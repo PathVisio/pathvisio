@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConnectorShape;
 import org.pathvisio.model.ConnectorShapeFactory;
 import org.pathvisio.model.LineStyle;
@@ -75,8 +76,7 @@ public class Line extends Graphics
 		setAnchors();
 		getConnectorShape().recalculateShape(getMLine());
 		updateSegmentHandles();
-		
-		getCitation().setRPosition(new Point2D.Double(-1, 0.9));
+		updateCitationPosition();
 	}
 	
 	private void addPoint(MPoint mp) {
@@ -322,6 +322,13 @@ public class Line extends Graphics
 		}
 	}
 	
+	private void updateCitationPosition() {
+		Point2D p = getConnectorShape().fromLineCoordinate(0.7);
+		p.setLocation(p.getX() - 15 * 5, p.getY());
+		Point2D r = gdata.toRelativeCoordinate(p);
+		getCitation().setRPosition(r);
+	}
+	
 	protected void swapPoint(VPoint pOld, VPoint pNew) 
 	{
 		int i = points.indexOf(pOld);
@@ -496,6 +503,7 @@ public class Line extends Graphics
 	public void recalculateConnector() {
 		getConnectorShape().recalculateShape(getMLine());
 		updateAnchorPositions();
+		updateCitationPosition();
 		for(VPoint vp : points) {
 			vp.setHandleLocation();
 		}
@@ -523,6 +531,7 @@ public class Line extends Graphics
 			setAnchors();
 		}
 		updateAnchorPositions();
+		updateCitationPosition();
 	}
 	
 	protected void destroyHandles() { 

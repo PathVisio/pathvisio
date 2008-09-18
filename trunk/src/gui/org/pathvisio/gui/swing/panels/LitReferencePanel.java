@@ -17,109 +17,73 @@
 package org.pathvisio.gui.swing.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
+import org.pathvisio.Engine;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.util.Resources;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class LitReferencePanel extends PathwayElementPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	static final String ADD = "Add";
+	static final String ADD = "New reference";
 	static final String REMOVE = "Remove";
 	static final String EDIT = "Edit";
-
+	private static URL IMG_EDIT= Resources.getResourceURL("edit.gif");
+	private static URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
+	
 	BiopaxReferenceManager refMgr;
 	BiopaxElementManager elmMgr;
 	
 	List<PublicationXRef> xrefs;
 
-	JTable refTable;
-	DefaultTableModel references;
-	JPanel buttons;
-
+	JScrollPane refPanel;
+	JButton addBtn;
+	
 	public LitReferencePanel() {
 		setLayout(new BorderLayout(5, 5));
 		xrefs = new ArrayList<PublicationXRef>();
-
-		references = new DefaultTableModel() {
-			private static final long serialVersionUID = 1L;
-
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-		final WrapRenderer cr = new WrapRenderer();
-		refTable = new JTable(references);
-		refTable.setDefaultRenderer(PublicationXRef.class, cr);
-
-		refTable.setTableHeader(null);
-		refTable.setIntercellSpacing(new Dimension(0, 5));
-
-		//Table doesn't adjust to border
-		//See bug: 4222732 at bugs.sun.com
-		//refTable.setBorder(BorderFactory.createTitledBorder("References"));
-		//Workaround, create a JPanel with border, add table to JPanel
-		JPanel tablePanel = new JPanel();
-		tablePanel.setLayout(new BorderLayout());
-		tablePanel.add(new JScrollPane(refTable), BorderLayout.CENTER);
-		tablePanel.setBorder(BorderFactory.createTitledBorder("References"));
-		refTable.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2) {
-					editPressed();
-				}
-			}
-		});
-
-
-		buttons = new JPanel();
-		buttons.setLayout(new BoxLayout(buttons, BoxLayout.PAGE_AXIS));
-
-		JButton add = new JButton(ADD);
-		JButton remove=  new JButton(REMOVE);
-		JButton edit = new JButton(EDIT);
-		add.addActionListener(this);
-		remove.addActionListener(this);
-		edit.addActionListener(this);
-		buttons.add(add);
-		buttons.add(remove);
-		buttons.add(edit);
-
-		add(tablePanel, BorderLayout.CENTER);
-		add(buttons, BorderLayout.LINE_END);
+		addBtn = new JButton(ADD);
+		addBtn.setActionCommand(ADD);
+		addBtn.addActionListener(this);
+		JPanel addPnl = new JPanel();
+		addPnl.add(addBtn);
+		add(addPnl, BorderLayout.SOUTH);
 	}
 
+	boolean readonly = false;
+	
 	public void setReadOnly(boolean readonly) {
 		super.setReadOnly(readonly);
-		setChildrenEnabled(buttons, !readonly);
+		this.readonly = readonly;
+		if(readonly) {
+			//TODO:
+		}
 	}
 
 	public void setInput(PathwayElement e) {
@@ -130,50 +94,127 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		super.setInput(e);
 	}
 
+	
+	private class XRefPanel extends JPanel implements HyperlinkListener, ActionListener {
+		PublicationXRef xref;
+		JPanel btnPanel;
+		
+		public XRefPanel(PublicationXRef xref) {
+			this.xref = xref;
+			setBackground(Color.WHITE);
+			setLayout(new FormLayout(
+					"2dlu, fill:[100dlu,min]:grow, 1dlu, pref, 2dlu", "2dlu, pref, 2dlu"
+			));
+			JTextPane txt = new JTextPane();
+			txt.setContentType("text/html");
+			txt.setEditable(false);
+			txt.setText("<html>" + "<B>" + 
+					elmMgr.getOrdinal(xref) + ":</B> " + 
+					xref.toHTML() + "</html>"
+			);
+			txt.addHyperlinkListener(this);
+			CellConstraints cc = new CellConstraints();
+			add(txt, cc.xy(2, 2));
+			
+			btnPanel = new JPanel(new FormLayout("pref", "pref, pref"));
+			JButton btnEdit = new JButton();
+			btnEdit.setActionCommand(EDIT);
+			btnEdit.addActionListener(this);
+			btnEdit.setIcon(new ImageIcon(IMG_EDIT));
+			btnEdit.setBackground(Color.WHITE);
+			btnEdit.setBorder(null);
+			btnEdit.setToolTipText("Edit literature reference");
+			
+			JButton btnRemove = new JButton();
+			btnRemove.setActionCommand(REMOVE);
+			btnRemove.addActionListener(this);
+			btnRemove.setIcon(new ImageIcon(IMG_REMOVE));
+			btnRemove.setBackground(Color.WHITE);
+			btnRemove.setBorder(null);
+			btnRemove.setToolTipText("Remove literature reference");
+			
+			MouseAdapter ma_highlight = new MouseAdapter() {
+				public void mouseEntered(MouseEvent e) {
+					e.getComponent().setBackground(new Color(200, 200, 255));
+				}
+				public void mouseExited(MouseEvent e) {
+					e.getComponent().setBackground(Color.WHITE);
+				}
+			};
+			btnEdit.addMouseListener(ma_highlight);
+			btnRemove.addMouseListener(ma_highlight);
+			
+			btnPanel.add(btnEdit, cc.xy(1, 1));
+			btnPanel.add(btnRemove, cc.xy(1, 2));
+			
+			add(btnPanel, cc.xy(4, 2));
+			btnPanel.setVisible(false);
+			
+			MouseAdapter ma_hide = new MouseAdapter() {
+				public void mouseEntered(MouseEvent e) {
+					if(!readonly) btnPanel.setVisible(true);
+				}
+				public void mouseExited(MouseEvent e) {
+					if(!contains(e.getPoint())) {
+						btnPanel.setVisible(false);
+					}
+				}
+			};
+			addMouseListener(ma_hide);
+			txt.addMouseListener(ma_hide);
+		}
+		
+		public void hyperlinkUpdate(HyperlinkEvent e) {
+			if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+				Engine.getCurrent().openUrl(e.getURL());
+			}
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			String action = e.getActionCommand();
+			if(EDIT.equals(action)) {
+				edit(xref);
+			} else if (REMOVE.equals(action)) {
+				LitReferencePanel.this.remove(xref);
+			}
+		}
+	}
+	
 	public void refresh() {
+		if(refPanel != null) remove(refPanel);
+		
 		xrefs = refMgr.getPublicationXRefs();
-		Object[][] data = new Object[xrefs.size()][1];
-		for(int i = 0; i < xrefs.size(); i++) {
-			data[i][0] = xrefs.get(i);
+		
+		DefaultFormBuilder b = new DefaultFormBuilder(
+				new FormLayout("fill:pref:grow")
+		);
+		for(PublicationXRef xref : xrefs) {
+			b.append(new XRefPanel(xref));
+			b.nextLine();
 		}
-		references.setDataVector(data, new Object[] { "" });
-		int prefferedWidth = refTable.getWidth();
-		TableColumn column = null;
-		for (int i = 0; i < references.getColumnCount(); i++) {
-			column = refTable.getColumnModel().getColumn(i);
-			column.setPreferredWidth(prefferedWidth);
-			column.setCellRenderer(new WrapRenderer());
-		}
-
+		JPanel p = b.getPanel();
+		p.setBackground(Color.WHITE);
+		refPanel = new JScrollPane(p);
+		add(refPanel, BorderLayout.CENTER);
+		validate();
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals(ADD)) {
 			addPressed();
-		} else if(e.getActionCommand().equals(REMOVE)) {
-			removePressed();
-		} else if(e.getActionCommand().equals(EDIT)) {
-			editPressed();
 		}
 	}
 
-	private void editPressed() {
-		int r = refTable.getSelectedRow();
-		if(r > -1) {
-			PublicationXRef xref = (PublicationXRef)references.getValueAt(r, 0);
-			if(xref != null) {
+	private void edit(PublicationXRef xref) {
+		if(xref != null) {
 				PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this, false);
 				d.setVisible(true);
-			}
-			refresh();
 		}
+		refresh();
 	}
 
-	private void removePressed() {
-		for(int r : refTable.getSelectedRows()) {
-			Object o = references.getValueAt(r, 0);
-			refMgr.removeElementReference((PublicationXRef)o);
-		}
+	private void remove(PublicationXRef xref) {
+		refMgr.removeElementReference(xref);
 		refresh();
 	}
 
@@ -196,102 +237,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		}
 		if(d.getExitCode().equals(PublicationXRefDialog.OK)) {
 			refMgr.addElementReference(xref);
-			refresh();			
+			refresh();
 		}
 	}
-
-	//Modified from:
-	//http://forum.java.sun.com/thread.jspa?threadID=753164&messageID=4305668
-	//(TK)
-	static class WrapRenderer extends JEditorPane	implements TableCellRenderer {
-		private static final long serialVersionUID = 1L;
-		
-		protected final DefaultTableCellRenderer adaptee =
-			new DefaultTableCellRenderer();
-		/** map from table to map of rows to map of column heights */
-		private final Map<JTable, Map<Integer, Map<Integer, Integer>>> cellSizes = 
-			new HashMap<JTable, Map<Integer, Map<Integer, Integer>>>();
-
-		public WrapRenderer() {
-//			setLineWrap(true);
-//			setWrapStyleWord(true);
-			setContentType("text/html");
-			setEditable(false);
-		}
-
-		public Component getTableCellRendererComponent(//
-				JTable table, Object obj, boolean isSelected,
-				boolean hasFocus, int row, int column) {
-			// set the colors, etc. using the standard for that platform
-			adaptee.getTableCellRendererComponent(table, obj,
-					isSelected, hasFocus, row, column);
-			setForeground(adaptee.getForeground());
-			setBackground(adaptee.getBackground());
-			setBorder(adaptee.getBorder());
-			setFont(adaptee.getFont());
-			setText(adaptee.getText());
-
-			// This line was very important to get it working with JDK1.4
-			TableColumnModel columnModel = table.getColumnModel();
-			setSize(columnModel.getColumn(column).getWidth(), 100000);
-			int height_wanted = (int) getPreferredSize().getHeight();
-			addSize(table, row, column, height_wanted);
-			height_wanted = findTotalMaximumRowSize(table, row);
-			if (height_wanted != table.getRowHeight(row)) {
-				table.setRowHeight(row, height_wanted);
-			}
-			return this;
-		}
-
-		protected void addSize(JTable table, int row, int column,
-				int height) {
-			Map<Integer, Map<Integer, Integer>> rows = 
-				(Map<Integer, Map<Integer, Integer>>) cellSizes.get(table);
-			if (rows == null) {
-				cellSizes.put(table, rows = new HashMap<Integer, Map<Integer, Integer>>());
-			}
-			Map<Integer, Integer> rowheights = 
-				(Map<Integer, Integer>) rows.get(new Integer(row));
-			if (rowheights == null) {
-				rows.put(new Integer(row), rowheights = new HashMap<Integer, Integer>());
-			}
-			rowheights.put(new Integer(column), new Integer(height));
-		}
-
-		/**
-		 * Look through all columns and get the renderer.  If it is
-		 * also a TextAreaRenderer, we look at the maximum height in
-		 * its hash table for this row.
-		 */
-		protected int findTotalMaximumRowSize(JTable table, int row) {
-			int maximum_height = 0;
-			Enumeration<?> columns = table.getColumnModel().getColumns();
-			while (columns.hasMoreElements()) {
-				TableColumn tc = (TableColumn) columns.nextElement();
-				TableCellRenderer cellRenderer = tc.getCellRenderer();
-				if (cellRenderer instanceof WrapRenderer) {
-					WrapRenderer tar = (WrapRenderer) cellRenderer;
-					maximum_height = Math.max(maximum_height,
-							tar.findMaximumRowSize(table, row));
-				}
-			}
-			return maximum_height + 5;
-		}
-
-		private int findMaximumRowSize(JTable table, int row) 
-		{
-			Map<Integer, Map<Integer, Integer>> rows = (Map<Integer, Map<Integer, Integer>>) cellSizes.get(table);
-			if (rows == null) return 0;
-			Map<Integer, Integer> rowheights = (Map<Integer, Integer>) rows.get(new Integer(row));
-			if (rowheights == null) return 0;
-			int maximum_height = 0;
-			for (Map.Entry<Integer, Integer> entry : rowheights.entrySet())
-			{
-				int cellHeight = entry.getValue();
-				maximum_height = Math.max(maximum_height, cellHeight);
-			}
-			return maximum_height;
-		}
-	}
-
 }

@@ -77,8 +77,8 @@ public class Test extends TestCase {
 		//Add to datanode
 		PathwayElement pwElm = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add(pwElm);
-		BiopaxReferenceManager dnRefManager = new BiopaxReferenceManager(elementManager, pwElm);
-		pwRefManager = new BiopaxReferenceManager(elementManager, data.getMappInfo());
+		BiopaxReferenceManager dnRefManager = new BiopaxReferenceManager(pwElm);
+		pwRefManager = new BiopaxReferenceManager(data.getMappInfo());
 		
 		//Test 1:
 		//Add two identical publication references, one to the pathway,
@@ -157,7 +157,7 @@ public class Test extends TestCase {
 			fail("Unable to read a pathway: " + e.toString());
 		}
 		elementManager = new BiopaxElementManager(data);
-		pwRefManager = new BiopaxReferenceManager(elementManager, data.getMappInfo());
+		pwRefManager = new BiopaxReferenceManager(data.getMappInfo());
 	}
 	
 	int nrWrite = 0;

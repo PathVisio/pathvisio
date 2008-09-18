@@ -21,7 +21,8 @@ import java.util.List;
 
 public class PublicationXRef extends BiopaxElement {
 	private static final long serialVersionUID = 1L;
-
+	static final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
+	
 	public PublicationXRef() {
 		super();
 		setName("PublicationXRef");
@@ -162,13 +163,18 @@ public class PublicationXRef extends BiopaxElement {
 			authors = "";
 		}
 		if(source != null && source.length() > 0) {
-			source = "<I>" + source + "</I>; ";
+			if(source.startsWith("http://")) {
+				source = "<A href='" + source + "'>" + source + "</A>; ";
+			} else {
+				source = "<I>" + source + "</I>; ";
+			}
 		}
 		if(year != null && year.length() > 0) {
 			year += "; ";
 		}
 		if(pmid != null && pmid.length() > 0) {
-			pmid = "<I>pmid=" + pmid + "</I>";
+			pmid = "<A href='" + PUBMED_URL + pmid + "'>" + 
+				"PubMed" + "</A>";
 		} else {
 			pmid = "";
 		}

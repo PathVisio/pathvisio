@@ -28,6 +28,7 @@ import javax.swing.JRadioButtonMenuItem;
 import org.pathvisio.gui.swing.CommonActions.AddLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.EditLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.PropertiesAction;
+import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.model.AnchorType;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.GroupStyle;
@@ -168,8 +169,17 @@ public class PathwayElementMenuListener implements VPathwayListener {
 	
 	public void vPathwayEvent(VPathwayEvent e) {
 		switch(e.getType()) {
-		case VPathwayEvent.ELEMENT_CLICKED_UP:
 		case VPathwayEvent.ELEMENT_CLICKED_DOWN:
+			if(e.getAffectedElement() instanceof Citation) {
+				Citation c = (Citation)e.getAffectedElement();
+				PathwayElementDialog d = PathwayElementDialog.getInstance(
+						c.getParent().getPathwayElement(), false
+				);
+				d.selectPathwayElementPanel(PathwayElementDialog.TAB_LITERATURE);
+				d.setVisible(true);
+				break;
+			}
+		case VPathwayEvent.ELEMENT_CLICKED_UP:
 			assert(e.getVPathway() != null);
 			assert(e.getVPathway().getWrapper() instanceof VPathwaySwing);
 			

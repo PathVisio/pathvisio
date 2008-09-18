@@ -31,12 +31,14 @@ import java.util.Locale;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
+import org.pathvisio.Engine.Browser;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
@@ -56,6 +58,8 @@ import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.MIMShapes;
+
+import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -309,7 +313,16 @@ public class GuiMain
 				Engine engine = Engine.init();
 				initLog(engine);
 				engine.setApplicationName("PathVisio 1.1");
-
+				engine.setUrlBrowser(new Browser() {
+					public void openUrl(URL url) {
+						try {
+							BrowserLauncher b = new BrowserLauncher(null);
+							b.openURLinBrowser(url.toString());
+						} catch (Exception ex) {
+							Logger.log.error ("Couldn't open url '" + url + "'", ex);
+						}
+					}
+				});
 				if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
 				{
 					try {

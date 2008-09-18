@@ -42,7 +42,12 @@ public class BiopaxElementManager {
 	Random random = new Random(); //Used to generate unique id's
 	
 	private Pathway pathway;
+	private PathwayElement bpElm;
 	private HashMap<String, BiopaxElement> biopax;
+	/**
+	 * Keeps track of the order of the loaded biopax elements per subclass.
+	 */
+	private HashMap<Class<? extends BiopaxElement>, HashMap<String, Integer>> ordinal;
 	
 	/**
 	 * Constructor for this class. Builds a map of all biopax
@@ -52,30 +57,51 @@ public class BiopaxElementManager {
 	public BiopaxElementManager(Pathway p) {
 		pathway = p;
 		biopax = new HashMap<String, BiopaxElement>();
-		
+		ordinal = new HashMap<Class<? extends BiopaxElement>, HashMap<String, Integer>>();
+		refresh();
+	}
+	
+	/**
+	 * Check if the pathway element that contains the biopax document has changed
+	 * and update the biopax hashmap if needed.
+	 */
+	public void refresh() {
+		refresh(false);
+	}
+	
+	private void refresh(boolean force) {
 		PathwayElement bp = pathway.getBiopax();
-		if(bp != null) {
-			Document d = bp.getBiopax();
-			if(d != null) {
-				Map<BiopaxElement, Element> oldElements = new HashMap<BiopaxElement, Element>();
-				Element root = d.getRootElement();
-				for(Object child : root.getChildren()) {
-					if(child instanceof Element) {
-						try {
-							BiopaxElement bpe = BiopaxElement.fromXML((Element)child);
-							biopax.put(bpe.getId(), bpe);
-							//Remember link between new and old element
-							oldElements.put(bpe, (Element)child);
-						} catch(Exception ex) {
-							Logger.log.error("Biopax element " + child + " ignored", ex);
+		if(bpElm != bp || force) { //Only refresh if element differs or forced
+			Logger.log.trace("Refreshing biopax");
+			bpElm = bp;
+			biopax.clear();
+			ordinal.clear();
+			
+			if(bp != null) {
+				Logger.log.trace("Biopax element found");
+				Document d = bp.getBiopax();
+				if(d != null) {
+					Map<BiopaxElement, Element> oldElements = new HashMap<BiopaxElement, Element>();
+					Element root = d.getRootElement();
+					for(Object child : root.getChildren()) {
+						if(child instanceof Element) {
+							try {
+								BiopaxElement bpe = BiopaxElement.fromXML((Element)child);
+								biopax.put(bpe.getId(), bpe);
+								addToOrdinal(bpe);
+								//Remember link between new and old element
+								oldElements.put(bpe, (Element)child);
+							} catch(Exception ex) {
+								Logger.log.error("Biopax element " + child + " ignored", ex);
+							}
 						}
 					}
-				}
-				//Remove old instances of the elements, replace with
-				//BiopaxElement instances
-				for(BiopaxElement bpe : oldElements.keySet()) {
-					root.addContent(bpe);
-					root.removeContent(oldElements.get(bpe));
+					//Remove old instances of the elements, replace with
+					//BiopaxElement instances
+					for(BiopaxElement bpe : oldElements.keySet()) {
+						root.addContent(bpe);
+						root.removeContent(oldElements.get(bpe));
+					}
 				}
 			}
 		}
@@ -99,6 +125,7 @@ public class BiopaxElementManager {
 		System.err.println("removed: " + doc.getRootElement().removeContent(e));
 //		doc.getRootElement().removeContent(e);
 		biopax.remove(e.getId());
+		rebuildOrdinal();
 	}
 	
 	/**
@@ -162,6 +189,33 @@ public class BiopaxElementManager {
 		}
 		d.getRootElement().addContent(elm);
 		biopax.put(elm.getId(), elm);
+		addToOrdinal(elm);
+	}
+	
+	private void addToOrdinal(BiopaxElement e) {
+		HashMap<String, Integer> classOrdinal = ordinal.get(e.getClass());
+		if(classOrdinal == null) {
+			classOrdinal = new HashMap<String, Integer>();
+			ordinal.put(e.getClass(), classOrdinal);
+		}
+		classOrdinal.put(e.getId(), classOrdinal.size() + 1);
+	}
+	
+	private void rebuildOrdinal() {
+		refresh(true);
+	}
+	
+	/**
+	 * Get the position of the biopax element in the document, relative
+	 * to other elements of the same class.
+	 */
+	public int getOrdinal(BiopaxElement bpe) {
+		HashMap<String, Integer> classOrdinal = ordinal.get(bpe.getClass());
+		if(classOrdinal != null) {
+			return classOrdinal.get(bpe.getId());
+		} else {
+			return -1;
+		}
 	}
 	
 	/**

@@ -17,9 +17,11 @@
 package org.pathvisio.view.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -37,15 +39,16 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.Action;
-import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToolTip;
 import javax.swing.JWindow;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
+import javax.swing.UIManager;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -58,8 +61,11 @@ import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
-		MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener {
+MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener {
 	private static final long serialVersionUID = 1L;
 
 	VPathway child;
@@ -74,7 +80,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
-		
+
 		setFocusable(true);
 		setRequestFocusEnabled(true);
 		setTransferHandler(new PathwayImportHandler());
@@ -89,7 +95,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 	public VPathway getChild() {
 		return child;
 	}
-	
+
 	public Rectangle getVBounds() {
 		return getBounds();
 	}
@@ -188,7 +194,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		}
 		container.getViewport().setViewPosition(
 				new Point (newx, newy)
-				);
+		);
 		child.mouseMove(new SwingMouseEvent(e));
 	}
 
@@ -200,7 +206,7 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		super.registerKeyboardAction(a, k, WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 		//super.registerKeyboardAction(a, k, WHEN_IN_FOCUSED_WINDOW);
 	}
-	
+
 	public VPathway createVPathway() {
 		setChild(new VPathway(this));
 		return child;
@@ -233,61 +239,107 @@ public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 		TransferHandler handler = getTransferHandler();
 		handler.importData(this, clip.getContents(this));
 	}
-	
+
 	List<PathwayElement> lastCopied;
-	
+
 	public void copyToClipboard(Pathway source, List<PathwayElement> copyElements) {
 		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 		clip.setContents(new PathwayTransferable(source, copyElements), 
 				(PathwayImportHandler)getTransferHandler());
 		((PathwayImportHandler)getTransferHandler()).obtainedOwnership();
 	}
-	
+
 	Set<ToolTipProvider> toolTipProviders = new HashSet<ToolTipProvider>();
-	
+
 	public void addToolTipProvider(ToolTipProvider p) {
 		toolTipProviders.add(p);
 	}
-	
-	public void showToolTip(VPathwayEvent e) {
-		if(toolTipProviders.size() == 0) return;
-		
-		List<VPathwayElement> elements = e.getAffectedElements();
-		if(elements.size() > 0) {
-			PathwayToolTip tip = new PathwayToolTip(elements);
-			
-			if(tip.getComponentCount() == 0) return;
-			
-			final JWindow w = new JWindow();
-			w.setLayout(new BorderLayout());
-			
-			w.addMouseListener(new MouseAdapter() {
-				public void mouseExited(MouseEvent e) {
-					w.dispose();
-				}
-			});
-			w.add(tip, BorderLayout.CENTER);
-			w.pack();
-			Point p = e.getMouseEvent().getLocation();
-			SwingUtilities.convertPointToScreen(p, this);
-			w.setLocation(p);
-			w.setVisible(true);
-		}
-	}
-	
-	class PathwayToolTip extends JToolTip {
-		private static final long serialVersionUID = 1L;
 
-		public PathwayToolTip(List<VPathwayElement> elements) {
-			setPreferredSize(new Dimension(200, 100));
-			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+	public void showToolTip(final VPathwayEvent e) {
+		if(toolTipProviders.size() == 0) return;
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				List<VPathwayElement> elements = e.getAffectedElements();
+				if(elements.size() > 0) {
+					PathwayToolTip tip = new PathwayToolTip(elements);
+
+					if(!tip.hasContent()) return;
+
+					final JWindow w = new JWindow();
+					w.setLayout(new BorderLayout());
+					w.add(tip, BorderLayout.CENTER);
+					
+					Point p = e.getMouseEvent().getLocation();
+					SwingUtilities.convertPointToScreen(p, VPathwaySwing.this);
+					w.setLocation(p);
+
+					//For some reason the mouse listener only works when
+					//adding it directly to the scrollpane (the first child component).
+					tip.getComponent(0).addMouseListener(new MouseAdapter() {
+						public void mouseExited(MouseEvent e) {
+							//Don't dispose if on scrollbars
+							if(e.getComponent().contains(e.getPoint())) 
+								return;
+							//Don't dispose if mouse is down (usually when scrolling)
+							if((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0)
+								return;
+							w.dispose();
+						}
+					});
+					
+					w.setVisible(true);
+					w.pack();
+				}
+			}
+		});
+	}
+
+	class PathwayToolTip extends JPanel {
+		private static final long serialVersionUID = 1L;
+		private boolean hasContent;
+		
+		public PathwayToolTip(List<VPathwayElement> elements) {	
+			applyToolTipStyle(this);
+			setLayout(new BorderLayout());
+			DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("pref"));
 			for(ToolTipProvider p : toolTipProviders) {
 				Component c = p.createToolTipComponent(this, elements);
-				if(c != null) add(c);
+				if(c != null) {
+					hasContent = true;
+					builder.append(c);
+					builder.nextLine();
+				}
 			}
+
+			JPanel contents = builder.getPanel();
+			applyToolTipStyle(contents);
+			JScrollPane scroll = new JScrollPane(contents, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+			int w = contents.getPreferredSize().width + 
+				scroll.getVerticalScrollBar().getPreferredSize().width + 5;
+			int h = contents.getPreferredSize().height + 
+				scroll.getHorizontalScrollBar().getPreferredSize().height + 5;
+			w = Math.min(400, w);
+			h = Math.min(500, h);
+			setPreferredSize(new Dimension(w, h));
+			add(scroll, BorderLayout.CENTER);
 		}
+		
+		public boolean hasContent() {
+			return hasContent;
+		}
+		
 	}
 
+	/**
+	 * Apply the tooltip style (e.g. colors) to the given component.
+	 */
+	public static void applyToolTipStyle(JComponent c) {
+		c.setForeground((Color)UIManager.get("ToolTip.foreground"));
+		c.setBackground((Color)UIManager.get("ToolTip.background"));
+		c.setFont((Font)UIManager.get("ToolTip.font"));
+	}
+	
 	public void scrollTo(Rectangle r) 
 	{
 		if (container instanceof JScrollPane)

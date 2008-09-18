@@ -124,14 +124,8 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 
 	public void setInput(PathwayElement e) {
 		if(e != getInput()) {
-			//Create new element manager only if it
-			//doesn't exist yet, or if the pathway has
-			//been changed
-			if(elmMgr == null || 
-					elmMgr.getPathway().equals(e.getParent())) {
-				elmMgr = new BiopaxElementManager(e.getParent());
-			}
-			refMgr = new BiopaxReferenceManager(elmMgr, e);
+			elmMgr = e.getParent().getBiopaxElementManager();
+			refMgr = e.getBiopaxReferenceManager();
 		}
 		super.setInput(e);
 	}

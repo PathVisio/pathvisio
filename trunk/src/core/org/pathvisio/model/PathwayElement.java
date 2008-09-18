@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jdom.Document;
+import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.view.LinAlg;
@@ -2534,9 +2535,21 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return biopax;
 	}
 
+	BiopaxReferenceManager bpRefMgr;
+	
+	public BiopaxReferenceManager getBiopaxReferenceManager() {
+		if(bpRefMgr == null) {
+			bpRefMgr = new BiopaxReferenceManager(
+					parent.getBiopaxElementManager(), this
+			);
+		}
+		return bpRefMgr;
+	}
+	
 	public void setBiopax(Document bp)
 	{
 		biopax = bp;
+		if(parent != null) parent.getBiopaxElementManager().refresh();
 	}
 
 	protected List<String> biopaxRefs = new ArrayList<String>();

@@ -108,31 +108,6 @@ public class MainPanelStandalone extends MainPanel
 		
 		SearchPane searchPane = new SearchPane(engine, swingEngine);
 		sidebarTabbedPane.addTab ("Search", searchPane); 
-		
-		backpagePane.addHyperlinkListener(
-				new HyperlinkListener() 
-				{
-					public void hyperlinkUpdate(HyperlinkEvent e) 
-					{
-						if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED)
-						{
-							URL url = e.getURL();
-							try
-							{
-								BrowserLauncher b = new BrowserLauncher(null);
-								b.openURLinBrowser(url.toString());
-							}
-							catch (Exception ex)
-							{
-								Logger.log.error ("Couldn't open url '" + url + "'", ex);
-								JOptionPane.showMessageDialog(swingEngine.getFrame(), 
-										"Error opening the Browser, see error log for details.");
-							}
-						}
-					}
-				}
-				);
-
 	}
 
 	@Override

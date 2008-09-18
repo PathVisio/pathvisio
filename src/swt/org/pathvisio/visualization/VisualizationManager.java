@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.JToolTip;
+import javax.swing.JComponent;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ControlContribution;
@@ -462,7 +462,7 @@ public class VisualizationManager implements ApplicationEventListener, GexManage
 		}
 	}
 
-	public Component createToolTipComponent(JToolTip parent, Collection<VPathwayElement> elements) {
+	public Component createToolTipComponent(JComponent parent, Collection<VPathwayElement> elements) {
 		if(getCurrent() == null) return null; //No tooltip if no visualization
 		
 		GeneProduct gp = null;

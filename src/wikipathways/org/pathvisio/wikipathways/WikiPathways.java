@@ -50,6 +50,7 @@ import org.apache.xmlrpc.util.HttpUtil;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
+import org.pathvisio.Engine.Browser;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.GdbManager;
@@ -117,6 +118,11 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		cookie = new HashMap<String, String>();
 		this.swingEngine = swingEngine;
 		this.engine = swingEngine.getEngine();
+		engine.setUrlBrowser(new Browser() {
+			public void openUrl(URL url) {
+				WikiPathways.this.uiHandler.showDocument(url, "_blank");
+			}
+		});
 	}
 
 	/**
@@ -663,15 +669,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		//mainPanel.addToToolbar(saveAction, MainPanel.TB_GROUP_SHOW_IF_EDITMODE);
 		mainPanel.addToToolbar(exitAction);
 
-		mainPanel.getBackpagePane().addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-					uiHandler.showDocument(e.getURL(), "_blank");
-				}
-			}
-		});	
-
-		SwingEngine.getCurrent().setApplicationPanel(mainPanel);
+		swingEngine.setApplicationPanel(mainPanel);
 		return mainPanel;
 	}
 

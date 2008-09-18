@@ -31,6 +31,7 @@ import org.pathvisio.gui.swing.CommonActions.PropertiesAction;
 import org.pathvisio.model.AnchorType;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.GroupStyle;
+import org.pathvisio.view.Citation;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;
@@ -60,6 +61,8 @@ public class PathwayElementMenuListener implements VPathwayListener {
 	 * @return The {@link JPopupMenu} for the given pathway element
 	 */
 	private static JPopupMenu getMenuInstance(VPathwayElement e) {
+		if(e instanceof Citation) return null;
+		
 		if(e instanceof Handle) e = ((Handle)e).getParent();
 		if(e instanceof VPoint) e = ((VPoint)e).getLine();
 		
@@ -174,7 +177,9 @@ public class PathwayElementMenuListener implements VPathwayListener {
 				Component invoker = (VPathwaySwing)e.getVPathway().getWrapper();
 				MouseEvent me = e.getMouseEvent();
 				JPopupMenu m = getMenuInstance(e.getAffectedElement());
-				m.show(invoker, me.getX(), me.getY());
+				if(m != null) {
+					m.show(invoker, me.getX(), me.getY());
+				}
 			}
 			break;
 		}

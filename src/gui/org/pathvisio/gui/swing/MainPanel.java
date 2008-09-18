@@ -36,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -43,12 +44,16 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.ApplicationEvent;
+import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.GexManager;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
@@ -140,7 +145,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	 * not be added to the menubar and toolbar should be specified in the hideActions parameter
 	 * @param hideActions The {@link Action}s that should not be added to the toolbar and menubar
 	 */
-	public MainPanel(SwingEngine swingEngine, Set<Action> hideActions) 
+	public MainPanel(final SwingEngine swingEngine, Set<Action> hideActions) 
 	{
 		this.hideActions = hideActions;
 		
@@ -183,6 +188,23 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
 		backpagePane = new BackpagePane(new BackpageTextProvider (swingEngine.getEngine(), swingEngine.getGdbManager(), GexManager.getCurrent()));
+		backpagePane.addHyperlinkListener(new HyperlinkListener() {
+			public void hyperlinkUpdate(HyperlinkEvent e) {
+				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+					try {
+						swingEngine.getEngine().openUrl(e.getURL());
+					} catch(UnsupportedOperationException ex) {
+						Logger.log.error("Unable to open URL", ex);
+						JOptionPane.showMessageDialog(
+								MainPanel.this,
+								"No browser launcher specified",
+								"Unable to open link",
+								JOptionPane.ERROR_MESSAGE
+						);
+					}
+				}
+			}
+		});
 		
 		sidebarTabbedPane = new JTabbedPane();
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );

@@ -17,10 +17,13 @@
 package org.pathvisio.biopax;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.pathvisio.biopax.reflect.BiopaxElement;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
 
 /**
@@ -29,7 +32,6 @@ import org.pathvisio.model.PathwayElement;
  *
  */
 public class BiopaxReferenceManager {
-	private BiopaxElementManager elementManager;
 	private PathwayElement pwElement;
 	
 	/**
@@ -40,7 +42,10 @@ public class BiopaxReferenceManager {
 	 */
 	public BiopaxReferenceManager(BiopaxElementManager mgr, PathwayElement e) {
 		pwElement = e;
-		elementManager = mgr;
+	}
+	
+	public BiopaxElementManager getBiopaxElementManager() {
+		return pwElement.getParent().getBiopaxElementManager();
 	}
 	
 	/**
@@ -53,9 +58,11 @@ public class BiopaxReferenceManager {
 		List<String> refs = pwElement.getBiopaxRefs();
 		List<BiopaxElement> bpElements = new ArrayList<BiopaxElement>();
 		for(String ref : refs) {
-			BiopaxElement bpe = elementManager.getElement(ref);
+			BiopaxElement bpe = getBiopaxElementManager().getElement(ref);
 			if(bpe != null) {
 				bpElements.add(bpe);
+			} else {
+				Logger.log.warn("Reference to non existing biopax element found: " + ref);
 			}
 		}
 		return bpElements;
@@ -71,6 +78,12 @@ public class BiopaxReferenceManager {
 		for(BiopaxElement e : getReferences()) {
 			if(e instanceof PublicationXRef) xrefs.add((PublicationXRef)e);
 		}
+		Collections.sort(xrefs, new Comparator<PublicationXRef>() {
+			public int compare(PublicationXRef o1, PublicationXRef o2) {
+				BiopaxElementManager elmMgr = getBiopaxElementManager();
+				return elmMgr.getOrdinal(o1) - elmMgr.getOrdinal(o2);
+			}
+		});
 		return xrefs;
 	}
 	
@@ -81,10 +94,12 @@ public class BiopaxReferenceManager {
 	 */
 	public void addElementReference(BiopaxElement e) {
 		//Will be added to the BioPAX document if not already in there
-		elementManager.addElement(e);
+		getBiopaxElementManager().addElement(e);
 		
 		//Add a reference to the biopax element
 		pwElement.addBiopaxRef(e.getId());
+		
+		fireBiopaxEvent(new BiopaxEvent(this));
 	}
 	
 	/**
@@ -98,8 +113,26 @@ public class BiopaxReferenceManager {
 		
 		//Remove element from the biopax GPML element
 		//Only if there are no references to this element
-		if(!elementManager.hasReferences(e)) {
-			elementManager.removeElement(e);
+		if(!getBiopaxElementManager().hasReferences(e)) {
+			getBiopaxElementManager().removeElement(e);
 		}
+		
+		fireBiopaxEvent(new BiopaxEvent(this));
+	}
+	
+	private void fireBiopaxEvent(BiopaxEvent e) {
+		for(BiopaxListener l : listeners) {
+			l.biopaxEvent(e);
+		}
+	}
+	
+	List<BiopaxListener> listeners = new ArrayList<BiopaxListener>();
+	
+	public void addBiopaxListener(BiopaxListener l) {
+		if(!listeners.contains(l)) listeners.add(l);
+	}
+	
+	public void removeBiopaxListener(BiopaxListener l) {
+		listeners.remove(l);
 	}
 }

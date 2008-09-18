@@ -19,6 +19,7 @@ package org.pathvisio.view;
 import java.awt.Font;
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.PathwayElement;
@@ -33,6 +34,7 @@ import org.pathvisio.model.PathwayListener;
 public abstract class Graphics extends VPathwayElement implements PathwayListener
 {	
 	protected PathwayElement gdata = null;
+	private Citation citation;
 	
 	public Graphics(VPathway canvas, PathwayElement o) {
 		super(canvas);
@@ -40,6 +42,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 		gdata = o;
 		gdata.addListener(canvas);
 		canvas.checkBoardSize(gdata);
+		citation = new Citation(canvas, this, new Point2D.Double(1, -1));
 	}
 	
 	public void select()
@@ -60,6 +63,10 @@ public abstract class Graphics extends VPathwayElement implements PathwayListene
 		}
 	}
 	
+	protected Citation getCitation() {
+		return citation;
+	}
+
 	/**
 	 * @deprecated use {@link #getPathwayElement()} instead
 	 */

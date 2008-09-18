@@ -31,6 +31,7 @@ import java.util.Set;
 
 import org.jdom.Document;
 import org.jdom.Element;
+import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -177,10 +178,20 @@ public class Pathway implements PathwayListener
 	
 	public void createBiopax()
 	{
-		biopax = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
+		PathwayElement biopax = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
 		this.add(biopax);
 	}
 
+	private BiopaxElementManager bpElmMgr;
+	
+	public BiopaxElementManager getBiopaxElementManager() {
+		if(bpElmMgr == null) {
+			bpElmMgr = new BiopaxElementManager(this);
+		}
+		bpElmMgr.refresh();
+		return bpElmMgr;
+	}
+	
 	/**
 	 * Add a PathwayElement to this Pathway.
 	 * takes care of setting parent and removing from possible previous

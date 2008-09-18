@@ -75,6 +75,8 @@ public class Line extends Graphics
 		setAnchors();
 		getConnectorShape().recalculateShape(getMLine());
 		updateSegmentHandles();
+		
+		getCitation().setRPosition(new Point2D.Double(-1, 0.9));
 	}
 	
 	private void addPoint(MPoint mp) {

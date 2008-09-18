@@ -141,6 +141,10 @@ public class PublicationXRef extends BiopaxElement {
 		return as;
 	}
 	
+	public String toHTML() {
+		return toString();
+	}
+	
 	public String toString() {
 		String title = getTitle();
 		String pmid = getPubmedId();

@@ -12,6 +12,7 @@ import org.pathvisio.biopax.BiopaxEvent;
 import org.pathvisio.biopax.BiopaxListener;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
 
 /**
@@ -70,7 +71,7 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 		String xrefStr = getXRefText();
 
 		if(xrefStr == null || "".equals(xrefStr)) {
-			tb = new Rectangle2D.Double(vp.getX(), vp.getY(), 0, 0);
+			return parent.getVBounds();
 		} else if(g != null) {
 			tb = g.getFontMetrics(getVFont()).getStringBounds(getXRefText(), g);
 			tb.setRect(
@@ -80,7 +81,8 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 					tb.getHeight() + 2*pd
 			);
 		} else { //No graphics context, we can only guess...
-			tb = new Rectangle2D.Double(vp.getX() - pd, vp.getY() - pd, 15 + 2*pd, 15 + 2*pd);
+			int w = xrefStr.length() * 5;
+			tb = new Rectangle2D.Double(vp.getX() - w/2 - pd, vp.getY() - pd, w + 2*pd, 15 + 2*pd);
 		}
 		return tb;
 	}

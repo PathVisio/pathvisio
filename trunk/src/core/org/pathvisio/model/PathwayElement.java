@@ -2428,7 +2428,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setGroupStyle(GroupStyle gs)
 	{
-		groupStyle = gs;
+		if(groupStyle != gs) {
+			groupStyle = gs;
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
+		}
 	}
 
 	public GroupStyle getGroupStyle()

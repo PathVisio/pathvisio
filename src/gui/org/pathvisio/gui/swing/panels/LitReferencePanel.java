@@ -81,9 +81,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	public void setReadOnly(boolean readonly) {
 		super.setReadOnly(readonly);
 		this.readonly = readonly;
-		if(readonly) {
-			//TODO:
-		}
+		addBtn.setEnabled(!readonly);
 	}
 
 	public void setInput(PathwayElement e) {

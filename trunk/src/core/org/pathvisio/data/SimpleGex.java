@@ -64,7 +64,8 @@ public class SimpleGex
 	
 	private Connection con;
 	private DBConnector dbConnector;
-			
+	private int commitCount = 0;
+	
 	private static CachedData cachedData;
 
 	/**
@@ -141,6 +142,7 @@ public class SimpleGex
 		pstSample.setString(2, value);
 		pstSample.setInt(3, type);
 		pstSample.execute();
+		con.commit();
 	}
 	
 	/**
@@ -162,6 +164,7 @@ public class SimpleGex
 		pstExpr.setString(4, truncValue);
 		pstExpr.setInt(5, group);
 		pstExpr.execute();
+		if (++commitCount % 1000 == 0) con.commit();
 	}
 	
 	public Sample getSample(int id) {
@@ -220,77 +223,76 @@ public class SimpleGex
 	 * @param srcRefs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, Gdb gdb) throws SQLException
+	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, Gdb gdb) throws DataException
 	{	
-		cachedData = new CachedData();
-		StopWatch timer = new StopWatch();
-		timer.start();
-
-		PreparedStatement pst = con.prepareStatement(
-				"SELECT id, code, data, idSample, groupId FROM expression " +
-				" WHERE id = ? AND code = ?");
-		
-		for(Xref srcRef : srcRefs)
+		try
 		{
-			String id = srcRef.getId();			
-			String code = srcRef.getDataSource().getSystemCode();
+			cachedData = new CachedData();
+			StopWatch timer = new StopWatch();
+			timer.start();
+	
+			PreparedStatement pst = con.prepareStatement(
+					"SELECT id, code, data, idSample, groupId FROM expression " +
+					" WHERE id = ? AND code = ?");
 			
-			if(cachedData.hasData(srcRef)) continue;
-			
-			// get all cross-refs for this id
-			Set<Xref> destRefs = new HashSet<Xref>();
-			destRefs.addAll (gdb.getCrossRefs(srcRef));
-			// make sure the original id itself is included
-			destRefs.add(srcRef);
-			
-			HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
-			
-			if(destRefs.size() > 0) //Only create a Data object if the id maps to an Ensembl gene
-			{				
-				StopWatch tt = new StopWatch();
-				StopWatch ts = new StopWatch();
-				
-				tt.start();
-				
-				groupData.clear();
-
-				for (Xref destRef : destRefs)
-				{	
-					ts.start();
-					
-					pst.setString(1, destRef.getId());
-					pst.setString(2, destRef.getDataSource().getSystemCode());
-					ResultSet r = pst.executeQuery();
-					
-					//r contains all data mapping to the destref
-					//there could be multiple data items
-					while(r.next())
-					{
-						int group = r.getInt("groupId");
-						Data data = groupData.get(group);
-						if(data == null) {
-							groupData.put(group, data = new Data(destRef, group));
-							cachedData.addData(srcRef, data);
-						}
-						
-						int idSample = r.getInt("idSample");					
-						data.setSampleData(idSample, r.getString("data"));
-					}
-					
-					ts.stopToLog("Fetching data for srcRef: " + srcRef + ", destRef " + destRef + "\t");
-				}
-				
-				tt.stopToLog(id + ", " + code + ": adding data to cache\t\t");
-			}			
-			if(p.isCancelled()) //Check if the process is interrupted
+			for(Xref srcRef : srcRefs)
 			{
-				return;
+				String id = srcRef.getId();			
+				String code = srcRef.getDataSource().getSystemCode();
+				
+				if(cachedData.hasData(srcRef)) continue;
+				
+				// get all cross-refs for this id
+				Set<Xref> destRefs = new HashSet<Xref>();
+				destRefs.addAll (gdb.getCrossRefs(srcRef));
+				// make sure the original id itself is included
+				destRefs.add(srcRef);
+				
+				HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
+				
+				if(destRefs.size() > 0) //Only create a Data object if the id maps to an Ensembl gene
+				{								
+					groupData.clear();
+	
+					for (Xref destRef : destRefs)
+					{	
+						pst.setString(1, destRef.getId());
+						pst.setString(2, destRef.getDataSource().getSystemCode());
+						ResultSet r = pst.executeQuery();
+						
+						//r contains all data mapping to the destref
+						//there could be multiple data items
+						while(r.next())
+						{
+							int group = r.getInt("groupId");
+							Data data = groupData.get(group);
+							if(data == null) {
+								groupData.put(group, data = new Data(destRef, group));
+								cachedData.addData(srcRef, data);
+							}
+							
+							int idSample = r.getInt("idSample");					
+							data.setSampleData(idSample, r.getString("data"));
+						}
+					}
+				}			
+				if(p != null)
+				{
+					if (p.isCancelled()) //Check if the process is interrupted
+					{
+						return;
+					}
+					p.worked(p.getTotalWork() / srcRefs.size()); //Update the progress
+				}
 			}
-			p.worked(p.getTotalWork() / srcRefs.size()); //Update the progress
+			if (p != null) p.finished();
+			timer.stopToLog("Caching expression data\t\t\t");
+			Logger.log.trace("> Nr of ids queried:\t" + srcRefs.size());
 		}
-		p.finished();
-		timer.stopToLog("Caching expression data\t\t\t");
-		Logger.log.trace("> Nr of ids queried:\t" + srcRefs.size());
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
 	}
 				
 	/**
@@ -414,6 +416,8 @@ public class SimpleGex
 					"	  groupId INTEGER 					" +
 	//				"     PRIMARY KEY (id, code, idSample, data)	" +
 			")										");
+			con.setAutoCommit(false);
+			commitCount = 0;
 		}
 		catch (SQLException e)
 		{
@@ -463,6 +467,14 @@ public class SimpleGex
 	 */
 	public void finalize() throws DataException
 	{
+		try
+		{
+			con.commit();
+		}
+		catch (SQLException e)
+		{
+			throw new DataException (e);
+		}
 		dbConnector.compact(con);
 		createGexIndices();
 		dbConnector.closeConnection(con, DBConnector.PROP_FINALIZE);

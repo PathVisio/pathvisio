@@ -241,7 +241,6 @@ public class GexTxtImporter
 						
 						try 
 						{
-							//TODO: use autocommit (false) and commit only every 1000 queries or so. 
 							result.addExpr(
 									ref, 
 									Integer.toString(dataCols.indexOf(col)),

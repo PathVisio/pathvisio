@@ -20,7 +20,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.io.File;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -40,6 +39,7 @@ import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
@@ -163,7 +163,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 					{	
 						gex.cacheData(p.getDataNodeXrefs(), pk, gdbManager.getCurrentGdb());
 					}
-					catch (SQLException e)
+					catch (DataException e)
 					{
 						Logger.log.error ("Exception while caching expression data ", e);
 					}

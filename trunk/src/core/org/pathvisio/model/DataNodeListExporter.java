@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbManager;
 
 /**
@@ -118,13 +119,20 @@ public class DataNodeListExporter implements PathwayExporter {
 				if(DB_ORIGINAL.equals(getResultCode()) || ds.equals(resultDs)) {
 					line = id + "\t" + ds.getFullName();
 				} else { //Lookup the cross-references for the wanted database code
-					List<Xref> refs = gdbManager.getCurrentGdb().getCrossRefs(elm.getXref(), resultDs);
-					for(Xref ref : refs) {
-						line += ref.getId() + multiRefSep;
+					try
+					{
+						List<Xref> refs = gdbManager.getCurrentGdb().getCrossRefs(elm.getXref(), resultDs);
+						for(Xref ref : refs) {
+							line += ref.getId() + multiRefSep;
+						}
+						if(line.length() > multiRefSep.length()) { //Remove the last ', '
+							line = line.substring(0, line.length() - multiRefSep.length());
+							line += "\t" + resultDs.getFullName();
+						}
 					}
-					if(line.length() > multiRefSep.length()) { //Remove the last ', '
-						line = line.substring(0, line.length() - multiRefSep.length());
-						line += "\t" + resultDs.getFullName();
+					catch (DataException ex)
+					{
+						throw new ConverterException (ex);
 					}
 				}
 				out.println(line);

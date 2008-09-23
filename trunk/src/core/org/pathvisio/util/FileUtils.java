@@ -55,13 +55,16 @@ public class FileUtils {
 			}
 		});
 
-		if(recursive) {
-			//Recursively add the files
-			for(File f : files) {
-				if(f.isDirectory()) fileList.addAll(getFiles(f, extension, true));
-				else fileList.add(f);
-			}
+		//Recursively add the files
+		for(File f : files) 
+		{
+			if(f.isDirectory()) 
+			{
+				if (recursive) fileList.addAll(getFiles(f, extension, true));
+			}			
+			else fileList.add(f);
 		}
+		
 		return fileList;
 	}
 	

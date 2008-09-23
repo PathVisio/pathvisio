@@ -134,7 +134,7 @@ public class DoubleGdb implements Gdb
 	/**
 	 * Return the aggregate of the child results.
 	 */
-	public List<Xref> getCrossRefs(Xref idc) 
+	public List<Xref> getCrossRefs(Xref idc) throws DataException 
 	{	
 		List<Xref> result = new ArrayList<Xref>();
 		
@@ -151,7 +151,7 @@ public class DoubleGdb implements Gdb
 	/**
 	 * Return the aggregate of the child results.
 	 */
-	public List<Xref> getCrossRefs(Xref idc, DataSource resultDs) 
+	public List<Xref> getCrossRefs(Xref idc, DataSource resultDs) throws DataException
 	{
 		List<Xref> result = new ArrayList<Xref>();
 		

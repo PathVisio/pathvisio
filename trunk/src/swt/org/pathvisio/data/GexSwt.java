@@ -78,7 +78,7 @@ public class GexSwt
 			{
 				GexManager.getCurrent().getCurrentGex().cacheData(refs, this, gdb);
 			}
-			catch (SQLException e)
+			catch (DataException e)
 			{
 				Logger.log.error ("Error while caching data", e);
 			}

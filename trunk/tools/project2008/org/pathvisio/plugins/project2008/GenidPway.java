@@ -23,7 +23,9 @@ import java.util.Set;
 
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.FileUtils;
@@ -75,7 +77,7 @@ public class GenidPway{
 		Set<Xref> allGenes=new HashSet<Xref>();
 		
 		// A SimpleGdb Database is used to be able to load the database 
-		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
+		SimpleGdb db= SimpleGdbFactory.createInstance(dbDir,new DataDerby(),0);
 		
 		// In the following for-loop the information from all different pathways must be loaded. 
 		for (File filename: filenames){

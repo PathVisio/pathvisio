@@ -61,7 +61,7 @@ class TutorialFiles
 		{
 			//String dbName = "C:\\Documents and Settings\\martijn\\PathVisio-Data\\gene databases\\Hs_41_36c.pgdb";
 			String dbName = "/home/martijn/PathVisio-Data/gene databases/Hs_Derby_20080102.pgdb";
-			sourceGdb = new SimpleGdb (dbName,	new DataDerby(), DBConnector.PROP_NONE);
+			sourceGdb = SimpleGdbFactory.createInstance (dbName, new DataDerby(), DBConnector.PROP_NONE);
 		}
 		catch (Exception e)
 		{
@@ -75,7 +75,7 @@ class TutorialFiles
 			int error = 0;
 			String dest = GlobalPreference.getDataDir() + File.separator + 
 				"gene databases" + File.separator + "tutorial";
-			SimpleGdb targetGdb = new SimpleGdb(dest, connector, DBConnector.PROP_RECREATE);
+			SimpleGdb targetGdb = SimpleGdbFactory.createInstance(dest, connector, DBConnector.PROP_RECREATE);
 			targetGdb.createGdbTables();
 			targetGdb.preInsert();
 			for (Xref i : refs.subList(0, 50))

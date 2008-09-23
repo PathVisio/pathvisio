@@ -24,7 +24,9 @@ import java.util.Set;
 
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
@@ -107,7 +109,7 @@ public class GeneCounter {
 	public static List<Set<Xref>> getSets(String dbDir,File pwDir) throws DataException, ConverterException{
 		List<File> filenames = FileUtils.getFiles(pwDir, "gpml", true);
 		Set<Xref> totalS=new HashSet<Xref>();
-		SimpleGdb db=new SimpleGdb(dbDir,new DataDerby(),0);
+		Gdb db= SimpleGdbFactory.createInstance(dbDir,new DataDerby(),0);
 		List<Set<Xref>> refPWarray = new ArrayList<Set<Xref>>();
 		for (int i=0;i<filenames.size();i++){
 			File fileName=filenames.get(i);
@@ -169,7 +171,7 @@ public class GeneCounter {
 	 * At last all references are added to a set. So a set remains with all Xref't that exist 
 	 * in the pathways. This set is returned.
 	 */
-	public static Set<Xref> getRefPW(File filename,SimpleGdb db)
+	public static Set<Xref> getRefPW(File filename, Gdb db)
 	{
 		Set<Xref> s = new HashSet<Xref>();
 		

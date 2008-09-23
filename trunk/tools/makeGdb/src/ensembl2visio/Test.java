@@ -22,6 +22,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.data.DBConnDerby;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
@@ -45,7 +46,7 @@ public class Test extends TestCase
 	
 	public void testDerby() throws DataException, ClassNotFoundException
 	{
-		SimpleGdb gdbMaker = new SimpleGdb ("test", new DBConnDerby(), DBConnector.PROP_RECREATE);
+		SimpleGdb gdbMaker = SimpleGdbFactory.createInstance("test", new DBConnDerby(), DBConnector.PROP_RECREATE);
 		creationTest (gdbMaker);
 	}
 }

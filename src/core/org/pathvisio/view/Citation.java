@@ -83,11 +83,15 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 	protected Rectangle2D getTextBounds(Graphics2D g) {
 		Rectangle2D tb = null;
 		Point2D vp = getVPosition();
+		double vx = Double.isNaN(vp.getX()) ? 0 : vp.getX();
+		double vy = Double.isNaN(vp.getY()) ? 0 : vp.getY();
+		vp.setLocation(vx, vy);
+		
 		double pd = vFromM(M_PADDING);
 		String xrefStr = getXRefText();
 
 		if(xrefStr == null || "".equals(xrefStr)) {
-			return parent.getVBounds();
+			tb = new Rectangle2D.Double(vp.getX(), vp.getY(), 0, 0);
 		} else if(g != null) {
 			tb = g.getFontMetrics(getVFont()).getStringBounds(getXRefText(), g);
 			tb.setRect(

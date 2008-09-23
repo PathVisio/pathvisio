@@ -141,7 +141,7 @@ public class GdbManager
 	private SimpleGdb connect(String gdbName) throws DataException
 	{
 		if (dbConnector == null) throw new NullPointerException();
-		SimpleGdb gdb = new SimpleGdb(gdbName, dbConnector, DBConnector.PROP_NONE);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbName, dbConnector, DBConnector.PROP_NONE);
 		return gdb;
 	}
 	

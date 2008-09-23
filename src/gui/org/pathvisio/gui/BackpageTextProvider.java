@@ -26,6 +26,7 @@ import java.util.Set;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
@@ -233,7 +234,15 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			text += getDataString(ref, gdb, gex);
 		}
 		
-		text += getCrossRefText (gdb, ref);
+		try
+		{
+			text += getCrossRefText (gdb, ref);
+		}
+		catch (DataException ex)
+		{
+			text += "Exception occured while getting cross-references</br>" 
+				+ ex.getMessage();
+		}
 
 		return text + "</body></html>";
 	}
@@ -306,7 +315,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		return exprInfo + colNames + dataString + "</TABLE>";
 	}
 	
-	private String getCrossRefText(Gdb gdb, Xref ref) 
+	private String getCrossRefText(Gdb gdb, Xref ref) throws DataException 
 	{
 		List<Xref> crfs = gdb.getCrossRefs(ref);
 		if(crfs.size() == 0) return "";

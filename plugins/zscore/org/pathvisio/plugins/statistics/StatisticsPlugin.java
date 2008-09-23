@@ -420,7 +420,7 @@ public class StatisticsPlugin implements Plugin
 							{
 								gex.cacheData(srcRefs, new ProgressKeeper(1000), gdb);
 							}
-							catch (SQLException e)
+							catch (DataException e)
 							{
 								Logger.log.error ("Exception while caching data", e);
 							}

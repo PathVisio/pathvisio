@@ -28,6 +28,7 @@ import javax.swing.ProgressMonitor;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
+import org.pathvisio.data.DataException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Xref;
@@ -48,6 +49,7 @@ public class SearchMethods
 	public static final String MSG_NOT_IN_GDB = "Gene not found in selected gene database";
 	public static final String MSG_NOTHING_FOUND = "Nothing found";
 	public static final String MSG_CANCELLED = "cancelled";
+	public static final String MSG_GDB_ERROR = "Gene database error";
 	
 	public static final double TOTAL_WORK = 1000.0;
 	
@@ -75,7 +77,14 @@ public class SearchMethods
 
 		public ByXrefMatcher(Xref ref) throws SearchException
 		{
-			refs = SwingEngine.getCurrent().getGdbManager().getCurrentGdb().getCrossRefs(ref);
+			try
+			{
+				refs = SwingEngine.getCurrent().getGdbManager().getCurrentGdb().getCrossRefs(ref);
+			}
+			catch (DataException ex)
+			{
+				throw new SearchException (MSG_GDB_ERROR);
+			}
 			if(refs == null || refs.size() == 0) throw new SearchException(MSG_NOT_IN_GDB);
 		}
 		

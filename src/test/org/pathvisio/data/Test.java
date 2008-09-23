@@ -53,7 +53,7 @@ public class Test extends TestCase implements GdbEventListener
 		// suitable for mapping Hs_Apoptosis genes.
 		
 		assertTrue (new File (gdbHuman).exists()); // if gdb can't be found, rest of test doesn't make sense. 
-		SimpleGdb gdb = new SimpleGdb (gdbHuman, new DataDerby(), 0);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance (gdbHuman, new DataDerby(), 0);
 		gdb.close();
 		
 		// assertTrue (eventReceived);
@@ -69,7 +69,7 @@ public class Test extends TestCase implements GdbEventListener
 		info.setTxtFile(f);
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setDbName(dbFileName);
-		SimpleGdb gdb = new SimpleGdb(gdbHuman, new DataDerby(), 0);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// no errors if all genes could be looked up.
@@ -80,12 +80,11 @@ public class Test extends TestCase implements GdbEventListener
 		dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info2.setDbName(dbFileName);
 		
-		gdb = new SimpleGdb(gdbRat, new DataDerby(), 0);
+		gdb = SimpleGdbFactory.createInstance (gdbRat, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// 91 errors expected if no genes can be looked up.
-		assertEquals (info.getErrorList().size(), 91);
-		
+		assertEquals (info.getErrorList().size(), 91);	
 	}
 
 	public void testImportAffy() throws IOException, DataException
@@ -104,8 +103,9 @@ public class Test extends TestCase implements GdbEventListener
 		
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setDbName(dbFileName);
-		
-		SimpleGdb gdb = new SimpleGdb (gdbRat, new DataDerby(), 0);
+		info.setSyscodeColumn(false);
+		info.setDataSource(DataSource.AFFY);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance (gdbRat, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// just 6 errors if all goes well
@@ -133,7 +133,7 @@ public class Test extends TestCase implements GdbEventListener
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info.setDbName(dbFileName);
 		
-		SimpleGdb gdb = new SimpleGdb (gdbHuman, new DataDerby(), 0);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// 0 errors if all goes well
@@ -162,7 +162,7 @@ public class Test extends TestCase implements GdbEventListener
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex4";
 		info.setDbName(dbFileName);
 		
-		SimpleGdb gdb = new SimpleGdb (gdbHuman, new DataDerby(), 0);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb);
 		
 		// 0 errors if all goes well

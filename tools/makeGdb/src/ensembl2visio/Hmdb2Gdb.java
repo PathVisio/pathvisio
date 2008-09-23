@@ -24,6 +24,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
@@ -60,7 +61,7 @@ public class Hmdb2Gdb
 		
     	try 
     	{
-			SimpleGdb simpleGdb = new SimpleGdb(dbname, new DataDerby(), DBConnector.PROP_RECREATE);
+			SimpleGdb simpleGdb = SimpleGdbFactory.createInstance(dbname, new DataDerby(), DBConnector.PROP_RECREATE);
  
     		h2g.init (dbname, simpleGdb);
     		h2g.run(file);

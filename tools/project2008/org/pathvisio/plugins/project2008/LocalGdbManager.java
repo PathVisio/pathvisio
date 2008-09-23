@@ -22,7 +22,9 @@ import java.util.List;
 
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.model.Organism;
 import org.pathvisio.util.FileUtils;
 
@@ -71,7 +73,7 @@ public class LocalGdbManager
 			// load a database and add it to the list
 			try
 			{
-				SimpleGdb database = new SimpleGdb(dbFilename.getPath(), new DataDerby(), 0);
+				SimpleGdb database = SimpleGdbFactory.createInstance(dbFilename.getPath(), new DataDerby(), 0);
 				databases.add(database);
 			}
 			catch (DataException e)

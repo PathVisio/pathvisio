@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.pathvisio.Engine;
+import org.pathvisio.data.DataException;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
@@ -55,7 +56,7 @@ public abstract class SearchMethods {
 	 */
 	public static void pathwaysContainingGeneID(Xref ref, File folder, 
 			SearchResultTable srt, SearchRunnableWithProgress runnable) 
-			throws SearchException, SAXException {
+			throws SearchException, SAXException, DataException {
 		
 		TableData srs = new TableData();
 		srs.addColumn("pathway");

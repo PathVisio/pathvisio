@@ -79,7 +79,7 @@ public interface Gdb
 	 * @return An {@link ArrayList} containing the cross references, or an empty
 	 * ArrayList when no cross references could be found
 	 */
-	public List<Xref> getCrossRefs(Xref idc);
+	public List<Xref> getCrossRefs(Xref idc) throws DataException;
 
 	/**
 	 * Get all cross-references for the given id/code pair, restricting the
@@ -90,7 +90,7 @@ public interface Gdb
 	 * @return An {@link ArrayList} containing the cross references, or an empty
 	 * ArrayList when no cross references could be found
 	 */
-	public List<Xref> getCrossRefs (Xref idc, DataSource resultDs); 
+	public List<Xref> getCrossRefs (Xref idc, DataSource resultDs) throws DataException;
 
 	/**
 	 * Get a list of cross-references for the given attribute name/value pair. This

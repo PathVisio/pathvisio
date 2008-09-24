@@ -33,6 +33,7 @@ import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
+import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -161,16 +162,22 @@ public class CommonActions implements ApplicationEventListener {
 					},
 					new Action[] { 	
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.SOLID, LineType.LINE, LineType.LINE)
+									"line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
 							),
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.SOLID, LineType.LINE, LineType.ARROW)
+									"arrow", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT)
 							),
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.DASHED, LineType.LINE, LineType.LINE)
+									"dashedline", LineStyle.DASHED, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
 							),
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.DASHED, LineType.LINE, LineType.ARROW)
+									"dashedarrow", LineStyle.DASHED, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT)
+							),
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									"elbow", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.ELBOW)
+							),
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									"curve", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.CURVED)
 							),
 					},
 					new Action[] { 
@@ -187,21 +194,21 @@ public class CommonActions implements ApplicationEventListener {
 					},
 					new Action[] { 
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.SOLID, LineType.LINE, LineType.TBAR
+									"tbar", LineStyle.SOLID, LineType.LINE, LineType.TBAR, ConnectorType.STRAIGHT
 							)) 
 					},
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND)
+									"ligandround", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND, ConnectorType.STRAIGHT)
 							),
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND)
+									"receptorround", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND, ConnectorType.STRAIGHT)
 							),
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE)
+									"ligandsquare", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE, ConnectorType.STRAIGHT)
 							),
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE)
+									"receptorsquare", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE, ConnectorType.STRAIGHT)
 							),
 					},
 					new Action[] { 

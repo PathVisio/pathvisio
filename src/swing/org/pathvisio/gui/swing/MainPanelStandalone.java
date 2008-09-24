@@ -18,7 +18,6 @@ package org.pathvisio.gui.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -27,19 +26,13 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.pathvisio.Engine;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.util.Resources;
 
 import com.mammothsoftware.frwk.ddb.DropDownButton;
-
-import edu.stanford.ejalbert.BrowserLauncher;
 
 public class MainPanelStandalone extends MainPanel 
 {

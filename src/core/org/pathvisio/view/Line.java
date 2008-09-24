@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConnectorShape;
 import org.pathvisio.model.ConnectorShapeFactory;
 import org.pathvisio.model.LineStyle;

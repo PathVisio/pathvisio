@@ -33,8 +33,6 @@ import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.JOptionPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;

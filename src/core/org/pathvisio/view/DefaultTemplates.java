@@ -19,6 +19,7 @@ package org.pathvisio.view;
 import java.awt.Color;
 import java.net.URL;
 
+import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -68,11 +69,15 @@ public abstract class DefaultTemplates {
 		int style;
 		LineType startType;
 		LineType endType;
+		ConnectorType connectorType;
+		String name;
 		
-		public LineTemplate(int style, LineType startType, LineType endType) {
+		public LineTemplate(String name, int style, LineType startType, LineType endType, ConnectorType connectorType) {
 			this.style = style;
 			this.startType = startType;
 			this.endType = endType;
+			this.connectorType = connectorType;
+			this.name = name;
 		}
 		
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
@@ -84,6 +89,7 @@ public abstract class DefaultTemplates {
 			e.setLineStyle(style);
 			e.setStartLineType(startType);
 			e.setEndLineType(endType);
+			e.setConnectorType(connectorType);
 			addElement(e, p);
 			
 			return new PathwayElement[] { e };
@@ -94,12 +100,9 @@ public abstract class DefaultTemplates {
 			return l.getEnd().getHandle();
 		}
 
-		public String getName() {
-			String sn = "";
-			if(style == LineStyle.DASHED) {
-				sn = "dashed";
-			}
-			return sn + endType.getGpmlName();
+		public String getName() 
+		{
+			return name;
 		}
 	}
 	
@@ -227,7 +230,7 @@ public abstract class DefaultTemplates {
 			
 			lastEndNode.setInitialSize();
 			
-			Template lnt = new LineTemplate(lineStyle, startType, endType);
+			Template lnt = new LineTemplate("defaultline", lineStyle, startType, endType, ConnectorType.STRAIGHT);
 			lastLine = lnt.addElements(p, mx, my)[0];
 			lastLine.getMStart().linkTo(lastStartNode, 1, 0);
 			lastLine.getMEnd().linkTo(lastEndNode, -1, 0);
@@ -274,7 +277,7 @@ public abstract class DefaultTemplates {
 			lastLine.setEndLineType(LineType.ARROW);
 			MAnchor anchor = lastLine.addMAnchor(0.5);
 			
-			Template lnt = new LineTemplate(LineStyle.SOLID, LineType.LINE, LineType.LINE);
+			Template lnt = new LineTemplate("line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT);
 			lastCatLine = lnt.addElements(p, mx, my)[0];
 			
 			lastCatLine.getMStart().linkTo(lastCatalyst, 0, 1);

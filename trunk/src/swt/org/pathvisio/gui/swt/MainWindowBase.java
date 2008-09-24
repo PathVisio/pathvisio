@@ -55,6 +55,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swt.CommonActions;
 import org.pathvisio.gui.swt.SwtEngine;
 import org.pathvisio.gui.swt.awt.VPathwaySwingComposite;
+import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -273,7 +274,7 @@ public class MainWindowBase extends ApplicationWindow implements
 		toolBarManager.add(new NewElementAction(
 				new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)));
 		toolBarManager.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-				LineStyle.SOLID, LineType.LINE, LineType.TBAR)));
+				"tbar", LineStyle.SOLID, LineType.LINE, LineType.TBAR, ConnectorType.STRAIGHT)));
 		toolBarManager.add(new NewElementAction(NewElementAction.MENULINESHAPE));
 		toolBarManager.add(new NewElementAction(new DefaultTemplates.InteractionTemplate()));
 

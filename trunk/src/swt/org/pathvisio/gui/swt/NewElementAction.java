@@ -27,6 +27,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.pathvisio.Engine;
+import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.util.Resources;
@@ -128,30 +129,30 @@ public class NewElementAction extends Action
 			{
 			case MENULINE:
 				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-						LineStyle.SOLID, LineType.LINE, LineType.LINE)
+						"line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
 				));
 				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-						LineStyle.SOLID, LineType.LINE, LineType.ARROW)
+						"arrow", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT)
 				));
 				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-						LineStyle.DASHED, LineType.LINE, LineType.LINE)
+						"dashedline", LineStyle.DASHED, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
 				));
 				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-						LineStyle.DASHED, LineType.LINE, LineType.ARROW)
+						"dashedarrow", LineStyle.DASHED, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT)
 				));
 				break;
 			case MENULINESHAPE:
 				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-						LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND)
+						"ligandround", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND, ConnectorType.STRAIGHT)
 				));
 				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-						LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND)
+						"receptorround", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND, ConnectorType.STRAIGHT)
 				));
 				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-						LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE)
+						"ligandsquare", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE, ConnectorType.STRAIGHT)
 				));
 				actions.add(new NewElementAction(new DefaultTemplates.LineTemplate(
-						LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE)
+						"receptorsquare", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE, ConnectorType.STRAIGHT)
 				));
 			}
 			

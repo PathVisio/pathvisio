@@ -28,7 +28,6 @@ import org.pathvisio.biopax.BiopaxEvent;
 import org.pathvisio.biopax.BiopaxListener;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
 
 /**

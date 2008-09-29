@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<project name="WikiPathwaysAxisClient" default="jar" basedir=".">
+	<property name="src.dir" value="src" />
+	<property name="axis.src.dir" value="axis-src"/>
+	<property name="build.dir" value="build" />
+	<property name="class.dir" value="class" />
+	<property name="lib.dir" value="lib" />
+	<property name="pathvisio.dir" value="../../" />
+	<property name="pathvisio.lib.dir" value="${pathvisio.dir}/lib" />
+	<property name="wsdl.url" value="http://localhost/wikipathways/wpi/webservice/webservice.php?wsdl"/>
+	
+	<path id="class.path">
+		<path location="${build.dir}"/>
+		<fileset dir="${lib.dir}" includes="*.jar" />
+		<pathelement location="${pathvisio.lib.dir}/jdom.jar" />
+		<pathelement location="${pathvisio.lib.dir}/resources.jar" />
+		<pathelement location="${pathvisio.dir}/pathvisio.jar" />
+	</path>
+		
+	<target name="prepare" description="Prepare">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${class.dir}" />
+	</target>
+
+	<target name="clean" description="Remove all generated files.">
+		<delete dir="${build.dir}" />
+		<delete dir="${class.dir}" />
+	</target>
+			
+	<target name="generate-client" depends="prepare">
+		<java classpathref="class.path" fork="true" failonerror="true" classname="org.apache.axis.wsdl.WSDL2Java">
+			<arg value="-o" />
+			<arg value="${axis.src.dir}" />
+			<arg value="-p" />
+			<arg value="org.pathvisio.wikipathways.webservice" />
+			<arg value="${wsdl.url}" />
+		</java>
+	</target>
+
+	<target name="compile" depends="generate-client">
+		<javac srcdir="${axis.src.dir}" debug="true" destdir="${build.dir}">
+			<classpath refid="class.path" />
+		</javac>
+		<javac srcdir="${src.dir}" debug="true" destdir="${build.dir}">
+			<classpath refid="class.path" />
+		</javac>
+	</target>
+		
+	<target name="jar" depends="compile" description="Generate jar file">
+		<jar jarfile="wikipathways-client.jar">
+			<fileset dir="${build.dir}" includes="**/*.class" />
+		</jar>
+	</target>
+</project>

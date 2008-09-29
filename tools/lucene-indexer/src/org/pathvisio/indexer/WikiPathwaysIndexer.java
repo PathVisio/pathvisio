@@ -29,17 +29,16 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.xml.rpc.ServiceException;
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
-import org.pathvisio.data.DBConnDerby;
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.data.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Organism;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.wikipathways.WikiPathwaysCache;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
@@ -76,12 +75,10 @@ public class WikiPathwaysIndexer extends Timer{
 	 * @param rpcUrl	The url to the WikiPathways RPC service
 	 * @param gdbs		The GdbProvider that provides the necessary gene databases to lookup
 	 * the cross references for datanodes
-	 * @throws CorruptIndexException
-	 * @throws LockObtainFailedException
-	 * @throws IOException
-	 * @throws ConverterException
+	 * @throws ServiceException 
+	 * @throws ConverterException 
 	 */
-	public WikiPathwaysIndexer(File indexPath, File cachePath, URL rpcUrl, GdbProvider gdbs) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
+	public WikiPathwaysIndexer(File indexPath, File cachePath, URL rpcUrl, GdbProvider gdbs) throws ServiceException, ConverterException {
 		this.indexPath = indexPath;
 		this.cachePath = cachePath;
 		this.rpcUrl = rpcUrl;
@@ -89,14 +86,14 @@ public class WikiPathwaysIndexer extends Timer{
 		init();
 	}
 	
-	public WikiPathwaysIndexer(File indexConfig, File gdbConfig) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
+	public WikiPathwaysIndexer(File indexConfig, File gdbConfig) throws ServiceException, ConverterException {
 		log.setLogLevel(true, false, true, true, true, true);
 		parseIndexConfig(indexConfig);
 		parseGdbConfig(gdbConfig);
 		init();
 	}
 	
-	private void init() throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
+	private void init() throws ServiceException, ConverterException {
 		wikiCache = new WikiPathwaysCache(
 				new WikiPathwaysClient(rpcUrl),
 				cachePath
@@ -108,7 +105,13 @@ public class WikiPathwaysIndexer extends Timer{
 		indexer = new GpmlIndexer(null, fileSet, gdbs);
 		indexer.setSourceProvider(new SourceProvider() {
 			public String getSource(File gpmlFile) {
-				return wikiCache.cacheFileToUrl(gpmlFile);
+				String source = gpmlFile.getAbsolutePath();
+				try {
+					source = wikiCache.getPathwayInfo(gpmlFile).getUrl();
+				} catch (Exception e) {
+					log.error("Unable to get pathway url", e);
+				}
+				return source;
 			}
 		});
 	}
@@ -252,34 +255,8 @@ public class WikiPathwaysIndexer extends Timer{
 	}
 	
 	void parseGdbConfig(File f) {
-		log.info("Parsing gene database configuration: " + f);
-		gdbs = new GdbProvider();
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(f));
-			String line = in.readLine();
-			while(line != null) {
-				String[] kv = line.split("\t");
-				if(kv.length == 2) {
-					String key = kv[0];
-					String value = kv[1];
-					Organism org = Organism.fromLatinName(key);
-					if(org != null) {
-						DBConnector dbConn = new DBConnDerby();
-						SimpleGdb gdb = new SimpleGdb(value, dbConn, DBConnector.PROP_NONE);
-						gdbs.addOrganismGdb(org, gdb);
-					} else if(DB_GLOBAL.equalsIgnoreCase(key)) {
-						DBConnector dbConn = new DBConnDerby();
-						SimpleGdb gdb = new SimpleGdb(value, dbConn, DBConnector.PROP_NONE);
-						gdbs.addGlobalGdb(gdb);
-					} else {
-						log.warn("Unable to parse organism: " + key);
-					}
-				} else {
-					configError("Invalid key/value pair in gene database configuration: " + line, null);
-				}
-				line = in.readLine();
-			}
-			in.close();
+			gdbs = GdbProvider.fromConfigFile(f);
 		} catch(Exception e) {
 			configError("", e);
 		}

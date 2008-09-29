@@ -32,6 +32,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.pathvisio.Engine;
+import org.pathvisio.data.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
 

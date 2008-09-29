@@ -216,8 +216,28 @@ public class SimpleGex
 		return cachedData;
 	}
 
+	PreparedStatement pst1 = null;
+	private PreparedStatement getPst1() throws SQLException
+	{
+		if (pst1 == null)
+		{
+			pst1 = con.prepareStatement(
+			"SELECT id, code, data, idSample, groupId FROM expression " +
+			" WHERE id = ? AND code = ?");
+		}
+		return pst1;
+	}
 
-	
+	PreparedStatement pst2 = null;
+	private PreparedStatement getPst2() throws SQLException
+	{
+		if (pst2 == null)
+		{
+			pst2 = con.prepareStatement("SELECT code FROM expression GROUP BY code");
+		}
+		return pst2;
+	}
+
 	/**
 	 * Loads expression data for all the given gene ids into memory
 	 * @param srcRefs	Genes to cache the expression data for
@@ -231,26 +251,45 @@ public class SimpleGex
 			StopWatch timer = new StopWatch();
 			timer.start();
 	
-			PreparedStatement pst = con.prepareStatement(
-					"SELECT id, code, data, idSample, groupId FROM expression " +
-					" WHERE id = ? AND code = ?");
+			
+			/* 
+			 * since datasets often use only one or a few system codes,
+			 * we get a big efficiency improvement if we only look at cross-refs
+			 * that occur in the dataset.  We create a destFilter to filter out
+			 * those cross-refs
+			 */
+			Set<DataSource> destFilter = new HashSet<DataSource>();
+			
+			{
+				PreparedStatement pst = getPst2();
+				ResultSet r = pst.executeQuery();
+				while (r.next())
+				{
+					destFilter.add(DataSource.getBySystemCode(r.getString(1)));
+				}
+			}
+			
+			PreparedStatement pst = getPst1();
 			
 			for(Xref srcRef : srcRefs)
-			{
-				String id = srcRef.getId();			
-				String code = srcRef.getDataSource().getSystemCode();
-				
+			{				
 				if(cachedData.hasData(srcRef)) continue;
 				
 				// get all cross-refs for this id
-				Set<Xref> destRefs = new HashSet<Xref>();
-				destRefs.addAll (gdb.getCrossRefs(srcRef));
-				// make sure the original id itself is included
-				destRefs.add(srcRef);
 				
+				Set<Xref> destRefs = new HashSet<Xref>();
+				for (Xref destRef : gdb.getCrossRefs(srcRef))
+				{
+					// add only the ones that are in the dest filter.
+					if (destFilter.contains(destRef.getDataSource()))
+					{
+						destRefs.add(destRef);
+					}
+				}
+				//destRefs.addAll(gdb.getCrossRefs(srcRef));
 				HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
 				
-				if(destRefs.size() > 0) //Only create a Data object if the id maps to an Ensembl gene
+				if(destRefs.size() > 0)
 				{								
 					groupData.clear();
 	

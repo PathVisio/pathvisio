@@ -79,6 +79,7 @@ public class KeggFormat {
 	private static String TYPE_ENZYME = "enzyme";
 	private static String TYPE_COMPOUND = "compound";
 	private static String TYPE_ORTHOLOG = "ortholog";
+	private static String TYPE_GENE = "gene";
 
 	private HashMap<String, PathwayElement> id2element = 
 		new HashMap<String, PathwayElement>();
@@ -103,6 +104,10 @@ public class KeggFormat {
 		PathwayElement mappInfo = pathway.getMappInfo();
 		String title = rootelement.getAttributeValue("title");
 		if(title != null) {
+			if(title.length() > 50) {
+				mappInfo.addComment(mappInfo.new Comment("Name truncated from: " + title, COMMENT_SOURCE));
+				title = title.substring(0, 50);
+			}
 			mappInfo.setMapInfoName(title);
 		}
 		mappInfo.setMapInfoDataSource("Kegg: " + rootelement.getAttributeValue("link"));
@@ -267,6 +272,8 @@ public class KeggFormat {
 				elm = mapMap(entry);
 			} else if	(TYPE_COMPOUND.equals(type)) {
 				elm = mapCompound(entry);
+			} else if   (TYPE_GENE.equals(type)) {
+				elm = mapToDataNode(entry);
 			}
 			if(elm != null) {
 				id2element.put(entry.getAttributeValue("id"), elm);
@@ -369,7 +376,7 @@ public class KeggFormat {
 	private PathwayElement createDataNode(Element graphics, DataNodeType type, String label, String id, DataSource source) {
 		PathwayElement dn = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		dn.setDataSource(source);
-		if(id != null) dn.setGeneID(id);
+		if(id != null && id.length() < 50) dn.setGeneID(id);
 		dn.setDataNodeType(type);
 		dn.setTextLabel(label);
 
@@ -513,7 +520,9 @@ public class KeggFormat {
 		link.addComment(link.new Comment(map.getAttributeValue("link"), COMMENT_SOURCE));
 		Element graphics = map.getChild(ELM_GRAPHICS);
 		if(graphics != null) {
-			label = graphics.getAttributeValue("name");
+			String glabel = graphics.getAttributeValue("name");
+			if(glabel == null) glabel = label;
+			else label = glabel;
 			if(label.startsWith("TITLE:")) {
 				return null; //This is the title of this map, skip it
 			}
@@ -749,7 +758,7 @@ public class KeggFormat {
 	}
 
 	private String[] getGenes(String keggId, Organism organism, String type) throws RemoteException, ConverterException {
-		if(useWebservice) {
+		if(useWebservice && !TYPE_GENE.equals(type)) {
 			if(TYPE_ORTHOLOG.equals(type)) {
 				return getGenesForKo(keggId, organism);
 			} else {
@@ -759,7 +768,8 @@ public class KeggFormat {
 			//Assumes that if it's an annotated gene:
 			//a gene is of the form hsa:1234, where 1234 is the Entrez Gene id and hsa is the organism code
 			if(keggId.startsWith(getKeggOrganism(organism))) {
-				keggId = keggId.substring(3);
+				keggId = keggId.substring(4);
+				Logger.log.trace("Gene: " + keggId);
 			}
 			return new String[] { keggId };
 		}

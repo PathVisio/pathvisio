@@ -25,7 +25,9 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Organism;
@@ -92,9 +94,13 @@ public class DataNodeIndexer extends IndexerBase {
 		if(gdbs != null) {
 			for(Gdb gdb : gdbs.getGdbs(organism)) {
 				if(gdb != null && gdb.isConnected()) {
-					List<Xref> crossRefs = gdb.getCrossRefs(xref);
-					for(Xref c : crossRefs) {
-						addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
+					try {
+						List<Xref> crossRefs = gdb.getCrossRefs(xref);
+						for(Xref c : crossRefs) {
+							addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
+						}
+					} catch(DataException e) {
+						Logger.log.error("Unable to fetch cross references", e);
 					}
 				}
 			}

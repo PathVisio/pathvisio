@@ -1,0 +1,21 @@
+table.botresult {
+	margin:1em 1em 1em 0;
+	background:#F9F9F9;
+	border:1px #AAA solid;
+	border-collapse:collapse;
+}
+
+table.botresult th, table.botresult td {
+	border:1px #AAA solid;
+	padding:0.2em;
+}
+
+table.prebotresultttytable th {
+	background:#F2F2F2;
+	text-align:center;
+}
+
+table.botresult caption {
+	margin-left:inherit;
+	margin-right:inherit;
+}

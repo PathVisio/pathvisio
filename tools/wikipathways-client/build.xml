@@ -15,6 +15,7 @@
 		<fileset dir="${lib.dir}" includes="*.jar" />
 		<pathelement location="${pathvisio.lib.dir}/jdom.jar" />
 		<pathelement location="${pathvisio.lib.dir}/resources.jar" />
+		<pathelement location="${pathvisio.lib.dir}/derby.jar" />
 		<pathelement location="${pathvisio.dir}/pathvisio.jar" />
 		<pathelement location="${pathvisio.dir}/wikipathways.jar" />
 	</path>

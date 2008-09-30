@@ -54,19 +54,20 @@ public class PluginManager {
 	void loadPlugins(String pluginLocation) {
 		//See if the plugin is a file
 		File dir = new File(pluginLocation);
+		Logger.log.info ("Looking for plugins in file or directory " + dir.getAbsolutePath());
 		if(dir.exists()) {
 			if(dir.isDirectory()) {
-				Logger.log.trace("Detected plugin argument as dir");
+				Logger.log.info("Detected plugin argument as dir");
 				for(File f : dir.listFiles()) {
 					loadPlugins(f.getAbsolutePath());
 				}
 			} else {
-				Logger.log.trace("Detected plugin argument as jar");
+				Logger.log.info("Detected plugin argument as jar");
 				loadPlugin(dir);
 			}
 		} else {
 			//Otherwise, try to load the class directly
-			Logger.log.trace("Detected plugin argument as class");
+			Logger.log.info("File not found, assuming plugin argument is a class");
 			loadAsClass(pluginLocation);
 		}
 	}

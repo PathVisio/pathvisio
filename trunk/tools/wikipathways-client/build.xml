@@ -5,26 +5,30 @@
 	<property name="build.dir" value="build" />
 	<property name="class.dir" value="class" />
 	<property name="lib.dir" value="lib" />
+	<property name="dist.dir" value="dist" />
 	<property name="pathvisio.dir" value="../../" />
 	<property name="pathvisio.lib.dir" value="${pathvisio.dir}/lib" />
 	<property name="wsdl.url" value="http://localhost/wikipathways/wpi/webservice/webservice.php?wsdl"/>
-	
+
 	<path id="class.path">
 		<path location="${build.dir}"/>
 		<fileset dir="${lib.dir}" includes="*.jar" />
 		<pathelement location="${pathvisio.lib.dir}/jdom.jar" />
 		<pathelement location="${pathvisio.lib.dir}/resources.jar" />
 		<pathelement location="${pathvisio.dir}/pathvisio.jar" />
+		<pathelement location="${pathvisio.dir}/wikipathways.jar" />
 	</path>
 		
 	<target name="prepare" description="Prepare">
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${class.dir}" />
+		<mkdir dir="${dist.dir}" />
 	</target>
 
 	<target name="clean" description="Remove all generated files.">
 		<delete dir="${build.dir}" />
 		<delete dir="${class.dir}" />
+		<delete dir="${dist.dir}" />
 	</target>
 			
 	<target name="generate-client" depends="prepare">
@@ -47,8 +51,36 @@
 	</target>
 		
 	<target name="jar" depends="compile" description="Generate jar file">
+		  <pathconvert refid="class.path" property="class.path.manifest" pathsep=" ">
+		    <mapper>
+		      <chainedmapper>
+		        <!-- remove absolute path -->
+		        <flattenmapper />
+		        <!-- add lib/ prefix -->
+		        <globmapper from="*" to="lib/*" />
+		      </chainedmapper>
+		    </mapper>
+		  </pathconvert>
+
 		<jar jarfile="wikipathways-client.jar">
 			<fileset dir="${build.dir}" includes="**/*.class" />
+			<manifest>
+				<attribute name="Class-Path" value="${class.path.manifest}"/>
+			</manifest>
 		</jar>
+	</target>
+	
+	<target name="dist" depends="jar" description="Put all libraries in the dist folder">
+		<copy file="wikipathways-client.jar" toDir="${dist.dir}"/>
+		<copy file="${pathvisio.lib.dir}/jdom.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.lib.dir}/derby.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.lib.dir}/resources.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/pathvisio.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/wikipathways.jar" toDir="${dist.dir}/lib"/>
+		<copy toDir="${dist.dir}/lib">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
 	</target>
 </project>

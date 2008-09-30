@@ -17,9 +17,9 @@
 package org.pathvisio.wikipathways;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -199,7 +199,7 @@ public class WikiPathwaysCache
 		prop.setProperty("Species", pathway.getSpecies());
 		prop.setProperty("Url", pathway.getUrl());
 		prop.setProperty("Revision", pathway.getRevision());
-		prop.store(new FileWriter(getInfoFile(pathwayToFile(pathway))), "");
+		prop.save(new FileOutputStream(getInfoFile(pathwayToFile(pathway))), "");
 	}
 	
 	private File getInfoFile(File pathwayFile) {
@@ -227,7 +227,7 @@ public class WikiPathwaysCache
 	public WSPathwayInfo getPathwayInfo(File cacheFile) throws FileNotFoundException, IOException {
 		File info = getInfoFile(cacheFile);
 		Properties prop = new Properties();
-		prop.load(new FileReader(info));
+		prop.load(new FileInputStream(info));
 		WSPathwayInfo pi = new WSPathwayInfo(
 				prop.getProperty("Url"),
 				prop.getProperty("Name"),

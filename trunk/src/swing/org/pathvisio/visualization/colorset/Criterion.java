@@ -203,7 +203,8 @@ public class Criterion
 		case '-':
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9':
-		case '.': {
+		case '.': 
+		{
 			String value = "" + ch;
 			ch = eatChar();
 			while ((ch >= '0' && ch <= '9') || ch == '.')
@@ -212,7 +213,16 @@ public class Criterion
 				ch = eatChar();
 			}
 			putBack (ch);									
-			token = new Token(Token.TOKEN_NUMBER, Double.parseDouble(value)); }                            
+			try
+			{
+				token = new Token(Token.TOKEN_NUMBER, Double.parseDouble(value));
+			}
+			catch (NumberFormatException e)
+			{
+				// most likely caused by typing a single "-"
+				throw new CriterionException ("Invalid number '" + value + "'");
+			}
+		}                            
 		break;
 		case '<':
 			ch = eatChar();

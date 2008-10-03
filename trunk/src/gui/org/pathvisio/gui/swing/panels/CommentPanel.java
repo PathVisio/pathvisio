@@ -17,62 +17,54 @@
 package org.pathvisio.gui.swing.panels;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.JTextPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import org.pathvisio.model.PathwayElement.Comment;
+import org.pathvisio.util.Resources;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class CommentPanel extends PathwayElementPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	protected static final String ADD = "Add comment";
 	protected static final String REMOVE = "Remove comment";
+	private static URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
 	
-	CommentsTableModel tableModel;
-	JTable commentsTable;
 	JPanel buttonPanel;
+	JScrollPane cmtPanel;
 	
 	public CommentPanel() {
 		setLayout(new BorderLayout(5, 5));
 		
-		commentsTable = new JTable();
-		commentsTable.setBorder(BorderFactory.createCompoundBorder());
-		commentsTable.setRowHeight(20);
-		commentsTable.setMinimumSize(new Dimension(200, 200));
 		buttonPanel = new JPanel();
 		JButton add = new JButton(ADD);
 		add.setActionCommand(ADD);
 		add.addActionListener(this);
-		JButton remove = new JButton(REMOVE);
-		remove.setActionCommand(REMOVE);
-		remove.addActionListener(this);
 		
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
 		buttonPanel.add(Box.createHorizontalGlue());
 		buttonPanel.add(add);
-		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-		buttonPanel.add(remove);
 		
-		JScrollPane contentPane = new JScrollPane(commentsTable);
-		add(contentPane, BorderLayout.CENTER);
 		add(buttonPanel, BorderLayout.PAGE_END);
-		
-		tableModel = new CommentsTableModel();
-		commentsTable.setModel(tableModel);
-		
-
 	}
 
 	public void setReadOnly(boolean readonly) {
@@ -83,52 +75,101 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals(ADD)) {
 			getInput().addComment("Type your comment here", "");
-		} else if(e.getActionCommand().equals(REMOVE)) {
-			int row = commentsTable.getSelectedRow();
-			if(row > -1) getInput().removeComment(tableModel.comments.get(row));
 		}
 		refresh();
 	}
 	
 	public void refresh() {
-		tableModel.setComments(getInput().getComments());	
+		if(cmtPanel != null) remove(cmtPanel);
+		
+		
+		DefaultFormBuilder b = new DefaultFormBuilder(
+				new FormLayout("fill:pref:grow")
+		);
+		for(Comment c : getInput().getComments()) {
+			b.append(new CommentEditor(c));
+			b.nextLine();
+		}
+		JPanel p = b.getPanel();
+		cmtPanel = new JScrollPane(p, 
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, 
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+		);
+		add(cmtPanel, BorderLayout.CENTER);
+		validate();
 	}
 	
-	class CommentsTableModel extends AbstractTableModel {
-		private static final long serialVersionUID = 1L;
+	private class CommentEditor extends JPanel implements ActionListener {
+		Comment comment;
+		JPanel btnPanel;
 		
-		List<Comment> comments = new ArrayList<Comment>();
-		void setComments(List<Comment> input) {
-			if(input == null) input = new ArrayList<Comment>();
-			this.comments = input;
-			fireTableDataChanged();
+		public CommentEditor(Comment c) {
+			comment = c;
+			setBackground(Color.WHITE);
+			setLayout(new FormLayout(
+					"2dlu, fill:[100dlu,min]:grow, 1dlu, pref, 2dlu", "2dlu, pref, 2dlu"
+			));
+			final JTextPane txt = new JTextPane();
+			txt.setText(comment.getComment());
+			txt.setBorder(BorderFactory.createEtchedBorder());
+			txt.getDocument().addDocumentListener(new DocumentListener() {
+				public void changedUpdate(DocumentEvent e) {
+					comment.setComment(txt.getText());
+				}
+				public void insertUpdate(DocumentEvent e) {
+					comment.setComment(txt.getText());
+				}
+				public void removeUpdate(DocumentEvent e) {
+					comment.setComment(txt.getText());
+				}
+			});
+			CellConstraints cc = new CellConstraints();
+			add(txt, cc.xy(2, 2));
+			
+			btnPanel = new JPanel(new FormLayout("pref", "pref"));
+			JButton btnRemove = new JButton();
+			btnRemove.setActionCommand(REMOVE);
+			btnRemove.addActionListener(this);
+			btnRemove.setIcon(new ImageIcon(IMG_REMOVE));
+			btnRemove.setBackground(Color.WHITE);
+			btnRemove.setBorder(null);
+			btnRemove.setToolTipText("Remove comment");
+			
+			MouseAdapter ma_highlight = new MouseAdapter() {
+				public void mouseEntered(MouseEvent e) {
+					e.getComponent().setBackground(new Color(200, 200, 255));
+				}
+				public void mouseExited(MouseEvent e) {
+					e.getComponent().setBackground(Color.WHITE);
+				}
+			};
+			btnRemove.addMouseListener(ma_highlight);
+			
+			btnPanel.add(btnRemove, cc.xy(1, 1));
+			
+			add(btnPanel, cc.xy(4, 2));
+			btnPanel.setVisible(false);
+			
+			MouseAdapter ma_hide = new MouseAdapter() {
+				public void mouseEntered(MouseEvent e) {
+					if(!readonly) btnPanel.setVisible(true);
+				}
+				public void mouseExited(MouseEvent e) {
+					if(!contains(e.getPoint())) {
+						btnPanel.setVisible(false);
+					}
+				}
+			};
+			addMouseListener(ma_hide);
+			txt.addMouseListener(ma_hide);
 		}
 		
-		public int getColumnCount() {
-			return 1;
-		}
-		
-		public int getRowCount() {
-			return comments.size();
-		}
-
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			Comment c = comments.get(rowIndex);
-			return c.getComment();
-		}
-		
-		public String getColumnName(int column) {
-			return "Comment";
-		}
-		
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			String value = (String)aValue;
-			Comment c = comments.get(rowIndex);
-			c.setComment(value);
-		}
-		
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return !readonly;
+		public void actionPerformed(ActionEvent e) {
+			String action = e.getActionCommand();
+			if(REMOVE.equals(action)) {
+				getInput().removeComment(comment);
+				refresh();
+			}
 		}
 	}
 }

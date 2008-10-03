@@ -82,12 +82,20 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 	public void refresh() {
 		if(cmtPanel != null) remove(cmtPanel);
 		
-		
 		DefaultFormBuilder b = new DefaultFormBuilder(
 				new FormLayout("fill:pref:grow")
 		);
+		CommentEditor firstEditor = null;
 		for(Comment c : getInput().getComments()) {
-			b.append(new CommentEditor(c));
+			CommentEditor ce = new CommentEditor(c);
+			if(firstEditor == null) firstEditor = ce;
+			b.append(ce);
+			b.nextLine();
+		}
+		if(getInput().getComments().size() == 0) {
+			CommentEditor ce = new CommentEditor(null);
+			firstEditor = ce;
+			b.append(ce);
 			b.nextLine();
 		}
 		JPanel p = b.getPanel();
@@ -102,6 +110,7 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 	private class CommentEditor extends JPanel implements ActionListener {
 		Comment comment;
 		JPanel btnPanel;
+		JTextPane txt;
 		
 		public CommentEditor(Comment c) {
 			comment = c;
@@ -109,18 +118,33 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 			setLayout(new FormLayout(
 					"2dlu, fill:[100dlu,min]:grow, 1dlu, pref, 2dlu", "2dlu, pref, 2dlu"
 			));
-			final JTextPane txt = new JTextPane();
-			txt.setText(comment.getComment());
+			txt = new JTextPane();
+			txt.setText(comment == null ? "Type your comment here" : comment.getComment());
 			txt.setBorder(BorderFactory.createEtchedBorder());
 			txt.getDocument().addDocumentListener(new DocumentListener() {
 				public void changedUpdate(DocumentEvent e) {
-					comment.setComment(txt.getText());
+					update();
 				}
 				public void insertUpdate(DocumentEvent e) {
-					comment.setComment(txt.getText());
+					update();
 				}
 				public void removeUpdate(DocumentEvent e) {
-					comment.setComment(txt.getText());
+					update();
+				}
+				void update() {
+					if(comment == null) {
+						comment = getInput().new Comment(txt.getText(), "");
+						getInput().addComment(comment);						
+					} else {
+						comment.setComment(txt.getText());
+					}
+				}
+			});
+			txt.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					if(comment == null) {
+						txt.selectAll();
+					}
 				}
 			});
 			CellConstraints cc = new CellConstraints();

@@ -285,6 +285,11 @@ public class XRefBot {
 		
 		public String getTagText() {
 			String[] labels = getLabelStrings();
+			
+			//Limit length of label string
+			if(labels[0].length() > 300) {
+				labels[0] = labels[0].substring(0, 300) + "...";
+			}
 			String txt = getNrInvalid() + " out of " + getNrXrefs() +
 				" DataNodes have an incorrect or missing external reference: " +
 				"<span title=\"" + labels[0] + "\">" + labels[1] + "</span>";

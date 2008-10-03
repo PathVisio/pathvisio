@@ -122,6 +122,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		remove.addActionListener(this);
 		
 		JPanel btnPanel = ButtonBarFactory.buildAddRemoveBar(add, remove);
+		
 		add(btnPanel, cc.xy(1, 9));
 		
 		refresh();
@@ -276,7 +277,8 @@ public class ColorSetPanel extends JPanel implements ActionListener
 
 			public void valueChanged(ListSelectionEvent e) 
 			{
-				rulesPanel.setInput (crtm.getRule(rulesTable.getSelectedRow()));
+				int selected = rulesTable.getSelectedRow();
+				rulesPanel.setInput (selected >= 0 ? crtm.getRule(selected) : null);
 			}
 		}
 		);

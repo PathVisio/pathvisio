@@ -20,6 +20,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 
+import javax.swing.JScrollPane;
+
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.visualization.colorset.ColorSet;
 
@@ -38,7 +40,7 @@ public class ColorSetDlg extends OkCancelDialog
 	{
 		super (frame, "Edit Color Set", locationComp, true, true);
 		this.cs = cs;
-		setDialogComponent(new ColorSetPanel(cs));
+		setDialogComponent(new JScrollPane(new ColorSetPanel(cs)));
 		setMinimumSize(new Dimension(200, 300));
 		pack();
 	}

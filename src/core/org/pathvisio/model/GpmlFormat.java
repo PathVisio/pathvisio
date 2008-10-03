@@ -540,6 +540,10 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	
     	String connType = getAttribute("Line.Graphics", "ConnectorType", graphics);
     	o.setConnectorType(ConnectorType.fromName(connType));
+
+    	String zorder = graphics.getAttributeValue("ZOrder");
+		if (zorder != null)
+			o.setZOrder(Integer.parseInt(zorder));
     	
     	//Map anchors
     	List<Element> anchors = graphics.getChildren("Anchor", e.getNamespace());
@@ -591,6 +595,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			
 			ConnectorType ctype = o.getConnectorType();
 			setAttribute("Line.Graphics", "ConnectorType", jdomGraphics, ctype.getName());
+			setAttribute("Line.Graphics", "ZOrder", jdomGraphics, "" + o.getZOrder());
 		}
 	}
 	
@@ -779,6 +784,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
     	o.setMCenterY (Double.parseDouble(getAttribute(base + ".Graphics", "CenterY", graphics)));	
 		o.setMWidth (Double.parseDouble(getAttribute(base + ".Graphics", "Width", graphics))); 
 		o.setMHeight (Double.parseDouble(getAttribute(base + ".Graphics", "Height", graphics)));
+		String zorder = graphics.getAttributeValue("ZOrder");
+		if (zorder != null)
+			o.setZOrder(Integer.parseInt(zorder));
 	}
 	
 	private static void updateShapeData(PathwayElement o, Element e, String base) throws ConverterException
@@ -792,6 +800,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				setAttribute(base + ".Graphics", "CenterY", graphics, "" + o.getMCenterY());
 				setAttribute(base + ".Graphics", "Width", graphics, "" + o.getMWidth());
 				setAttribute(base + ".Graphics", "Height", graphics, "" + o.getMHeight());
+				setAttribute(base + ".Graphics", "ZOrder", graphics, "" + o.getZOrder());
 			}
 		}
 	}

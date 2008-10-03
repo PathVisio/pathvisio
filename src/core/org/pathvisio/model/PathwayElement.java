@@ -2711,9 +2711,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		//Translate
 		relX -= bounds.getCenterX();
 		relY -= bounds.getCenterY();
-		//Scale
-		relX /= bounds.getWidth() / 2;
-		relY /= bounds.getHeight() / 2;
+		//Scalebounds.getCenterX();
+		double w = bounds.getWidth();
+		double h = bounds.getHeight();
+		if(relX != 0) relX /= bounds.getWidth() / 2;
+		if(relY != 0) relY /= bounds.getHeight() / 2;
 		return new Point2D.Double(relX, relY);
 	}
 }

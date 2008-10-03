@@ -19,6 +19,8 @@ package org.pathvisio.visualization.gui;
 import java.awt.Component;
 import java.awt.Frame;
 
+import javax.swing.JScrollPane;
+
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
@@ -35,7 +37,7 @@ public class VisualizationDialog extends OkCancelDialog
 		
 		this.visMgr = visMgr;
 		
-		setDialogComponent(createDialogPane());
+		setDialogComponent(new JScrollPane (createDialogPane()));
 
 		//If there is no visualization yet, create one
 		if(visMgr.getVisualizations().size() == 0) {

@@ -108,6 +108,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		
 		crtm = new ColorRuleTableModel(colorSet);
 		rulesTable = new JTable(crtm);
+		rulesTable.setFillsViewportHeight(true);
 		rulesTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 
 		add(new JScrollPane(rulesTable), cc.xy(1, 5));
@@ -310,10 +311,12 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		} 
 		else if(ACTION_REMOVE_RULE.equals(action)) 
 		{
-			int index = rulesTable.getSelectedRow();
-			ColorRule cr = crtm.getRule(index);
-			colorSet.removeObject(cr);
-			rulesTable.getSelectionModel().setLeadSelectionIndex(index - 1);
+			for (int index : rulesTable.getSelectedRows())
+			{
+				ColorRule cr = crtm.getRule(index);
+				colorSet.removeObject(cr);
+				rulesTable.getSelectionModel().setLeadSelectionIndex(index - 1);
+			}
 			crtm.refresh();
 			refresh();
 		} 

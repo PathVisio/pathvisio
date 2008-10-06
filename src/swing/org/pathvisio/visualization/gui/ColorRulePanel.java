@@ -69,7 +69,9 @@ public class ColorRulePanel extends JPanel
 	private void setExpresion()
 	{
 		String[] sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames().toArray(new String[0]);
-		boolean ok = cr.getCriterion().setExpression(txtExpr.getText(), sampleNames);
+		String expr = txtExpr.getText();
+		
+		boolean ok = cr.getCriterion().setExpression(expr, sampleNames);
 		if (ok)
 		{
 			errorMsg.setText("Expression OK");
@@ -140,15 +142,9 @@ public class ColorRulePanel extends JPanel
 				setExpresion();
 			}
 
-			public void insertUpdate(DocumentEvent de) 
-			{
-				setExpresion();
-			}
+			public void insertUpdate(DocumentEvent de) { }
 
-			public void removeUpdate(DocumentEvent de) 
-			{
-				setExpresion();
-			}
+			public void removeUpdate(DocumentEvent de) { }
 		});
 		
 		add (new JLabel ("Expression: "), cc.xy (2,2));

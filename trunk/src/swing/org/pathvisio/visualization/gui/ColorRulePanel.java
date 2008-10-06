@@ -65,6 +65,7 @@ public class ColorRulePanel extends JPanel
 
 	/**
 	 * Called whenever the txtExpr textfield changes
+	 * Only call this when cr is not null
 	 */
 	private void setExpresion()
 	{

@@ -83,7 +83,7 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		add(new JLabel("Visualization"), cc.xy(1, 1));
 		add(visCombo, cc.xy(3, 1));
 		add(visButton, cc.xy(5, 1));
-		add(new JScrollPane(methods), cc.xyw(1, 3, 5));
+		add(methods, cc.xyw(1, 3, 5));
 	}
 
 	public void actionPerformed(ActionEvent e) {

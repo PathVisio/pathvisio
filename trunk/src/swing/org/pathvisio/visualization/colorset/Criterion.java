@@ -25,6 +25,9 @@ import org.pathvisio.debug.Logger;
 
 public class Criterion 
 {
+	/**
+	 * Exception thrown e.g. when there is a syntax error in the criterion
+	 */
 	public static class CriterionException extends Throwable
 	{
 		CriterionException (String msg) { super (msg); }
@@ -36,102 +39,78 @@ public class Criterion
 	public static final String[] tokens = {"AND", "OR", "=", "<", ">", "<=", ">="};
 	private Map<String, Double> symTab = new HashMap<String, Double>();
 
-	private String expression;
+	private String expression = "";
 		
-	private CriterionException parseException;
-	
-	public String getExpression() {  
-		return expression == null ? "" : expression; 
+	/**
+	 * Get the current expression, an empty string by default.
+	 */
+	public String getExpression() 
+	{  
+		return expression; 
 	}
 	
-	public boolean setExpression(String expression) {
+	/**
+	 * set and expression and available symbols
+	 * The expression will be parsed and checked for syntax errors
+	 * 
+	 * Returns an error String, or null if there was no error.
+	 */
+	public String setExpression(String expression, String[] symbols) 
+	{
+		if (expression == null) throw new NullPointerException();
 		this.expression = expression;
-		return testExpression(expression);
-	}
-	
-	public boolean setExpression(String expression, String[] symbols) {
-		//Evaluate with dummy data:
-		this.expression = expression;
-		return testExpression(expression, symbols);
-	}
-	
-	boolean testExpression(String expression) {
-		try {
-			evaluate(expression);
-			parseException = null;
-			return true;
-		} catch(CriterionException e) { 
-			parseException = e;
-			return false;
-		}
-	}
-	
-	boolean testExpression(String expression, String[] symbols) {
-		for(String s : symbols) {
-			addSymbol(s, 1.0);
-		}
-		return testExpression(expression);
-	}
-	
-	public CriterionException getParseException() { 
-		return parseException;
-	}
 
-	void setSampleData(HashMap<Integer, Object> data) {
+		for(String s : symbols) {
+			symTab.put (s, 1.0);
+		}
+		try {
+			evaluate();
+			return null;
+		} catch(CriterionException e) { 
+			return e.getMessage();
+		}
+	}
+	
+	//TODO: externalize reference to GexManager here...
+	private void setSampleData(HashMap<Integer, Object> data) 
+	{
 		// Add current sample values to symTab if they are of type Double
 		HashMap<Integer, Sample> samples = GexManager.getCurrent().getCurrentGex().getSamples();
-		clearSymbols();
-		for(Sample s : samples.values()) {
+		symTab.clear();
+		for(Sample s : samples.values()) 
+		{
 			Object value = data.get(s.getId());
-			if(value instanceof Double) addSymbol(s.getName(), (Double)value);
+			if(value instanceof Double) symTab.put (s.getName(), (Double)value);
 		}
 	}
 	
-	public boolean evaluate(HashMap<Integer, Object> data, int displaySampleId) throws CriterionException {
+	public boolean evaluate(HashMap<Integer, Object> data, int displaySampleId) throws CriterionException 
+	{
+		if (expression == null) throw new NullPointerException();
 		setSampleData(data);
 		Object value = data.get(displaySampleId);
-		if(value instanceof Double) addSymbol(displaySample, (Double)value);
+		if(value instanceof Double) symTab.put (displaySample, (Double)value);
 
-		return evaluate(expression);
+		return evaluate();
 	}
 	
 	public boolean evaluate(HashMap<Integer, Object> data) throws CriterionException {
 		setSampleData(data);
-		return evaluate(expression);
+		return evaluate();
 	}
 	
-	public boolean evaluate(String[] symbols, double[] values) throws CriterionException {
-		clearSymbols();
-		for(int i = 0; i < symbols.length; i++) {
-			symTab.put(symbols[i], values[i]);
-		}
-		return evaluate(expression);
-	}
-
-	public void addSymbol(String sym, Double val)
-	{
-		if(symTab == null) symTab = new HashMap<String, Double>();
-		symTab.put(sym, val);
-	}
-
-	void clearSymbols()
-	{
-		if(symTab == null) return;
-		symTab.clear();
-	}
-		
 	//Boolean expression parser by Martijn
 	String input;
 	int charNr;
-	boolean evaluate (String expr) throws CriterionException
+	private boolean evaluate () throws CriterionException
 	{
-		Token e = parse(expr);
+		Token e = parse();
 		return e.evaluateAsBool();
 	}
 
-	Token parse(String expr) throws CriterionException {
+	private Token parse() throws CriterionException {
 		charNr = 0;
-		input = expr;
+		input = expression;
 
 		Token e = expression();
 		Token t = getToken();
@@ -144,7 +123,7 @@ public class Criterion
 		return e;
 	}
 	
-	char eatChar()
+	private char eatChar()
 	{
 		if (input.length() == 0)
 		{
@@ -159,7 +138,7 @@ public class Criterion
 		}
 	}
 
-	void putBack(char ch)
+	private void putBack(char ch)
 	{
 		if (input.length() == 0 && ch == '\0')
 		{
@@ -170,16 +149,16 @@ public class Criterion
 		}
 	}
 
-	Token nextToken = null;
+	private Token nextToken = null;
 
-	Token getLookAhead() throws CriterionException
+	private Token getLookAhead() throws CriterionException
 	{
 		nextToken = getToken();
 		return nextToken;
 	}
 
 	// note: token is taken away from input!
-	Token getToken() throws CriterionException
+	private Token getToken() throws CriterionException
 	{      
 		Token token = null;
 		if (nextToken != null)
@@ -304,7 +283,7 @@ public class Criterion
 			- identifier
 			- "(" expression ")"
 	 */
-	Token factor() throws CriterionException
+	private Token factor() throws CriterionException
 	{
 		Token result;
 		Token t = getLookAhead();
@@ -345,7 +324,7 @@ public class Criterion
 			morefactors -> "<=|=|>=|>|<" factor morefactors
 						| empty
 	 */
-	Token subterm() throws CriterionException
+	private Token subterm() throws CriterionException
 	{
 		Token result;
 		result = factor();
@@ -375,7 +354,7 @@ public class Criterion
 			moresubterms -> "AND" subterm moresubterms
 						| empty
 	 */
-	Token term() throws CriterionException
+	private Token term() throws CriterionException
 	{
 		Token result;
 		result = subterm();
@@ -403,7 +382,7 @@ public class Criterion
 			moreterms -> "OR" term moreterms
 				| empty
 	 */
-	Token expression() throws CriterionException
+	private Token expression() throws CriterionException
 	{
 		Token result;
 		result = term();
@@ -427,7 +406,7 @@ public class Criterion
 	/**
 	 * This class represents a single token of an expression
 	 */
-	class Token {
+	private class Token {
 		public int type;
 		public static final int TOKEN_NONE = -2;
 		public static final int TOKEN_END = -1;

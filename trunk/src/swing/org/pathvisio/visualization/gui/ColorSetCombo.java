@@ -33,49 +33,29 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
 public class ColorSetCombo extends JComboBox implements ActionListener {
 	private static final long serialVersionUID = 1L;
-	public Object NEW = new Object();
 	
 	ColorSetManager csMgr;
 	
-	public ColorSetCombo(ColorSetManager csMgr) {
+	public ColorSetCombo(ColorSetManager _csMgr) {
 		super();
-		this.csMgr = csMgr;
+		this.csMgr = _csMgr;
 		refresh();
 		setRenderer(new ColorSetRenderer());
-		addActionListener(this);
 	}
 	
 	public void refresh() {
 		ArrayList<Object> csClone = new ArrayList<Object>();
 		csClone.addAll(csMgr.getColorSets());
-		csClone.add(NEW);
 		setModel(new DefaultComboBoxModel(csClone.toArray()));
 		if(csMgr.getColorSets().size() == 0) {
 			setSelectedItem(null);
 		}
-	}
-	
-	public void actionPerformed(ActionEvent e) {
-		if(getSelectedItem() == NEW) {
-			ColorSet cs = new ColorSet(csMgr);
-			ColorSetDlg dlg = new ColorSetDlg(cs, null, this);
-			dlg.setVisible(true);
-			csMgr.addColorSet(cs);
-			refresh();
-			setSelectedItem(cs);
-		}
-	}
-	
-	public void setSelectedIndex(int anIndex) {
-		if(getItemAt(anIndex) == NEW) {
-			anIndex = anIndex - 1;
-		}
-		super.setSelectedIndex(anIndex);
 	}
 	
 	public ColorSet getSelectedColorSet() {
@@ -111,13 +91,13 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
                 setForeground(list.getForeground());
             }
 
-			if(value == NEW) {
-				setText("New...");
-				current = null;
-			} else if(value == null) {
+			if(value == null) 
+			{
 				setText("<null>");
 				current = null;
-			} else {
+			} 
+			else 
+			{
 				current = (ColorSet)value;
 				setText(current.getName());
 			}

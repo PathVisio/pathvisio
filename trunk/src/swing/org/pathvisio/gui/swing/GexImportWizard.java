@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -605,7 +606,16 @@ public class GexImportWizard extends Wizard
 	    
 	    public void aboutToDisplayPanel()
 	    {			
-	    	String[] cn = importInformation.getColNames();
+	    	String[] cn;
+	    	try
+	    	{
+	    		cn = importInformation.getColNames();
+	    	}
+	    	catch (IOException e)
+	    	{
+	    		Logger.log.error ("getting column names", e);
+	    		cn = new String[importInformation.getSampleMaxNumCols()];
+	    	}
 	    	cbColId.setModel(new DefaultComboBoxModel(cn));
 	    	cbColSyscode.setModel(new DefaultComboBoxModel(cn));
 			

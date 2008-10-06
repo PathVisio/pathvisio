@@ -21,9 +21,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -266,56 +268,59 @@ public class ImportInformation {
 	 * Reads the column names from the text file containing the expression data at the
 	 * header row specified by the user. Multiple header rows can also be read. When no header
 	 * row is present, a header row is created manually.
+	 * 
+	 * The column names are guaranteed to be unique, non-empty, and 
+	 * there will be at least as many columns as sampleMaxNumCols.
+	 * 
 	 * @return the column names
 	 */
-	public String[] getColNames() 
+	public String[] getColNames() throws IOException
 	{
-		if(getNoHeader() == true) 
-		{
-			try {
-				BufferedReader in = getBufferedReader();
-				String[] firstLine = in.readLine().split(getDelimiter());
-				int j = 1; // Number of the column
-				String[] newColNames = new String[firstLine.length]; // Array with manually set column names
-				for (String col : firstLine) {
-					col = "Column " + j;
-					newColNames[j-1] = col; // New column name
-					j++;
+		String[] result = null;
+		BufferedReader in = getBufferedReader();
+		String[] line = in.readLine().split(getDelimiter());
+		int nrCol = Math.max(line.length, sampleMaxNumCols); // Number of columns			
+		result = new String[nrCol];
+		
+		// initialize columns to empty strings
+		for(int i = 0; i < nrCol; i++) result[i] = "";
+
+		// concatenate header rows
+		if(!getNoHeader())
+		{	
+			int i = 0;
+			// Read headerlines till the first data row
+			while (i < firstDataRow - 1) 
+			{ 	boolean first = true;
+				for(int j = 0; j < line.length; j++)
+				{  
+					// All header rows are added
+					if(i >= headerRow - 1) 
+					{
+						if (!first) result[j] += " ";
+						first = false;
+						result[j] = result[j] += line[j].trim();
+					}
 				}
-				return newColNames;
-				
-			} catch (IOException e) { // TODO: handle IOException
-				Logger.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
-				return new String[] {};
+				line = in.readLine().split(getDelimiter());
+				i++;
 			}
 		}
 		
-		else {
-			try {
-				BufferedReader in = getBufferedReader();
-				String[] line = in.readLine().split(getDelimiter()); // Read the first line
-				int nrCol = line.length; // Number of columns
-				// Initiate headerline as line with no characters
-				String[] headerLine = new String[nrCol];
-				for(int i = 0; i < nrCol; i++) headerLine[i] = "";
-				
-				int i = 0;
-				while (i < firstDataRow - 1) { // Read headerlines till the first data row
-					for(int j = 0; j < line.length; j++){  // Represents columns
-						// All header rows are added
-						if(i >= headerRow - 1) headerLine[j] = headerLine[j] + " " + line[j];
-					}
-					line = in.readLine().split(getDelimiter());
-					i++;
-				}
-				return headerLine;
+		// check that column names are unique
+		Set<String> unique = new HashSet<String>();
+		// set remaining emtpy column names to default string
+		for (int j = 0; j < result.length; ++j) 
+		{
+			String col = result[j];
+			if (col.equals ("") || unique.contains(col))
+			{
+				// generate default column name
+				result[j] = "Column " + (j + 1);
 			}
-
-			catch (IOException e) { // TODO: handle IOException
-				Logger.log.error("Unable to get column names for importing expression data: " + e.getMessage(), e);
-				return new String[] {};
-			}
-		}
+			unique.add (result[j]);
+		}		
+		return result;
 	}
 	
 	/**

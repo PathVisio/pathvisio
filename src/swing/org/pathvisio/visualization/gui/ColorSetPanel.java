@@ -306,19 +306,20 @@ public class ColorSetPanel extends JPanel implements ActionListener
 			ColorSetObject cso = new ColorRule(colorSet);
 			colorSet.addObject(cso);
 			crtm.refresh();
-			rulesTable.getSelectionModel().setLeadSelectionIndex(crtm.getRowCount() - 1);
-			refresh();
+			int selected = crtm.getRowCount() - 1;
+			rulesTable.getSelectionModel().setSelectionInterval(selected, selected);
 		} 
 		else if(ACTION_REMOVE_RULE.equals(action)) 
 		{
+			int lead = rulesTable.getSelectedRow();
 			for (int index : rulesTable.getSelectedRows())
 			{
 				ColorRule cr = crtm.getRule(index);
 				colorSet.removeObject(cr);
-				rulesTable.getSelectionModel().setLeadSelectionIndex(index - 1);
 			}
 			crtm.refresh();
-			refresh();
+			if (lead > crtm.getRowCount()) lead = crtm.getRowCount() - 1;
+			rulesTable.getSelectionModel().setSelectionInterval (lead, lead);
 		} 
 		else if(ACTION_GRADIENT.equals(action)) 
 		{

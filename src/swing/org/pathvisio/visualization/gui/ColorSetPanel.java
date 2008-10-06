@@ -225,7 +225,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 			case 0:
 				return colorRules.get(row).getColor();
 			default:
-				return "" + colorRules.get(row).getCriterion().getExpression();
+				return "" + colorRules.get(row).getExpression();
 			}
 		}
 		

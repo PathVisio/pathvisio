@@ -71,15 +71,15 @@ public class ColorRulePanel extends JPanel
 		String[] sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames().toArray(new String[0]);
 		String expr = txtExpr.getText();
 		
-		boolean ok = cr.getCriterion().setExpression(expr, sampleNames);
-		if (ok)
+		String error = cr.setExpression(expr, sampleNames);
+		if (error == null)
 		{
 			errorMsg.setText("Expression OK");
 			errorMsg.setForeground(Color.GREEN);
 		}
 		else
 		{
-			errorMsg.setText(cr.getCriterion().getParseException().getMessage());
+			errorMsg.setText(error);
 			errorMsg.setForeground(Color.RED);
 		}
 	}
@@ -112,7 +112,7 @@ public class ColorRulePanel extends JPanel
 		if (active)
 		{
 			colorLabel.setBackground(cr.getColor ());
-			txtExpr.setText (cr.getCriterion().getExpression());
+			txtExpr.setText (cr.getExpression());
 		}
 		else
 		{
@@ -139,12 +139,18 @@ public class ColorRulePanel extends JPanel
 
 			public void changedUpdate(DocumentEvent de) 
 			{
-				setExpresion();
+				if (cr != null) setExpresion();
 			}
 
-			public void insertUpdate(DocumentEvent de) { }
+			public void insertUpdate(DocumentEvent de) 
+			{ 
+				if (cr != null) setExpresion();				
+			}
 
-			public void removeUpdate(DocumentEvent de) { }
+			public void removeUpdate(DocumentEvent de) 
+			{
+				if (cr != null) setExpresion();				
+			}
 		});
 		
 		add (new JLabel ("Expression: "), cc.xy (2,2));

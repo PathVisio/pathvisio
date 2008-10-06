@@ -37,7 +37,7 @@ public class ColorRule extends ColorSetObject
 	// colorCriterion for backwards compatibility
 	public static final String XML_ELEMENT_NAME = "ColorCriterion";
 	
-	Criterion criterion;
+	private Criterion criterion;
 	
 	public static final Color INITIAL_COLOR = Color.WHITE;
 	private Color color;
@@ -48,7 +48,15 @@ public class ColorRule extends ColorSetObject
 	
 	public Color getColor() { return color == null ? INITIAL_COLOR : color; }
 	
-	public Criterion getCriterion() { return criterion; }
+	/**
+	 * Returns error message or null if there was no error.
+	 */
+	public String setExpression(String expression, String[] symbols)
+	{
+		return criterion.setExpression(expression, symbols);
+	}
+	
+	public String getExpression() { return criterion.getExpression(); }
 	
 	public ColorRule(ColorSet parent) {
 		super(parent, "rule");

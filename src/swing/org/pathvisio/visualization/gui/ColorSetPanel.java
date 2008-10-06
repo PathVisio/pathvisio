@@ -110,7 +110,6 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		
 		crtm = new ColorRuleTableModel(colorSet);
 		rulesTable = new JTable(crtm);
-		rulesTable.setFillsViewportHeight(true);
 		rulesTable.setDefaultRenderer(Color.class, new ColorRenderer(true));
 
 		add(new JScrollPane(rulesTable), cc.xy(1, 5));

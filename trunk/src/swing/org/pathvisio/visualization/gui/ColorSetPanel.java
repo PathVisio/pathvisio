@@ -40,7 +40,9 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.visualization.colorset.ColorSetEvent;
 import org.pathvisio.visualization.colorset.ColorSetObject;
+import org.pathvisio.visualization.colorset.ColorSetManager.ColorSetListener;
 
 import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -180,7 +182,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 	}
 	
 
-	private static class ColorRuleTableModel extends AbstractTableModel
+	private static class ColorRuleTableModel extends AbstractTableModel implements ColorSetListener
 	{
 		private static final long serialVersionUID = 1L;
 
@@ -190,6 +192,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		ColorRuleTableModel (ColorSet cs)
 		{
 			this.cs = cs;
+			cs.getColorSetManager().addListener(this);
 			refresh();
 		}
 		
@@ -244,6 +247,13 @@ public class ColorSetPanel extends JPanel implements ActionListener
 			default:
 				return "".getClass();
 			}
+		}
+
+		// triggered by changes in any color set
+		// TODO: distinghuish changes in # of rows and changes in row data
+		public void colorSetEvent(ColorSetEvent e) 
+		{
+			fireTableRowsUpdated(0, getRowCount());
 		}
 	}
 	

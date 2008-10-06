@@ -41,7 +41,9 @@ public class ColorRule extends ColorSetObject
 	
 	public static final Color INITIAL_COLOR = Color.WHITE;
 	private Color color;
-	public void setColor(Color color) { 
+	
+	public void setColor(Color color) 
+	{ 
 		this.color = color;
 		fireModifiedEvent();
 	}

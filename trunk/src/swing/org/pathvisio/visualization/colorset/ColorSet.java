@@ -64,6 +64,7 @@ public class ColorSet
 	
 	public List<ColorSetObject> colorSetObjects = new ArrayList<ColorSetObject>();
 		
+	public ColorSetManager getColorSetManager() { return colorSetMgr; }
 	
 	/**
 	 * Constructor of this class

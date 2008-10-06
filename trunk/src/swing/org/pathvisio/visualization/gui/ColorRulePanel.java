@@ -197,20 +197,19 @@ public class ColorRulePanel extends JPanel
 		colorLabel = new JLabel(" ");
 		add (colorLabel, cc.xy (2,8));
 		colorLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-		colorLabel.setOpaque(true);
-		
+		colorLabel.setOpaque(true);		
 		
 		btnColor = new JButton ("Color...");
 		btnColor.addActionListener(new ActionListener () 
 		{
-
 			public void actionPerformed(ActionEvent ae) 
 			{
+				// sanity check, button should have been disabled when cr == null
+				if (cr == null) throw new NullPointerException();
 				Color newColor = 
-					JColorChooser.showDialog(getTopLevelAncestor(), "Pick color", ColorRulePanel.this.cr.getColor());
+					JColorChooser.showDialog(getTopLevelAncestor(), "Pick color", cr.getColor());
 				colorLabel.setBackground(newColor);
-				if (ColorRulePanel.this.cr != null)
-					ColorRulePanel.this.cr.setColor(newColor);
+				cr.setColor(newColor);
 			}});
 		
 		add (btnColor, cc.xy (4, 8));

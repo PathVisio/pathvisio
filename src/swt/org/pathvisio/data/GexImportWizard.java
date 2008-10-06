@@ -692,14 +692,21 @@ public class GexImportWizard extends Wizard
 	 */
 	public void setColumnControlsContent() 
 	{
-		String[] colNames = importInformation.getColNames();
+		try
+		{
+			String[] colNames = importInformation.getColNames();
 
-		columnList.setItems(colNames);
-		columnList.setSelection(importInformation.getStringCols());
-		idCombo.setItems(colNames);
-		idCombo.select(importInformation.getIdColumn());
-		codeCombo.setItems(colNames);
-		codeCombo.select(importInformation.getCodeColumn());
+			columnList.setItems(colNames);
+			columnList.setSelection(importInformation.getStringCols());
+			idCombo.setItems(colNames);
+			idCombo.select(importInformation.getIdColumn());
+			codeCombo.setItems(colNames);
+			codeCombo.select(importInformation.getCodeColumn());
+		}
+		catch (IOException e)
+		{
+			Logger.log.error ("can't read column names", e);
+		}
 	}
 
 	/**
@@ -739,14 +746,14 @@ public class GexImportWizard extends Wizard
 		columnTable.removeAll();
 		for (TableColumn col : columnTable.getColumns())
 			col.dispose();
-		for (String colName : importInformation.getColNames()) 
-		{
-			TableColumn tc = new TableColumn(columnTable, SWT.NONE);
-			tc.setText(colName);
-			tc.pack();
-		}
 		try 
 		{
+			for (String colName : importInformation.getColNames()) 
+			{
+				TableColumn tc = new TableColumn(columnTable, SWT.NONE);
+				tc.setText(colName);
+				tc.pack();
+			}
 			int n = 50; // nr of lines to include in the preview
 			BufferedReader in = importInformation.getBufferedReader();
 			String line;

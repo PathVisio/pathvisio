@@ -74,10 +74,11 @@ public class StatisticsPlugin implements Plugin
 	 */
 	public void init() 
 	{
-		StatisticsAction statisticsAction = new StatisticsAction();
+		SwingEngine se = SwingEngine.getCurrent();
+		StatisticsAction statisticsAction = new StatisticsAction(se);
 
 		Logger.log.info ("Initializing statistics plugin");
-		SwingEngine.getCurrent().registerMenuAction ("Data", statisticsAction);
+		se.registerMenuAction ("Data", statisticsAction);
 	}
 	
 	/**
@@ -86,10 +87,12 @@ public class StatisticsPlugin implements Plugin
 	private static class StatisticsAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
-
-		public StatisticsAction() 
+		SwingEngine se;
+		
+		public StatisticsAction(SwingEngine se) 
 		{
 			super();
+			this.se = se;
 			putValue(NAME, "Statistics...");
 			putValue(SHORT_DESCRIPTION, "Do simple pathway statistics");
 		}
@@ -99,12 +102,12 @@ public class StatisticsPlugin implements Plugin
 			SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 			if (gex == null)
 			{
-				JOptionPane.showMessageDialog(SwingEngine.getCurrent().getFrame(), "Select an expression dataset first");
+				JOptionPane.showMessageDialog(se.getFrame(), "Select an expression dataset first");
 			}
 			else
 			{
 				StatisticsDlg dlg = new StatisticsDlg();
-				dlg.createAndShowDlg();
+				dlg.createAndShowDlg(se);
 			}
 		}
 	}
@@ -138,10 +141,10 @@ public class StatisticsPlugin implements Plugin
 		/**
 		 * Pop up the statistics dialog
 		 */
-		private void createAndShowDlg()
+		private void createAndShowDlg(final SwingEngine se)
 		{
 			
-			final JDialog dlg = new JDialog (SwingEngine.getCurrent().getFrame(), "Pathway statistics", false);
+			final JDialog dlg = new JDialog (se.getFrame(), "Pathway statistics", false);
 			
 			FormLayout layout = new FormLayout (
 					"4dlu, pref:grow, 4dlu, pref, 4dlu", 
@@ -255,7 +258,7 @@ public class StatisticsPlugin implements Plugin
 						
 						//TODO: here I want to use SwingEngine.openPathway, but I need to 
 						// be able to wait until the process is finished!
-					SwingEngine.getCurrent().openPathway(sr.getFile());
+					se.openPathway(sr.getFile());
 				}
 
 			});
@@ -267,7 +270,6 @@ public class StatisticsPlugin implements Plugin
 				public void actionPerformed(ActionEvent ae) 
 				{
 					File pwDir = new File (txtDir.getText());
-					String expr = txtExpr.getText();
 					btnCalc.setEnabled(false);
 					doCalculate (pwDir, myCriterion, tblResult, dlg);
 				}
@@ -306,7 +308,7 @@ public class StatisticsPlugin implements Plugin
 	
 			txtExpr.requestFocus();
 			dlg.pack();
-			dlg.setLocationRelativeTo(SwingEngine.getCurrent().getFrame());
+			dlg.setLocationRelativeTo(se.getFrame());
 			dlg.setVisible(true);
 		}
 
@@ -386,17 +388,18 @@ public class StatisticsPlugin implements Plugin
 		int N = 0;
 		int R = 0;
 		Criterion crit;
+		File pwDir;
 		
 		void save (File f) throws IOException
 		{
 			PrintStream out = new PrintStream (new FileOutputStream(f));
 			
-			//TODO: it may have happened that the criterion was changed by the user,
-			// so it needs to be stored in a temp variable  
 			out.println ("Statistics results for " + new Date());
 			out.println ("Dataset: " + GexManager.getCurrent().getCurrentGex().getDbName());
+			out.println ("Pathway directory: " + pwDir);
 			out.println ("Criterion: " + crit.getExpression());
-			out.println ("Z-scores are based on N = " + N + " and R = " + R); 
+			out.println ("Rows in data (N): " + N);
+			out.println ("Rows meeting criterion (R): " + R);
 			out.println();
 			
 			stm.printData(out);
@@ -406,7 +409,6 @@ public class StatisticsPlugin implements Plugin
 	private static class ZScoreCalculator extends SwingWorker <Result, StatisticsResult> 
 	{			
 		private Result result;
-		private File pwDir;
 		private String note = null;
 		
 		private void setNote(String value)
@@ -421,7 +423,7 @@ public class StatisticsPlugin implements Plugin
 			result = new Result();
 			result.crit = crit;
 			result.stm = stm;
-			this.pwDir = pwDir;
+			result.pwDir = pwDir;
 		}
 		
 		@Override
@@ -468,7 +470,7 @@ public class StatisticsPlugin implements Plugin
 			Logger.log.info ("N: " + result.N + ", R: " + result.R);
 			
 			// now we calculate n and r for each pwy				
-			List<File> files = FileUtils.getFiles(pwDir, "gpml", true);
+			List<File> files = FileUtils.getFiles(result.pwDir, "gpml", true);
 			
 			XMLReader xmlReader = null;
 			
@@ -492,11 +494,6 @@ public class StatisticsPlugin implements Plugin
 				{
 					PathwayParser pwyParser = new PathwayParser(file, xmlReader);
 					
-					// Step 1: map the genes in the pathway to a common system.
-					// This common system can be Ensembl, but it doesn't have to be.
-					// as long as the same single common system is used for all pathways
-					// Make the list unique. This is our "n".
-					
 					Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
 					
 					Logger.log.info ("Calculating statistics for " + pwyParser.getName());
@@ -515,8 +512,6 @@ public class StatisticsPlugin implements Plugin
 
 					int cPwyTotal = srcRefs.size();
 					int cPwyMeasured = 0;
-					
-					// Step 2: find the corresponding rows in the Gex. There could be more than one row per gene, this is ok.
 					
 					double cPwyPositive = 0;
 					
@@ -547,7 +542,9 @@ public class StatisticsPlugin implements Plugin
 								}
 							}
 						
-							// Step 4: Map the rows back to the corresponding genes. "yes" is counted, weighed by the # of rows per gene. This is our "r".
+							// Map the rows back to the corresponding genes. 
+							// "yes" is counted, weighed by the # of rows per gene. 
+							// This is our "r".
 							
 							//This line is different from MAPPFinder: if 2 out of 3 probes are positive, count only 2/3
 							cPwyPositive += (double)cGenePositive / (double)cGeneTotal;

@@ -16,6 +16,7 @@
 //
 package org.pathvisio.plugins.statistics;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,7 +48,9 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.ProgressKeeper;
@@ -69,6 +72,28 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class StatisticsPlugin implements Plugin 
 {
+	enum StatisticsPreference implements Preference
+	{
+		STATS_DIR_LAST_USED_PATHWAY (PreferenceManager.getCurrent().get(GlobalPreference.DIR_PWFILES)),
+		STATS_DIR_LAST_USED_RESULTS (PreferenceManager.getCurrent().get(GlobalPreference.DIR_LAST_USED_PGEX));
+		
+		StatisticsPreference (String defaultValue) 
+		{
+			this.defaultValue = defaultValue;
+		}
+		
+		private String defaultValue;
+		
+		public String getDefault() {
+			return defaultValue;
+		}
+		
+		public void setDefault(String defValue) {
+			defaultValue = defValue;
+		}
+					
+	}
+	
 	/**
 	 * Plugin initialization method, registers statistics action in the Data menu
 	 */
@@ -217,7 +242,7 @@ public class StatisticsPlugin implements Plugin
 			dlg.add (lblError, cc.xyw (2,8,3));
 			dlg.add (new JLabel ("Pathway Directory: "), cc.xy (2,10));
 			final JTextField txtDir = new JTextField(40);
-			txtDir.setText(PreferenceManager.getCurrent().get(GlobalPreference.DIR_PWFILES));
+			txtDir.setText(PreferenceManager.getCurrent().get(StatisticsPreference.STATS_DIR_LAST_USED_PATHWAY));
 			dlg.add (txtDir, cc.xy(2,12));
 			JButton btnDir = new JButton("Browse");
 			btnDir.addActionListener(new ActionListener ()
@@ -230,7 +255,9 @@ public class StatisticsPlugin implements Plugin
 					jfc.setCurrentDirectory(new File (txtDir.getText()));
 					if (jfc.showDialog(null, "Choose") == JFileChooser.APPROVE_OPTION)
 					{
-						txtDir.setText("" + jfc.getSelectedFile());
+						String newVal = "" + jfc.getSelectedFile();
+						txtDir.setText(newVal); 
+						PreferenceManager.getCurrent().set(StatisticsPreference.STATS_DIR_LAST_USED_PATHWAY, newVal);
 					}
 				}
 			});
@@ -284,10 +311,11 @@ public class StatisticsPlugin implements Plugin
 					jfc.setDialogTitle("Save results");
 					jfc.setFileFilter(new SimpleFileFilter ("Tab delimited text", "*.txt", true));
 					jfc.setDialogType(JFileChooser.SAVE_DIALOG);
-					
+					jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(StatisticsPreference.STATS_DIR_LAST_USED_RESULTS));
 					if (jfc.showDialog(dlg, "Save") == JFileChooser.APPROVE_OPTION)
 					{
 						File f = jfc.getSelectedFile();
+						PreferenceManager.getCurrent().setFile(StatisticsPreference.STATS_DIR_LAST_USED_RESULTS, jfc.getCurrentDirectory());
 						if (!f.toString().endsWith (".txt"))
 						{
 							f = new File (f + ".txt");

@@ -170,6 +170,12 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 					pk.finished();
 					return null;
 				}
+				
+				@Override
+				protected void done()
+				{
+					Engine.getCurrent().getActiveVPathway().redraw();
+				}
 			};
 			
 			sw.execute();

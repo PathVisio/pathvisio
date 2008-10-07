@@ -153,7 +153,7 @@ public class WikiPathwaysClientGui extends JPanel implements ActionListener {
 			WSSearchResult result = selected.getResult();
 			request.pwName = result.getName();
 			request.pwSpecies = result.getSpecies();
-			request.revision = BigInteger.valueOf(Integer.parseInt(result.getRevision()));
+			request.revision = Integer.parseInt(result.getRevision());
 			WebServiceClientManager.getCyWebServiceEventSupport().fireCyWebServiceEvent(
 				new CyWebServiceEvent(
 						client.getClientID(), WSEventType.IMPORT_NETWORK, 

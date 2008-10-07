@@ -157,7 +157,7 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 	public static class GetPathwayParameters {
 		public String pwName;
 		public String pwSpecies;
-		public BigInteger revision;
+		public int revision;
 	}
 	
 	class OpenTask implements Task {

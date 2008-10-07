@@ -242,9 +242,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		return keyHashMap;
 	}
 
-	private void addLitSearchRef(BiopaxElementManager biopaxElmMgr, PathwayElement line, Map litMap) {
-		BiopaxReferenceManager biopaxRefMgr = new BiopaxReferenceManager(biopaxElmMgr, line);
-		
+	private void addLitSearchRef(PathwayElement line, Map litMap) {
 		for(Object key : litMap.keySet()) {
 			String link = key.toString();
 			//Parse pubmed id from
@@ -266,8 +264,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			xref.setSource(journal);
 			xref.setYear(year);
 			
-			biopaxElmMgr.addElement(xref);
-			biopaxRefMgr.addElementReference(xref);
+			line.getBiopaxReferenceManager().addElementReference(xref);
 		}
 	}
 	
@@ -300,7 +297,6 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		//Keep reference to a pathway and biopax element for adding
 		//biopax references
 		Pathway pathway = new Pathway();
-		BiopaxElementManager biopaxElmMgr = new BiopaxElementManager(pathway);
 		
 		//Process nodes
 		for(CyNode node : selNodes) {
@@ -348,7 +344,8 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 				);
 				if(litMap != null) {
 					System.err.println("Adding litsearch references");
-					addLitSearchRef(biopaxElmMgr, line, litMap);
+					pathway.add(line);
+					addLitSearchRef(line, litMap);
 				}
 			}
 			

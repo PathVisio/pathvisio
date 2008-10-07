@@ -1602,16 +1602,16 @@ public class VPathway implements PathwayListener
 			boolean removeFromModel)
 	{
 		if (toRemove != null){
-		toRemove.destroy(); // Object will remove itself from the drawing
-		if (removeFromModel)
-		{
-			if (toRemove instanceof Graphics)
+			selection.removeFromSelection(toRemove); // Remove from selection
+			toRemove.destroy(); // Object will remove itself from the drawing
+			if (removeFromModel)
 			{
-				data.remove(((Graphics) toRemove).getPathwayElement());
+				if (toRemove instanceof Graphics)
+				{
+					data.remove(((Graphics) toRemove).getPathwayElement());
+				}
 			}
-		}
-		selection.removeFromSelection(toRemove); // Remove from selection
-		redrawDirtyRect();
+			redrawDirtyRect();
 		}
 	}
 

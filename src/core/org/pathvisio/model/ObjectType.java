@@ -35,13 +35,14 @@ public class ObjectType
 	public static final int MAPPINFO = 6;
 	public static final int GROUP = 7;
 	public static final int BIOPAX = 8;
-	public static final int MAX_VALID = 8;
+	public static final int MODIFICATION = 9;
+	public static final int MAX_VALID = 9;
 	 
 	// Some mappings to Gpml TAGS
 	 // TODO: is this actually used?
 	private static final List<String> tagMappings = Arrays.asList(new String[] {
 		"Shape", "DataNode", "Label", "Line", "Legend", "InfoBox", 
-		"Pathway", "Group", "Biopax"
+		"Pathway", "Group", "Biopax", "Modification"
 	});
 
 	public static int getTagMapping(String value)

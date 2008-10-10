@@ -36,19 +36,28 @@ public enum PropertyType
 	// all
 	COMMENTS ("Comments", "Comments", PropertyClass.COMMENTS),
 
-	// line, shape, brace, geneproduct, label
+	// line, shape, datanode, label
 	COLOR ("Color", "Color", PropertyClass.COLOR),
 			
-	// shape, brace, geneproduct, label
+	// shape, datanode, label
 	CENTERX ("CenterX", "Center X", PropertyClass.DOUBLE),
 	CENTERY ("CenterY", "Center Y", PropertyClass.DOUBLE),
+	
+	// shape, datanode, label, modification
 	WIDTH ("Width", "Width", PropertyClass.DOUBLE),
 	HEIGHT ("Height", "Height", PropertyClass.DOUBLE),
-			
-	// shape
+
+	// modification
+	RELX ("CenterX", "Center X", PropertyClass.DOUBLE),
+	RELY ("CenterY", "Center Y", PropertyClass.DOUBLE),
+	GRAPHREF ("GraphRef", "GraphRef", PropertyClass.STRING),
+
+	// shape, modification
 	TRANSPARENT ("Transparent", "Transparent", PropertyClass.BOOLEAN),
 	FILLCOLOR ("FillColor", "Fill Color", PropertyClass.COLOR),
 	SHAPETYPE ("ShapeType", "Shape Type", PropertyClass.SHAPETYPE),
+	
+	// shape
 	ROTATION ("Rotation", "Rotation", PropertyClass.ANGLE),
 			
 	// line
@@ -60,21 +69,25 @@ public enum PropertyType
 	ENDLINETYPE ("EndLineType", "End Line Type", PropertyClass.LINETYPE), 
 	STARTLINETYPE ("StartLineType", "Start Line Type", PropertyClass.LINETYPE), 
 
-	// line and shape
+	// line, shape and modification
 	LINESTYLE ("LineStyle", "Line Style", PropertyClass.LINESTYLE),
 			
 	// brace
 	ORIENTATION ("Orientation", "Orientation", PropertyClass.ORIENTATION),
 			
-	// gene product
+	// datanode
 	GENEID ("GeneID", "Database Identifier", PropertyClass.DB_ID),  
 	DATASOURCE ("SystemCode", "Database Name", PropertyClass.DATASOURCE), 
 	GENMAPP_XREF ("Xref", "Xref", PropertyClass.STRING), // deprecated, maintained for backward compatibility with GenMAPP. 
 	BACKPAGEHEAD ("BackpageHead", "Backpage head", PropertyClass.STRING), 
 	TYPE ("Type", "Type", PropertyClass.GENETYPE),
-			
+		
+	MODIFICATIONTYPE ("ModificationType", "ModificationType", PropertyClass.STRING),
+	
+	// label, modification, datanode
+	TEXTLABEL ("TextLabel", "Text Label", PropertyClass.STRING),
+	
 	// label
-	TEXTLABEL ("TextLabel", "Text Label", PropertyClass.STRING), 
 	FONTNAME ("FontName", "Font Name", PropertyClass.FONT),
 	FONTWEIGHT ("FontWeight", "Bold", PropertyClass.BOOLEAN), 
 	FONTSTYLE ("FontStyle", "Italic", PropertyClass.BOOLEAN), 

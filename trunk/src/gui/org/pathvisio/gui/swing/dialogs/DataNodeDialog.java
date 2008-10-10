@@ -94,7 +94,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 	private void search(final String text) {
 		if(text == null || "".equals(text)) {
 			JOptionPane.showMessageDialog(this, "No search term specified, " +
-			"please type something in the 'Text label' field");
+			"please type something in the 'Search' field");
 			return;
 		}
 

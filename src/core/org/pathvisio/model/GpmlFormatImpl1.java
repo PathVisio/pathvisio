@@ -170,21 +170,21 @@ public class GpmlFormatImpl1
 		result.put("DataNode@BackpageHead", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("DataNode@GenMAPP-Xref", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("DataNode@Type", new AttributeInfo ("gpml:DataNodeType", "Unknown", "optional"));
-		result.put("Modification.Graphics@relX", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("Modification.Graphics@relY", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("Modification.Graphics@Width", new AttributeInfo ("gpml:Dimension", null, "required"));
-		result.put("Modification.Graphics@Height", new AttributeInfo ("gpml:Dimension", null, "required"));
-		result.put("Modification.Graphics@Color", new AttributeInfo ("gpml:ColorType", null, "optional"));
-		result.put("Modification.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", null, "optional"));
-		result.put("Modification.Xref@Database", new AttributeInfo ("gpml:DatabaseType", null, "required"));
-		result.put("Modification.Xref@ID", new AttributeInfo ("gpml:NameType", null, "required"));
-		result.put("Modification@BiopaxRef", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Modification@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
-		result.put("Modification@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
-		result.put("Modification@Style", new AttributeInfo ("gpml:StyleType", "Solid", "optional"));
-		result.put("Modification@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
-		result.put("Modification@ModificationType", new AttributeInfo ("xsd:string", "Unknown", "optional"));
-		result.put("Modification@ShapeType", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("State.Graphics@relX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("State.Graphics@relY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("State.Graphics@Width", new AttributeInfo ("gpml:Dimension", null, "required"));
+		result.put("State.Graphics@Height", new AttributeInfo ("gpml:Dimension", null, "required"));
+		result.put("State.Graphics@Color", new AttributeInfo ("gpml:ColorType", null, "optional"));
+		result.put("State.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", null, "optional"));
+		result.put("State.Xref@Database", new AttributeInfo ("gpml:DatabaseType", null, "required"));
+		result.put("State.Xref@ID", new AttributeInfo ("gpml:NameType", null, "required"));
+		result.put("State@BiopaxRef", new AttributeInfo ("xsd:string", null, "optional"));
+		result.put("State@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
+		result.put("State@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
+		result.put("State@Style", new AttributeInfo ("gpml:StyleType", "Solid", "optional"));
+		result.put("State@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
+		result.put("State@StateType", new AttributeInfo ("xsd:string", "Unknown", "optional"));
+		result.put("State@ShapeType", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("Line.Graphics.Point@x", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Line.Graphics.Point@y", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Line.Graphics.Point@relX", new AttributeInfo ("xsd:float", null, "optional"));
@@ -336,7 +336,7 @@ public class GpmlFormatImpl1
 		// correctly ordered list of tag names, which are loaded into the hashmap in
 		// the constructor.
 		private final String[] elements = new String[] {
-				"Comment", "BiopaxRef", "Graphics", "DataNode", "Modification", "Line", "Label",
+				"Comment", "BiopaxRef", "Graphics", "DataNode", "State", "Line", "Label",
 				"Shape", "Group", "InfoBox", "Legend", "Biopax"
 			};
 		
@@ -461,9 +461,9 @@ public class GpmlFormatImpl1
 				mapGroupRef(o, e);
 				mapBiopaxRef(o, e);
 				break;
-			case ObjectType.MODIFICATION:
+			case ObjectType.STATE:
 				mapShapeColor(o, e);
-				mapModificationData(o, e);
+				mapStateData(o, e);
 				mapColor(o, e);
 				mapComments(o, e);
 				mapGraphId(o, e);
@@ -521,28 +521,28 @@ public class GpmlFormatImpl1
 		return o;
 	}
 
-	private void mapModificationData(PathwayElement o, Element e) throws ConverterException
+	private void mapStateData(PathwayElement o, Element e) throws ConverterException
 	{
-    	String ref = getAttribute("Modification", "GraphRef", e);
+    	String ref = getAttribute("State", "GraphRef", e);
     	if (ref != null) {
     		o.setGraphRef(ref);
     	}
 
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	
-    	o.setRelX(Double.parseDouble(getAttribute("Modification.Graphics", "relX", graphics)));
-    	o.setRelY(Double.parseDouble(getAttribute("Modification.Graphics", "relY", graphics)));
-		o.setMWidth (Double.parseDouble(getAttribute("Modification.Graphics", "Width", graphics))); 
-		o.setMHeight (Double.parseDouble(getAttribute("Modification.Graphics", "Height", graphics)));
+    	o.setRelX(Double.parseDouble(getAttribute("State.Graphics", "relX", graphics)));
+    	o.setRelY(Double.parseDouble(getAttribute("State.Graphics", "relY", graphics)));
+		o.setMWidth (Double.parseDouble(getAttribute("State.Graphics", "Width", graphics))); 
+		o.setMHeight (Double.parseDouble(getAttribute("State.Graphics", "Height", graphics)));
     		
 		//TODO
-		//ModificationType
+		//StateType
 		// ShapeType???
 		// Line style???
 		// Xref???
 	}
 	
-	private static void updateModificationData(PathwayElement o, Element e) throws ConverterException
+	private static void updateStateData(PathwayElement o, Element e) throws ConverterException
 	{
 		//TODO
 	}
@@ -1065,13 +1065,13 @@ public class GpmlFormatImpl1
 				updateGraphId(o, e);				
 				updateGroupRef(o, e);
 				break;
-			case ObjectType.MODIFICATION:
-				e = new Element("Modification", ns);
+			case ObjectType.STATE:
+				e = new Element("State", ns);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				e.addContent(new Element("Graphics", ns));
 				//TODO: Xref?
-				updateModificationData(o, e);
+				updateStateData(o, e);
 				updateColor(o, e);
 				updateShapeColor(o, e);
 				updateGraphId(o, e);				

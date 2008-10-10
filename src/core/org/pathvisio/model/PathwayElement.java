@@ -496,7 +496,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 		case ObjectType.SHAPE:
 			return Z_ORDER_SHAPE;
-		case ObjectType.MODIFICATION:
+		case ObjectType.STATE:
 			return Z_ORDER_GENEPRODUCT + 10;
 		case ObjectType.DATANODE:
 			return Z_ORDER_GENEPRODUCT;
@@ -533,8 +533,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ObjectType.LINE:
 			e = new MLine();
 			break;
-		case ObjectType.MODIFICATION:
-			e = new MModification();
+		case ObjectType.STATE:
+			e = new MState();
 			break;
 		default:
 			e = new PathwayElement(ot);
@@ -725,7 +725,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				result.add(PropertyType.BIOPAXREF);
 			}
 			break;
-		case ObjectType.MODIFICATION:
+		case ObjectType.STATE:
 			result.add(PropertyType.COMMENTS);
 			result.add(PropertyType.RELX);
 			result.add(PropertyType.RELY);

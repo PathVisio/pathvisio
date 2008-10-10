@@ -237,7 +237,7 @@
 
 				<xsd:element ref="gpml:DataNode" minOccurs="0" maxOccurs="unbounded"/>
 
-				<xsd:element ref="gpml:Modification" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gpml:State" minOccurs="0" maxOccurs="unbounded"/>
 
 				<xsd:element ref="gpml:Line" minOccurs="0" maxOccurs="unbounded"/>
 
@@ -383,8 +383,8 @@
 	</xsd:element>
 <!-- End: DataNode -->
 
-<!-- Modification -->
-	<xsd:element name="Modification">
+<!-- State -->
+	<xsd:element name="State">
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:group ref="gpml:CommentGroup"/>
@@ -413,15 +413,15 @@
 			
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 		
-			<xsd:attribute name="ModificationType" type="xsd:string" default="Unknown"/>
-			<!-- Biological modification type. suggested values: Phosphorylation, Glycosylation, ... !-->
+			<xsd:attribute name="StateType" type="xsd:string" default="Unknown"/>
+			<!-- Biological modification type. suggested values: Phosphorylated, Glycosylated, Activated, ... !-->
 
 			<xsd:attribute name="ShapeType" type="xsd:string" use="required"/>
 
 		</xsd:complexType>
 
 	</xsd:element>
-<!-- End: Modification -->
+<!-- End: State -->
 
 <!-- Line -->
 	<xsd:element name="Line">

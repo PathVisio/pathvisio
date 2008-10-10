@@ -155,15 +155,6 @@
 		</xsd:union>
 	</xsd:simpleType>
 
-	<xsd:simpleType name="GroupStyleType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="Stack"/>
-			<xsd:enumeration value="Box"/>
-			<xsd:enumeration value="Complex"/>
-			<xsd:enumeration value="None" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
 	<xsd:simpleType name="ObjectType">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Node"/>
@@ -204,6 +195,13 @@
 				</xsd:complexType>
 			</xsd:element>
 			<xsd:element name="BiopaxRef" minOccurs="0" maxOccurs="unbounded"/>		
+			<xsd:element name="Attribute" minOccurs="0"
+			maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="Key" type="xsd:string" use="required"/>
+					<xsd:attribute name="Value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:group>
 	
@@ -243,8 +241,6 @@
 				<xsd:element ref="gpml:Line" minOccurs="0" maxOccurs="unbounded"/>
 
 				<xsd:element ref="gpml:Label" minOccurs="0" maxOccurs="unbounded"/>
-
-				<xsd:element ref="gpml:Link" minOccurs="0" maxOccurs="unbounded"/>
 
 				<xsd:element ref="gpml:Shape" minOccurs="0" maxOccurs="unbounded"/>
 
@@ -296,6 +292,8 @@
 
 			<xsd:attribute name="Email" type="xsd:string" use="optional"/>
 
+			<xsd:attribute name="License" type="xsd:string" use="optional"/>
+
 			<xsd:attribute name="Copyright" type="xsd:string" use="optional">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">Copyright
@@ -336,6 +334,8 @@
 					<xsd:complexType>
 						<xsd:attributeGroup ref="gpml:RectAttributes"/>
 						<xsd:attribute name="Color" type="gpml:ColorType"/>
+						<xsd:attribute name="ZOrder"
+							type="xsd:integer" use="optional"/>
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element name="Xref" minOccurs="1" maxOccurs="1">
@@ -467,6 +467,8 @@
 							type="gpml:ColorType" default="Black" />
 						<xsd:attribute name="ConnectorType"
 							type="xsd:string" use="optional" default="Straight"/>
+						<xsd:attribute name="ZOrder"
+							type="xsd:integer" use="optional"/>
 					</xsd:complexType>
 				</xsd:element>
 
@@ -505,10 +507,17 @@
 						<xsd:attribute name="Color" use="optional"
 							type="gpml:ColorType"/>
 						<xsd:attributeGroup ref="gpml:FontAttributes" />
+						<xsd:attribute name="ZOrder"
+							type="xsd:integer" use="optional"/>
 					</xsd:complexType>
 				</xsd:element>
 
 			</xsd:sequence>
+			
+			<!-- for a reference to a url !-->
+			<xsd:attribute name="Href" use="optional" type="xsd:string" />
+			<!-- for a reference to a Stable pathway ID on wikipathways !-->
+			<xsd:attribute name="PathwayRef" use="optional" type="xsd:string" />
 			
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
@@ -547,51 +556,6 @@
 	</xsd:element>
 <!-- End: Label -->
 
-<!-- Link -->
-	<xsd:element name="Link">
-
-		<xsd:complexType>
-			<xsd:annotation>
-				<xsd:documentation xml:lang="en">This is text on a GenMAPP map that
-					can have associated comments.</xsd:documentation>
-			</xsd:annotation>
-
-			<xsd:sequence>
-
-				<xsd:group ref="gpml:CommentGroup"/>
-
-				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
-					<xsd:complexType>
-						<xsd:attributeGroup ref="gpml:RectAttributes"/>
-						<xsd:attribute name="Color" use="optional"
-							type="gpml:ColorType"/>
-						<xsd:attributeGroup ref="gpml:FontAttributes" />
-					</xsd:complexType>
-				</xsd:element>
-
-			</xsd:sequence>
-	
-			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
-			<xsd:attribute name="Href" use="optional" type="xsd:string" />
-			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
-			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
-			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
-
-			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
-
-			<!-- Xref is deprecated, to avoid confusion with the Xref tag. Use GenMapp-Xref for pathways converted from GenMAPP -->
-			<xsd:attribute name="GenMAPP-Xref" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP
-						Links</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			
-		</xsd:complexType>
-
-	</xsd:element>
-<!-- End: Link -->
-
 <!-- Shape -->
 	<xsd:element name="Shape">
 
@@ -611,6 +575,8 @@
 						<xsd:attribute name="Color" type="gpml:ColorType" default="Black" />
 						<xsd:attribute name="Rotation" type="gpml:RotationType" default="Top" />
 						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
+						<xsd:attribute name="ZOrder"
+							type="xsd:integer" use="optional"/>
 					</xsd:complexType>
 				</xsd:element>
 
@@ -665,8 +631,7 @@
 			<xsd:attribute name="GroupId" type="xsd:string" use="required" />
 			<xsd:attribute name="GroupRef" type="xsd:string"
 				use="optional" />
-			<xsd:attribute name="Style" type="gpml:GroupStyleType"
-				default="None" />
+			<xsd:attribute name="Style" type="xsd:string" default="None" />
 			<xsd:attribute name="TextLabel" type="xsd:string"
 				use="optional" />
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />

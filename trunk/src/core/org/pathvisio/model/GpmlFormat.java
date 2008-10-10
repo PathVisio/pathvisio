@@ -92,13 +92,12 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	public static PathwayElement mapElement(Element e, Pathway p) throws ConverterException
 	{
 		return current.mapElement(e, p);
-	}
+	}	
 	
 	public static PathwayElement mapElement(Element e) throws ConverterException
 	{
 		return current.mapElement(e);
 	}
-
 	
 	/**
 	 * Writes the JDOM document to the file specified

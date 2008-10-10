@@ -496,6 +496,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 		case ObjectType.SHAPE:
 			return Z_ORDER_SHAPE;
+		case ObjectType.MODIFICATION:
+			return Z_ORDER_GENEPRODUCT + 10;
 		case ObjectType.DATANODE:
 			return Z_ORDER_GENEPRODUCT;
 		case ObjectType.LABEL:
@@ -530,6 +532,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			break;
 		case ObjectType.LINE:
 			e = new MLine();
+			break;
+		case ObjectType.MODIFICATION:
+			e = new MModification();
 			break;
 		default:
 			e = new PathwayElement(ot);
@@ -716,6 +721,26 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			if (fAdvanced)
 			{
 				result.add(PropertyType.GRAPHID);
+				result.add(PropertyType.GROUPREF);
+				result.add(PropertyType.BIOPAXREF);
+			}
+			break;
+		case ObjectType.MODIFICATION:
+			result.add(PropertyType.COMMENTS);
+			result.add(PropertyType.RELX);
+			result.add(PropertyType.RELY);
+			result.add(PropertyType.WIDTH);
+			result.add(PropertyType.HEIGHT);
+			result.add(PropertyType.COLOR);
+			result.add(PropertyType.FILLCOLOR);
+			result.add(PropertyType.TRANSPARENT);
+			result.add(PropertyType.TEXTLABEL);
+			result.add(PropertyType.MODIFICATIONTYPE);
+			result.add(PropertyType.LINESTYLE);
+			if (fAdvanced)
+			{
+				result.add(PropertyType.GRAPHID);
+				result.add(PropertyType.GRAPHREF);
 				result.add(PropertyType.GROUPREF);
 				result.add(PropertyType.BIOPAXREF);
 			}
@@ -2485,6 +2510,80 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			}
 		}	
 	}
+	
+	private String graphRef = null;
+	
+	/** graphRef property, used by Modification */
+	public String getGraphRef()
+	{
+		return graphRef;
+	}
+	
+	/** 
+	 * set graphRef property, used by Modification
+	 * The new graphRef should exist and point to an existing DataNode
+	 */
+	public void setGraphRef (String value)
+	{
+		// TODO: check that new graphRef exists and that it points to a DataNode
+		if (!(graphRef == null ? value == null : graphRef.equals(value)))
+		{
+			graphRef = value;
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+	
+	private double relX;
+	
+	/**
+	 * relX property, used by Modification.
+	 * Should normally be between -1.0 and 1.0, where 1.0 
+	 * corresponds to the edge of the parent object
+	 */
+	public double getRelX()
+	{
+		return relX;
+	}
+	
+	/**
+	 * See getRelX
+	 */
+	public void setRelX(double value)
+	{
+		if (relX != value)
+		{
+			relX = value;
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+
+	private double relY;
+	
+	/**
+	 * relX property, used by Modification.
+	 * Should normally be between -1.0 and 1.0, where 1.0 
+	 * corresponds to the edge of the parent object
+	 */
+	public double getRelY()
+	{
+		return relY;
+	}
+	
+	/**
+	 * See getRelX
+	 */
+	public void setRelY(double value)
+	{
+		if (relY != value)
+		{
+			relY = value;
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
+		}
+	}
+
 	
 	public String getGraphId()
 	{

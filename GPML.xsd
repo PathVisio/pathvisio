@@ -235,8 +235,9 @@
 					</xsd:complexType>
 				</xsd:element>
 
-				<xsd:element ref="gpml:DataNode" minOccurs="0"
-					maxOccurs="unbounded"/>
+				<xsd:element ref="gpml:DataNode" minOccurs="0" maxOccurs="unbounded"/>
+
+				<xsd:element ref="gpml:Modification" minOccurs="0" maxOccurs="unbounded"/>
 
 				<xsd:element ref="gpml:Line" minOccurs="0" maxOccurs="unbounded"/>
 
@@ -316,7 +317,7 @@
 <!-- End: Pathway -->
 
 
-<!-- Gene Product -->
+<!-- Data Node -->
 	<xsd:element name="DataNode">
 
 		<xsd:annotation>
@@ -380,7 +381,47 @@
 		</xsd:complexType>
 
 	</xsd:element>
-<!-- End: GeneProduct -->
+<!-- End: DataNode -->
+
+<!-- Modification -->
+	<xsd:element name="Modification">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="relX" type="xsd:float" use="required"/>
+						<xsd:attribute name="relY" type="xsd:float" use="required"/>
+						<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
+						<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
+						<xsd:attribute name="Color" type="gpml:ColorType"/>
+						<xsd:attribute name="FillColor" type="gpml:ColorType"/>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="Xref" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="Database" type="gpml:DatabaseType" use="required"/>
+						<xsd:attribute name="ID" type="gpml:NameType" use="required"/>						
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			
+			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+            <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+			<xsd:attribute name="GraphRef" type="xsd:IDREF" use="optional" />
+			<xsd:attribute name="Style" type="gpml:StyleType" default="Solid" />
+			
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
+		
+			<xsd:attribute name="ModificationType" type="xsd:string" default="Unknown"/>
+			<!-- Biological modification type. suggested values: Phosphorylation, Glycosylation, ... !-->
+
+			<xsd:attribute name="ShapeType" type="xsd:string" use="required"/>
+
+		</xsd:complexType>
+
+	</xsd:element>
+<!-- End: Modification -->
 
 <!-- Line -->
 	<xsd:element name="Line">

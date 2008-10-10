@@ -11,6 +11,10 @@ E.g. mapping from affymetrix to agilent is really a rare thing to do in the
 PathVisio use-case. We should define a way to tell the user which mappings he/she
 can expect to work, and which ones won't.
 
+Other Problems to Solve
+* names of metabolites and genes are currently stored as "symbol". Each crossref needs to store it's own symbol even though this is highly redundant. Similarly, the storage of bpText is redundant as well.
+* If there are multiple synonyms (very often in the case of metabolites) there is no way to indicate which is the primary one.
+
 == Roadmap ==
 
 We're going to change the Gdb schema. This will be Gdb schema 3.
@@ -101,3 +105,4 @@ You can always use biological systemcodes for everything (data or pathways).
 We guarantee that you can always map between two biological systemcodes (entrez to ensembl), 
 or between biological systemcodes and measurement systemcodes (affymetrix to ensembl).
 Mapping between two measurement systemcodes (agilent to affymetrix) is not guaranteed to work.
+

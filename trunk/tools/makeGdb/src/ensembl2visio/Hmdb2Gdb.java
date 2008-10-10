@@ -86,6 +86,7 @@ public class Hmdb2Gdb
 		String idPubchem = null;
 		String idChebi = null;
 		String idCas = null;
+		String[] synonyms = null;
 	}
 	
 	SimpleGdb simpleGdb;
@@ -161,11 +162,21 @@ public class Hmdb2Gdb
 		error += simpleGdb.addLink(ref, ref);
 		error += simpleGdb.addAttribute(ref, "Symbol", c.symbol);
 
+		if (c.symbol != null)
+		{
+			// hmdb id is actually also the NUGOWIKI id.
+			Xref right = new Xref (c.idHmdb, DataSource.NUGOWIKI);
+			error += simpleGdb.addGene (right, bpText);
+			error += simpleGdb.addLink (ref, right);
+			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
+		}
+		
 		if (c.idKegg != null)
 		{
 			Xref right = new Xref (c.idKegg, DataSource.KEGG_COMPOUND);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
+			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
 		}
 		
 		if (c.idChebi != null)
@@ -173,6 +184,7 @@ public class Hmdb2Gdb
 			Xref right = new Xref (c.idChebi, DataSource.CHEBI);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
+			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
 		}
 		
 		if (c.idPubchem != null)
@@ -180,6 +192,7 @@ public class Hmdb2Gdb
 			Xref right = new Xref (c.idPubchem, DataSource.PUBCHEM);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
+			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
 		}
 		
 		if (c.idCas != null)
@@ -187,7 +200,16 @@ public class Hmdb2Gdb
 			Xref right = new Xref (c.idCas, DataSource.CAS);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
-		}		
+			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
+		}
+		
+		//TODO
+		/*
+		for (String synonym : c.synonyms)
+		{
+			error += simpleGdb.addAttribute(ref, "Synonym", synonym);			
+		}
+		*/
 	}
 	
 	Compound parseNext (BufferedReader in) throws IOException
@@ -201,6 +223,8 @@ public class Hmdb2Gdb
 		final int COL_OMIM = 6;
 		final int COL_CHEBI = 7;
 		final int COL_CAS = 8;
+		final int COL_SYNONYMS = 9;
+		final int COL_WIKIPEDIA = 10;
 		
 		String l;
 		l = in.readLine();
@@ -213,6 +237,7 @@ public class Hmdb2Gdb
 		result.idHmdb = cols[COL_HMDB_ID]; // CAS no
 		result.symbol = cols[COL_SYMBOL];
 		result.formula = cols[COL_FORMULA];
+		result.synonyms = cols[COL_SYNONYMS].split ("; ");
 		if (cols.length > COL_KEGG && !cols[COL_KEGG].equals("Not Available"))
 		{	
 			result.idKegg = cols[COL_KEGG];

@@ -256,6 +256,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		<jar jarfile="lib/resources.jar">
 			<fileset dir="resources" includes="**"/>
 			<fileset dir="." includes="GPML.xsd"/>
+			<fileset dir="." includes="GPML2007.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
 			<fileset dir="." includes="biopax-level2.owl"/>
 		</jar>

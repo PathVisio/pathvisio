@@ -778,7 +778,10 @@ public class GpmlFormatImpl1
 		//Style
 		o.setGroupStyle(GroupStyle.fromGpmlName(getAttribute("Group", "Style", e)));
 		//Label
-		o.setTextLabel (getAttribute("Group", "TextLabel", e));
+		String textLabel = getAttribute("Group", "TextLabel", e);
+		if(textLabel != null) {
+			o.setTextLabel (textLabel);
+		}
 	}
 	
 	private void updateGroup (PathwayElement o, Element e) throws ConverterException

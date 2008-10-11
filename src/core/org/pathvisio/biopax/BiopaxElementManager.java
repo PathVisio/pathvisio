@@ -158,8 +158,24 @@ public class BiopaxElementManager {
 	}
 	
 	/**
+	 * Add a biopax element to the biopax document, but don't ignore it
+	 * in the BiopaxElementManager. This method can be used for elemens that
+	 * are not used by PathVisio but still have to be included in the GPML
+	 * file.
+	 * @param e
+	 */
+	public void addPassiveElement(Element e) {
+		if(!Namespaces.BIOPAX.equals(e.getNamespace())) {
+			throw new IllegalArgumentException("Namespace is not BioPAX");
+		}
+		getDocument().getRootElement().addContent((Element)e.clone());
+	}
+	
+	/**
 	 * Adds an element to the biopax document. Also sets the id if
-	 * not specified, or not unique
+	 * not specified, or not unique. This method only applies to BioPAX
+	 * elements which have a reflecting Java class in the package org.pathvisio.biopax.reflect.
+	 * Other elements can be added using {@link #addPassiveElement(Element)}.
 	 * @param elm
 	 */
 	public void addElement(BiopaxElement elm) {

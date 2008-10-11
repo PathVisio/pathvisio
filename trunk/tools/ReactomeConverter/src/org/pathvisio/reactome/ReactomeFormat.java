@@ -32,7 +32,6 @@ import org.pathvisio.model.PathwayElement.MPoint;
 /**
  * Converts a reactome pathway to GPML
  * @author thomas
- *
  */
 public class ReactomeFormat {
 	static final int BORDER_OFFSET = 50 * Pathway.OLD_GMMLZOOM;

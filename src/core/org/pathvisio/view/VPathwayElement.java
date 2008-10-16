@@ -344,7 +344,6 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 			return 0;
 
 		int a, b;
-		// if only one of two is selected (XOR):
 
 		a = getZOrder();
 		b = d.getZOrder();
@@ -355,7 +354,8 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 			return hashCode() - d.hashCode();
 		}
 		else
-			return a - b;
+			// not simply "a - b" because of the risk of integer overflows
+			return a < b ? -1 : 1;
 	}	
 	
 	/** 

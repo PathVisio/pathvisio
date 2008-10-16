@@ -206,6 +206,8 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return angleEditor;
 		case DOUBLE:
 			return doubleEditor;
+		case INTEGER:
+			return integerEditor;
 		case FONT:
 			return fontEditor;
 		case SHAPETYPE:
@@ -246,7 +248,25 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return d;
 		}
 	}
-	
+
+	private static class IntegerEditor extends DefaultCellEditor {
+		private static final long serialVersionUID = 1L;
+		
+		public IntegerEditor() {
+			super(new JTextField());
+		}
+		public Object getCellEditorValue() {
+			String value = ((JTextField)getComponent()).getText();
+			Integer i = new Integer(0);
+			try {
+				i = Integer.parseInt(value);
+			} catch(Exception e) {
+				//ignore
+			}
+			return i;
+		}
+	}
+
 	private static class AngleEditor extends DefaultCellEditor {
 		private static final long serialVersionUID = 1L;
 		
@@ -456,6 +476,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	private static ComboEditor organismEditor = new ComboEditor(true, Organism.latinNames().toArray(), false);
 	private static AngleEditor angleEditor = new AngleEditor();
 	private static DoubleEditor doubleEditor = new DoubleEditor();
+	private static IntegerEditor integerEditor = new IntegerEditor();
 	private static ComboEditor fontEditor = new ComboEditor(GraphicsEnvironment
 			.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(), false);
 	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getValues(), false);
@@ -481,7 +502,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			}
 		}
 	};
-	
+
 	private static DefaultTableCellRenderer differentRenderer = new DefaultTableCellRenderer() {
 		private static final long serialVersionUID = 1L;
 

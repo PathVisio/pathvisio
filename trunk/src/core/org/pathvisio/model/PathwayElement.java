@@ -1216,6 +1216,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		mBoardWidth = src.mBoardWidth;
 		mCenterx = src.mCenterx;
 		mCentery = src.mCentery;
+		zOrder =  src.zOrder;
 		color = src.color;
 		fillColor = src.fillColor;
 		dataSource = src.dataSource;

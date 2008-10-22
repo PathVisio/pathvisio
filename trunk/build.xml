@@ -354,6 +354,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 		<jar jarfile="${wikipathways.applet.dir}/lib/resources.jar" index="true">
 			<fileset dir="resources" excludes="logo*, *.bmp, *.ai"/>
 			<fileset dir="." includes="GPML.xsd"/>
+			<fileset dir="." includes="GPML2007.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
 			<!--<fileset dir="." includes="biopax-level2.owl"/>-->
 		</jar>
@@ -470,6 +471,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swt.GuiMain
 			<fileset dir=".">
 				<include name="pathvisio_core.jar"/>
 				<include name="GPML.xsd"/>
+				<include name="GPML2007.xsd"/>
 			</fileset>
 		</copy>
 		<!-- Copy converter jar with modified main class -->

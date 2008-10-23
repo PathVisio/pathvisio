@@ -104,6 +104,7 @@ public class LinAlg
 		}
 		if(position > 1) position = 1;
 		if(position < 0) position = 0;
+		if(Double.isNaN(position)) position = 0;
 		return position;
 	}
 	/**

@@ -46,6 +46,7 @@ import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.GpmlFormatImpl1;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MLine;
@@ -400,7 +401,7 @@ public class KeggFormat {
 		String colorStringGPML = graphics.getAttributeValue("fgcolor");
 		Color colorGPML;
 		if (colorStringGPML != null) {
-			colorGPML = GpmlFormat.gmmlString2Color(colorStringGPML.substring(1));
+			colorGPML = GpmlFormatImpl1.gmmlString2Color(colorStringGPML.substring(1));
 		} else {
 			colorGPML = Color.BLACK;
 		}

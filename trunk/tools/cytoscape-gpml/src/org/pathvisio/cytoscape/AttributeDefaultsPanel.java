@@ -29,6 +29,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.Engine;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.propertypanel.TypedProperty;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
@@ -52,9 +53,10 @@ public class AttributeDefaultsPanel extends JPanel {
 		setLayout(new BorderLayout());
 		
 		//Hack to make TypedProperty work
-		Engine.init();
-		Engine.getCurrent().setWrapper(new VPathwayWrapperBase());
-		Engine.getCurrent().newPathway();
+		Engine engine = Engine.init();
+		engine.setWrapper(new VPathwayWrapperBase());
+		engine.newPathway();
+		SwingEngine swingEngine = SwingEngine.init(engine);
 		
 		this.mapper = mapper;
 		tableModel = new AttributeMapperTableModel();
@@ -63,7 +65,7 @@ public class AttributeDefaultsPanel extends JPanel {
 		PathwayElement dummyElement = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		for(PropertyType p : dummyElement.getAttributes(false)) {
 			if(!mapper.isProtected(p)) {
-				TypedProperty tp = new TypedProperty(p);
+				TypedProperty tp = new TypedProperty(swingEngine, p);
 				Object value = mapper.getDefaultValue(p);
 				if(value == null) {
 					value = dummyElement.getProperty(p);

@@ -16,7 +16,6 @@
 //
 package org.pathvisio.plugins.statistics;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,13 +43,13 @@ import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.StandaloneEngine;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.ProgressKeeper;
@@ -97,13 +96,18 @@ public class StatisticsPlugin implements Plugin
 	/**
 	 * Plugin initialization method, registers statistics action in the Data menu
 	 */
-	public void init() 
+	private SwingEngine swingEngine;
+	private StandaloneEngine standaloneEngine;
+	
+	public void init(StandaloneEngine _standaloneEngine) 
 	{
-		SwingEngine se = SwingEngine.getCurrent();
-		StatisticsAction statisticsAction = new StatisticsAction(se);
+		swingEngine = _standaloneEngine.getSwingEngine();
+		standaloneEngine = _standaloneEngine;
+		StatisticsAction statisticsAction = new StatisticsAction(swingEngine,
+				standaloneEngine.getGexManager());
 
 		Logger.log.info ("Initializing statistics plugin");
-		se.registerMenuAction ("Data", statisticsAction);
+		swingEngine.registerMenuAction ("Data", statisticsAction);
 	}
 	
 	/**
@@ -112,19 +116,21 @@ public class StatisticsPlugin implements Plugin
 	private static class StatisticsAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
-		SwingEngine se;
+		private final SwingEngine se;
+		private final GexManager gm;
 		
-		public StatisticsAction(SwingEngine se) 
+		public StatisticsAction(SwingEngine se, GexManager gm) 
 		{
 			super();
 			this.se = se;
+			this.gm = gm;
 			putValue(NAME, "Statistics...");
 			putValue(SHORT_DESCRIPTION, "Do simple pathway statistics");
 		}
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+			SimpleGex gex = gm.getCurrentGex();
 			if (gex == null)
 			{
 				JOptionPane.showMessageDialog(se.getFrame(), "Select an expression dataset first");
@@ -132,7 +138,7 @@ public class StatisticsPlugin implements Plugin
 			else
 			{
 				StatisticsDlg dlg = new StatisticsDlg();
-				dlg.createAndShowDlg(se);
+				dlg.createAndShowDlg(se, gm);
 			}
 		}
 	}
@@ -148,10 +154,12 @@ public class StatisticsPlugin implements Plugin
 		private JButton btnSave;
 		private Result result = null;
 		private JButton btnCalc;
+		private GexManager gm;
+		private SwingEngine se;
 		
 		private void updateCriterion()
 		{
-			String[] sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames().toArray(new String[0]);
+			String[] sampleNames = gm.getCurrentGex().getSampleNames().toArray(new String[0]);
 			String error = myCriterion.setExpression(txtExpr.getText(), sampleNames);
 			if (error != null)
 			{
@@ -166,9 +174,10 @@ public class StatisticsPlugin implements Plugin
 		/**
 		 * Pop up the statistics dialog
 		 */
-		private void createAndShowDlg(final SwingEngine se)
+		private void createAndShowDlg(SwingEngine _se, GexManager gm)
 		{
-			
+			this.se = _se;
+			this.gm = gm;
 			final JDialog dlg = new JDialog (se.getFrame(), "Pathway statistics", false);
 			
 			FormLayout layout = new FormLayout (
@@ -219,7 +228,7 @@ public class StatisticsPlugin implements Plugin
 				}
 			} );
 			
-			SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+			SimpleGex gex = gm.getCurrentGex();
 			final List<String> sampleNames = gex.getSampleNames();
 			final JList lstSamples = new JList(sampleNames.toArray());
 	
@@ -354,7 +363,7 @@ public class StatisticsPlugin implements Plugin
 			stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
 			resultTable.setModel (stm);
 
-			final ZScoreCalculator worker = new ZScoreCalculator(crit, stm, pwDir);
+			final ZScoreCalculator worker = new ZScoreCalculator(crit, stm, pwDir, gm.getCurrentGex(), se.getGdbManager().getCurrentGdb());
 			
 			worker.addPropertyChangeListener(new PropertyChangeListener()
 			{
@@ -417,14 +426,17 @@ public class StatisticsPlugin implements Plugin
 		int R = 0;
 		Criterion crit;
 		File pwDir;
+		SimpleGex gex;
+		Gdb gdb;
 		
 		void save (File f) throws IOException
 		{
 			PrintStream out = new PrintStream (new FileOutputStream(f));
 			
 			out.println ("Statistics results for " + new Date());
-			out.println ("Dataset: " + GexManager.getCurrent().getCurrentGex().getDbName());
+			out.println ("Dataset: " + gex.getDbName());
 			out.println ("Pathway directory: " + pwDir);
+			out.println ("Gene database: " + gdb.getDbName());
 			out.println ("Criterion: " + crit.getExpression());
 			out.println ("Rows in data (N): " + N);
 			out.println ("Rows meeting criterion (R): " + R);
@@ -446,12 +458,14 @@ public class StatisticsPlugin implements Plugin
 			firePropertyChange ("note", oldNote, note);
 		}
 		
-		ZScoreCalculator(Criterion crit, StatisticsTableModel stm, File pwDir)
+		ZScoreCalculator(Criterion crit, StatisticsTableModel stm, File pwDir, SimpleGex gex, Gdb gdb)
 		{
 			result = new Result();
 			result.crit = crit;
 			result.stm = stm;
 			result.pwDir = pwDir;
+			result.gex = gex;
+			result.gdb = gdb;
 		}
 		
 		@Override
@@ -459,20 +473,18 @@ public class StatisticsPlugin implements Plugin
 		{
 			setProgress (0);
 			setNote("Analyzing data");
-			
-			SimpleGex gex = GexManager.getCurrent().getCurrentGex();
-			
+						
 			// first we calculate N and R
 			
 			try
 			{
-				int maxRow = gex.getMaxRow();
+				int maxRow = result.gex.getMaxRow();
 				for (int i = 0; i < maxRow; ++i)
 				{
 					if (isCancelled()) return null;
 					try
 					{
-						Data d = gex.getRow(i);
+						Data d = result.gex.getRow(i);
 						result.N++;
 						boolean eval = result.crit.evaluate(d.getSampleData());
 						if (eval)
@@ -531,7 +543,7 @@ public class StatisticsPlugin implements Plugin
 					
 					try
 					{
-						gex.cacheData(srcRefs, new ProgressKeeper(1000), gdb);
+						result.gex.cacheData(srcRefs, new ProgressKeeper(1000), gdb);
 					}
 					catch (DataException e)
 					{
@@ -547,7 +559,7 @@ public class StatisticsPlugin implements Plugin
 					{
 						if (isCancelled()) return null;
 						
-						List<Data> rows = gex.getCachedData().getData(srcRef);
+						List<Data> rows = result.gex.getCachedData().getData(srcRef);
 						
 						if (rows != null)
 						{

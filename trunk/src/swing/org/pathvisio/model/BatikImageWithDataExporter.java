@@ -38,8 +38,12 @@ import org.w3c.dom.Document;
 
 public class BatikImageWithDataExporter extends ImageExporter 
 {
-	public BatikImageWithDataExporter(String type) {
+	private final VisualizationManager visualizationManager;
+	
+	public BatikImageWithDataExporter(String type, VisualizationManager visualizationManager) 
+	{
 		super(type);
+		this.visualizationManager = visualizationManager;
 	}
 
 	protected boolean dataVisible = true; // true by default
@@ -61,7 +65,7 @@ public class BatikImageWithDataExporter extends ImageExporter
 		// if data visualization is enabled, link this VPathway up to the visualization manager.
 		if (dataVisible)
 		{
-			vPathway.addVPathwayListener(VisualizationManager.getCurrent());
+			vPathway.addVPathwayListener(visualizationManager);
 		}
 
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();

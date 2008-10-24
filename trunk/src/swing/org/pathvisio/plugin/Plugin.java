@@ -16,6 +16,8 @@
 //
 package org.pathvisio.plugin;
 
+import org.pathvisio.gui.swing.StandaloneEngine;
+
 /**
  * This interface needs to be implemented by PathVisio plugins
  * @author thomas
@@ -24,5 +26,5 @@ public interface Plugin {
 	/**
 	 * Called on loading the plugin
 	 */
-	public void init();
+	public void init(StandaloneEngine standaloneEngine);
 }

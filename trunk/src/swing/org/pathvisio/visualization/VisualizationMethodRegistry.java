@@ -30,6 +30,7 @@ public class VisualizationMethodRegistry {
 	
 	private static VisualizationMethodRegistry current;
 	
+	@Deprecated
 	public static VisualizationMethodRegistry getCurrent() {
 		if(current == null) {
 			current = new VisualizationMethodRegistry();

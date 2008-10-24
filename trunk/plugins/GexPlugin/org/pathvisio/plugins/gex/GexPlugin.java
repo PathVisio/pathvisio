@@ -23,10 +23,9 @@ import javax.swing.JOptionPane;
 
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
-import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.GexImportWizard;
-import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.StandaloneEngine;
 import org.pathvisio.plugin.Plugin;
 
 /**
@@ -36,12 +35,13 @@ import org.pathvisio.plugin.Plugin;
  */
 public class GexPlugin implements Plugin {
 
-	public void init() {
-		ImportGexDataAction importAction = new ImportGexDataAction();
-		SelectGexAction selectAction = new SelectGexAction();
+	public void init(StandaloneEngine standaloneEngine) 
+	{
+		ImportGexDataAction importAction = new ImportGexDataAction(standaloneEngine);
+		SelectGexAction selectAction = new SelectGexAction(standaloneEngine);
 		
-		SwingEngine.getCurrent().registerMenuAction ("Data", importAction);
-		SwingEngine.getCurrent().registerMenuAction ("Data", selectAction);
+		standaloneEngine.getSwingEngine().registerMenuAction ("Data", importAction);
+		standaloneEngine.getSwingEngine().registerMenuAction ("Data", selectAction);
 	}
 	
 	/**
@@ -51,19 +51,20 @@ public class GexPlugin implements Plugin {
 	{
 		private static final long serialVersionUID = 1L;
 		
-		public ImportGexDataAction()
+		private final StandaloneEngine sae;
+		
+		public ImportGexDataAction(StandaloneEngine sae)
 		{
 			super();
+			this.sae = sae;
 			putValue (NAME, "Import expression data");
 			putValue (SHORT_DESCRIPTION, "Import data from a tab delimited text file, for example experimental data from a high-throughput experiment");
 		}
 		
 		public void actionPerformed (ActionEvent e)
 		{
-			GexImportWizard wizard = new GexImportWizard();
-			int ret = wizard.showModalDialog(SwingEngine.getCurrent().getFrame());
-			
-			// ret == (0=Finish,1=Cancel,2=Error) 
+			GexImportWizard wizard = new GexImportWizard(sae);
+			wizard.showModalDialog(sae.getSwingEngine().getFrame());
 		}
 	}
 	
@@ -71,8 +72,13 @@ public class GexPlugin implements Plugin {
 	 * Let the user open an expression dataset
 	 * @author thomas
 	 */
-	public static class SelectGexAction extends AbstractAction {
-		public SelectGexAction() {
+	public static class SelectGexAction extends AbstractAction 
+	{
+		private static final long serialVersionUID = 1L;
+		private final StandaloneEngine se;
+		
+		public SelectGexAction(StandaloneEngine standaloneEngine) {
+			se = standaloneEngine;
 			putValue(NAME, "Select expression dataset");
 			putValue(SHORT_DESCRIPTION, "Select expression dataset");
 		}
@@ -86,7 +92,7 @@ public class GexPlugin implements Plugin {
 				 * throws an exception if that fails
 				 */
 				DBConnectorSwing dbcon;
-				DBConnector dbc = GexManager.getCurrent().getDBConnector();
+				DBConnector dbc = se.getGexManager().getDBConnector();
 				if(dbc instanceof DBConnectorSwing) 
 				{
 					dbcon = (DBConnectorSwing)dbc;
@@ -100,8 +106,8 @@ public class GexPlugin implements Plugin {
 				
 				if(dbName == null) return;
 				
-				GexManager.getCurrent().setCurrentGex(dbName, false);
-				SwingEngine.getCurrent().loadGexCache();
+				se.getGexManager().setCurrentGex(dbName, false);
+				se.loadGexCache();
 			} 
 			catch(Exception ex) 
 			{

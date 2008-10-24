@@ -99,7 +99,7 @@ public class GexSwt
 		public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			super.run(monitor);
 			monitor.beginTask("Importing data", getTotalWork());
-			GexTxtImporter.importFromTxt(info, this, gdb);
+			GexTxtImporter.importFromTxt(info, this, gdb, GexManager.getCurrent());
 		}
 	}	
 }

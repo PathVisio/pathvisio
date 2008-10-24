@@ -49,37 +49,31 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
 /**
  * Maintains the visualizations
  */
-public class VisualizationManager implements GexManagerListener, VPathwayListener, ApplicationEventListener {
-	private static VisualizationManager current;
-	
-	public static VisualizationManager getCurrent() {
-		if(current == null) {
-			current = new VisualizationManager(
-					VisualizationMethodRegistry.getCurrent(),
-					new ColorSetManager()
-			);
-		}
-		return current;
-	}
+public class VisualizationManager implements GexManagerListener, VPathwayListener, ApplicationEventListener 
+{
 	/**
 	   name of the top-level xml element
 	 */
 	public static final String XML_ELEMENT = "visualizations";
 	
-	private ColorSetManager colorSetMgr;
-	VisualizationMethodRegistry methodRegistry;
+	private final ColorSetManager colorSetMgr;
+	private final Engine engine;
+	private final GexManager gexManager;
+	private final VisualizationMethodRegistry methodRegistry;
 	
-	private VisualizationManager(VisualizationMethodRegistry methodRegistry, 
-			ColorSetManager colorSetMgr) {
-		this.colorSetMgr = colorSetMgr;
+	public VisualizationManager(VisualizationMethodRegistry methodRegistry, 
+			Engine engine, GexManager gexManager) {
+		colorSetMgr = new ColorSetManager();
+		this.engine = engine;
+		this.gexManager = gexManager;
 		this.methodRegistry = methodRegistry;
-		GexManager.getCurrent().addListener(this);
-		Engine.getCurrent().addApplicationEventListener(this);
-		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		gexManager.addListener(this);
+		engine.addApplicationEventListener(this);
+		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) {
 			vp.addVPathwayListener(this);
 		}
-		if(GexManager.getCurrent().isConnected()) {
+		if(gexManager.isConnected()) {
 			loadXML();
 		}
 	}
@@ -242,7 +236,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	 * @param v The visualization that has been modified.
 	 */
 	protected void visualizationModified(Visualization v) {
-		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) {
 			vp.redraw();
 		}
@@ -270,7 +264,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 
 	public  InputStream getXmlInput()
 	{
-		File xmlFile = new File(GexManager.getCurrent().getCurrentGex().getDbName() + ".xml");
+		File xmlFile = new File(gexManager.getCurrentGex().getDbName() + ".xml");
 		Logger.log.trace("Getting visualizations xml: " + xmlFile);
 		try {
 			if(!xmlFile.exists()) xmlFile.createNewFile();
@@ -284,7 +278,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	
 	public  OutputStream getXmlOutput() {
 		try {
-			File f = new File(GexManager.getCurrent().getCurrentGex().getDbName() + ".xml");
+			File f = new File(gexManager.getCurrentGex().getDbName() + ".xml");
 			Logger.log.trace("Visualization settings will be saved to: " + f);
 			OutputStream out = new FileOutputStream(f);
 			return out;
@@ -295,7 +289,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	}
 	
 	public  void saveXML() {
-		if(!GexManager.getCurrent().isConnected()) return;
+		if(!gexManager.isConnected()) return;
 		
 		OutputStream out = getXmlOutput();
 		

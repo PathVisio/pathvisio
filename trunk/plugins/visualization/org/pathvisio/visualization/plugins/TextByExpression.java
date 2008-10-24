@@ -77,8 +77,11 @@ public class TextByExpression extends VisualizationMethod
 	Font font;
 	List<Sample> useSamples = new ArrayList<Sample>();
 	
-	public TextByExpression(Visualization v, String registeredName) {
+	private final GexManager gexManager;
+	
+	public TextByExpression(Visualization v, String registeredName, GexManager gexManager) {
 		super(v, registeredName);
+		this.gexManager = gexManager;
 		setIsConfigurable(true);
 		setUseProvidedArea(false);
 	}
@@ -94,7 +97,7 @@ public class TextByExpression extends VisualizationMethod
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+			SimpleGex gex = gexManager.getCurrentGex();
 			if(gex == null) return;
 			
 			CachedData  cache = gex.getCachedData();
@@ -130,7 +133,7 @@ public class TextByExpression extends VisualizationMethod
 	public Component visualizeOnToolTip(Graphics g) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			CachedData  cache = GexManager.getCurrent().getCurrentGex().getCachedData();
+			CachedData  cache = gexManager.getCurrentGex().getCachedData();
 			
 			Xref idc = new Xref(
 					gp.getPathwayElement().getGeneID(), 
@@ -361,7 +364,7 @@ public class TextByExpression extends VisualizationMethod
 		for(Object o : xml.getChildren(XML_ELM_ID)) {
 			try {
 				int id = Integer.parseInt(((Element)o).getText());
-				useSamples.add(GexManager.getCurrent().getCurrentGex().getSample(id));
+				useSamples.add(gexManager.getCurrentGex().getSample(id));
 			} catch(Exception e) { Logger.log.error("Unable to add sample", e); }
 		}
 		roundTo = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ROUND));

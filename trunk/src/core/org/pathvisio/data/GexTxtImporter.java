@@ -47,7 +47,7 @@ public class GexTxtImporter
 	 * @param p	{@link ProgressKeeper} that reports the progress of the process and enables
 	 * the user to cancel. May be null for headless mode operation.
 	 */
-	public static void importFromTxt(ImportInformation info, ProgressKeeper p, Gdb currentGdb)
+	public static void importFromTxt(ImportInformation info, ProgressKeeper p, Gdb currentGdb, GexManager gexManager)
 	{
 		SimpleGex result = null;
 		int importWork = 0;
@@ -77,7 +77,7 @@ public class GexTxtImporter
 			if (p != null) p.report("\nCreating expression dataset");
 						
 			//Create a new expression database (or overwrite existing)
-			result = new SimpleGex(info.getDbName(), true, GexManager.getCurrent().getDBConnector());
+			result = new SimpleGex(info.getDbName(), true, gexManager.getDBConnector());
 			
 			if (p != null)
 			{
@@ -280,7 +280,7 @@ public class GexTxtImporter
 			error.println("Time to create expression dataset: " + timer.stop());
 			error.close();
 			
-			GexManager.getCurrent().setCurrentGex(result.getDbName(), false);
+			gexManager.setCurrentGex(result.getDbName(), false);
 			if (p != null) p.finished();
 		} 
 		catch(Exception e) 

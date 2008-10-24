@@ -64,14 +64,17 @@ public class ColorByExpression extends VisualizationMethod {
 	private List<ConfiguredSample> useSamples = new ArrayList<ConfiguredSample>();
 	List<URL> imageURLs;
 
+	private final GexManager gexManager;
+	
 	private List<URL> defaultURLs() {
 		return new ArrayList<URL>(Arrays.asList(new URL[] {
 				Resources.getResourceURL("protein_hi.bmp"),
 				Resources.getResourceURL("mRNA_hi.bmp") }));
 	}
 	
-	public ColorByExpression(Visualization v, String registeredName) {
+	public ColorByExpression(Visualization v, String registeredName, GexManager gexManager) {
 		super(v, registeredName);
+		this.gexManager = gexManager;
 		setIsConfigurable(true);
 		setUseProvidedArea(true);
 	}
@@ -223,7 +226,7 @@ public class ColorByExpression extends VisualizationMethod {
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
 			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
-			CachedData cache = GexManager.getCurrent().getCurrentGex().getCachedData();
+			CachedData cache = gexManager.getCurrentGex().getCachedData();
 			if(cache == null) continue;
 			
 			if(s.getColorSet() == null) {
@@ -291,7 +294,7 @@ public class ColorByExpression extends VisualizationMethod {
 	}
 
 	void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
-		CachedData cache = GexManager.getCurrent().getCurrentGex().getCachedData();
+		CachedData cache = gexManager.getCurrentGex().getCachedData();
 		ColorSet cs = s.getColorSet();
 		
 		if(s.hasImage()) {
@@ -484,7 +487,7 @@ public class ColorByExpression extends VisualizationMethod {
 		private final void loadXML(Element xml) throws Exception {
 			int id = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ID));
 			String csn = xml.getAttributeValue(XML_ATTR_COLORSET);
-			sample = GexManager.getCurrent().getCurrentGex().getSamples().get(id);
+			sample = gexManager.getCurrentGex().getSamples().get(id);
 			setColorSet(getVisualization().getManager().getColorSetManager().getColorSet(csn));
 			loadAttributes(xml);
 		}

@@ -25,6 +25,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.StandaloneEngine;
 
 /**
  * This class loads and maintains a collection of plugins
@@ -37,12 +38,16 @@ public class PluginManager {
 	
 	Set<Class<Plugin>> plugins = new LinkedHashSet<Class<Plugin>>();
 	
+	final StandaloneEngine standaloneEngine;
+	
 	/**
 	 * Create a plugin manager that loads plugins from the given locations
 	 * @param pluginLocations An array of File objects pointing to jar files 
 	 * or directories that will be searched recursively for jar files.
 	 */
-	public PluginManager(String[] pluginLocations) {
+	public PluginManager(String[] pluginLocations, StandaloneEngine standaloneEngine) {
+		this.standaloneEngine = standaloneEngine;
+		
 		for(String s : pluginLocations) {
 			loadPlugins(s);
 		}
@@ -119,7 +124,7 @@ public class PluginManager {
 	}
 	
 	void loadPlugin(Class<Plugin> c) throws InstantiationException, IllegalAccessException {
-			c.newInstance().init();
+			c.newInstance().init(standaloneEngine);
 			plugins.add(c);
 			Logger.log.trace("\tLoaded plugin: " + c);
 	}

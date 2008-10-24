@@ -191,7 +191,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
 					try {
-						swingEngine.getEngine().openUrl(e.getURL());
+						swingEngine.openUrl(e.getURL());
 					} catch(UnsupportedOperationException ex) {
 						Logger.log.error("Unable to open URL", ex);
 						JOptionPane.showMessageDialog(

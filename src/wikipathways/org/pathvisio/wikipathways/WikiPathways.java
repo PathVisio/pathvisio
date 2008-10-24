@@ -48,7 +48,6 @@ import org.apache.xmlrpc.util.HttpUtil;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
-import org.pathvisio.Engine.Browser;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.GdbManager;
@@ -56,6 +55,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.SwingEngine.Browser;
 import org.pathvisio.gui.wikipathways.Actions;
 import org.pathvisio.gui.wikipathways.SaveReminder;
 import org.pathvisio.model.ConverterException;
@@ -116,7 +116,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		cookie = new HashMap<String, String>();
 		this.swingEngine = swingEngine;
 		this.engine = swingEngine.getEngine();
-		engine.setUrlBrowser(new Browser() {
+		swingEngine.setUrlBrowser(new Browser() {
 			public void openUrl(URL url) {
 				WikiPathways.this.uiHandler.showDocument(url, "_blank");
 			}

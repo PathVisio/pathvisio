@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
@@ -33,7 +32,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import org.pathvisio.debug.Logger;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 

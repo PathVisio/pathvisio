@@ -27,7 +27,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.Visualization;

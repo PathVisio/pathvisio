@@ -487,9 +487,12 @@ public class CommonActions implements ApplicationEventListener {
 		VPathwayElement element;
 		Component parent;
 		
-		public PathwayElementDialogAction(Component parent, VPathwayElement e) {
+		SwingEngine swingEngine;
+		
+		public PathwayElementDialogAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
 			super();
 			this.parent = parent;
+			this.swingEngine = swingEngine;
 			element = e;
 			//If the element is an empty selectionbox,
 			//the an empty space on the drawing is clicked
@@ -511,7 +514,7 @@ public class CommonActions implements ApplicationEventListener {
 			if(element instanceof Graphics) {
 				PathwayElement p = ((Graphics)element).getPathwayElement();
 				PathwayElementDialog pd = PathwayElementDialog.getInstance(
-						p, !element.getDrawing().isEditMode(), null, parent);
+						swingEngine, p, !element.getDrawing().isEditMode(), null, parent);
 				if(pd != null) {
 					pd.selectPathwayElementPanel(getSelectedPanel());
 					pd.setVisible(true);
@@ -524,8 +527,8 @@ public class CommonActions implements ApplicationEventListener {
 	
 	public static class AddLiteratureAction extends PathwayElementDialogAction {
 		private static final long serialVersionUID = 1L;
-		public AddLiteratureAction(Component parent, VPathwayElement e) {
-			super(parent, e);
+		public AddLiteratureAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
+			super(swingEngine, parent, e);
 			putValue(NAME, "Add literature reference");
 			putValue(SHORT_DESCRIPTION, "Add a literature reference to this element");
 			setEnabled(e.getDrawing().isEditMode());
@@ -553,8 +556,8 @@ public class CommonActions implements ApplicationEventListener {
 	public static class EditLiteratureAction extends PathwayElementDialogAction {
 		private static final long serialVersionUID = 1L;
 
-		public EditLiteratureAction(Component parent, VPathwayElement e) {
-			super(parent, e);
+		public EditLiteratureAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
+			super(swingEngine, parent, e);
 			putValue(NAME, "Edit literature references");
 			putValue(SHORT_DESCRIPTION, "Edit the literature references of this element");
 			setEnabled(e.getDrawing().isEditMode());
@@ -568,8 +571,8 @@ public class CommonActions implements ApplicationEventListener {
 	public static class PropertiesAction extends PathwayElementDialogAction {
 		private static final long serialVersionUID = 1L;
 
-		public PropertiesAction(Component parent, VPathwayElement e) {
-			super(parent, e);
+		public PropertiesAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
+			super(swingEngine, parent, e);
 			putValue(NAME, "Properties");
 			putValue(SHORT_DESCRIPTION, "View this element's properties");
 		}

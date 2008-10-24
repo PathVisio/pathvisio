@@ -44,7 +44,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.Engine;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
@@ -64,8 +64,9 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	PropertyType type;
 	boolean different;
 
-	public TypedProperty(PropertyType type) {
+	public TypedProperty(SwingEngine swingEngine, PropertyType type) {
 		this.type = type;
+		this.swingEngine = swingEngine;
 		elements = new HashSet<PathwayElement>();
 	}
 	
@@ -100,13 +101,9 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	}
 	
 	public void setValue(Object value) {
-		setValue(value, true);
-	}
-	
-	public void setValue(Object value, boolean setElement) {
 		this.value = value;
-		if(value != null && setElement) {
-			Engine.getCurrent().getActiveVPathway().getUndoManager().newAction (
+		if(value != null) {
+			swingEngine.getEngine().getActiveVPathway().getUndoManager().newAction (
 					"Change " + type + " property");
 			for(PathwayElement e : elements) {
 				e.setProperty(type, value);
@@ -125,7 +122,10 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	public boolean hasDifferentValues() { return different; }
 	public void setHasDifferentValues(boolean diff) { different = diff; }
 
-	public TableCellRenderer getCellRenderer() {
+	private SwingEngine swingEngine;
+	
+	public TableCellRenderer getCellRenderer() 
+	{
 		if(hasDifferentValues()) return differentRenderer;
 		switch(type.type()) {
 		case COLOR:
@@ -213,6 +213,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		case SHAPETYPE:
 			return shapeTypeEditor;
 		case COMMENTS:
+			CommentsEditor commentsEditor = new CommentsEditor(swingEngine);
 			commentsEditor.setInput(this);
 			return commentsEditor;
 		case OUTLINETYPE:
@@ -371,7 +372,10 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		
 		protected static final String EDIT = "edit";
 
-		public CommentsEditor() {
+		private SwingEngine swingEngine;
+		
+		public CommentsEditor(SwingEngine swingEngine) {
+			this.swingEngine = swingEngine;
 			button = new JButton();
 			button.setText(BUTTON_LABEL);
 			button.setActionCommand("edit");
@@ -395,7 +399,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			if (EDIT.equals(e.getActionCommand()) && property != null) {
 				currentElement = property.getFirstElement();
 				if(currentElement != null) {
-					PathwayElementDialog d = PathwayElementDialog.getInstance(currentElement, false, null, this.button);
+					PathwayElementDialog d = PathwayElementDialog.getInstance(swingEngine, currentElement, false, null, this.button);
 					d.selectPathwayElementPanel(PathwayElementDialog.TAB_COMMENTS);
 					d.setVisible(true);
 					fireEditingCanceled(); //Value is directly saved in dialog
@@ -489,7 +493,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			super.setValue( (Double)(value) * 180.0 / Math.PI );
 		}
 	};
-	private static CommentsEditor commentsEditor = new CommentsEditor();
+	
 	private static ComboEditor datanodeTypeEditor = new ComboEditor(DataNodeType.getNames(), false);
 	
 	private static DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer() {

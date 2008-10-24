@@ -61,7 +61,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 	 * {@link Handle}, the menu is based on the parent element.
 	 * @return The {@link JPopupMenu} for the given pathway element
 	 */
-	private static JPopupMenu getMenuInstance(VPathwayElement e) {
+	private static JPopupMenu getMenuInstance(SwingEngine swingEngine, VPathwayElement e) {
 		if(e instanceof Citation) return null;
 		
 		if(e instanceof Handle) e = ((Handle)e).getParent();
@@ -157,14 +157,21 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		menu.add(orderMenu);
 		
 		JMenu litMenu = new JMenu("Literature");
-		litMenu.add(new AddLiteratureAction(component, e));
-		litMenu.add(new EditLiteratureAction(component, e));
+		litMenu.add(new AddLiteratureAction(swingEngine, component, e));
+		litMenu.add(new EditLiteratureAction(swingEngine, component, e));
 		menu.add(litMenu);
 		if(e instanceof Graphics) {
 			menu.addSeparator();
-			menu.add(new PropertiesAction(component,e));
+			menu.add(new PropertiesAction(swingEngine, component,e));
 		}
 		return menu;
+	}
+	
+	private SwingEngine swingEngine;
+	
+	PathwayElementMenuListener(SwingEngine swingEngine)
+	{
+		this.swingEngine = swingEngine;
 	}
 	
 	public void vPathwayEvent(VPathwayEvent e) {
@@ -172,8 +179,8 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		case VPathwayEvent.ELEMENT_CLICKED_DOWN:
 			if(e.getAffectedElement() instanceof Citation) {
 				Citation c = (Citation)e.getAffectedElement();
-				PathwayElementDialog d = PathwayElementDialog.getInstance(
-						c.getParent().getPathwayElement(), false
+				PathwayElementDialog d = PathwayElementDialog.getInstance(swingEngine,
+						c.getParent().getPathwayElement(), false, null, null
 				);
 				d.selectPathwayElementPanel(PathwayElementDialog.TAB_LITERATURE);
 				d.setVisible(true);
@@ -186,7 +193,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			if(e.getMouseEvent().isPopupTrigger()) {
 				Component invoker = (VPathwaySwing)e.getVPathway().getWrapper();
 				MouseEvent me = e.getMouseEvent();
-				JPopupMenu m = getMenuInstance(e.getAffectedElement());
+				JPopupMenu m = getMenuInstance(swingEngine, e.getAffectedElement());
 				if(m != null) {
 					m.show(invoker, me.getX(), me.getY());
 				}

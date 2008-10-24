@@ -22,7 +22,7 @@ import java.util.HashMap;
 
 import javax.swing.JTabbedPane;
 
-import org.pathvisio.Engine;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.panels.CommentPanel;
 import org.pathvisio.gui.swing.panels.LitReferencePanel;
 import org.pathvisio.gui.swing.panels.PathwayElementPanel;
@@ -51,20 +51,16 @@ public class PathwayElementDialog extends OkCancelDialog {
 	 * @return An instance of a subclass of PathwayElementDialog (depends on the
 	 * type attribute of the given PathwayElement, e.g. type DATANODE returns a DataNodeDialog
 	 */
-	public static PathwayElementDialog getInstance(PathwayElement e, boolean readonly) {
-		return getInstance(e, readonly, null, null);
-	}
-	
-	public static PathwayElementDialog getInstance(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
+	public static PathwayElementDialog getInstance(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		switch(e.getObjectType()) {
 		case ObjectType.LABEL:
-			return new LabelDialog(e, readonly, frame, locationComp);
+			return new LabelDialog(swingEngine, e, readonly, frame, locationComp);
 		case ObjectType.DATANODE:
-			return new DataNodeDialog(e, readonly, frame, locationComp);
+			return new DataNodeDialog(swingEngine, e, readonly, frame, locationComp);
 		case ObjectType.INFOBOX:
-			return new PathwayElementDialog(e.getParent().getMappInfo(), readonly, frame, "Pathway properties", locationComp);
+			return new PathwayElementDialog(swingEngine, e.getParent().getMappInfo(), readonly, frame, "Pathway properties", locationComp);
 		default:
-			return new PathwayElementDialog(e, readonly, frame, "Element properties", locationComp);
+			return new PathwayElementDialog(swingEngine, e, readonly, frame, "Element properties", locationComp);
 		}
 	}
 	
@@ -75,10 +71,12 @@ public class PathwayElementDialog extends OkCancelDialog {
 	private Pathway originalPathway; //Used for undo event
 		
 	protected boolean readonly;
+	protected SwingEngine swingEngine;
 	
-	protected PathwayElementDialog(PathwayElement e, boolean readonly, Frame frame, String title, Component locationComp) {
+	protected PathwayElementDialog(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, String title, Component locationComp) {
 		super(frame, title, locationComp, true);
 		this.readonly = readonly;
+		this.swingEngine = swingEngine;
 		setDialogComponent(createDialogPane());
 		panels = new HashMap<String, PathwayElementPanel>();
 		createTabs();
@@ -188,7 +186,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	 * Called when the OK button is pressed. Will close the dialog amd register an undo event.
 	 */
 	protected void okPressed() {
-		VPathway p = Engine.getCurrent().getActiveVPathway();
+		VPathway p = swingEngine.getEngine().getActiveVPathway();
 		p.getUndoManager().newAction(
 				new UndoAction("Modified element properties", originalPathway)
 		);

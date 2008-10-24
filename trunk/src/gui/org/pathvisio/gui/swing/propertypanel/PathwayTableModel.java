@@ -32,8 +32,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
@@ -56,13 +56,15 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	HashMap<PropertyType, TypedProperty> propertyValues;
 	List<TypedProperty> shownProperties;
 	
-	public PathwayTableModel() {
+	private SwingEngine swingEngine;
+	
+	public PathwayTableModel(SwingEngine swingEngine) {
 		input = new HashSet<PathwayElement>();
 		propertyValues = new HashMap<PropertyType, TypedProperty>();
 		shownProperties = new ArrayList<TypedProperty>();
-		
-		Engine.getCurrent().addApplicationEventListener(this);
-		VPathway vp = Engine.getCurrent().getActiveVPathway();
+		this.swingEngine = swingEngine;
+		swingEngine.getEngine().addApplicationEventListener(this);
+		VPathway vp = swingEngine.getEngine().getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
 	}
 	
@@ -123,7 +125,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			
 			TypedProperty tp = propertyValues.get(p);
 			if(tp == null) {
-				propertyValues.put(p, tp = new TypedProperty(p));
+				propertyValues.put(p, tp = new TypedProperty(swingEngine, p));
 			}
 			if(remove) {
 				tp.removeElement(e);
@@ -180,7 +182,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			TypedProperty p = getPropertyAt(rowIndex);
 			p.setValue(aValue);
 		}
-		Engine.getCurrent().getActiveVPathway().redrawDirtyRect();
+		swingEngine.getEngine().getActiveVPathway().redrawDirtyRect();
 	}
 	
 	public String getColumnName(int column) {
@@ -190,8 +192,8 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return columnIndex == 1 &&
-				Engine.getCurrent().hasVPathway() && 
-				Engine.getCurrent().getActiveVPathway().isEditMode();
+				swingEngine.getEngine().hasVPathway() && 
+				swingEngine.getEngine().getActiveVPathway().isEditMode();
 	}
 		
 	public void selectionEvent(SelectionEvent e) {

@@ -142,7 +142,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	
 	private void createTabs() {
 		addPathwayElementPanel(TAB_COMMENTS, new CommentPanel());
-		addPathwayElementPanel(TAB_LITERATURE, new LitReferencePanel());
+		addPathwayElementPanel(TAB_LITERATURE, new LitReferencePanel(swingEngine));
 		addCustomTabs(dialogPane);
 	}
 	

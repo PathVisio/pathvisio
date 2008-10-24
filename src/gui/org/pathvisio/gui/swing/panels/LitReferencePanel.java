@@ -64,7 +64,11 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	JScrollPane refPanel;
 	JButton addBtn;
 	
-	public LitReferencePanel() {
+	final private SwingEngine swingEngine;
+	
+	public LitReferencePanel(SwingEngine swingEngine) 
+	{
+		this.swingEngine = swingEngine;
 		setLayout(new BorderLayout(5, 5));
 		xrefs = new ArrayList<PublicationXRef>();
 		addBtn = new JButton(ADD);
@@ -93,6 +97,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 
 	
 	private class XRefPanel extends JPanel implements HyperlinkListener, ActionListener {
+		private static final long serialVersionUID = 1L;
 		PublicationXRef xref;
 		JPanel btnPanel;
 		
@@ -163,7 +168,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		
 		public void hyperlinkUpdate(HyperlinkEvent e) {
 			if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-				SwingEngine.getCurrent().openUrl(e.getURL());
+				swingEngine.openUrl(e.getURL());
 			}
 		}
 		

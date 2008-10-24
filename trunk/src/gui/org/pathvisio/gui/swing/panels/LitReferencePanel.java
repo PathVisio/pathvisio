@@ -35,11 +35,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.pathvisio.Engine;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.Resources;
@@ -163,7 +163,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		
 		public void hyperlinkUpdate(HyperlinkEvent e) {
 			if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-				Engine.getCurrent().openUrl(e.getURL());
+				SwingEngine.getCurrent().openUrl(e.getURL());
 			}
 		}
 		

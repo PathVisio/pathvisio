@@ -37,7 +37,7 @@ import javax.swing.UIManager;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
-import org.pathvisio.Engine.Browser;
+import org.pathvisio.gui.swing.SwingEngine.Browser;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
@@ -312,16 +312,6 @@ public class GuiMain
 				Engine engine = Engine.init();
 				initLog(engine);
 				engine.setApplicationName("PathVisio 1.1");
-				engine.setUrlBrowser(new Browser() {
-					public void openUrl(URL url) {
-						try {
-							BrowserLauncher b = new BrowserLauncher(null);
-							b.openURLinBrowser(url.toString());
-						} catch (Exception ex) {
-							Logger.log.error ("Couldn't open url '" + url + "'", ex);
-						}
-					}
-				});
 				if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
 				{
 					try {
@@ -333,6 +323,16 @@ public class GuiMain
 				}
 
 				SwingEngine swingEngine = SwingEngine.init(engine);
+				swingEngine.setUrlBrowser(new Browser() {
+					public void openUrl(URL url) {
+						try {
+							BrowserLauncher b = new BrowserLauncher(null);
+							b.openURLinBrowser(url.toString());
+						} catch (Exception ex) {
+							Logger.log.error ("Couldn't open url '" + url + "'", ex);
+						}
+					}
+				});
 				swingEngine.getGdbManager().initPreferred();
 				MainPanelStandalone mps = new MainPanelStandalone(engine, swingEngine);
 				JFrame frame = gui.createAndShowGUI(mps, swingEngine);

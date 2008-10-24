@@ -17,7 +17,6 @@
 package org.pathvisio.data;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;

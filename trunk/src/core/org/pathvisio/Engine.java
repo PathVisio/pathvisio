@@ -400,34 +400,6 @@ public class Engine
 		fireApplicationEvent(e);
 	}
 	
-	private Browser browser = null;
-	
-	/**
-	 * Set the browser launcher that will be used to open urls in the
-	 * system's default web browser.
-	 */
-	public void setUrlBrowser(Browser b) {
-		this.browser = b;
-	}
-	
-	/**
-	 * Opens an URL in the system's default browser if a browser is set
-	 * @see #setUrlBrowser
-	 * @throws UnsupportedOperationException when there is no browser set.
-	 */
-	public void openUrl(URL url) throws UnsupportedOperationException {
-		if(browser != null) browser.openUrl(url);
-	}
-	
-	/**
-	 * Simple interface to allow different browser launcher implementations.
-	 * Note: Java 1.6 provides an easy method to open an url in the default system browser
-	 * using {@link Desktop#browse(java.net.URI)}, we should use this in the future.
-	 * @author thomas
-	 */
-	public interface Browser {
-		public void openUrl(URL url);
-	}
 	
 	//TODO:
 	// Constants for swing version.

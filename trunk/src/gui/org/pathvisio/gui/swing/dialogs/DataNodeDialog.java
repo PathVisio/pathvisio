@@ -57,8 +57,11 @@ import org.pathvisio.util.RunnableWithProgress;
 public class DataNodeDialog extends PathwayElementDialog {
 	private static final long serialVersionUID = 1L;
 
+	private final SwingEngine swingEngine;
+	
 	protected DataNodeDialog(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		super(swingEngine, e, readonly, frame, "DataNode properties", locationComp);
+		this.swingEngine = swingEngine;
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
 	}
@@ -106,7 +109,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public List<XrefWithSymbol> excecuteCode() 
 			{
 				final int QUERY_LIMIT = 200;
-				Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
+				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
 
 				List<XrefWithSymbol> result = gdb.freeSearch(text, QUERY_LIMIT); 
 
@@ -214,7 +217,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public Object[] provideOptions(String text) {
 				if(text == null) return new Object[0];
 
-				Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
+				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
 				List<String> symbols = gdb.getSymbolSuggestions(text, 100);
 				return symbols.toArray();
 			}
@@ -224,7 +227,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public Object[] provideOptions(String text) {
 				if(text == null) return new Object[0];
 
-				Gdb gdb = SwingEngine.getCurrent().getGdbManager().getCurrentGdb();
+				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
 				List<Xref> refs = gdb.getIdSuggestions(text, 100);
 				//Only take identifiers
 				String[] ids = new String[refs.size()];

@@ -26,15 +26,17 @@ public class BibliographyApplet extends PathwayPageApplet
 {
 	private static final long serialVersionUID = 1L;
 
+	@Override
 	protected void createGui() {
 		Container content = getContentPane();
 		
 		Pathway pathway = wiki.getPathway();
-		LitReferencePanel refPanel = new LitReferencePanel();
+		LitReferencePanel refPanel = new LitReferencePanel(wiki.getSwingEngine());
 		refPanel.setInput(pathway.getMappInfo());
 		content.add(refPanel, BorderLayout.CENTER);
 	}
 	
+	@Override
 	protected String getDefaultDescription() {
 		return "Modified bibliography";
 	}

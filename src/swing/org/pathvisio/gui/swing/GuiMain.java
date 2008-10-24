@@ -69,7 +69,14 @@ import edu.stanford.ejalbert.BrowserLauncher;
  */
 public class GuiMain
 {
-	protected MainPanelStandalone mainPanel;
+	private GuiMain()
+	{
+	}
+	
+	private MainPanelStandalone mainPanel;
+	
+	private StandaloneEngine standaloneEngine;
+	private SwingEngine swingEngine;
 	
 	private static void initLog(Engine engine)
 	{
@@ -144,12 +151,11 @@ public class GuiMain
 	 */
 	public void processOptions()
 	{
-		SwingEngine swingEngine = SwingEngine.getCurrent();
-		
 		//Create a plugin manager that loads the plugins
 		if(pluginLocations.size() > 0) {
 			PluginManager pluginManager = new PluginManager(
-					pluginLocations.toArray(new String[0])
+					pluginLocations.toArray(new String[0]),
+					standaloneEngine
 			);
 		}
 		
@@ -162,8 +168,8 @@ public class GuiMain
 			try
 			{
 				
-				GexManager.getCurrent().setCurrentGex(pgexFile, false);
-				swingEngine.loadGexCache();
+				standaloneEngine.getGexManager().setCurrentGex(pgexFile, false);
+				standaloneEngine.loadGexCache();
 				Logger.log.info ("Loaded pgex " + pgexFile);
 			}
 			catch (DataException e)
@@ -300,67 +306,72 @@ public class GuiMain
 		);
 	}
 	
+	private void init()
+	{
+		Engine engine = Engine.init();
+		initLog(engine);
+		engine.setApplicationName("PathVisio 1.1");
+		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
+		{
+			try {
+			    UIManager.setLookAndFeel(
+			        UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception ex) {
+				Logger.log.error("Unable to load native look and feel", ex);
+			}
+		}
+
+		swingEngine = SwingEngine.init(engine);
+		swingEngine.setUrlBrowser(new Browser() {
+			public void openUrl(URL url) {
+				try {
+					BrowserLauncher b = new BrowserLauncher(null);
+					b.openURLinBrowser(url.toString());
+				} catch (Exception ex) {
+					Logger.log.error ("Couldn't open url '" + url + "'", ex);
+				}
+			}
+		});
+		swingEngine.getGdbManager().initPreferred();
+		standaloneEngine = new StandaloneEngine (swingEngine);
+		
+		MainPanelStandalone mps = new MainPanelStandalone(engine, swingEngine);
+		JFrame frame = createAndShowGUI(mps, swingEngine);
+		initImporters(engine);
+		initExporters(engine, swingEngine.getGdbManager());
+		MIMShapes.registerShapes();
+		swingEngine.setFrame(frame);
+		swingEngine.setApplicationPanel(mps);
+		processOptions();		
+	}
 	
 	public static void main(String[] args) {
 		final GuiMain gui = new GuiMain();
 		gui.parseArgs (args);
 		
 		javax.swing.SwingUtilities.invokeLater(new Runnable() 
-		{
-			
-			public void run() {
-				Engine engine = Engine.init();
-				initLog(engine);
-				engine.setApplicationName("PathVisio 1.1");
-				if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
-				{
-					try {
-					    UIManager.setLookAndFeel(
-					        UIManager.getSystemLookAndFeelClassName());
-					} catch (Exception ex) {
-						Logger.log.error("Unable to load native look and feel", ex);
-					}
-				}
-
-				SwingEngine swingEngine = SwingEngine.init(engine);
-				swingEngine.setUrlBrowser(new Browser() {
-					public void openUrl(URL url) {
-						try {
-							BrowserLauncher b = new BrowserLauncher(null);
-							b.openURLinBrowser(url.toString());
-						} catch (Exception ex) {
-							Logger.log.error ("Couldn't open url '" + url + "'", ex);
-						}
-					}
-				});
-				swingEngine.getGdbManager().initPreferred();
-				MainPanelStandalone mps = new MainPanelStandalone(engine, swingEngine);
-				JFrame frame = gui.createAndShowGUI(mps, swingEngine);
-				initImporters(engine);
-				initExporters(engine, swingEngine.getGdbManager());
-				MIMShapes.registerShapes();
-				swingEngine.setFrame(frame);
-				swingEngine.setApplicationPanel(mps);
-				gui.processOptions();
-
+		{		
+			public void run() 
+			{
+				gui.init();
 			}
 		});
 	}
 	
-	private static void initImporters(Engine engine) 
+	private void initImporters(Engine engine) 
 	{
 		engine.addPathwayImporter(new MappFormat());
 		engine.addPathwayImporter(new GpmlFormat());
 	}
 	
-	private static void initExporters(Engine engine, GdbManager gdbManager) 
+	private void initExporters(Engine engine, GdbManager gdbManager) 
 	{
 		engine.addPathwayExporter(new MappFormat());
 		engine.addPathwayExporter(new GpmlFormat());
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_SVG));
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PNG));
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_TIFF));
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PDF));	
+		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_SVG, standaloneEngine.getVisualizationManager()));
+		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PNG, standaloneEngine.getVisualizationManager()));
+		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_TIFF, standaloneEngine.getVisualizationManager()));
+		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PDF, standaloneEngine.getVisualizationManager()));	
 		engine.addPathwayExporter(new DataNodeListExporter(gdbManager));
 		engine.addPathwayExporter(new EUGeneExporter());
 	}

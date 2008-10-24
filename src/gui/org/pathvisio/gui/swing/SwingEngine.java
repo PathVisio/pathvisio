@@ -39,10 +39,7 @@ import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
-import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
@@ -138,50 +135,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	
 	public boolean hasApplicationPanel() {
 		return mainPanel != null;
-	}
-	
-	/**
-	 * Load the Gex cache for the current pathway. Only starts loading
-	 * when an expression dataset is available and a pathway is open.
-	 */
-	public void loadGexCache() {
-		final SimpleGex gex = GexManager.getCurrent().getCurrentGex();
-		final Pathway p = engine.getActivePathway();
-		if(p != null && gex != null && gdbManager.isConnected()) {
-			final SwingProgressKeeper pk = new SwingProgressKeeper(
-					(int)1E5
-			);
-			final ProgressDialog d = new ProgressDialog(
-					JOptionPane.getFrameForComponent(getApplicationPanel()), 
-					"", pk, false, true
-			);
-					
-			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-				protected Void doInBackground() {
-					pk.setTaskName("Loading expression data");
-					try
-					{	
-						gex.cacheData(p.getDataNodeXrefs(), pk, gdbManager.getCurrentGdb());
-					}
-					catch (DataException e)
-					{
-						Logger.log.error ("Exception while caching expression data ", e);
-					}
-					pk.finished();
-					return null;
-				}
-				
-				@Override
-				protected void done()
-				{
-					engine.getActiveVPathway().redraw();
-				}
-			};
-			
-			sw.execute();
-			d.setVisible(true);
-		}
-	}
+	}	
 	
 	public static String MSG_UNABLE_IMPORT = "Unable to import GPML file.";
 	public static String MSG_UNABLE_EXPORT = "Unable to export GPML file.";
@@ -572,7 +526,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) 
 		{
-			loadGexCache();
 			updateTitle();
 			engine.getActivePathway().addStatusFlagListener(SwingEngine.this);
 		}
@@ -674,7 +627,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				getGdbManager().setMetaboliteDb(dbName);
 				PreferenceManager.getCurrent().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
 			}
-			loadGexCache();
 		} 
 		catch(Exception ex) 
 		{

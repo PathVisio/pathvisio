@@ -70,7 +70,7 @@ public class Test extends TestCase implements GdbEventListener
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setDbName(dbFileName);
 		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
-		GexTxtImporter.importFromTxt(info, null, gdb);
+		GexTxtImporter.importFromTxt(info, null, gdb, GexManager.getCurrent());
 		
 		// no errors if all genes could be looked up.
 		assertEquals (info.getErrorList().size(), 0);
@@ -81,7 +81,7 @@ public class Test extends TestCase implements GdbEventListener
 		info2.setDbName(dbFileName);
 		
 		gdb = SimpleGdbFactory.createInstance (gdbRat, new DataDerby(), 0);
-		GexTxtImporter.importFromTxt(info, null, gdb);
+		GexTxtImporter.importFromTxt(info, null, gdb, GexManager.getCurrent());
 		
 		// 91 errors expected if no genes can be looked up.
 		assertEquals (info.getErrorList().size(), 91);	
@@ -106,7 +106,7 @@ public class Test extends TestCase implements GdbEventListener
 		info.setSyscodeColumn(false);
 		info.setDataSource(DataSource.AFFY);
 		SimpleGdb gdb = SimpleGdbFactory.createInstance (gdbRat, new DataDerby(), 0);
-		GexTxtImporter.importFromTxt(info, null, gdb);
+		GexTxtImporter.importFromTxt(info, null, gdb, GexManager.getCurrent());
 		
 		// just 6 errors if all goes well
 		assertEquals (info.getErrorList().size(), 6);		
@@ -134,7 +134,7 @@ public class Test extends TestCase implements GdbEventListener
 		info.setDbName(dbFileName);
 		
 		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
-		GexTxtImporter.importFromTxt(info, null, gdb);
+		GexTxtImporter.importFromTxt(info, null, gdb, GexManager.getCurrent());
 		
 		// 0 errors if all goes well
 		assertEquals (info.getErrorList().size(), 0);		
@@ -163,7 +163,7 @@ public class Test extends TestCase implements GdbEventListener
 		info.setDbName(dbFileName);
 		
 		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
-		GexTxtImporter.importFromTxt(info, null, gdb);
+		GexTxtImporter.importFromTxt(info, null, gdb, GexManager.getCurrent());
 		
 		// 0 errors if all goes well
 		assertEquals (info.getErrorList().size(), 0);		

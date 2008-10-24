@@ -20,15 +20,13 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
-import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.StandaloneEngine;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.VisualizationMethodProvider;
 import org.pathvisio.visualization.VisualizationMethodRegistry;
@@ -41,14 +39,19 @@ import org.pathvisio.visualization.gui.VisualizationDialog;
  */
 public class VisualizationPlugin implements Plugin {
 
-	public void init() {
+	public void init(StandaloneEngine standaloneEngine) 
+	{
+		final StandaloneEngine se = standaloneEngine;
+		
 		//Register the visualization methods
-		VisualizationMethodRegistry reg = VisualizationMethodRegistry.getCurrent();
+		VisualizationMethodRegistry reg = 
+			standaloneEngine.getVisualizationMethodRegistry();
+
 		reg.registerMethod(
 				ColorByExpression.class.toString(), 
 				new VisualizationMethodProvider() {
 					public VisualizationMethod create(Visualization v, String registeredName) {
-						return new ColorByExpression(v, registeredName);
+						return new ColorByExpression(v, registeredName, se.getGexManager());
 					}
 			}
 		);
@@ -56,7 +59,7 @@ public class VisualizationPlugin implements Plugin {
 				TextByExpression.class.toString(), 
 				new VisualizationMethodProvider() {
 					public VisualizationMethod create(Visualization v, String registeredName) {
-						return new TextByExpression(v, registeredName);
+						return new TextByExpression(v, registeredName, se.getGexManager());
 					}
 			}
 		);
@@ -69,32 +72,36 @@ public class VisualizationPlugin implements Plugin {
 			}
 		);
 		//Register the menu items
-		SwingEngine.getCurrent().registerMenuAction ("Data", new VisualizationAction(
-				SwingEngine.getCurrent().getApplicationPanel())
+		se.getSwingEngine().registerMenuAction ("Data", new VisualizationAction(
+				standaloneEngine)
 		);
 	}
 
 	public static class VisualizationAction extends AbstractAction implements GexManagerListener {
+		private static final long serialVersionUID = 1L;
 		MainPanel mainPanel;
+		private final StandaloneEngine ste;
 		
-		public VisualizationAction(MainPanel mainPanel) {
+		public VisualizationAction(StandaloneEngine ste) 
+		{
+			this.ste = ste;
 			putValue(NAME, "Visualization options");
-			this.mainPanel = mainPanel;
-			setEnabled(GexManager.getCurrent().isConnected());
-			GexManager.getCurrent().addListener(this);
+			this.mainPanel = ste.getSwingEngine().getApplicationPanel();
+			setEnabled(ste.getGexManager().isConnected());
+			ste.getGexManager().addListener(this);
 		}
 		
 		public void actionPerformed(ActionEvent e) {
 			new VisualizationDialog(
-					VisualizationManager.getCurrent(),
-					SwingEngine.getCurrent().getFrame(),
+					ste.getVisualizationManager(),
+					ste.getSwingEngine().getFrame(),
 					mainPanel
 			).setVisible(true);
 		}
 
 		public void gexManagerEvent(GexManagerEvent e) 
 		{
-			boolean isConnected = GexManager.getCurrent().isConnected();
+			boolean isConnected = ste.getGexManager().isConnected();
 			Logger.log.trace("Visualization options action, gexmanager event, connected: " + isConnected);
 			setEnabled(isConnected);
 		}

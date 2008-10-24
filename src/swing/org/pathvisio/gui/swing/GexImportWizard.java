@@ -41,7 +41,6 @@ import javax.swing.event.DocumentListener;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
-import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexTxtImporter;
 import org.pathvisio.data.ImportInformation;
 import org.pathvisio.debug.Logger;
@@ -69,8 +68,12 @@ public class GexImportWizard extends Wizard
     ColumnPage cpd = new ColumnPage();
     ImportPage ipd = new ImportPage();
     
-	public GexImportWizard()
+    private final StandaloneEngine standaloneEngine;
+    
+	public GexImportWizard (StandaloneEngine standaloneEngine)
 	{
+		this.standaloneEngine = standaloneEngine;
+		
 		getDialog().setTitle ("Expression data import wizard");
 		
         this.registerWizardPanel(FilePage.IDENTIFIER, fpd);
@@ -221,7 +224,7 @@ public class GexImportWizard extends Wizard
 			String action = e.getActionCommand();
 			
 			if(ACTION_GDB.equals(action)) {
-				SwingEngine.getCurrent().selectGdb("Gene");
+				standaloneEngine.getSwingEngine().selectGdb("Gene");
 				txtGdb.setText(
 						PreferenceManager.getCurrent().get(GlobalPreference.DB_GDB_CURRENT)
 				);
@@ -242,7 +245,7 @@ public class GexImportWizard extends Wizard
 				}
 			} else if(ACTION_OUTPUT.equals(action)) {
 				try {
-					DBConnector dbConn = GexManager.getCurrent().getDBConnector();
+					DBConnector dbConn = standaloneEngine.getGexManager().getDBConnector();
 						String output = ((DBConnectorSwing)dbConn).openNewDbDialog(
 								getPanelComponent(), importInformation.getDbName()	
 						);
@@ -722,7 +725,8 @@ public class GexImportWizard extends Wizard
 						GexTxtImporter.importFromTxt(
 								importInformation, 
 								pk, 
-								SwingEngine.getCurrent().getGdbManager().getCurrentGdb()
+								standaloneEngine.getSwingEngine().getGdbManager().getCurrentGdb(),
+								standaloneEngine.getGexManager()
 						);
 
 						getWizard().setNextFinishButtonEnabled(true);

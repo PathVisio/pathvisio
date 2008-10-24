@@ -32,6 +32,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.swing.FontChooser;
@@ -49,8 +50,8 @@ public class LabelDialog extends PathwayElementDialog {
 	JTextArea text;
 	JLabel fontPreview;
 	
-	protected LabelDialog(PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
-		super(e, readonly, frame, "Label properties", locationComp);
+	protected LabelDialog(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
+		super(swingEngine, e, readonly, frame, "Label properties", locationComp);
 		text.requestFocus();
 	}
 	

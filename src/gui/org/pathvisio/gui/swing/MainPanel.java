@@ -93,6 +93,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	Set<Action> hideActions;
 	
+	protected SwingEngine swingEngine;
+
 	private boolean mayAddAction(Action a) {
 		return hideActions == null || !hideActions.contains(a);
 	}
@@ -144,9 +146,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	 * not be added to the menubar and toolbar should be specified in the hideActions parameter
 	 * @param hideActions The {@link Action}s that should not be added to the toolbar and menubar
 	 */
-	public MainPanel(final SwingEngine swingEngine, Set<Action> hideActions) 
+	public MainPanel(SwingEngine swingEngine, Set<Action> hideActions) 
 	{
 		this.hideActions = hideActions;
+		this.swingEngine = swingEngine;
 		
 		setLayout(new BorderLayout());
 		setTransferHandler(new PathwayImportHandler());
@@ -165,7 +168,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		// set background color when no VPathway is loaded, override l&f because it is usually white.
 		pathwayScrollPane.getViewport().setBackground(Color.LIGHT_GRAY); 
 
-		final PathwayTableModel model = new PathwayTableModel();
+		final PathwayTableModel model = new PathwayTableModel(swingEngine);
 		propertyTable = new JTable(model) {
 			private static final long serialVersionUID = 1L;
 
@@ -191,7 +194,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
 					try {
-						swingEngine.openUrl(e.getURL());
+						MainPanel.this.swingEngine.openUrl(e.getURL());
 					} catch(UnsupportedOperationException ex) {
 						Logger.log.error("Unable to open URL", ex);
 						JOptionPane.showMessageDialog(
@@ -398,7 +401,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 					!(pwe instanceof SelectionBox)) {
 				PathwayElement p = ((Graphics)pwe).getPathwayElement();
 				if(p != null) {
-					PathwayElementDialog.getInstance(p, !vp.isEditMode(), null, this).setVisible(true);
+					PathwayElementDialog.getInstance(swingEngine, p, !vp.isEditMode(), null, this).setVisible(true);
 				}
 			}
 			break;
@@ -420,7 +423,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		case ApplicationEvent.VPATHWAY_CREATED:
 			VPathway vp = (VPathway)e.getSource();
 			vp.addVPathwayListener(this);
-			vp.addVPathwayListener(new PathwayElementMenuListener());
+			vp.addVPathwayListener(new PathwayElementMenuListener(swingEngine));
 			for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_VPATHWAY)) {
 				b.setEnabled(true);
 			}

@@ -174,7 +174,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				@Override
 				protected void done()
 				{
-					Engine.getCurrent().getActiveVPathway().redraw();
+					engine.getActiveVPathway().redraw();
 				}
 			};
 			

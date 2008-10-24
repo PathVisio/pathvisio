@@ -23,7 +23,6 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.preferences.GlobalPreference;
@@ -41,6 +40,7 @@ public class AppletMain extends PathwayPageApplet {
 		// Don't create toolbar, already in mainpanel
 	}
 	
+	@Override
 	protected void doInitWiki(ProgressKeeper pk, URL base) throws Exception {
 		Logger.log.trace("AppletMain:doInitWiki");
 		SwingUtilities.invokeAndWait(new Runnable() {
@@ -49,7 +49,7 @@ public class AppletMain extends PathwayPageApplet {
 			}
 		});
 		
-		Engine.getCurrent().setWrapper(wiki.getSwingEngine().createWrapper());
+		wiki.getEngine().setWrapper(wiki.getSwingEngine().createWrapper());
 		Logger.log.trace("calling:doInitWiki");
 		super.doInitWiki(pk, base);
 	}

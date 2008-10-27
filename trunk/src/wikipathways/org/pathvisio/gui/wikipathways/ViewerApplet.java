@@ -1,0 +1,73 @@
+package org.pathvisio.gui.wikipathways;
+
+import java.awt.BorderLayout;
+import java.net.URL;
+
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.SwingUtilities;
+
+import org.pathvisio.Engine;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.MainPanel;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.ProgressKeeper;
+
+public class ViewerApplet extends PathwayPageApplet {
+	private MainPanel mainPanel;
+	
+	public static final String PAR_PATHWAY_URL = "pathway.url";
+	
+	protected void createToolbar() {
+		// Don't create toolbar, already in mainpanel
+	}
+	
+	protected void doInitWiki(ProgressKeeper pk, URL base) throws Exception {
+		Logger.log.trace("AppletMain:doInitWiki");
+		SwingUtilities.invokeAndWait(new Runnable() {
+			public void run() {
+				mainPanel = wiki.prepareMainPanel();				
+			}
+		});
+		
+		Engine.getCurrent().setWrapper(wiki.getSwingEngine().createWrapper());
+		Logger.log.trace("calling:doInitWiki");
+		super.doInitWiki(pk, base);
+		wiki.getPathwayView().setEditMode(false);
+	}
+	
+	public void createGui() {
+		mainPanel = wiki.getMainPanel();
+	
+		//Add a save to wiki button
+		Action saveAction = new Actions.SaveToServerAction(uiHandler, wiki, null);
+		JButton saveButton = new JButton(saveAction);
+		saveButton.setText("");
+		mainPanel.getToolBar().add(saveButton, 2);
+		
+		//Add custom import button
+		if(wiki.isNew() && !wiki.isReadOnly()) {
+			Action importAction = new Actions.ImportAction(uiHandler, wiki);
+			JButton importButton = new JButton(importAction);
+			importButton.setText("");
+			mainPanel.getToolBar().add(importButton, 0);
+		}
+
+		//Create a maximize button
+		JButton btn = new JButton(new Actions.FullScreenAction(uiHandler, wiki, this));
+		btn.setText("");
+		mainPanel.getToolBar().add(btn,  mainPanel.getToolBar().getComponentCount() - 2);
+		getContentPane().add(mainPanel, BorderLayout.CENTER);
+		
+		setVisible(true);
+		validate(); //We need to validate before calling setDividerLocation
+		int spPercent = PreferenceManager.getCurrent().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
+		mainPanel.getSplitPane().setDividerLocation( (100 - spPercent) / 100.0 );
+	}
+	
+	public void destroy() {
+		getContentPane().remove(mainPanel);
+		super.destroy();
+	}
+}

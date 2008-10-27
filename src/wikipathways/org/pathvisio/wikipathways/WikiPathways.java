@@ -294,6 +294,10 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		this.mayExit = mayExit;
 	}
 
+	public String getPwId() {
+		return parameters.getValue(Parameter.PW_ID);
+	}
+	
 	public String getPwName() {
 		return parameters.getValue(Parameter.PW_NAME);
 	}
@@ -306,6 +310,10 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		return parameters.getValue(Parameter.PW_URL);
 	}
 
+	public String getSiteURL() {
+		return parameters.getValue(Parameter.SITE_URL);
+	}
+	
 	public String getRpcURL() {
 		return parameters.getValue(Parameter.RPC_URL);
 	}
@@ -353,7 +361,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 	}
 
 	public boolean isNew() {
-		return parameters.getValue(Parameter.PW_NEW) != null;
+		Logger.log.trace("ID: '" + parameters.getValue(Parameter.PW_ID) + "'");
+		return "".equals(parameters.getValue(Parameter.PW_ID));
 	}
 
 	public boolean isReadOnly() {
@@ -514,11 +523,9 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 			Logger.log.trace("MayExit: " + mayExit());
 			uiHandler.showExitMessage("Please wait...the page will be reloaded");
 			try {
-				if(isNew()) {
-					uiHandler.showDocument(new URL(getPwURL()), "_top");
-				} else {
-					uiHandler.showDocument(new URL("javascript:window.location.reload();"), "_top");
-				}
+				URL url = new URL(getSiteURL() + "/index.php?title=Pathway:" + getPwId());
+				Logger.log.error("Redirecting to " + url);
+				uiHandler.showDocument(url, "_top");
 			} catch (MalformedURLException ex) {
 				Logger.log.error("Unable to refresh pathway page", ex);
 			}
@@ -548,12 +555,21 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 			GpmlFormat.writeToXml(getCurrentPathway(), out, true);
 
 			byte[] data = out.toByteArray();
-			Object[] params = new Object[]{ getPwName(), getPwSpecies(), description, data, getRevision() };
-			Object response = client.execute("WikiPathways.updatePathway", params);
-
-			//Update the revision in case we want to save again
-			parameters.setValue(Parameter.REVISION, (String)response);
-			firstSave = false;
+		
+			if(isNew()) {
+				Object[] params = new Object[]{ description, data };
+				Object response = client.execute("WikiPathways.createPathway", params);
+				HashMap<String, String> map = (HashMap)response;
+				parameters.setValue(Parameter.REVISION, map.get("revision"));
+				parameters.setValue(Parameter.PW_ID, map.get("id"));
+				firstSave = false;
+			} else {
+				Object[] params = new Object[]{ getPwId(), description, data, getRevision() };
+				Object response = client.execute("WikiPathways.updatePathway", params);
+				//Update the revision in case we want to save again
+				parameters.setValue(Parameter.REVISION, (String)response);
+				firstSave = false;
+			}
 
 			getCurrentPathway().clearChangedFlag();
 			setRemoteChanged(false); //Save successful, don't save next time

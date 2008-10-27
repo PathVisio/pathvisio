@@ -26,12 +26,13 @@ import java.util.Set;
  * @author thomas
  */
 public class Parameter {
+	public static final String PW_ID = "pwId";
 	public static final String PW_NAME = "pwName";
 	public static final String PW_URL = "pwUrl";
 	public static final String PW_SPECIES = "pwSpecies";
-	public static final String PW_NEW = "new";
 	public static final String USER = "user";
 	public static final String RPC_URL = "rpcUrl";
+	public static final String SITE_URL = "siteUrl";
 	/**
 	 * Parameter value: A comma seperated list of categories
 	 */
@@ -105,15 +106,16 @@ public class Parameter {
 	}
 	
 	private void registerDefaults() {
+		add(PW_ID, new ParameterValue(""));
 		add(PW_NAME, new ParameterValue());
 		add(PW_URL, new ParameterValue(null));
 		add(PW_SPECIES, new ParameterValue());
-		add(PW_NEW, new ParameterValue(null));
 		add(USER, new ParameterValue(null));
 		add(RPC_URL, new ParameterValue());
 		add(CATEGORIES, new ParameterValue(""));
 		add(GDB_SERVER, new ParameterValue("wikipathways.org"));
 		add(REVISION, new ParameterValue());
+		add(SITE_URL, new ParameterValue());
 	}
 	
 	private void add(String name, ParameterValue p) {

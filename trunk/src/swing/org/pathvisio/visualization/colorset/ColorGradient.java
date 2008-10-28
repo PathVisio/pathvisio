@@ -192,9 +192,12 @@ public class ColorGradient extends ColorSetObject {
 		return rgb;
 	}
 	
-	public Color getColor(HashMap<Integer, Object> data, int idSample) throws NumberFormatException
+	public Color getColor(HashMap<Integer, Object> data, int idSample)
 	{
-		double value = (Double)data.get(idSample);
+		Object o = data.get(idSample);
+		double value;
+		if (o instanceof Double) value = (Double)data.get(idSample);
+		else value = Double.NaN;
 		return getColor(value);
 	}
 	

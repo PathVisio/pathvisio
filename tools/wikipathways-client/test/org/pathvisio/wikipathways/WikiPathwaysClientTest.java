@@ -88,7 +88,7 @@ public class WikiPathwaysClientTest extends TestCase {
 
 	public void testGetPathway() {
 		try {
-			WSPathway wsp = client.getPathway("Sandbox", Organism.HomoSapiens);
+			WSPathway wsp = client.getPathway("WP1");
 			assertEquals("Sandbox", wsp.getName());
 			WikiPathwaysClient.toPathway(wsp);
 		} catch(Exception e) {
@@ -100,12 +100,12 @@ public class WikiPathwaysClientTest extends TestCase {
 	public void testUpdatePathway() {
 		try {
 			login();
-			WSPathway wsp = client.getPathway("Sandbox", Organism.HomoSapiens);
+			WSPathway wsp = client.getPathway("WP1");
 			Pathway p = WikiPathwaysClient.toPathway(wsp);
 			p.getMappInfo().addComment("Soap test - " + System.currentTimeMillis(), "Soap test");
 			
 			client.updatePathway(
-					"Sandbox", p, 
+					"WP1", p, 
 					"Soap test - " + System.currentTimeMillis(), 
 					Integer.parseInt(wsp.getRevision()));
 		} catch(Exception e) {

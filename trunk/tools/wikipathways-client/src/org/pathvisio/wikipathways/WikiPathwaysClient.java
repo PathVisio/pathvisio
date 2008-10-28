@@ -67,8 +67,8 @@ public class WikiPathwaysClient {
 	 * Get a pathway from WikiPathways.
 	 * @see #toPathway(WSPathway)
 	 */
-	public WSPathway getPathway(String name, Organism species) throws RemoteException, ConverterException {
-		return getPathway(name, species, 0);
+	public WSPathway getPathway(String id) throws RemoteException, ConverterException {
+		return getPathway(id, 0);
 	}
 	
 	/**
@@ -84,8 +84,8 @@ public class WikiPathwaysClient {
 	 * Get a specific revision of a pathway from WikiPathways
 	 * @see #toPathway(WSPathway)
 	 */
-	public WSPathway getPathway(String name, Organism species, int revision) throws RemoteException, ConverterException {
-		WSPathway wsp = port.getPathway(name, species.latinName(), revision);
+	public WSPathway getPathway(String id, int revision) throws RemoteException, ConverterException {
+		WSPathway wsp = port.getPathway(id, revision);
 		return wsp;
 	}
 	
@@ -105,64 +105,59 @@ public class WikiPathwaysClient {
 	/**
 	 * Update a pathway on WikiPathways.
 	 * Note: you need to login first, see: {@link #login(String, String)}.
-	 * @param pwName The name of the pathway on WikiPathways
+	 * @param id The pathway identifier
 	 * @param pathway The updated pathway data
 	 * @param description A description of the changes
 	 * @param revision The revision these changes were based on (to prevent conflicts)
 	 */
-	public void updatePathway(String pwName, Pathway pathway, String description, int revision) throws ConverterException, RemoteException {
-		String species = pathway.getMappInfo().getOrganism();
+	public void updatePathway(String id, Pathway pathway, String description, int revision) throws ConverterException, RemoteException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
 		GpmlFormat.writeToXml(pathway, out, true);
 		String gpml = out.toString();
-		port.updatePathway(pwName, species, description, gpml, revision, auth);
+		port.updatePathway(id, description, gpml, revision, auth);
 	}
 	
 	/**
 	 * Apply a curation tag to a pathway. Will overwrite existing tags with the same name.
-	 * @param pwName The name of the pathway to apply the tag to
-	 * @param species The species of the pathway to apply the tag to
+	 * @param id The pathway identifier
 	 * @param tagName The name of the tag (e.g. CurationTag:Approved)
 	 * @param tagText The tag text
 	 * @param revision The revision to apply the tag to
 	 * @throws RemoteException
 	 */
-	public void saveCurationTag(String pwName, Organism species, String tagName, String tagText, int revision) throws RemoteException {
-		port.saveCurationTag(pwName, species.latinName(), tagName, tagText, revision, auth);
+	public void saveCurationTag(String id, String tagName, String tagText, int revision) throws RemoteException {
+		port.saveCurationTag(id, tagName, tagText, revision, auth);
 	}
 	
 	/**
 	 * Apply a curation tag to a pathway. Will overwrite existing tags with the same name.
-	 * @param pwName The name of the pathway to apply the tag to
-	 * @param species The species of the pathway to apply the tag to
+	 * @param id The pathway identifier
 	 * @param tagName The name of the tag (e.g. CurationTag:Approved)
 	 * @param tagText The tag text
 	 * @throws RemoteException
 	 */
-	public void saveCurationTag(String pwName, Organism species, String tagName, String text) throws RemoteException {
-		saveCurationTag(pwName, species, tagName, text, 0);
+	public void saveCurationTag(String id, String tagName, String text) throws RemoteException {
+		saveCurationTag(id, tagName, text, 0);
 	}
 	
 	/**
 	 * Remove the given curation tag from the pathway
-	 * @param pwName The name of the pathway to apply the tag to
-	 * @param species The species of the pathway to apply the tag to
+	 * @param id The pathway identifier
 	 * @param tagName The name of the tag (e.g. CurationTag:Approved)
 	 * @throws RemoteException
 	 */
-	public void removeCurationTag(String pwName, Organism species, String tagName) throws RemoteException {
-		port.removeCurationTag(pwName, species.latinName(), tagName, auth);
+	public void removeCurationTag(String id, String tagName) throws RemoteException {
+		port.removeCurationTag(id, tagName, auth);
 	}
 	
 	/**
 	 * Get all curation tags for the given pathway
-	 * @param pwName The name of the pathway
-	 * @param species The species of the pathway
+	 * @param id The pathway identifier
 	 * @return An array with the curation tags.
 	 * @throws RemoteException
 	 */
-	public WSCurationTag[] getCurationTags(String pwName, Organism species) throws RemoteException {
-		WSCurationTag[] tags = port.getCurationTags(pwName, species.latinName());
+	public WSCurationTag[] getCurationTags(String id) throws RemoteException {
+		WSCurationTag[] tags = port.getCurationTags(id);
 		if(tags == null) tags = new WSCurationTag[0];
 		return tags;
 	}

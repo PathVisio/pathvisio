@@ -16,13 +16,14 @@
 //
 package org.pathvisio.model;
 
-import org.pathvisio.Engine;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import junit.framework.TestCase;
+
+import org.pathvisio.Engine;
 
 public class Test extends TestCase implements PathwayListener 
 {
@@ -295,6 +296,62 @@ public class Test extends TestCase implements PathwayListener
 		data.writeToSvg(temp);
 	}
 
+	/**
+	 * test exporting of .png
+	 */
+	public void testPng() throws IOException, ConverterException
+	{
+		data.readFromXml(new File("testData/test.gpml"), false);
+		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
+		File temp = File.createTempFile ("data.test", ".png");
+		temp.deleteOnExit();
+		
+		BatikImageExporter exporter = new BatikImageExporter(BatikImageExporter.TYPE_PNG);
+		exporter.doExport(temp, data);
+	}
+
+	/**
+	 * test exporting of .pdf
+	 */
+	public void testPdf() throws IOException, ConverterException
+	{
+		data.readFromXml(new File("testData/test.gpml"), false);
+		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
+		File temp = File.createTempFile ("data.test", ".pdf");
+		temp.deleteOnExit();
+		
+		BatikImageExporter exporter = new BatikImageExporter(BatikImageExporter.TYPE_PDF);
+		exporter.doExport(temp, data);
+	}
+	
+	/**
+	 * test exporting of .txt
+	 */
+	public void testTxt() throws IOException, ConverterException
+	{
+		data.readFromXml(new File("testData/test.gpml"), false);
+		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
+		File temp = File.createTempFile ("data.test", ".txt");
+		temp.deleteOnExit();
+		
+		DataNodeListExporter exporter = new DataNodeListExporter();
+		exporter.doExport(temp, data);
+	}
+	
+	/**
+	 * test exporting of .pwf
+	 */
+	public void testPwf() throws IOException, ConverterException
+	{
+		data.readFromXml(new File("testData/test.gpml"), false);
+		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
+		File temp = File.createTempFile ("data.test", ".pwf");
+		temp.deleteOnExit();
+		
+		EUGeneExporter exporter = new EUGeneExporter();
+		exporter.doExport(temp, data);
+	}
+	
 	/**
 	 * Test that there is one and only one MAPPINFO object
 	 *

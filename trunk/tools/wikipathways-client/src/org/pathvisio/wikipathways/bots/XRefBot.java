@@ -137,12 +137,9 @@ public class XRefBot {
 		for(XRefReport r : results) {
 			//Find an existing tag
 			WSPathwayInfo pwi = r.getPathwayInfo();
-			Organism pwSpecies = Organism.fromLatinName(pwi.getSpecies());
-			String pwName = pwi.getName();
+			String pwId = pwi.getId();
 			//First check if the existing tag is up-to-date
-			WSCurationTag[] tags = client.getCurationTags(
-					pwName, pwSpecies
-			);
+			WSCurationTag[] tags = client.getCurationTags(pwId);
 			String currTagText = null;
 			for(WSCurationTag t : tags) {
 				if(CURATIONTAG.equals(t.getName())) {
@@ -155,17 +152,17 @@ public class XRefBot {
 			if(r.getPercentValid() < threshold) {
 				String newTagText = r.getTagText();
 				if(!newTagText.equals(currTagText)) {
-					Logger.log.info("Applying tag to " + pwSpecies + ":" + pwName);
+					Logger.log.info("Applying tag to " + pwId);
 					client.saveCurationTag(
-							pwName, pwSpecies,
+							pwId,
 							CURATIONTAG, newTagText
 					);
 				}
 			} else {
 				//Remove the existing tag
 				if(currTagText != null) {
-					Logger.log.info("Removing tag from " + pwSpecies + ":" + pwName);
-					client.removeCurationTag(pwName, pwSpecies, CURATIONTAG);
+					Logger.log.info("Removing tag from " + pwId);
+					client.removeCurationTag(pwId, CURATIONTAG);
 				}
 			}
 		}

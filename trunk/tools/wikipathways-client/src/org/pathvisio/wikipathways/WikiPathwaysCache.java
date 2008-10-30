@@ -35,7 +35,6 @@ import javax.xml.rpc.ServiceException;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.wikipathways.webservice.WSPathway;
@@ -166,7 +165,7 @@ public class WikiPathwaysCache
 		int i = 1;
 		for(WSPathwayInfo pwi : pathways) {
 			File file = pathwayToFile(pwi);
-			WSPathway wsp = wpClient.getPathway(pwi.getName(), Organism.fromLatinName(pwi.getSpecies()));
+			WSPathway wsp = wpClient.getPathway(pwi.getId());
 			Pathway p = WikiPathwaysClient.toPathway(wsp);
 			p.writeToXml(file, true);
 			// also write a file that stores some pathway info
@@ -188,7 +187,7 @@ public class WikiPathwaysCache
 		new File(pathToDownload).mkdirs();
 		
 		// download the pathway and give status in console
-		File pwFile = new File (pathToDownload + pathway.getName() + PW_EXT_DOT);
+		File pwFile = new File (pathToDownload + pathway.getId() + PW_EXT_DOT);
 		
 		return pwFile;
 	}
@@ -199,6 +198,7 @@ public class WikiPathwaysCache
 		prop.setProperty("Species", pathway.getSpecies());
 		prop.setProperty("Url", pathway.getUrl());
 		prop.setProperty("Revision", pathway.getRevision());
+		prop.setProperty("Id", pathway.getId());
 		prop.save(new FileOutputStream(getInfoFile(pathwayToFile(pathway))), "");
 	}
 	
@@ -229,6 +229,7 @@ public class WikiPathwaysCache
 		Properties prop = new Properties();
 		prop.load(new FileInputStream(info));
 		WSPathwayInfo pi = new WSPathwayInfo(
+				prop.getProperty("Id"),
 				prop.getProperty("Url"),
 				prop.getProperty("Name"),
 				prop.getProperty("Species"),

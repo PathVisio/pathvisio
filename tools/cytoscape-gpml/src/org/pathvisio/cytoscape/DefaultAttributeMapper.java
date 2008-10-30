@@ -134,61 +134,54 @@ public class DefaultAttributeMapper implements AttributeMapper {
 		//Process mappings
 		for(String aname : attr.getAttributeNames()) {
 			PropertyType prop = getProperty(aname);
-			
-//			Logger.log.trace("Mapping attribute " + aname);
-			
-			//No mapping for this attribute, store as comment
-//			if(prop == null) {
-////				Logger.log.trace("\tNo mapping found, adding as comment");
-//				String value = null;
-//				try { //We don't know what type of attribute
-//					  //Throws an IllegalArgumentException if it's a Map
-//					  //TODO: Find out if there is a generic method that returns an object
-//					value = attr.getStringAttribute(id, aname);					
-//				} catch(Exception e) {
-////					Logger.log.error("Unable to transfer attribute " + aname, e);
-//				}
-//				if(value != null && !(value.length() == 0)) {
-//					elm.addComment(attr.getStringAttribute(id, aname), CY_COMMENT_SOURCE + aname);
-//				}
-//				continue;
-//			} else {
-////				Logger.log.trace("\tFound mapping to " + prop);
-//			}
-			
+
 			//Protected property, don't set from attributes
 			if(isProtected(prop)) {
 //				Logger.log.trace("\tProperty is protected, skipping");
 				continue;
 			}
-			
-			//Found a property, try to set it
-			try {
-				Object value = null;
-				switch(prop.type()) {
-				case BOOLEAN:
-					value = attr.getBooleanAttribute(id, aname);
+
+			Logger.log.trace ("Property " + aname);
+			//No mapping for this attribute, store in attributeMap
+			if(prop == null) 
+			{
+// disabled for now, doesn't work correctly.
+/*				String value = null;
+				switch (attr.getType(id))
+				{
+				case CyAttributes.TYPE_STRING: 
+					value = attr.getStringAttribute(id, aname);
 					break;
-				case INTEGER:
-					value = attr.getIntegerAttribute(id, aname);
+				case CyAttributes.TYPE_BOOLEAN:
+					value = "" + attr.getBooleanAttribute(id, aname);
 					break;
-				case DOUBLE:
-					value = attr.getDoubleAttribute(id, aname);
+				case CyAttributes.TYPE_FLOATING:
+					value = "" + attr.getDoubleAttribute(id, aname);
 					break;
-				case COLOR:
-					value = Color.decode("" + attr.getIntegerAttribute(id, aname));
+				case CyAttributes.TYPE_INTEGER:
+					value = "" + attr.getIntegerAttribute(id, aname);
 					break;
-				case STRING:
-				case DB_ID:
-				case DB_SYMBOL:
-				case DATASOURCE:
-					value = attr.getAttribute(id, aname);
+				case CyAttributes.TYPE_UNDEFINED:
+					try
+					{
+						value = "" + attr.getAttribute(id, aname);
+					}
+					catch (IllegalArgumentException e)
+					{
+						Logger.log.error ("Illegal argument exception " + aname + " " + value);
+					}
+					Logger.log.trace ("Undefined " + value);
 					break;
 				default:
-//					Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
-				//Don't transfer the attribute, if it's not a supported type
+					//TODO: handle other types such as List
 				}
-			}
+				Logger.log.trace("\tNo mapping found, adding as generic attribute " + aname + " " + value);
+				if(value != null && !(value.length() == 0)) 
+				{
+					Logger.log.trace ("Setting value");
+					elm.setDynamicProperty(aname, value);
+				}
+*/			}
 			else
 			{
 				//Found a property, try to set it
@@ -224,8 +217,6 @@ public class DefaultAttributeMapper implements AttributeMapper {
 				} catch(Exception e) {
 	//				Logger.log.error("Unable to parse value for " + prop, e);
 				}
-			} catch(Exception e) {
-//				Logger.log.error("Unable to parse value for " + prop, e);
 			}
 		}
 	}
@@ -240,7 +231,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	
 	public void propertiesToAttributes(String id, PathwayElement elm,
 			CyAttributes attr) {
-		for(PropertyType prop : elm.getAttributes(true)) {
+		for(PropertyType prop : elm.getStaticPropertyKeys()) {
 			Object value = elm.getStaticProperty(prop);
 			if(value != null) {
 				String aname = getAttributeName(prop);
@@ -264,6 +255,12 @@ public class DefaultAttributeMapper implements AttributeMapper {
 					attr.setAttribute(id, aname, value.toString());
 				}
 			}
+		}
+		
+		// now deal with the attributes in attributeMap.
+		for (String key : elm.getDynamicPropertyKeys())
+		{
+			attr.setAttribute(id, key, elm.getDynamicProperty(key));
 		}
 	}
 }

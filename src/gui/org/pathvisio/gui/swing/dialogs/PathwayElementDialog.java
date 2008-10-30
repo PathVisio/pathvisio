@@ -124,8 +124,8 @@ public class PathwayElementDialog extends OkCancelDialog {
 	protected void storeState() {
 		PathwayElement e = getInput();
 		originalPathway = (Pathway) e.getParent().clone();
-		for(PropertyType t : e.getAttributes()) {
-			state.put(t, e.getProperty(t));
+		for(PropertyType t : e.getStaticPropertyKeys()) {
+			state.put(t, e.getStaticProperty(t));
 		}
 	}
 	
@@ -136,7 +136,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	protected void restoreState() {
 		PathwayElement e = getInput();
 		for(PropertyType t : state.keySet()) {
-			e.setProperty(t, state.get(t));
+			e.setStaticProperty(t, state.get(t));
 		}
 	}
 	

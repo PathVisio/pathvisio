@@ -83,7 +83,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	public void refreshValue() {
 		boolean first = true;
 		for(PathwayElement e : elements) {
-			Object o = e.getProperty(type);
+			Object o = e.getStaticProperty(type);
 			if(!first && (o == null || !o.equals(value))) {
 				setHasDifferentValues(true);
 				return;
@@ -106,7 +106,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			swingEngine.getEngine().getActiveVPathway().getUndoManager().newAction (
 					"Change " + type + " property");
 			for(PathwayElement e : elements) {
-				e.setProperty(type, value);
+				e.setStaticProperty(type, value);
 			}
 		}
 	}

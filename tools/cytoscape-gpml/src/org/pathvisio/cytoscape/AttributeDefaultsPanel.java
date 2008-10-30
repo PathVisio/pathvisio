@@ -68,7 +68,7 @@ public class AttributeDefaultsPanel extends JPanel {
 				TypedProperty tp = new TypedProperty(swingEngine, p);
 				Object value = mapper.getDefaultValue(p);
 				if(value == null) {
-					value = dummyElement.getProperty(p);
+					value = dummyElement.getStaticProperty(p);
 				}
 				tp.setValue(value);
 				properties.add(tp);

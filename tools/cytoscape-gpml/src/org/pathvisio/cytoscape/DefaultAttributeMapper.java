@@ -128,7 +128,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	public void attributesToProperties(String id, PathwayElement elm, CyAttributes attr) {
 		//Process defaults
 		for(PropertyType prop : defaultValues.keySet()) {
-			elm.setProperty(prop, defaultValues.get(prop));
+			elm.setStaticProperty(prop, defaultValues.get(prop));
 		}
 		
 		//Process mappings
@@ -188,9 +188,41 @@ public class DefaultAttributeMapper implements AttributeMapper {
 //					Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
 				//Don't transfer the attribute, if it's not a supported type
 				}
-				Logger.log.trace("Setting property " + prop + " to " + value);
-				if(value != null) {
-					elm.setProperty(prop, value);
+			}
+			else
+			{
+				//Found a property, try to set it
+				try {
+					Object value = null;
+					switch(prop.type()) {
+					case BOOLEAN:
+						value = attr.getBooleanAttribute(id, aname);
+						break;
+					case INTEGER:
+						value = attr.getIntegerAttribute(id, aname);
+						break;
+					case DOUBLE:
+						value = attr.getDoubleAttribute(id, aname);
+						break;
+					case COLOR:
+						value = Color.decode("" + attr.getIntegerAttribute(id, aname));
+						break;
+					case STRING:
+					case DB_ID:
+					case DB_SYMBOL:
+					case DATASOURCE:
+						value = attr.getAttribute(id, aname);
+						break;
+					default:
+	//					Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
+					//Don't transfer the attribute, if it's not a supported type
+					}
+					Logger.log.trace("Setting property " + prop + " to " + value);
+					if(value != null) {
+						elm.setStaticProperty(prop, value);
+					}
+				} catch(Exception e) {
+	//				Logger.log.error("Unable to parse value for " + prop, e);
 				}
 			} catch(Exception e) {
 //				Logger.log.error("Unable to parse value for " + prop, e);
@@ -209,7 +241,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	public void propertiesToAttributes(String id, PathwayElement elm,
 			CyAttributes attr) {
 		for(PropertyType prop : elm.getAttributes(true)) {
-			Object value = elm.getProperty(prop);
+			Object value = elm.getStaticProperty(prop);
 			if(value != null) {
 				String aname = getAttributeName(prop);
 				switch(prop.type()) {

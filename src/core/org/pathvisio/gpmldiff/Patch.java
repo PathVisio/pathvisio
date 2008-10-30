@@ -59,14 +59,14 @@ class Patch
 				switch (pt.type())
 				{
 				case STRING: 
-					result.setProperty(pt, ch.newValue);
+					result.setStaticProperty(pt, ch.newValue);
 					break;
 				case DOUBLE:
-					result.setProperty(pt, Double.parseDouble (ch.newValue));
+					result.setStaticProperty(pt, Double.parseDouble (ch.newValue));
 					break;
 				case SHAPETYPE:
 					// setProperty expects to get ShapeType for this Shape.
-					result.setProperty(pt, ShapeType.fromName(ch.newValue));
+					result.setStaticProperty(pt, ShapeType.fromName(ch.newValue));
 					break;							
 				default:
 					Logger.log.error (ch.attr + " not supported");

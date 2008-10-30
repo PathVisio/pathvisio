@@ -125,7 +125,7 @@ public class AttributeDefaultsPanel extends JPanel {
 			TypedProperty tp = properties.get(rowIndex);
 			
 			if(columnIndex == 0) {
-				return tp.getType().desc();
+				return tp.getDesc();
 			} else {
 				return tp.getValue();
 			}
@@ -134,7 +134,8 @@ public class AttributeDefaultsPanel extends JPanel {
 		public void setValueAt(Object value, int rowIndex, int columnIndex) {
 			TypedProperty tp = properties.get(rowIndex);
 			tp.setValue(value);
-			mapper.setDefaultValue(tp.getType(), value);
+			//TODO: casting to PropertyType not good solution
+			mapper.setDefaultValue((PropertyType)tp.getType(), value);
 		}
 		
 		public TableCellRenderer getCellRenderer(int row, int column) {

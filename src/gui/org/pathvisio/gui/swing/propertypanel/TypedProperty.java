@@ -58,34 +58,57 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
 
-public class TypedProperty implements Comparable<TypedProperty> {	
+/**
+ * TypedProperty ties together functionality to view / edit a property
+ * on one or more PathwayElements at the same time
+ */
+public class TypedProperty {	
 	Collection<PathwayElement> elements;
 	Object value;
-	PropertyType type;
+	Object type;
 	boolean different;
 
-	public TypedProperty(SwingEngine swingEngine, PropertyType type) {
+	/**
+	 * @param type is either String for a dynamic property,
+	 * or PropertyType for a static property;
+	 */
+	public TypedProperty(SwingEngine swingEngine, Object type) {
 		this.type = type;
+		if (!(type instanceof String || type instanceof PropertyType))
+		{
+			throw new IllegalArgumentException();
+		}
 		this.swingEngine = swingEngine;
 		elements = new HashSet<PathwayElement>();
 	}
 	
+	/**
+	 * Add a PathwayElement to the set of elements that are viewed / edited together
+	 */
 	public void addElement(PathwayElement e) {
 		elements.add(e);
 		refreshValue();		
 	}
 	
+	/**
+	 * Remove a PathwayElement to the set of elements that are viewed / edited together
+	 */
 	public void removeElement(PathwayElement e) {
 		elements.remove(e);
 		refreshValue();
 	}
 	
+	/**
+	 * Refresh the viewer / editor value by checking all PathwayElements
+	 * This notifies the TypedProperty that one of the PathwayElements has changed
+	 * or that the PathwayElement list has been changed, and a new value should be cached.
+	 */
 	public void refreshValue() {
 		boolean first = true;
 		for(PathwayElement e : elements) {
-			Object o = e.getStaticProperty(type);
+			Object o = e.getPropertyEx(type);
 			if(!first && (o == null || !o.equals(value))) {
-				setHasDifferentValues(true);
+				different = true;
 				return;
 			}
 			value = o;
@@ -93,41 +116,73 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		}
 	}
 	
+	/**
+	 * Number of PathwayElement's being edited / viewed
+	 */
 	public int elementCount() { return elements.size(); }
 	
-	public int compareTo(TypedProperty o) 
+	/**
+	 * Get a description for the property being edited.
+	 */
+	public String getDesc()
 	{
-		return type.compareTo(o.getType());
+		if (type instanceof PropertyType)
+		{
+			return ((PropertyType)type).desc();
+		}
+		else
+		{
+			return type.toString();
+		}
 	}
 	
+	/**
+	 * Set a value for the property being edited.
+	 * This will update all PathwayElements that are being edited at once.
+	 */
 	public void setValue(Object value) {
 		this.value = value;
 		if(value != null) {
 			swingEngine.getEngine().getActiveVPathway().getUndoManager().newAction (
 					"Change " + type + " property");
 			for(PathwayElement e : elements) {
-				e.setStaticProperty(type, value);
+				e.setPropertyEx(type, value);
 			}
 		}
 	}
 
+	/**
+	 * The value of the property being viewed / edited.
+	 * This value is cached, call refreshValue() to update the cache.
+	 */
 	public Object getValue() {
 		return value;
 	}
 	
-	public PropertyType getType() {
+	/**
+	 * The type of the property being edited. This is a String
+	 * if the property is dynamic, or a PropertyType is the property
+	 * is static. (See PathwayElement for an explanation of static / dynamic)
+	 */
+	public Object getType() {
 		return type;
 	}
 
+	/**
+	 * Returns true if the PathwayElement's being edited differ for this Property.
+	 */
 	public boolean hasDifferentValues() { return different; }
-	public void setHasDifferentValues(boolean diff) { different = diff; }
-
+	
+	
 	private SwingEngine swingEngine;
 	
+	/**
+	 * Returns a TableCellRenderer suitable for rendering this property
+	 */
 	public TableCellRenderer getCellRenderer() 
 	{
 		if(hasDifferentValues()) return differentRenderer;
-		switch(type.type()) {
+		if (type instanceof PropertyType) switch(((PropertyType)type).type()) {
 		case COLOR:
 			return colorRenderer;
 		case LINETYPE:
@@ -172,8 +227,11 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		return null;
 	}
 
+	/**
+	 * Returns a TableCellEditor suitable for editing this property.
+	 */
 	public TableCellEditor getCellEditor() {
-		switch(type.type()) {
+		if (type instanceof PropertyType) switch(((PropertyType)type).type()) {
 		case BOOLEAN:
 			return checkboxEditor;
 		case DATASOURCE:
@@ -225,10 +283,15 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		default:
 			return null;
 		}
+		else return null;
 	}
 	
+	/**
+	 * Return the first of the set of PathwayElement's
+	 */
 	private PathwayElement getFirstElement() {
 		PathwayElement first;
+		//TODO: weird way of getting first element?
 		for(first = (PathwayElement)elements.iterator().next();;) break;
 		return first;
 	}

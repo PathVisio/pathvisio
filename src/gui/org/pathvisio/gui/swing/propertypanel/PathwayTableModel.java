@@ -53,14 +53,14 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());
 	JTable table;
 	Collection<PathwayElement> input;
-	HashMap<PropertyType, TypedProperty> propertyValues;
+	HashMap<Object, TypedProperty> propertyValues;
 	List<TypedProperty> shownProperties;
 	
 	private SwingEngine swingEngine;
 	
 	public PathwayTableModel(SwingEngine swingEngine) {
 		input = new HashSet<PathwayElement>();
-		propertyValues = new HashMap<PropertyType, TypedProperty>();
+		propertyValues = new HashMap<Object, TypedProperty>();
 		shownProperties = new ArrayList<TypedProperty>();
 		this.swingEngine = swingEngine;
 		swingEngine.getEngine().addApplicationEventListener(this);
@@ -120,12 +120,18 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		
 	protected void updatePropertyCounts(PathwayElement e, boolean remove) {
 		boolean advanced = PreferenceManager.getCurrent().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES);
-		for(PropertyType p : e.getAttributes(advanced)) {
-			if(p.isHidden()) continue;
+		// TODO: distinguish between advanced and not-advanced usage
+		for(Object o : e.getPropertyKeys()) 
+		{
+			if (o instanceof PropertyType) 
+			{
+				PropertyType p = (PropertyType)o;
+				if(p.isHidden()) continue;
+			}
 			
-			TypedProperty tp = propertyValues.get(p);
+			TypedProperty tp = propertyValues.get(o);
 			if(tp == null) {
-				propertyValues.put(p, tp = new TypedProperty(swingEngine, p));
+				propertyValues.put(o, tp = new TypedProperty(swingEngine, o));
 			}
 			if(remove) {
 				tp.removeElement(e);
@@ -147,7 +153,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			}
 			Collections.sort(shownProperties, new Comparator<TypedProperty>() {
 				public int compare(TypedProperty o1, TypedProperty o2) {
-					return o1.getType().desc().compareTo(o2.getType().desc());
+					return o1.getDesc().compareTo(o2.getDesc());
 				}
 			});
 		}
@@ -173,7 +179,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		TypedProperty p = getPropertyAt(rowIndex);
-		if(columnIndex == 0) return p.getType().desc();
+		if(columnIndex == 0) return p.getDesc();
 		else return p.getValue();
 	}
 

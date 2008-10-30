@@ -31,7 +31,6 @@ import javax.xml.rpc.ServiceException;
 import org.pathvisio.data.DataException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.WikiPathways;
@@ -135,12 +134,9 @@ public class DescriptionBot {
 		for(WSPathwayInfo pwi : pathways.keySet()) {
 			Logger.log.info("Getting current tag " + CURATIONTAG + " for " + pwi.getName());
 			//Find an existing tag
-			Organism pwSpecies = Organism.fromLatinName(pwi.getSpecies());
-			String pwName = pwi.getName();
+			String pwId = pwi.getId();
 			//First check if the existing tag is up-to-date
-			WSCurationTag[] tags = client.getCurationTags(
-					pwName, pwSpecies
-			);
+			WSCurationTag[] tags = client.getCurationTags(pwId);
 			String currTagText = null;
 			for(WSCurationTag t : tags) {
 				if(CURATIONTAG.equals(t.getName())) {
@@ -152,17 +148,17 @@ public class DescriptionBot {
 			//Apply a tag if there is no description
 			if(!pathways.get(pwi)) {
 				if(currTagText == null) {
-					Logger.log.info("Applying tag to " + pwSpecies + ":" + pwName);
+					Logger.log.info("Applying tag to " + pwId);
 					client.saveCurationTag(
-							pwName, pwSpecies,
+							pwId,
 							CURATIONTAG, ""
 					);
 				}
 			} else {
 				//Remove the existing tag
 				if(currTagText != null) {
-					Logger.log.info("Removing tag from " + pwSpecies + ":" + pwName);
-					client.removeCurationTag(pwName, pwSpecies, CURATIONTAG);
+					Logger.log.info("Removing tag from " + pwId);
+					client.removeCurationTag(pwId, CURATIONTAG);
 				}
 			}
 		}

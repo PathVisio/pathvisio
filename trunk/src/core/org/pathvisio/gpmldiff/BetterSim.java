@@ -65,8 +65,8 @@ class BetterSim extends SimilarityFunction
 		{
 			if (oldProps.contains(newProp))
 			{
-				Object oo = oldE.getProperty(newProp);
-				Object no = newE.getProperty(newProp);
+				Object oo = oldE.getStaticProperty(newProp);
+				Object no = newE.getStaticProperty(newProp);
 				
 				int max = 0;
 				int score = 0;

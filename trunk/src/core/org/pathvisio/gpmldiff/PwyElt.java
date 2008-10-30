@@ -35,33 +35,33 @@ class PwyElt
 		String result = "[" + ObjectType.getTagMapping (elt.getObjectType());
 		List<PropertyType> props = elt.getAttributes(true);
 		if (props.contains(PropertyType.TEXTLABEL))
-			result += ",lbl=" + elt.getProperty(PropertyType.TEXTLABEL);
+			result += ",lbl=" + elt.getStaticProperty(PropertyType.TEXTLABEL);
 		if (props.contains(PropertyType.WIDTH))
-			result += ",w=" + elt.getProperty(PropertyType.WIDTH);
+			result += ",w=" + elt.getStaticProperty(PropertyType.WIDTH);
 		if (props.contains(PropertyType.HEIGHT))
-			result += ",h=" + elt.getProperty(PropertyType.HEIGHT);
+			result += ",h=" + elt.getStaticProperty(PropertyType.HEIGHT);
 		if (props.contains(PropertyType.CENTERX))
-			result += ",cx=" + elt.getProperty(PropertyType.CENTERX);
+			result += ",cx=" + elt.getStaticProperty(PropertyType.CENTERX);
 		if (props.contains(PropertyType.CENTERY))
-			result += ",cy=" + elt.getProperty(PropertyType.CENTERY);
+			result += ",cy=" + elt.getStaticProperty(PropertyType.CENTERY);
 		if (props.contains(PropertyType.STARTX))
-			result += ",x1=" + elt.getProperty(PropertyType.STARTX);
+			result += ",x1=" + elt.getStaticProperty(PropertyType.STARTX);
 		if (props.contains(PropertyType.STARTY))
-			result += ",y1=" + elt.getProperty(PropertyType.STARTY);		
+			result += ",y1=" + elt.getStaticProperty(PropertyType.STARTY);		
 		if (props.contains(PropertyType.ENDX))
-			result += ",x2=" + elt.getProperty(PropertyType.ENDX);
+			result += ",x2=" + elt.getStaticProperty(PropertyType.ENDX);
 		if (props.contains(PropertyType.ENDY))
-			result += ",y2=" + elt.getProperty(PropertyType.ENDY);		
+			result += ",y2=" + elt.getStaticProperty(PropertyType.ENDY);		
 		if (props.contains(PropertyType.GRAPHID))
-			result += ",id=" + elt.getProperty(PropertyType.GRAPHID);
+			result += ",id=" + elt.getStaticProperty(PropertyType.GRAPHID);
 		if (props.contains(PropertyType.STARTGRAPHREF))
-			result += ",startref=" + elt.getProperty(PropertyType.STARTGRAPHREF);
+			result += ",startref=" + elt.getStaticProperty(PropertyType.STARTGRAPHREF);
 		if (props.contains(PropertyType.ENDGRAPHREF))
-			result += ",endref=" + elt.getProperty(PropertyType.ENDGRAPHREF);
+			result += ",endref=" + elt.getStaticProperty(PropertyType.ENDGRAPHREF);
 		if (props.contains(PropertyType.MAPINFONAME))
-			result += ",name=" + elt.getProperty(PropertyType.MAPINFONAME);
+			result += ",name=" + elt.getStaticProperty(PropertyType.MAPINFONAME);
 		if (props.contains(PropertyType.AUTHOR))
-			result += ",author=" + elt.getProperty(PropertyType.AUTHOR);
+			result += ",author=" + elt.getStaticProperty(PropertyType.AUTHOR);
 		result += "]";
 		return result;
 	}
@@ -73,7 +73,7 @@ class PwyElt
 		for (PropertyType prop : elt.getAttributes(true))
 		{
 			String attr = prop.tag();
-			String val = "" + elt.getProperty (prop);
+			String val = "" + elt.getStaticProperty (prop);
 			result.put (attr, val);
 		}
 		return result;

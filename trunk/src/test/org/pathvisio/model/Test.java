@@ -54,11 +54,11 @@ public class Test extends TestCase implements PathwayListener
 		assertEquals ("test set/get CenterX", 1.0, o.getMCenterX(), 0.0001);		
 		
 		assertEquals ("Setting CenterX should generate single event", received.size(), 1);
-		assertEquals ("test getProperty()", 1.0, (Double)o.getProperty(PropertyType.CENTERX), 0.0001);
+		assertEquals ("test getProperty()", 1.0, (Double)o.getStaticProperty(PropertyType.CENTERX), 0.0001);
 		
 		try 
 		{
-			o.setProperty(PropertyType.CENTERX, null);
+			o.setStaticProperty(PropertyType.CENTERX, null);
 			fail("Setting centerx property to null should generate exception");
 		}
 		catch (Exception e) {}
@@ -74,7 +74,7 @@ public class Test extends TestCase implements PathwayListener
 	{
 		try 
 		{
-			o.setProperty(null, new Object());
+			o.setStaticProperty(null, new Object());
 			fail("Setting null property should generate exception");
 		}
 		catch (Exception e) {}

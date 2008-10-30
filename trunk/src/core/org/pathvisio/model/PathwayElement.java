@@ -23,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,12 +39,41 @@ import org.pathvisio.view.LinAlg.Point;
  * PathwayElement is responsible for maintaining the data for all the individual
  * objects that can appear on a pwy (Lines, GeneProducts, Shapes, etc.)
  * 
- * GmmlDataObjects contain a union of all possible fields (e.g it has both start
- * and endpoints for lines, and label text for labels) Each field can be
- * accessed through a specific accessor, or through getProperty() and
- * setProperty()
  * 
- * most fields cannot be set to null. Notable exceptions are graphId,
+ * PathwayElements have a number of properties which consist of a 
+ * key, value pair.
+ * 
+ * There are two types of properties: Static and Dynamic
+ * Static properties are one of the properties 
+ * 
+ * Dynamic properties can have any String as key. Their value is
+ * always of type String. Dynamic properties are not essential for
+ * the functioning of PathVisio and can be used to
+ * store arbitrary data. In GPML, dynamic properties are
+ * stored in an <Attribute key="" value=""/> tag.
+ * Internally, dynamic properties are stored in a Map<String, String>
+ * 
+ * Static properties must have a key from the PropertyType enum
+ * Their value can be various types which can be 
+ * obtained from PropertyType.type(). Static properties can
+ * be queried with getStaticProperty (key) and 
+ * setStaticProperty(key, value), but also specific accessors 
+ * such as e.g. getTextLabel() and setTextLabel()
+ * 
+ * Internally, dynamic properties are stored in various 
+ * fields of the PathwayElement Object.
+ * The static properties are a union of all possible fields 
+ * (e.g it has both start and endpoints for lines, 
+ * and label text for labels) 
+ * 
+ * the setPropertyEx() and getPropertyEx() functions can be used
+ * to access both dynamic and static properties 
+ * from the same function. If key instanceof String then it's 
+ * assumed the caller wants a dynamic
+ * property, if key instanceof PropertyType then the static property 
+ * is used.  
+ * 
+ * most static properties cannot be set to null. Notable exceptions are graphId,
  * startGraphRef and endGraphRef.
  * 
  * @author Martijn
@@ -55,8 +85,35 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	
 	/**
 	 * Get a map of arbitrary key / value pairs
+	 * @deprecated should be private
 	 */
 	public Map<String, String> getAttributeMap() { return attributes; }
+	
+	/**
+	 * get a set of all dynamic property keys
+	 */
+	public Set<String> getDynamicPropertyKeys()
+	{
+		return attributes.keySet();
+	}
+	
+	/**
+	 * set a dynamic property.
+	 */
+	public void setDynamicProperty (String key, String value)
+	{
+		attributes.put (key, value);
+		fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
+				PathwayEvent.MODIFIED_GENERAL));
+	}
+	
+	/**
+	 * get a dynamic property
+	 */
+	public String getDynamicProperty (String key)
+	{
+		return attributes.get (key);
+	}
 	
 	public class Comment implements Cloneable
 	{
@@ -672,21 +729,47 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	/**
+	 * Returns both the static properties and the dynamic properties as an object list
+	 */
+	public Set<Object> getPropertyKeys()
+	{
+		Set<Object> keys = new HashSet<Object>();
+		keys.addAll(getStaticPropertyKeys());
+		keys.addAll(getDynamicPropertyKeys());
+		return keys;
+	}
+	
+	/**
 	 * get all attributes, also the advanced ones
+	 * @deprecated use getStaticPropertyKeys or preferably rewrite to use getPropertyKeys
 	 */
 	public List<PropertyType> getAttributes()
 	{
-		return getAttributes(true);
+		return getStaticPropertyKeys(true);
 	}
-
+	
 	/**
 	 * get a list of attributes for this PathwayElement.
 	 * 
 	 * @param fAdvanced:
 	 *            if true, return all valid attributes. If false, hide certain
 	 *            "advanced" attributes that can be set in other ways too.
+	 * @deprecated use getStaticPropertyKeys or preferably rewrite to use getPropertyKeys
 	 */
 	public List<PropertyType> getAttributes(boolean fAdvanced)
+	{
+		return getStaticPropertyKeys(fAdvanced);
+	}
+
+	public List<PropertyType> getStaticPropertyKeys()
+	{
+		return getStaticPropertyKeys(true);
+	}
+
+	/**
+	 * get all attributes that are stored as static members.
+	 */
+	public List<PropertyType> getStaticPropertyKeys(boolean fAdvanced)
 	{
 		List<PropertyType> result = new ArrayList<PropertyType>();
 		switch (getObjectType())
@@ -838,6 +921,49 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 		return result;
 	}
+	
+	/**
+	 * Set dynamic or static properties at the same time
+	 * Will be replaced with setProperty in the future.
+	 */
+	public void setPropertyEx (Object key, Object value)
+	{
+		if (key instanceof PropertyType)
+		{
+			setStaticProperty((PropertyType)key, value);
+		}
+		else if (key instanceof String)
+		{
+			setDynamicProperty((String)key, value.toString());
+		}
+		else
+		{
+			throw new IllegalArgumentException();
+		}		
+	}
+	
+	public Object getPropertyEx (Object key)
+	{
+		if (key instanceof PropertyType)
+		{
+			return getStaticProperty((PropertyType)key);
+		}
+		else if (key instanceof String)
+		{
+			return getDynamicProperty ((String)key);
+		}
+		else
+		{
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	/**
+	 * @deprecated use setStaticProperty
+	 */
+	public void setProperty(PropertyType key, Object value)
+	{
+	}
 
 	/**
 	 * This works so that o.setNotes(x) is the equivalent of
@@ -848,7 +974,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * @param key
 	 * @param value
 	 */
-	public void setProperty(PropertyType key, Object value)
+	public void setStaticProperty(PropertyType key, Object value)
 	{
 		switch (key)
 		{
@@ -1039,7 +1165,15 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
+	/**
+	 * @deprecated use getStaticProperty
+	 */
 	public Object getProperty(PropertyType x)
+	{
+		return getStaticProperty(x);
+	}
+	
+	public Object getStaticProperty(PropertyType x)
 	{
 		Object result = null;
 		switch (x)
@@ -1217,6 +1351,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public void copyValuesFrom(PathwayElement src)
 	{
+		attributes = new HashMap<String, String>(src.attributes); // create copy
 		author = src.author;
 		copyright = src.copyright;
 		backpageHead = src.backpageHead;

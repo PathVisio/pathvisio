@@ -22,7 +22,9 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jdom.Document;
@@ -49,7 +51,13 @@ import org.pathvisio.view.LinAlg.Point;
  */
 public class PathwayElement implements GraphIdContainer, Comparable<PathwayElement>
 {
-
+	private Map<String, String> attributes = new HashMap<String, String>();
+	
+	/**
+	 * Get a map of arbitrary key / value pairs
+	 */
+	public Map<String, String> getAttributeMap() { return attributes; }
+	
 	public class Comment implements Cloneable
 	{
 		public Comment(String _comment, String _source)

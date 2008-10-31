@@ -126,8 +126,8 @@ public class PreferenceDlg extends PreferenceManager {
 			addField(fmim);
 
 			BooleanFieldEditor f2 =	new BooleanFieldEditor (
-				GlobalPreference.SHOW_ADVANCED_ATTRIBUTES.name(),									   
-				"Show advanced attributes (e.g. references)", getFieldEditorParent());
+				GlobalPreference.SHOW_ADVANCED_PROPERTIES.name(),									   
+				"Show advanced properties (e.g. references)", getFieldEditorParent());
 			addField (f2);
 			
 		}

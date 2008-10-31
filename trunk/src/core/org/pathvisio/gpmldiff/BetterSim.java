@@ -16,7 +16,7 @@
 //
 package org.pathvisio.gpmldiff;
 
-import java.util.List;
+import java.util.Set;
 
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
@@ -32,8 +32,8 @@ class BetterSim extends SimilarityFunction
 	{
 		int oldOt = oldE.getObjectType();
 		int newOt = newE.getObjectType();
-		List<PropertyType> oldProps = oldE.getAttributes(true);
-		List<PropertyType> newProps = newE.getAttributes(true);
+		Set<PropertyType> oldProps = oldE.getStaticPropertyKeys();
+		Set<PropertyType> newProps = newE.getStaticPropertyKeys();
 
 		int oldN = oldProps.size();
 		//int newN = newProps.size();

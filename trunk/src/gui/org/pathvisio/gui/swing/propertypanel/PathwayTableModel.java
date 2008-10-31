@@ -17,12 +17,14 @@
 package org.pathvisio.gui.swing.propertypanel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -33,6 +35,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.gui.VisibleProperties;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
@@ -119,9 +122,9 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 		
 	protected void updatePropertyCounts(PathwayElement e, boolean remove) {
-		boolean advanced = PreferenceManager.getCurrent().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES);
 		// TODO: distinguish between advanced and not-advanced usage
-		for(Object o : e.getPropertyKeys()) 
+		
+		for(Object o : VisibleProperties.getVisiblePropertyKeys(e)) 
 		{
 			if (o instanceof PropertyType) 
 			{

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -70,16 +71,89 @@ public class Test extends TestCase implements PathwayListener
 		assertNull ("can set graphRef to null", l.getStartGraphRef());
 	}
 	
-	public void testProperties()
+	public void testProperties() throws IOException, ConverterException
 	{
+		// set 10 dynamic properties in two ways
+		for (int i = 0; i < 5; ++i)
+		{
+			o.setDynamicProperty("Hello" + i, "World" + i);
+		}
+		for (int i = 5; i < 10; ++i)
+		{
+			o.setPropertyEx("Hello" + i, "World" + i);
+		}
+		
+		// check contents of dynamic properties 
+		assertEquals("World0", o.getDynamicProperty("Hello0"));
+		for (int i = 0; i < 10; ++i)
+		{
+			assertEquals("World" + i, o.getDynamicProperty("Hello" + i));
+		}
+		
+		// check non-existing dynamic property
+		
+		assertNull (o.getDynamicProperty("NonExistingProperty"));
+
+		// check that we have 10 dynamic properties, no more, no less.
+		Set<String> dynamicKeys = o.getDynamicPropertyKeys();
+		assertEquals (10, dynamicKeys.size());
+
+		// check that superset dynamic + static also contains dynamic properties 
+		assertEquals("World0", o.getPropertyEx("Hello0"));
+		for (int i = 0; i < 10; ++i)
+		{
+			assertEquals("World" + i, o.getPropertyEx("Hello" + i));
+		}
+
+		// check setting null property
 		try 
 		{
 			o.setStaticProperty(null, new Object());
 			fail("Setting null property should generate exception");
 		}
-		catch (Exception e) {}
+		catch (NullPointerException e) {}
+
+		// check setting non string / PropertyType property
+		try 
+		{
+			o.setPropertyEx(new Object(), new Object());
+			fail("Using key that is not String or PropertyType should generate exception");
+		}
+		catch (IllegalArgumentException e) {}
+
+		// test storage of dynamic properties
+		File temp = File.createTempFile ("dynaprops.test", ".gpml");
+		temp.deleteOnExit();
+		
+		// set an id on this element so we can find it back easily
+		String id = o.setGeneratedGraphId();
+		
+		// store 
+		data.writeToXml(temp, false);
+		
+		// and read back
+		Pathway p2 = new Pathway();
+		p2.readFromXml(temp, true);
+
+		// get same datanode back
+		PathwayElement o2 = p2.getElementById(id);
+		// check that it still has the dynamic properties after storing / reading
+		assertEquals ("World5", o2.getDynamicProperty("Hello5"));
+		assertEquals ("World3", o2.getPropertyEx("Hello3"));
+		// sanity check: no non-existing properties
+		assertNull (o2.getDynamicProperty("NonExistingProperty"));
+		assertNull (o2.getPropertyEx("NonExistingProperty"));
+		
+		// check that dynamic properties are copied.
+		PathwayElement o3 = o2.copy();
+		assertEquals ("World7", o3.getPropertyEx("Hello7"));
+		
+		// check that it's a deep copy
+		o2.setDynamicProperty("Hello7", "Something other than 'World7'");
+		assertEquals ("World7", o3.getPropertyEx("Hello7"));
+		assertEquals ("Something other than 'World7'", o2.getPropertyEx("Hello7"));
 	}
-	
+		
 	public void testColor()
 	{
 		try

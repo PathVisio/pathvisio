@@ -219,6 +219,8 @@ public class ColorByExpression extends VisualizationMethod {
 		int nr = useSamples.size();
 		int left = area.width % nr; //Space left after dividing, give to last rectangle
 		int w = area.width / nr;
+		java.awt.Shape origClip = g2d.getClip();
+		g2d.clip(gp.getShape());
 		for(int i = 0; i < nr; i++) {
 			Rectangle r = new Rectangle(
 					area.x + w * i,
@@ -238,6 +240,9 @@ public class ColorByExpression extends VisualizationMethod {
 			else 
 				drawNoDataFound(s, area, g2d);
 		}
+		g2d.setClip(origClip);
+		g2d.setColor(Color.BLACK);
+		g2d.draw (gp.getShape());
 	}
 	
 	void drawNoDataFound(ConfiguredSample s, Rectangle area, Graphics2D g2d) {

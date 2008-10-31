@@ -65,19 +65,30 @@ public class GeneProduct extends GraphicsShape
 		return (int)(vFromM (gdata.getMFontSize()));
 	}
 
+	/**
+	 * Get the outline shape for this DataNode
+	 * This is used for drawing the DataNode, but
+	 * it can also be used by Visualization plugins as a clipping area
+	 */
+	public RectangularShape getShape()
+	{
+		RectangularShape area = new Rectangle2D.Double(
+				getVLeft(), getVTop(), getVWidth(), getVHeight());
+			boolean rounded = PreferenceManager.getCurrent().getBoolean(GlobalPreference.DATANODES_ROUNDED);
+			if(rounded) {
+				double r = Math.max(area.getWidth(), area.getHeight()) * 0.2;
+				area = new RoundRectangle2D.Double(area.getX(), area.getY(), 
+						area.getWidth(), area.getHeight(), 
+						r, r);
+			}
+		return area;
+	}
+	
 	public void doDraw(Graphics2D g)
 	{
 		java.awt.Shape origClip = g.getClip();
-		RectangularShape area = new Rectangle2D.Double(
-			getVLeft(), getVTop(), getVWidth(), getVHeight());
-		boolean rounded = PreferenceManager.getCurrent().getBoolean(GlobalPreference.DATANODES_ROUNDED);
-		if(rounded) {
-			double r = Math.max(area.getWidth(), area.getHeight()) * 0.2;
-			area = new RoundRectangle2D.Double(area.getX(), area.getY(), 
-					area.getWidth(), area.getHeight(), 
-					r, r);
-		}
 		
+		RectangularShape area = getShape();
 		//White background
 		g.setPaint (Color.WHITE);
 		g.fill(area);

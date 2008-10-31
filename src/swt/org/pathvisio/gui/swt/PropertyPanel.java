@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.gui.VisibleProperties;
 import org.pathvisio.gui.swt.dialogs.CommentsDialog;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
@@ -62,8 +64,6 @@ import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyClass;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swt.SwtUtils;
 import org.pathvisio.util.swt.TableColumnResizer;
 import org.pathvisio.view.Graphics;
@@ -89,7 +89,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	
 	private List<PathwayElement> dataObjects;
 	
-	private List<PropertyType> attributes;
+	private List<Object> attributes;
 	
 	final static int TYPES_DIFF = ObjectType.MIN_VALID -1;
 	final static Object VALUE_DIFF = new Different();
@@ -158,11 +158,11 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		return type;
 	}
 	
-	Object getAggregateValue(PropertyType key) {
+	Object getAggregateValue(Object key) {
 		Object value = VALUE_DIFF;
 		for(int i = 0; i < dataObjects.size(); i++) {
 			PathwayElement g = dataObjects.get(i);
-			Object o = g.getProperty(key);
+			Object o = g.getPropertyEx(key);
 			if(i != 0 && (o == null || !o.equals(value))) return VALUE_DIFF;
 
 			value = o;
@@ -177,12 +177,11 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	 */
 	public void setAttributes ()
 	{
-		HashMap<PropertyType, Integer> master = new HashMap<PropertyType, Integer>();
+		HashMap<Object, Integer> master = new HashMap<Object, Integer>();
 		for (PathwayElement o : dataObjects)
 		{
 			// get attributes. Only get advanced attributes if the preferences say so.
-			for (PropertyType attr : o.getAttributes(
-					 PreferenceManager.getCurrent().getBoolean(GlobalPreference.SHOW_ADVANCED_ATTRIBUTES)))
+			for (Object attr : VisibleProperties.getVisiblePropertyKeys(o))
 			{
 				if (master.containsKey(attr))
 				{
@@ -197,7 +196,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 			}
 		}
 		attributes.clear();
-		for (PropertyType attr : master.keySet())
+		for (Object attr : master.keySet())
 		{
 			if (master.get(attr) == dataObjects.size())
 			{
@@ -205,7 +204,14 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 			}
 		}
 		// sortAttributes();
-		Collections.sort (attributes);		
+		Collections.sort (attributes, new Comparator<Object>()
+				{
+					public int compare(Object o1, Object o2) 
+					{
+						return o1.toString().compareTo(o2.toString());
+					}
+				}
+		);		
 	}
 	
 //	void sortAttributes() {
@@ -260,7 +266,7 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		t.addControlListener(new TableColumnResizer(t, t.getParent()));
 		
 		dataObjects = new ArrayList<PathwayElement>();
-		attributes = new ArrayList<PropertyType>();
+		attributes = new ArrayList<Object>();
 		tableViewer.setInput(attributes);
 		
 		Engine.getCurrent().addApplicationEventListener(this);
@@ -288,8 +294,19 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	
 	private CellEditor getCellEditor(Object element)
 	{
-		PropertyType key = (PropertyType)element;
-		PropertyClass type = key.type();
+		
+		PropertyClass type;
+		
+		if (element instanceof PropertyType)
+		{
+			PropertyType key = (PropertyType)element;
+			type = key.type();
+		}
+		else
+		{
+			type = PropertyClass.STRING;
+		}
+		
 		switch(type)
 		{
 			case FONT:				
@@ -372,70 +389,73 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		 */
 		public Object getValue(Object element, String property) 
 		{
-			PropertyType key = (PropertyType)element;
-			Object value = getAggregateValue(key);
-			switch(key.type())
+			Object value = getAggregateValue(element);
+			if (element instanceof PropertyType)
 			{
-				case ANGLE:
-					if(value instanceof Double)
-						value = Math.round((Double)(value) * 1800.0 / Math.PI) / 10.0;
-					break;
-				case DOUBLE:
-					if(value instanceof Double)
-						value = Math.round((Double)(value) * 100.0) / 100.0;
-					break;
-				case ORGANISM:
-					return Organism.latinNames().indexOf(value.toString());
-				case GENETYPE:
-					return Arrays.asList(genetype_names).indexOf(value.toString());
-				case DATASOURCE:
-					if (value == null)
-						return 0;
-					else
-						return Arrays.asList(datasource_names).indexOf(value.toString());				
-				// for all combobox types:
-				case BOOLEAN:
-					if(value instanceof Boolean)
-						return ((Boolean)value) ? 1 : 0;
-					else
-						return 0;
-				case SHAPETYPE:
-					if(value instanceof ShapeType)
-						return (((ShapeType)value).getOrdinal());
-					else
-						return 0;
-				case LINETYPE:
-					if(value instanceof LineType)
-						return (((LineType)value).getOrdinal());
-					else
-						return 0;
-			    case OUTLINETYPE:
-			    	if(value instanceof OutlineType)
-			    		return (((OutlineType)value).ordinal());
-					else
-						return 0;
-				case COLOR:
-					if(value instanceof Color)
-						value = SwtUtils.color2rgb((Color)value);
-					if(value instanceof RGB)
-						return (RGB)value;
-					else
-						return new RGB(0, 0, 0);//ColorEditor can't handle string
-					
-				case ORIENTATION:
-				case LINESTYLE:
-					if(value instanceof Integer)
-						return (Integer)value;
-					else
-						return 0;
-				case DB_ID:
-				case DB_SYMBOL:
-					if(value instanceof PropertyPanel.AutoFillData) 
-						return ((PropertyPanel.AutoFillData)value).getMainValue();
-					break;
-				case BIOPAXREF:
-				case COMMENTS:
-					return value;
+				PropertyType key = (PropertyType)element;
+				switch(key.type())
+				{
+					case ANGLE:
+						if(value instanceof Double)
+							value = Math.round((Double)(value) * 1800.0 / Math.PI) / 10.0;
+						break;
+					case DOUBLE:
+						if(value instanceof Double)
+							value = Math.round((Double)(value) * 100.0) / 100.0;
+						break;
+					case ORGANISM:
+						return Organism.latinNames().indexOf(value.toString());
+					case GENETYPE:
+						return Arrays.asList(genetype_names).indexOf(value.toString());
+					case DATASOURCE:
+						if (value == null)
+							return 0;
+						else
+							return Arrays.asList(datasource_names).indexOf(value.toString());				
+					// for all combobox types:
+					case BOOLEAN:
+						if(value instanceof Boolean)
+							return ((Boolean)value) ? 1 : 0;
+						else
+							return 0;
+					case SHAPETYPE:
+						if(value instanceof ShapeType)
+							return (((ShapeType)value).getOrdinal());
+						else
+							return 0;
+					case LINETYPE:
+						if(value instanceof LineType)
+							return (((LineType)value).getOrdinal());
+						else
+							return 0;
+				    case OUTLINETYPE:
+				    	if(value instanceof OutlineType)
+				    		return (((OutlineType)value).ordinal());
+						else
+							return 0;
+					case COLOR:
+						if(value instanceof Color)
+							value = SwtUtils.color2rgb((Color)value);
+						if(value instanceof RGB)
+							return (RGB)value;
+						else
+							return new RGB(0, 0, 0);//ColorEditor can't handle string
+						
+					case ORIENTATION:
+					case LINESTYLE:
+						if(value instanceof Integer)
+							return (Integer)value;
+						else
+							return 0;
+					case DB_ID:
+					case DB_SYMBOL:
+						if(value instanceof PropertyPanel.AutoFillData) 
+							return ((PropertyPanel.AutoFillData)value).getMainValue();
+						break;
+					case BIOPAXREF:
+					case COMMENTS:
+						return value;
+				}
 			}
 			//We can get here because:
 			// - the property type is a string
@@ -445,7 +465,6 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 		}
 		
 		public void modify(Object element, String property, Object value) {
-			PropertyType key = (PropertyType)((TableItem)element).getData();
 			
 			if(value == VALUE_DIFF || value == VALUE_DIFF.toString()) {
 				return;
@@ -462,82 +481,86 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 			 * For Double / Integer, we go from String to Double
 			 * For Datasource, we go from Integer to String.
 			 */
-			switch(key.type())
+			if (element instanceof PropertyType)
 			{
-			case ANGLE: 	
-				try 
-				{ 
-					// convert degrees (property editor) to radians (model)
-					value = Double.parseDouble((String)value) * Math.PI / 180;					
-					break;
-				} 
-				catch(Exception e) 
+				PropertyType key = (PropertyType)((TableItem)element).getData();
+				switch(key.type())
 				{
-					// invalid input, ignore
-					return; 
-				}
-			case DOUBLE: 	
-				try 
-				{ 
-					value = Double.parseDouble((String)value); 
-					break; 
-				} 
-				catch(Exception e) 
-				{
-					// invalid input, ignore
-					return; 
-				}
-			case INTEGER: 	
-				try 
-				{ 
-					value = Integer.parseInt((String)value); 
-					break; 
-				}
-				catch(Exception e) 
-				{ 
-					// invalid input, ignore 
-					return; 
-				}
-			case DATASOURCE:
-				if((Integer)value == -1) return; //Nothing selected
-				value = datasource_names[(Integer)value];
-				break;
-			case BOOLEAN:
-				if ((Integer)value == 0)
-				{
-					value = new Boolean (false);
-				}
-				else
-				{
-					value = new Boolean (true);
-				}
-				break;
-			case ORGANISM:
-				if((Integer)value == -1) return; //Nothing selected
-				value = Organism.latinNames().get((Integer)value);
-				break;
-			case GENETYPE:
-				if((Integer)value == -1) return; //Nothing selected
-				value = genetype_names[(Integer)value];
-				break;
-			case COLOR:
-				value = SwtUtils.rgb2color((RGB)value);
-			case DB_SYMBOL:
-			case DB_ID:
-				if(value instanceof PropertyPanel.AutoFillData) {
-					PropertyPanel.AutoFillData adf = (PropertyPanel.AutoFillData)value;
-					for(PathwayElement o : dataObjects) {
-						if(o.getObjectType() == ObjectType.DATANODE) {
-							adf.fillData(o);
-						}
+				case ANGLE: 	
+					try 
+					{ 
+						// convert degrees (property editor) to radians (model)
+						value = Double.parseDouble((String)value) * Math.PI / 180;					
+						break;
+					} 
+					catch(Exception e) 
+					{
+						// invalid input, ignore
+						return; 
 					}
-					value = adf.getMainValue();
+				case DOUBLE: 	
+					try 
+					{ 
+						value = Double.parseDouble((String)value); 
+						break; 
+					} 
+					catch(Exception e) 
+					{
+						// invalid input, ignore
+						return; 
+					}
+				case INTEGER: 	
+					try 
+					{ 
+						value = Integer.parseInt((String)value); 
+						break; 
+					}
+					catch(Exception e) 
+					{ 
+						// invalid input, ignore 
+						return; 
+					}
+				case DATASOURCE:
+					if((Integer)value == -1) return; //Nothing selected
+					value = datasource_names[(Integer)value];
+					break;
+				case BOOLEAN:
+					if ((Integer)value == 0)
+					{
+						value = new Boolean (false);
+					}
+					else
+					{
+						value = new Boolean (true);
+					}
+					break;
+				case ORGANISM:
+					if((Integer)value == -1) return; //Nothing selected
+					value = Organism.latinNames().get((Integer)value);
+					break;
+				case GENETYPE:
+					if((Integer)value == -1) return; //Nothing selected
+					value = genetype_names[(Integer)value];
+					break;
+				case COLOR:
+					value = SwtUtils.rgb2color((RGB)value);
+				case DB_SYMBOL:
+				case DB_ID:
+					if(value instanceof PropertyPanel.AutoFillData) {
+						PropertyPanel.AutoFillData adf = (PropertyPanel.AutoFillData)value;
+						for(PathwayElement o : dataObjects) {
+							if(o.getObjectType() == ObjectType.DATANODE) {
+								adf.fillData(o);
+							}
+						}
+						value = adf.getMainValue();
+					}
+					break;
 				}
-				break;
 			}
-			Engine.getCurrent().getActiveVPathway().getUndoManager().newAction ("Change " + key + " property");
+			Engine.getCurrent().getActiveVPathway().getUndoManager().newAction ("Change " + element + " property");
 			for(PathwayElement o : dataObjects) {
-				o.setProperty(key, value);
+				o.setPropertyEx(element, value);
 			}
 			tableViewer.refresh();
 			Engine.getCurrent().getActiveVPathway().redrawDirtyRect();
@@ -551,22 +574,37 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 			return null;
 		}
 		public String getColumnText(Object element, int columnIndex) {
-			PropertyType key = (PropertyType)element;
+
+			PropertyClass type;
+			String desc;
+			
+			if (element instanceof PropertyType)
+			{
+				PropertyType key = (PropertyType)element;
+				type = key.type();
+				desc = key.desc();
+			}
+			else
+			{
+				type = PropertyClass.STRING;
+				desc = element.toString();
+			}
+			
 			switch(columnIndex) {
 				case 0:
-					return key.desc();					
+					return desc;					
 				case 1:
 					//TODO: prettier labels for different value types
-					if(attributes.contains(key))
+					if(attributes.contains(element))
 					{
-						Object value = getAggregateValue(key);
+						Object value = getAggregateValue(element);
 						if (value == null)
 						{
 							return null;
 						}
 						else 
 						{
-							switch (key.type())
+							switch (type)
 							{
 								case ANGLE:
 								{
@@ -683,35 +721,35 @@ public class PropertyPanel extends Composite implements PathwayListener, Selecti
 	}
 
 	static class AutoFillData {
-		PropertyType mProp;
+		Object mProp;
 		Object mValue;
-		HashMap<PropertyType, String> values;
+		HashMap<Object, String> values;
 		
 		private boolean doGuess = false;
 		
-		public AutoFillData(PropertyType mainProperty, String mainValue) {
-			values = new HashMap<PropertyType, String>();
+		public AutoFillData(Object mainProperty, String mainValue) {
+			values = new HashMap<Object, String>();
 			mProp = mainProperty;
 			mValue = mainValue;
 			setProperty(mainProperty, mainValue);
 		}
 		
-		public void setProperty(PropertyType property, String value) {
+		public void setProperty(Object property, String value) {
 			values.put(property, value);
 		}
 		
-		public PropertyType getMainProperty() { return mProp; }
+		public Object getMainProperty() { return mProp; }
 		public Object getMainValue() { return mValue; }
 		
-		public String getProperty(PropertyType property) { return values.get(property); }
+		public String getProperty(Object property) { return values.get(property); }
 		
-		public Set<PropertyType> getProperties() { return values.keySet(); }
+		public Set<Object> getProperties() { return values.keySet(); }
 		
 		public void fillData(PathwayElement o) {
 			if(doGuess) guessData(o);
-			for(PropertyType p : getProperties()) {
+			for(Object p : getProperties()) {
 				Object vNew = getProperty(p);
-				o.setProperty(p, vNew);
+				o.setPropertyEx(p, vNew);
 			}
 		}
 		

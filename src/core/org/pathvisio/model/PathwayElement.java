@@ -39,7 +39,12 @@ import org.pathvisio.view.LinAlg.Point;
  * PathwayElement is responsible for maintaining the data for all the individual
  * objects that can appear on a pwy (Lines, GeneProducts, Shapes, etc.)
  * 
- * 
+ * All PathwayElements have an ObjectType. This ObjectType is specified at creation
+ * time and can't be modified. To create a PathwayElement, 
+ * use the createPathwayElement() function. This is a factory method
+ * that returns a different implementation class depending on
+ * the specified ObjectType. 
+ *  
  * PathwayElements have a number of properties which consist of a 
  * key, value pair.
  * 
@@ -71,7 +76,7 @@ import org.pathvisio.view.LinAlg.Point;
  * from the same function. If key instanceof String then it's 
  * assumed the caller wants a dynamic
  * property, if key instanceof PropertyType then the static property 
- * is used.  
+ * is used.
  * 
  * most static properties cannot be set to null. Notable exceptions are graphId,
  * startGraphRef and endGraphRef.
@@ -729,7 +734,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	/**
-	 * Returns both the static properties and the dynamic properties as an object list
+	 * Returns keys of available static properties and dynamic properties as an object list
 	 */
 	public Set<Object> getPropertyKeys()
 	{
@@ -749,177 +754,182 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 	
 	/**
-	 * get a list of attributes for this PathwayElement.
-	 * 
-	 * @param fAdvanced:
-	 *            if true, return all valid attributes. If false, hide certain
-	 *            "advanced" attributes that can be set in other ways too.
-	 * @deprecated use getStaticPropertyKeys or preferably rewrite to use getPropertyKeys
+	 * @deprecated PathwayElement doesn't distinguish between advanced / not advanced attributes anymore, 
+	 * that distinction is made at the UI level.
 	 */
 	public List<PropertyType> getAttributes(boolean fAdvanced)
 	{
 		return getStaticPropertyKeys(fAdvanced);
 	}
 
-	public List<PropertyType> getStaticPropertyKeys()
+	/**
+	 * @deprecated PathwayElement doesn't distinguish between advanced / not advanced attributes anymore, 
+	 * that distinction is made at the UI level.
+	 */
+	public List<PropertyType> getStaticPropertyKeys(boolean fAdvanced)
 	{
 		return getStaticPropertyKeys(true);
 	}
 
+	private static final Map<Integer, Set<PropertyType>> allowedProps;
+
+	static {		
+		Set<PropertyType> propsCommon = new HashSet<PropertyType>();
+		propsCommon.addAll (Arrays.asList(new PropertyType[] {						
+				PropertyType.COMMENTS,
+				PropertyType.GRAPHID,
+				PropertyType.GROUPREF,
+				PropertyType.BIOPAXREF,
+				PropertyType.ZORDER,
+			}));
+		Set<PropertyType> propsCommonShape = new HashSet<PropertyType>();
+		propsCommonShape.addAll (Arrays.asList(new PropertyType[] {						
+				PropertyType.CENTERX,
+				PropertyType.CENTERY,
+				PropertyType.WIDTH,
+				PropertyType.HEIGHT,
+				PropertyType.COLOR,
+			}));
+		
+		allowedProps = new HashMap<Integer, Set<PropertyType>>();		
+		{
+			Set<PropertyType> propsMappinfo = new HashSet<PropertyType>();
+			propsMappinfo.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.COMMENTS,
+					PropertyType.MAPINFONAME,
+					PropertyType.ORGANISM,
+					PropertyType.MAPINFO_DATASOURCE,
+					PropertyType.VERSION,
+					PropertyType.AUTHOR,
+					PropertyType.MAINTAINED_BY,
+					PropertyType.EMAIL,
+					PropertyType.LAST_MODIFIED,
+					PropertyType.AVAILABILITY,
+					PropertyType.BOARDWIDTH,
+					PropertyType.BOARDHEIGHT,
+					PropertyType.WINDOWWIDTH,
+					PropertyType.WINDOWHEIGHT,
+				}));
+			allowedProps.put (ObjectType.MAPPINFO, propsMappinfo);
+		}
+		{
+			Set<PropertyType> propsState = new HashSet<PropertyType>();
+			propsState.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.RELX,
+					PropertyType.RELY,
+					PropertyType.WIDTH,
+					PropertyType.HEIGHT,
+					PropertyType.COLOR,
+					PropertyType.FILLCOLOR,
+					PropertyType.TRANSPARENT,
+					PropertyType.TEXTLABEL,
+					PropertyType.MODIFICATIONTYPE,
+					PropertyType.LINESTYLE,
+					PropertyType.GRAPHREF,
+				}));
+			propsState.addAll (propsCommon);
+			allowedProps.put (ObjectType.STATE, propsState);
+		}
+		{			
+			Set<PropertyType> propsShape = new HashSet<PropertyType>();
+			propsShape.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.FILLCOLOR,
+					PropertyType.SHAPETYPE,
+					PropertyType.ROTATION,
+					PropertyType.TRANSPARENT,
+					PropertyType.LINESTYLE,
+			}));
+			propsShape.addAll (propsCommon);
+			propsShape.addAll (propsCommonShape);
+			allowedProps.put (ObjectType.SHAPE, propsShape);
+		}
+		{
+			Set<PropertyType> propsDatanode = new HashSet<PropertyType>();
+			propsDatanode.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.GENEID,
+					PropertyType.DATASOURCE,
+					PropertyType.TEXTLABEL,
+					// PropertyType.XREF,
+					PropertyType.BACKPAGEHEAD,
+					PropertyType.TYPE,
+			}));
+			propsDatanode.addAll (propsCommon);
+			propsDatanode.addAll (propsCommonShape);
+			allowedProps.put (ObjectType.DATANODE, propsDatanode);
+		}
+		{
+			Set<PropertyType> propsLine = new HashSet<PropertyType>();
+			propsLine.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.COLOR,
+					PropertyType.STARTX,
+					PropertyType.STARTY,
+					PropertyType.ENDX,
+					PropertyType.ENDY,
+					PropertyType.STARTLINETYPE,
+					PropertyType.ENDLINETYPE,
+					PropertyType.LINESTYLE,
+					PropertyType.STARTGRAPHREF,
+					PropertyType.ENDGRAPHREF,
+			}));
+			propsLine.addAll (propsCommon);
+			allowedProps.put (ObjectType.LINE, propsLine);
+		}
+		{
+			Set<PropertyType> propsLabel = new HashSet<PropertyType>();
+			propsLabel.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.GENMAPP_XREF,
+					PropertyType.TEXTLABEL,
+					PropertyType.FONTNAME,
+					PropertyType.FONTWEIGHT,
+					PropertyType.FONTSTYLE,
+					PropertyType.FONTSIZE,
+					PropertyType.OUTLINE,
+			}));
+			propsLabel.addAll (propsCommon);
+			propsLabel.addAll (propsCommonShape);
+			allowedProps.put (ObjectType.LABEL, propsLabel);
+		}
+		{			
+			Set<PropertyType> propsGroup = new HashSet<PropertyType>();
+			propsGroup.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.GROUPID,
+					PropertyType.GROUPREF,
+					PropertyType.BIOPAXREF,
+					PropertyType.GROUPSTYLE,
+					PropertyType.TEXTLABEL,
+					PropertyType.COMMENTS,
+					PropertyType.ZORDER,
+			}));
+			allowedProps.put (ObjectType.GROUP, propsGroup);
+		}
+		{			
+			Set<PropertyType> propsInfobox = new HashSet<PropertyType>();
+			propsInfobox.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.CENTERX,
+					PropertyType.CENTERY,
+					PropertyType.ZORDER,
+			}));
+			allowedProps.put (ObjectType.INFOBOX, propsInfobox);
+		}
+		{			
+			Set<PropertyType> propsLegend = new HashSet<PropertyType>();
+			propsLegend.addAll (Arrays.asList(new PropertyType[] {						
+					PropertyType.CENTERX,
+					PropertyType.CENTERY,
+					PropertyType.ZORDER,
+			}));
+			allowedProps.put (ObjectType.LEGEND, propsLegend);
+		}
+	};
+	
+	
+	
 	/**
 	 * get all attributes that are stored as static members.
 	 */
-	public List<PropertyType> getStaticPropertyKeys(boolean fAdvanced)
+	public Set<PropertyType> getStaticPropertyKeys()
 	{
-		List<PropertyType> result = new ArrayList<PropertyType>();
-		switch (getObjectType())
-		{
-		case ObjectType.MAPPINFO:
-			result.add(PropertyType.COMMENTS);
-			result.add(PropertyType.MAPINFONAME);
-			result.add(PropertyType.ORGANISM);
-			result.add(PropertyType.MAPINFO_DATASOURCE);
-			result.add(PropertyType.VERSION);
-			result.add(PropertyType.AUTHOR);
-			result.add(PropertyType.MAINTAINED_BY);
-			result.add(PropertyType.EMAIL);
-			result.add(PropertyType.LAST_MODIFIED);
-			result.add(PropertyType.AVAILABILITY);
-			// if
-			// (Engine.getCurrent().getPreferences().getBoolean(Preferences.PREF_SHOW_ADVANCED_ATTR))
-			if (fAdvanced)
-			{// these two properties are deprecated and not used in PathVisio
-				// itself.
-				result.add(PropertyType.BOARDWIDTH);
-				result.add(PropertyType.BOARDHEIGHT);
-				result.add(PropertyType.WINDOWWIDTH);
-				result.add(PropertyType.WINDOWHEIGHT);
-			}
-			break;
-		case ObjectType.DATANODE:
-			result.add(PropertyType.COMMENTS);
-			result.add(PropertyType.CENTERX);
-			result.add(PropertyType.CENTERY);
-			result.add(PropertyType.WIDTH);
-			result.add(PropertyType.HEIGHT);
-			result.add(PropertyType.COLOR);
-			result.add(PropertyType.GENEID);
-			result.add(PropertyType.DATASOURCE);
-			result.add(PropertyType.TEXTLABEL);
-			// PropertyType.XREF,
-			result.add(PropertyType.BACKPAGEHEAD);
-			result.add(PropertyType.TYPE);
-			if (fAdvanced)
-			{
-				result.add(PropertyType.GRAPHID);
-				result.add(PropertyType.GROUPREF);
-				result.add(PropertyType.BIOPAXREF);
-			}
-			break;
-		case ObjectType.STATE:
-			result.add(PropertyType.COMMENTS);
-			result.add(PropertyType.RELX);
-			result.add(PropertyType.RELY);
-			result.add(PropertyType.WIDTH);
-			result.add(PropertyType.HEIGHT);
-			result.add(PropertyType.COLOR);
-			result.add(PropertyType.FILLCOLOR);
-			result.add(PropertyType.TRANSPARENT);
-			result.add(PropertyType.TEXTLABEL);
-			result.add(PropertyType.MODIFICATIONTYPE);
-			result.add(PropertyType.LINESTYLE);
-			if (fAdvanced)
-			{
-				result.add(PropertyType.GRAPHID);
-				result.add(PropertyType.GRAPHREF);
-				result.add(PropertyType.GROUPREF);
-				result.add(PropertyType.BIOPAXREF);
-			}
-			break;
-		case ObjectType.SHAPE:
-			result.add(PropertyType.COMMENTS);
-			result.add(PropertyType.CENTERX);
-			result.add(PropertyType.CENTERY);
-			result.add(PropertyType.WIDTH);
-			result.add(PropertyType.HEIGHT);
-			result.add(PropertyType.COLOR);
-			result.add(PropertyType.FILLCOLOR);
-			result.add(PropertyType.SHAPETYPE);
-			result.add(PropertyType.ROTATION);
-			result.add(PropertyType.TRANSPARENT);
-			result.add(PropertyType.LINESTYLE);
-			if (fAdvanced)
-			{
-				result.add(PropertyType.GRAPHID);
-				result.add(PropertyType.GROUPREF);
-				result.add(PropertyType.BIOPAXREF);
-			}
-			break;
-		case ObjectType.LINE:
-			result.add(PropertyType.COMMENTS);
-			result.add(PropertyType.COLOR);
-			result.add(PropertyType.STARTX);
-			result.add(PropertyType.STARTY);
-			result.add(PropertyType.ENDX);
-			result.add(PropertyType.ENDY);
-			result.add(PropertyType.STARTLINETYPE);
-			result.add(PropertyType.ENDLINETYPE);
-			result.add(PropertyType.LINESTYLE);
-			if (fAdvanced)
-			{
-				result.add(PropertyType.STARTGRAPHREF);
-				result.add(PropertyType.ENDGRAPHREF);
-				result.add(PropertyType.GRAPHID);
-				result.add(PropertyType.GROUPREF);
-				result.add(PropertyType.BIOPAXREF);
-			}
-			break;
-		case ObjectType.LABEL:
-			result.add(PropertyType.COMMENTS);
-			result.add(PropertyType.GENMAPP_XREF);
-			result.add(PropertyType.CENTERX);
-			result.add(PropertyType.CENTERY);
-			result.add(PropertyType.WIDTH);
-			result.add(PropertyType.HEIGHT);
-			result.add(PropertyType.COLOR);
-			result.add(PropertyType.TEXTLABEL);
-			result.add(PropertyType.FONTNAME);
-			result.add(PropertyType.FONTWEIGHT);
-			result.add(PropertyType.FONTSTYLE);
-			result.add(PropertyType.FONTSIZE);
-			result.add(PropertyType.OUTLINE);
-			if (fAdvanced)
-			{
-				result.add(PropertyType.GRAPHID);
-				result.add(PropertyType.GROUPREF);
-				result.add(PropertyType.BIOPAXREF);
-			}
-			break;
-		case ObjectType.GROUP:
-			if (fAdvanced)
-			{
-				result.add(PropertyType.GROUPID);
-				result.add(PropertyType.GROUPREF);
-				result.add(PropertyType.BIOPAXREF);
-			}
-			result.add(PropertyType.GROUPSTYLE);
-			result.add(PropertyType.TEXTLABEL);
-			result.add(PropertyType.COMMENTS);
-			break;
-		case ObjectType.INFOBOX:
-			result.add(PropertyType.CENTERX);
-			result.add(PropertyType.CENTERY);
-			break;
-		case ObjectType.LEGEND:
-			result.add(PropertyType.CENTERX);
-			result.add(PropertyType.CENTERY);
-			break;
-		}
-		if (fAdvanced)
-		{
-			result.add (PropertyType.ZORDER);
-		}
-		return result;
+		return allowedProps.get (getObjectType());
 	}
 	
 	/**
@@ -976,6 +986,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public void setStaticProperty(PropertyType key, Object value)
 	{
+		if (!getStaticPropertyKeys().contains(key)) 
+			throw new IllegalArgumentException("Property " + key.name() + " is not allowed for objects of type " + getObjectType());
 		switch (key)
 		{
 		case COMMENTS:
@@ -1173,10 +1185,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return getStaticProperty(x);
 	}
 	
-	public Object getStaticProperty(PropertyType x)
+	public Object getStaticProperty(PropertyType key)
 	{
+		if (!getStaticPropertyKeys().contains(key)) 
+			throw new IllegalArgumentException("Property " + key.name() + " is not allowed for objects of type " + getObjectType());
 		Object result = null;
-		switch (x)
+		switch (key)
 		{
 		case COMMENTS:
 			result = getComments();

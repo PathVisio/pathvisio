@@ -58,8 +58,8 @@ public class PreferencesDlg extends AbstractPreferenceDlg
 				"Load support for molecular interaction maps (MIM) at program start");
 
 		builder.addBooleanField (
-				GlobalPreference.SHOW_ADVANCED_ATTRIBUTES,									   
-				"Show advanced attributes (e.g. references)");
+				GlobalPreference.SHOW_ADVANCED_PROPERTIES,									   
+				"Show advanced properties (e.g. references)");
 
 		builder.addBooleanField (
 				GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL,									   

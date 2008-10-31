@@ -34,15 +34,33 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethodRegistry;
 
-
+/**
+ * StandaloneEngine is a singleton that ties together several
+ * other important singletons and provides access to them for
+ * the entire swing standalone application (not SWT).
+ * StandaloneEngine provides functionality for the Standalone application
+ * such as data visualization and access to gene expression data. It
+ * is also a contact point for Plugins, and makes sure
+ * Gex data is cached when a suitable pgdb, pgex and gpml are loaded.
+ * 
+ * StandaloneEngine is a singleton: There should be always exactly 
+ * one instance of it.
+ * 
+ * //TODO: this class will probably be renamed in the future  
+ */
 public class StandaloneEngine implements ApplicationEventListener, GdbEventListener
 {
 	private final VisualizationManager visualizationManager;
 	private final GexManager gexManager;
 	private final SwingEngine swingEngine;
-	
+
+	/**
+	 * During construction, visualizationManager and gexManager will be initialized.
+	 * SwingEngine needs to have been initialized already.
+	 */
 	public StandaloneEngine(SwingEngine swingEngine)
 	{
+		if (swingEngine == null) throw new NullPointerException();
 		this.swingEngine = swingEngine;
 		swingEngine.getEngine().addApplicationEventListener(this);
 		swingEngine.getGdbManager().addGdbEventListener(this);
@@ -52,6 +70,9 @@ public class StandaloneEngine implements ApplicationEventListener, GdbEventListe
 				swingEngine.getEngine(), gexManager);
 	}
 
+	/**
+	 * Return the global visualizationManager instance.
+	 */
 	public VisualizationManager getVisualizationManager() 
 	{
 		return visualizationManager;
@@ -61,12 +82,18 @@ public class StandaloneEngine implements ApplicationEventListener, GdbEventListe
 	{
 		return VisualizationMethodRegistry.getCurrent();
 	}	
-	
+
+	/**
+	 * returns the global gexManager instance.
+	 */
 	public GexManager getGexManager()
 	{
 		return gexManager;
 	}
 
+	/**
+	 * returns the global swingEngine instance.
+	 */
 	public SwingEngine getSwingEngine()
 	{
 		return swingEngine;

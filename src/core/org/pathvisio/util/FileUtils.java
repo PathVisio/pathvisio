@@ -29,6 +29,7 @@ import java.io.RandomAccessFile;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.pathvisio.debug.Logger;
 
@@ -103,7 +104,7 @@ public class FileUtils {
 	}
 	
 	/**
-	 * Removes the file extension (everything after the last occurence of '.')
+	 * Removes the file extension (everything from the last occurence of '.')
 	 */
 	public static String removeExtension(String fname) {
 		int dot = fname.lastIndexOf('.');
@@ -140,5 +141,30 @@ public class FileUtils {
 		if (out != null) {
 			out.close();
 		}
+	}
+	
+	/**
+	 * Attempts to create a directory in the right temporary directory,
+	 * with a random name that starts with prefix.
+	 */
+	public static File createTempDir(String prefix, String postfix) throws IOException
+	{
+		File result;
+		Random rng = new Random();
+		int i = rng.nextInt(100000);
+		// check for a filename that is free
+		do
+		{
+			result = new File (System.getProperty("java.io.tmpdir"), prefix + i + postfix);
+			i++;
+		}
+		while (result.exists());
+		result.mkdir();
+		
+		if (!result.exists()) throw new IOException();
+		if (!result.isDirectory()) throw new IOException();
+		
+		Logger.log.info ("Created temporary directory " + result.getAbsolutePath());
+		return result;
 	}
 }

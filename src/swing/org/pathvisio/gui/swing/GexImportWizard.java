@@ -48,6 +48,7 @@ import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
 import org.pathvisio.util.swing.SimpleFileFilter;
@@ -121,18 +122,18 @@ public class GexImportWizard extends Wizard
 			}
 		    getWizard().setNextFinishButtonEnabled(txtFileComplete);
 
-		    // make outFile equal to fileName without extension, if any
-		    int pos = fileName.lastIndexOf(".");
-			String outFile = ((pos >= 0) ? fileName.substring(0, pos) : fileName);
+		    // add .pgex.
+			String outFile = FileUtils.removeExtension(fileName) + ".pgex";
+
 		    txtOutput.setText(outFile);
-			
+		    
 		    if (txtFileComplete)
 			{
 				setErrorMessage(null);
 				txtFileComplete = true;
 			}
 		}
-
+		
 		public void aboutToDisplayPanel()
 		{
 	        getWizard().setNextFinishButtonEnabled(txtFileComplete);

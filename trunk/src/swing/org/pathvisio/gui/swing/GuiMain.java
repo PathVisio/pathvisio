@@ -96,11 +96,11 @@ public class GuiMain
 	
 	// pathway specified at command line
 	private URL pathwayUrl = null;
+	private File pathwayFile = null;
 	private String pgexFile = null;
 
 	public void parseArgs(String [] args)
-	{
-		
+	{	
 		for(int i = 0; i < args.length - 1; i++) 
 		{
 			if("-p".equals(args[i])) 
@@ -122,20 +122,22 @@ public class GuiMain
 			else if ("-o".equals(args[i])) 
 			{
 				String pws = args[i + 1];
-				try {
-					File f = new File(pws);
-					//Assume the argument is a file
-					if(f.exists()) {
-						pathwayUrl = f.toURI().toURL();
-					//If it doesn't exist, assume it's an url
-					} else {
-						pathwayUrl = new URL(pws);
-					}
-				} catch(MalformedURLException e) 
+				File f = new File(pws);
+				//Assume the argument is a file
+				if(f.exists()) 
 				{
-					System.out.println ("Pathway '" + args[i] + "' not a valid file or URL"); 
-					printHelp();
-					System.exit(-1);
+					pathwayFile = f;
+				} 
+				else //If it doesn't exist, assume it's an url
+				{
+					try {
+						pathwayUrl = new URL(pws);
+					} catch(MalformedURLException e) 
+					{
+						System.out.println ("Pathway '" + args[i + 1] + "' not a valid file or URL"); 
+						printHelp();
+						System.exit(-1);
+					}							
 				}
 				i++;
 			}
@@ -159,7 +161,11 @@ public class GuiMain
 			);
 		}
 		
-		if(pathwayUrl != null) {
+		if (pathwayFile != null)
+		{
+			swingEngine.openPathway (pathwayFile);
+		}
+		else if(pathwayUrl != null) {
 			swingEngine.openPathway(pathwayUrl);
 		}
 	

@@ -36,8 +36,11 @@ import org.pathvisio.util.FileUtils;
 
 /**
    DBConnector implementation using the Derby driver, with the database in a
-   single, uncompressed zip archive
+   single, uncompressed zip archive.
+   While creating, the data is stored in a temporary directory. 
+   This directory will be cleaned up when the database is finalized.
 */
+//TODO: make sure the temp directory is cleaned up also when this is not finalized
 public class DataDerby extends DBConnector
 {
 	static final String DB_FILE_EXT_GDB = "pgdb";
@@ -53,12 +56,13 @@ public class DataDerby extends DBConnector
 	
 	private static final String DB_NAME_IN_ZIP = "database";
 	
-	// name of db, or what it will be when the db is finalized.
+	// name of db, what it will be when the db is finalized.
 	private String finalDbName;
 	
 	// while making a database, it is created in a temporary directory,
-	// that is equal to the final db name but without the extension.
-	private String tempDbName = null;
+	private File tempDbSubdir = null;
+	private File tempDbParentdir = null;
+	
 	private boolean finalized;
 	
 	private String getDbUrl()
@@ -70,13 +74,13 @@ public class DataDerby extends DBConnector
 		} 
 		else 
 		{
-			url += tempDbName;
+			url += tempDbSubdir;
 		}
 		return url;
 	}
 	
 	/**
-	 * dbName is the file that is connected to.
+	 * dbName is the file that will be produced finally.
 	 * If dbName doesn't end with the right extension, the right extension will be added.
 	 */
 	public Connection createConnection(String dbName, int props) throws DataException 
@@ -89,8 +93,15 @@ public class DataDerby extends DBConnector
 		
 		if(recreate) 
 		{
-			tempDbName = FileUtils.removeExtension(finalDbName);
-			FileUtils.deleteRecursive(new File (tempDbName));
+			try
+			{
+				tempDbParentdir = FileUtils.createTempDir("derby", ".tmp");
+				tempDbSubdir = new File (tempDbParentdir, "database");
+			}
+			catch (IOException e)
+			{
+				throw new DataException (e);
+			}
 		}
 		
 		Properties sysprop = System.getProperties();
@@ -141,9 +152,9 @@ public class DataDerby extends DBConnector
 		if (finalized) return finalDbName; // already finalized.
 		
 		//Transfer db to zip and clear old dbfiles
-		toZip (new File (finalDbName), new File (tempDbName));
+		toZip (new File (finalDbName), tempDbSubdir);
 		
-		FileUtils.deleteRecursive(new File (tempDbName));
+		FileUtils.deleteRecursive(tempDbParentdir);
 		
 		//Return new database file
 		return finalDbName;

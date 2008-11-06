@@ -151,8 +151,7 @@ public class WikiPathwaysClientGui extends JPanel implements ActionListener {
 		try {
 			GetPathwayParameters request = new GetPathwayParameters();
 			WSSearchResult result = selected.getResult();
-			request.pwName = result.getName();
-			request.pwSpecies = result.getSpecies();
+			request.id = result.getId();
 			request.revision = Integer.parseInt(result.getRevision());
 			WebServiceClientManager.getCyWebServiceEventSupport().fireCyWebServiceEvent(
 				new CyWebServiceEvent(

@@ -155,8 +155,7 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 	}
 	
 	public static class GetPathwayParameters {
-		public String pwName;
-		public String pwSpecies;
+		public String id;
 		public int revision;
 	}
 	
@@ -177,7 +176,7 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 
 		public void run() {
 			try {
-				WSPathway r = getStub().getPathway(query.pwName, query.pwSpecies, query.revision);
+				WSPathway r = getStub().getPathway(query.id, query.revision);
 				String gpml = r.getGpml();
 				Logger.log.trace(gpml);
 				Pathway pathway = new Pathway();

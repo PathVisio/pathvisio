@@ -28,19 +28,17 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.Engine;
-import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.VisibleProperties;
 import org.pathvisio.gui.swing.propertypanel.TypedProperty;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
-import org.pathvisio.view.VPathwayWrapperBase;
 
 /**
  * Panel to configure attribute to GPML property mappings
- * @author thomas
  */
 public class AttributeDefaultsPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
 	String[] columnNames = new String[] { "Property", "Default value" };
 	AttributeMapper mapper;
 	
@@ -52,20 +50,14 @@ public class AttributeDefaultsPanel extends JPanel {
 	public AttributeDefaultsPanel(AttributeMapper mapper) {
 		setLayout(new BorderLayout());
 		
-		//Hack to make TypedProperty work
-		Engine engine = Engine.init();
-		engine.setWrapper(new VPathwayWrapperBase());
-		engine.newPathway();
-		SwingEngine swingEngine = SwingEngine.init(engine);
-		
 		this.mapper = mapper;
 		tableModel = new AttributeMapperTableModel();
 		
 		//Get the property list
 		PathwayElement dummyElement = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-		for(PropertyType p : dummyElement.getAttributes(false)) {
+		for(PropertyType p : dummyElement.getStaticPropertyKeys()) {
 			if(!mapper.isProtected(p)) {
-				TypedProperty tp = new TypedProperty(swingEngine, p);
+				TypedProperty tp = new TypedProperty(null, p);
 				Object value = mapper.getDefaultValue(p);
 				if(value == null) {
 					value = dummyElement.getStaticProperty(p);
@@ -76,6 +68,7 @@ public class AttributeDefaultsPanel extends JPanel {
 		}
 		
 		table = new JTable(tableModel) {
+			private static final long serialVersionUID = 1L;
 			public TableCellRenderer getCellRenderer(int row, int column) {
 				TableCellRenderer r = tableModel.getCellRenderer(row, column);
 				return r == null ? super.getCellRenderer(row, column) : r;
@@ -104,6 +97,8 @@ public class AttributeDefaultsPanel extends JPanel {
 	}
 	
 	class AttributeMapperTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 1L;
+
 		public String getColumnName(int column) {
 			return columnNames[column];
 		}
@@ -149,7 +144,7 @@ public class AttributeDefaultsPanel extends JPanel {
 		public TableCellEditor getCellEditor(int row, int column) {
 			if(column != 0) {
 				TypedProperty tp = properties.get(row);
-				if(tp != null) return tp.getCellEditor();
+				if(tp != null) return tp.getCellEditor(null);
 			}
 			return null;
 		}		

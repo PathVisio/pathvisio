@@ -134,7 +134,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			
 			TypedProperty tp = propertyValues.get(o);
 			if(tp == null) {
-				propertyValues.put(o, tp = new TypedProperty(swingEngine, o));
+				propertyValues.put(o, tp = new TypedProperty(swingEngine.getEngine().getActiveVPathway(), o));
 			}
 			if(remove) {
 				tp.removeElement(e);
@@ -235,7 +235,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	public TableCellEditor getCellEditor(int row, int column) {
 		if(column != 0) {
 			TypedProperty tp = getPropertyAt(row);
-			if(tp != null) return tp.getCellEditor();
+			if(tp != null) return tp.getCellEditor(swingEngine);
 		}
 		return null;
 	}

@@ -145,7 +145,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 			//No mapping for this attribute, store in attributeMap
 			if(prop == null) 
 			{
-// disabled for now, doesn't work correctly.
+//TODO needs more testing	
 /*				String value = null;
 				switch (attr.getType(id))
 				{
@@ -256,11 +256,13 @@ public class DefaultAttributeMapper implements AttributeMapper {
 				}
 			}
 		}
-		
+//TODO needs more testing	
+/*	
 		// now deal with the attributes in attributeMap.
 		for (String key : elm.getDynamicPropertyKeys())
 		{
 			attr.setAttribute(id, key, elm.getDynamicProperty(key));
 		}
+*/
 	}
 }

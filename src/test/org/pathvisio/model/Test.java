@@ -308,20 +308,37 @@ public class Test extends TestCase implements PathwayListener
 		assertTrue ("reference created through adding", data.getReferringObjects("3").contains(l.getMEnd()));
 	}
 	
-	public void testXml() throws IOException, ConverterException
+	public void testXml2007() throws IOException, ConverterException
 	{
-		data.readFromXml(new File("testData/test.gpml"), false);
+		File testFile = new File ("testData/test.gpml");
+		assertTrue (testFile.exists());
+		data.readFromXml(testFile, false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
+		
 		File temp = File.createTempFile ("data.test", ".gpml");
 		temp.deleteOnExit();
 		data.writeToXml(temp, false);
+	}
 
+	public void testWrongFormat()
+	{
 		try {
 			data.readFromXml(new File ("testData/test.mapp"), false);
 			fail ("Loading wrong format, Exception expected");
 		} catch (Exception e) {}
 	}
 	
+	public void testXml2008a() throws IOException, ConverterException
+	{
+		File testFile = new File ("testData/test2.gpml");
+		assertTrue (testFile.exists());
+		data.readFromXml(testFile, false);
+		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
+		File temp = File.createTempFile ("data.test", ".gpml");
+		temp.deleteOnExit();
+		data.writeToXml(temp, false);
+	}
+
 	// bug 440: valid gpml file is rejected 
 	// because it doesn't contain Pathway.Graphics
 	public void testBug440() throws ConverterException

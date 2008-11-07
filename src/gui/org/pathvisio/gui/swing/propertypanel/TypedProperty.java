@@ -57,6 +57,7 @@ import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.view.VPathway;
 
 /**
  * TypedProperty ties together functionality to view / edit a property
@@ -71,14 +72,16 @@ public class TypedProperty {
 	/**
 	 * @param type is either String for a dynamic property,
 	 * or PropertyType for a static property;
+	 * @param aVPathway is used to register undo actions when setting a value
+	 * to this property. May be null, in which case no undo actions are registered.
 	 */
-	public TypedProperty(SwingEngine swingEngine, Object type) {
-		this.type = type;
+	public TypedProperty(VPathway aVPathway, Object aType) {
+		type = aType;
 		if (!(type instanceof String || type instanceof PropertyType))
 		{
 			throw new IllegalArgumentException();
 		}
-		this.swingEngine = swingEngine;
+		vPathway = aVPathway;
 		elements = new HashSet<PathwayElement>();
 	}
 	
@@ -143,8 +146,11 @@ public class TypedProperty {
 	public void setValue(Object value) {
 		this.value = value;
 		if(value != null) {
-			swingEngine.getEngine().getActiveVPathway().getUndoManager().newAction (
+			if (vPathway != null)
+			{
+				vPathway.getUndoManager().newAction (
 					"Change " + type + " property");
+			}
 			for(PathwayElement e : elements) {
 				e.setPropertyEx(type, value);
 			}
@@ -174,7 +180,7 @@ public class TypedProperty {
 	public boolean hasDifferentValues() { return different; }
 	
 	
-	private SwingEngine swingEngine;
+	private VPathway vPathway;
 	
 	/**
 	 * Returns a TableCellRenderer suitable for rendering this property
@@ -229,8 +235,10 @@ public class TypedProperty {
 
 	/**
 	 * Returns a TableCellEditor suitable for editing this property.
+	 * 
+	 * @param swingEngine: the comments editor requires a connection to swingEngine, so you need to pass it here.
 	 */
-	public TableCellEditor getCellEditor() {
+	public TableCellEditor getCellEditor(SwingEngine swingEngine) {
 		if (type instanceof PropertyType) switch(((PropertyType)type).type()) {
 		case BOOLEAN:
 			return checkboxEditor;

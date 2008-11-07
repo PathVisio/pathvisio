@@ -750,7 +750,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public List<PropertyType> getAttributes()
 	{
-		return getStaticPropertyKeys(true);
+		List<PropertyType> result = new ArrayList<PropertyType>();
+		result.addAll (getStaticPropertyKeys());
+		return result;
 	}
 	
 	/**
@@ -759,16 +761,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public List<PropertyType> getAttributes(boolean fAdvanced)
 	{
-		return getStaticPropertyKeys(fAdvanced);
-	}
-
-	/**
-	 * @deprecated PathwayElement doesn't distinguish between advanced / not advanced attributes anymore, 
-	 * that distinction is made at the UI level.
-	 */
-	public List<PropertyType> getStaticPropertyKeys(boolean fAdvanced)
-	{
-		return getStaticPropertyKeys(true);
+		List<PropertyType> result = new ArrayList<PropertyType>();
+		result.addAll (getStaticPropertyKeys());
+		return result;
 	}
 
 	private static final Map<Integer, Set<PropertyType>> allowedProps;

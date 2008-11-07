@@ -153,6 +153,16 @@ public class DataSourcePatterns
 				DataSource.AGILENT,
 				Pattern.compile("A_\\d+_.+")
 		);
+
+		patterns.put(
+				DataSource.HMDB,
+				Pattern.compile("HMDB\\d{5}")
+		);
+
+		patterns.put(
+				DataSource.CAS,
+				Pattern.compile("\\d+-\\d+-\\d+")
+		);
 	}
 
 	/**

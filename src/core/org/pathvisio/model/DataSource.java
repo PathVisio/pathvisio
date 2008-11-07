@@ -63,20 +63,85 @@ public class DataSource
 	private static Map<String, DataSource> byFullName = new HashMap<String, DataSource>();
 	private static Set<DataSource> registry = new HashSet<DataSource>();
 	
+	public static final DataSource TAIR = new DataSource (
+		 "A", "TAIR",
+		 null, "http://www.arabidopsis.org/");
+	public static final DataSource AGILENT = new DataSource (
+		"Ag", "Agilent", 
+		null, null);
+	public static final DataSource CINT = new DataSource (
+		"C", "Cint", 
+		null, null);
+	public static final DataSource CAS = new DataSource (
+		"Ca", "CAS", 
+		new PrefixUrlMaker ("http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno="),
+		null);
+	public static final DataSource CHEBI = new DataSource (
+		"Ce", "ChEBI", 
+		new PrefixUrlMaker ("http://www.ebi.ac.uk/chebi/searchId=CHEBI:"),
+		null);
+	public static final DataSource HMDB = new DataSource (
+		"Ch", "HMDB", 
+		new PrefixUrlMaker ("http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD="),
+		null);
+	public static final DataSource PUBCHEM = new DataSource (
+		"Cp", "PubChem", 
+		new PrefixUrlMaker ("http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid="),
+		null);
+	public static final DataSource KEGG_COMPOUND = new DataSource (
+		"Ck", "Kegg Compound", 
+		new PrefixUrlMaker ("http://www.genome.jp/dbget-bin/www_bget?cpd:"),
+		null);
 	public static final DataSource SGD = new DataSource (
 		"D", "SGD", 
 		new PrefixUrlMaker ("http://db.yeastgenome.org/cgi-bin/locus.pl?locus="),
 		null);
+	public static final DataSource ECOLI = new DataSource (
+		"Ec", "Ecoli", 
+		null, null);
+	public static final DataSource EMBL = new DataSource (
+		"Em", "EMBL", 
+		new PrefixUrlMaker ("http://www.ebi.ac.uk/cgi-bin/emblfetch?style=html&id="), 
+		"http://www.ebi.ac.uk/embl");
+	public static final DataSource ENSEMBL = new DataSource (
+		"En", "Ensembl", 
+		new PrefixUrlMaker("http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q="), 
+		"http://www.ensembl.org");
 	public static final DataSource FLYBASE = new DataSource (
 		"F", "FlyBase", 
 		null, null);
 	public static final DataSource GENBANK = new DataSource (
 		"G", "GenBank", 
 		null, null);
+	public static final DataSource CODELINK = new DataSource (
+		"Ge", "CodeLink", 
+		null, null);	
+	public static final DataSource GRAMENE_GENES_DB = new DataSource (
+		"Gg", "Gramene Genes DB", 
+		null, "http://www.gramene.org/");	
+	public static final DataSource GRAMENE_PATHWAY = new DataSource (
+		"Gp", "Gramene Pathway", 
+		null, "http://www.gramene.org/pathway");	
+	public static final DataSource HUGO = new DataSource (
+		"H", "HUGO", 
+		new PrefixUrlMaker ("http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/get_data.pl?hgnc_id="),
+		"http://www.gene.ucl.ac.uk/nomenclature");
+	public static final DataSource HSGENE = new DataSource (
+		"Hs", "HsGene", 
+		null, null);
 	public static final DataSource INTERPRO = new DataSource (
 		"I", "InterPro", 
 		new PrefixUrlMaker ("http://www.ebi.ac.uk/interpro/IEntry?ac="),
-		null);
+		"http://www.ebi.ac.uk/interpro");
+	public static final DataSource ILLUMINA = new DataSource (
+		"Il", "Illumina", 
+		null, null);
+	public static final DataSource IPI = new DataSource (
+		"Ip", "IPI", 
+		null, null);
+	public static final DataSource IRGSP_GENE = new DataSource (
+		"Ir", "IRGSP Gene", 
+		null, "http://rgp.dna.affrc.go.jp/IRGSP/");
 	public static final DataSource ENTREZ_GENE = new DataSource (
 		"L", "Entrez Gene", 
 		new PrefixUrlMaker ("http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=gene&cmd=Retrieve&dopt=full_report&list_uids="),
@@ -84,7 +149,36 @@ public class DataSource
 	public static final DataSource MGI = new DataSource (
 		"M", "MGI", 
 		new PrefixUrlMaker ("http://www.informatics.jax.org/searches/accession_report.cgi?id="),
+		"http://www.informatics.jax.org/");
+	public static final DataSource MIRBASE = new DataSource (
+		"Mb", "miRBase", 
+		null,
 		null);
+	public static final DataSource NASC_GENE = new DataSource (
+		"N", "NASC Gene", 
+		null,
+		null);
+	public static final DataSource NUGOWIKI = new DataSource (
+		"Nw", "NuGO wiki", 
+		new PrefixUrlMaker ("http://nugowiki.org/index.php/"),
+		null);
+	public static final DataSource OTHER = new DataSource (
+		"O", "Other", 
+		null, null);
+	public static final DataSource OMIM = new DataSource (
+		"Om", "OMIM", 
+		new PrefixUrlMaker ("http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM&cmd=Search&doptcmdl=Detailed&term=?"),
+		null);
+	public static final DataSource PDB = new DataSource (
+		"Pd", "PDB", 
+		new PrefixUrlMaker ("http://bip.weizmann.ac.il/oca-bin/ocashort?id="),
+		"http://www.rcsb.org/pdb/home/home.do");
+	public static final DataSource PFAM = new DataSource (
+		"Pf", "Pfam", 
+		new PrefixUrlMaker ("http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?"),
+		"http://www.sanger.ac.uk/Software/Pfam");
+	public static final DataSource PLANTGDB = new DataSource (
+		"Pl", "PlantGDB", null, "http://www.plantgdb.org/");
 	public static final DataSource REFSEQ = new DataSource (
 		"Q", "RefSeq", 
 		new UrlMaker() 
@@ -102,19 +196,28 @@ public class DataSource
 				}
 			}
 		}
-		, null);
+		, "http://www.ncbi.nlm.nih.gov/RefSeq");
 	public static final DataSource RGD = new DataSource (
 		"R", "RGD", 
 		new PrefixUrlMaker ("http://rgd.mcw.edu/generalSearch/RgdSearch.jsp?quickSearch=1&searchKeyword="), 
-		null);
+		"http://rgd.mcw.edu/");
+	public static final DataSource RFAM = new DataSource (
+		"Rf", "Rfam", 
+		null, null);
 	public static final DataSource UNIPROT = new DataSource (
-		"S", "SwissProt", 
+		"S", "Uniprot/TrEMBL", 
 		new PrefixUrlMaker ("http://www.expasy.org/uniprot/"),
-		null);
+		"http://www.expasy.uniprot.org/");
+	public static final DataSource SNP = new DataSource (
+		"Sn", "dbSNP", 
+		null, null);
 	public static final DataSource GENE_ONTOLOGY = new DataSource (
 		"T", "GeneOntology", 
 		new PrefixUrlMaker ("http://godatabase.org/cgi-bin/go.cgi?view=details&search_constraint=terms&depth=0&query="), 
-		null);
+		"http://www.geneontology.org/");
+	public static final DataSource TIGR = new DataSource (
+		"Ti", "J. Craig Venter Institute (formerly TIGR)", 
+		null, "http://www.jcvi.org/");
 	public static final DataSource UNIGENE = new DataSource (
 		"U", "UniGene", 
 		new UrlMaker () 
@@ -131,6 +234,9 @@ public class DataSource
 				}
 			}
 		}, null);
+	public static final DataSource UCSC = new DataSource (
+		"Uc", "UCSC Genome Browser", 
+		null, "http://genome.ucsc.edu/");
 	public static final DataSource WORMBASE = new DataSource (
 		"W", "WormBase", 
 		new PrefixUrlMaker ("http://www.wormbase.org/db/gene/gene?name="), 
@@ -139,77 +245,8 @@ public class DataSource
 		"X", "Affy", 
 		new PrefixUrlMaker ("http://www.ensembl.org/Homo_sapiens/featureview?type=OligoProbe;id="), 
 		null);
-	public static final DataSource ENSEMBL = new DataSource (
-		"En", "Ensembl", 
-		new PrefixUrlMaker("http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q="), 
-		"http://www.ensembl.org");
-	public static final DataSource EMBL = new DataSource (
-		"Em", "EMBL", 
-		new PrefixUrlMaker ("http://www.ebi.ac.uk/cgi-bin/emblfetch?style=html&id="), 
-		null);
-	public static final DataSource HUGO = new DataSource (
-		"H", "HUGO", 
-		new PrefixUrlMaker ("http://www.gene.ucl.ac.uk/cgi-bin/nomenclature/get_data.pl?hgnc_id="),
-		null);
-	public static final DataSource OMIM = new DataSource (
-		"Om", "OMIM", 
-		new PrefixUrlMaker ("http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM&cmd=Search&doptcmdl=Detailed&term=?"),
-		null);
-	public static final DataSource PDB = new DataSource (
-		"Pd", "PDB", 
-		new PrefixUrlMaker ("http://bip.weizmann.ac.il/oca-bin/ocashort?id="),
-		null);
-	public static final DataSource PFAM = new DataSource (
-		"Pf", "Pfam", 
-		new PrefixUrlMaker ("http://www.sanger.ac.uk//cgi-bin/Pfam/getacc?"),
-		null);
 	public static final DataSource ZFIN = new DataSource (
 		"Z", "ZFIN", 
-		null, null);
-	public static final DataSource HSGENE = new DataSource (
-		"Hs", "HsGene", 
-		null, null);
-	public static final DataSource CINT = new DataSource (
-		"C", "Cint", 
-		null, null);
-	public static final DataSource AGILENT = new DataSource (
-		"Ag", "Agilent", 
-		null, null);
-	public static final DataSource ILLUMINA = new DataSource (
-		"Il", "Illumina", 
-		null, null);
-	public static final DataSource SNP = new DataSource (
-		"Sn", "SNP", 
-		null, null);
-	public static final DataSource ECOLI = new DataSource (
-		"Ec", "Ecoli", 
-		null, null);
-	public static final DataSource CAS = new DataSource (
-		"Ca", "CAS", 
-		new PrefixUrlMaker ("http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno="),
-		null);
-	public static final DataSource CHEBI = new DataSource (
-		"Ce", "ChEBI", 
-		new PrefixUrlMaker ("http://www.ebi.ac.uk/chebi/searchId=CHEBI:"),
-		null);
-	public static final DataSource PUBCHEM = new DataSource (
-		"Cp", "PubChem", 
-		new PrefixUrlMaker ("http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid="),
-		null);
-	public static final DataSource NUGOWIKI = new DataSource (
-		"Nw", "NuGO wiki", 
-		new PrefixUrlMaker ("http://nugowiki.org/index.php/"),
-		null);
-	public static final DataSource KEGG_COMPOUND = new DataSource (
-		"Ck", "Kegg Compound", 
-		new PrefixUrlMaker ("http://www.genome.jp/dbget-bin/www_bget?cpd:"),
-		null);
-	public static final DataSource HMDB = new DataSource (
-		"Ch", "HMDB", 
-		new PrefixUrlMaker ("http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD="),
-		null);
-	public static final DataSource OTHER = new DataSource (
-		"O", "Other", 
 		null, null);
 
 	private String sysCode = null;

@@ -102,12 +102,14 @@ public class CategoryApplet extends PathwayPageApplet
 		}
 		for(Comment c : mappInfo.getComments()) {
 			if(WikiPathways.COMMENT_CATEGORY.equals(c.getSource())) {
-				Category cat = categories.get(c);
-				if(cat == null) {
-					cat = new Category(c.getComment(), mappInfo);
-					categories.put(c.getComment(), cat);
+				if(c.getComment() != null && !"".equals(c.getComment())) {
+					Category cat = categories.get(c);
+					if(cat == null) {
+						cat = new Category(c.getComment(), mappInfo);
+						categories.put(c.getComment(), cat);
+					}
+					cat.setComment(c);				
 				}
-				cat.setComment(c);				
 			}
 		}
 	}

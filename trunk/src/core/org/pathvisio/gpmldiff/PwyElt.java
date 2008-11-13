@@ -59,7 +59,7 @@ class PwyElt
 		if (props.contains(PropertyType.ENDGRAPHREF))
 			result += ",endref=" + elt.getStaticProperty(PropertyType.ENDGRAPHREF);
 		if (props.contains(PropertyType.MAPINFONAME))
-			result += ",name=" + elt.getStaticProperty(PropertyType.MAPINFONAME);
+			result += ",title=" + elt.getStaticProperty(PropertyType.MAPINFONAME);
 		if (props.contains(PropertyType.AUTHOR))
 			result += ",author=" + elt.getStaticProperty(PropertyType.AUTHOR);
 		result += "]";

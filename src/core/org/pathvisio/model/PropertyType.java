@@ -95,7 +95,7 @@ public enum PropertyType
 	OUTLINE ("Outline", "Outline", PropertyClass.OUTLINETYPE),
 
 	// mappinfo
-	MAPINFONAME ("MapInfoName", "Map Info Name", PropertyClass.STRING),
+	MAPINFONAME ("MapInfoName", "Title", PropertyClass.STRING),
 	ORGANISM ("Organism", "Organism", PropertyClass.ORGANISM), 
 	MAPINFO_DATASOURCE ("Data-Source", "Data-Source", PropertyClass.STRING),
 	VERSION ("Version", "Version", PropertyClass.STRING), 

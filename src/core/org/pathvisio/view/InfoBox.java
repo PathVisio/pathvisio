@@ -76,7 +76,7 @@ public class InfoBox extends Graphics {
 		
 		//Draw Name, Organism, Data-Source, Version, Author, Maintained-by, Email, Availability and last modified
 		String[][] text = new String[][] {
-				{"Name: ", gdata.getMapInfoName()},
+				{"Title: ", gdata.getMapInfoName()},
 				{"Maintained by: ", gdata.getMaintainer()},
 				{"Email: ", gdata.getEmail()},
 				{"Availability: ", gdata.getCopyright()},

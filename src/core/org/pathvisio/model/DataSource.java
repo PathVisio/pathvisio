@@ -84,18 +84,34 @@ public class DataSource
 		"Ch", "HMDB", 
 		new PrefixUrlMaker ("http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD="),
 		null);
-	public static final DataSource PUBCHEM = new DataSource (
-		"Cp", "PubChem", 
-		new PrefixUrlMaker ("http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid="),
-		null);
 	public static final DataSource KEGG_COMPOUND = new DataSource (
 		"Ck", "Kegg Compound", 
 		new PrefixUrlMaker ("http://www.genome.jp/dbget-bin/www_bget?cpd:"),
 		null);
+	public static final DataSource PUBCHEM = new DataSource (
+			"Cp", "PubChem", 
+			new PrefixUrlMaker ("http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid="),
+			null);
+	public static final DataSource CHEMSPIDER = new DataSource (
+			"Cs", "Chemspider", 
+			new UrlMaker ()
+			{
+				@Override
+				public String getUrl(String id) 
+				{
+					return "http://www.chemspider.com/Chemical-Structure." + id + ".html";
+				}
+			},			
+			"http://www.chemspider.com/");		
 	public static final DataSource SGD = new DataSource (
 		"D", "SGD", 
 		new PrefixUrlMaker ("http://db.yeastgenome.org/cgi-bin/locus.pl?locus="),
 		null);
+	public static final DataSource ENZYME_CODE = new DataSource (
+		"E", "EC Number",
+		new PrefixUrlMaker ("http://www.brenda-enzymes.info/php/result_flat.php4?ecno="),
+		"http://www.brenda-enzymes.info/"
+			);
 	public static final DataSource ECOLI = new DataSource (
 		"Ec", "Ecoli", 
 		null, null);

@@ -17,7 +17,10 @@
 package org.pathvisio.data;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.pathvisio.model.DataSource;
@@ -163,8 +166,39 @@ public class DataSourcePatterns
 				DataSource.CAS,
 				Pattern.compile("\\d+-\\d+-\\d+")
 		);
+		
+		patterns.put(
+				DataSource.ENZYME_CODE,
+				Pattern.compile("(\\d+\\.){3}\\d+")
+		);
+
+		patterns.put(
+				DataSource.CHEBI,
+				Pattern.compile("CHEBI\\:\\d+")
+		);
+
+		patterns.put(
+				DataSource.KEGG_COMPOUND,
+				Pattern.compile("C\\d+")
+		);
+
 	}
 
+	/**
+	 * Convenience method. 
+	 * Returns a set of patterns which matches the given id.
+	 */
+	public static Set<DataSource> getDataSourceMatches (String id)
+	{
+		Set<DataSource> result = new HashSet<DataSource>();
+		for (DataSource ds : patterns.keySet())
+		{
+			Matcher m = patterns.get(ds).matcher(id);					
+			if (m.matches()) result.add (ds);			
+		}
+		return result;
+	}
+	
 	/**
 	 * Return all known data patterns, mapped to
 	 * their DataSource.

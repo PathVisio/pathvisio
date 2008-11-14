@@ -480,6 +480,7 @@ public class GpmlFormatImpl1
 			case ObjectType.LINE:
 				mapLineData(o, e);
 				mapColor(o, e);
+				mapGraphId(o, e);
 				mapComments(o, e);
 				mapGroupRef(o, e);
 				mapBiopaxRef(o, e);
@@ -1131,6 +1132,7 @@ public class GpmlFormatImpl1
 				updateAttributes(o, e);
 				e.addContent(new Element("Graphics", ns));				
 				updateLineData(o, e);
+				updateGraphId(o, e);
 				updateColor(o, e);
 				updateGroupRef(o, e);
 				break;

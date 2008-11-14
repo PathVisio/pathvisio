@@ -757,10 +757,13 @@ public class GpmlFormatImpl1
 	private void mapGraphId (GraphIdContainer o, Element e)
 	{
 		String id = e.getAttributeValue("GraphId");
-		if((id == null || id.equals("")) && o.getGmmlData() != null) {
-			id = o.getGmmlData().getUniqueGraphId();
+		//Never add graphid until all elements are mapped, to prevent duplcate ids!
+//		if((id == null || id.equals("")) && o.getGmmlData() != null) {
+//			id = o.getGmmlData().getUniqueGraphId();
+//		}
+		if(id != null) {
+			o.setGraphId (id);
 		}
-		o.setGraphId (id);
 	}
 	
 	private void updateGraphId (GraphIdContainer o, Element e)
@@ -1329,11 +1332,24 @@ public class GpmlFormatImpl1
 			mapElement((Element)e, pwy);
 		}			
 		Logger.log.trace ("End copying map elements");
+		
+		//Add graphIds for objects that don't have one
+		addGraphIds(pwy);
+		
 		//Convert absolute point coordinates of linked points to
 		//relative coordinates
 		convertPointCoordinates(pwy);
 	}
 
+	private static void addGraphIds(Pathway pathway) throws ConverterException {
+		for(PathwayElement pe : pathway.getDataObjects()) {
+			String id = pe.getGraphId();
+			if(id == null || "".equals(id)) {
+				pe.setGeneratedGraphId();
+			}
+		}
+	}
+	
 	private static void convertPointCoordinates(Pathway pathway) throws ConverterException
 	{
 		for(PathwayElement pe : pathway.getDataObjects()) {

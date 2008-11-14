@@ -60,6 +60,15 @@ public class Test extends TestCase implements GdbEventListener
 		// test reception of event...
 	}
 	
+	public void testPatterns()
+	{
+		assertTrue (DataSourcePatterns.getDataSourceMatches("1.1.1.1").contains(DataSource.ENZYME_CODE));
+		assertTrue (DataSourcePatterns.getDataSourceMatches("50-99-7").contains(DataSource.CAS));
+		assertTrue (DataSourcePatterns.getDataSourceMatches("HMDB00122").contains(DataSource.HMDB));
+		assertTrue (DataSourcePatterns.getDataSourceMatches("C00031").contains(DataSource.KEGG_COMPOUND));
+		assertTrue (DataSourcePatterns.getDataSourceMatches("CHEBI:17925").contains(DataSource.CHEBI));
+	}
+	
 	public void testImportSimple() throws IOException, DataException
 	{
 		Engine.init();

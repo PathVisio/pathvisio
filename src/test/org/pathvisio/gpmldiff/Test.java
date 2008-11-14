@@ -61,6 +61,7 @@ public class Test extends TestCase
 		public void delete(PathwayElement oldElt) 
 		{
 			assertFalse ("There was a modifyStart event not followed by a modifyEnd event", modifyOpened);
+			System.out.println ("Deleted: " + oldElt.getObjectType() + " " + oldElt.getGraphId());
 			deletions++;			
 		}
 
@@ -85,6 +86,7 @@ public class Test extends TestCase
 			assertNotNull ("attr can't be null", attr);
 			assertNotNull ("oldVal can't be null", oldVal);
 			assertNotNull ("newVal can't be null", newVal);
+			System.out.println ("	attribute: " + attr + " ("+ oldVal + " -> " + newVal + ")");
 			changes++;
 			changedSinceOpen++;
 		}
@@ -103,6 +105,7 @@ public class Test extends TestCase
 			assertNotNull ("oldElt can't be null", oldElt);
 			assertNotNull ("newElt can't be null", newElt);
 			assertFalse ("There was a modifyStart event not followed by a modifyEnd event", modifyOpened);
+			System.out.println ("Changed: " + oldElt.getObjectType() + " " + oldElt.getGraphId());
 			modifyOpened = true;
 			changedSinceOpen = 0;
 			modifiedElements++;
@@ -118,7 +121,7 @@ public class Test extends TestCase
 				"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" + 
 				"<Pathway xmlns=\"http://genmapp.org/GPML/2007\" Name=\"New Pathway\" Data-Source=\"GenMAPP 2.0\" Version=\"20070724\">\n" + 
 				"  <Graphics BoardWidth=\"18000.0\" BoardHeight=\"12000.0\" WindowWidth=\"18000.0\" WindowHeight=\"12000.0\" />\n" + 
-				"  <Line>\n" + 
+				"  <Line GraphId=\"aaa\">\n" + 
 				"    <Graphics Color=\"000000\">\n" + 
 				"      <Point x=\"1740.0\" y=\"990.0\" Head=\"Arrow\" />\n" + 
 				"      <Point x=\"2430.0\" y=\"2310.0\" />\n" + 
@@ -151,7 +154,7 @@ public class Test extends TestCase
 				"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" + 
 				"<Pathway xmlns=\"http://genmapp.org/GPML/2007\" Name=\"New Pathway\" Data-Source=\"GenMAPP 2.0\" Version=\"20070724\">\n" + 
 				"  <Graphics BoardWidth=\"18000.0\" BoardHeight=\"12000.0\" WindowWidth=\"18000.0\" WindowHeight=\"12000.0\" />\n" + 
-				"  <Line>\n" + 
+				"  <Line GraphId=\"aaa\">\n" + 
 				"    <Graphics Color=\"000000\">\n" + 
 				"      <Point x=\"1740.0\" y=\"990.0\" Head=\"Arrow\" />\n" + 
 				"      <Point x=\"2430.0\" y=\"2310.0\" />\n" + 
@@ -200,7 +203,7 @@ public class Test extends TestCase
 				"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" + 
 				"<Pathway xmlns=\"http://genmapp.org/GPML/2007\" Name=\"New Pathway\" Data-Source=\"GenMAPP 2.0\" Version=\"20070724\">\n" + 
 				"  <Graphics BoardWidth=\"18000.0\" BoardHeight=\"12000.0\" WindowWidth=\"18000.0\" WindowHeight=\"12000.0\" />\n" + 
-				"  <Line>\n" + 
+				"  <Line GraphId=\"aaa\">\n" + 
 				"    <Graphics Color=\"000000\">\n" + 
 				"      <Point x=\"1740.0\" y=\"990.0\" Head=\"Arrow\" />\n" + 
 				"      <Point x=\"2430.0\" y=\"2310.0\" />\n" + 
@@ -244,7 +247,7 @@ public class Test extends TestCase
 						"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" + 
 						"<Pathway xmlns=\"http://genmapp.org/GPML/2007\" Name=\"New Pathway\" Data-Source=\"GenMAPP 2.0\" Version=\"20070724\">\n" + 
 						"  <Graphics BoardWidth=\"18000.0\" BoardHeight=\"12000.0\" WindowWidth=\"18000.0\" WindowHeight=\"12000.0\" />\n" + 
-						"  <Line>\n" + 
+						"  <Line GraphId=\"aaa\">\n" + 
 						"    <Graphics Color=\"000000\">\n" + 
 						"      <Point x=\"1740.0\" y=\"990.0\" Head=\"Arrow\" />\n" + 
 						"      <Point x=\"2430.0\" y=\"2310.0\" />\n" + 
@@ -285,7 +288,7 @@ public class Test extends TestCase
 								"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n" + 
 								"<Pathway xmlns=\"http://genmapp.org/GPML/2007\" Name=\"New Pathway\" Data-Source=\"GenMAPP 2.0\" Version=\"20070724\">\n" + 
 								"  <Graphics BoardWidth=\"18000.0\" BoardHeight=\"12000.0\" WindowWidth=\"18000.0\" WindowHeight=\"12000.0\" />\n" + 
-								"  <Line>\n" + 
+								"  <Line GraphId=\"aaa\">\n" + 
 								"    <Graphics Color=\"000000\">\n" + 
 								"      <Point x=\"1740.0\" y=\"990.0\" Head=\"Arrow\" />\n" + 
 								"      <Point x=\"2970.0\" y=\"1605.0\" />\n" + 
@@ -332,7 +335,7 @@ public class Test extends TestCase
 				"    <Change attr=\"ShapeType\" old=\"Rectangle\" new=\"Oval\" />\n" +
 				"  </Modify>\n" +
 				"  <Modify>\n" +
-				"    <Line xmlns=\"http://genmapp.org/GPML/2007\">\n" +
+				"    <Line xmlns=\"http://genmapp.org/GPML/2007\" GraphId=\"aaa\">\n" +
 				"      <Graphics Color=\"000000\">\n" +
 				"        <Point x=\"1740.0\" y=\"990.0\" Head=\"Arrow\" />\n" +
 				"        <Point x=\"2430.0\" y=\"2310.0\" />\n" +

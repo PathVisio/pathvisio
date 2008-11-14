@@ -523,7 +523,13 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 			Logger.log.trace("MayExit: " + mayExit());
 			uiHandler.showExitMessage("Please wait...the page will be reloaded");
 			try {
-				URL url = new URL(getSiteURL() + "/index.php?title=Pathway:" + getPwId());
+				URL url = null;
+				String pwId = getPwId();
+				if(pwId == null || "".equals(pwId)) {
+					url = new URL(getSiteURL());
+				} else {
+					url = new URL(getSiteURL() + "/index.php?title=Pathway:" + getPwId());
+				}
 				Logger.log.error("Redirecting to " + url);
 				uiHandler.showDocument(url, "_top");
 			} catch (MalformedURLException ex) {

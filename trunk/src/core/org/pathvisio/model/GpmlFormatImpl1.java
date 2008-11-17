@@ -735,8 +735,9 @@ public class GpmlFormatImpl1
 	{
 		for (Object f : e.getChildren("Attribute", e.getNamespace()))
 		{
-			o.getAttributeMap().put (
-					getAttribute("Attribute", "Key", (Element)f), getAttribute("Attribute", "Value", (Element)f));
+			o.setDynamicProperty(
+					getAttribute("Attribute", "Key", (Element)f), 
+					getAttribute("Attribute", "Value", (Element)f));
 		}    	
 	}
 	
@@ -744,12 +745,11 @@ public class GpmlFormatImpl1
 	{
 		if(e != null) 
 		{
-			Map<String, String> attrs = o.getAttributeMap();
-			for (String key : attrs.keySet())
+			for (String key : o.getDynamicPropertyKeys())
 			{
 				Element a = new Element ("Attribute", e.getNamespace());
 				setAttribute ("Attribute", "Key", a, key);				
-				setAttribute ("Attribute", "Value", a, attrs.get(key));	
+				setAttribute ("Attribute", "Value", a, o.getDynamicProperty(key));	
 				e.addContent (a);
 			}
 		}
@@ -807,7 +807,7 @@ public class GpmlFormatImpl1
 		mapGraphId(o, e);
 		
 		//Style
-		o.setGroupStyle(GroupStyle.fromGpmlName(getAttribute("Group", "Style", e)));
+		o.setGroupStyle(GroupStyle.fromName(getAttribute("Group", "Style", e)));
 		//Label
 		String textLabel = getAttribute("Group", "TextLabel", e);
 		if(textLabel != null) {
@@ -826,7 +826,7 @@ public class GpmlFormatImpl1
 		updateGraphId(o, e);
 		
 		//Style
-		setAttribute("Group", "Style", e, GroupStyle.toGpmlName(o.getGroupStyle()));
+		setAttribute("Group", "Style", e, o.getGroupStyle().getName());
 		//Label
 		setAttribute ("Group", "TextLabel", e, o.getTextLabel());
 	}

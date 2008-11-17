@@ -40,10 +40,10 @@ class PanelOutputter extends DiffOutputter
 	private static final int PWY_OLD = 0;
 	private static final int PWY_NEW = 1;
 	
-	PanelOutputter (VPathway _old, VPathway _new)
+	PanelOutputter (VPathway aOld, VPathway aNew)
 	{
-		vpwy[PWY_OLD] = _old;
-		vpwy[PWY_NEW] = _new;
+		vpwy[PWY_OLD] = aOld;
+		vpwy[PWY_NEW] = aNew;
 		for (int i = 0; i < 2; ++i)
 		{
 			pwy[i] = vpwy[i].getPathwayModel();

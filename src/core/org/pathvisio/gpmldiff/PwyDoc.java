@@ -112,10 +112,10 @@ class PwyDoc
 	{
 	}
 	
-	public PwyDoc (Pathway _pwy)
+	public PwyDoc (Pathway aPwy)
 	{
-		assert (_pwy != null);
-		pwy = _pwy;
+		assert (aPwy != null);
+		pwy = aPwy;
 		
 		for (PathwayElement e : pwy.getDataObjects())
 		{

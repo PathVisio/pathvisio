@@ -30,9 +30,9 @@ public class GpmlDiff
 	static File oldFile = null;
 	static File newFile = null;
 	static String outputType = "svg";
-	static final String[] outputTypes = {"svg", "dgpml", "basic", "table"};
+	static final String[] OUTPUT_TYPES = {"svg", "dgpml", "basic", "table"};
 	static String simFunType = "better";
-	static final String[] simFunTypes = {"basic", "better"};
+	static final String[] SIMFUN_TYPES = {"basic", "better"};
 	
 	/**
 	   Parse Command-line Options
@@ -51,7 +51,7 @@ public class GpmlDiff
 				if (error == null)
 				{				
 					outputType = argv[pos];
-					if (!Arrays.asList(outputTypes).contains (outputType))
+					if (!Arrays.asList(OUTPUT_TYPES).contains (outputType))
 					{
 						error = "Outputtype " + outputType + " is not allowed";
 					}
@@ -69,7 +69,7 @@ public class GpmlDiff
 				if (error == null)
 				{				
 					simFunType = argv[pos];
-					if (!Arrays.asList(simFunTypes).contains (simFunType))
+					if (!Arrays.asList(SIMFUN_TYPES).contains (simFunType))
 					{
 						error = "SimFunType " + simFunType + " is not allowed";
 					}

@@ -69,12 +69,12 @@ class SearchNode
 	   note: parent may be null for the first SearchNode.
 	   This will mark oldElt and newElt so they can be added only once.
 	*/
-	public SearchNode(SearchNode _parent, PathwayElement _oldElt, PathwayElement _newElt, float _cost)
+	public SearchNode(SearchNode aParent, PathwayElement anOldElt, PathwayElement aNewElt, float aCost)
 	{
-		cost = _cost;
-		parent = _parent;
-		oldElt = _oldElt;
-		newElt = _newElt;
+		cost = aCost;
+		parent = aParent;
+		oldElt = anOldElt;
+		newElt = aNewElt;
 		assert (oldElt != null);
 		assert (newElt != null);
 		if (parent != null)

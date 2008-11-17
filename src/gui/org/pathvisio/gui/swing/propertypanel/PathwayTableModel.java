@@ -17,14 +17,12 @@
 package org.pathvisio.gui.swing.propertypanel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -41,8 +39,6 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyType;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.SelectionBox.SelectionEvent;

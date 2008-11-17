@@ -1,4 +1,5 @@
-// PathVisio,// a tool for data visualization and analysis using Biological Pathways
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2007 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); 

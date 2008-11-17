@@ -48,18 +48,18 @@ public class Map2D <S, T, U>
 	   Note: doubles in the collection are discarded!
 	 */
 	@SuppressWarnings("unchecked")
-	Map2D (Collection<S> _rows, Collection<T> _cols)
+	Map2D (Collection<S> aRows, Collection<T> aCols)
 	{
 		rows = new HashMap <S, Integer>();
 		cols = new HashMap <T, Integer>();
 		int i = 0;
-		for (S s : _rows)
+		for (S s : aRows)
 		{
 			rows.put (s, i);
 			i++;
 		}
 		i = 0;
-		for (T t : _cols)
+		for (T t : aCols)
 		{
 			cols.put (t, i);
 			i++;

@@ -111,13 +111,13 @@ class GlassPane extends JPanel implements AWTEventListener
 	/**
 	   setModifyHint implies showHint (true)
 	 */
-	void setModifyHint(Map <String, String> _hint, double _x1, double _y1, double _x2, double _y2)
+	void setModifyHint(Map <String, String> aHint, double ax1, double ay1, double ax2, double ay2)
 	{
-		hint = _hint;
-		x1 = _x1;
-		y1 = _y1;
-		x2 = _x2;
-		y2 = _y2;
+		hint = aHint;
+		x1 = ax1;
+		y1 = ay1;
+		x2 = ax2;
+		y2 = ay2;
 		baloonPaint = Color.YELLOW;
 		showHint = true;
 		type = Type.MODIFY;
@@ -127,28 +127,28 @@ class GlassPane extends JPanel implements AWTEventListener
 	/**
 	 * implies showHint (true)
 	 */
-	void setRemoveHint(Map <String, String> _hint, double x, double y)
+	void setRemoveHint(Map <String, String> aHint, double x, double y)
 	{
 		x1 = x;
 		y1 = y;
 		baloonPaint = Color.RED;
 		type = Type.REMOVE;
 		showHint = true;
-		hint = _hint;
+		hint = aHint;
 		repaint();
 	}
 
 	/**
 	 * implies showHint (true)
 	 */
-	void setAddHint(Map <String, String> _hint, double x, double y)
+	void setAddHint(Map <String, String> aHint, double x, double y)
 	{
 		x2 = x;
 		y2 = y;
 		baloonPaint = Color.GREEN;
 		type = Type.ADD;
 		showHint = true;
-		hint = _hint;
+		hint = aHint;
 		repaint();
 	}
 

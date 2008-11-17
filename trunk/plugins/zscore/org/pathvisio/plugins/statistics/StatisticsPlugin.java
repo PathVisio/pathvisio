@@ -99,10 +99,10 @@ public class StatisticsPlugin implements Plugin
 	private SwingEngine swingEngine;
 	private StandaloneEngine standaloneEngine;
 	
-	public void init(StandaloneEngine _standaloneEngine) 
+	public void init(StandaloneEngine aStandaloneEngine) 
 	{
-		swingEngine = _standaloneEngine.getSwingEngine();
-		standaloneEngine = _standaloneEngine;
+		swingEngine = aStandaloneEngine.getSwingEngine();
+		standaloneEngine = aStandaloneEngine;
 		StatisticsAction statisticsAction = new StatisticsAction(swingEngine,
 				standaloneEngine.getGexManager());
 
@@ -174,9 +174,9 @@ public class StatisticsPlugin implements Plugin
 		/**
 		 * Pop up the statistics dialog
 		 */
-		private void createAndShowDlg(SwingEngine _se, GexManager gm)
+		private void createAndShowDlg(SwingEngine aSwingEngine, GexManager gm)
 		{
-			this.se = _se;
+			this.se = aSwingEngine;
 			this.gm = gm;
 			final JDialog dlg = new JDialog (se.getFrame(), "Pathway statistics", false);
 			

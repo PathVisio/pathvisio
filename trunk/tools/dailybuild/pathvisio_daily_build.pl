@@ -43,6 +43,8 @@ my @steps;
 
 my $fSendEmail = 1;
 
+my $fCheckstyle = "/home/martijn/cs_pathvisio.txt";
+
 #################
 #  subroutines
 #################
@@ -266,6 +268,51 @@ eval
 			my @files = <INFILE>;
 			close INFILE;
 			if (@files > 0) { die ("License header missing on some files\n"); }
+		}
+	);
+
+	# Next step: checkstyle
+	do_step (
+		name => "CHECKSTYLE",
+		log => "$dir/cs_result.txt",
+		action => sub
+		{
+			system ("ant checkstyle") == 0 or 
+				die ("ant [checkstyle] failed with error code ", $? >> 8, "\n");
+				
+			#Now do a bit of magic so we only report NEW errors.
+			my $cNew = 0;
+			
+			system ("touch $fCheckstyle") == 0 or die ("Can't touch. Look ma, no hands? $!");
+			open OLD, "$fCheckstyle" or die $!;
+			
+			# create a hash of all old warnings
+			# filter out the path before /src/ as it's different each run
+			my %lOld =  map { $_ =~ s#^.*/src/#src/#; $_ => 1 } <OLD>;
+			close OLD;
+			
+			open OUTPUT, ">$dir/cs_result.txt" or die $!;
+			print OUTPUT "New warnings:\n";
+			
+			open NEW, "$dir/warnings.txt" or die $!;			
+			while (my $line = <NEW>)
+			{
+				# filter out the path before /src/ as it's different each run
+				$line =~ s#^.*/src/#src/#;
+				if (!exists $lOld{$line})
+				{
+					$cNew++;
+					print OUTPUT $line;
+				}
+			}
+			close NEW;
+			close OUTPUT;
+			
+			system ("mv $dir/warnings.txt $fCheckstyle" ) == 0 or 
+				die ("mv [checkstyle] failed with error code ", $? >> 8, "\n");
+			
+			# here is the logic bit: we bail out if there are any NEW warnings.
+			if ($cNew > 0) { die "$cNew new checkstyle warnings" };
 		}
 	);
 

@@ -23,9 +23,11 @@ use strict;
 ###############
 
 use File::Temp qw / tempfile tempdir /;
+use File::Find;
 
-my $dir = tempdir ( CLEANUP => 1 );
-#~ my $dir = "/home/martijn/temp";
+# If $fCleanCheckout == 1, svn checkout will be done in a fresh temp directory.
+# If $fCleanCheckout == 0, svn checkout will be done in $defaultDir.
+my $fCleanCheckout = 0;
 
 # these people will be emailed when a problem occurs
 my @emails = (
@@ -34,8 +36,6 @@ my @emails = (
 #    'thomas.kelder@bigcat.unimaas.nl',
     );
 
-print "Location: $dir\n";
-
 my @steps;
 
 # if fSendEmail is false, the email will not be sent but
@@ -43,7 +43,33 @@ my @steps;
 
 my $fSendEmail = 1;
 
-my $fCheckstyle = "/home/martijn/cs_pathvisio.txt";
+my $basedir = "/home/martijn";
+my $cytoscapedir= "$basedir/etc/cytoscape-v2.6.0";
+my $fnCheckstyle = "$basedir/cs_pathvisio.txt";
+my $defaultDir = "$basedir/temp";
+
+# checkout dir
+my $dir;
+
+#################
+# initialization
+#################
+
+if ($fCleanCheckout)
+{
+	$dir = tempdir ( CLEANUP => 1 );
+}
+else
+{
+	$dir = $defaultDir;
+	
+	mkdir $dir; # make sure dir exists
+	
+	# clean the working copy if we can. Ignore failure, we'll do a checkout anyway.
+	system ("svn-clean $dir");
+}
+
+print "Location: $dir\n";
 
 #################
 #  subroutines
@@ -86,7 +112,7 @@ sub do_step
 # in the eval below, each step is done consecutively until 
 # one step dies, which causes a break out of the eval statement.
 eval
-{
+{	
 	# create a temp dir and do a fresh checkout
 	chdir ($dir);
 
@@ -270,6 +296,54 @@ eval
 			if (@files > 0) { die ("License header missing on some files\n"); }
 		}
 	);
+	
+	# test compilation of cytoscape-gpml
+	do_step (
+		name => "CYTOSCAPE-GPML",
+		log => "$dir/cytoscape-gpml.txt",
+		action => sub
+		{
+			my $cmd = 'ant -f tools/cytoscape-gpml/build.xml '.
+				"-Dcytoscape.dir=$cytoscapedir ".
+				'-Dwsdl.url=http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl '.
+				"> $dir/cytoscape-gpml.txt";
+			print $cmd;
+			system ($cmd) == 0 or 
+				die ("cytoscape-gpml failed with error code ", $? >> 8, "\n");
+		}
+	);
+	
+	# Next step: check that java files have svn propset svn:eol-style native
+	do_step (
+		name => "SVN:EOL-STYLE PROPERTY",
+		log => "$dir/props.txt",
+		action => sub
+		{
+			our @javalist;
+			sub wanted { if (-f $_ && /\.java$/i && ! (/Revision.java$/)) { push @javalist, $File::Find::name; } }
+			find (\&wanted, "$dir/src");
+
+			system ("touch $dir/props.txt") == 0 or die ("Can't touch. Look ma, no hands? $!");
+			open OUTPUT, ">$dir/props.txt" or die $!;
+			my $cWrong = 0;
+			
+			for my $file (@javalist)
+			{
+				if (`svn propget svn:eol-style $file` !~ /native/)
+				{
+					print OUTPUT $file, "\n";
+					$cWrong++;
+				}
+			}
+			
+			close OUTPUT;
+			
+			if ($cWrong > 0)
+			{
+				die "$cWrong java files are missing the svn:eolstyle property";
+			}
+		}
+	);
 
 	# Next step: checkstyle
 	do_step (
@@ -283,8 +357,8 @@ eval
 			#Now do a bit of magic so we only report NEW errors.
 			my $cNew = 0;
 			
-			system ("touch $fCheckstyle") == 0 or die ("Can't touch. Look ma, no hands? $!");
-			open OLD, "$fCheckstyle" or die $!;
+			system ("touch $fnCheckstyle") == 0 or die ("Can't touch. Look ma, no hands? $!");
+			open OLD, "$fnCheckstyle" or die $!;
 			
 			# create a hash of all old warnings
 			# filter out the path before /src/ as it's different each run
@@ -308,7 +382,7 @@ eval
 			close NEW;
 			close OUTPUT;
 			
-			system ("mv $dir/warnings.txt $fCheckstyle" ) == 0 or 
+			system ("mv $dir/warnings.txt $fnCheckstyle" ) == 0 or 
 				die ("mv [checkstyle] failed with error code ", $? >> 8, "\n");
 			
 			# here is the logic bit: we bail out if there are any NEW warnings.

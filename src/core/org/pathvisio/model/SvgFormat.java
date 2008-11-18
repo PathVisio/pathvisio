@@ -40,7 +40,7 @@ import org.jdom.output.XMLOutputter;
 */
 public class SvgFormat implements PathwayExporter
 {
-	static final Namespace nsSVG = Namespace.getNamespace("http://www.w3.org/2000/svg");
+	static final Namespace NS_SVG = Namespace.getNamespace("http://www.w3.org/2000/svg");
 		
 	static Element defs;
 	static Set<String> markers;
@@ -49,11 +49,11 @@ public class SvgFormat implements PathwayExporter
 	{
 		Document doc = new Document();		
 		
-		defs = new Element("defs", nsSVG);
+		defs = new Element("defs", NS_SVG);
 		markers = new HashSet<String>();
 		
 		Element root = new Element("svg");
-		root.setNamespace(nsSVG);
+		root.setNamespace(NS_SVG);
 		doc.setRootElement(root);
 		DocType dt = new DocType("svg", "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd");
     	doc.setDocType(dt);
@@ -128,7 +128,7 @@ public class SvgFormat implements PathwayExporter
 				{"Data Source: ", o.getMapInfoDataSource()}};
 		
 		double fsize = toPixel(o.getMFontSize()) + 2;//TODO: find out why smaller in SVG
-		Element e = new Element("text", nsSVG);
+		Element e = new Element("text", NS_SVG);
 		e.setAttribute("x", "" + toPixel(o.getMLeft()));
 		e.setAttribute("y", "" + toPixel(o.getMTop()));
 		e.setAttribute("font-size", "" + fsize);
@@ -136,12 +136,12 @@ public class SvgFormat implements PathwayExporter
 		for(int i = 0; i < text.length; i++) {
 			if(text[i][1] == null || text[i][1].equals("")) continue;
 			
-			Element l = new Element("tspan", nsSVG);
+			Element l = new Element("tspan", NS_SVG);
 			l.setAttribute("x", "" + toPixel(o.getMLeft()));
 			l.setAttribute("dy", fsize + "pt");
 			l.setAttribute("font-weight", "bold");
 			l.addContent(text[i][0]);
-			Element v = new Element("tspan", nsSVG);
+			Element v = new Element("tspan", NS_SVG);
 			v.addContent(text[i][1]);
 			e.addContent(l);
 			e.addContent(v);
@@ -150,7 +150,7 @@ public class SvgFormat implements PathwayExporter
 	}
 	
 	static void mapLine(Element parent, PathwayElement o) {
-		Element e = new Element("line", nsSVG);
+		Element e = new Element("line", NS_SVG);
 		e.setAttribute("x1", "" + toPixel(o.getMStartX()));
 		e.setAttribute("y1", "" + toPixel(o.getMStartY()));
 		e.setAttribute("x2", "" + toPixel(o.getMEndX()));
@@ -169,7 +169,7 @@ public class SvgFormat implements PathwayExporter
 	}
 	
 	static void mapDataNode(Element parent, PathwayElement o) {
-		Element e = new Element("rect", nsSVG);
+		Element e = new Element("rect", NS_SVG);
 		e.setAttribute("x", "" + toPixel(o.getMLeft()));
 		e.setAttribute("y", "" + toPixel(o.getMTop()));
 		e.setAttribute("width", "" + toPixel(o.getMWidth()));
@@ -195,15 +195,15 @@ public class SvgFormat implements PathwayExporter
 		
 		double r = o.getRotation() * 180.0/Math.PI;
 		
-		Element tr = new Element("g", nsSVG);		
+		Element tr = new Element("g", NS_SVG);		
 		tr.setAttribute("transform", "translate(" + cx + ", " + cy + ")");
-		Element rot = new Element("g", nsSVG);
+		Element rot = new Element("g", NS_SVG);
 		rot.setAttribute("transform", "rotate(" + r + ")");
 		Element e = null;	
 		
 		if (o.getShapeType() == ShapeType.OVAL)
 		{
-			e = new Element("ellipse", nsSVG);
+			e = new Element("ellipse", NS_SVG);
 			e.setAttribute("cx", "0");
 			e.setAttribute("cy", "0");
 			e.setAttribute("rx", "" + toPixel(o.getMWidth()/2));
@@ -211,12 +211,12 @@ public class SvgFormat implements PathwayExporter
 		}
 		else if (o.getShapeType() == ShapeType.ARC)
 		{
-			e = new Element("path", nsSVG);
+			e = new Element("path", NS_SVG);
 			e.setAttribute("d", "M " + -w/2 + " 0 " + " a " + w/2 + " " + h/2 + " 0 0 0 " + w + " 0");
 		}
 		else if (o.getShapeType() == ShapeType.BRACE)
 		{
-			e = new Element("path", nsSVG);
+			e = new Element("path", NS_SVG);
 			e.setAttribute(
 				"d", "M " + -w/2 + " " + h/2 + " q 0 " + -h/2 + " " + h/2 + " " + -h/2 + " " +
 				"L " + -h/2 + " 0 " +
@@ -228,7 +228,7 @@ public class SvgFormat implements PathwayExporter
 		}
 		else
 		{
-				e = new Element("rect", nsSVG);
+				e = new Element("rect", NS_SVG);
 				e.setAttribute("x", "" + -w/2);
 				e.setAttribute("y", "" + -h/2);
 				e.setAttribute("width", "" + toPixel(o.getMWidth()));
@@ -266,7 +266,7 @@ public class SvgFormat implements PathwayExporter
 	}
 	
 	static Element createTextElement(PathwayElement o) {
-		Element e = new Element("text", nsSVG);
+		Element e = new Element("text", NS_SVG);
 		e.setAttribute("x", "" + toPixel(o.getMCenterX()));
 		e.setAttribute("y", "" + (toPixel(o.getMCenterY()) + toPixel(o.getMFontSize())));
 		e.setAttribute("font-family", o.getFontName()); 
@@ -291,7 +291,7 @@ public class SvgFormat implements PathwayExporter
 		String c = rgb2String(color);
 		if (type == LineType.ARROW)
 		{
-			marker = new Element("marker", nsSVG);
+			marker = new Element("marker", NS_SVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 10");
 			marker.setAttribute("orient", "auto");
@@ -299,7 +299,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "5");
 			marker.setAttribute("markerWidth", "10");
 			marker.setAttribute("markerHeight", "10");
-			Element e = new Element("path", nsSVG);
+			Element e = new Element("path", NS_SVG);
 			e.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", c);
@@ -307,7 +307,7 @@ public class SvgFormat implements PathwayExporter
 		}
 		else if (type == LineType.TBAR)
 		{
-			marker = new Element("marker", nsSVG);
+			marker = new Element("marker", NS_SVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 1 15");
 			marker.setAttribute("orient", "auto");
@@ -315,7 +315,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "8");
 			marker.setAttribute("markerWidth", "2");
 			marker.setAttribute("markerHeight", "20");
-			Element e = new Element("rect", nsSVG);
+			Element e = new Element("rect", NS_SVG);
 			e.setAttribute("x", "1");
 			e.setAttribute("y", "1");
 			e.setAttribute("width", "1");
@@ -326,7 +326,7 @@ public class SvgFormat implements PathwayExporter
 		}
 		else if (type == LineType.LIGAND_ROUND)
 		{
-			marker = new Element("marker", nsSVG);
+			marker = new Element("marker", NS_SVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 10");
 			marker.setAttribute("orient", "auto");
@@ -334,7 +334,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "5");
 			marker.setAttribute("markerWidth", "10");
 			marker.setAttribute("markerHeight", "10");
-			Element e = new Element("ellipse", nsSVG);
+			Element e = new Element("ellipse", NS_SVG);
 			e.setAttribute("cx", "5");
 			e.setAttribute("cy", "5");
 			e.setAttribute("rx", "5");
@@ -345,7 +345,7 @@ public class SvgFormat implements PathwayExporter
 		}
 		else if (type == LineType.RECEPTOR_ROUND)
 		{
-			marker = new Element("marker", nsSVG);
+			marker = new Element("marker", NS_SVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 10");
 			marker.setAttribute("orient", "auto");
@@ -353,7 +353,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "5");
 			marker.setAttribute("markerWidth", "15");
 			marker.setAttribute("markerHeight", "15");
-			Element e = new Element("path", nsSVG);
+			Element e = new Element("path", NS_SVG);
 			e.setAttribute("d", "M 10 0 A 5 5 0 0 0 10 10");
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", "none");
@@ -361,7 +361,7 @@ public class SvgFormat implements PathwayExporter
 		}
 		else if (type == LineType.RECEPTOR_SQUARE)
 		{
-			marker = new Element("marker", nsSVG);
+			marker = new Element("marker", NS_SVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 15");
 			marker.setAttribute("orient", "auto");
@@ -369,7 +369,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "7.5");
 			marker.setAttribute("markerWidth", "15");
 			marker.setAttribute("markerHeight", "15");
-			Element e = new Element("path", nsSVG);
+			Element e = new Element("path", NS_SVG);
 			e.setAttribute("d", "M 10 0 L 0 0  L 0 15 L 10 15");
 			e.setAttribute("stroke", c);
 			e.setAttribute("fill", "none");
@@ -377,7 +377,7 @@ public class SvgFormat implements PathwayExporter
 		}
 		else if (type == LineType.LIGAND_SQUARE)
 		{
-			marker = new Element("marker", nsSVG);
+			marker = new Element("marker", NS_SVG);
 			marker.setAttribute("id", id);
 			marker.setAttribute("viewBox", "0 0 10 15");
 			marker.setAttribute("orient", "auto");
@@ -385,7 +385,7 @@ public class SvgFormat implements PathwayExporter
 			marker.setAttribute("refY", "7.5");
 			marker.setAttribute("markerWidth", "10");
 			marker.setAttribute("markerHeight", "10");
-			Element e = new Element("rect", nsSVG);
+			Element e = new Element("rect", NS_SVG);
 			e.setAttribute("x", "1");
 			e.setAttribute("y", "1");
 			e.setAttribute("width", "10");

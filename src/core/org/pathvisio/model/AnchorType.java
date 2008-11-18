@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class AnchorType implements Comparable<AnchorType> {
-	private static final Map<String, AnchorType> nameMappings = new HashMap<String, AnchorType>();
-	private static final Set<AnchorType> values = new TreeSet<AnchorType>();
+	private static Map<String, AnchorType> nameMappings = new HashMap<String, AnchorType>();
+	private static Set<AnchorType> values = new TreeSet<AnchorType>();
 	
 	public static final AnchorType NONE = new AnchorType("None");
 	public static final AnchorType CIRCLE = new AnchorType("Circle");

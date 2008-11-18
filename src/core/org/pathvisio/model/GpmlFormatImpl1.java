@@ -64,10 +64,10 @@ import org.xml.sax.SAXException;
 public class GpmlFormatImpl1
 {
 	
-	public static final GpmlFormatImpl1 Gpml2007 = new GpmlFormatImpl1 (
+	public static final GpmlFormatImpl1 GPML_2007 = new GpmlFormatImpl1 (
 			"GPML2007.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2007")
 		);
-	public static final GpmlFormatImpl1 Gpml2008a = new GpmlFormatImpl1 (
+	public static final GpmlFormatImpl1 GPML_2008A = new GpmlFormatImpl1 (
 			"GPML.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2008a")
 		);
 
@@ -86,9 +86,9 @@ public class GpmlFormatImpl1
 	 * to the GPML model coordinates. E.g. if you want to convert the
 	 * width from pixels to GPML model coordinates you use:
 	 * 
-	 * double mWidth = width * pixel2model;
+	 * double mWidth = width * PIXEL_TO_MODEL;
 	 */
-	public static final double pixel2model = 15;
+	public static final double PIXEL_TO_MODEL = 15;
 
 	/**
 	 * name of resource containing the gpml schema definition
@@ -113,17 +113,17 @@ public class GpmlFormatImpl1
 		 */
 		public String use;
 		
-		AttributeInfo (String _schemaType, String _def, String _use)
+		AttributeInfo (String aSchemaType, String aDef, String aUse)
 		{
-			schemaType = _schemaType;
-			def = _def;
-			use = _use;
+			schemaType = aSchemaType;
+			def = aDef;
+			use = aUse;
 		}
 	}
 
-	static final Map<String, AttributeInfo> attributeInfo = initAttributeInfo();
+	private static final Map<String, AttributeInfo> ATTRIBUTE_INFO = initAttributeInfo();
 	
-	static Map<String, AttributeInfo> initAttributeInfo()
+	private static Map<String, AttributeInfo> initAttributeInfo()
 	{
 		Map<String, AttributeInfo> result = new HashMap<String, AttributeInfo>();
 		// IMPORTANT: this array has been generated from the xsd with 
@@ -265,10 +265,10 @@ public class GpmlFormatImpl1
 	private  void setAttribute(String tag, String name, Element el,
 			String value) throws ConverterException {
 		String key = tag + "@" + name;
-		if (!attributeInfo.containsKey(key))
+		if (!ATTRIBUTE_INFO.containsKey(key))
 			throw new ConverterException("Trying to set invalid attribute "
 					+ key);
-		AttributeInfo aInfo = attributeInfo.get(key);
+		AttributeInfo aInfo = ATTRIBUTE_INFO.get(key);
 		boolean isDefault = false;
 		// here we start seeing if the attribute is equal to the
 		// default value
@@ -307,9 +307,9 @@ public class GpmlFormatImpl1
 	private  String getAttribute(String tag, String name, Element el) throws ConverterException 
 	{
 		String key = tag + "@" + name;
-		if (!attributeInfo.containsKey(key))
+		if (!ATTRIBUTE_INFO.containsKey(key))
 				throw new ConverterException("Trying to get invalid attribute " + key);
-		AttributeInfo aInfo = attributeInfo.get(key);
+		AttributeInfo aInfo = ATTRIBUTE_INFO.get(key);
 		String result = ((el == null) ? aInfo.def : el.getAttributeValue(name, aInfo.def));
 		return result;
 	}
@@ -1183,9 +1183,9 @@ public class GpmlFormatImpl1
 	 */
     public static Color gmmlString2Color(String strColor)
     {
-    	if(colorMappings.contains(strColor))
+    	if(COLOR_MAPPINGS.contains(strColor))
     	{
-    		double[] color = (double[])rgbMappings.get(colorMappings.indexOf(strColor));
+    		double[] color = (double[])RGB_MAPPINGS.get(COLOR_MAPPINGS.indexOf(strColor));
     		return new Color((int)(255*color[0]),(int)(255*color[1]),(int)(255*color[2]));
     	}
     	else
@@ -1236,7 +1236,7 @@ public class GpmlFormatImpl1
     	return s;
     }
     
-	public static final List<double[]> rgbMappings = Arrays.asList(new double[][] {
+	public static final List<double[]> RGB_MAPPINGS = Arrays.asList(new double[][] {
 			{0, 1, 1},		// aqua 
 			{0, 0, 0},	 	// black
 			{0, 0, 1}, 		// blue
@@ -1256,7 +1256,7 @@ public class GpmlFormatImpl1
 			{0, 0, 0}		// transparent (actually irrelevant)
 		});
 	
-	public static final List<String> colorMappings = Arrays.asList(new String[]{
+	public static final List<String> COLOR_MAPPINGS = Arrays.asList(new String[]{
 			"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",
 			"Maroon", "Navy", "Olive", "Purple", "Red", "Silver", "Teal",
 			"White", "Yellow", "Transparent"

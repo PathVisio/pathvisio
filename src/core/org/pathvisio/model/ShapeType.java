@@ -26,9 +26,9 @@ import java.util.Map;
  */
 public class ShapeType 
 {	
-	private static final Map<String, ShapeType> mappMappings = new HashMap<String, ShapeType>();
-	private static final Map<String, ShapeType> nameMappings = new HashMap<String, ShapeType>();
-	private static final List<ShapeType> values = new ArrayList<ShapeType>();
+	private static Map<String, ShapeType> mappMappings = new HashMap<String, ShapeType>();
+	private static Map<String, ShapeType> nameMappings = new HashMap<String, ShapeType>();
+	private static List<ShapeType> values = new ArrayList<ShapeType>();
 
 	public static final ShapeType RECTANGLE = new ShapeType ("Rectangle", "Rectangle");
 	public static final ShapeType OVAL = new ShapeType ("Oval", "Oval");

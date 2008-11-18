@@ -39,19 +39,18 @@ public class ObjectType
 	public static final int MAX_VALID = 9;
 	 
 	// Some mappings to Gpml TAGS
-	 // TODO: is this actually used?
-	private static final List<String> tagMappings = Arrays.asList(new String[] {
+	private static final List<String> TAG_MAPPINGS = Arrays.asList(new String[] {
 		"Shape", "DataNode", "Label", "Line", "Legend", "InfoBox", 
 		"Pathway", "Group", "Biopax", "State"
 	});
 
 	public static int getTagMapping(String value)
 	{
-		return tagMappings.indexOf(value);
+		return TAG_MAPPINGS.indexOf(value);
 	}
 	
 	public static String getTagMapping(int value)
 	{
-		return (String)tagMappings.get(value);
+		return (String)TAG_MAPPINGS.get(value);
 	}
 }

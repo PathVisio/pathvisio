@@ -63,7 +63,6 @@ public class StandaloneActions
 	 */
 	public static class HelpAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 	
 		public HelpAction() 
 		{
@@ -96,7 +95,6 @@ public class StandaloneActions
 	 */
 	public static class OpenAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 	
 		SwingEngine swingEngine;
 		
@@ -125,7 +123,6 @@ public class StandaloneActions
 	 */
 	public static class NewAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 	
 		SwingEngine swingEngine;
 
@@ -154,7 +151,6 @@ public class StandaloneActions
 	 */
 	public static class SelectGeneDbAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 
 		SwingEngine swingEngine;
 
@@ -185,7 +181,6 @@ public class StandaloneActions
 	 */
 	public static class AboutAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 
 		SwingEngine swingEngine;
 		
@@ -211,7 +206,6 @@ public class StandaloneActions
 	 */
 	public static class PreferencesAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 
 		SwingEngine swingEngine;
 
@@ -232,7 +226,6 @@ public class StandaloneActions
 
 	public static class SearchAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 
 		SwingEngine swingEngine;
 

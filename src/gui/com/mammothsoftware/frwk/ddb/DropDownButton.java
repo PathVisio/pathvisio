@@ -45,7 +45,6 @@ import javax.swing.border.CompoundBorder;
  */
 public class DropDownButton extends JButton implements ActionListener {
 
-	private static final long serialVersionUID = 1L;
 	private JPopupMenu popup = new JPopupMenu();
 	private JToolBar tb = new ToolBar();
 	private JButton mainButton;
@@ -246,7 +245,6 @@ public class DropDownButton extends JButton implements ActionListener {
    
    private static class ToolBar extends JToolBar 
    {
-	   private static final long serialVersionUID = 1L;
 
 	   public void updateUI() 
 	   {

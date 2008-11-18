@@ -51,7 +51,6 @@ import org.pathvisio.model.PathwayEvent;
  */
 public class Line extends Graphics
 {	
-	private static final long serialVersionUID = 1L;
 	
 	private List<VPoint> points;
 	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();

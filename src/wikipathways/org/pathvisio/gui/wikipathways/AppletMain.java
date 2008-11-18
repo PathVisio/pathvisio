@@ -30,7 +30,6 @@ import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
 
 public class AppletMain extends PathwayPageApplet {	
-	private static final long serialVersionUID = 1L;
 
 	private MainPanel mainPanel;
 	

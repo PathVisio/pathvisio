@@ -25,7 +25,6 @@ import org.pathvisio.debug.Logger;
 
 public class AppletMain extends JApplet
 {
-	private static final long serialVersionUID = 1L;
 	GpmlDiffWindow panel;
 	
 	void openUrl(int pwyType, String param)

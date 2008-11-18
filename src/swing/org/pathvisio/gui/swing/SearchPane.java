@@ -59,7 +59,6 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class SearchPane extends JPanel 
 {	
-	private static final long serialVersionUID = 1L;
 	private JButton btnSearch;
 	private JButton btnBrowse;
 	private JTextField txtDir;

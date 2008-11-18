@@ -50,7 +50,6 @@ import org.pathvisio.wikipathways.WikiPathways;
 
 public class CategoryApplet extends PathwayPageApplet 
 {
-	private static final long serialVersionUID = 1L;
 	Map<String, Category> categories;
 	PathwayElement mappInfo;
 	
@@ -206,7 +205,6 @@ public class CategoryApplet extends PathwayPageApplet
 	
 	// @author Santhosh Kumar T - santhosh@in.fiorano.com
 	public class CheckListCellRenderer extends JPanel implements ListCellRenderer{ 
-		private static final long serialVersionUID = 1L;
 		private ListCellRenderer delegate; 
 	    private ListSelectionModel selectionModel; 
 	    private JCheckBox checkBox = new JCheckBox(); 

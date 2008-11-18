@@ -33,7 +33,6 @@ import org.pathvisio.visualization.colorset.ColorSet;
  */
 public class ColorSetDlg extends OkCancelDialog 
 {
-	private static final long serialVersionUID = 1L;
 	ColorSet cs;
 	
 	public ColorSetDlg (ColorSet cs, Frame frame, Component locationComp)

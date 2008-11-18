@@ -27,7 +27,6 @@ package org.pathvisio.data;
 */
 public class DataException extends Exception
 {
-	private static final long serialVersionUID = 1L;
 
 	/** See Exception(Throwable) */
 	DataException (Throwable t)

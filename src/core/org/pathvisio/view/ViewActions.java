@@ -253,7 +253,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 //	}
 
 	public static class CopyAction extends AbstractAction {	
-		private static final long serialVersionUID = 1L;
 
 		public CopyAction() {
 			super();
@@ -272,7 +271,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	public static class PasteAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		public PasteAction() {
 			super();
@@ -291,7 +289,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	public static class KeyMoveAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		KeyStroke key;
 
@@ -314,7 +311,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	private class SelectClassAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		Class<?> c;
 		public SelectClassAction(String name, Class<?> c) {
@@ -327,7 +323,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	private class SelectAllAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		public SelectAllAction() {
 			super("Select all");
@@ -339,7 +334,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	private class AddAnchorAction extends AbstractAction implements SelectionListener {
-		private static final long serialVersionUID = 1L;
 
 		public AddAnchorAction() {
 			vPathway.addSelectionListener(this);
@@ -399,7 +393,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 	}
 	private class GroupActionBase extends AbstractAction implements SelectionListener {
-		private static final long serialVersionUID = 1L;
 		private String groupLbl, ungroupLbl, groupTt, ungroupTt;
 		private GroupStyle groupStyle;
 		
@@ -456,7 +449,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	private class DeleteAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		public DeleteAction() {
 			super();
@@ -484,7 +476,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	public static class UndoAction extends AbstractAction implements UndoManagerListener, ApplicationEventListener {
-		private static final long serialVersionUID = 1L;
 
 		public UndoAction() {
 			super();
@@ -523,7 +514,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public static class OrderTopAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 		public OrderTopAction() 
 		{
 			putValue(NAME, "Bring to front");
@@ -546,7 +536,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public static class OrderBottomAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 		public OrderBottomAction() 
 		{
 			putValue(NAME, "Send to Back");
@@ -570,7 +559,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public static class OrderUpAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 		public OrderUpAction() 
 		{
 			putValue(NAME, "Bring Forward");
@@ -592,7 +580,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public static class OrderDownAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 		public OrderDownAction() 
 		{
 			putValue(NAME, "Send Backward");

@@ -25,7 +25,6 @@ import javax.swing.JTabbedPane;
 import org.pathvisio.model.PathwayElement;
 
 public abstract class PathwayElementPanel extends JPanel {
-	private static final long serialVersionUID = 1L;
 	private PathwayElement input;
 	JTabbedPane dialogPane;
 	boolean readonly;

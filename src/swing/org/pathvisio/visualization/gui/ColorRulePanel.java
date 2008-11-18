@@ -53,7 +53,6 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class ColorRulePanel extends JPanel 
 {
-	private static final long serialVersionUID = 1L;
 
 	private JLabel colorLabel; 
 	private ColorRule cr = null;

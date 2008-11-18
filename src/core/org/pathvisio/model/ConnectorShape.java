@@ -68,7 +68,6 @@ public interface ConnectorShape {
 	 * will have a handle in the view, so the user can modify it's position.
 	 */
 	public class WayPoint extends Point2D.Double {		
-		private static final long serialVersionUID = 1L;
 		public WayPoint(Point2D position) {
 			super(position.getX(), position.getY());
 		}

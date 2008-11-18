@@ -53,7 +53,6 @@ public class SelectionBox extends VPathwayElement
 	// double vTop, vLeft, vWidth, vHeight;
 	double mTop, mLeft, mWidth, mHeight;
 
-	private static final long serialVersionUID = 1L;
 
 	private Set<VPathwayElement> selection;
 
@@ -626,7 +625,6 @@ public class SelectionBox extends VPathwayElement
 
 	public static class SelectionEvent extends EventObject
 	{
-		private static final long serialVersionUID = 1L;
 
 		public static final int OBJECT_ADDED = 0;
 

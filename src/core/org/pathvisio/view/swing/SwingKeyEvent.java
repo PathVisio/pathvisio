@@ -19,7 +19,6 @@ package org.pathvisio.view.swing;
 import java.awt.event.KeyEvent;
 
 public class SwingKeyEvent extends org.pathvisio.view.KeyEvent {
-	private static final long serialVersionUID = 1L;
 
 	KeyEvent awtEvent;
 	

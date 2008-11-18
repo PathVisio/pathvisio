@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PublicationXRef extends BiopaxElement {
-	private static final long serialVersionUID = 1L;
 	static final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
 	
 	public PublicationXRef() {

@@ -47,7 +47,6 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 public class PathwayTableModel extends AbstractTableModel implements SelectionListener, 
 									PathwayListener, 
 									ApplicationEventListener {
-	private static final long serialVersionUID = 1L;
 
 	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());
 	JTable table;

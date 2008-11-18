@@ -25,7 +25,6 @@ import org.pathvisio.data.ImportInformation;
 
 class PreviewTableModel extends AbstractTableModel
 {
-	private static final long serialVersionUID = 1L;
 	
 	private ImportInformation info;
 	

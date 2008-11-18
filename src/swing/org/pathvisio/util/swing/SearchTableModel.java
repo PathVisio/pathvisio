@@ -24,7 +24,6 @@ package org.pathvisio.util.swing;
 public class SearchTableModel extends 
 	ListWithPropertiesTableModel<SearchTableModel.Column, MatchResult>
 {
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Defines the columns that can be displayed in a SearchTable

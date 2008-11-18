@@ -229,7 +229,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 
 	public static class ZoomToFitAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		Component parent;
 		Engine engine;
@@ -259,7 +258,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class ZoomAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		Component parent;
 		double zoomFactor;
@@ -289,7 +287,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class SaveAction extends AbstractAction implements StatusFlagListener, ApplicationEventListener {
-		private static final long serialVersionUID = 1L;
 		boolean forceDisabled;
 		boolean isSaveAs; // is either save... or save as...
 		
@@ -362,7 +359,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class ImportAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		SwingEngine swingEngine;
 		
@@ -386,7 +382,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class ExportAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		SwingEngine swingEngine;
 		
@@ -410,7 +405,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 			
 	public static class NewElementAction extends AbstractAction implements VPathwayListener {
-		private static final long serialVersionUID = 1L;
 
 		Template template;
 		
@@ -442,7 +436,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class StackAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 
 		StackType type;
 		Engine engine;
@@ -463,7 +456,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class AlignAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 		AlignType type;
 
 		Engine engine;
@@ -483,7 +475,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	private static abstract class PathwayElementDialogAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 		VPathwayElement element;
 		Component parent;
 		
@@ -526,7 +517,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class AddLiteratureAction extends PathwayElementDialogAction {
-		private static final long serialVersionUID = 1L;
 		public AddLiteratureAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
 			super(swingEngine, parent, e);
 			putValue(NAME, "Add literature reference");
@@ -554,7 +544,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class EditLiteratureAction extends PathwayElementDialogAction {
-		private static final long serialVersionUID = 1L;
 
 		public EditLiteratureAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
 			super(swingEngine, parent, e);
@@ -569,7 +558,6 @@ public class CommonActions implements ApplicationEventListener {
 	}
 	
 	public static class PropertiesAction extends PathwayElementDialogAction {
-		private static final long serialVersionUID = 1L;
 
 		public PropertiesAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
 			super(swingEngine, parent, e);
@@ -588,7 +576,6 @@ public class CommonActions implements ApplicationEventListener {
 	 */
 	public static class ExitAction extends AbstractAction 
 	{
-		private static final long serialVersionUID = 1L;
 
 		SwingEngine swingEngine;
 		

@@ -8,7 +8,6 @@ import javax.swing.border.*;
 
 public class TestPanel1 extends JPanel {
  
-	private static final long serialVersionUID = 1L;
     private JLabel blankSpace;
     private JLabel jLabel1;
     private JLabel jLabel2;

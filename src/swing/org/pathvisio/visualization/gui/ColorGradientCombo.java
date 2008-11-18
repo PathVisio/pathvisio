@@ -46,7 +46,6 @@ import org.pathvisio.visualization.colorset.ColorGradient;
  */
 public class ColorGradientCombo extends JComboBox
 {
-	private static final long serialVersionUID = 1L;
 
 	public ColorGradientCombo() {
 		super();
@@ -93,7 +92,6 @@ public class ColorGradientCombo extends JComboBox
 	
 	class ColorGradientRenderer extends JLabel implements ListCellRenderer 
 	{
-		private static final long serialVersionUID = 1L;
 		ColorGradient current;
 		Border b_selected = BorderFactory.createLineBorder(Color.BLACK, 3);
 		Border b_unselected = BorderFactory.createLineBorder(Color.GRAY, 1);

@@ -32,7 +32,6 @@ public class Criterion
 	{
 		CriterionException (String msg) { super (msg); }
 		
-		private static final long serialVersionUID = 1L;
 	}
 	
 	static final String displaySample = "|Displayed sample|";

@@ -305,7 +305,6 @@ public class TypedProperty {
 	}
 	
 	private static class DoubleEditor extends DefaultCellEditor {
-		private static final long serialVersionUID = 1L;
 		public DoubleEditor() {
 			super(new JTextField());
 		}
@@ -322,7 +321,6 @@ public class TypedProperty {
 	}
 
 	private static class IntegerEditor extends DefaultCellEditor {
-		private static final long serialVersionUID = 1L;
 		
 		public IntegerEditor() {
 			super(new JTextField());
@@ -340,7 +338,6 @@ public class TypedProperty {
 	}
 
 	private static class AngleEditor extends DefaultCellEditor {
-		private static final long serialVersionUID = 1L;
 		
 		public AngleEditor() {
 			super(new JTextField());
@@ -363,7 +360,6 @@ public class TypedProperty {
 	}
 	
 	private static class ComboEditor extends DefaultCellEditor {
-		private static final long serialVersionUID = 1L;
 		
 		HashMap<Object, Object> label2value;
 		HashMap<Object, Object> value2label;
@@ -434,7 +430,6 @@ public class TypedProperty {
 	}
 	
 	private static class CommentsEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-		private static final long serialVersionUID = 1L;
 
 		static final String BUTTON_LABEL = "View/edit comments";
 		JButton button;
@@ -492,7 +487,6 @@ public class TypedProperty {
 	}
 	
 	private static class ColorEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-		private static final long serialVersionUID = 1L;
 
 		Color currentColor;
 		JButton button;
@@ -558,7 +552,6 @@ public class TypedProperty {
 	private static ComboEditor groupStyleEditor = new ComboEditor(GroupStyle.getNames(), false);
 	
 	private static DefaultTableCellRenderer angleRenderer = new DefaultTableCellRenderer() {
-		private static final long serialVersionUID = 1L;
 
 		protected void setValue(Object value) {
 			super.setValue( (Double)(value) * 180.0 / Math.PI );
@@ -568,7 +561,6 @@ public class TypedProperty {
 	private static ComboEditor datanodeTypeEditor = new ComboEditor(DataNodeType.getNames(), false);
 	
 	private static DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer() {
-		private static final long serialVersionUID = 1L;
 
 		protected void setValue(Object value) {
 			if (value != null){ //hack needed to remove NPE following group refactoring
@@ -579,7 +571,6 @@ public class TypedProperty {
 	};
 
 	private static DefaultTableCellRenderer differentRenderer = new DefaultTableCellRenderer() {
-		private static final long serialVersionUID = 1L;
 
 		protected void setValue(Object value) {
 			value = "Different values";
@@ -588,7 +579,6 @@ public class TypedProperty {
 	};
 
 	private static class CheckBoxRenderer extends JCheckBox implements TableCellRenderer {
-		private static final long serialVersionUID = 1L;
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			setSelected((Boolean)value);
@@ -597,7 +587,6 @@ public class TypedProperty {
 	}
 	
 	private static class ComboRenderer extends JComboBox implements TableCellRenderer {
-		private static final long serialVersionUID = 1L;
 
 		HashMap<Object, Object> value2label;
 		public ComboRenderer(Object[] values) {
@@ -639,7 +628,6 @@ public class TypedProperty {
 	}
 	
 	private static class FontRenderer extends JLabel implements TableCellRenderer {
-		private static final long serialVersionUID = 1L;
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			String fn = (String)value;
@@ -651,7 +639,6 @@ public class TypedProperty {
 	}
 	
 	private static class ColorRenderer extends JLabel implements TableCellRenderer {
-		private static final long serialVersionUID = 1L;
 
 		Border unselectedBorder = null;
 		Border selectedBorder = null;

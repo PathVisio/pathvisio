@@ -67,7 +67,6 @@ class GlassPane extends JPanel implements AWTEventListener
 		REMOVE
 	}
 	
-	private static final long serialVersionUID = 1L;
 
     private final JPanel frame;
     private Point mousePos = new Point();

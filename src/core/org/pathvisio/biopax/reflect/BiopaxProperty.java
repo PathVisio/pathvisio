@@ -19,7 +19,6 @@ package org.pathvisio.biopax.reflect;
 import org.jdom.Element;
 
 public class BiopaxProperty extends Element {	
-	private static final long serialVersionUID = 1L;
 
 	public static final int UNBOUND = -1;
 	

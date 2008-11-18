@@ -27,7 +27,6 @@ import com.jroller.completer.CompleterTextField;
  *
  */
 public class CompleterQueryTextField extends CompleterTextField {
-	private static final long serialVersionUID = 1L;
 	CompleterQueryFilter myFilter;
 	
 	public CompleterQueryTextField(OptionProvider optionProvider, 

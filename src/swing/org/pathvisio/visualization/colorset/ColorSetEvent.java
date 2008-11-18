@@ -26,7 +26,6 @@ import java.util.EventObject;
  */
 public class ColorSetEvent extends EventObject
 {
-	private static final long serialVersionUID = 1L;
 
 	public static final int COLORSET_ADDED = 0;
 	public static final int COLORSET_REMOVED = 1;

@@ -34,7 +34,6 @@ class ColumnTableModel extends AbstractTableModel
 {
 	static private class HighlightedCellRenderer extends DefaultTableCellRenderer
 	{
-		private static final long serialVersionUID = 1L;
 		ImportInformation info;
 		
 		public HighlightedCellRenderer(ImportInformation info) 
@@ -80,7 +79,6 @@ class ColumnTableModel extends AbstractTableModel
 		}
 	}
 	
-	private static final long serialVersionUID = 1L;
 	
 	private ImportInformation info;
 	

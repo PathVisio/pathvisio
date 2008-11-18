@@ -28,7 +28,6 @@ import org.pathvisio.visualization.VisualizationManager;
 public class VisualizationDialog extends OkCancelDialog 
 {
 	
-	private static final long serialVersionUID = 1L;
 	VisualizationPanel visPanel;
 	VisualizationManager visMgr;
 	

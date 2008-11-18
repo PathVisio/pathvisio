@@ -33,7 +33,6 @@ import org.pathvisio.view.LinAlg.Point;
  */
 public class Handle extends VPathwayElement
 {
-	private static final long serialVersionUID = 1L;
 	
 	/** 
 	 * because isSelected really doesn't make sense for GmmlHandles, 

@@ -1,3 +1,7 @@
+dl.botresult dt {
+	font-weight: bold;
+}
+
 table.botresult {
 	margin:1em 1em 1em 0;
 	background:#F9F9F9;

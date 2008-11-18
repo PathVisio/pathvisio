@@ -16,13 +16,15 @@
 //
 package org.pathvisio.util;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 public class Test extends TestCase {
 	
 	public void testConverter() {
 		try {
-			Converter.main(new String[] { "testData/test.gpml", "testData/test.svg" });
+			Converter.main(new String[] { "testData/test.gpml", File.createTempFile("test", ".svg").toString()});
 		} catch(Exception e) {
 			e.printStackTrace(System.err);
 			fail("Unable to convert GPML file to SVG");

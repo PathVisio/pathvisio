@@ -17,6 +17,7 @@
 package org.pathvisio.biopax.reflect;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -73,7 +74,7 @@ public class Test extends TestCase {
 		} catch(IllegalArgumentException e) { }
 	}
 		
-	public void testReadWrite() {
+	public void testReadWrite() throws IOException {
 		//Add to datanode
 		PathwayElement pwElm = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add(pwElm);
@@ -144,15 +145,17 @@ public class Test extends TestCase {
 		
 	}
 
-	public void writeRead(Pathway data) {
-		write();
-		read();
+	public void writeRead(Pathway data) throws IOException 
+	{
+		File f = File.createTempFile("test-biopax-", ".xml");
+		write(f);
+		read(f);
 	}
 	
-	public void read() {
+	public void read(File f) {
 		data = new Pathway();
 		try {
-			data.readFromXml(testfile(nrWrite - 1), true);
+			data.readFromXml(f, true);
 		} catch(ConverterException e) {
 			fail("Unable to read a pathway: " + e.toString());
 		}
@@ -160,14 +163,9 @@ public class Test extends TestCase {
 		pwRefManager = new BiopaxReferenceManager(data.getMappInfo());
 	}
 	
-	int nrWrite = 0;
-	private File testfile(int i) {
-		return new File("testData/test-biopax-" + i + ".xml");
-	}
-	
-	public void write() {
+	public void write(File f) {
 		try {
-			data.writeToXml(testfile(nrWrite++), true);
+			data.writeToXml(f, true);
 		} catch(ConverterException e) {
 			fail("Unable to write a pathway: " + e.toString());
 		}

@@ -23,7 +23,7 @@ import java.util.Date;
 import junit.framework.TestCase;
 
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Organism;
+import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
@@ -89,7 +89,12 @@ public class WikiPathwaysClientTest extends TestCase {
 	public void testGetPathway() {
 		try {
 			WSPathway wsp = client.getPathway("WP1");
-			assertEquals("Sandbox", wsp.getName());
+			assertEquals("Returned wrong pathway", "WP1", wsp.getId());
+			try {
+				WikiPathwaysClient.toPathway(wsp);
+			} catch(ConverterException e) {
+				fail("Unable to create pathway object from response");
+			}
 			WikiPathwaysClient.toPathway(wsp);
 		} catch(Exception e) {
 			e.printStackTrace();

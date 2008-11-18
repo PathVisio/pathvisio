@@ -65,7 +65,6 @@ import com.jgoodies.forms.layout.FormLayout;
 
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener {
-	private static final long serialVersionUID = 1L;
 
 	VPathway child;
 
@@ -294,7 +293,6 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 	}
 
 	class PathwayToolTip extends JPanel {
-		private static final long serialVersionUID = 1L;
 		private boolean hasContent;
 		
 		public PathwayToolTip(List<VPathwayElement> elements) {	

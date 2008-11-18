@@ -52,7 +52,6 @@ import javax.swing.table.AbstractTableModel;
  */
 public class ListWithPropertiesTableModel<U extends PropertyColumn, T extends RowWithProperties<U>> extends AbstractTableModel 
 {
-	private static final long serialVersionUID = 1L;
 	
 	protected List<T> rows = new ArrayList<T>();
 	private U[] columns = null;

@@ -179,7 +179,6 @@ public class GexManager
 	 */
 	public static class GexManagerEvent extends EventObject 
 	{
-		private static final long serialVersionUID = 1L;
 		
 		/** Event passed just after a new Gex is opened */
 		public static final int CONNECTION_OPENED = 0;

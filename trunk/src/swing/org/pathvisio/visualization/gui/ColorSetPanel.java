@@ -54,7 +54,6 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class ColorSetPanel extends JPanel implements ActionListener
 {
-	private static final long serialVersionUID = 1L;
 	static final String ACTION_GRADIENT = "Gradient:";
 	static final String ACTION_ADD_RULE = "Add rule";
 	static final String ACTION_REMOVE_RULE = "Remove rule";
@@ -132,7 +131,6 @@ public class ColorSetPanel extends JPanel implements ActionListener
 
 	public class ColorRenderer extends JLabel implements TableCellRenderer 
 	{
-		private static final long serialVersionUID = 1L;
 
 		Border unselectedBorder = null;
 		Border selectedBorder = null;
@@ -183,7 +181,6 @@ public class ColorSetPanel extends JPanel implements ActionListener
 
 	private static class ColorRuleTableModel extends AbstractTableModel implements ColorSetListener
 	{
-		private static final long serialVersionUID = 1L;
 
 		private ColorSet cs;
 		private List<ColorRule> colorRules;

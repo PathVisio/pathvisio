@@ -49,7 +49,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class LitReferencePanel extends PathwayElementPanel implements ActionListener {
-	private static final long serialVersionUID = 1L;
 	static final String ADD = "New reference";
 	static final String REMOVE = "Remove";
 	static final String EDIT = "Edit";
@@ -97,7 +96,6 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 
 	
 	private class XRefPanel extends JPanel implements HyperlinkListener, ActionListener {
-		private static final long serialVersionUID = 1L;
 		PublicationXRef xref;
 		JPanel btnPanel;
 		

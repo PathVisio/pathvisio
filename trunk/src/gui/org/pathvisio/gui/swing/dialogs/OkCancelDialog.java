@@ -37,7 +37,6 @@ import javax.swing.UIManager;
  * The central panel can have arbitrarily complex contents 
  */
 public class OkCancelDialog extends JDialog implements ActionListener {
-	private static final long serialVersionUID = 1L;
 	public static final String OK = "Ok";
 	public static final String CANCEL = "Cancel";
 	

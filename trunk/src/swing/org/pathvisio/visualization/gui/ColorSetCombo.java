@@ -36,7 +36,6 @@ import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
 public class ColorSetCombo extends JComboBox implements ActionListener {
-	private static final long serialVersionUID = 1L;
 	
 	ColorSetManager csMgr;
 	
@@ -67,7 +66,6 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 	
 	class ColorSetRenderer extends JLabel implements ListCellRenderer 
 	{
-		private static final long serialVersionUID = 1L;
 
 		ColorSet current;
 		

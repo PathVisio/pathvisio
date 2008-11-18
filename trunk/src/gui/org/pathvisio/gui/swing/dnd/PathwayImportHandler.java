@@ -42,7 +42,6 @@ import org.pathvisio.view.swing.VPathwaySwing;
 
 public class PathwayImportHandler extends TransferHandler implements ClipboardOwner {
 	
-	private static final long serialVersionUID = 1L;
 	static final int NOT_OWNER = -1;
 	int timesPasted; //Keeps track of how many times the same data is pasted
 	

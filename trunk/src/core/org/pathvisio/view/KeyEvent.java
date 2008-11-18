@@ -18,7 +18,6 @@ package org.pathvisio.view;
 
 
 public class KeyEvent extends InputEvent {
-	private static final long serialVersionUID = 1L;
 
 	//Types
 	public static final int KEY_PRESSED = 0;

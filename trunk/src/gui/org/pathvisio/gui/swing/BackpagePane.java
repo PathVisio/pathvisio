@@ -28,7 +28,6 @@ import org.pathvisio.gui.BackpageTextProvider;
  *
  */
 public class BackpagePane extends JEditorPane implements BackpageListener {	
-	private static final long serialVersionUID = 1L;
 
 	public BackpagePane(BackpageTextProvider bpt) 
 	{

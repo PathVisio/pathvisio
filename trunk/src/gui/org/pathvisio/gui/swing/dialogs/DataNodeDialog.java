@@ -55,7 +55,6 @@ import org.pathvisio.util.RunnableWithProgress;
 
 
 public class DataNodeDialog extends PathwayElementDialog {
-	private static final long serialVersionUID = 1L;
 
 	private final SwingEngine swingEngine;
 	

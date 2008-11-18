@@ -71,7 +71,6 @@ import org.pathvisio.view.VPathwayListener;
 import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 public class MainPanel extends JPanel implements VPathwayListener, ApplicationEventListener {
-	private static final long serialVersionUID = 1L;
 
 	private JSplitPane splitPane;
 
@@ -170,7 +169,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		final PathwayTableModel model = new PathwayTableModel(swingEngine);
 		propertyTable = new JTable(model) {
-			private static final long serialVersionUID = 1L;
 
 			public TableCellRenderer getCellRenderer(int row, int column) {
 				TableCellRenderer r = model.getCellRenderer(row, column);

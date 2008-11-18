@@ -50,7 +50,6 @@ import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.util.ProgressKeeper;
 
 public class PublicationXRefDialog extends OkCancelDialog {
-	private static final long serialVersionUID = 1L;
 
 	final static String ADD = "Add";
 	final static String REMOVE = "Remove";

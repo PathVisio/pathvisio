@@ -40,7 +40,6 @@ public class PathwayParser extends DefaultHandler
 {
 	public static class ParseException extends Exception
 	{
-		private static final long serialVersionUID = 1L;
 		
 		public ParseException (Exception e)
 		{

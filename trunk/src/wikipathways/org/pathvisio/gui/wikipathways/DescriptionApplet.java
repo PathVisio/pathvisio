@@ -33,7 +33,6 @@ import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class DescriptionApplet extends PathwayPageApplet {
-	private static final long serialVersionUID = 1L;
 	Comment description;
 	boolean noupdate = false;
 	

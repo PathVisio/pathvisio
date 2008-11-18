@@ -37,7 +37,6 @@ import com.jgoodies.forms.layout.FormLayout;
 
 
 public class FontChooser extends OkCancelDialog {
-	private static final long serialVersionUID = 1L;
 	public static Font showDialog(Frame frame, Component locationComp, Font font) {
 		FontChooser fc = new FontChooser(frame, locationComp, font);
 		fc.setVisible(true);
@@ -124,7 +123,6 @@ public class FontChooser extends OkCancelDialog {
 	}
 
 	private class IntegerDocument extends PlainDocument {
-		private static final long serialVersionUID = 1L;
 		int currentValue = 0;
 
 		public int getValue() {

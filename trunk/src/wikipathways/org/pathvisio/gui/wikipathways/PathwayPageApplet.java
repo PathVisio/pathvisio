@@ -45,7 +45,6 @@ import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class PathwayPageApplet extends JApplet {
-	private static final long serialVersionUID = 1L;
 	UserInterfaceHandler uiHandler;
 	WikiPathways wiki;
 

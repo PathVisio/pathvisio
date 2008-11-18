@@ -106,7 +106,6 @@ public class ProgressKeeper {
 	}
 	
 	public class ProgressEvent extends EventObject {
-		private static final long serialVersionUID = 1L;
 
 		public static final int FINISHED = 0;
 		public static final int TASK_NAME_CHANGED = 1;

@@ -46,7 +46,6 @@ import com.jgoodies.forms.layout.FormLayout;
  *
  */
 public class LabelDialog extends PathwayElementDialog {
-	private static final long serialVersionUID = 1L;
 	JTextArea text;
 	JLabel fontPreview;
 	

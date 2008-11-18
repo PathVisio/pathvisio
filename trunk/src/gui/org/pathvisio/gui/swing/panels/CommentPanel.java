@@ -43,7 +43,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class CommentPanel extends PathwayElementPanel implements ActionListener {
-	private static final long serialVersionUID = 1L;
 
 	protected static final String ADD = "Add comment";
 	protected static final String REMOVE = "Remove comment";

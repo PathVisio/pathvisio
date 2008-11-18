@@ -32,7 +32,6 @@ import javax.swing.UIManager;
  * @author thomas
  */
 public class FontNameRenderer extends DefaultListCellRenderer{
-	private static final long serialVersionUID = 1L;
 	public FontNameRenderer() {
 		super();
 	}

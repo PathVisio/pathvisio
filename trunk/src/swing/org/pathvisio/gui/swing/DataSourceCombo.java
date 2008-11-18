@@ -22,7 +22,6 @@ import org.pathvisio.model.DataSource;
 
 public class DataSourceCombo extends JComboBox 
 {
-	private static final long serialVersionUID = 1L;
 
 	public void initItems()
 	{

@@ -36,7 +36,6 @@ import org.pathvisio.preferences.PreferenceManager;
  */
 public class GeneProduct extends GraphicsShape
 {
-	private static final long serialVersionUID = 1L;
 	public static final Color INITIAL_FILL_COLOR = Color.WHITE;
 	
 	//note: not the same as color!

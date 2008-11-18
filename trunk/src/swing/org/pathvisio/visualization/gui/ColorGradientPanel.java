@@ -36,7 +36,6 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 public class ColorGradientPanel extends JPanel
 {
-	private static final long serialVersionUID = 1L;
 
 	ColorGradient gradient;
 

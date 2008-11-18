@@ -38,7 +38,6 @@ import org.pathvisio.util.ProgressKeeper.ProgressListener;
  * show a dialog for a task of indeterminate length
  */
 public class ProgressDialog extends JDialog implements ActionListener, ProgressListener {
-	private static final long serialVersionUID = 1L;
 
 	private final String CANCEL = "Cancel";
 	

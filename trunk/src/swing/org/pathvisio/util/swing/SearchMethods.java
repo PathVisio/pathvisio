@@ -261,7 +261,6 @@ public class SearchMethods
 	 */
 	public static class SearchException extends Exception 
 	{
-		private static final long serialVersionUID = 1L;
 
 		SearchException(String msg) 
 		{

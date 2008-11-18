@@ -28,7 +28,6 @@ import java.util.EventObject;
  */
 public class VisualizationEvent extends EventObject
 {
-	private static final long serialVersionUID = 1L;
 
 	/** event type for when a new visualization is added to the visualizationmanager */
 	public static final int VISUALIZATION_ADDED = 3;

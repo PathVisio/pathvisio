@@ -23,7 +23,6 @@ import java.util.EventObject;
  */
 public class GdbEvent  extends EventObject
 {
-	private static final long serialVersionUID = 1L;
 
 	/**
 	   Called from GdbManager, when a GDB is loaded, either

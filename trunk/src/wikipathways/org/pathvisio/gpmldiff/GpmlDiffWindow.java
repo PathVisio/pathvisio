@@ -29,7 +29,6 @@ import org.pathvisio.gui.swing.WrapLayout;
 
 class GpmlDiffWindow extends JPanel implements VPathwayListener
 {
-	private static final long serialVersionUID = 1L;
 	
 	private JScrollPane[] pwyPane = new JScrollPane[2];
 	private JToolBar toolbar = null;
@@ -88,7 +87,6 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 	
 	private class LoadPwyAction extends AbstractAction
 	{
-		private static final long serialVersionUID = 1L;
 		private int pwyType;
 		private JPanel parent;
 		
@@ -118,7 +116,6 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 
 	class CenterAction extends AbstractAction
 	{
-		private static final long serialVersionUID = 1L;
 
 		public CenterAction()
 		{
@@ -132,7 +129,6 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 
 	private class ZoomAction extends AbstractAction
 	{
-		private static final long serialVersionUID = 1L;
 
 		double actionZoomFactor;
 		
@@ -158,7 +154,6 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 
 	private class ZoomToFitAction extends AbstractAction
 	{
-		private static final long serialVersionUID = 1L;
 
 		public ZoomToFitAction()
 		{

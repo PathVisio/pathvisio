@@ -31,7 +31,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class MethodPanel extends JPanel implements ActionListener {
-	private static final long serialVersionUID = 1L;
 	VisualizationMethod method;
 	JPanel configPanel;
 	JCheckBox checkBox;

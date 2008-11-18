@@ -24,7 +24,6 @@ import org.pathvisio.model.Pathway;
 
 public class BibliographyApplet extends PathwayPageApplet 
 {
-	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void createGui() {

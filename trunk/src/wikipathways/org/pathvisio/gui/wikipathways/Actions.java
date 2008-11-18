@@ -42,7 +42,6 @@ import org.pathvisio.wikipathways.WikiPathways;
  */
 public class Actions {
 	public static abstract class WikiAction extends AbstractAction {
-		private static final long serialVersionUID = 1L;
 		UserInterfaceHandler uiHandler;
 		WikiPathways wiki;
 		public WikiAction(UserInterfaceHandler uih, WikiPathways w, String name, ImageIcon icon) {
@@ -53,7 +52,6 @@ public class Actions {
 	}
 
 	public static class ImportAction extends WikiAction {
-		private static final long serialVersionUID = 1L;
 
 		public ImportAction(UserInterfaceHandler h, WikiPathways w) {
 			super(h, w, "Import", new ImageIcon(Resources.getResourceURL("import.gif")));
@@ -75,7 +73,6 @@ public class Actions {
 	 * @author thomas
 	 */
 	public static class ExitAction extends WikiAction {
-		private static final long serialVersionUID = 1L;
 
 		boolean doSave;
 		String description;
@@ -93,7 +90,6 @@ public class Actions {
 	}
 
 	public static class SaveToServerAction extends WikiAction implements StatusFlagListener {
-		private static final long serialVersionUID = 1L;
 		String description;
 
 		public SaveToServerAction(UserInterfaceHandler h, WikiPathways w, String description) {
@@ -125,7 +121,6 @@ public class Actions {
 		 *
 		 */
 		public static class FullScreenAction extends WikiAction {
-			private static final long serialVersionUID = 1L;
 			final ImageIcon imgFull = new ImageIcon(
 					Resources.getResourceURL("fullscreen.gif"));
 			final ImageIcon imgRestore = new ImageIcon(

@@ -36,7 +36,6 @@ import org.pathvisio.model.ShapeType;
 public class Shape extends GraphicsShape
 {
 	static final int FUZZY_STROKE_WIDTH = 7;
-	private static final long serialVersionUID = 1L;
 			
 	/**
 	 * Constructor for this class

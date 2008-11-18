@@ -36,7 +36,6 @@ import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 public class MainPanelStandalone extends MainPanel 
 {
-	private static final long serialVersionUID = 1L;
 
 	protected JMenuBar menuBar;
 	

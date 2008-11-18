@@ -6,7 +6,6 @@ import java.awt.*;
 
 public class TestPanel3 extends JPanel 
 {
-	private static final long serialVersionUID = 1L;
 
     private JLabel anotherBlankSpace;
     private JLabel blankSpace;

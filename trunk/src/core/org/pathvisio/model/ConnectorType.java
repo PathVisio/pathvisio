@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class ConnectorType implements Comparable<ConnectorType> {
-	private static final Map<String, ConnectorType> nameMappings = new HashMap<String, ConnectorType>();
-	private static final Set<ConnectorType> values = new TreeSet<ConnectorType>();
+	private static Map<String, ConnectorType> nameMappings = new HashMap<String, ConnectorType>();
+	private static Set<ConnectorType> values = new TreeSet<ConnectorType>();
 
 	public static final ConnectorType STRAIGHT = new ConnectorType ("Straight");
 	public static final ConnectorType ELBOW = new ConnectorType ("Elbow");

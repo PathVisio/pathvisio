@@ -50,11 +50,11 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	 * 
 	 * double mWidth = width * pixel2model;
 	 */
-	public static final double pixel2model = 15;
+	public static final double PIXEL_TO_MODEL = 15;
 
-	static private final GpmlFormatImpl1 current = GpmlFormatImpl1.Gpml2008a;
+	static private final GpmlFormatImpl1 CURRENT = GpmlFormatImpl1.GPML_2008A;
 	
-	public static final Namespace GPML = current.getGpmlNamespace();
+	public static final Namespace GPML = CURRENT.getGpmlNamespace();
 	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	public static final Namespace BIOPAX = Namespace.getNamespace("bp", "http://www.biopax.org/release/biopax-level2.owl#");
@@ -81,22 +81,22 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	
 	public static Document createJdom(Pathway data) throws ConverterException
 	{
-		return current.createJdom(data);
+		return CURRENT.createJdom(data);
 	}
 
 	static public Element createJdomElement(PathwayElement o, Namespace ns) throws ConverterException
 	{
-		return current.createJdomElement(o, ns);
+		return CURRENT.createJdomElement(o, ns);
 	}
 	
 	public static PathwayElement mapElement(Element e, Pathway p) throws ConverterException
 	{
-		return current.mapElement(e, p);
+		return CURRENT.mapElement(e, p);
 	}	
 	
 	public static PathwayElement mapElement(Element e) throws ConverterException
 	{
-		return current.mapElement(e);
+		return CURRENT.mapElement(e);
 	}
 	
 	/**
@@ -107,12 +107,12 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	 */
 	static public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException 
 	{
-		current.writeToXml(pwy, file, validate);
+		CURRENT.writeToXml(pwy, file, validate);
 	}
 	
 	static public void writeToXml(Pathway pwy, OutputStream out, boolean validate) throws ConverterException 
 	{
-		current.writeToXml(pwy, out, validate);
+		CURRENT.writeToXml(pwy, out, validate);
 	}
 	
 	static public void readFromXml(Pathway pwy, File file, boolean validate) throws ConverterException
@@ -149,7 +149,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			}
 			
 			Namespace ns = root.getNamespace();
-			GpmlFormatImpl1[] formats = new GpmlFormatImpl1[] { GpmlFormatImpl1.Gpml2007, GpmlFormatImpl1.Gpml2008a };
+			GpmlFormatImpl1[] formats = new GpmlFormatImpl1[] { GpmlFormatImpl1.GPML_2007, GpmlFormatImpl1.GPML_2008A };
 			boolean recognized = false;
 			for (GpmlFormatImpl1 format : formats)
 			{
@@ -202,7 +202,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	 */
 	public static void validateDocument(Document doc) throws ConverterException
 	{
-		current.validateDocument(doc);
+		CURRENT.validateDocument(doc);
 	}
 
 }

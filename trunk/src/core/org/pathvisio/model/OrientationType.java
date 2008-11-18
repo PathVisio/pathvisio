@@ -32,18 +32,18 @@ public class OrientationType {
 	public static final int LEFT	= 3;
 
 	// Some mappings to Gpml
-	private static final List<String> orientationMappings = Arrays.asList(new String[] {
+	private static final List<String> ORIENTATION_MAPPINGS = Arrays.asList(new String[] {
 			"top", "right", "bottom", "left"
 	});
 
 	public static int getMapping(String value)
 	{
-		return orientationMappings.indexOf(value);
+		return ORIENTATION_MAPPINGS.indexOf(value);
 	}
 	
 	public static String getMapping(int value)
 	{
-		return (String)orientationMappings.get(value);
+		return (String)ORIENTATION_MAPPINGS.get(value);
 	}
 
 	public static String[] getNames() {

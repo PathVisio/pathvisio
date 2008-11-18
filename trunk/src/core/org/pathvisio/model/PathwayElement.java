@@ -122,10 +122,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	
 	public class Comment implements Cloneable
 	{
-		public Comment(String _comment, String _source)
+		public Comment(String aComment, String aSource)
 		{
-			source = _source;
-			comment = _comment;
+			source = aSource;
+			comment = aComment;
 		}
 
 		public Object clone() throws CloneNotSupportedException

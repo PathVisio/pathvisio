@@ -123,17 +123,17 @@ public enum PropertyType
 	private PropertyClass type;
 	private boolean hidden;
 	
-	PropertyType (String _tag, String _desc, PropertyClass _type, boolean _hidden)
+	PropertyType (String aTag, String aDesc, PropertyClass aType, boolean isHidden)
 	{
-		tag = _tag;
-		type = _type;
-		desc = _desc;
-		hidden = _hidden;
+		tag = aTag;
+		type = aType;
+		desc = aDesc;
+		hidden = isHidden;
 	}
 
-	PropertyType (String _tag, String _desc, PropertyClass _type)
+	PropertyType (String aTag, String aDesc, PropertyClass aType)
 	{
-		this(_tag, _desc, _type, false);
+		this(aTag, aDesc, aType, false);
 	}
 
 	public String tag()

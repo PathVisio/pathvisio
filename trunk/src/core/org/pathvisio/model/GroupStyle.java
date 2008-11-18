@@ -22,8 +22,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class GroupStyle implements Comparable<GroupStyle> {
-	private static final Map<String, GroupStyle> nameMappings = new HashMap<String, GroupStyle>();
-	private static final Set<GroupStyle> values = new TreeSet<GroupStyle>();
+	private static Map<String, GroupStyle> nameMappings = new HashMap<String, GroupStyle>();
+	private static Set<GroupStyle> values = new TreeSet<GroupStyle>();
 
 	public static final GroupStyle NONE = new GroupStyle ("None");
 	

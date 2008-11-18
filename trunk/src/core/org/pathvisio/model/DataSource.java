@@ -240,10 +240,10 @@ public class DataSource
 		{
 			public String getUrl(String id)
 			{
-				String [] org_nr = id.split("\\.");
-				if(org_nr.length == 2) {
+				String [] orgNr = id.split("\\.");
+				if(orgNr.length == 2) {
 					return "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=" + 
-					org_nr[0] + "&CID=" + org_nr[1];
+					orgNr[0] + "&CID=" + orgNr[1];
 				}
 				else {
 					return null;

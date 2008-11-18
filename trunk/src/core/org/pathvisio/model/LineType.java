@@ -23,9 +23,9 @@ import java.util.Map;
 
 public class LineType 
 {
-	private static final Map<String, LineType> mappMappings = new HashMap<String, LineType>();
-	private static final Map<String, LineType> nameMappings = new HashMap<String, LineType>();
-	private static final List<LineType> values = new ArrayList<LineType>();
+	private static Map<String, LineType> mappMappings = new HashMap<String, LineType>();
+	private static Map<String, LineType> nameMappings = new HashMap<String, LineType>();
+	private static List<LineType> values = new ArrayList<LineType>();
 
 	public static final LineType LINE = new LineType("Line", "Line");
 	public static final LineType ARROW = new LineType("Arrow", "Arrow");

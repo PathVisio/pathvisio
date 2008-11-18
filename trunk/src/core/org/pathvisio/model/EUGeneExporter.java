@@ -151,8 +151,8 @@ public class EUGeneExporter implements PathwayExporter
 		}
 	}
 
-	static Map<DataSource, String> systemMappings;
-	static final String[] euGeneSystems = new String[]
+	private static Map<DataSource, String> systemMappings;
+	private static final String[] EU_GENE_SYSTEMS = new String[]
 	                                           {
 		"ENSEMBL_GENE_ID",
 		"UNIPROT", 
@@ -164,7 +164,7 @@ public class EUGeneExporter implements PathwayExporter
 		"PDB_ID", 
 		"SGD_ID" 
 	                                           };
-	static final DataSource[] genMappSystems = new DataSource[]
+	private static final DataSource[] GENMAPP_SYSTEMS = new DataSource[]
 	                                            {
 		DataSource.ENSEMBL,
 		DataSource.UNIPROT,
@@ -180,9 +180,9 @@ public class EUGeneExporter implements PathwayExporter
 	static
 	{
 		systemMappings = new HashMap<DataSource, String>();
-		for(int i = 0; i < euGeneSystems.length; i++) 
+		for(int i = 0; i < EU_GENE_SYSTEMS.length; i++) 
 		{
-			systemMappings.put(genMappSystems[i], euGeneSystems[i]);
+			systemMappings.put(GENMAPP_SYSTEMS[i], EU_GENE_SYSTEMS[i]);
 		}
 	}
 }

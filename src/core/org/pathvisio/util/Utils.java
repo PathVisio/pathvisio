@@ -140,12 +140,12 @@ public class Utils {
 	/**
 	 * Checks the version of the Gene database or Expression dataset to be opened
 	 */
-	public static void checkDbVersion(Connection con, int compat_version) throws Exception
+	public static void checkDbVersion(Connection con, int compatVersion) throws Exception
 	{
 		boolean check = false;
 		try {
 			ResultSet r = con.createStatement().executeQuery("SELECT version FROM info");
-			if(r.next()) check = r.getInt("version") == compat_version;
+			if(r.next()) check = r.getInt("version") == compatVersion;
 		} catch (Exception e) {
 			Logger.log.error("Database compatibility version number could not be read", e);
 		}

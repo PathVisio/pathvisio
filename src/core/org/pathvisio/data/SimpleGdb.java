@@ -19,7 +19,6 @@ package org.pathvisio.data;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.pathvisio.model.DataSource;
@@ -143,7 +142,7 @@ public abstract class SimpleGdb implements Gdb
 	
 	public static final int NO_LIMIT = 0;
 	public static final int NO_TIMEOUT = 0;
-	public static int query_timeout = 5; //seconds
+	public static final int QUERY_TIMEOUT = 5; //seconds
 
 	/**
 	 * Get up to limit suggestions for a symbol autocompletion. 

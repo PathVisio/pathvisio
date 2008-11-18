@@ -28,18 +28,18 @@ public class Stats
 	 *  
 	 * resulting score == 0 if the sampled beads are in the same ratio as the total beads
 	 */
-	public static double zscore (int i_n, double i_r, int i_N, int i_R)
+	public static double zscore (int an, double ar, int aBigN, int aBigR)
 	{
-		double n = (double)i_n;
-		double r = (double)i_r;
-		double N = (double)i_N;
-		double R = (double)i_R;
+		double n = (double)an;
+		double r = (double)ar;
+		double bigN = (double)aBigN;
+		double bigR = (double)aBigR;
 		
-		double f1 = r - (n * (R / N));
-		double f2 = R / N;
-		double f3 = 1.0 - (R / N);
-		double f4 = 1.0 - ((n - 1) / (N - 1));
+		double f1 = r - (n * (bigR / bigN));
+		double f2 = bigR / bigN;
+		double f3 = 1.0 - (bigR / bigN);
+		double f4 = 1.0 - ((n - 1) / (bigN - 1));
 		
-		return f1 / Math.sqrt (i_n * f2 * f3 * f4);
+		return f1 / Math.sqrt (an * f2 * f3 * f4);
 	}
 }

@@ -17,13 +17,13 @@
 package org.pathvisio.gpmldiff;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.jdom.JDOMException;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.*;
+import org.pathvisio.model.ConverterException;
 
 /**
    Dgpml patch utility, main function

@@ -51,7 +51,9 @@ public class PathwayTransferable implements Transferable {
 	 * Note that the equals method of DataFlavor only checks for the main mimetype ('text'),
 	 * so returns true for any DataFlavor that stores text, not only xml.
 	 */
-	public static final DataFlavor gpmlDataFlavor = new DataFlavor(String.class, "text/xml");
+	public static final DataFlavor GPML_DATA_FLAVOR = new DataFlavor(String.class, "text/xml");
+	/** @deprecated use GPML_DATA_FLAVOR instead */
+	public static final DataFlavor gpmlDataFlavor = GPML_DATA_FLAVOR;
 
 	List<PathwayElement> elements;
 	Pathway pathway;
@@ -149,7 +151,7 @@ public class PathwayTransferable implements Transferable {
 	}
 
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
-		return gpmlDataFlavor.equals(flavor);
+		return GPML_DATA_FLAVOR.equals(flavor);
 	}
 	
 	/**
@@ -168,7 +170,7 @@ public class PathwayTransferable implements Transferable {
 		for(DataFlavor df : t.getTransferDataFlavors()) {
 			if(DataFlavor.javaFileListFlavor.equals(df)) {
 				//Return the first element of the file list
-				return ((List<File>)t.getTransferData(df)).get(0).toURL();
+				return ((List<File>)t.getTransferData(df)).get(0).toURI().toURL();
 			}
 			//Gnome fix:
 			//Check for text/uri-list mime type, an uri list separated by \n

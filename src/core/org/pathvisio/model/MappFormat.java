@@ -368,8 +368,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		o.setWindowHeight(Double.parseDouble(row[ICOL_WINDOWHEIGHT]));
 		
 		// guess organism based on first two characters of filename
-		String short_code = new File (filename).getName().substring(0, 2);
-		Organism org = Organism.fromCode(short_code);
+		String shortCode = new File (filename).getName().substring(0, 2);
+		Organism org = Organism.fromCode(shortCode);
 		if (org != null)
 		{		
 			o.setOrganism(org.latinName());
@@ -471,7 +471,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	private static void unmapUnknownShapeType(PathwayElement o, String[] mappObject) 
 	{
 		mappObject[COL_TYPE] = ShapeType.OVAL.getMappName();
-		unmapShape_half (o, mappObject);
+		unmapShapeHalf (o, mappObject);
 		mappObject[COL_COLOR] = toMappColor(o.getFillColor(), o.isTransparent());
 		unmapRotation (o, mappObject);
 	}
@@ -676,14 +676,14 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	o.setMHeight(Double.parseDouble(mappObject[COL_HEIGHT]));
 	}
 	
-	private static void unmapShape_half (PathwayElement o, String[] mappObject)
+	private static void unmapShapeHalf (PathwayElement o, String[] mappObject)
 	{
     	unmapCenter(o, mappObject);    	
     	mappObject[COL_WIDTH] = "" + o.getMWidth() / 2;
     	mappObject[COL_HEIGHT] = "" + o.getMHeight() / 2;	
 	}
 
-	private static void mapShape_half (PathwayElement o, String[] mappObject)
+	private static void mapShapeHalf (PathwayElement o, String[] mappObject)
 	{
     	mapCenter(o, mappObject);    	
     	o.setMWidth(Double.parseDouble(mappObject[COL_WIDTH]) * 2);
@@ -781,10 +781,10 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	unmapCenter (o, mappObject);    	
     }
 
-	private final static int styleBold = 1; 
-	private final static int styleItalic = 2;
-	private final static int styleUnderline = 4;
-	private final static int styleStrikethru = 8;
+	private final static int STYLE_BOLD = 1; 
+	private final static int STYLE_ITALIC = 2;
+	private final static int STYLE_UNDERLINE = 4;
+	private final static int STYLE_STRIKETHRU = 8;
     
     private static PathwayElement mapLabelType(String[] mappObject) 
     {
@@ -810,10 +810,10 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         String styleString = mappObject[COL_SYSTEMCODE]; 
         int style = styleString == null ? 0 : (int)(styleString.charAt(0));
             
-        o.setBold((style & styleBold) > 0);
-        o.setItalic((style & styleItalic) > 0);
-        o.setUnderline((style & styleUnderline) > 0);
-        o.setStrikethru((style & styleStrikethru) > 0);
+        o.setBold((style & STYLE_BOLD) > 0);
+        o.setItalic((style & STYLE_ITALIC) > 0);
+        o.setUnderline((style & STYLE_UNDERLINE) > 0);
+        o.setStrikethru((style & STYLE_STRIKETHRU) > 0);
         
         
         String xrefv = mappObject[COL_LINKS];
@@ -840,10 +840,10 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	int style = 16; 
     	// note: from VB source I learned that 16 is added to prevent field from becoming 0, 
     	// as this can't be stored in a text field in the database
-    	if (o.isBold()) style |= styleBold;   	
-    	if (o.isItalic()) style |= styleItalic;    	
-    	if (o.isUnderline()) style |= styleUnderline;    	
-    	if (o.isStrikethru()) style |= styleStrikethru;
+    	if (o.isBold()) style |= STYLE_BOLD;   	
+    	if (o.isItalic()) style |= STYLE_ITALIC;    	
+    	if (o.isUnderline()) style |= STYLE_UNDERLINE;    	
+    	if (o.isStrikethru()) style |= STYLE_STRIKETHRU;
     	
     	char stylechars[] = new char[1];
     	stylechars[0] = (char)style;
@@ -858,7 +858,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	ShapeType shapeType = ShapeType.fromMappName(mappObject[COL_TYPE]);
     	o.setShapeType(shapeType);        
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
-    		mapShape_half (o, mappObject);
+    		mapShapeHalf (o, mappObject);
     	else
     		mapShape (o, mappObject);
 		
@@ -889,7 +889,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	ShapeType shapeType = o.getShapeType();
     	mappObject[COL_TYPE] = shapeType.getMappName();
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
-    		unmapShape_half (o, mappObject);
+    		unmapShapeHalf (o, mappObject);
     	else
     		unmapShape (o, mappObject);
 		

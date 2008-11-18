@@ -54,15 +54,30 @@ public class DescriptionBot {
 			DescriptionBot bot = new DescriptionBot(new File(args[0]));
 			Map<WSPathwayInfo, Boolean> results = bot.scan();
 			
-			Logger.log.trace("Generating HTML report");
-			String htmlReport = bot.createHtmlReport(results);
+			Logger.log.trace("Generating report");
+			BotReport report = new BotReport(
+					new String[] { "Has description" }
+			);
+			report.setTitle("DescriptionBot scan report");
+			report.setDescription("Checks pathways for an empty description field");
+			
+			int nrMissing = 0;
+			for(WSPathwayInfo p : results.keySet()) if(!results.get(p)) nrMissing++;
+			report.setComment("Number of pathways", "" + results.size());
+			report.setComment("Number of pathways missing description", "" + nrMissing);
+			
+			for(WSPathwayInfo p : results.keySet()) {
+				report.setRow(p, new String[] { results.get(p) + "" });
+			}
+			
+			File txtFile = new File(args[1] + ".txt");
+			Logger.log.trace("Writing text report");
+			report.writeTextReport(txtFile);
 			
 			Logger.log.trace("Writing HTML report");
-			File htmlFile =  new File(args[1]);
-			FileWriter out = new FileWriter(htmlFile);
-			out.append(htmlReport);
-			out.close();
-			
+			File htmlFile = new File(args[1] + ".html");
+			report.writeHtmlReport(htmlFile);
+
 			if(args.length == 4) {
 				bot.client.login(args[2], args[3]);
 				bot.applyCurationTags(results);
@@ -79,8 +94,9 @@ public class DescriptionBot {
 			"java org.pathvisio.wikipathways.bots.DescriptionBot cacheDir reportFile [user pass]\n" +
 			"Where:\n" +
 			"-cacheDir: the directory that will be used to cache downloaded pathways\n" +
-			"-reportFile: the file to save the HTML report to\n" +
-			"-user is the username of the WikiPathways account that will be used for tagging " +
+			"-reportFile: the base name of the files to save the reports to (will be appended" +
+			" with correct extension automatically).\n" +
+			"-user is the username of the WikiPathways account that will be used for tagging\n" +
 			"-pass is the password for the WikiPathways account" +
 			"If the description field is empty, a curation tag will " +
 			"be added to the pathway. If no user account information is given, no pathways will be tagged."
@@ -97,36 +113,6 @@ public class DescriptionBot {
 	
 	public DescriptionBot(File cacheDir) throws DataException, IOException, ServiceException {
 		this(cacheDir, null);
-	}
-	
-	/**
-	 * Create a HTML report.
-	 * @param pathways The pathways that are missing a description.
-	 */
-	public String createHtmlReport(Map<WSPathwayInfo, Boolean> pathways) {
-		String html = "<html><head><script src=\"sorttable.js\"></script>";
-		html += " <link rel=\"stylesheet\" type=\"text/css\" href=\"botresult.css\">";
-		html += "</head><body>";
-		
-		DateFormat df = DateFormat.getDateInstance();
-		html += "<h1>Description scan report (" + df.format(new Date()) + ")</h1>";
-		int nrMissing = 0;
-		for(WSPathwayInfo p : pathways.keySet()) if(!pathways.get(p)) nrMissing++;
-		html += "<p>The following " + nrMissing + " out of " + 
-			pathways.size() + " pathways are missing a description</p>";
-		html += "<table class=\"sortable botresult\"><tbody>";
-		html += "<th>Pathway<th>Organism";
-		for(WSPathwayInfo p : pathways.keySet()) {
-			if(!pathways.get(p)) {
-				html += "<tr>";
-				html += "<td><a href=\"" + p.getUrl() + "\">" +
-				p.getName() + "</a></td>";
-				html += "<td>" + p.getSpecies() + "</td>";
-			}
-		}
-		
-		html += "</tbody></table></body></html>";
-		return html;
 	}
 	
 	public void applyCurationTags(Map<WSPathwayInfo, Boolean> pathways) throws RemoteException {

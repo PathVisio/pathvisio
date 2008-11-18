@@ -18,13 +18,10 @@ package org.pathvisio.wikipathways.bots;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,14 +55,16 @@ public class ConnectorBot {
 			ConnectorBot bot = new ConnectorBot(new File(args[0]));
 			Collection<ConnectorBotReport> results = bot.scan();
 			
-			Logger.log.trace("Generating HTML report");
-			String htmlReport = bot.createHtmlReport(results);
+			Logger.log.trace("Generating report");
+			BotReport report = bot.createReport(results);
+			
+			File txtFile = new File(args[1] + ".txt");
+			Logger.log.trace("Writing text report");
+			report.writeTextReport(txtFile);
 			
 			Logger.log.trace("Writing HTML report");
-			File htmlFile =  new File(args[1]);
-			FileWriter out = new FileWriter(htmlFile);
-			out.append(htmlReport);
-			out.close();
+			File htmlFile = new File(args[1] + ".html");
+			report.writeHtmlReport(htmlFile);
 
 			if(args.length == 5) {
 				bot.client.login(args[3], args[4]);
@@ -85,7 +84,8 @@ public class ConnectorBot {
 			"java org.pathvisio.wikipathways.bots.ConnectorBot cacheDir reportFile [threshold user pass]\n" +
 			"Where:\n" +
 			"-cacheDir: the directory that will be used to cache downloaded pathways\n" +
-			"-reportFile: the file to save the HTML report to\n" +
+			"-reportFile: the base name of the files to save the reports to (will be appended" +
+			" with correct extension automatically).\n" +
 			"-threshold is an optional threshold percentage used to add curation tags. " +
 			"-user is the username of the WikiPathways account that will be used for tagging " +
 			"-pass is the password for the WikiPathways account" +
@@ -106,21 +106,25 @@ public class ConnectorBot {
 		this(cacheDir, null);
 	}
 	
-	public String createHtmlReport(Collection<ConnectorBotReport> results) {
-		String html = "<html><head><script src=\"sorttable.js\"></script>";
-		html += " <link rel=\"stylesheet\" type=\"text/css\" href=\"botresult.css\">";
-		html += "</head><body>";
-		
-		DateFormat df = DateFormat.getDateInstance();
-		html += "<h1>ConnectorBot scan report (" + df.format(new Date()) + ")</h1>";
-		html += "<table class=\"sortable botresult\"><tbody>";
-		html += "<th>Pathway<th>Organism<th>Nr lines<th>Nr connected<th>% connected";
+	public BotReport createReport(Collection<ConnectorBotReport> results) {
+		BotReport report = new BotReport(
+			new String[] {
+				"Nr lines", "Nr connected", "% connected"
+			}
+		);
+		report.setTitle("ConnectorBot scan report");
+		report.setDescription("The ConnectorBot checks for properly connected lines");
 		for(ConnectorBotReport r : results) {
-			html += r.tableRow();
+			report.setRow(
+					r.getPathwayInfo(),
+					new String[] {
+						"" + r.getNrLines(),
+						"" + r.getNrValid(),
+						"" + (int)(r.getPercentValid() * 100) / 100 //Round to two decimals
+					}
+			);
 		}
-		
-		html += "</tbody></table></body></html>";
-		return html;
+		return report;
 	}
 	
 	public void applyCurationTags(Collection<ConnectorBotReport> results, double threshold) throws RemoteException {
@@ -238,25 +242,6 @@ public class ConnectorBot {
 			String txt = getNrInvalid() + " out of " + getNrLines() +
 				" lines are not properly connected.";
 			return txt;
-		}
-		
-		/**
-		 * <tr>
-		 * <td><a href="pwurl">pwName</a>
-		 * <td>pwSpecies
-		 * <td>nrXrefs
-		 * <td>nrValid
-		 * <td>%valid
-		 */
-		public String tableRow() {
-			String html = "<tr>";
-			html += "<td><a href=\"" + pathwayInfo.getUrl() + "\">" +
-				pathwayInfo.getName() + "</a></td>";
-			html += "<td>" + pathwayInfo.getSpecies() + "</td>";
-			html += "<td>" + getNrLines() + "</td>";
-			html += "<td>" + getNrValid() + "</td>";
-			html += "<td>" + (int)(getPercentValid() * 100) / 100 + "</td>";
-			return html;
 		}
 	}
 }

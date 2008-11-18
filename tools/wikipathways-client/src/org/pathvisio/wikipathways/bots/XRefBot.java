@@ -47,6 +47,9 @@ import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSCurationTag;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
+import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
+import sun.security.action.GetBooleanAction;
+
 /**
  * Checks for DataNode XRef annotations and adds a curation tag for
  * pathways that contain more wrongly annotated DataNodes than a given threshold.
@@ -63,14 +66,16 @@ public class XRefBot {
 			XRefBot bot = new XRefBot(new File(args[1]), new File(args[0]));
 			Collection<XRefReport> results = bot.scan();
 			
-			Logger.log.trace("Generating HTML report");
-			String htmlReport = bot.createHtmlReport(results);
+			Logger.log.trace("Generating report");
+			BotReport report = bot.createReport(results);
+			
+			File txtFile = new File(args[2] + ".txt");
+			Logger.log.trace("Writing text report");
+			report.writeTextReport(txtFile);
 			
 			Logger.log.trace("Writing HTML report");
-			File htmlFile =  new File(args[2]);
-			FileWriter out = new FileWriter(htmlFile);
-			out.append(htmlReport);
-			out.close();
+			File htmlFile = new File(args[2] + ".html");
+			report.writeHtmlReport(htmlFile);
 			
 			if(args.length > 3) {
 				if(args.length == 6) {
@@ -93,7 +98,8 @@ public class XRefBot {
 			"Where:\n" +
 			"-cacheDir: the directory that will be used to cache downloaded pathways\n" +
 			"-gdbConfig: a configuration file that lists the available synonym databases\n" +
-			"-reportFile: the file to save the HTML report to\n" +
+			"-reportFile: the base name of the files to save the reports to (will be appended" +
+					" with correct extension automatically).\n" +
 			"-threshold is an optional threshold percentage used to add curation tags. " +
 			"-user is the username of the WikiPathways account that will be used for tagging " +
 			"-pass is the password for the WikiPathways account" +
@@ -115,21 +121,26 @@ public class XRefBot {
 		this(gdbConfig, cacheDir, null);
 	}
 	
-	public String createHtmlReport(Collection<XRefReport> results) {
-		String html = "<html><head><script src=\"sorttable.js\"></script>";
-		html += " <link rel=\"stylesheet\" type=\"text/css\" href=\"botresult.css\">";
-		html += "</head><body>";
-		
-		DateFormat df = DateFormat.getDateInstance();
-		html += "<h1>XRefBot scan report (" + df.format(new Date()) + ")</h1>";
-		html += "<table class=\"sortable botresult\"><tbody>";
-		html += "<th>Pathway<th>Organism<th>Nr xrefs<th>Nr valid<th>% valid<th>Invalid DataNodes";
+	public BotReport createReport(Collection<XRefReport> results) {
+		BotReport report = new BotReport(
+			new String[] {
+				"Nr Xrefs", "Nr valid", "% valid", "Invalid DataNodes"	
+			}
+		);
+		report.setTitle("XRefBot scan report");
+		report.setDescription("The XRefBot checks for valid DataNode annotations");
 		for(XRefReport r : results) {
-			html += r.tableRow();
+			report.setRow(
+					r.getPathwayInfo(),
+					new String[] {
+						"" + r.getNrXrefs(),
+						"" + r.getNrValid(),
+						"" + (int)(r.getPercentValid() * 100) / 100, //Round to two decimals
+						"" + r.getLabelsForInvalid()
+					}
+			);
 		}
-		
-		html += "</tbody></table></body></html>";
-		return html;
+		return report;
 	}
 	
 	public void applyCurationTags(Collection<XRefReport> results, double threshold) throws RemoteException {
@@ -291,27 +302,6 @@ public class XRefBot {
 				" DataNodes have an incorrect or missing external reference: " +
 				"<span title=\"" + labels[0] + "\">" + labels[1] + "</span>";
 			return txt;
-		}
-		
-		/**
-		 * <tr>
-		 * <td><a href="pwurl">pwName</a>
-		 * <td>pwSpecies
-		 * <td>nrXrefs
-		 * <td>nrValid
-		 * <td>%valid
-		 */
-		public String tableRow() {
-			String html = "<tr>";
-			html += "<td><a href=\"" + pathwayInfo.getUrl() + "\">" +
-				pathwayInfo.getName() + "</a></td>";
-			html += "<td>" + pathwayInfo.getSpecies() + "</td>";
-			html += "<td>" + getNrXrefs() + "</td>";
-			html += "<td>" + getNrValid() + "</td>";
-			html += "<td>" + (int)(getPercentValid() * 100) / 100 + "</td>";
-			String[] labels = getLabelStrings();
-			html += "<td title=\"" + labels[0] + "\">" + labels[1] + "</td>";
-			return html;
 		}
 	}
 }

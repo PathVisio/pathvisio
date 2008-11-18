@@ -26,8 +26,8 @@ import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.util.Resources;
 
 public abstract class DefaultTemplates {

@@ -16,7 +16,6 @@
 //
 package org.pathvisio.view;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -41,17 +40,17 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayListener;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -253,19 +252,19 @@ public class VPathway implements PathwayListener
 	/**
 	 * @deprecated use fromModel instead
 	 */
-	public void fromGmmlData(Pathway _data)
+	public void fromGmmlData(Pathway aData)
 	{
-		fromModel (_data);
+		fromModel (aData);
 	}
 
 	/**
 	 * Maps the contents of a pathway to this VPathway
 	 */
-	public void fromModel(Pathway _data)
+	public void fromModel(Pathway aData)
 	{
 		Logger.log.trace("Create view structure");
 
-		data = _data;
+		data = aData;
 		for (PathwayElement o : data.getDataObjects())
 		{
 			fromModelElement(o);
@@ -683,7 +682,7 @@ public class VPathway implements PathwayListener
 	HoverManager hoverManager = new HoverManager();
 	
 	class HoverManager implements ActionListener {
-		static final int delay = 1000; //tooltip delay in ms
+		static final int DELAY = 1000; //tooltip delay in ms
 		boolean tooltipDisplayed = false;
 		
 		MouseEvent lastEvent = null;
@@ -691,7 +690,7 @@ public class VPathway implements PathwayListener
 		Timer timer;
 
 		public HoverManager() {
-			timer = new Timer(delay, this);
+			timer = new Timer(DELAY, this);
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -881,7 +880,7 @@ public class VPathway implements PathwayListener
 	public void draw(Graphics2D g2d, Rectangle area, boolean erase)
 	{
 		//save original, non-clipped, to pass on to VPathwayEvent
-		Graphics2D g2d_full = (Graphics2D)g2d.create();
+		Graphics2D g2dFull = (Graphics2D)g2d.create();
 		
 		if (area == null)
 		{
@@ -914,7 +913,7 @@ public class VPathway implements PathwayListener
 				{
 					o.draw((Graphics2D) g2d.create());
 					fireVPathwayEvent(new VPathwayEvent(this, o,
-							(Graphics2D) g2d_full.create(),
+							(Graphics2D) g2dFull.create(),
 							VPathwayEvent.ELEMENT_DRAWN));
 				}
 			}
@@ -1205,8 +1204,6 @@ public class VPathway implements PathwayListener
 	public static final int NEWLINEMENU = 15;
 
 	public static final int NEWLINESHAPEMENU = 16;
-
-	public static final Color stdRGB = new Color(0, 0, 0);
 
 	/**
 	 * pathvisio distinguishes between placing objects with a click or with a
@@ -1943,15 +1940,15 @@ public class VPathway implements PathwayListener
 		if (elts.size() < 2) return; // nothing to renumber
 		Collections.sort (elts, new ZComparator());
 		
-		final int SPACING = 2;
+		final int spacing = 2;
 		
 		int waterLevel = elts.get(0).gdata.getZOrder();
 		for (int i = 1; i < elts.size(); ++i)
 		{
 			Graphics curr = elts.get (i);
-			if (curr.gdata.getZOrder() - waterLevel < SPACING)
+			if (curr.gdata.getZOrder() - waterLevel < spacing)
 			{
-				curr.gdata.setZOrder(waterLevel + SPACING);
+				curr.gdata.setZOrder(waterLevel + spacing);
 			}
 			waterLevel = curr.gdata.getZOrder();
 		}

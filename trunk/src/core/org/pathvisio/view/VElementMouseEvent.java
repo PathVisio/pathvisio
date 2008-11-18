@@ -23,6 +23,7 @@ import java.util.EventObject;
  * @author thomas
  */
 public class VElementMouseEvent extends EventObject {
+	private static final long serialVersionUID = 1L;
 	public static final int TYPE_MOUSEENTER = 0;
 	public static final int TYPE_MOUSEEXIT = 1;
 	

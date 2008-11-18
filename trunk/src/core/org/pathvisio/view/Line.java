@@ -31,17 +31,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.model.ConnectorShape;
-import org.pathvisio.model.ConnectorShapeFactory;
+import org.pathvisio.model.ConnectorShape.Segment;
+import org.pathvisio.model.ConnectorShape.WayPoint;
+import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.ConnectorShape.Segment;
-import org.pathvisio.model.ConnectorShape.WayPoint;
-import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.PathwayEvent;
  
 /**
  * This class represents a line on the pathway.

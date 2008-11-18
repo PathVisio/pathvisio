@@ -21,10 +21,10 @@ import org.pathvisio.model.Pathway;
 
 public class UndoAction 
 {	
-	public UndoAction(String _message, 
+	public UndoAction(String aMessage, 
 					  Pathway current)
 	{
-		message = _message;
+		message = aMessage;
 		originalState = current;
 	}
 	

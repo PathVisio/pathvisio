@@ -16,6 +16,7 @@
 //
 package org.pathvisio.cytoscape.visualmapping;
 
+import java.awt.Color;
 import java.util.HashMap;
 
 import org.pathvisio.cytoscape.AttributeMapper;
@@ -29,7 +30,9 @@ import org.pathvisio.model.PropertyType;
 
 import cytoscape.visual.ArrowShape;
 import cytoscape.visual.EdgeAppearanceCalculator;
+import cytoscape.visual.NodeAppearance;
 import cytoscape.visual.NodeAppearanceCalculator;
+import cytoscape.visual.NodeShape;
 import cytoscape.visual.VisualPropertyType;
 import cytoscape.visual.VisualStyle;
 import cytoscape.visual.calculators.BasicCalculator;
@@ -77,6 +80,15 @@ public class GpmlVisualStyle extends VisualStyle {
 		setTypeMapping();
 		setArrowMapping();
 		setLineTypeMapping();
+		setNodeShapeMapping();
+	}
+	
+	void setNodeShapeMapping() {
+		getNodeAppearanceCalculator().setNodeSizeLocked(false);
+		NodeAppearance nd = nac.getDefaultAppearance();
+		nd.set(VisualPropertyType.NODE_SHAPE, NodeShape.RECT);
+		nd.set(VisualPropertyType.NODE_WIDTH, 80);
+		nd.set(VisualPropertyType.NODE_HEIGHT, 20);
 	}
 	
 	void setLineTypeMapping() {
@@ -207,6 +219,10 @@ public class GpmlVisualStyle extends VisualStyle {
 	}
 	
 	void setColorMapping() {
+		//Default node color is white and semi-transparent
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FILL_COLOR, Color.WHITE);
+		nac.getDefaultAppearance().set(VisualPropertyType.NODE_OPACITY, 220);
+
 		String colAttr = attrMapper.getMapping(PropertyType.COLOR);
 		nac.setCalculator(
 				new BasicCalculator(

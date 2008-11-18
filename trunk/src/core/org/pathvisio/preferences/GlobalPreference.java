@@ -110,26 +110,26 @@ public enum GlobalPreference implements Preference
 	}
 		
 	
-	private static File DIR_APPLICATION = null;
-	private static File DIR_DATA = null;
+	private static File dirApplication = null;
+	private static File dirData = null;
 	
 	/**
 	 * Get the working directory of this application
 	 */
 	public static File getApplicationDir() {
-		if(DIR_APPLICATION == null) {
-			DIR_APPLICATION = new File(System.getProperty("user.home"), ".PathVisio");
-			if(!DIR_APPLICATION.exists()) DIR_APPLICATION.mkdir();
+		if(dirApplication == null) {
+			dirApplication = new File(System.getProperty("user.home"), ".PathVisio");
+			if(!dirApplication.exists()) dirApplication.mkdir();
 		}
-		return DIR_APPLICATION;
+		return dirApplication;
 	}
 		
 	public static File getDataDir() {
-		if(DIR_DATA == null) {
-			DIR_DATA = new File(System.getProperty("user.home"), "PathVisio-Data");
-			if(!DIR_DATA.exists()) DIR_DATA.mkdir();
+		if(dirData == null) {
+			dirData = new File(System.getProperty("user.home"), "PathVisio-Data");
+			if(!dirData.exists()) dirData.mkdir();
 		}
-		return DIR_DATA;
+		return dirData;
 	}
 
 }

@@ -20,10 +20,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -401,7 +401,7 @@ public class ImportInformation {
 		readSample();
 	}
 	
-	private final int N = 50;
+	private static final int N = 50;
 	private String[] lines = null;
 	private String[][] cells = null;
 	
@@ -503,6 +503,9 @@ public class ImportInformation {
 		}
 	}
 	
+	/** fraction of cells that have to match a pattern for it to be a good guess */
+	private static final double GOOD_GUESS_FRACTION = 0.9;
+	
 	/* read a sample from the selected text file to guess some parameters
 	 * and preview the table
 	 */
@@ -563,9 +566,7 @@ public class ImportInformation {
 			}
 			
 			/*Calculate percentage of rows where a system code is found and
-			 * compare with a given percentage*/
-			final double CHECKPERCENTAGE = 0.9;
-			
+			 * compare with a given percentage*/			
 			{
 				double max = 0;
 				int maxCol = -1;
@@ -584,7 +585,7 @@ public class ImportInformation {
 				/*Set the selection to the codeRadio button if a system code is found
 				 * in more than rows than the given percentage, otherwise set the 
 				 * selection to the syscodeRadio button*/
-				if (max >= CHECKPERCENTAGE)
+				if (max >= GOOD_GUESS_FRACTION)
 				{
 					guessHasSyscodeColumn = true;
 					guessSyscodeColumn = maxCol;
@@ -600,7 +601,7 @@ public class ImportInformation {
 			double dotTotal = dotCounter.getTotal();
 			
 			// if more than 90% of number-like patterns use a dot, then the digit symbol is a dot. 
-			guessDigitIsDot = ((dotTotal / (commaTotal + dotTotal)) > CHECKPERCENTAGE);
+			guessDigitIsDot = ((dotTotal / (commaTotal + dotTotal)) > GOOD_GUESS_FRACTION);
 			Logger.log.info ("readsample - I read " + dotTotal + " dots and " + commaTotal + " comma's. I'm guessing " + (guessDigitIsDot ? "dot" : "comma"));
 			
 			//Look for maximum.

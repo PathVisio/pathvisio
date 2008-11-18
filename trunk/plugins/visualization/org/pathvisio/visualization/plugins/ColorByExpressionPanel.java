@@ -532,7 +532,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			int status = fc.showOpenDialog(this);
 			if(status == JFileChooser.APPROVE_OPTION) {
 				try {
-					URL url = fc.getSelectedFile().toURL();
+					URL url = fc.getSelectedFile().toURI().toURL();
 					cs.getMethod().addImageURL(url);
 					cs.setURL(url);
 					imageCombo.addItem(url);

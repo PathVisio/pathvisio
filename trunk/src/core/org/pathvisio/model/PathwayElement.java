@@ -32,8 +32,6 @@ import org.jdom.Document;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
-import org.pathvisio.view.LinAlg;
-import org.pathvisio.view.LinAlg.Point;
 
 /**
  * PathwayElement is responsible for maintaining the data for all the individual
@@ -766,7 +764,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return result;
 	}
 
-	private static final Map<Integer, Set<PropertyType>> allowedProps;
+	private static final Map<Integer, Set<PropertyType>> ALLOWED_PROPS;
 
 	static {		
 		Set<PropertyType> propsCommon = new HashSet<PropertyType>();
@@ -786,7 +784,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				PropertyType.COLOR,
 			}));
 		
-		allowedProps = new HashMap<Integer, Set<PropertyType>>();		
+		ALLOWED_PROPS = new HashMap<Integer, Set<PropertyType>>();		
 		{
 			Set<PropertyType> propsMappinfo = new HashSet<PropertyType>();
 			propsMappinfo.addAll (Arrays.asList(new PropertyType[] {						
@@ -805,7 +803,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.WINDOWWIDTH,
 					PropertyType.WINDOWHEIGHT,
 				}));
-			allowedProps.put (ObjectType.MAPPINFO, propsMappinfo);
+			ALLOWED_PROPS.put (ObjectType.MAPPINFO, propsMappinfo);
 		}
 		{
 			Set<PropertyType> propsState = new HashSet<PropertyType>();
@@ -823,7 +821,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.GRAPHREF,
 				}));
 			propsState.addAll (propsCommon);
-			allowedProps.put (ObjectType.STATE, propsState);
+			ALLOWED_PROPS.put (ObjectType.STATE, propsState);
 		}
 		{			
 			Set<PropertyType> propsShape = new HashSet<PropertyType>();
@@ -836,7 +834,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			}));
 			propsShape.addAll (propsCommon);
 			propsShape.addAll (propsCommonShape);
-			allowedProps.put (ObjectType.SHAPE, propsShape);
+			ALLOWED_PROPS.put (ObjectType.SHAPE, propsShape);
 		}
 		{
 			Set<PropertyType> propsDatanode = new HashSet<PropertyType>();
@@ -850,7 +848,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			}));
 			propsDatanode.addAll (propsCommon);
 			propsDatanode.addAll (propsCommonShape);
-			allowedProps.put (ObjectType.DATANODE, propsDatanode);
+			ALLOWED_PROPS.put (ObjectType.DATANODE, propsDatanode);
 		}
 		{
 			Set<PropertyType> propsLine = new HashSet<PropertyType>();
@@ -867,7 +865,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.ENDGRAPHREF,
 			}));
 			propsLine.addAll (propsCommon);
-			allowedProps.put (ObjectType.LINE, propsLine);
+			ALLOWED_PROPS.put (ObjectType.LINE, propsLine);
 		}
 		{
 			Set<PropertyType> propsLabel = new HashSet<PropertyType>();
@@ -882,7 +880,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			}));
 			propsLabel.addAll (propsCommon);
 			propsLabel.addAll (propsCommonShape);
-			allowedProps.put (ObjectType.LABEL, propsLabel);
+			ALLOWED_PROPS.put (ObjectType.LABEL, propsLabel);
 		}
 		{			
 			Set<PropertyType> propsGroup = new HashSet<PropertyType>();
@@ -895,7 +893,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.COMMENTS,
 					PropertyType.ZORDER,
 			}));
-			allowedProps.put (ObjectType.GROUP, propsGroup);
+			ALLOWED_PROPS.put (ObjectType.GROUP, propsGroup);
 		}
 		{			
 			Set<PropertyType> propsInfobox = new HashSet<PropertyType>();
@@ -904,7 +902,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.CENTERY,
 					PropertyType.ZORDER,
 			}));
-			allowedProps.put (ObjectType.INFOBOX, propsInfobox);
+			ALLOWED_PROPS.put (ObjectType.INFOBOX, propsInfobox);
 		}
 		{			
 			Set<PropertyType> propsLegend = new HashSet<PropertyType>();
@@ -913,7 +911,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.CENTERY,
 					PropertyType.ZORDER,
 			}));
-			allowedProps.put (ObjectType.LEGEND, propsLegend);
+			ALLOWED_PROPS.put (ObjectType.LEGEND, propsLegend);
 		}
 	};
 	
@@ -924,7 +922,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public Set<PropertyType> getStaticPropertyKeys()
 	{
-		return allowedProps.get (getObjectType());
+		return ALLOWED_PROPS.get (getObjectType());
 	}
 	
 	/**
@@ -1126,10 +1124,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setCopyright((String) value);
 			break;
 		case BOARDWIDTH:
-			setMBoardWidth((Double) value);
+			//ignore, board width is calculated automatically
 			break;
 		case BOARDHEIGHT:
-			setMBoardHeight((Double) value);
+			//ignore, board width is calculated automatically
 			break;
 		case WINDOWWIDTH:
 			setWindowWidth((Double) value);
@@ -1167,7 +1165,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			if(value instanceof GroupStyle) {
 				setGroupStyle((GroupStyle)value);
 			} else {
-				setGroupStyle(GroupStyle.fromGpmlName((String)value));
+				setGroupStyle(GroupStyle.fromName((String)value));
 			}
 		}
 	}
@@ -1364,8 +1362,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		author = src.author;
 		copyright = src.copyright;
 		backpageHead = src.backpageHead;
-		mBoardHeight = src.mBoardHeight;
-		mBoardWidth = src.mBoardWidth;
 		mCenterx = src.mCenterx;
 		mCentery = src.mCentery;
 		zOrder =  src.zOrder;
@@ -2101,45 +2097,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public Rectangle2D getMBounds() {
 		return new Rectangle2D.Double(getMLeft(), getMTop(), getMWidth(), getMHeight());
 	}
-	
-	/**
-	 * Translate the given point to internal coordinate system
-	 * (origin in center and axis direction rotated with this objects rotation
-	 * @param MPoint p
-	 */
-	private Point mToInternal(Point p)
-	{
-		Point pt = mRelativeToCenter(p);
-		Point pr = LinAlg.rotate(pt, getRotation());
-		return pr;
-	}
-	
-	/**
-	 * Get the coordinates of the given point relative
-	 * to this object's center
-	 * @param p
-	 */
-	private Point mRelativeToCenter(Point p)
-	{
-		return p.subtract(new Point(getMCenterX(), getMCenterY()));
-	}
-	
-	/**
-	 * Transla	/**
-	 * Translate the given coordinates to external coordinate system (of the
-	 * drawing canvas)
-	 * @param x
-	 * @param y
-	 */
-	private Point mToExternal(double x, double y)
-	{
-		Point p = new Point(x, y);
-		Point pr = LinAlg.rotate(p, -getRotation());
-		pr.x += getMCenterX();
-		pr.y += getMCenterY();
-		return pr;
-	}
-	
+		
 	// for labels
 	protected boolean fBold = false;
 
@@ -2457,48 +2415,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return parent.calculateMBoardSize();
 	}
 	
-	/**
-	 * @deprecated use {@link #getMBoardSize()} instead
-	 */
-	protected double mBoardWidth;
-
 	public double getMBoardWidth()
 	{
 		return getMBoardSize()[0];
 	}
 
-	/**
-	 * @deprecated drawing size will be calculated on basis of the containing pathway elements
-	 */
-	public void setMBoardWidth(double v)
-	{
-		if (mBoardWidth != v)
-		{
-			mBoardWidth = v;
-			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.WINDOW));
-		}
-	}
-
-	/**
-	 * @deprecated use {@link #getMBoardSize()} instead
-	 */
-	protected double mBoardHeight;
-
 	public double getMBoardHeight()
 	{
 		return getMBoardSize()[1];
-	}
-
-	/**
-	 * @deprecated drawing size will be calculated on basis of the containing pathway elements
-	 */
-	public void setMBoardHeight(double v)
-	{
-		if (mBoardHeight != v)
-		{
-			mBoardHeight = v;
-			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.WINDOW));
-		}
 	}
 
 	protected double windowWidth;
@@ -2964,8 +2888,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		relX -= bounds.getCenterX();
 		relY -= bounds.getCenterY();
 		//Scalebounds.getCenterX();
-		double w = bounds.getWidth();
-		double h = bounds.getHeight();
 		if(relX != 0) relX /= bounds.getWidth() / 2;
 		if(relY != 0) relY /= bounds.getHeight() / 2;
 		return new Point2D.Double(relX, relY);

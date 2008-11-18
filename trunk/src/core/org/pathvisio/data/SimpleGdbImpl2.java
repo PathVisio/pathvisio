@@ -386,7 +386,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 	
 	public static final int NO_LIMIT = 0;
 	public static final int NO_TIMEOUT = 0;
-	public static int query_timeout = 5; //seconds
+	public static final int QUERY_TIMEOUT = 5; //seconds
 
 	/**
 	 * Get up to limit suggestions for a symbol autocompletion
@@ -400,7 +400,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 		try {
 			Statement s = con.createStatement();
 
-			s.setQueryTimeout(query_timeout);
+			s.setQueryTimeout(QUERY_TIMEOUT);
 			if(limit > NO_LIMIT) s.setMaxRows(limit);
 
 			//TODO: use prepared statement
@@ -437,7 +437,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 		try {
 			Statement s = con.createStatement();
 
-			s.setQueryTimeout(query_timeout);
+			s.setQueryTimeout(QUERY_TIMEOUT);
 			if(limit > NO_LIMIT) s.setMaxRows(limit);
 
 			StringBuilder sb = new StringBuilder();
@@ -491,7 +491,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 					"		OR " +
 					"			attr.attrname = 'Symbol') "
 					);
-			ps1.setQueryTimeout(query_timeout);
+			ps1.setQueryTimeout(QUERY_TIMEOUT);
 			if(limit > NO_LIMIT) 
 			{
 				ps1.setMaxRows(limit);

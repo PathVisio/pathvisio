@@ -177,10 +177,10 @@ public class Engine
 		
 		if(importer == null) throw new ConverterException( "No importer for '" + ext +  "' files" );
 		
-		Pathway _pathway = new Pathway();
-		importer.doImport(file, _pathway);
-		createVPathway(_pathway);
-		fireApplicationEvent(new ApplicationEvent(_pathway, ApplicationEvent.PATHWAY_OPENED));
+		Pathway pathway = new Pathway();
+		importer.doImport(file, pathway);
+		createVPathway(pathway);
+		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
 		if (vPathway != null)
 		{
 			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
@@ -192,16 +192,16 @@ public class Engine
 	 */
 	public void openPathway(File pathwayFile) throws ConverterException
 	{
-		Pathway _pathway = null;		
+		Pathway pathway = null;		
 		String pwf = pathwayFile.toString();
 		
 		// initialize new JDOM gpml representation and read the file
-		_pathway = new Pathway();
-		_pathway.readFromXml(new File(pwf), true);
+		pathway = new Pathway();
+		pathway.readFromXml(new File(pwf), true);
 		//Only set the pathway field after the data is loaded
 		//(Exception thrown on error, this part will not be reached)
-		createVPathway(_pathway);
-		fireApplicationEvent(new ApplicationEvent(_pathway, ApplicationEvent.PATHWAY_OPENED));
+		createVPathway(pathway);
+		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
 		if (vPathway != null)
 		{
 			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));

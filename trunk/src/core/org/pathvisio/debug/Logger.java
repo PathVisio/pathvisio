@@ -43,7 +43,7 @@ public class Logger
 	private PrintStream s = System.err;
 		
 	public PrintStream getStream () { return s; }	
-	public void setStream (PrintStream _s) { s = _s; }
+	public void setStream (PrintStream aStream) { s = aStream; }
 
 	/**
 	 * if dest is "STDERR" or "STDOUT", the
@@ -148,5 +148,5 @@ public class Logger
 	/**
 	   Global application logger
 	 */
-	public static final Logger log = new Logger();
+	public static Logger log = new Logger();
 }

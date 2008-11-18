@@ -50,7 +50,7 @@ public class PathwayImportHandler extends TransferHandler implements ClipboardOw
 	
 	public PathwayImportHandler() {
 		supportedFlavors = new HashSet<DataFlavor>();
-		supportedFlavors.add(PathwayTransferable.gpmlDataFlavor);
+		supportedFlavors.add(PathwayTransferable.GPML_DATA_FLAVOR);
 		supportedFlavors.add(DataFlavor.stringFlavor);
 	}
 	

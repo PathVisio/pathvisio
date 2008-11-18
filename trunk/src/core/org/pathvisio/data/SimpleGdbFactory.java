@@ -38,7 +38,6 @@ public class SimpleGdbFactory
 	{
 		if(dbName == null) throw new NullPointerException();
 		
-		Gdb result;
 		DBConnector dbConnector;
 		Connection con;
 		

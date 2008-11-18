@@ -28,15 +28,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MPoint;
 
 public class Group extends Graphics implements LinkProvider, VElementMouseListener
 {
-	public static int FLAG_SELECTED = 1 << 0;
-	public static int FLAG_MOUSEOVER = 1 << 1;
-	public static int FLAG_ANCHORSVISIBLE = 1 << 2;
+	public static final int FLAG_SELECTED = 1 << 0;
+	public static final int FLAG_MOUSEOVER = 1 << 1;
+	public static final int FLAG_ANCHORSVISIBLE = 1 << 2;
 	
 	public Group(VPathway canvas, PathwayElement pe)
 	{
@@ -337,35 +337,35 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
 	
 	private static final int MIN_SIZE_LA = 15 * 25;
-	private int num_linkanchors_h = -1;
-	private int num_linkanchors_v = -1;
+	private int numLinkanchorsH = -1;
+	private int numLinkanchorsV = -1;
 	
 	public List<LinkAnchor> getLinkAnchors() {
 		//Number of link anchors depends on the size of the object
 		//If the width/height is large enough, there will be three link anchors per side,
 		//Otherwise there will be only one link anchor per side
-		int n_h = gdata.getMWidth() >= MIN_SIZE_LA ? 3 : 1;
-		int n_v = gdata.getMHeight() >= MIN_SIZE_LA ? 3 : 1;
-		if(n_h != num_linkanchors_h || n_v != num_linkanchors_v) {
-			createLinkAnchors(n_h, n_v);
+		int numH = gdata.getMWidth() >= MIN_SIZE_LA ? 3 : 1;
+		int numV = gdata.getMHeight() >= MIN_SIZE_LA ? 3 : 1;
+		if(numH != numLinkanchorsH || numV != numLinkanchorsV) {
+			createLinkAnchors(numH, numV);
 		}
 		return linkAnchors;
 	}
 	
-	private void createLinkAnchors(int n_h, int n_v) {
+	private void createLinkAnchors(int numH, int numV) {
 		linkAnchors.clear();
-		double d_h = 2.0/(n_h + 1);
-		for(int i = 1; i <= n_h; i++) {
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1 + i * d_h, -1));
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1 + i * d_h, 1));
+		double deltaH = 2.0/(numH + 1);
+		for(int i = 1; i <= numH; i++) {
+			linkAnchors.add(new LinkAnchor(canvas, gdata, -1 + i * deltaH, -1));
+			linkAnchors.add(new LinkAnchor(canvas, gdata, -1 + i * deltaH, 1));
 		}
-		double d_v = 2.0/(n_v + 1);
-		for(int i = 1; i <= n_v; i++) {
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1, -1 + i * d_v));
-			linkAnchors.add(new LinkAnchor(canvas, gdata, 1, -1 + i * d_v));
+		double deltaV = 2.0/(numV + 1);
+		for(int i = 1; i <= numV; i++) {
+			linkAnchors.add(new LinkAnchor(canvas, gdata, -1, -1 + i * deltaV));
+			linkAnchors.add(new LinkAnchor(canvas, gdata, 1, -1 + i * deltaV));
 		}
-		num_linkanchors_h = n_h;
-		num_linkanchors_v = n_v;
+		numLinkanchorsH = numH;
+		numLinkanchorsV = numV;
 	}
 	
 	boolean showLinkAnchors = false;

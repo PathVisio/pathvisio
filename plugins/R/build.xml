@@ -1,5 +1,0 @@
-<!-- snippets from original build file. TODO: make this work !-->
-	<jar jarfile="lib/R-resources.jar">
-			<fileset dir="lib" includes="R/**/*"/>
-			<fileset dir="lib" includes="JRI-lib/*"/>
-	</jar>

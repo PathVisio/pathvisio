@@ -64,14 +64,8 @@ public class MainPanelStandalone extends MainPanel
 		addToMenu(standaloneActions.preferencesAction, editMenu);
 		
 		JMenu selectionMenu = new JMenu("Selection");
-		JMenu alignMenu = new JMenu("Align");
-		JMenu stackMenu = new JMenu("Stack");
+		for(Action a : actions.layoutActions) addToMenu(a, selectionMenu);
 		
-		for(Action a : actions.alignActions) addToMenu(a, alignMenu);
-		for(Action a : actions.stackActions) addToMenu(a, stackMenu);
-		
-		selectionMenu.add(alignMenu);
-		selectionMenu.add(stackMenu);
 		editMenu.add (selectionMenu);
 
 		JMenu dataMenu = new JMenu("Data");
@@ -177,8 +171,7 @@ public class MainPanelStandalone extends MainPanel
 				
 		tb.addSeparator();
 		
-		addToToolbar(actions.alignActions);
-		addToToolbar(actions.stackActions);
+		addToToolbar(actions.layoutActions);
 	}
 	
 }

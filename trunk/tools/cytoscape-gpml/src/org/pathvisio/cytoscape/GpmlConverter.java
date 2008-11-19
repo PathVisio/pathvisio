@@ -303,7 +303,7 @@ public class GpmlConverter {
 				//Create the cytoscape parts of the group
 				for(int i = 0; i < groupElements.length; i++) {
 					PathwayElement pe_i = groupElements[i];
-					GpmlNetworkElement<?> ne_i = gpmlHandler.getNetworkElement(getNodeId(pe_i));
+					GpmlNetworkElement ne_i = gpmlHandler.getNetworkElement(getNodeId(pe_i));
 					//Only add links to nodes, not to annotations
 					if(ne_i instanceof GpmlNode) {
 						cyGroup.addNode(((GpmlNode)ne_i).getParent());

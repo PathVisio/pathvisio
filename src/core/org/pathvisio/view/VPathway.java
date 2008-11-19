@@ -1613,100 +1613,256 @@ public class VPathway implements PathwayListener
 	}
 
 	/**
-	 * Handles aligning alignTypes CENTERX, CENTERY, TOP, LEFT, BOTTOM and RIGHT
-	 * for alignType WIDTH, HEIGHT, see scaleSelected
+	 * Handles aligning layoutTypes ALIGN_*
 	 */
-	private void alignEdgeSelected(AlignType alignType)
+	private void alignGraphics(LayoutType alignType, List<Graphics> gs)
+	{
+		// first sort either horizontally or vertically
+		switch (alignType)
+		{
+		case ALIGN_CENTERY:
+		case ALIGN_TOP:
+			Collections.sort(gs, new YComparator());
+			break;
+		case ALIGN_LEFT:
+		case ALIGN_CENTERX:
+			Collections.sort(gs, new XComparator());
+			break;
+		case ALIGN_BOTTOM:
+			Collections.sort(gs, new YComparator());
+			Collections.reverse(gs);
+			break;
+		case ALIGN_RIGHT:
+			Collections.sort(gs, new XComparator());
+			Collections.reverse(gs);
+			break;
+		default:
+			throw new IllegalArgumentException("This method only handles ALIGN_* layoutTypes");
+		}
+
+		// The bounds of the model to view
+		// translated shape
+		Rectangle2D vBoundsFirst = 
+			gs.get(0).getVShape(true).getBounds2D();
+
+		for (int i = 1; i < gs.size(); i++)
+		{
+			Graphics g = gs.get(i);
+			Rectangle2D vBounds = g.getVShape(true).getBounds2D();
+
+			switch (alignType)
+			{
+				case ALIGN_CENTERX:
+					g.vMoveBy(vBoundsFirst.getCenterX()- vBounds.getCenterX(), 0);
+				break;
+				case ALIGN_CENTERY:
+					g.vMoveBy(0, vBoundsFirst.getCenterY() - vBounds.getCenterY());
+				break;
+				case ALIGN_LEFT:
+					g.vMoveBy(vBoundsFirst.getX() - vBounds.getX(), 0);
+				break;
+				case ALIGN_RIGHT:
+					g.vMoveBy(vBoundsFirst.getMaxX() - vBounds.getMaxX(), 0);
+				break;
+				case ALIGN_TOP:
+					g.vMoveBy(0, vBoundsFirst.getY() - vBounds.getY());
+				break;
+				case ALIGN_BOTTOM:
+					g.vMoveBy(0, vBoundsFirst.getMaxY() - vBounds.getMaxY());
+				break;
+			}
+			// notify parents of any moving children!
+			g.getPathwayElement().notifyParentGroup();
+		}
+	}
+	
+	/**
+	 * Align, stack or scale selected objects based on user-selected layout type
+	 */
+	public void layoutSelected(LayoutType layoutType)
 	{
 		List<Graphics> selectedGraphics = getSelectedNonGroupGraphics();
 
 		if (selectedGraphics.size() > 0)
 		{
-			undoManager.newAction(alignType.getDescription());
-
-			// first sort either horizontally or vertically
-			switch (alignType)
+			undoManager.newAction(layoutType.getDescription());		
+			switch (layoutType)
 			{
-			case CENTERY:
-			case TOP:
-				Collections.sort(selectedGraphics, new YComparator());
-				break;
-			case LEFT:
-			case CENTERX:
-				Collections.sort(selectedGraphics, new XComparator());
-				break;
-			case BOTTOM:
-				Collections.sort(selectedGraphics, new YComparator());
-				Collections.reverse(selectedGraphics);
-				break;
-			case RIGHT:
-				Collections.sort(selectedGraphics, new XComparator());
-				Collections.reverse(selectedGraphics);
-				break;
+				case COMMON_WIDTH:
+					scaleWidth(selectedGraphics);
+					break;
+				case COMMON_HEIGHT:
+					scaleHeight(selectedGraphics);
+					break;
+				case ALIGN_CENTERX:
+				case ALIGN_CENTERY:
+				case ALIGN_TOP:
+				case ALIGN_LEFT:
+				case ALIGN_RIGHT:
+				case ALIGN_BOTTOM:
+					alignGraphics(layoutType, selectedGraphics);
+					break;
+				case STACK_BOTTOM:
+				case STACK_TOP:
+				case STACK_LEFT:
+				case STACK_RIGHT:
+				case STACK_CENTERX:
+				case STACK_CENTERY:
+					stackGraphics(layoutType, selectedGraphics);
+					break;
 			}
-
-			// The bounds of the model to view
-			// translated shape
-			Rectangle2D vBoundsFirst = 
-				selectedGraphics.get(0).getVShape(true).getBounds2D();
-
-			for (int i = 1; i < selectedGraphics.size(); i++)
-			{
-				Graphics g = selectedGraphics.get(i);
-				Rectangle2D vBounds = g.getVShape(true).getBounds2D();
-
-				switch (alignType)
-				{
-					case CENTERX:
-						g.vMoveBy(vBoundsFirst.getCenterX()- vBounds.getCenterX(), 0);
-					break;
-					case CENTERY:
-						g.vMoveBy(0, vBoundsFirst.getCenterY() - vBounds.getCenterY());
-					break;
-					case LEFT:
-						g.vMoveBy(vBoundsFirst.getX() - vBounds.getX(), 0);
-					break;
-					case RIGHT:
-						g.vMoveBy(vBoundsFirst.getMaxX() - vBounds.getMaxX(), 0);
-					break;
-					case TOP:
-						g.vMoveBy(0, vBoundsFirst.getY() - vBounds.getY());
-					break;
-					case BOTTOM:
-						g.vMoveBy(0, vBoundsFirst.getMaxY() - vBounds.getMaxY());
-					break;
-				}
-				// notify parents of any moving children!
-				selectedGraphics.get(i).getPathwayElement().notifyParentGroup();
-			}
+			
 			selection.fitToSelection();
 			redrawDirtyRect();
 		}
 	}
+
+	/**
+	 * Stacks a set of objects based on user-selected stack type
+	 */
+	private void stackGraphics(LayoutType stackType, List<Graphics> gs)
+	{
+		// first we sort the selected graphics, either horizontally or vertically
+		switch (stackType)
+		{
+		case STACK_CENTERX:
+		case STACK_LEFT:
+		case STACK_RIGHT:
+			Collections.sort(gs, new YComparator());
+			break;
+		case STACK_CENTERY:
+		case STACK_TOP:
+		case STACK_BOTTOM:
+			Collections.sort(gs, new XComparator());
+			break;
+		default:
+			throw new IllegalArgumentException("This method only handles STACK_* layoutTypes");
+		}
+
+		for (int i = 1; i < gs.size(); i++)
+		{
+			// Get the current and previous graphics objects
+			Graphics eCurr = gs.get(i);
+			Graphics ePrev = gs.get(i - 1);
+
+			// Get the bounds of the model to view translated shapes
+			Rectangle2D vBoundsPrev = ePrev.getVShape(true).getBounds2D();
+			Rectangle2D vBoundsCurr = eCurr.getVShape(true).getBounds2D();
+			switch (stackType)
+			{
+			case STACK_CENTERX:	
+				eCurr.vMoveBy(
+						vBoundsPrev.getCenterX() - vBoundsCurr.getCenterX(), 
+						vBoundsPrev.getMaxY() - vBoundsCurr.getY());
+				break;
+			case STACK_CENTERY:
+				eCurr.vMoveBy(
+						vBoundsPrev.getMaxX() - vBoundsCurr.getX(),
+						vBoundsPrev.getCenterY() - vBoundsCurr.getCenterY());
+				break;
+			case STACK_LEFT:
+				eCurr.vMoveBy(
+						vBoundsPrev.getX() - vBoundsCurr.getX(), 
+						vBoundsPrev.getMaxY() - vBoundsCurr.getY());
+				break;
+			case STACK_RIGHT:
+				eCurr.vMoveBy(
+						vBoundsPrev.getMaxX() - vBoundsCurr.getMaxX(), 
+						vBoundsPrev.getMaxY() - vBoundsCurr.getY());
+				break;
+			case STACK_TOP:
+				eCurr.vMoveBy(
+						vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 
+						vBoundsPrev.getY() - vBoundsCurr.getY());
+				break;
+			case STACK_BOTTOM:
+				eCurr.vMoveBy(
+						vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 
+						vBoundsPrev.getMaxY() - vBoundsCurr.getMaxY());
+				break;
+			}
+			// notify parents of any moving children!
+			eCurr.getPathwayElement().notifyParentGroup();
+		}
+	}
+
+	/**
+	 * Scales a set of objects by max width
+	 */
+	private void scaleWidth(List<Graphics> gs)
+	{
+		double maxW = 0;
+		Graphics gMax = null;
+		for (Graphics g : gs)
+		{
+			Rectangle2D r = g.getVShape(true).getBounds2D();
+			double w = Math.abs(r.getWidth());
+			if (w > maxW)
+			{
+				gMax = g;
+				maxW = w;
+			}
+		}
+		for (Graphics g : gs)
+		{
+			if (g == gMax)
+				continue;
+
+			Rectangle2D r = g.getVShape(true).getBounds2D();
+			double oldWidth = r.getWidth();
+			if (oldWidth < 0)
+			{
+				r.setRect(r.getX(), r.getY(), -(maxW), r.getHeight());
+				g.setVScaleRectangle(r);
+				g.vMoveBy((oldWidth + maxW) / 2, 0);
+			} else
+			{
+				r.setRect(r.getX(), r.getY(), maxW, r.getHeight());
+				g.setVScaleRectangle(r);
+				g.vMoveBy((oldWidth - maxW) / 2, 0);
+			}
+			// notify parents of any moving children!
+			g.getPathwayElement().notifyParentGroup();
+		}
+	}
 	
 	/**
-	 * Aligns selected objects based on user-selected align type
-	 * 
-	 * @param alignType
+	 * Scales selected objects by max height
 	 */
-	public void alignSelected(AlignType alignType)
+	private void scaleHeight(List<Graphics> gs)
 	{
-		switch (alignType)
+		double maxH = 0;
+		Graphics gMax = null;
+		for (Graphics g : gs)
 		{
-			case WIDTH:
-				scaleWidth();
-				break;
-			case HEIGHT:
-				scaleHeight();
-				break;
-			case CENTERX:
-			case CENTERY:
-			case TOP:
-			case LEFT:
-			case RIGHT:
-			case BOTTOM:
-				alignEdgeSelected(alignType);
-				break;
+			Rectangle2D r = g.getVShape(true).getBounds2D();
+			double h = Math.abs(r.getHeight());
+			if (h > maxH)
+			{
+				gMax = g;
+				maxH = h;
+			}
+		}
+		for (Graphics g : gs)
+		{
+			if (g == gMax)
+				continue;
+
+			Rectangle2D r = g.getVShape(true).getBounds2D();
+			double oldHeight = r.getHeight();
+			if (oldHeight < 0)
+			{
+				r.setRect(r.getX(), r.getY(), r.getWidth(), -(maxH));
+				g.setVScaleRectangle(r);
+				g.vMoveBy(0, (maxH + oldHeight) / 2);
+			} else
+			{
+				r.setRect(r.getX(), r.getY(), r.getWidth(), maxH);
+				g.setVScaleRectangle(r);
+				g.vMoveBy(0, (oldHeight - maxH) / 2);
+			}
+			// notify parents of any moving children!
+			g.getPathwayElement().notifyParentGroup();
 		}
 	}
 
@@ -1854,180 +2010,7 @@ public class VPathway implements PathwayListener
 			}
 		}
 		return result;
-	}
-	
-	/**
-	 * Stacks selected objects based on user-selected stack type
-	 * 
-	 * @param stackType
-	 */
-	public void stackSelected(StackType stackType)
-	{
-		List<Graphics> selectedGraphics = getSelectedNonGroupGraphics();
-
-		if (selectedGraphics.size() > 0)
-		{
-			undoManager.newAction(stackType.getDescription());
-			// first we sort the selected graphics, either horizontally or vertically
-			switch (stackType)
-			{
-			case CENTERX:
-			case LEFT:
-			case RIGHT:
-				Collections.sort(selectedGraphics, new YComparator());
-				break;
-			case CENTERY:
-			case TOP:
-			case BOTTOM:
-				Collections.sort(selectedGraphics, new XComparator());
-				break;
-			}
-	
-			for (int i = 1; i < selectedGraphics.size(); i++)
-			{
-				// Get the current and previous graphics objects
-				Graphics eCurr = selectedGraphics.get(i);
-				Graphics ePrev = selectedGraphics.get(i - 1);
-
-				// Get the bounds of the model to view translated shapes
-				Rectangle2D vBoundsPrev = ePrev.getVShape(true)
-						.getBounds2D();
-				Rectangle2D vBoundsCurr = eCurr.getVShape(true)
-						.getBounds2D();
-				switch (stackType)
-				{
-				case CENTERX:	
-					eCurr.vMoveBy(
-							vBoundsPrev.getCenterX() - vBoundsCurr.getCenterX(), 
-							vBoundsPrev.getMaxY() - vBoundsCurr.getY());
-					break;
-				case CENTERY:
-					eCurr.vMoveBy(
-							vBoundsPrev.getMaxX() - vBoundsCurr.getX(),
-							vBoundsPrev.getCenterY() - vBoundsCurr.getCenterY());
-					break;
-				case LEFT:
-					eCurr.vMoveBy(
-							vBoundsPrev.getX() - vBoundsCurr.getX(), 
-							vBoundsPrev.getMaxY() - vBoundsCurr.getY());
-					break;
-				case RIGHT:
-					eCurr.vMoveBy(
-							vBoundsPrev.getMaxX() - vBoundsCurr.getMaxX(), 
-							vBoundsPrev.getMaxY() - vBoundsCurr.getY());
-					break;
-				case TOP:
-					eCurr.vMoveBy(
-							vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 
-							vBoundsPrev.getY() - vBoundsCurr.getY());
-					break;
-				case BOTTOM:
-					eCurr.vMoveBy(
-							vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 
-							vBoundsPrev.getMaxY() - vBoundsCurr.getMaxY());
-					break;
-				}
-				// notify parents of any moving children!
-				eCurr.getPathwayElement().notifyParentGroup();
-			}
-			selection.fitToSelection();
-			redrawDirtyRect();
-		}
-	}
-
-	/**
-	 * Scales selected objects by max width
-	 */
-	private void scaleWidth()
-	{
-		List<Graphics> selectedGraphics = getSelectedNonGroupGraphics();
-		if (selectedGraphics.size() > 0)
-		{
-			undoManager.newAction(AlignType.WIDTH.getDescription());
-			double maxW = 0;
-			Graphics gMax = null;
-			for (Graphics g : selectedGraphics)
-			{
-				Rectangle2D r = g.getVShape(true).getBounds2D();
-				double w = Math.abs(r.getWidth());
-				if (w > maxW)
-				{
-					gMax = g;
-					maxW = w;
-				}
-			}
-			for (Graphics g : selectedGraphics)
-			{
-				if (g == gMax)
-					continue;
-
-				Rectangle2D r = g.getVShape(true).getBounds2D();
-				double oldWidth = r.getWidth();
-				if (oldWidth < 0)
-				{
-					r.setRect(r.getX(), r.getY(), -(maxW), r.getHeight());
-					g.setVScaleRectangle(r);
-					g.vMoveBy((oldWidth + maxW) / 2, 0);
-				} else
-				{
-					r.setRect(r.getX(), r.getY(), maxW, r.getHeight());
-					g.setVScaleRectangle(r);
-					g.vMoveBy((oldWidth - maxW) / 2, 0);
-				}
-				// notify parents of any moving children!
-				g.getPathwayElement().notifyParentGroup();
-			}
-			selection.fitToSelection();
-			redrawDirtyRect();
-		}
-	}
-	
-	/**
-	 * Scales selected objects by max height
-	 */
-	private void scaleHeight()
-	{
-		List<Graphics> selectedGraphics = getSelectedNonGroupGraphics();
-		if (selectedGraphics.size() > 0)
-		{
-			undoManager.newAction(AlignType.HEIGHT.getDescription());
-			double maxH = 0;
-			Graphics gMax = null;
-			for (Graphics g : selectedGraphics)
-			{
-				Rectangle2D r = g.getVShape(true).getBounds2D();
-				double h = Math.abs(r.getHeight());
-				if (h > maxH)
-				{
-					gMax = g;
-					maxH = h;
-				}
-			}
-			for (Graphics g : selectedGraphics)
-			{
-				if (g == gMax)
-					continue;
-
-				Rectangle2D r = g.getVShape(true).getBounds2D();
-				double oldHeight = r.getHeight();
-				if (oldHeight < 0)
-				{
-					r.setRect(r.getX(), r.getY(), r.getWidth(), -(maxH));
-					g.setVScaleRectangle(r);
-					g.vMoveBy(0, (maxH + oldHeight) / 2);
-				} else
-				{
-					r.setRect(r.getX(), r.getY(), r.getWidth(), maxH);
-					g.setVScaleRectangle(r);
-					g.vMoveBy(0, (oldHeight - maxH) / 2);
-				}
-				// notify parents of any moving children!
-				g.getPathwayElement().notifyParentGroup();
-			}
-			selection.fitToSelection();
-			redrawDirtyRect();
-		}
-	}
+	}	
 
 	/**
 	 * Get all elements of the class Graphics that are currently selected

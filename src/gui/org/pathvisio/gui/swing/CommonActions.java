@@ -43,12 +43,11 @@ import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.util.Resources;
-import org.pathvisio.view.AlignType;
+import org.pathvisio.view.LayoutType;
 import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.SelectionBox;
-import org.pathvisio.view.StackType;
 import org.pathvisio.view.Template;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
@@ -84,10 +83,8 @@ public class CommonActions implements ApplicationEventListener {
 			va.registerToGroup(pasteAction, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 			va.registerToGroup(pasteAction, 	ViewActions.GROUP_ENABLE_EDITMODE);
 			va.registerToGroup(zoomActions, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
-			va.registerToGroup(alignActions, 	ViewActions.GROUP_ENABLE_EDITMODE);
-			va.registerToGroup(alignActions, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
-			va.registerToGroup(stackActions, 	ViewActions.GROUP_ENABLE_EDITMODE);
-			va.registerToGroup(stackActions, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
+			va.registerToGroup(layoutActions, 	ViewActions.GROUP_ENABLE_EDITMODE);
+			va.registerToGroup(layoutActions, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
 			va.registerToGroup(newElementActions, ViewActions.GROUP_ENABLE_EDITMODE);
 			va.registerToGroup(newElementActions, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 			
@@ -111,10 +108,8 @@ public class CommonActions implements ApplicationEventListener {
 
 	public final Action[] zoomActions;
 	
-	public final Action[] alignActions;
+	public final Action[] layoutActions;
 	
-	public final Action[] stackActions;
-		
 	public final Action[][] newElementActions;
 	
 	public CommonActions(SwingEngine se) 
@@ -132,24 +127,22 @@ public class CommonActions implements ApplicationEventListener {
 				new ZoomAction(e, 200)
 		};
 		
-		 alignActions = new Action[] {
-					new AlignAction(e, AlignType.CENTERX),
-					new AlignAction(e, AlignType.CENTERY),
-//					new AlignAction(e, AlignType.LEFT),
-//					new AlignAction(e, AlignType.RIGHT),
-//					new AlignAction(e, AlignType.TOP),
-//					new AlignAction(e, AlignType.BOTTOM),
-					new AlignAction(e, AlignType.WIDTH),
-					new AlignAction(e, AlignType.HEIGHT),
-			};
-		 
-		 stackActions = new Action[] {
-					new StackAction(e, StackType.CENTERX),
-					new StackAction(e, StackType.CENTERY),
-//					new StackAction(e, StackType.LEFT),
-//					new StackAction(e, StackType.RIGHT),
-//					new StackAction(e, StackType.TOP),
-//					new StackAction(e, StackType.BOTTOM)
+		 layoutActions = new Action[] {
+					new LayoutAction(e, LayoutType.ALIGN_CENTERX),
+					new LayoutAction(e, LayoutType.ALIGN_CENTERY),
+//					new LayoutAction(e, LayoutType.ALIGN_LEFT),
+//					new LayoutAction(e, LayoutType.ALIGN_RIGHT),
+//					new LayoutAction(e, LayoutType.ALIGN_TOP),
+//					new LayoutAction(e, LayoutType.ALIGN_BOTTOM),
+					new LayoutAction(e, LayoutType.COMMON_WIDTH),
+					new LayoutAction(e, LayoutType.COMMON_HEIGHT),
+
+					new LayoutAction(e, LayoutType.STACK_CENTERX),
+					new LayoutAction(e, LayoutType.STACK_CENTERY),
+//					new LayoutAction(e, LayoutType.STACK_LEFT),
+//					new LayoutAction(e, LayoutType.STACK_RIGHT),
+//					new LayoutAction(e, LayoutType.STACK_TOP),
+//					new LayoutAction(e, LayoutType.STACK_BOTTOM)
 			};
 		 newElementActions = new Action[][] {
 					new Action[] { 
@@ -436,31 +429,11 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
-	public static class StackAction extends AbstractAction {
-
-		StackType type;
-		Engine engine;
-		
-		public StackAction(Engine engine, StackType t) {
-			super();
-			this.engine = engine;
-			putValue(NAME, t.getLabel());
-			putValue(SMALL_ICON, new ImageIcon(Resources.getResourceURL(t.getIcon())));
-			putValue(SHORT_DESCRIPTION, t.getDescription());
-			type = t;
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			VPathway vp = engine.getActiveVPathway();
-			if(vp != null) vp.stackSelected(type);
-		}
-	}
-	
-	public static class AlignAction extends AbstractAction {
-		AlignType type;
+	public static class LayoutAction extends AbstractAction {
+		LayoutType type;
 
 		Engine engine;
-		public AlignAction(Engine engine, AlignType t) {
+		public LayoutAction(Engine engine, LayoutType t) {
 			super();
 			this.engine = engine;
 			putValue(NAME, t.getLabel());
@@ -471,7 +444,7 @@ public class CommonActions implements ApplicationEventListener {
 
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = engine.getActiveVPathway();
-			if(vp != null) vp.alignSelected(type);
+			if(vp != null) vp.layoutSelected(type);
 		}
 	}
 	

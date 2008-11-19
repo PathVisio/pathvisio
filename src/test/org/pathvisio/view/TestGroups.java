@@ -149,7 +149,7 @@ public class TestGroups extends TestCase
 	{
 		vDn[0].select();
 		vDn[1].select();
-		vpwy.alignSelected(AlignType.LEFT);
+		vpwy.layoutSelected(LayoutType.ALIGN_LEFT);
 	}
 	
 	/**

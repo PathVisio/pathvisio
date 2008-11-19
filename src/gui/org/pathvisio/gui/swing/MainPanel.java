@@ -116,14 +116,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		editMenu.addSeparator();
 		
 		JMenu selectionMenu = new JMenu("Selection");
-		JMenu alignMenu = new JMenu("Align");
-		JMenu stackMenu = new JMenu("Stack");
 		
-		for(Action a : actions.alignActions) addToMenu(a, alignMenu);
-		for(Action a : actions.stackActions) addToMenu(a, stackMenu);
-		
-		selectionMenu.add(alignMenu);
-		selectionMenu.add(stackMenu);
+		for(Action a : actions.layoutActions) addToMenu(a, selectionMenu);
 		editMenu.add (selectionMenu);
 		
 		JMenu viewMenu = new JMenu("View");
@@ -311,8 +305,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				
 		tb.addSeparator();
 		
-		addToToolbar(actions.alignActions);
-		addToToolbar(actions.stackActions);
+		addToToolbar(actions.layoutActions);
 	}
 
 	public static final String TB_GROUP_SHOW_IF_EDITMODE = "edit";

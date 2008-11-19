@@ -27,9 +27,9 @@ public enum AlignType {
 	HEIGHT("Height", "Set common height", "sizeheight.gif"),
 	;
 	
-	String label;
-	String description;
-	String icon;
+	private String label;
+	private String description;
+	private String icon;
 	
 	AlignType(String label, String tooltip, String icon) {
 		this.label = label;

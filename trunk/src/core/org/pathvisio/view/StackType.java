@@ -25,9 +25,9 @@ public enum StackType {
 	BOTTOM("Bottom", "Stack horizontal bottom", "stackhorizontalbottom.gif"),
 	;
 	
-	String label;
-	String description;
-	String icon;
+	private String label;
+	private String description;
+	private String icon;
 	
 	StackType(String label, String tooltip, String icon) {
 		this.label = label;

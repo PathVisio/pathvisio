@@ -463,7 +463,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
 			for(VPathwayElement o : vPathway.getDrawingObjects())
 			{
-				if (!o.isSelected() || o == vPathway.selection || o == vPathway.infoBox)
+				if (!o.isSelected() || o == vPathway.selection || o == vPathway.getMappInfo())
 					continue; // Object not selected, skip
 				toRemove.add(o);
 			}

@@ -138,6 +138,7 @@ public class CommonActions implements ApplicationEventListener {
 //					new AlignAction(e, AlignType.LEFT),
 //					new AlignAction(e, AlignType.RIGHT),
 //					new AlignAction(e, AlignType.TOP),
+//					new AlignAction(e, AlignType.BOTTOM),
 					new AlignAction(e, AlignType.WIDTH),
 					new AlignAction(e, AlignType.HEIGHT),
 			};

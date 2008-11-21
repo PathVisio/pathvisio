@@ -105,7 +105,7 @@ public class GexTxtImporter
 					return;
 				}
 
-				//skip the gene and systemcode column if there is one
+				//skip the id and systemcode column if there is one
 				if(
 					(info.getSyscodeColumn() && i != info.getIdColumn() && i != info.getCodeColumn()) ||
 					(!info.getSyscodeColumn() && i != info.getIdColumn())
@@ -194,12 +194,12 @@ public class GexTxtImporter
 				//check if the ref exists
 				boolean refExists = currentGdb.xrefExists(ref);
 				
-				if(!refExists) //No Ensembl gene found
+				if(!refExists)
 				{
 					errors = reportError(info, error, "Line " + n + ":\t" + ref + 
-							"\tCould not look up this identifier in the gene database", errors);
+							"\tCould not look up this identifier in the synonym database", errors);
 				} 
-				// add gene anyway
+				// add row anyway
 				{
 					boolean success = true;
 					for(int col : dataCols)
@@ -265,7 +265,7 @@ public class GexTxtImporter
 			info.setMaximum(maximum);
 			info.setMinimum(minimum);
 			
-			if (p != null) p.report(added + " genes were added succesfully to the expression dataset");
+			if (p != null) p.report(added + " rows of data were imported succesfully");
 			if(errors > 0) 
 			{
 				if (p != null) p.report(errors + " exceptions occured, see file '" + errorFile + "' for details");

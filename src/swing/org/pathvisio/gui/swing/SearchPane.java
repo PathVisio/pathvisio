@@ -211,7 +211,7 @@ public class SearchPane extends JPanel
 		tblResult.getTableHeader().setVisible(true);
 		Box box6 = Box.createHorizontalBox();
 		box6.add (chkHighlight);
-		box6.add (new JLabel ("Highlight found genes"));
+		box6.add (new JLabel ("Highlight matches"));
 		resultPanel.add (box6, BorderLayout.NORTH);
 		resultPanel.add (new JScrollPane(tblResult), BorderLayout.CENTER);
 		lblNumFound = new JLabel();

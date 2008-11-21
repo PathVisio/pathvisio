@@ -314,36 +314,37 @@ eval
 	);
 	
 	# Next step: check that java files have svn propset svn:eol-style native
-	do_step (
-		name => "SVN:EOL-STYLE PROPERTY",
-		log => "$dir/props.txt",
-		action => sub
-		{
-			our @javalist;
-			sub wanted { if (-f $_ && /\.java$/i && ! (/Revision.java$/)) { push @javalist, $File::Find::name; } }
-			find (\&wanted, "$dir/src");
+	# Note: disabled because git-svn doesn't support propset atm.
+	#~ do_step (
+		#~ name => "SVN:EOL-STYLE PROPERTY",
+		#~ log => "$dir/props.txt",
+		#~ action => sub
+		#~ {
+			#~ our @javalist;
+			#~ sub wanted { if (-f $_ && /\.java$/i && ! (/Revision.java$/)) { push @javalist, $File::Find::name; } }
+			#~ find (\&wanted, "$dir/src");
 
-			system ("touch $dir/props.txt") == 0 or die ("Can't touch. Look ma, no hands? $!");
-			open OUTPUT, ">$dir/props.txt" or die $!;
-			my $cWrong = 0;
+			#~ system ("touch $dir/props.txt") == 0 or die ("Can't touch. Look ma, no hands? $!");
+			#~ open OUTPUT, ">$dir/props.txt" or die $!;
+			#~ my $cWrong = 0;
 			
-			for my $file (@javalist)
-			{
-				if (`svn propget svn:eol-style $file` !~ /native/)
-				{
-					print OUTPUT $file, "\n";
-					$cWrong++;
-				}
-			}
+			#~ for my $file (@javalist)
+			#~ {
+				#~ if (`svn propget svn:eol-style $file` !~ /native/)
+				#~ {
+					#~ print OUTPUT $file, "\n";
+					#~ $cWrong++;
+				#~ }
+			#~ }
 			
-			close OUTPUT;
+			#~ close OUTPUT;
 			
-			if ($cWrong > 0)
-			{
-				die "$cWrong java files are missing the svn:eolstyle property";
-			}
-		}
-	);
+			#~ if ($cWrong > 0)
+			#~ {
+				#~ die "$cWrong java files are missing the svn:eolstyle property";
+			#~ }
+		#~ }
+	#~ );
 
 	# Next step: checkstyle
 	do_step (

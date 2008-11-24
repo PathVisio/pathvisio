@@ -2872,8 +2872,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		double y = p.getY();
 		Rectangle2D bounds = getRBounds();
 		//Scale
-		x *= bounds.getWidth() / 2;
-		y *= bounds.getHeight() / 2;
+		if(bounds.getWidth() != 0) x *= bounds.getWidth() / 2;
+		if(bounds.getHeight() != 0) y *= bounds.getHeight() / 2;
 		//Translate
 		x += bounds.getCenterX();
 		y += bounds.getCenterY();
@@ -2888,8 +2888,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		relX -= bounds.getCenterX();
 		relY -= bounds.getCenterY();
 		//Scalebounds.getCenterX();
-		if(relX != 0) relX /= bounds.getWidth() / 2;
-		if(relY != 0) relY /= bounds.getHeight() / 2;
+		if(relX != 0 && bounds.getWidth() != 0) relX /= bounds.getWidth() / 2;
+		if(relY != 0 && bounds.getHeight() != 0) relY /= bounds.getHeight() / 2;
 		return new Point2D.Double(relX, relY);
 	}
 }

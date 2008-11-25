@@ -16,7 +16,11 @@
 //
 package org.pathvisio.wikipathways;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -30,11 +34,13 @@ import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.Xref;
 import org.pathvisio.view.MIMShapes;
 import org.pathvisio.wikipathways.webservice.WSAuth;
 import org.pathvisio.wikipathways.webservice.WSCurationTag;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
+import org.pathvisio.wikipathways.webservice.WSSearchResult;
 import org.pathvisio.wikipathways.webservice.WikiPathwaysLocator;
 import org.pathvisio.wikipathways.webservice.WikiPathwaysPortType;
 
@@ -87,6 +93,16 @@ public class WikiPathwaysClient {
 	public WSPathway getPathway(String id, int revision) throws RemoteException, ConverterException {
 		WSPathway wsp = port.getPathway(id, revision);
 		return wsp;
+	}
+	
+	public byte[] getPathwayAs(String fileType, String id, int revision) throws RemoteException {
+		return port.getPathwayAs(fileType, id, revision);
+	}
+	
+	public void savePathwayAs(File file, String fileType, String id, int revision) throws IOException {
+		byte[] data = getPathwayAs(fileType, id, revision);
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+		out.write(data);
 	}
 	
 	/**
@@ -186,5 +202,43 @@ public class WikiPathwaysClient {
 		WSPathwayInfo[] changes = port.getRecentChanges(timestamp);
 		if(changes == null) changes = new WSPathwayInfo[0];
 		return changes;
+	}
+	
+	public WSSearchResult[] findPathwaysByText(String query) throws RemoteException {
+		WSSearchResult[] r = port.findPathwaysByText(query, null);
+		if(r == null) r = new WSSearchResult[0];
+		return r;
+	}
+	
+	public WSSearchResult[] findPathwaysByText(String query, Organism organism) throws RemoteException {
+		String species = null;
+		if(organism != null) {
+			species = organism.latinName();
+		}
+		WSSearchResult[] r =  port.findPathwaysByText(query, species);
+		if(r == null) r = new WSSearchResult[0];
+		return r;
+	}
+	
+	public WSSearchResult[] findPathwaysByXref(Xref xref) throws RemoteException {
+		String code = null;
+		if(xref.getDataSource() != null) {
+			code = xref.getDataSource().getSystemCode();
+		}
+		WSSearchResult[] r =  port.findPathwaysByXref(xref.getId(), code);
+		if(r == null) r = new WSSearchResult[0];
+		return r;
+	}
+	
+	public WSSearchResult[] findPathwaysByXref(String id) throws RemoteException {
+		WSSearchResult[] r =  port.findPathwaysByXref(id, null);
+		if(r == null) r = new WSSearchResult[0];
+		return r;
+	}
+	
+	public WSSearchResult[] findInteractions(String query) throws RemoteException {
+		WSSearchResult[] r = port.findInteractions(query);
+		if(r == null) r = new WSSearchResult[0];
+		return r;
 	}
 }

@@ -28,6 +28,7 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
@@ -42,6 +43,10 @@ public class BatikImageExporter extends ImageExporter {
 	}
 
 	public void doExport(File file, VPathway vPathway) throws ConverterException {
+		doExport(file, vPathway, null);
+	}
+	
+	public void doExport(File file, VPathway vPathway, TranscodingHints hints) throws ConverterException {
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);
 		
@@ -80,7 +85,11 @@ public class BatikImageExporter extends ImageExporter {
 
 		svgG2d.getRoot(svg.getDocumentElement());
 		t.addTranscodingHint(ImageTranscoder.KEY_BACKGROUND_COLOR, java.awt.Color.WHITE);
-
+		if(hints != null) {
+			for(Object o : hints.keySet()) {
+				t.addTranscodingHint((TranscodingHints.Key)o, hints.get(o));
+			}
+		}
 		try {
 			TranscoderInput input = new TranscoderInput(svg);
 

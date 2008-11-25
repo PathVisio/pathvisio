@@ -24,9 +24,12 @@ import junit.framework.TestCase;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.Xref;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
+import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
 public class WikiPathwaysClientTest extends TestCase {
 	protected void setUp() throws Exception {
@@ -114,6 +117,19 @@ public class WikiPathwaysClientTest extends TestCase {
 					"Soap test - " + System.currentTimeMillis(), 
 					Integer.parseInt(wsp.getRevision()));
 		} catch(Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
+	
+	public void testSearchXref() {
+		try {
+			WSSearchResult[] results = client.findPathwaysByXref(
+					new Xref("8743", DataSource.ENTREZ_GENE)
+			);
+			assertNotNull(results);
+			assertTrue(results.length > 0);
+		} catch (RemoteException e) {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}

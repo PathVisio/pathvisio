@@ -18,14 +18,11 @@ package org.pathvisio.wikipathways.bots;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +43,6 @@ import org.pathvisio.wikipathways.WikiPathwaysCache;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSCurationTag;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
-
-import sun.reflect.ReflectionFactory.GetReflectionFactoryAction;
-import sun.security.action.GetBooleanAction;
 
 /**
  * Checks for DataNode XRef annotations and adds a curation tag for

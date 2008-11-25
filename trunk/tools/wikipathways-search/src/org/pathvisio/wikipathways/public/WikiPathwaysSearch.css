@@ -1,0 +1,34 @@
+/** Add css rules here for your application. */
+/** Example rules used by the template application (remove for your app) */
+
+.search-box {
+	padding: 1em;
+}
+
+.result-description {
+	color: graytext;
+	text-align: left;
+}
+
+.result-title {
+	font-weight: bold;
+}
+
+.result-label {
+	padding-left: 1em;
+}
+
+.result-image {
+	border: none;
+}
+
+.result-image-container {
+	padding: 1em;
+	border: thin solid #E1E1FF;
+}
+
+.search-progress {
+	width: 100%;
+	text-align: center;
+	background-color: #FFABAB;
+}

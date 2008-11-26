@@ -18,6 +18,7 @@ package org.pathvisio.model;
 
 import java.io.File;
 
+/** implemented by classes that can import a pathway from various different types */
 public interface PathwayImporter {
 	public String getName();
 	public String[] getExtensions();	

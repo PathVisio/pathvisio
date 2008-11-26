@@ -43,6 +43,9 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 
+/**
+ * helps transfer Pathways or bits of pathway over the clipboard
+ */
 public class PathwayTransferable implements Transferable {
 	public static final String INFO_DATASOURCE = "COPIED";
 

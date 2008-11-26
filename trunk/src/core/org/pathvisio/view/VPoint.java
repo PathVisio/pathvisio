@@ -26,6 +26,9 @@ import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.LinAlg.Point;
 
+/**
+ * One of the two endpoints of a line. Carries a single handle.
+ */
 public class VPoint extends VPathwayElement {
 	Handle handle;
 	Line line;

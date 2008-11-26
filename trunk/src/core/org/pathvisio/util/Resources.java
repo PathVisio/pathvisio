@@ -20,6 +20,10 @@ import java.net.URL;
 
 import org.pathvisio.debug.Logger;
 
+/**
+ * Utility function related to getting Resources from the class path.
+ * TODO: merge with org.pathvisio.util.Utils.
+ */
 public class Resources 
 {
 	/**

@@ -38,6 +38,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class PathwayParser extends DefaultHandler 
 {
+	/** exception occuring during parsing of pathway, most likely because
+	 * the input file is not properly formatted */
 	public static class ParseException extends Exception
 	{
 		

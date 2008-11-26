@@ -506,6 +506,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			String msg = e.getMessage();
 			putValue(SHORT_DESCRIPTION, "Undo: " + msg);
 			setEnabled(!msg.equals(UndoManager.CANT_UNDO));
+			//TODO: why isn't this called?
 		}
 
 		public void applicationEvent(ApplicationEvent e) {

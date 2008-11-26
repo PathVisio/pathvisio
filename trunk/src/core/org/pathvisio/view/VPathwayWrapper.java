@@ -26,6 +26,9 @@ import javax.swing.KeyStroke;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
+/**
+ * Wrapper for VPathway that handles toolkit (swing / SWT) dependent differences.  
+ */
 public abstract interface VPathwayWrapper
 {		
 	public void redraw();

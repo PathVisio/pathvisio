@@ -16,6 +16,12 @@
 //
 package org.pathvisio.view;
 
+/**
+ * Identifiers for layout action types related to neatly laying out pathway elements, a. o. 
+ * aligning, scaling to the same size and stacking pathway elements.
+ * 
+ * For each action, a short description, a long description and an icon name is stored.
+ */
 public enum LayoutType {
 	ALIGN_CENTERX("Align Center X", "Align horizontal centers", "aligncenterx.gif"),
 	ALIGN_CENTERY("Align Center Y", "Align vertical centers", "aligncentery.gif"),

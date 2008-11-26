@@ -16,6 +16,9 @@
 //
 package org.pathvisio.view;
 
+/**
+ * Implement this if you wish to receive events when a VPathway is modified.
+ */
 public interface VPathwayListener {
 	public void vPathwayEvent(VPathwayEvent e);
 }

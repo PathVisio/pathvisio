@@ -63,6 +63,9 @@ import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
+/**
+ * swing-dependent implementation of VPathway.
+ */
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener {
 

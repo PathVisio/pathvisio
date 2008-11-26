@@ -18,6 +18,11 @@ package org.pathvisio.view.swing;
 
 import java.awt.event.MouseEvent;
 
+/** 
+ * Swing implementation of org.pathvisio.view.MouseEvent: handles
+ * converting a MouseEvent from swing (awt) to the more generic
+ * MouseEvent type understood by VPathway
+ */
 public class SwingMouseEvent extends org.pathvisio.view.MouseEvent {
 
 	MouseEvent awtEvent;

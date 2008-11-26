@@ -2360,6 +2360,7 @@ public class VPathway implements PathwayListener
 				.getMBoardHeight());
 	}
 
+	/** sorts graphics by VCenterY */
 	public static class YComparator implements Comparator<Graphics>
 	{
 		public int compare(Graphics g1, Graphics g2)
@@ -2373,6 +2374,7 @@ public class VPathway implements PathwayListener
 		}
 	}
 
+	/** sorts graphics by VCenterX */
 	public static class XComparator implements Comparator<Graphics>
 	{
 		public int compare(Graphics g1, Graphics g2)
@@ -2386,6 +2388,7 @@ public class VPathway implements PathwayListener
 		}
 	}
 
+	/** sorts Graphics by ZOrder */
 	public static class ZComparator implements Comparator<Graphics>
 	{
 		public int compare(Graphics g1, Graphics g2)

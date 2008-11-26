@@ -16,6 +16,9 @@
 //
 package org.pathvisio.util;
 
+/**
+ * Utility functions for statistics calculations.
+ */
 public class Stats 
 {
 	/**

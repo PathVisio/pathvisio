@@ -16,7 +16,7 @@
 //
 package org.pathvisio.view;
 
-
+/** generic keyboard input event for VPathway, toolkit (swing / SWT) independent */
 public class KeyEvent extends InputEvent {
 
 	//Types

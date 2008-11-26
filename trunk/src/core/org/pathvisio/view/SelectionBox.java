@@ -618,11 +618,16 @@ public class SelectionBox extends VPathwayElement
 		}
 	}
 
+	/** implement this if you want to be notified 
+	 * when the set of selected objects changes */
 	public interface SelectionListener
 	{
 		public void selectionEvent(SelectionEvent e);
 	}
 
+	/**
+	 * signals change to the set of currently selected objects.
+	 */
 	public static class SelectionEvent extends EventObject
 	{
 

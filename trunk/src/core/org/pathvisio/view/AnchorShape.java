@@ -18,6 +18,11 @@ package org.pathvisio.view;
 
 import java.awt.Shape;
 
+/**
+ * AnchorShape is responsible for defining the graphic for Anchors, 
+ * similar to ArrowShape for Arrows.
+ * Currently this is nothing but a wrapper for a simple java Shape.
+ */
 public class AnchorShape
 {
 	public AnchorShape (Shape shape)

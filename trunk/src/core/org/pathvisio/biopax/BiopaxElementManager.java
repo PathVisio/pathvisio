@@ -158,7 +158,7 @@ public class BiopaxElementManager {
 	}
 	
 	/**
-	 * Add a biopax element to the biopax document, but don't ignore it
+	 * Add a biopax element to the biopax document, but ignore it
 	 * in the BiopaxElementManager. This method can be used for elemens that
 	 * are not used by PathVisio but still have to be included in the GPML
 	 * file.

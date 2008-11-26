@@ -16,6 +16,10 @@
 //
 package org.pathvisio.biopax;
 
+/**
+ * A class that needs to be notified of BioPAX events
+ * implement this interface. 
+ */
 public interface BiopaxListener {
 	public void biopaxEvent(BiopaxEvent e);
 }

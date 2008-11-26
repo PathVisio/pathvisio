@@ -32,8 +32,7 @@ import org.pathvisio.model.ConnectorShape.Segment;
  * Implementation of the AStar algorithm, 
  * that can make connectors that avoid overlap with other shapes.
  * See http://theory.stanford.edu/~amitp/GameProgramming/index.html for a good explanation.
- */ 
-/*
+ *
  * TODO: improvement where, instead of using a fixed grid, we calculate a set of magic horizontal
  * and vertical lines and use that as basis for our grid.
  */

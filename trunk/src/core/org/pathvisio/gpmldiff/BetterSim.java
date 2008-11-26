@@ -22,6 +22,10 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 
+/**
+ * An implementation of the SimilarityFunction that compares elements,
+ * that was written after BasicSim and should be more finely tuned
+ */
 class BetterSim extends SimilarityFunction
 {
 

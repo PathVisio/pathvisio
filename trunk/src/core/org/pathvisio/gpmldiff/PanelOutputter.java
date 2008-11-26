@@ -31,6 +31,13 @@ import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 
+/**
+ * Outputs a pathway diff to two VPathways, highlighting the elements
+ * in the VPathway red, green or yellow.
+ * This is the Outputter used by GpmlDiffWindow, and thus by the GpmlDiff applet.
+ * TODO: this class is maybe better named DualVPathwayOutputter 
+ * as it's not directly linked to a panel.
+ */
 class PanelOutputter extends DiffOutputter
 {	
 	VPathway vpwy[] = new VPathway[2];

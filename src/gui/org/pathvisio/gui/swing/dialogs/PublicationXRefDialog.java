@@ -142,11 +142,11 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		JPanel contents = new JPanel();
 		contents.setLayout(new GridBagLayout());
 		
-		JLabel lbl_pmId = new JLabel(PMID);
-		JLabel lbl_title = new JLabel(TITLE);
-		JLabel lbl_source = new JLabel(SOURCE);
-		JLabel lbl_year = new JLabel(YEAR);
-		JLabel lbl_authors = new JLabel(AUTHORS);
+		JLabel lblPmId = new JLabel(PMID);
+		JLabel lblTitle = new JLabel(TITLE);
+		JLabel lblSource = new JLabel(SOURCE);
+		JLabel lblYear = new JLabel(YEAR);
+		JLabel lblAuthors = new JLabel(AUTHORS);
 		
 		pmId = new JTextField();
 		title = new JTextField();
@@ -195,11 +195,11 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		c.gridx = 0;
 		c.gridy = GridBagConstraints.RELATIVE;
 		c.weightx = 0;
-		contents.add(lbl_pmId, c);
-		contents.add(lbl_title, c);
-		contents.add(lbl_year, c);
-		contents.add(lbl_source, c);
-		contents.add(lbl_authors, c);
+		contents.add(lblPmId, c);
+		contents.add(lblTitle, c);
+		contents.add(lblYear, c);
+		contents.add(lblSource, c);
+		contents.add(lblAuthors, c);
 				
 		c.gridx = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;

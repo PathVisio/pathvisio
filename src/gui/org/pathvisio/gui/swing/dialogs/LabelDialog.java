@@ -16,6 +16,9 @@
 //
 package org.pathvisio.gui.swing.dialogs;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Frame;
@@ -36,9 +39,6 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.swing.FontChooser;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Dialog to modify label specific properties

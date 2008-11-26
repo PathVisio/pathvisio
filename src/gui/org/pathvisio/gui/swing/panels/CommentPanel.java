@@ -16,6 +16,10 @@
 //
 package org.pathvisio.gui.swing.panels;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -38,15 +42,11 @@ import javax.swing.event.DocumentListener;
 import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.util.Resources;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 public class CommentPanel extends PathwayElementPanel implements ActionListener {
 
 	protected static final String ADD = "Add comment";
 	protected static final String REMOVE = "Remove comment";
-	private static URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
+	private static final URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
 	
 	JPanel buttonPanel;
 	JScrollPane cmtPanel;
@@ -158,7 +158,7 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 			btnRemove.setBorder(null);
 			btnRemove.setToolTipText("Remove comment");
 			
-			MouseAdapter ma_highlight = new MouseAdapter() {
+			MouseAdapter maHighlight = new MouseAdapter() {
 				public void mouseEntered(MouseEvent e) {
 					e.getComponent().setBackground(new Color(200, 200, 255));
 				}
@@ -166,14 +166,14 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 					e.getComponent().setBackground(Color.WHITE);
 				}
 			};
-			btnRemove.addMouseListener(ma_highlight);
+			btnRemove.addMouseListener(maHighlight);
 			
 			btnPanel.add(btnRemove, cc.xy(1, 1));
 			
 			add(btnPanel, cc.xy(4, 2));
 			btnPanel.setVisible(false);
 			
-			MouseAdapter ma_hide = new MouseAdapter() {
+			MouseAdapter maHide = new MouseAdapter() {
 				public void mouseEntered(MouseEvent e) {
 					if(!readonly) btnPanel.setVisible(true);
 				}
@@ -183,8 +183,8 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 					}
 				}
 			};
-			addMouseListener(ma_hide);
-			txt.addMouseListener(ma_hide);
+			addMouseListener(maHide);
+			txt.addMouseListener(maHide);
 		}
 		
 		public void actionPerformed(ActionEvent e) {

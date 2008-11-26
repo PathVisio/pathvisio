@@ -16,6 +16,9 @@
 //
 package org.pathvisio.view.swing;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -59,9 +62,6 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
 
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener {
@@ -170,25 +170,25 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 
 	public void mouseDragged(MouseEvent e) {
 		Rectangle r = container.getViewport().getViewRect();
-		final int STEPSIZE = 10;
+		final int stepSize = 10;
 		int newx = (int)r.getMinX();
 		int newy = (int)r.getMinY();
 		// scroll when dragging out of view
 		if (e.getX() > r.getMaxX())
 		{
-			newx += STEPSIZE;
+			newx += stepSize;
 		}
 		if (e.getX() < r.getMinX())
 		{
-			newx = Math.max (newx - STEPSIZE, 0);
+			newx = Math.max (newx - stepSize, 0);
 		}
 		if (e.getY() > r.getMaxY())
 		{
-			newy += STEPSIZE;
+			newy += stepSize;
 		}
 		if (e.getY() < r.getMinY())
 		{
-			newy = Math.max (newy - STEPSIZE, 0);
+			newy = Math.max (newy - stepSize, 0);
 		}
 		container.getViewport().setViewPosition(
 				new Point (newx, newy)

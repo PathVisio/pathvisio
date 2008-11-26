@@ -16,7 +16,6 @@
 //
 package org.pathvisio.gui.swing;
 
-import java.awt.FileDialog;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 

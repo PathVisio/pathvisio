@@ -33,6 +33,9 @@ import java.util.Random;
 
 import org.pathvisio.debug.Logger;
 
+/**
+ * Collection of static utility methods dealing with files.
+ */
 public class FileUtils {	
 	/**
 	 * Get all files in a directory
@@ -69,6 +72,9 @@ public class FileUtils {
 		return fileList;
 	}
 	
+	/**
+	 * Think "deltree" or "rm -r"
+	 */
 	public static void deleteRecursive(File file) {
 		if(file.isDirectory()) {
 			for(File f : file.listFiles()) deleteRecursive(f);

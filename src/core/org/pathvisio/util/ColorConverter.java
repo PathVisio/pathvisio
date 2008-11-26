@@ -20,6 +20,12 @@ import java.awt.Color;
 
 import org.jdom.Element;
 
+/**
+ * Methods for writing and parsing colors in different ways.
+ * There are two methods for exchanging RGB triplets in a 255,255,255 string format,
+ * and two methods for exchanging RGB triplets as 
+ * a <color red="255" green="255" blue="255"/> JDom element 
+ */
 public abstract class ColorConverter
 {		
 	/**
@@ -56,7 +62,11 @@ public abstract class ColorConverter
 	final static String XML_COLOR_R = "red";
 	final static String XML_COLOR_G = "green";
 	final static String XML_COLOR_B = "blue";
-    public static Element createColorElement(String name, Color rgb) {
+    
+	/**
+	 * Create a JDom Element to store this RGB triplet
+	 */
+	public static Element createColorElement(String name, Color rgb) {
     	Element elm = new Element(XML_ELEMENT_COLOR);
     	elm.setName(name);
     	elm.setAttribute(XML_COLOR_R, Integer.toString(rgb.getRed()));
@@ -66,6 +76,9 @@ public abstract class ColorConverter
     	return elm;
     }
     
+	/**
+	 * obtain the RGB triplet from a JDom element.
+	 */
     public static Color parseColorElement(Element xml) {
     	int r = Integer.parseInt(xml.getAttributeValue(XML_COLOR_R));
     	int g = Integer.parseInt(xml.getAttributeValue(XML_COLOR_G));

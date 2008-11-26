@@ -374,6 +374,10 @@ public class Engine
 		for(ApplicationEventListener l : applicationEventListeners) l.applicationEvent(e);
 	}
 	
+	/**
+	 * Implement this if you want to receive events upon opening / closing
+	 * pathways
+	 */
 	public interface ApplicationEventListener {
 		public void applicationEvent(ApplicationEvent e);
 	}

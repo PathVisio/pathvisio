@@ -27,6 +27,11 @@ import java.awt.geom.Rectangle2D;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 
+/**
+ * A LinkAnchor is a small round target on a Shape or Line that appears
+ * only when you drag a line end around. If the line end is near a LinkAnchor,
+ * the line end "connects" to the Shape or Line.
+ */
 public class LinkAnchor {
 	static final double DRAW_RADIUS = 5 * 15;
 	static final double MATCH_RADIUS = DRAW_RADIUS + 5 * 15;

@@ -134,6 +134,10 @@ public class LinAlg
 		return pr;
 	}
 	
+	/**
+	 * Point, pair of doubles. Supports adding, substracting,
+	 * calculating the length of the vector, etc.
+	 */
 	public static class Point 
 	{
 		public double x, y;

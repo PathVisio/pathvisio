@@ -21,12 +21,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Extensible enum pattern for defining the various possible arrow heads.
+ * NB: the name LineType is slightly misleading, as it refers strictly to arrowheads and
+ * other kinds of line endings.
+ * A Line in PathVisio has two endings that each can have a different "LineType" 
+ */
 public class LineType 
 {
 	private static Map<String, LineType> mappMappings = new HashMap<String, LineType>();
 	private static Map<String, LineType> nameMappings = new HashMap<String, LineType>();
 	private static List<LineType> values = new ArrayList<LineType>();
 
+	/** LineType LINE means the absence of an arrowhead */
 	public static final LineType LINE = new LineType("Line", "Line");
 	public static final LineType ARROW = new LineType("Arrow", "Arrow");
 	public static final LineType TBAR = new LineType("TBar", "TBar");

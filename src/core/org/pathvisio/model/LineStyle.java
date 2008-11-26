@@ -16,7 +16,9 @@
 //
 package org.pathvisio.model;
 
-
+/**
+ * LineStyle, either solid or Dashed. Not to be confused with LineType.
+ */
 public class LineStyle {
 	public static final int SOLID = 0;
 	public static final int DASHED = 1;

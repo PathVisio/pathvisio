@@ -26,9 +26,9 @@ import java.util.Map;
  * 
  * Note: the set of keys has to be known at creation, and can't be changed later!
  * 
- * @param S Object type of row keys
- * @param T Object type of column keys
- * @param U Object type of values
+ * @param <S> Object type of row keys
+ * @param <T> Object type of column keys
+ * @param <U> Object type of values
  */
 public class Map2D <S, T, U>
 {

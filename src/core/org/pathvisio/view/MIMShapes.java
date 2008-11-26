@@ -24,6 +24,10 @@ import java.awt.geom.Rectangle2D;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.ShapeType;
 
+/**
+ * Collection of Shapes and ArrowHeads used in 
+ * the Molecular Interaction Map - style of pathways
+ */
 public class MIMShapes
 {
 	public static void registerShapes()

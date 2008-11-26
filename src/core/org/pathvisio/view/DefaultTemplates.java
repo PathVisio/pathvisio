@@ -30,9 +30,17 @@ import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.util.Resources;
 
+/**
+ * Contains a set of templates, patterns of PathwayElements that can
+ * be added to a Pathway, including default values.
+ */
 public abstract class DefaultTemplates {
 	final static Color COLOR_METABOLITE = Color.BLUE;
 	
+	/**
+	 * Abstract base for templates that only add a single PathwayElement
+	 * to a Pathway
+	 */
 	static abstract class SingleElementTemplate implements Template {
 		PathwayElement lastAdded;
 		
@@ -65,6 +73,10 @@ public abstract class DefaultTemplates {
 			return  Resources.getResourceURL("new" + getName().toLowerCase() + ".gif");
 		}
 	}
+	
+	/**
+	 * Template for adding a single line to a Pathway.
+	 */
 	public static class LineTemplate extends SingleElementTemplate {
 		int style;
 		LineType startType;
@@ -106,6 +118,9 @@ public abstract class DefaultTemplates {
 		}
 	}
 	
+	/**
+	 * Template for adding a Label to a Pathway
+	 */
 	public static class LabelTemplate extends SingleElementTemplate {
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
 			PathwayElement e = PathwayElement.createPathwayElement(ObjectType.LABEL);
@@ -129,6 +144,9 @@ public abstract class DefaultTemplates {
 		}
 	}
 	
+	/**
+	 * Template for adding a DataNode to a Pathway. Pass a DataNodeType upon creation
+	 */
 	public static class DataNodeTemplate extends SingleElementTemplate {
 		DataNodeType type;
 		
@@ -168,6 +186,9 @@ public abstract class DefaultTemplates {
 		}
 	}
 	
+	/**
+	 * Template for adding a Shape to a Pathway. Pass a ShapeType upon creation.
+	 */
 	public static class ShapeTemplate extends SingleElementTemplate {
 		ShapeType type;
 		
@@ -202,7 +223,9 @@ public abstract class DefaultTemplates {
 		}
 	}
 	
-
+	/**
+	 * Template for an interaction, two datanodes with a connecting line.
+	 */
 	public static class InteractionTemplate implements Template {
 		final static int OFFSET_LINE = 5 * 15;
 		PathwayElement lastStartNode;
@@ -255,6 +278,10 @@ public abstract class DefaultTemplates {
 		}
 	}
 	
+	/**
+	 * Template for a reaction, two Metabolites with a connecting arrow, and a GeneProduct (enzyme)
+	 * pointing to an anchor on that arrow.
+	 */
 	public static class ReactionTemplate extends InteractionTemplate {
 		static final double OFFSET_CATALYST = 50 * 15;
 		PathwayElement lastCatalyst;

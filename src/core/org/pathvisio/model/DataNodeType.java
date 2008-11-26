@@ -19,6 +19,11 @@ package org.pathvisio.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Refers to the biological type of a DataNode, e.g. RNA, PROTEIN etc.
+ * Most existing pathways use either METABOLITE or GENEPRODUCT. The use of the other
+ * types is not clearly defined.
+ */
 public enum DataNodeType {
 	UNKOWN("Unknown"),
 	RNA("Rna"),

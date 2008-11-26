@@ -220,7 +220,7 @@ public class StandaloneActions
 		public void actionPerformed(ActionEvent e) 
 		{
 			PreferencesDlg dlg = new PreferencesDlg();
-			dlg.createAndShowGUI();
+			dlg.createAndShowGUI(swingEngine);
 		}
 	}
 

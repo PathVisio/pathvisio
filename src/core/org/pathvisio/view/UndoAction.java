@@ -16,7 +16,6 @@
 //
 package org.pathvisio.view;
 
-import org.pathvisio.Engine;
 import org.pathvisio.model.Pathway;
 
 public class UndoAction 
@@ -30,7 +29,17 @@ public class UndoAction
 	
 	private String message;
 	private Pathway originalState;
-
+	private UndoManager undoMgr;
+	
+	/**
+	 * Set the undo manager that will be used to perform
+	 * the undo. This will be set by {@link UndoManager#newAction}
+	 * @param undoMgr
+	 */
+	protected void setUndoManager(UndoManager undoMgr) {
+		this.undoMgr = undoMgr;
+	}
+	
 	public String getMessage()
 	{
 		return message;	
@@ -49,6 +58,8 @@ public class UndoAction
 		Engine.getCurrent().createVPathway (originalState);
 		Engine.getCurrent().getActiveVPathway().setUndoManager(um);
 		*/
-		Engine.getCurrent().replacePathway (originalState);
+		if(undoMgr != null) {
+			undoMgr.getEngine().replacePathway (originalState);
+		}
 	}
 }

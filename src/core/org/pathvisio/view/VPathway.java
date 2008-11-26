@@ -39,18 +39,19 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
+import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElement.MAnchor;
-import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
+import org.pathvisio.model.Pathway.StatusFlagEvent;
+import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -169,7 +170,9 @@ public class VPathway implements PathwayListener
 
 		selection = new SelectionBox(this);
 
-		registerKeyboardActions();
+		//Code that uses VPathway have to initialize
+		//the keyboard actions explicitly, if necessary.
+		//registerKeyboardActions();
 	}
 
 	public void redraw()
@@ -1410,9 +1413,9 @@ public class VPathway implements PathwayListener
 		parent.registerKeyboardAction(key, a);
 	}
 
-	private void registerKeyboardActions()
+	public void registerKeyboardActions(Engine engine)
 	{
-		viewActions = new ViewActions(this);
+		viewActions = new ViewActions(engine, this);
 
 		registerKeyboardAction(viewActions.copy);
 		registerKeyboardAction(viewActions.paste);
@@ -1430,21 +1433,29 @@ public class VPathway implements PathwayListener
 		registerKeyboardAction(viewActions.orderDown);
 		registerKeyboardAction(viewActions.showUnlinked);
 		parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(
+				engine,
 				KEY_MOVERIGHT));
 		parent.registerKeyboardAction(KEY_MOVERIGHT_SHIFT, new KeyMoveAction(
+				engine,
 				KEY_MOVERIGHT_SHIFT));
 		parent.registerKeyboardAction(KEY_MOVELEFT, new KeyMoveAction(
+				engine,
 				KEY_MOVELEFT));
 		parent.registerKeyboardAction(KEY_MOVELEFT_SHIFT, new KeyMoveAction(
+				engine,
 				KEY_MOVELEFT_SHIFT));
 		parent
 				.registerKeyboardAction(KEY_MOVEUP, new KeyMoveAction(
+						engine,
 						KEY_MOVEUP));
 		parent.registerKeyboardAction(KEY_MOVEUP_SHIFT, new KeyMoveAction(
+				engine,
 				KEY_MOVEUP_SHIFT));
 		parent.registerKeyboardAction(KEY_MOVEDOWN, new KeyMoveAction(
+				engine,
 				KEY_MOVEDOWN));
 		parent.registerKeyboardAction(KEY_MOVEDOWN_SHIFT, new KeyMoveAction(
+				engine,
 				KEY_MOVEDOWN_SHIFT));
 	}
 
@@ -2385,6 +2396,16 @@ public class VPathway implements PathwayListener
 	
 	UndoManager undoManager = new UndoManager();
 
+	/**
+	 * Activates the undo manager by providing an engine
+	 * to which the undo actions will be applied. If this
+	 * method is not called, the undo manager will not 
+	 * record any undo actions.
+	 */
+	public void activateUndoManager(Engine engine) {
+		undoManager.activate(engine);
+	}
+	
 	/**
 	 * returns undoManager owned by this instance of VPathway.
 	 */

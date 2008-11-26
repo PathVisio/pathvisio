@@ -19,6 +19,7 @@ package org.pathvisio.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pathvisio.Engine;
 import org.pathvisio.model.Pathway;
 
 public class UndoManager 
@@ -31,6 +32,38 @@ public class UndoManager
 	
 	public void setPathway (Pathway pathway) {
 		this.pathway = pathway;
+	}
+	
+	private Engine engine;
+	
+	/**
+	 * Check if this undo manager is active.
+	 * If there is no instance of Engine available,
+	 * the undo manager will not record any undo events.
+	 * Provide an instance of engine to activate the undo
+	 * manager.
+	 * @see #activate(Engine)
+	 */
+	public boolean isActive() {
+		return engine != null;
+	}
+	
+	/**
+	 * Set the engine for this undo manager.
+	 * @param engine
+	 */
+	public void activate (Engine engine) {
+		this.engine = engine;
+	}
+
+	/**
+	 * Get the engine for this undo manager. The engine
+	 * can be null, in which case the undo manager will be
+	 * inactive.
+	 * @return The Engine, or null if the undo manager is inactive.
+	 */
+	protected Engine getEngine() {
+		return engine;
 	}
 	
 	static final int MAX_UNDO_SIZE = 25;
@@ -46,6 +79,9 @@ public class UndoManager
 	 */
 	public void newAction (UndoAction act)
 	{		
+		if(!isActive()) return; //Don' record event if inactive
+		
+		act.setUndoManager(this);
 		undoList.add (act);
 		if (undoList.size() > MAX_UNDO_SIZE)
 		{
@@ -64,8 +100,11 @@ public class UndoManager
 	 */
 	public void newAction (String desc)
 	{
+		if(!isActive()) return; //Don' record event if inactive
+		
 		if(pathway != null) {
 			UndoAction x = new UndoAction (desc, (Pathway)pathway.clone());
+			x.setUndoManager(this);
 			newAction (x);
 		}
 	}
@@ -86,7 +125,7 @@ public class UndoManager
 	
 	void undo()
 	{
-		if (undoList.size() > 0)
+		if (undoList.size() > 0 && isActive())
 		{
 			UndoAction a = undoList.get(undoList.size()-1);
 			a.undo();

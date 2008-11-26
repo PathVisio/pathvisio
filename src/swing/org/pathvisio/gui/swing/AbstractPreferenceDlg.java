@@ -22,16 +22,31 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -314,9 +329,9 @@ abstract public class AbstractPreferenceDlg
 	/**
 	 * call this to open the dialog
 	 */
-	public void createAndShowGUI()
+	public void createAndShowGUI(SwingEngine swingEngine)
 	{
-		final JDialog dlg = new JDialog(SwingEngine.getCurrent().getFrame(), "Preferences", true);
+		final JDialog dlg = new JDialog(swingEngine.getFrame(), "Preferences", true);
 		dlg.setLayout (new BorderLayout());
 		
 		initPanels();
@@ -376,7 +391,7 @@ abstract public class AbstractPreferenceDlg
 		dlg.add (pnlButtons, BorderLayout.SOUTH);
 		
 		dlg.pack();
-		dlg.setLocationRelativeTo(SwingEngine.getCurrent().getFrame());
+		dlg.setLocationRelativeTo(swingEngine.getFrame());
 		dlg.setVisible (true);
 	}
 }

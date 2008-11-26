@@ -29,8 +29,8 @@ import javax.swing.ProgressMonitor;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.FileUtils;
@@ -75,11 +75,11 @@ public class SearchMethods
 	{
 		private List<Xref> refs;
 
-		public ByXrefMatcher(Xref ref) throws SearchException
+		public ByXrefMatcher(Gdb gdb, Xref ref) throws SearchException
 		{
 			try
 			{
-				refs = SwingEngine.getCurrent().getGdbManager().getCurrentGdb().getCrossRefs(ref);
+				refs = gdb.getCrossRefs(ref);
 			}
 			catch (DataException ex)
 			{

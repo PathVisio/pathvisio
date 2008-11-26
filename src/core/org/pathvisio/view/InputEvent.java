@@ -18,6 +18,11 @@ package org.pathvisio.view;
 
 import java.util.EventObject;
 
+/**
+ * base class for MouseEvent and KeyEvent: represents an input event
+ * independent of toolkit (swing or SWT)
+ * TODO: no longer needed. Just use swing event
+ */
 public class InputEvent extends EventObject {
 
 	public static final int M_SHIFT = java.awt.event.InputEvent.SHIFT_DOWN_MASK;

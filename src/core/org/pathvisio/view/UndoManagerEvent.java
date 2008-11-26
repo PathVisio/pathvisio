@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view;
 
+/** signals that an action was added or removed from the undo stack. */
 public class UndoManagerEvent
 {
 	public UndoManagerEvent (String msg)

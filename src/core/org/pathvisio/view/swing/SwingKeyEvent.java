@@ -18,6 +18,10 @@ package org.pathvisio.view.swing;
 
 import java.awt.event.KeyEvent;
 
+/** swing-specific implementation of the PathVisio Key Event,
+ * handles conversion from the swing(awt) key event to the
+ * more generic key event understood by VPathway. 
+ */
 public class SwingKeyEvent extends org.pathvisio.view.KeyEvent {
 
 	KeyEvent awtEvent;

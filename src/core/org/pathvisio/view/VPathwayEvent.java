@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
+/**
+ * event sent by VPathway upon modification of one or more VPathwayElements.
+ */
 public class VPathwayEvent extends EventObject {
 
 	public static final int ELEMENT_ADDED = 0;

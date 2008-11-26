@@ -18,6 +18,7 @@ package org.pathvisio.view;
 
 import java.util.EventListener;
 
+/** implement this if you wish to respond to changes in the Undo stack */
 public interface UndoManagerListener extends EventListener
 {
 	public void undoManagerEvent (UndoManagerEvent e);

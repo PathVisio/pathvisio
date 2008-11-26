@@ -26,6 +26,14 @@ import java.awt.geom.Rectangle2D;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 
+/**
+ * A single graphical element in the view of a pathway. Handles bounds checking and dirty rectangles.
+ * NB: this does not necessarily correspond directly with a org.pathvisio.model.PathwayElement.
+ * 
+ * VPathwayElement includes purely visual helpers that do not have direct correspondence in the model,
+ * such as handles and a selection box.
+ * TODO naming - better named VElement, because there is no connection to PathwayElement.  
+ */
 public abstract class VPathwayElement implements Comparable<VPathwayElement>
 {	
 	protected BasicStroke defaultStroke = new BasicStroke();

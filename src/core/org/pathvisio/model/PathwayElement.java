@@ -118,6 +118,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return attributes.get (key);
 	}
 	
+	/**
+	 * A comment in a pathway element: each 
+	 * element can have zero or more comments with it, and
+	 * each comment has a source and a text.
+	 */
 	public class Comment implements Cloneable
 	{
 		public Comment(String aComment, String aSource)

@@ -18,6 +18,13 @@ package org.pathvisio.view;
 
 import org.pathvisio.model.Pathway;
 
+/** 
+ * a single item on the undo stack. 
+ * Stores a complete copy of the Pathway as it was before the user modified it, so
+ * it can be restored.
+ * 
+ * TODO: remember selection state as well.
+ */
 public class UndoAction 
 {	
 	public UndoAction(String aMessage, 

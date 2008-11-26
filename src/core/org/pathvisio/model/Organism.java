@@ -22,6 +22,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * enum representing organisms understood by PathVisio.
+ * Handles conversion from full bionominal name to common name and short code.
+ * Still work in progress, currently not used everywhere it could be used.
+ * TODO: make extensible 
+ */
 public enum Organism {
 	MusMusculus("Mus musculus", "Mm", "Mouse"),
 	HomoSapiens("Homo sapiens", "Hs", "Human"),

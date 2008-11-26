@@ -26,6 +26,10 @@ import javax.swing.KeyStroke;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
+/**
+ * Nearly empty base class for VPathwayWrapper, the bare minimum.
+ * Can be used when no interactive GUI is needed.
+ */
 public class VPathwayWrapperBase implements VPathwayWrapper {
 	Dimension vSize = new Dimension();
 	

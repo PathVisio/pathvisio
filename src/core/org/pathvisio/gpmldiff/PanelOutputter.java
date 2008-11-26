@@ -117,7 +117,8 @@ class PanelOutputter extends DiffOutputter
 	 */
 	static public class ModData implements Comparable<ModData>
 	{
-		static public enum ModType
+		/** type of modication: added, removed, changed */
+		static enum ModType
 		{
 			ADDED,
 			REMOVED,

@@ -18,6 +18,10 @@ package org.pathvisio.view;
 
 import java.awt.Point;
 
+/** 
+ * Represents a mouse event in a way that is independent of toolkit (swing or SWT) 
+ * TODO: no longer needed. Just use swing event
+ */
 public abstract class MouseEvent extends InputEvent {
 
 	//Buttons

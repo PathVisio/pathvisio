@@ -41,17 +41,17 @@ import javax.swing.Timer;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayListener;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -61,6 +61,9 @@ import org.pathvisio.view.ViewActions.KeyMoveAction;
  * This class implements and handles a drawing. Graphics objects are stored in
  * the drawing and can be visualized. The class also provides methods for mouse
  * and key event handling.
+ * 
+ * It's necessary to call PreferenceManager.init() before you can instantiate
+ * this class.
  */
 public class VPathway implements PathwayListener
 {
@@ -164,6 +167,16 @@ public class VPathway implements PathwayListener
 	 */
 	public VPathway(VPathwayWrapper parent)
 	{
+		//NOTE: you need to call PreferenceManager.init() at application start,
+		// before instantiating a VPathway
+		//This used to be called by Engine.init(), but not anymore.
+		//TODO: make preferencemanager a non-static object, so this check is obsolete.
+		if (PreferenceManager.getCurrent() == null)
+		{
+			throw new InstantiationError(
+					"Please call PreferenceManager.init() before instantiating a VPathway"
+			);
+		}
 		this.parent = parent == null ? new VPathwayWrapperBase() : parent;
 
 		drawingObjects = new ArrayList<VPathwayElement>();

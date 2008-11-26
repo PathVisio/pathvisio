@@ -35,6 +35,7 @@ import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.MIMShapes;
 import org.pathvisio.view.VPathway;
@@ -141,7 +142,7 @@ public class ColorExporter implements VPathwayListener {
 	}
 	
 	public static void main(String[] args) {
-		Engine.init();
+		PreferenceManager.init();
 		
 		if(args.length < 2) {
 			printHelp();

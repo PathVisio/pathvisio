@@ -24,7 +24,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.Engine;
+import org.pathvisio.preferences.PreferenceManager;
 
 public class Test extends TestCase implements PathwayListener 
 {
@@ -36,7 +36,7 @@ public class Test extends TestCase implements PathwayListener
 	
 	public void setUp()
 	{
-		Engine.init();
+		PreferenceManager.init();
 		data = new Pathway();
 		data.addListener(this);
 		o = PathwayElement.createPathwayElement(ObjectType.DATANODE);

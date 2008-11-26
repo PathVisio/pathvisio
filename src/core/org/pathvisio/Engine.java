@@ -54,62 +54,10 @@ public class Engine
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";
 	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
 	
-	// use Engine.init() to create an Engine
-	public Engine()
-	{
-		PreferenceManager.init();
-	}
-	
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
 	public static final Color TRANSPARENT_COLOR = new Color(255, 0, 255);
-	
-	private static Engine currentEngine;
-	
-	/**
-	 * Get the current instance of Engine
-	 * @return
-	 * @deprecated
-	 */
-	public static Engine getCurrent() 
-	{
-		if(currentEngine == null) 
-		{
-			throw new IllegalArgumentException ("Current Engine was not initialized!");
-		}
-		return currentEngine;
-	}
-	
-	//TODO: use constructor instead of init()
-	public static Engine init()
-	{
-		if (currentEngine != null)
-		{
-			Logger.log.warn ("Tried to initialize Engine for the second time");
-		}
-		else
-		{
-			currentEngine = new Engine();
-		}
-		return currentEngine;
-	}
-	
-	/**
-	 * Sets currentEngine to null.
-	 */
-	public static void destroy() {
-		currentEngine = null;
-	}
-	
-	/**
-	 * Set the current Engine
-	 * Any previous Engine will be lost
-	 * @param e
-	 */
-	public static void setCurrent(Engine e) {
-		currentEngine = e;
-	}
 	
 	/**
 	   Set this to the toolkit-specific wrapper before opening or

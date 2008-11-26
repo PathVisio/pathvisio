@@ -314,7 +314,8 @@ public class GuiMain
 	
 	private void init()
 	{
-		Engine engine = Engine.init();
+		PreferenceManager.init();
+		Engine engine = new Engine();
 		initLog(engine);
 		engine.setApplicationName("PathVisio 1.1");
 		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
@@ -327,7 +328,7 @@ public class GuiMain
 			}
 		}
 
-		swingEngine = SwingEngine.init(engine);
+		swingEngine = new SwingEngine(engine);
 		swingEngine.setUrlBrowser(new Browser() {
 			public void openUrl(URL url) {
 				try {

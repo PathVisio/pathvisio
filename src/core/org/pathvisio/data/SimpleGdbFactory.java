@@ -22,6 +22,12 @@ import java.sql.SQLException;
 
 import org.pathvisio.debug.Logger;
 
+/**
+ * Factory class that instantiates the correct SimpleGdb implementation
+ * for a new / existing gdb,
+ * based on the schema version.
+ * Use this class for creating / connecting to any SimpleGdb database.
+ */
 public class SimpleGdbFactory 
 {
 	static final int LATEST_SCHEMA_VERSION = 2;

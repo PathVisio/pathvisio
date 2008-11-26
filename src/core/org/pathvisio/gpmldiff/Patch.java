@@ -34,6 +34,11 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
 
+/**
+ * A patch contains a series of deletions, insertions and modifications
+ * and can be read from an Dgpml XML file, and then applied to a Pathway object.
+ * This class does not handle writing modifications, that is done by DgpmlOutputter.
+ */
 class Patch
 {
 	private class Change

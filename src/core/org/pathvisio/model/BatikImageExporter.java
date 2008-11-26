@@ -36,6 +36,10 @@ import org.pathvisio.view.VPathway;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+/**
+ * Export Pathway image through Batik, which can handle a number of file formats
+ * including SVG, PNG, PDF and TIFF 
+ */
 public class BatikImageExporter extends ImageExporter {
 
 	public BatikImageExporter(String type) {

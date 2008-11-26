@@ -26,6 +26,15 @@ import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.AnchorType;
 
+/**
+ * Defines and registers all basic shapes and arrowheads, such Oval,
+ * Rectangle, Arrow, TBar.
+ * 
+ * Note that this does not include all shapes used in GenMAPP, See GenMAPPShapes for more
+ * Shapes defined by GenMAPP.
+ * 
+ * Shapes are defined and registered in the static section of this class.
+ */
 class BasicShapes
 {
 	static void registerShapes()

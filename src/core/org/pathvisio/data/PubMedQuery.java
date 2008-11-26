@@ -27,17 +27,32 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+/**
+ * This class can handle a query for a pubmed record.
+ * Just instantiate this class with a given pubmed id (pmid),
+ * and run execute() (this method may block, so don't call it from the UI thread)
+ * The result can then be obtained with getResult()
+ * TODO: move DefaultHandler methods to private subclass, they don't need to be exposed. 
+ */
 public class PubMedQuery extends DefaultHandler {
 	static final String URL_BASE = "http://www.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi";
 	
 	String id;
 	PubMedResult result;
 	
+	/**
+	 * Prepares a new pubmed query for the given pmid, e.g. "17588266".
+	 */
 	public PubMedQuery(String id) {
 		this.id = id;
 	}
 	
+	/**
+	 * Execute a query. Don't call this from the UI thread, because
+	 * this method blocks.
+	 */
 	public void execute() throws IOException, SAXException {
+		//TODO: assert not being in UI thread
 		String urlString = URL_BASE;
 		urlString += "?db=pubmed&id=" + id;
 		
@@ -55,6 +70,9 @@ public class PubMedQuery extends DefaultHandler {
 		is.close();
 	}
 	
+	/**
+	 * get the result, after execute() has finished.
+	 */
 	public PubMedResult getResult() {
 		return result;
 	}

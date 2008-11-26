@@ -52,7 +52,7 @@ import javax.swing.SwingUtilities;
  * This is the final version of the GlassPane
  * it is transparent for MouseEvents,
  * and respects underneath component's cursors by default,
- * it is also friedly for other users,
+ * it is also friendly for other users,
  * if someone adds a mouseListener to this GlassPane
  * or set a new cursor it will respect them
  *
@@ -60,6 +60,9 @@ import javax.swing.SwingUtilities;
  */
 class GlassPane extends JPanel implements AWTEventListener
 {
+	/**
+	 * Type of element modification
+	 */
 	private static enum Type 
 	{
 		MODIFY,

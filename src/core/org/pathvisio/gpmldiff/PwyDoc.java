@@ -173,6 +173,9 @@ class PwyDoc
 		}		
 	}
 	
+	/**
+	 * Used for sorting pathway elements by the max matching score
+	 */
 	class MaxScoreComparator implements Comparator<PathwayElement>
 	{
 		Map <PathwayElement, Integer> scores;

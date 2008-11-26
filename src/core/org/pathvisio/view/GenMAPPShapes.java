@@ -18,6 +18,13 @@ package org.pathvisio.view;
 
 import java.awt.geom.GeneralPath;
 
+/**
+ * This defines and registers some 
+ * Special Shapes that are very specific to GenMAPP,
+ * such as the GenMAPP ProteinComplex, Vesicle and Ribosome.
+ * 
+ * Shapes are defined and registered in the static section of this class.
+ */
 class GenMAPPShapes
 {
 	static void registerShapes()

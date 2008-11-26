@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Extensible enum for Anchor types
+ */
 public class AnchorType implements Comparable<AnchorType> {
 	private static Map<String, AnchorType> nameMappings = new HashMap<String, AnchorType>();
 	private static Set<AnchorType> values = new TreeSet<AnchorType>();

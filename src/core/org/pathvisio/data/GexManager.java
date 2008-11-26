@@ -157,6 +157,10 @@ public class GexManager
 		for(GexManagerListener l : listeners) l.gexManagerEvent(e);
 	}
 	
+	/**
+	 * Implement this interface if you want to receive an event when 
+	 * an expression dataset is opened / closed
+	 */
 	public interface GexManagerListener 
 	{
 		public void gexManagerEvent(GexManagerEvent e);

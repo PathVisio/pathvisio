@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing.completer;
 
+import com.jroller.completer.CompleterFilterWithWindow;
+
 import java.util.HashSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -23,8 +25,6 @@ import java.util.TreeSet;
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-
-import com.jroller.completer.CompleterFilterWithWindow;
 
 /**
  * A completer filter that queries the completion options via

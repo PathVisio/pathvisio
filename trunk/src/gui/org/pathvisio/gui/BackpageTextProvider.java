@@ -26,13 +26,13 @@ import java.util.Set;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.data.SimpleGex;
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
@@ -42,10 +42,10 @@ import org.pathvisio.model.Xref;
 import org.pathvisio.util.Resources;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 
 /**
  * This class fetches and distributes the backpage text to all registered
@@ -55,7 +55,7 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 public class BackpageTextProvider implements ApplicationEventListener, SelectionListener, PathwayListener 
 {
 	PathwayElement input;
-	final static int maxThreads = 1;
+	final static int MAX_THREADS = 1;
 	volatile ThreadGroup threads;
 	volatile Thread lastThread;
 	
@@ -103,7 +103,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		if(threads == null || threads.isDestroyed()) {
 			threads = new ThreadGroup("backpage-queries" + System.currentTimeMillis());
 		}
-		if(threads.activeCount() < maxThreads) {
+		if(threads.activeCount() < MAX_THREADS) {
 				QueryThread qt = new QueryThread(input);
 				qt.start();
 				lastThread = qt;		

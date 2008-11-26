@@ -17,6 +17,9 @@
 
 package org.pathvisio.util.swing;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Frame;
@@ -31,10 +34,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
-
 
 public class FontChooser extends OkCancelDialog {
 	public static Font showDialog(Frame frame, Component locationComp, Font font) {

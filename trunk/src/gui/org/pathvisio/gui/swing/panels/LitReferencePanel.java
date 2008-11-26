@@ -16,6 +16,10 @@
 //
 package org.pathvisio.gui.swing.panels;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -44,16 +48,12 @@ import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.Resources;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 public class LitReferencePanel extends PathwayElementPanel implements ActionListener {
-	static final String ADD = "New reference";
-	static final String REMOVE = "Remove";
-	static final String EDIT = "Edit";
-	private static URL IMG_EDIT= Resources.getResourceURL("edit.gif");
-	private static URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
+	private static final String ADD = "New reference";
+	private static final String REMOVE = "Remove";
+	private static final String EDIT = "Edit";
+	private static final URL IMG_EDIT= Resources.getResourceURL("edit.gif");
+	private static final URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
 	
 	BiopaxReferenceManager refMgr;
 	BiopaxElementManager elmMgr;
@@ -133,7 +133,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			btnRemove.setBorder(null);
 			btnRemove.setToolTipText("Remove literature reference");
 			
-			MouseAdapter ma_highlight = new MouseAdapter() {
+			MouseAdapter maHighlight = new MouseAdapter() {
 				public void mouseEntered(MouseEvent e) {
 					e.getComponent().setBackground(new Color(200, 200, 255));
 				}
@@ -141,8 +141,8 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 					e.getComponent().setBackground(Color.WHITE);
 				}
 			};
-			btnEdit.addMouseListener(ma_highlight);
-			btnRemove.addMouseListener(ma_highlight);
+			btnEdit.addMouseListener(maHighlight);
+			btnRemove.addMouseListener(maHighlight);
 			
 			btnPanel.add(btnEdit, cc.xy(1, 1));
 			btnPanel.add(btnRemove, cc.xy(1, 2));
@@ -150,7 +150,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			add(btnPanel, cc.xy(4, 2));
 			btnPanel.setVisible(false);
 			
-			MouseAdapter ma_hide = new MouseAdapter() {
+			MouseAdapter maHide = new MouseAdapter() {
 				public void mouseEntered(MouseEvent e) {
 					if(!readonly) btnPanel.setVisible(true);
 				}
@@ -160,8 +160,8 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 					}
 				}
 			};
-			addMouseListener(ma_hide);
-			txt.addMouseListener(ma_hide);
+			addMouseListener(maHide);
+			txt.addMouseListener(maHide);
 		}
 		
 		public void hyperlinkUpdate(HyperlinkEvent e) {

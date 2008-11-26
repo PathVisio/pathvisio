@@ -38,10 +38,10 @@ import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
@@ -65,10 +65,10 @@ import org.pathvisio.view.ViewActions.UndoAction;
  * @see {@link ViewActions}
  */
 public class CommonActions implements ApplicationEventListener {
-	private static URL IMG_SAVE = Resources.getResourceURL("save.gif");
-	private static URL IMG_SAVEAS = Resources.getResourceURL("saveas.gif");
-	private static URL IMG_IMPORT = Resources.getResourceURL("import.gif");
-	private static URL IMG_EXPORT = Resources.getResourceURL("export.gif");
+	private static final URL IMG_SAVE = Resources.getResourceURL("save.gif");
+	private static final URL IMG_SAVEAS = Resources.getResourceURL("saveas.gif");
+	private static final URL IMG_IMPORT = Resources.getResourceURL("import.gif");
+	private static final URL IMG_EXPORT = Resources.getResourceURL("export.gif");
 	
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {

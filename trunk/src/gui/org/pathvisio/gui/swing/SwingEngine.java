@@ -35,8 +35,8 @@ import javax.swing.filechooser.FileFilter;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.Globals;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
@@ -46,9 +46,9 @@ import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
-import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
@@ -136,11 +136,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public boolean hasApplicationPanel() {
 		return mainPanel != null;
 	}	
-	
-	public static String MSG_UNABLE_IMPORT = "Unable to import GPML file.";
-	public static String MSG_UNABLE_EXPORT = "Unable to export GPML file.";
-	public static String MSG_UNABLE_SAVE = "Unable to save GPML file.";
-	public static String MSG_UNABLE_OPEN = "Unable to open GPML file.";
 	
 	public void handleConverterException(String message, Component c, ConverterException e) {
 		if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))

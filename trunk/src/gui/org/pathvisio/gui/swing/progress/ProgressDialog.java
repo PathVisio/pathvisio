@@ -39,7 +39,7 @@ import org.pathvisio.util.ProgressKeeper.ProgressListener;
  */
 public class ProgressDialog extends JDialog implements ActionListener, ProgressListener {
 
-	private final String CANCEL = "Cancel";
+	private static final String CANCEL = "Cancel";
 	
 	JLabel task;
 	JLabel report;

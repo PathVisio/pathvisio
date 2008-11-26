@@ -45,16 +45,16 @@ public class WrapLayout implements LayoutManager {
         int width = parent.getWidth();
         int x = 0;
         int y = 0;
-        int current_height = 0;
+        int currentHeight = 0;
         for ( Component c : parent.getComponents() ) {
             Dimension d = c.getPreferredSize();
             if ( ( hgap + x + d.width + hgap > width ) && ( x > 0 ) ) {
-                y += current_height + vgap;
+                y += currentHeight + vgap;
                 x = 0;
-                current_height = 0;
+                currentHeight = 0;
             }
-            if ( d.height > current_height ) {
-                current_height = d.height;
+            if ( d.height > currentHeight ) {
+                currentHeight = d.height;
             }
             c.setBounds(hgap + x, vgap + y, d.width, d.height);
             x += d.width + hgap;
@@ -84,21 +84,21 @@ public class WrapLayout implements LayoutManager {
         result.width = parent.getWidth();
         result.height = vgap;
         int x = 0;
-        int current_height = 0;
+        int currentHeight = 0;
         for ( Component c : parent.getComponents() ) {
             Dimension d = c.getPreferredSize();
             if ( ( hgap + x + d.width + hgap > result.width ) && ( x > 0 ) ) {
-                result.height += current_height + vgap;
+                result.height += currentHeight + vgap;
                 x = 0;
-                current_height = 0;
+                currentHeight = 0;
             }
-            if ( d.height > current_height ) {
-                current_height = d.height;
+            if ( d.height > currentHeight ) {
+                currentHeight = d.height;
             }
             x += d.width + hgap;
         }
-        if ( current_height > 0 ) {
-            result.height += current_height + vgap;
+        if ( currentHeight > 0 ) {
+            result.height += currentHeight + vgap;
         }
         result.width += hgap;
         return result;

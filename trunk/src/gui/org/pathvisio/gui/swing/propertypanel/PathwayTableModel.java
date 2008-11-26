@@ -40,9 +40,9 @@ import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.view.Graphics;
-import org.pathvisio.view.VPathway;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
+import org.pathvisio.view.VPathway;
 
 public class PathwayTableModel extends AbstractTableModel implements SelectionListener, 
 									PathwayListener, 

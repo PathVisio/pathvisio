@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing;
 
+import com.mammothsoftware.frwk.ddb.DropDownButton;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -67,8 +69,6 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
-
-import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 public class MainPanel extends JPanel implements VPathwayListener, ApplicationEventListener {
 

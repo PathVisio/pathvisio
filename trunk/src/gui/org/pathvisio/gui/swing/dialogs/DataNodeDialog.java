@@ -105,9 +105,9 @@ public class DataNodeDialog extends PathwayElementDialog {
 		dialog.setLocationRelativeTo(this);
 
 		final RunnableWithProgress<List<XrefWithSymbol>> task = new RunnableWithProgress<List<XrefWithSymbol>>() {
+			private static final int QUERY_LIMIT = 200;
 			public List<XrefWithSymbol> excecuteCode() 
 			{
-				final int QUERY_LIMIT = 200;
 				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
 
 				List<XrefWithSymbol> result = gdb.freeSearch(text, QUERY_LIMIT); 

@@ -42,7 +42,6 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.jdom.Element;
-import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
@@ -56,6 +55,7 @@ import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.FontChooser;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 
@@ -221,8 +221,11 @@ public class TextByExpression extends VisualizationMethod
 	Font getFont(boolean adjustZoom) {
 		Font f = font == null ? DEFAULT_FONT : font;
 		if(adjustZoom) {
-			int size = (int)Math.ceil(Engine.getCurrent().getActiveVPathway().vFromM(f.getSize()) * 15);
-			f = new Font(f.getName(), f.getStyle(), size);
+			VPathway vp = getVisualization().getManager().getEngine().getActiveVPathway();
+			if(vp != null) {
+				int size = (int)Math.ceil(vp.vFromM(f.getSize()) * 15);
+				f = new Font(f.getName(), f.getStyle(), size);
+			}
 		}
 		return f;
 	}

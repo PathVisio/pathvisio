@@ -26,7 +26,19 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 
 import org.jdesktop.swingworker.SwingWorker;
@@ -353,7 +365,9 @@ public class SearchPane extends JPanel
 				SearchTableModel.Column.PATHWAY_NAME, 
 				SearchTableModel.Column.DIRECTORY
 				});
-		SearchMethods.searchHelper (new ByXrefMatcher (ref), folder, srs, lblNumFound, parent);
+		SearchMethods.searchHelper (
+				new ByXrefMatcher (swingEngine.getGdbManager().getCurrentGdb(), ref), 
+				folder, srs, lblNumFound, parent);
 	}
 
 	/**

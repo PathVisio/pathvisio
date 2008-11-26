@@ -47,7 +47,7 @@ public class ViewerApplet extends PathwayPageApplet {
 			}
 		});
 		
-		Engine.getCurrent().setWrapper(wiki.getSwingEngine().createWrapper());
+		wiki.getEngine().setWrapper(wiki.getSwingEngine().createWrapper());
 		Logger.log.trace("calling:doInitWiki");
 		super.doInitWiki(pk, base);
 		wiki.getPathwayView().setEditMode(false);

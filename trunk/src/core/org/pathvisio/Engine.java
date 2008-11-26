@@ -55,7 +55,7 @@ public class Engine
 	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
 	
 	// use Engine.init() to create an Engine
-	private Engine()
+	public Engine()
 	{
 		PreferenceManager.init();
 	}
@@ -264,6 +264,8 @@ public class Engine
 			if(hasVPathway()) zoom = getActiveVPathway().getPctZoom();
 			
 			vPathway = wrapper.createVPathway();
+			vPathway.registerKeyboardActions(this);
+			vPathway.activateUndoManager(this);
 			vPathway.fromModel(p);
 			
 			vPathway.setPctZoom(zoom);

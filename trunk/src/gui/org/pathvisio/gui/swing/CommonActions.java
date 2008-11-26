@@ -43,10 +43,10 @@ import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.util.Resources;
-import org.pathvisio.view.LayoutType;
 import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Handle;
+import org.pathvisio.view.LayoutType;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.Template;
 import org.pathvisio.view.VPathway;
@@ -54,8 +54,6 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.ViewActions;
-import org.pathvisio.view.ViewActions.CopyAction;
-import org.pathvisio.view.ViewActions.PasteAction;
 import org.pathvisio.view.ViewActions.UndoAction;
 
 
@@ -100,10 +98,10 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action importAction;
 	public final Action exportAction;
 	
-	public final Action copyAction = new CopyAction();
-	public final Action pasteAction = new PasteAction();
+	public final Action copyAction;
+	public final Action pasteAction;
 	
-	public final Action undoAction = new UndoAction();
+	public final Action undoAction;
 	public final Action exitAction;
 
 	public final Action[] zoomActions;
@@ -210,11 +208,15 @@ public class CommonActions implements ApplicationEventListener {
 					new Action[] { 
 							new NewElementAction(e, new DefaultTemplates.ReactionTemplate()) },
 			};
-
+		
 		saveAction = new SaveAction(se, true, false);
 		saveAsAction = new SaveAction(se, true, true);
 		standaloneSaveAction = new SaveAction(se, false, false);
 		standaloneSaveAsAction = new SaveAction(se, false, true);
+		
+		undoAction = new ViewActions.UndoAction(se.getEngine());
+		copyAction = new ViewActions.CopyAction(se.getEngine());
+		pasteAction = new ViewActions.PasteAction(se.getEngine());
 		
 		exportAction = new ExportAction(se);
 		importAction = new ImportAction(se);

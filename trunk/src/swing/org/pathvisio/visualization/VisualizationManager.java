@@ -78,6 +78,10 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		}
 	}
 	
+	public Engine getEngine() {
+		return engine;
+	}
+	
 	public ColorSetManager getColorSetManager() {
 		return colorSetMgr;
 	}

@@ -68,7 +68,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	
 	public Engine getEngine() { return engine; }
 	
-	private SwingEngine(Engine engine) 
+	public SwingEngine(Engine engine) 
 	{
 		this.engine = engine;
 		gdbManager = new GdbManager();

@@ -95,13 +95,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final OrderDownAction orderDown;
 	public final ShowUnlinkedConnectors showUnlinked;
 	
-	Engine engine;
-
-	ViewActions(VPathway vp) {
+	ViewActions(Engine engine, VPathway vp) {
 		vPathway = vp;
 
-		engine = Engine.getCurrent();
-//		engine.addApplicationEventListener(this);
 		vp.addSelectionListener(this);
 		vp.addVPathwayListener(this);
 
@@ -110,15 +106,15 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		toggleGroup = new GroupAction();
 		toggleComplex = new ComplexAction();
 		delete = new DeleteAction();
-		copy = new CopyAction();
-		paste = new PasteAction();
-		keyMove = new KeyMoveAction(null);
-		undo = new UndoAction();
+		copy = new CopyAction(engine);
+		paste = new PasteAction(engine);
+		keyMove = new KeyMoveAction(engine, null);
+		undo = new UndoAction(engine);
 		addAnchor = new AddAnchorAction();
-		orderSendToBack = new OrderBottomAction();
-		orderBringToFront = new OrderTopAction();
-		orderUp = new OrderUpAction();
-		orderDown = new OrderDownAction();
+		orderSendToBack = new OrderBottomAction(engine);
+		orderBringToFront = new OrderTopAction(engine);
+		orderUp = new OrderUpAction(engine);
+		orderDown = new OrderDownAction(engine);
 		showUnlinked = new ShowUnlinkedConnectors();
 
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -253,9 +249,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 //	}
 
 	public static class CopyAction extends AbstractAction {	
-
-		public CopyAction() {
+		Engine engine;
+		
+		public CopyAction(Engine engine) {
 			super();
+			this.engine = engine;
 			putValue(NAME, "Copy");
 			putValue(SMALL_ICON, new ImageIcon(IMG_COPY));
 			String descr = "Copy selected pathway objects to clipboard";
@@ -265,15 +263,17 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) vp.copyToClipboard();
 		}		
 	}
 
 	public static class PasteAction extends AbstractAction {
-
-		public PasteAction() {
+		Engine engine;
+		
+		public PasteAction(Engine engine) {
 			super();
+			this.engine = engine;
 			putValue(NAME, "Paste");
 			putValue(SMALL_ICON, new ImageIcon(IMG_PASTE));
 			String descr = "Paste pathway objects from clipboard";
@@ -283,16 +283,16 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(isEnabled() && vp != null) vp.pasteFromClipboard();
 		}
 	}
 
 	public static class KeyMoveAction extends AbstractAction {
-
+		Engine engine;
 		KeyStroke key;
 
-		public KeyMoveAction(KeyStroke key) {
+		public KeyMoveAction(Engine engine, KeyStroke key) {
 			this.key = key; 
 		}
 
@@ -305,7 +305,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			{ moveIncrement = LARGE_INCREMENT;}
 			else {moveIncrement = SMALL_INCREMENT;}
 
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			vp.moveByKey(key, moveIncrement);
 		}
 	}
@@ -476,20 +476,22 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	public static class UndoAction extends AbstractAction implements UndoManagerListener, ApplicationEventListener {
-
-		public UndoAction() {
+		Engine engine;
+		
+		public UndoAction(Engine engine) {
 			super();
+			this.engine = engine;
 			putValue(NAME, "Undo");
 			putValue(SHORT_DESCRIPTION, "Undo last action");
 			putValue(SMALL_ICON, new ImageIcon(IMG_UNDO));
 
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl Z"));
-			Engine.getCurrent().addApplicationEventListener(this);
+			engine.addApplicationEventListener(this);
 			setEnabled(false);
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if (vp != null)
 			{
 				vp.undo();
@@ -514,8 +516,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public static class OrderTopAction extends AbstractAction 
 	{
-		public OrderTopAction() 
+		Engine engine;
+		
+		public OrderTopAction(Engine engine) 
 		{
+			this.engine = engine;
 			putValue(NAME, "Bring to front");
 			putValue(SHORT_DESCRIPTION, "Bring the element in front of all other elements");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
@@ -523,7 +528,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		
 		public void actionPerformed(ActionEvent e) 
 		{
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) {
 				vp.moveGraphicsTop(vp.getSelectedGraphics());
 				vp.redraw();
@@ -536,8 +541,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public static class OrderBottomAction extends AbstractAction 
 	{
-		public OrderBottomAction() 
+		Engine engine;
+		
+		public OrderBottomAction(Engine engine) 
 		{
+			this.engine = engine;
 			putValue(NAME, "Send to Back");
 			putValue(SHORT_DESCRIPTION, "Send the element behind all other elements");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
@@ -545,7 +553,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		
 		public void actionPerformed(ActionEvent e) 
 		{
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) 
 			{
 				vp.moveGraphicsBottom(vp.getSelectedGraphics());
@@ -559,15 +567,17 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public static class OrderUpAction extends AbstractAction 
 	{
-		public OrderUpAction() 
+		Engine engine;
+		public OrderUpAction(Engine engine) 
 		{
+			this.engine = engine;
 			putValue(NAME, "Bring Forward");
 			putValue(SHORT_DESCRIPTION, "Bring Forward");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.CTRL_DOWN_MASK));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) {
 				vp.moveGraphicsUp(vp.getSelectedGraphics());
 				vp.redraw();
@@ -580,15 +590,18 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public static class OrderDownAction extends AbstractAction 
 	{
-		public OrderDownAction() 
+		Engine engine;
+		
+		public OrderDownAction(Engine engine) 
 		{
+			this.engine = engine;
 			putValue(NAME, "Send Backward");
 			putValue(SHORT_DESCRIPTION, "Send Backward");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.CTRL_DOWN_MASK));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			VPathway vp = Engine.getCurrent().getActiveVPathway();
+			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) {
 				vp.moveGraphicsDown(vp.getSelectedGraphics());
 				vp.redraw();

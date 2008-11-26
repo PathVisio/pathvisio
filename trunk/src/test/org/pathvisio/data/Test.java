@@ -22,10 +22,10 @@ import java.sql.SQLException;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.Engine;
 import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.preferences.PreferenceManager;
 
 public class Test extends TestCase implements GdbEventListener
 {	
@@ -78,7 +78,7 @@ public class Test extends TestCase implements GdbEventListener
 	
 	public void testImportSimple() throws IOException, DataException
 	{
-		Engine.init();
+		PreferenceManager.init();
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_1.txt");
 		assertTrue (f.exists());
@@ -105,7 +105,6 @@ public class Test extends TestCase implements GdbEventListener
 
 	public void testImportAffy() throws IOException, DataException
 	{
-		Engine.init();
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_affymetrix.txt");
 		assertTrue (f.exists());
@@ -134,7 +133,6 @@ public class Test extends TestCase implements GdbEventListener
 	 */
 	public void testImportLongHeaders() throws IOException, DataException
 	{
-		Engine.init();
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_long_headers.txt");
 		assertTrue (f.exists());
@@ -162,7 +160,6 @@ public class Test extends TestCase implements GdbEventListener
 	 */
 	public void testImportWithText() throws IOException, DataException
 	{
-		Engine.init();
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_with_text.txt");
 		assertTrue (f.exists());

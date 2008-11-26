@@ -18,11 +18,11 @@ package org.pathvisio.view;
 
 import java.awt.geom.Point2D;
 
-import org.pathvisio.Engine;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.preferences.PreferenceManager;
 
 import junit.framework.TestCase;
 
@@ -32,7 +32,7 @@ public class TestGroups extends TestCase
 	
 	public void setUp()
 	{
-		Engine.init();
+		PreferenceManager.init();
 		vpwy = new VPathway(null);
 		pwy = new Pathway();
 		vpwy.fromModel(pwy);

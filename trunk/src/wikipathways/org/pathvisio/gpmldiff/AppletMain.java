@@ -19,6 +19,8 @@ package org.pathvisio.gpmldiff;
 import javax.swing.*;
 import java.net.URL;
 import java.io.File;
+
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
@@ -58,7 +60,7 @@ public class AppletMain extends JApplet
 	
 	public void init()
 	{
-		Engine.init();
+		PreferenceManager.init();
 		panel = new GpmlDiffWindow(this);
 		setContentPane (panel);
 

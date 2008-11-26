@@ -58,8 +58,6 @@ import org.pathvisio.view.swing.VPathwaySwing;
 public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlagListener {	
 	private MainPanel mainPanel;
 	
-	private static SwingEngine current = null;
-	
 	private CommonActions actions;
 	private JFrame frame; // may be null (for applet...)
 	
@@ -79,35 +77,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public GdbManager getGdbManager()
 	{
 		return gdbManager;
-	}
-	
-	
-	// frame may be null...
-	public static SwingEngine init(Engine engine)
-	{
-		if (current != null)
-		{
-			Logger.log.warn ("SwingEngine initialized twice");
-		}
-		current = new SwingEngine(engine);
-		return current;
-	}
-	
-	/**
-	 * Sets current to null.
-	 */
-	public static void destroy() {
-		current = null;
-	}
-	
-	@Deprecated
-	public static SwingEngine getCurrent() 
-	{
-		if(current == null) 
-		{
-			throw new IllegalArgumentException ("SwingEngine was not initialized");
-		}
-		return current;
 	}
 	
 	public CommonActions getActions() {

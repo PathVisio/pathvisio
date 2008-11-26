@@ -169,7 +169,14 @@ public class PreferenceManager
 	
 	public static void init()
 	{
-		preferences = new PreferenceManager();
-		preferences.load();
+		if (preferences == null)
+		{
+			preferences = new PreferenceManager();
+			preferences.load();
+		}
+		else
+		{
+			Logger.log.warn ("PreferenceManager was initialized twice");
+		}
 	}
 }

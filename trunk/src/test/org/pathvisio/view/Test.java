@@ -31,6 +31,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.preferences.PreferenceManager;
 
 
 public class Test extends TestCase {
@@ -42,7 +43,7 @@ public class Test extends TestCase {
 	
 	public void setUp()
 	{
-		Engine.init();
+		PreferenceManager.init();
     	pwy = new Pathway();
     	eltDn = PathwayElement.createPathwayElement(ObjectType.DATANODE);
     	eltDn.setMCenterX(3000);

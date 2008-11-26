@@ -33,6 +33,9 @@ import java.util.jar.JarFile;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 
+/**
+ * Collection of static functions to deal with Resources stored in Jar files.
+ */
 public class JarUtils
 {
 	static final String PREFIX_TMP = "PVJAR";

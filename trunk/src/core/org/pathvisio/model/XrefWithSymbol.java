@@ -16,6 +16,10 @@
 //
 package org.pathvisio.model;
 
+/**
+ * Stores a combination of DataSource, id and symbol. Extension of Xref,
+ * which only stores DataSource and id.
+ */
 public class XrefWithSymbol extends Xref implements Comparable<Xref> 
 {
 	private String symbol;

@@ -248,6 +248,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 //	}
 //	}
 
+	/** "Copy" command in the menu / toolbar, copies selected pathway elements to the clipboard */ 
 	public static class CopyAction extends AbstractAction {	
 		Engine engine;
 		
@@ -268,6 +269,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}		
 	}
 
+	/** "Paste" command in the menu / toolbar, pastes from clipboard */ 
 	public static class PasteAction extends AbstractAction {
 		Engine engine;
 		
@@ -288,6 +290,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 	}
 
+	/** "Nudge" action, move selected element(s) a bit in the direction of the cursor key pressed. */
 	public static class KeyMoveAction extends AbstractAction {
 		Engine engine;
 		KeyStroke key;
@@ -475,6 +478,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 	}
 
+	/** "Undo" command in the menu / toolbar */ 
 	public static class UndoAction extends AbstractAction implements UndoManagerListener, ApplicationEventListener {
 		Engine engine;
 		

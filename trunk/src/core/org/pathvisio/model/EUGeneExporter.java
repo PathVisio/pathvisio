@@ -25,7 +25,15 @@ import java.util.Map;
 
 import org.pathvisio.debug.Logger;
 
-
+/**
+ * Exports to pathway format understood by the EuGene
+ * pathway statistics program.
+ * This format is basically a list of genes in a flat text file
+ * preceded by 3 header lines.
+ * 
+ * EuGene supports several id systems but has its own naming
+ * for them, this exporter also handles the translation.
+ */
 public class EUGeneExporter implements PathwayExporter 
 {
 	public String[] getExtensions() {

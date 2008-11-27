@@ -55,7 +55,7 @@ public class Line extends Graphics
 	private List<VPoint> points;
 	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();
 	
-	ArrayList<Handle> segmentHandles = new ArrayList<Handle>();
+	List<Handle> segmentHandles = new ArrayList<Handle>();
 
 	ConnectorShape shape;
 	
@@ -424,7 +424,7 @@ public class Line extends Graphics
 	
 	public Handle[] getHandles()
 	{
-		ArrayList<Handle> handles = new ArrayList<Handle>();
+		List<Handle> handles = new ArrayList<Handle>();
 		for(VPoint p : points) {
 			handles.add(p.getHandle());
 		}
@@ -548,7 +548,7 @@ public class Line extends Graphics
 		for(MPoint p : gdata.getMPoints()) {
 			canvas.pointsMtoV.remove(p);
 		}
-		ArrayList<VAnchor> remove = new ArrayList<VAnchor>(anchors.values());
+		List<VAnchor> remove = new ArrayList<VAnchor>(anchors.values());
 		for(VAnchor a : remove) {
 			a.destroy();
 		}

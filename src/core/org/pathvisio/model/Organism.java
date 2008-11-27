@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * enum representing organisms understood by PathVisio.
@@ -61,9 +62,9 @@ public enum Organism {
 	public String latinName() { return latinName; }
 	public String shortName() { return shortName; }
 	
-	private static HashMap<String, Organism> byCode;
-	private static HashMap<String, Organism> byLatinName;
-	private static HashMap<String, Organism> byShortName;
+	private static Map<String, Organism> byCode;
+	private static Map<String, Organism> byLatinName;
+	private static Map<String, Organism> byShortName;
 	private static List<String> latinNames;
 	private static String[] codes;
 	

@@ -135,8 +135,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		resetGroupStates();
 	}
 
-	HashMap<String, List<Action>> actionGroups = new HashMap<String, List<Action>>();
-	HashMap<Action, List<String>> groupActions = new HashMap<Action, List<String>>();
+	Map<String, List<Action>> actionGroups = new HashMap<String, List<Action>>();
+	Map<Action, List<String>> groupActions = new HashMap<Action, List<String>>();
 
 	/**
 	 * Register the given action to a group (one of the GROUP* contants)
@@ -463,7 +463,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public void actionPerformed(ActionEvent e) {
 			if(!isEnabled()) return; //Don't perform action if not enabled
 
-			ArrayList<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
+			List<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
 			for(VPathwayElement o : vPathway.getDrawingObjects())
 			{
 				if (!o.isSelected() || o == vPathway.selection || o == vPathway.getMappInfo())

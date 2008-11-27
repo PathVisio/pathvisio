@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -49,10 +50,10 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	 * 
 	 * @return HashMap<String, String>
 	 */
-	protected HashMap<String, String> getIdRefPairs()
+	protected Map<String, String> getIdRefPairs()
 	{
 		// idRefPairs<id, ref>
-		HashMap<String, String> idRefPairs = new HashMap<String, String>();
+		Map<String, String> idRefPairs = new HashMap<String, String>();
 
 		// Populate hash map of id-ref pairs for all groups
 		for (VPathwayElement vpe : canvas.getDrawingObjects())
@@ -75,10 +76,10 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	 * 
 	 * @return ArrayList<String>
 	 */
-	protected ArrayList<String> getRefList()
+	protected List<String> getRefList()
 	{
-		HashMap<String, String> idRefPairs = this.getIdRefPairs();
-		ArrayList<String> refList = new ArrayList<String>();
+		Map<String, String> idRefPairs = this.getIdRefPairs();
+		List<String> refList = new ArrayList<String>();
 		String thisId = this.getPathwayElement().getGroupId();
 		refList.add(thisId);
 		boolean hit = true;
@@ -199,9 +200,9 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	 * 
 	 * @return ArrayList<Graphics>
 	 */
-	public ArrayList<Graphics> getGroupGraphics()
+	public List<Graphics> getGroupGraphics()
 	{
-		ArrayList<Graphics> gg = new ArrayList<Graphics>();
+		List<Graphics> gg = new ArrayList<Graphics>();
 		// return true if group object is referenced by selection
 		for (VPathwayElement vpe : canvas.getDrawingObjects())
 		{

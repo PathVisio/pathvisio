@@ -107,9 +107,9 @@ public class VPathway implements PathwayListener
 	 * All objects that are visible on this mapp, including the handles but
 	 * excluding the legend, mappInfo and selectionBox objects
 	 */
-	private ArrayList<VPathwayElement> drawingObjects;
+	private List<VPathwayElement> drawingObjects;
 
-	public ArrayList<VPathwayElement> getDrawingObjects()
+	public List<VPathwayElement> getDrawingObjects()
 	{
 		return drawingObjects;
 	}
@@ -383,7 +383,7 @@ public class VPathway implements PathwayListener
 		return null;
 	}
 
-	HashMap<MPoint, VPoint> pointsMtoV = new HashMap<MPoint, VPoint>();
+	Map<MPoint, VPoint> pointsMtoV = new HashMap<MPoint, VPoint>();
 
 	protected VPoint getPoint(MPoint mPoint)
 	{

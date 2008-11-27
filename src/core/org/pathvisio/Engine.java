@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
@@ -258,8 +259,8 @@ public class Engine
 	 */
 	public boolean hasVPathway() { return vPathway != null; }
 
-	private HashMap<String, PathwayExporter> exporters = new HashMap<String, PathwayExporter>();
-	private HashMap<String, PathwayImporter> importers = new HashMap<String, PathwayImporter>();
+	private Map<String, PathwayExporter> exporters = new HashMap<String, PathwayExporter>();
+	private Map<String, PathwayImporter> importers = new HashMap<String, PathwayImporter>();
 	/**
 	 * Add a {@link PathwayExporter} that handles export of GPML to another file format
 	 * @param export
@@ -288,11 +289,11 @@ public class Engine
 		return importers.get(ext);
 	}
 	
-	public HashMap<String, PathwayExporter> getPathwayExporters() {
+	public Map<String, PathwayExporter> getPathwayExporters() {
 		return exporters;
 	}
 		
-	public HashMap<String, PathwayImporter> getPathwayImporters() {
+	public Map<String, PathwayImporter> getPathwayImporters() {
 		return importers;
 	}
 		

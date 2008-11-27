@@ -18,7 +18,7 @@ package org.pathvisio.visualization.colorset;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.jdom.Element;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
@@ -80,7 +80,7 @@ public abstract class ColorSetObject {
 	 * null if the input data doesn't result in a valid color
 	 * @throws Exception 
 	 */
-	abstract Color getColor(HashMap<Integer, Object> data, int idSample) throws CriterionException;
+	abstract Color getColor(Map<Integer, Object> data, int idSample) throws CriterionException;
 	
 	/**
 	 * Returns the parent colorset

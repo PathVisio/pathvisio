@@ -25,6 +25,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -52,7 +53,7 @@ public class ColorGradientCombo extends JComboBox
 		setRenderer(new ColorGradientRenderer());
 	}
 	
-	HashMap<String, ColorGradient> id2gradient = new HashMap<String, ColorGradient>();
+	Map<String, ColorGradient> id2gradient = new HashMap<String, ColorGradient>();
 	
 	public void setGradients(List<ColorGradient> gradients) {
 		/*

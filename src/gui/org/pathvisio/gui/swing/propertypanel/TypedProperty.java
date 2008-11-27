@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.AbstractCellEditor;
@@ -361,8 +362,8 @@ public class TypedProperty {
 	
 	private static class ComboEditor extends DefaultCellEditor {
 		
-		HashMap<Object, Object> label2value;
-		HashMap<Object, Object> value2label;
+		Map<Object, Object> label2value;
+		Map<Object, Object> value2label;
 		boolean useIndex;
 		JComboBox combo;
 		
@@ -588,7 +589,7 @@ public class TypedProperty {
 	
 	private static class ComboRenderer extends JComboBox implements TableCellRenderer {
 
-		HashMap<Object, Object> value2label;
+		Map<Object, Object> value2label;
 		public ComboRenderer(Object[] values) {
 			super(values);
 		}

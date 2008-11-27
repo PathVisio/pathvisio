@@ -19,7 +19,7 @@ package org.pathvisio.visualization.colorset;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.HashMap;
+import java.util.Map;
 
 import org.jdom.Element;
 import org.pathvisio.data.GexManager;
@@ -69,7 +69,7 @@ public class ColorRule extends ColorSetObject
 		super(parent, xml);
 	}
 	
-	Color getColor(HashMap<Integer, Object> data, int idSample) throws CriterionException {
+	Color getColor(Map<Integer, Object> data, int idSample) throws CriterionException {
 		if(criterion.evaluate(data, idSample)) return color;
 		return null;
 	}

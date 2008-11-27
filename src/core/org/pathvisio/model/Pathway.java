@@ -356,7 +356,7 @@ public class Pathway implements PathwayListener
 		}
 		
 		//Create a map of existing biopax elements with an id
-		HashMap<String, Element> bpelements = new HashMap<String, Element>();
+		Map<String, Element> bpelements = new HashMap<String, Element>();
 		for(Object o : dOld.getRootElement().getContent()) {
 			if(o instanceof Element) {
 				Element e = (Element)o;
@@ -382,7 +382,7 @@ public class Pathway implements PathwayListener
 	/**
 	 * Stores references of graph ids to other GraphRefContainers
 	 */
-	private HashMap<String, List<GraphRefContainer>> graphRefs = new HashMap<String, List<GraphRefContainer>>();
+	private Map<String, List<GraphRefContainer>> graphRefs = new HashMap<String, List<GraphRefContainer>>();
 	private Map<String, GraphIdContainer> graphIds = new HashMap<String, GraphIdContainer>();
 
 	public Set<String> getGraphIds() {
@@ -466,7 +466,7 @@ public class Pathway implements PathwayListener
 	}
 	
 	private Map<String, PathwayElement> groupIds = new HashMap<String, PathwayElement>();
-	private HashMap<String, Set<PathwayElement>> groupRefs = new HashMap<String, Set<PathwayElement>>();
+	private Map<String, Set<PathwayElement>> groupRefs = new HashMap<String, Set<PathwayElement>>();
 	
 	public Set<String> getGroupIds() {
 		return groupIds.keySet();

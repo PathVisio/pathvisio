@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -51,7 +52,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());
 	JTable table;
 	Collection<PathwayElement> input;
-	HashMap<Object, TypedProperty> propertyValues;
+	Map<Object, TypedProperty> propertyValues;
 	List<TypedProperty> shownProperties;
 	
 	private SwingEngine swingEngine;

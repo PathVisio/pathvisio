@@ -19,6 +19,7 @@ package org.pathvisio.gui.swing.dialogs;
 import java.awt.Component;
 import java.awt.Frame;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JTabbedPane;
 
@@ -65,8 +66,8 @@ public class PathwayElementDialog extends OkCancelDialog {
 	
 	PathwayElement input;
 	private JTabbedPane dialogPane;
-	private HashMap<String, PathwayElementPanel> panels;
-	private HashMap<PropertyType, Object> state = new HashMap<PropertyType, Object>();
+	private Map<String, PathwayElementPanel> panels;
+	private Map<PropertyType, Object> state = new HashMap<PropertyType, Object>();
 	private Pathway originalPathway; //Used for undo event
 		
 	protected boolean readonly;

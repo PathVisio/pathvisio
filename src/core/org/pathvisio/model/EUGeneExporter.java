@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.debug.Logger;
@@ -59,7 +60,7 @@ public class EUGeneExporter implements PathwayExporter
 
 		DataSource system; //The annotation system
 
-		ArrayList<Xref> refs;
+		List<Xref> refs;
 
 		public EUGenePathway(Pathway p)  {
 			pathway = p;
@@ -103,7 +104,7 @@ public class EUGeneExporter implements PathwayExporter
 
 		void read() { 
 			refs = new ArrayList<Xref>();
-			HashMap<DataSource, Integer> codeCount = new HashMap<DataSource, Integer>();
+			Map<DataSource, Integer> codeCount = new HashMap<DataSource, Integer>();
 
 			for(PathwayElement elm : pathway.getDataObjects()) {
 				if(elm.getObjectType() != ObjectType.DATANODE) {

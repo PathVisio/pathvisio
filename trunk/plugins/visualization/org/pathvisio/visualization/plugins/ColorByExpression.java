@@ -316,7 +316,7 @@ public class ColorByExpression extends VisualizationMethod {
 					break;
 				}
 			} else {
-				HashMap<Integer, Object> data = cache.getSingleData(idc).getSampleData();
+				Map<Integer, Object> data = cache.getSingleData(idc).getSampleData();
 				Color rgb = cs.getColor(data, s.getId());
 				drawColoredRectangle(area, rgb, g2d);
 			}

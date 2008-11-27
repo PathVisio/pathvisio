@@ -43,9 +43,9 @@ public abstract class ColorSetObject {
 	 * getter for name, the name of this colorSetObject
 	 * the Name does not need to be unique
 	 */
-	public void setName(String _name) 
+	public void setName(String aName) 
 	{
-		this.name = _name; 
+		this.name = aName; 
 	}
 	
 	/**

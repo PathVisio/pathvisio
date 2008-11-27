@@ -16,6 +16,9 @@
 //
 package org.pathvisio.visualization.gui;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,9 +29,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.pathvisio.visualization.VisualizationMethod;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 public class MethodPanel extends JPanel implements ActionListener {
 	VisualizationMethod method;

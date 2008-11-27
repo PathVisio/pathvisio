@@ -190,11 +190,11 @@ public class SearchMethods
 	public static void searchHelper (final PathwayMatcher search, final File folder,
 			final SearchTableModel srs, final JLabel lblNumFound, Component parent)
 	{
-		final int TOTALWORK = 1000;
+		final int totalWork = 1000;
 
 		final ProgressMonitor pmon = new ProgressMonitor(
 				parent, "Pathway search", "searching pathways...",
-				0, TOTALWORK);
+				0, totalWork);
 		
 		SwingWorker<Integer, MatchResult> worker = new SwingWorker<Integer, MatchResult>() 
 		{
@@ -204,7 +204,7 @@ public class SearchMethods
 				//get all pathway files in the folder and subfolders
 				List<File> pathways = FileUtils.getFiles(folder, Engine.PATHWAY_FILE_EXTENSION, true);
 				
-				pmon.setProgress((int)(TOTALWORK * 0.2));
+				pmon.setProgress((int)(totalWork * 0.2));
 				
 				int i = 0;
 				int matchCount = 0;
@@ -224,7 +224,7 @@ public class SearchMethods
 					}
 					
 					i++;
-					pmon.setProgress((int)(TOTALWORK * 0.2 + TOTALWORK * 0.8 * i / pathways.size()));
+					pmon.setProgress((int)(totalWork * 0.2 + totalWork * 0.8 * i / pathways.size()));
 				}
 				pmon.close (); // just to be sure				
 				return matchCount;

@@ -234,7 +234,7 @@ public class StatisticsPlugin implements Plugin
 				
 				add (txtExpr, cc.xyw(2,4,3));
 				
-				final JList lstOperators = new JList(Criterion.tokens);
+				final JList lstOperators = new JList(Criterion.TOKENS);
 				add (new JScrollPane (lstOperators), cc.xy (2,6));
 				
 				lstOperators.addMouseListener(new MouseAdapter() 
@@ -244,7 +244,7 @@ public class StatisticsPlugin implements Plugin
 						int selectedIndex = lstOperators.getSelectedIndex();
 						if (selectedIndex >= 0)
 						{
-							String toInsert = Criterion.tokens[selectedIndex];
+							String toInsert = Criterion.TOKENS[selectedIndex];
 							TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 						}
 						txtExpr.requestFocus();

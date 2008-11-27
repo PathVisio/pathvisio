@@ -52,9 +52,9 @@ public class ColorSet
 	 */
 	public static final int ID_COLOR_NO_DATA_FOUND = 3;
 	
-	Color color_no_criteria_met = PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_NO_CRIT_MET);
-	Color color_no_gene_found = PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_NO_GENE_FOUND);
-	Color color_no_data_found = PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_NO_DATA_FOUND);
+	Color colorNoCriteriaMet = PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_NO_CRIT_MET);
+	Color colorNoGeneFound = PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_NO_GENE_FOUND);
+	Color colorNoDataFound = PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_NO_DATA_FOUND);
 		
 	/**
 	 * A user can give each colorset a name
@@ -97,13 +97,13 @@ public class ColorSet
 	public void setColor(int id, Color rgb) {
 		switch(id) {
 		case ID_COLOR_NO_CRITERIA_MET:
-			color_no_criteria_met = rgb;
+			colorNoCriteriaMet = rgb;
 			break;
 		case ID_COLOR_NO_DATA_FOUND:
-			color_no_data_found = rgb;
+			colorNoDataFound = rgb;
 			break;
 		case ID_COLOR_NO_GENE_FOUND:
-			color_no_gene_found = rgb;
+			colorNoGeneFound = rgb;
 			break;
 		}
 		fireModifiedEvent();
@@ -117,11 +117,11 @@ public class ColorSet
 	public Color getColor(int id) {
 		switch(id) {
 		case ID_COLOR_NO_CRITERIA_MET:
-			return color_no_criteria_met;
+			return colorNoCriteriaMet;
 		case ID_COLOR_NO_DATA_FOUND:
-			return color_no_data_found;
+			return colorNoDataFound;
 		case ID_COLOR_NO_GENE_FOUND:
-			return color_no_gene_found;
+			return colorNoGeneFound;
 		default: return null;
 		}
 	}
@@ -163,11 +163,11 @@ public class ColorSet
 	 */
 	public Color getColor(Map<Integer, Object> data, int sampleId)
 	{
-		if(data == null) return color_no_data_found;
+		if(data == null) return colorNoDataFound;
 		Object value = data.get(sampleId);
-		if(value == null || value.equals(Double.NaN)) return color_no_data_found;
+		if(value == null || value.equals(Double.NaN)) return colorNoDataFound;
 		
-		Color rgb = color_no_criteria_met; //The color to return
+		Color rgb = colorNoCriteriaMet; //The color to return
 		Iterator<ColorSetObject> it = colorSetObjects.iterator();
 		//Evaluate all ColorSet objects, return when a valid color is found
 		while(it.hasNext())
@@ -186,16 +186,16 @@ public class ColorSet
 	}
 	
 	public void paintPreview(Graphics2D g, Rectangle bounds) {
-		double g_space = colorSetObjects.size() > 1 ? 0.8 : 1; //80% to gradient
+		double gSpace = colorSetObjects.size() > 1 ? 0.8 : 1; //80% to gradient
 		
 		ColorGradient gradient = getGradient();
 		if(gradient != null) {
-			Rectangle g_bounds = new Rectangle(
-					bounds.x, bounds.y, (int)(bounds.width * g_space), bounds.height
+			Rectangle gBounds = new Rectangle(
+					bounds.x, bounds.y, (int)(bounds.width * gSpace), bounds.height
 			);
-			gradient.paintPreview((Graphics2D)g.create(), g_bounds, true);
+			gradient.paintPreview((Graphics2D)g.create(), gBounds, true);
 			bounds = new Rectangle(
-					bounds.x + g_bounds.width, bounds.y, bounds.width - g_bounds.width, bounds.height
+					bounds.x + gBounds.width, bounds.y, bounds.width - gBounds.width, bounds.height
 			);
 		}
 		int x = bounds.x;
@@ -256,9 +256,9 @@ public class ColorSet
 		Element elm = new Element(XML_ELEMENT);
 		elm.setAttribute(XML_ATTR_NAME, name);
 		
-		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NCM, color_no_criteria_met));
-		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NGF, color_no_gene_found));
-		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NDF, color_no_data_found));
+		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NCM, colorNoCriteriaMet));
+		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NGF, colorNoGeneFound));
+		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NDF, colorNoDataFound));
 		
 		for(ColorSetObject cso : colorSetObjects)
 			elm.addContent(cso.toXML());

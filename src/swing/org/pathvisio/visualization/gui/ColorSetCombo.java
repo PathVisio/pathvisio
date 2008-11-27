@@ -40,9 +40,9 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 	
 	ColorSetManager csMgr;
 	
-	public ColorSetCombo(ColorSetManager _csMgr) {
+	public ColorSetCombo(ColorSetManager aCsMgr) {
 		super();
-		this.csMgr = _csMgr;
+		this.csMgr = aCsMgr;
 		refresh();
 		setRenderer(new ColorSetRenderer());
 	}

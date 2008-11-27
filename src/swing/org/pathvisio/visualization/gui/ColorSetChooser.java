@@ -17,6 +17,10 @@
 
 package org.pathvisio.visualization.gui;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.mammothsoftware.frwk.ddb.DropDownButton;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,10 +31,6 @@ import javax.swing.JPanel;
 import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 /**
  * A panel containing a colorset combo + button to add/remove/modify colorsets.
@@ -57,18 +57,18 @@ public class ColorSetChooser extends JPanel implements ActionListener {
 		DropDownButton csButton = new DropDownButton(new ImageIcon(
 				Resources.getResourceURL("edit.gif"))
 		);
-		JMenuItem m_new = new JMenuItem(ACTION_NEW);
-		JMenuItem m_remove = new JMenuItem(ACTION_REMOVE);
-		JMenuItem m_rename = new JMenuItem(ACTION_MODIFY);
-		m_new.setActionCommand(ACTION_NEW);
-		m_remove.setActionCommand(ACTION_REMOVE);
-		m_rename.setActionCommand(ACTION_MODIFY);
-		m_new.addActionListener(this);
-		m_remove.addActionListener(this);
-		m_rename.addActionListener(this);
-		csButton.addComponent(m_new);
-		csButton.addComponent(m_remove);
-		csButton.addComponent(m_rename);
+		JMenuItem mNew = new JMenuItem(ACTION_NEW);
+		JMenuItem mRemove = new JMenuItem(ACTION_REMOVE);
+		JMenuItem mRename = new JMenuItem(ACTION_MODIFY);
+		mNew.setActionCommand(ACTION_NEW);
+		mRemove.setActionCommand(ACTION_REMOVE);
+		mRename.setActionCommand(ACTION_MODIFY);
+		mNew.addActionListener(this);
+		mRemove.addActionListener(this);
+		mRename.addActionListener(this);
+		csButton.addComponent(mNew);
+		csButton.addComponent(mRemove);
+		csButton.addComponent(mRename);
 		
 		CellConstraints cc = new CellConstraints();
 		add(colorSetCombo, cc.xy(1, 1));

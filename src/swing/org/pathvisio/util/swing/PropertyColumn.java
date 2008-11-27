@@ -15,12 +15,12 @@
 // limitations under the License.
 //
 
+package org.pathvisio.util.swing;
+
 /**
  * an interface type for objects that can be used to define rows in a table
  * Use an enum as subclass.
  */
-package org.pathvisio.util.swing;
-
 public interface PropertyColumn
 {
 	/**

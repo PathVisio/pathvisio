@@ -31,11 +31,11 @@ import org.pathvisio.view.Graphics;
  */
 public abstract class VisualizationMethod implements Comparable <VisualizationMethod> 
 {
-	public static String XML_ELEMENT = "method";
-	public static String XML_ATTR_NAME = "name";
+	public static final String XML_ELEMENT = "method";
+	public static final String XML_ATTR_NAME = "name";
 	
-	private boolean CONFIGURABLE; //Configurable (if true, override createConfigComposite)
-	private boolean USE_PROVIDED_AREA; //Does this plugin use reserved region in GmmlGraphicsObject
+	private boolean isConfigurable; //Configurable (if true, override createConfigComposite)
+	private boolean isUseProvidedArea; //Does this plugin use reserved region in GmmlGraphicsObject
 	
 	private boolean isActive;
 	
@@ -167,7 +167,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 * @see Visualization#provideDrawArea(VisualizationMethod, Graphics)
 	 */
 	protected void setUseProvidedArea(boolean use) {
-		USE_PROVIDED_AREA = use;
+		isUseProvidedArea = use;
 	}
 	
 	/**
@@ -175,7 +175,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 * @param configurable
 	 */
 	protected void setIsConfigurable(boolean configurable) {
-		CONFIGURABLE = configurable;
+		isConfigurable = configurable;
 	}
 
 	/**
@@ -183,7 +183,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 * @see VisualizationMethod#setIsConfigurable(boolean)
 	 * @return true if this plugin is configurable, false otherwise
 	 */
-	public final boolean isConfigurable() { return CONFIGURABLE; }
+	public final boolean isConfigurable() { return isConfigurable; }
 	
 	public JPanel getConfigurationPanel() { return new JPanel(); }
 	
@@ -194,7 +194,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 * @return true if this plugin uses the provided area, false otherwise
 	 */
 	public final boolean isUseProvidedArea() { 
-		return USE_PROVIDED_AREA; 
+		return isUseProvidedArea; 
 	}
 		
 	public int compareTo(VisualizationMethod o) 

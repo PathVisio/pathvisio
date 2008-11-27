@@ -16,6 +16,9 @@
 //
 package org.pathvisio.visualization.gui;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -27,9 +30,6 @@ import javax.swing.event.DocumentListener;
 
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A panel for selecting and editing color gradients

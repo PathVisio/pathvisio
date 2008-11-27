@@ -16,6 +16,9 @@
 //
 package org.pathvisio.gui.swing;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -50,9 +53,6 @@ import javax.swing.tree.TreePath;
 
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Global dialog for setting the user preferences.
@@ -90,6 +90,8 @@ abstract public class AbstractPreferenceDlg
 		return new PreferencePanelBuilder (prefs);
 	}
 	
+	/** Helper class to build preference panel, based on a list of preferences and their types.
+	 * Builds a panel and adds a textfield for a string, checkbox for a boolean, etc. */
 	protected static class PreferencePanelBuilder
 	{
 		PreferenceManager prefs;
@@ -342,10 +344,10 @@ abstract public class AbstractPreferenceDlg
 		JTree trCategories = new JTree(top);
 		final JPanel pnlSettings = new JPanel();
 				
-		JButton OkBtn = new JButton();
-		OkBtn.setText ("OK");
+		JButton btnOk = new JButton();
+		btnOk.setText ("OK");
 		
-		OkBtn.addActionListener(new ActionListener() {
+		btnOk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae)
 			{
 				dlg.setVisible (false);
@@ -383,7 +385,7 @@ abstract public class AbstractPreferenceDlg
 			}
 		});
 		
-		pnlButtons.add (OkBtn);
+		pnlButtons.add (btnOk);
 		pnlButtons.add (btnCancel);
 		
 		dlg.add (new JScrollPane (pnlSettings), BorderLayout.CENTER);

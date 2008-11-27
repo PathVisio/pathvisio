@@ -21,6 +21,9 @@ import javax.swing.text.BadLocationException;
 
 import org.pathvisio.debug.Logger;
 
+/**
+ * Contains a utility function to insert a piece of text at the cursor in a TextField.
+ */
 public class TextFieldUtils 
 {
 	/**

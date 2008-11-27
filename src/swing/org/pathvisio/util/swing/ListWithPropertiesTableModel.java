@@ -16,8 +16,8 @@
 //
 package org.pathvisio.util.swing;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -40,15 +40,15 @@ import javax.swing.table.AbstractTableModel;
  * You can define which columns / properties are shown
  * with setColumns().
  * 
- * To turn a list of any object into a simple table, you must do the following:
+ * To turn a list of any object into a simple table, you must have the following:
  * 
- * - define an enum U implements PropertyColumn, 
+ * @param <U> Column base class that implements PropertyColumn, 
  *   wich enumerates the possible columns
- *  
- * - make an object T implements RowWithProperties<U>
+ *   
+ * @param <T> Row base class that implements RowWithProperties<U>
  * 
  * Then you can use the following table model:
- * 	ListWithPropertiesTableModel<U, T<U>>
+ * ListWithPropertiesTableModel<U, T<U>>
  */
 public class ListWithPropertiesTableModel<U extends PropertyColumn, T extends RowWithProperties<U>> extends AbstractTableModel 
 {

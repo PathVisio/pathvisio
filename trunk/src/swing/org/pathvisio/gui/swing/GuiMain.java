@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing;
 
+import edu.stanford.ejalbert.BrowserLauncher;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -37,16 +39,16 @@ import javax.swing.UIManager;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
-import org.pathvisio.gui.swing.SwingEngine.Browser;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.SimpleGex;
 import org.pathvisio.data.GdbManager.GdbEventListener;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;
+import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.SwingEngine.Browser;
 import org.pathvisio.model.BatikImageWithDataExporter;
 import org.pathvisio.model.DataNodeListExporter;
 import org.pathvisio.model.EUGeneExporter;
@@ -57,8 +59,6 @@ import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.MIMShapes;
-
-import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.

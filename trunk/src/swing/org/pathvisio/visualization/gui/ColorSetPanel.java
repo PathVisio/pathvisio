@@ -16,12 +16,16 @@
 //
 package org.pathvisio.visualization.gui;
 
+import com.jgoodies.forms.factories.ButtonBarFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -41,12 +45,8 @@ import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetEvent;
-import org.pathvisio.visualization.colorset.ColorSetObject;
 import org.pathvisio.visualization.colorset.ColorSetManager.ColorSetListener;
-
-import com.jgoodies.forms.factories.ButtonBarFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
+import org.pathvisio.visualization.colorset.ColorSetObject;
 
 /**
  * Panel for editing a color set, a combination of

@@ -20,6 +20,10 @@ import javax.swing.JComboBox;
 
 import org.pathvisio.model.DataSource;
 
+/**
+ * A combobox populated with DataSources, used by the GexImportWizard.
+ * TODO: check if this can be used more broadly.
+ */
 public class DataSourceCombo extends JComboBox 
 {
 

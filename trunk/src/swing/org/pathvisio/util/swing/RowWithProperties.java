@@ -21,6 +21,8 @@ package org.pathvisio.util.swing;
  * A row in a ListWithProperties table
  * A row defines a way to get to a number of properties that may or 
  * may not be displayed in columns of this pathway
+ * 
+ * @param <T> PropertyColumn type
  */
 public interface RowWithProperties<T extends PropertyColumn>
 {

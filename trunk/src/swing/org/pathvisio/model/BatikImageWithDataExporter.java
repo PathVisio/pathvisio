@@ -36,6 +36,10 @@ import org.pathvisio.visualization.VisualizationManager;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+/**
+ * Same as BatikImageExporter, but can also include visualized data
+ * in the resulting image.
+ */
 public class BatikImageWithDataExporter extends ImageExporter 
 {
 	private final VisualizationManager visualizationManager;

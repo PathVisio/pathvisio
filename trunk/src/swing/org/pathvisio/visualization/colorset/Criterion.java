@@ -23,6 +23,15 @@ import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 
+/**
+ * A criterion is a simple boolean expression that can 
+ * be applied to a row in an expression dataset, and is used
+ * for example in overrepresentation analysis to divide the data in two sets
+ * (meets the criterion yes/no), or in color rules to decide whether a color 
+ * applies or not.
+ * 
+ * This class handles tokenizing, parsing and evaluating 
+ */
 public class Criterion 
 {
 	/**
@@ -34,8 +43,8 @@ public class Criterion
 		
 	}
 	
-	static final String displaySample = "|Displayed sample|";
-	public static final String[] tokens = {"AND", "OR", "=", "<", ">", "<=", ">="};
+	private static final String DISPLAY_SAMPLE = "|Displayed sample|";
+	public static final String[] TOKENS = {"AND", "OR", "=", "<", ">", "<=", ">="};
 	private Map<String, Double> symTab = new HashMap<String, Double>();
 
 	private String expression = "";
@@ -88,7 +97,7 @@ public class Criterion
 		if (expression == null) throw new NullPointerException();
 		setSampleData(data);
 		Object value = data.get(displaySampleId);
-		if(value instanceof Double) symTab.put (displaySample, (Double)value);
+		if(value instanceof Double) symTab.put (DISPLAY_SAMPLE, (Double)value);
 
 		return evaluate();
 	}
@@ -541,9 +550,9 @@ public class Criterion
 			throw new CriterionException(error);
 		}
 
-		Token (int _type) { type = _type; numberValue = 0; symbolValue = ""; }
-		Token (int _type, double _numberValue) { type = _type; numberValue = _numberValue; symbolValue = ""; }
-		Token (int _type, String _symbolValue) { type = _type; numberValue = 0; symbolValue = _symbolValue; }
+		Token (int aType) { type = aType; numberValue = 0; symbolValue = ""; }
+		Token (int aType, double aNumberValue) { type = aType; numberValue = aNumberValue; symbolValue = ""; }
+		Token (int aType, String aSymbolValue) { type = aType; numberValue = 0; symbolValue = aSymbolValue; }
 	}
 }
 

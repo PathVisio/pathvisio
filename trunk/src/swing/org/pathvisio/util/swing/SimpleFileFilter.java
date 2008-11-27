@@ -16,11 +16,11 @@
 //
 package org.pathvisio.util.swing;
 
-import javax.swing.filechooser.FileFilter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.filechooser.FileFilter;
 
 /**
  * A utility class that simplifies creating a file filter for a JFileChooser dialog. 

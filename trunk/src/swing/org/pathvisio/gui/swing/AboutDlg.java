@@ -16,6 +16,9 @@
 //
 package org.pathvisio.gui.swing;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -32,16 +35,13 @@ import org.pathvisio.Globals;
 import org.pathvisio.Revision;
 import org.pathvisio.util.Resources;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 /**
  * Creates and displays the About dialog,
  * showing some general information about the application.
  */
 public class AboutDlg 
 {
-	private static URL IMG_ABOUT_LOGO = Resources.getResourceURL("logo.jpg");	
+	private static final URL IMG_ABOUT_LOGO = Resources.getResourceURL("logo.jpg");	
 
 	private SwingEngine swingEngine;
 

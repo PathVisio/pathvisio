@@ -16,6 +16,10 @@
 //
 package org.pathvisio.gui.swing;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
@@ -54,17 +58,13 @@ import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.MatchResult;
 import org.pathvisio.util.swing.SearchMethods;
-import org.pathvisio.util.swing.SearchTableModel;
 import org.pathvisio.util.swing.SearchMethods.ByPatternMatcher;
 import org.pathvisio.util.swing.SearchMethods.ByXrefMatcher;
 import org.pathvisio.util.swing.SearchMethods.SearchException;
+import org.pathvisio.util.swing.SearchTableModel;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A side panel which displays search results.

@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing;
 
+import edu.stanford.ejalbert.BrowserLauncher;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
@@ -29,12 +31,15 @@ import javax.swing.KeyStroke;
 import org.pathvisio.Globals;
 import org.pathvisio.util.Resources;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-
+/**
+ * collection of menu / toolbar Actions that are only needed 
+ * in the standalone (non-applet)
+ * version of PathVisio.
+ */
 public class StandaloneActions 
 {
-	private static URL IMG_OPEN = Resources.getResourceURL("open.gif");
-	private static URL IMG_NEW = Resources.getResourceURL("new.gif");
+	private static final URL IMG_OPEN = Resources.getResourceURL("open.gif");
+	private static final URL IMG_NEW = Resources.getResourceURL("new.gif");
 
 	public final Action openAction;
 	public final Action helpAction;
@@ -224,6 +229,7 @@ public class StandaloneActions
 		}
 	}
 
+	/** activates search pane */
 	public static class SearchAction extends AbstractAction 
 	{
 

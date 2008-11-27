@@ -94,8 +94,8 @@ public class ColorGradientCombo extends JComboBox
 	class ColorGradientRenderer extends JLabel implements ListCellRenderer 
 	{
 		ColorGradient current;
-		Border b_selected = BorderFactory.createLineBorder(Color.BLACK, 3);
-		Border b_unselected = BorderFactory.createLineBorder(Color.GRAY, 1);
+		Border bSelected = BorderFactory.createLineBorder(Color.BLACK, 3);
+		Border bUnselected = BorderFactory.createLineBorder(Color.GRAY, 1);
 		
 		public ColorGradientRenderer() 
 		{
@@ -108,7 +108,7 @@ public class ColorGradientCombo extends JComboBox
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) 
 		{
-			setBorder(isSelected ? b_selected : b_unselected);
+			setBorder(isSelected ? bSelected : bUnselected);
 			String id = (String)value;
 			current = id2gradient.get(id);
 			return this;
@@ -118,7 +118,7 @@ public class ColorGradientCombo extends JComboBox
 			super.paintComponent(g);
 			if(current != null) 
 			{
-				int b = getBorder() == b_selected ? 3 : 1;
+				int b = getBorder() == bSelected ? 3 : 1;
 				Dimension d = getSize();
 				current.paintPreview(
 						(Graphics2D)g.create(), new Rectangle(b, b, d.width - b*2, d.height - b*2)

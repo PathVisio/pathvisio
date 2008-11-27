@@ -16,6 +16,9 @@
 //
 package org.pathvisio.visualization.gui;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,9 +43,6 @@ import org.pathvisio.data.SimpleGex;
 import org.pathvisio.util.swing.TextFieldUtils;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.Criterion;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A panel for editing a color rule
@@ -156,7 +156,7 @@ public class ColorRulePanel extends JPanel
 		add (new JLabel ("Expression: "), cc.xy (2,2));
 		add (txtExpr, cc.xy (4, 2));
 		
-		lstOperators = new JList(Criterion.tokens);
+		lstOperators = new JList(Criterion.TOKENS);
 		add (new JScrollPane (lstOperators), cc.xy (2,4));
 		
 		lstOperators.addMouseListener(new MouseAdapter() 
@@ -166,7 +166,7 @@ public class ColorRulePanel extends JPanel
 				int selectedIndex = lstOperators.getSelectedIndex();
 				if (selectedIndex >= 0)
 				{
-					TextFieldUtils.insertAtCursorWithSpace(txtExpr, Criterion.tokens[selectedIndex]);
+					TextFieldUtils.insertAtCursorWithSpace(txtExpr, Criterion.TOKENS[selectedIndex]);
 				}
 				txtExpr.requestFocus();
 			}

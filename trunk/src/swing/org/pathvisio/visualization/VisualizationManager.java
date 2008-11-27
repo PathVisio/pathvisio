@@ -264,7 +264,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		}
 	}
 
-	public  final String ROOT_XML_ELEMENT = "expression-data-visualizations";
+	public static final String ROOT_XML_ELEMENT = "expression-data-visualizations";
 
 	public  InputStream getXmlInput()
 	{

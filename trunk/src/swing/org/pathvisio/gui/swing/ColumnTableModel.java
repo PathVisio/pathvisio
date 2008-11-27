@@ -30,6 +30,11 @@ import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.data.ImportInformation;
 
+/**
+ * Table model used in the column page of the Gex Import Wizard.
+ * It displays a sample of the data to be imported, with the cells colored depending on
+ * their type. e.g. an identifier is Green, a system code is Red and a header is yellow.  
+ */
 class ColumnTableModel extends AbstractTableModel
 {
 	static private class HighlightedCellRenderer extends DefaultTableCellRenderer

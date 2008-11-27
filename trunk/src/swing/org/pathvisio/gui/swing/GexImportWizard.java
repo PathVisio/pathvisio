@@ -16,6 +16,13 @@
 //
 package org.pathvisio.gui.swing;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.nexes.wizard.Wizard;
+import com.nexes.wizard.WizardPanelDescriptor;
+
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -53,13 +60,10 @@ import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
 import org.pathvisio.util.swing.SimpleFileFilter;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.nexes.wizard.Wizard;
-import com.nexes.wizard.WizardPanelDescriptor;
-
+/**
+ * Wizard to guide the user through importing a large dataset from a tab delimited text file 
+ * in PathVisio. For example gene expression data.
+ */
 public class GexImportWizard extends Wizard 
 {
 	private ImportInformation importInformation = new ImportInformation();

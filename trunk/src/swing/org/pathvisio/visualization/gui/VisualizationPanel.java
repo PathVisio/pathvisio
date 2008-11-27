@@ -16,6 +16,11 @@
 //
 package org.pathvisio.visualization.gui;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.mammothsoftware.frwk.ddb.DropDownButton;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -32,11 +37,6 @@ import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethod;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 public class VisualizationPanel extends JPanel implements ActionListener 
 {
@@ -63,18 +63,18 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		DropDownButton visButton = new DropDownButton(new ImageIcon(
 				Resources.getResourceURL("edit.gif"))
 		);
-		JMenuItem m_new = new JMenuItem(ACTION_NEW);
-		JMenuItem m_remove = new JMenuItem(ACTION_REMOVE);
-		JMenuItem m_rename = new JMenuItem(ACTION_RENAME);
-		m_new.setActionCommand(ACTION_NEW);
-		m_remove.setActionCommand(ACTION_REMOVE);
-		m_rename.setActionCommand(ACTION_RENAME);
-		m_new.addActionListener(this);
-		m_remove.addActionListener(this);
-		m_rename.addActionListener(this);
-		visButton.addComponent(m_new);
-		visButton.addComponent(m_remove);
-		visButton.addComponent(m_rename);
+		JMenuItem mNew = new JMenuItem(ACTION_NEW);
+		JMenuItem mRemove = new JMenuItem(ACTION_REMOVE);
+		JMenuItem mRename = new JMenuItem(ACTION_RENAME);
+		mNew.setActionCommand(ACTION_NEW);
+		mRemove.setActionCommand(ACTION_REMOVE);
+		mRename.setActionCommand(ACTION_RENAME);
+		mNew.addActionListener(this);
+		mRemove.addActionListener(this);
+		mRename.addActionListener(this);
+		visButton.addComponent(mNew);
+		visButton.addComponent(mRemove);
+		visButton.addComponent(mRename);
 		
 		methods = new JPanel();
 		CellConstraints cc = new CellConstraints();

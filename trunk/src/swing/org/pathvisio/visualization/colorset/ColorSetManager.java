@@ -30,8 +30,11 @@ import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 
+/** 
+ * Manages colorSets (a ColorSet is a combination of rules and / or gradients)
+ * Can send events when a colorSet is added or removed. 
+ */
 public class ColorSetManager {
 	public final static String XML_ELEMENT = "color-sets";
 

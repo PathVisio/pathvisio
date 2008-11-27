@@ -20,6 +20,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.pathvisio.model.Xref;
 
@@ -36,7 +37,7 @@ import org.pathvisio.model.Xref;
  */
 public class CachedData {
 	
-	HashMap<Xref, List<Data>> data; //Data objects for gene-products on the pathway
+	Map<Xref, List<Data>> data; //Data objects for gene-products on the pathway
 		
 	protected CachedData() {
 		data = new HashMap<Xref, List<Data>>();
@@ -104,12 +105,12 @@ public class CachedData {
 	 * @return a HashMap where the keys represent the sample ids and the values the averaged data
 	 * @see Data#getSampleData()
 	 */
-	public HashMap<Integer, Object> getAverageSampleData(Xref idc)
+	public Map<Integer, Object> getAverageSampleData(Xref idc)
 	{
-		HashMap<Integer, Object> averageData = new HashMap<Integer, Object>();
+		Map<Integer, Object> averageData = new HashMap<Integer, Object>();
 		List<Data> dlist = data.get(idc);
 		if(dlist != null) {
-			HashMap<Integer, Sample> samples = GexManager.getCurrent().getCurrentGex().getSamples();
+			Map<Integer, Sample> samples = GexManager.getCurrent().getCurrentGex().getSamples();
 			for(int idSample : samples.keySet())
 			{
 				int dataType = samples.get(idSample).getDataType();
@@ -163,7 +164,7 @@ public class CachedData {
 	public static class Data {
 		Xref idc;
 		int group;
-		HashMap<Integer, Object> sampleData;
+		Map<Integer, Object> sampleData;
 		
 		/**
 		 * Constructor for this class. Creates a new {@link Data} object for the given reporter
@@ -198,7 +199,7 @@ public class CachedData {
 		 * @see Sample#getDataType()
 		 * @see Sample#getId()
 		 */
-		public HashMap<Integer, Object> getSampleData() {
+		public Map<Integer, Object> getSampleData() {
 			return sampleData;
 		}
 		

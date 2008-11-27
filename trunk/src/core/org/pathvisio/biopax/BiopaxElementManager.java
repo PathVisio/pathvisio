@@ -43,11 +43,11 @@ public class BiopaxElementManager {
 	
 	private Pathway pathway;
 	private PathwayElement bpElm;
-	private HashMap<String, BiopaxElement> biopax;
+	private Map<String, BiopaxElement> biopax;
 	/**
 	 * Keeps track of the order of the loaded biopax elements per subclass.
 	 */
-	private HashMap<Class<? extends BiopaxElement>, HashMap<String, Integer>> ordinal;
+	private Map<Class<? extends BiopaxElement>, Map<String, Integer>> ordinal;
 	
 	/**
 	 * Constructor for this class. Builds a map of all biopax
@@ -57,7 +57,7 @@ public class BiopaxElementManager {
 	public BiopaxElementManager(Pathway p) {
 		pathway = p;
 		biopax = new HashMap<String, BiopaxElement>();
-		ordinal = new HashMap<Class<? extends BiopaxElement>, HashMap<String, Integer>>();
+		ordinal = new HashMap<Class<? extends BiopaxElement>, Map<String, Integer>>();
 		refresh();
 	}
 	
@@ -209,7 +209,7 @@ public class BiopaxElementManager {
 	}
 	
 	private void addToOrdinal(BiopaxElement e) {
-		HashMap<String, Integer> classOrdinal = ordinal.get(e.getClass());
+		Map<String, Integer> classOrdinal = ordinal.get(e.getClass());
 		if(classOrdinal == null) {
 			classOrdinal = new HashMap<String, Integer>();
 			ordinal.put(e.getClass(), classOrdinal);
@@ -226,7 +226,7 @@ public class BiopaxElementManager {
 	 * to other elements of the same class.
 	 */
 	public int getOrdinal(BiopaxElement bpe) {
-		HashMap<String, Integer> classOrdinal = ordinal.get(bpe.getClass());
+		Map<String, Integer> classOrdinal = ordinal.get(bpe.getClass());
 		if(classOrdinal != null) {
 			return classOrdinal.get(bpe.getId());
 		} else {

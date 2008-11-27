@@ -19,6 +19,7 @@ package org.pathvisio.gui.swing.completer;
 import com.jroller.completer.CompleterFilterWithWindow;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -36,7 +37,7 @@ import javax.swing.text.BadLocationException;
 public class CompleterQueryFilter extends CompleterFilterWithWindow {
 	OptionProvider optionProvider;
 	SortedSet<Object> options = new TreeSet<Object>();
-	HashSet<String> history = new HashSet<String>();
+	Set<String> history = new HashSet<String>();
 
 	QueryThread t = new QueryThread();
 

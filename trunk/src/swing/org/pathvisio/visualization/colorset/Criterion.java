@@ -71,10 +71,10 @@ public class Criterion
 	}
 	
 	//TODO: externalize reference to GexManager here...
-	private void setSampleData(HashMap<Integer, Object> data) 
+	private void setSampleData(Map<Integer, Object> data) 
 	{
 		// Add current sample values to symTab if they are of type Double
-		HashMap<Integer, Sample> samples = GexManager.getCurrent().getCurrentGex().getSamples();
+		Map<Integer, Sample> samples = GexManager.getCurrent().getCurrentGex().getSamples();
 		symTab.clear();
 		for(Sample s : samples.values()) 
 		{
@@ -83,7 +83,7 @@ public class Criterion
 		}
 	}
 	
-	public boolean evaluate(HashMap<Integer, Object> data, int displaySampleId) throws CriterionException 
+	public boolean evaluate(Map<Integer, Object> data, int displaySampleId) throws CriterionException 
 	{
 		if (expression == null) throw new NullPointerException();
 		setSampleData(data);
@@ -93,7 +93,7 @@ public class Criterion
 		return evaluate();
 	}
 	
-	public boolean evaluate(HashMap<Integer, Object> data) throws CriterionException {
+	public boolean evaluate(Map<Integer, Object> data) throws CriterionException {
 		setSampleData(data);
 		return evaluate();
 	}

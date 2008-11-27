@@ -326,7 +326,7 @@ public class GpmlFormatImpl1
 	private static class ByElementName implements Comparator<Element>
 	{
 		// hashmap for quick lookups during sorting
-		private HashMap<String, Integer> elementOrdering;
+		private Map<String, Integer> elementOrdering;
 				
 		// correctly ordered list of tag names, which are loaded into the hashmap in
 		// the constructor.

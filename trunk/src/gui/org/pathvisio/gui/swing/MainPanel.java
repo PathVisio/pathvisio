@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.Action;
@@ -311,7 +312,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public static final String TB_GROUP_SHOW_IF_EDITMODE = "edit";
 	public static final String TB_GROUP_SHOW_IF_VPATHWAY = "vpathway";
 	
-	HashMap<String, List<Component>> toolbarGroups = new HashMap<String, List<Component>>();
+	Map<String, List<Component>> toolbarGroups = new HashMap<String, List<Component>>();
 	
 	public void addToToolbar(Component c, String group) {
 		JToolBar tb = getToolBar();

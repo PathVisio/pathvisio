@@ -25,6 +25,7 @@ import java.sql.Types;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.pathvisio.debug.Logger;
@@ -94,7 +95,7 @@ public class GexTxtImporter
 			//Parse sample names and add to Sample table
 			result.prepare();
 			int sampleId = 0;
-			ArrayList<Integer> dataCols = new ArrayList<Integer>();
+			List<Integer> dataCols = new ArrayList<Integer>();
 			for(int i = 0; i < headers.length; i++)
 			{
 				if(p != null && p.isCancelled())

@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.pathvisio.data.CachedData.Data;
@@ -91,7 +92,7 @@ public class SimpleGex
 	 */
 	private void setDbName(String name) { dbName = name; }
 						    
-	private HashMap<Integer, Sample> samples;
+	private Map<Integer, Sample> samples;
 	/**
 	 * Loads the samples used in the expression data (Sample table) in memory
 	 */
@@ -171,7 +172,7 @@ public class SimpleGex
 		return getSamples().get(id);
 	}
 	
-	public HashMap<Integer, Sample> getSamples()
+	public Map<Integer, Sample> getSamples()
 	{
 		if(samples == null) setSamples();
 		return samples;
@@ -287,7 +288,7 @@ public class SimpleGex
 					}
 				}
 				//destRefs.addAll(gdb.getCrossRefs(srcRef));
-				HashMap<Integer, Data> groupData = new HashMap<Integer, Data>();
+				Map<Integer, Data> groupData = new HashMap<Integer, Data>();
 				
 				if(destRefs.size() > 0)
 				{								

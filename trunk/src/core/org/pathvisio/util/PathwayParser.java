@@ -50,7 +50,7 @@ public class PathwayParser extends DefaultHandler
 	}
 	
 	String name;
-	private ArrayList<XrefWithSymbol> genes;
+	private List<XrefWithSymbol> genes;
 	
 	public PathwayParser() 
 	{

@@ -29,6 +29,7 @@ import java.io.RandomAccessFile;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.pathvisio.debug.Logger;
@@ -44,8 +45,8 @@ public class FileUtils {
 	 * @param recursive	Whether to include subdirectories or not
 	 * @return A list of files with given extension present in the given directory
 	 */
-	public static ArrayList<File> getFiles(File directory, final String extension, boolean recursive) {
-		ArrayList<File> fileList = new ArrayList<File>();
+	public static List<File> getFiles(File directory, final String extension, boolean recursive) {
+		List<File> fileList = new ArrayList<File>();
 		
 		if(!directory.isDirectory()) { //File is not a directory, return file itself (if has correct extension)
 			if(directory.getName().endsWith("." + extension)) fileList.add(directory);

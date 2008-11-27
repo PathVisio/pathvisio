@@ -20,9 +20,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
@@ -161,7 +161,7 @@ public class ColorSet
 	 * @param sampleId	the id of the sample that will be visualized
 	 * @return	an {@link RGB} object representing the color for the given data
 	 */
-	public Color getColor(HashMap<Integer, Object> data, int sampleId)
+	public Color getColor(Map<Integer, Object> data, int sampleId)
 	{
 		if(data == null) return color_no_data_found;
 		Object value = data.get(sampleId);

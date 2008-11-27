@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -47,7 +48,7 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 	}
 	
 	public void refresh() {
-		ArrayList<Object> csClone = new ArrayList<Object>();
+		List<Object> csClone = new ArrayList<Object>();
 		csClone.addAll(csMgr.getColorSets());
 		setModel(new DefaultComboBoxModel(csClone.toArray()));
 		if(csMgr.getColorSets().size() == 0) {

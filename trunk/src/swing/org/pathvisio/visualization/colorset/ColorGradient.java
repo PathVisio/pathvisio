@@ -23,8 +23,8 @@ import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
@@ -36,7 +36,7 @@ import org.pathvisio.util.ColorConverter;
 public class ColorGradient extends ColorSetObject {
 	public static final String XML_ELEMENT_NAME = "ColorGradient";
 
-	private ArrayList<ColorValuePair> colorValuePairs;
+	private List<ColorValuePair> colorValuePairs;
 	
 	/**
 	 * Constructor for this class
@@ -87,7 +87,7 @@ public class ColorGradient extends ColorSetObject {
 	 * Get the the colors and corresponding values used in this gradient as {@link ColorValuePair}
 	 * @return ArrayList containing the ColorValuePairs
 	 */
-	public ArrayList<ColorValuePair> getColorValuePairs() 
+	public List<ColorValuePair> getColorValuePairs() 
 	{
 		return colorValuePairs;
 	}
@@ -192,7 +192,7 @@ public class ColorGradient extends ColorSetObject {
 		return rgb;
 	}
 	
-	public Color getColor(HashMap<Integer, Object> data, int idSample)
+	public Color getColor(Map<Integer, Object> data, int idSample)
 	{
 		Object o = data.get(idSample);
 		double value;

@@ -190,6 +190,10 @@ public class GeneCounter {
 		{
 			Logger.log.error ("Ignoring Pathway");
 		}
+		catch (DataException e)
+		{
+			Logger.log.error ("Ignoring Pathway");
+		}
 		catch (SAXException e)
 		{
 			Logger.log.error ("Couldn't create XML reader");

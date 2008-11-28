@@ -547,7 +547,7 @@ public class Test extends TestCase implements PathwayListener
 		assertEquals (ds.getFullName(), "Ensembl");
 		assertEquals (ds.getSystemCode(), "En");
 		
-		DataSource.register("@@", "ZiZaZo", null, null);
+		DataSource.register("@@", "ZiZaZo", null, null, null, false, false, null);
 		
 		DataSource ds2 = DataSource.getBySystemCode ("@@");
 		DataSource ds3 = DataSource.getByFullName ("ZiZaZo");
@@ -564,6 +564,33 @@ public class Test extends TestCase implements PathwayListener
 		assertEquals (ds5, DataSource.ENTREZ_GENE);
 	}
 
+	public void testDataSourceFilter ()
+	{
+		// ensembl is primary, affy isn't
+		Set<DataSource> f1 = DataSource.getFilteredSet(true, null, null);
+		assertTrue (f1.contains(DataSource.ENSEMBL));
+		assertTrue (f1.contains(DataSource.HMDB));
+		assertFalse (f1.contains(DataSource.AFFY));
+
+		// wormbase is specific for Ce.
+		Set<DataSource> f2 = DataSource.getFilteredSet(null, null, Organism.CaenorhabditisElegans);
+		assertTrue (f2.contains(DataSource.ENSEMBL));
+		assertTrue (f2.contains(DataSource.WORMBASE));
+		assertFalse (f2.contains(DataSource.ZFIN));
+
+		// metabolites
+		Set<DataSource> f3 = DataSource.getFilteredSet(null, true, null);
+		assertTrue (f3.contains(DataSource.HMDB));
+		assertFalse (f3.contains(DataSource.WORMBASE));
+		assertFalse (f3.contains(DataSource.ENSEMBL));
+
+		// non-metabolites
+		Set<DataSource> f4 = DataSource.getFilteredSet(null, false, null);
+		assertTrue (f4.contains(DataSource.ENSEMBL));
+		assertTrue (f4.contains(DataSource.WORMBASE));
+		assertFalse (f4.contains(DataSource.HMDB));
+	}
+	
 	/**
 	 * Dangling references, pointing to nothing, can occur in theory.
 	 * These should be removed.

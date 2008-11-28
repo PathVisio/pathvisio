@@ -22,9 +22,13 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -198,8 +202,8 @@ public class TypedProperty {
 			return lineStyleRenderer;
 		case DATASOURCE:
 		{
-			Set<DataSource> dataSources = DataSource.getDataSources();
-			if(dataSources.size() > datasourceRenderer.getItemCount()) {
+			Set<DataSource> dataSources = DataSource.getFilteredSet(true, null, null);
+			if(dataSources.size() != datasourceRenderer.getItemCount()) {
 				Object[] labels = new Object[dataSources.size()];
 				Object[] values = new Object[dataSources.size()];
 				int i = 0;
@@ -245,8 +249,17 @@ public class TypedProperty {
 			return checkboxEditor;
 		case DATASOURCE:
 		{
-			Set<DataSource> dataSources = DataSource.getDataSources();
-			if(dataSources.size() > datasourceEditor.getItemCount()) {
+			List<DataSource> dataSources = new ArrayList<DataSource>();
+			dataSources.addAll (DataSource.getFilteredSet(true, null, null));
+			if(dataSources.size() != datasourceEditor.getItemCount()) 
+			{
+				Collections.sort (dataSources, new Comparator<DataSource>() {
+
+					public int compare(DataSource arg0, DataSource arg1) 
+					{
+						return arg0.getFullName().toLowerCase().compareTo(arg1.getFullName().toLowerCase());
+					}});
+				
 				Object[] labels = new Object[dataSources.size()];
 				Object[] values = new Object[dataSources.size()];
 				int i = 0;

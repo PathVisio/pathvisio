@@ -34,6 +34,9 @@ import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayListener;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
@@ -202,7 +205,17 @@ public class PathwayPageApplet extends JApplet {
 	protected void toFullScreen() {
 		final MainPanel mainPanel = wiki.getMainPanel();
 		fullScreenFrame = new JFrame();
-		fullScreenFrame.setTitle("WikiPathways editor - " + wiki.getPwName());
+		
+		PathwayElement mappInfo = wiki.getPathway().getMappInfo();
+		
+		fullScreenFrame.setTitle("WikiPathways editor - " + mappInfo.getMapInfoName());
+		
+		wiki.getPathway().getMappInfo().addListener(new PathwayListener() {
+			public void gmmlObjectModified(PathwayEvent e) {
+				fullScreenFrame.setTitle("WikiPathways editor - " + 
+						e.getAffectedData().getMapInfoName());
+			}
+		});
 		getContentPane().repaint();
 		
 		fullScreenFrame.getContentPane().add(mainPanel);

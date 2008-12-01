@@ -70,6 +70,14 @@ public class WikiPathwaysClient {
 	}
 	
 	/**
+	 * Get a info about the pathway (without getting the actual
+	 * GPML code).
+	 */
+	public WSPathwayInfo getPathwayInfo(String id) throws RemoteException {
+		return port.getPathwayInfo(id);
+	}
+	
+	/**
 	 * Get a pathway from WikiPathways.
 	 * @see #toPathway(WSPathway)
 	 */
@@ -83,6 +91,16 @@ public class WikiPathwaysClient {
 	public WSPathwayInfo[] listPathways() throws RemoteException {
 		WSPathwayInfo[] r = port.listPathways();
 		if(r == null) r = new WSPathwayInfo[0];
+		return r;
+	}
+	
+	/**
+	 * Lists all available organisms on WikiPathways
+	 * @throws RemoteException 
+	 */
+	public String[] listOrganisms() throws RemoteException {
+		String[] r = port.listOrganisms();
+		if(r == null) r = new String[0];
 		return r;
 	}
 	

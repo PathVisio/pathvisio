@@ -22,6 +22,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("wikipathwaysSearch")
 public interface SearchService extends RemoteService {
-	public Result[] search(String query);
+	public Result[] search(Query query);
 	public void waitForImage(String id);
+	public String[] getSystemNames();
+	public String[] getOrganismNames();
 }

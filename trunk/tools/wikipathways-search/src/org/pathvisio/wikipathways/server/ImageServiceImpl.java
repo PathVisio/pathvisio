@@ -23,12 +23,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.client.ResultsTable;
 
 public class ImageServiceImpl extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
+			if(!ImageManager.isInit()) {
+				WikiPathwaysClient client = new WikiPathwaysClient(
+						SearchServiceImpl.getClientUrl()
+				);
+				ImageManager.init(client);
+			}
 			ImageManager imgManager = ImageManager.getInstance();
 
 			//Update the cache

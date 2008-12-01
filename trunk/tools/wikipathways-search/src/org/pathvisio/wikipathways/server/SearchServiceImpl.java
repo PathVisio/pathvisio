@@ -16,19 +16,23 @@
 //
 package org.pathvisio.wikipathways.server;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Properties;
 
 import javax.xml.rpc.ServiceException;
 
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.DataSource;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.Xref;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.pathvisio.wikipathways.client.IdSearchPanel;
+import org.pathvisio.wikipathways.client.Query;
 import org.pathvisio.wikipathways.client.Result;
 import org.pathvisio.wikipathways.client.ResultsTable;
 import org.pathvisio.wikipathways.client.SearchException;
@@ -43,76 +47,92 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	WikiPathwaysClient client;
 	
 	public SearchServiceImpl() throws ServiceException {
-		client = new WikiPathwaysClient();
+		if(!ImageManager.isInit()) {
+			client = new WikiPathwaysClient(getClientUrl());
+			ImageManager.init(client);
+		}
 		imageMgr = ImageManager.getInstance();
+	}
+	
+	protected static URL getClientUrl() {
+		URL url = null;
+		try {
+			url = new URL(
+					"http://www.wikipathways.org/wpi/webservice/webservice.php"
+			);
+			Properties prop = new Properties();
+			prop.load(new FileInputStream(new File("wikipathways.props")));
+			String wsurl = (String)prop.get("webservice-url");
+			if(wsurl != null) {
+				url = new URL(wsurl);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return url;
 	}
 	
 	private WikiPathwaysClient getClient() {
 		return client;
 	}
 	
-	public Result[] search(String query) throws SearchException {
+	public Result[] search(Query query) throws SearchException {
 		try {
-			Map<String, Result> results = new HashMap<String, Result>();
-			
-			int i = 0;
-			Result[] idResults = searchIdentifier(query);
-			for(Result r : idResults) {
-				r.setOrder(i++);
-				Result er = results.get(r.getPathwayId());
-				if(er == null) {
-					results.put(r.getPathwayId(), r);
-				} else {
-					//Add the index field to the existing result
-					Map<String, String[]> props = r.getProperties();
-					Map<String, String[]> eprops = er.getProperties();
-					for(String p : props.keySet()) {
-						if(eprops.containsKey(p)) {
-							//Merge the values
-							Set<String> combined = new HashSet<String>();
-							for(String s : eprops.get(p)) combined.add(s);
-							for(String s : props.get(p)) combined.add(s);
-							er.setProperty(p, combined.toArray(new String[combined.size()]));
-						} else {
-							er.setProperty(p, props.get(p));
-						}
-					}
-				}
+			if(Query.TYPE_ID.equals(query.getType())) { //System code specified, use id search
+				return searchIdentifier(query);
+			} else { //Use text search
+				return searchText(query.getText());
 			}
-			
-			Result[] textResults = searchText(query);
-			for(Result r : textResults) {
-				r.setOrder(i++);
-				if(!results.containsKey(r.getPathwayId())) {
-					results.put(r.getPathwayId(), r);
-				}
-			}
-			
-			List<Result> sortedResults = new ArrayList<Result>(results.values());
-			Collections.sort(sortedResults, new Comparator<Result>() {
-				public int compare(Result ra, Result rb) {
-					return ra.getOrder() - rb.getOrder();
-				}
-			});
-			return sortedResults.toArray(new Result[sortedResults.size()]);
 		} catch (Exception e) {
 			throw new SearchException(e);
 		}
 	}
 
-	private Result createPathwayResult(final WSSearchResult wsr) {
+	private Result createPathwayResult(final WSSearchResult wsr, String id) {
+		imageMgr.setServerBasePath(getServletContext().getRealPath("org/pathvisio/wikipathways/public/"));
+
+		String pdescr = null;
+		String iddescr = null;
+		try {
+			if(id != null) {
+				Pathway pathway = imageMgr.getPathway(wsr);
+				String idlist = "<ul>";
+				for(WSIndexField f : wsr.getFields()) {
+					if("graphId".equals(f.getName())) {
+						for(String graphId : f.getValues()) {
+							PathwayElement pwe = pathway.getElementById(graphId);
+							if(pwe != null) {
+								idlist += "<li>" + pwe.getTextLabel() + " (";
+								Xref xref = pwe.getXref();
+								idlist += "<a href='" + xref.getUrl() + "'>" +
+									xref.getId() + ", " + xref.getDatabaseName() + "</a>)";
+							}
+						}
+					}
+				}
+				if(!"<ul>".equals(idlist)) {
+					iddescr = idlist + "</ul>";
+				}
+			}
+			
+		} catch(ConverterException e) {
+			e.printStackTrace();
+		}
+		
 		String descr = "<table class='" + ResultsTable.STYLE_DESCRIPTION + "'>";
 		descr += "<tr><td><i>Title:</i> " + wsr.getName();
 		descr += "<tr><td><i>Organism:</i> " + wsr.getSpecies();
-		descr += "<tr><td><i>Identifier:</i> " + wsr.getId();
-		descr += "<tr><td><i>Score:</i> " + wsr.getScore();
+		descr += "<tr><td><i>Pathway ID:</i> " + wsr.getId();
+		if(iddescr != null) descr += "<tr><td><i>" +
+				"IDs mapping to " + id + ":</i> " + iddescr;
 		descr += "</table>";
 		
 		Result r = new Result(
 				wsr.getId(),
 				wsr.getName() + " (" + wsr.getSpecies() + ")",
 				descr,
-				wsr.getUrl()
+				wsr.getUrl(),
+				wsr.getSpecies()
 		);
 		WSIndexField[] fields = wsr.getFields();
 		if(fields != null) {
@@ -122,7 +142,6 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		}
 		r.setImageId("" + ImageManager.getGpmlId(wsr.getId(), wsr.getRevision()));
 		
-		imageMgr.setServerBasePath(getServletContext().getRealPath("org/pathvisio/wikipathways/public/"));
 		imageMgr.startDownload(wsr); //Start downloading image that will be requested by client later
 		return r;
 	}
@@ -131,16 +150,27 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		WSSearchResult[] wsResults = getClient().findPathwaysByText(query, null);
 		Result[] results = new Result[wsResults.length];
 		for(int i = 0; i < wsResults.length; i++) {
-			results[i] = createPathwayResult(wsResults[i]);
+			results[i] = createPathwayResult(wsResults[i], null);
 		}
 		return results;
 	}
 
-	private Result[] searchIdentifier(String query) throws RemoteException {
-		WSSearchResult[] wsResults = getClient().findPathwaysByXref(query);
+	private Result[] searchIdentifier(Query query) throws RemoteException {
+		WSSearchResult[] wsResults = new WSSearchResult[0];
+		
+		String id = query.getText();
+		String system = query.getField(Query.FIELD_SYSTEM);
+		if(IdSearchPanel.SYSTEM_ALL.equals(system) || system == null) {
+			wsResults = client.findPathwaysByXref(id);
+		} else {
+			DataSource ds = DataSource.getByFullName(system);
+			Xref xref = new Xref(id, ds);
+			wsResults = client.findPathwaysByXref(xref);
+		}
+		
 		Result[] results = new Result[wsResults.length];
 		for(int i = 0; i < wsResults.length; i++) {
-			results[i] = createPathwayResult(wsResults[i]);
+			results[i] = createPathwayResult(wsResults[i], id);
 		}
 		return results;
 	}
@@ -149,6 +179,23 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		try {
 			imageMgr.waitForImage(id);
 		} catch(Exception e) {
+			throw new SearchException(e);
+		}
+	}
+	
+	public String[] getSystemNames() {
+		String[] names = DataSource.getFullNames().toArray(new String[0]);
+		Arrays.sort(names);
+		return names;
+	}
+	
+	public String[] getOrganismNames() {
+		String[] orgs;
+		try {
+			orgs = client.listOrganisms();
+			Arrays.sort(orgs);
+			return orgs;
+		} catch (RemoteException e) {
 			throw new SearchException(e);
 		}
 	}

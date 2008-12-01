@@ -16,11 +16,9 @@
 //
 package org.pathvisio.wikipathways.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 
-public interface SearchServiceAsync {
-	  void search(Query query, AsyncCallback<Result[]> callback);
-	  void waitForImage(String id, AsyncCallback<Void> callback);
-	  void getSystemNames(AsyncCallback<String[]> callback);
-	  void getOrganismNames(AsyncCallback<String[]> callback);
+public abstract class QueryWidget extends Widget {
+	public abstract Query getQuery();
+	public abstract void setQuery(Query query);
 }

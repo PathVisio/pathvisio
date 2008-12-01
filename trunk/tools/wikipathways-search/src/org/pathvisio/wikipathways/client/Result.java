@@ -31,16 +31,18 @@ public class Result implements IsSerializable {
 	private String title;
 	private String description;
 	private String url;
+	private String organism;
 	private int order;
 	
 	private Map<String, String[]> properties;
 	
-	public Result(String pathwayId, String title, String description, String url) {
+	public Result(String pathwayId, String title, String description, String url, String organism) {
 		properties = new HashMap<String, String[]>();
 		this.pathwayId = pathwayId;
 		this.title = title;
 		this.description = description;
 		this.url = url;
+		this.organism = organism;
 	}
 	
 	public void setOrder(int order) {
@@ -57,6 +59,10 @@ public class Result implements IsSerializable {
 	
 	public void setPathwayId(String pathwayId) {
 		this.pathwayId = pathwayId;
+	}
+	
+	public void setOrganism(String organism) {
+		this.organism = organism;
 	}
 	
 	public String getTitle() {
@@ -81,6 +87,10 @@ public class Result implements IsSerializable {
 	
 	public String getPathwayId() {
 		return pathwayId;
+	}
+	
+	public String getOrganism() {
+		return organism;
 	}
 	
 	public Map<String, String[]> getProperties() {

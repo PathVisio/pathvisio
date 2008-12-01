@@ -41,6 +41,7 @@ public class AppletMain extends PathwayPageApplet {
 	
 	@Override
 	protected void doInitWiki(ProgressKeeper pk, URL base) throws Exception {
+		wiki.setUseGdb(true);
 		Logger.log.trace("AppletMain:doInitWiki");
 		SwingUtilities.invokeAndWait(new Runnable() {
 			public void run() {

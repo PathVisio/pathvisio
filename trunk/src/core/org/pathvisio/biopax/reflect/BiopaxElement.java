@@ -138,6 +138,15 @@ public class BiopaxElement extends Element {
 		if(d == null) return;
 		d.getRootElement().removeContent(this);
 	}
+
+	/**
+	 * Check if this element equals the given element by comparing the properties.
+	 * @param e
+	 * @return
+	 */
+	public boolean propertyEquals(BiopaxElement e) {
+		return propertyEquals(e, null);
+	}
 	
 	/**
 	 * Check if this element equals the given element by comparing the properties.
@@ -149,7 +158,7 @@ public class BiopaxElement extends Element {
 	public boolean propertyEquals(BiopaxElement e, Collection<PropertyType> ignore) {
 		for(PropertyType p : PropertyType.values()) {
 			//Continue if property is in ignore list
-			if(ignore.contains(p)) continue;
+			if(ignore != null && ignore.contains(p)) continue;
 			
 			//Get the properties for this property type
 			List<BiopaxProperty> pv1 = getProperties(p.name());

@@ -191,11 +191,9 @@ public class BiopaxElementManager {
 			elm.setId(getUniqueID());
 		}
 		//Add this element to the document if it's not already in there
-		List<PropertyType> ignore = new ArrayList<PropertyType>();
-		ignore.add(PropertyType.ID);
 		for(BiopaxElement e : getElements()) {
 			System.out.println("Comparing: " + e + " with " + elm);
-			if(e.propertyEquals(elm, ignore)) {
+			if(e.propertyEquals(elm)) {
 				System.out.println("Equal properties!");
 				//If we found this property equal to another one,
 				//change the id and return

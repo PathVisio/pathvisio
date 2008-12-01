@@ -17,6 +17,7 @@
 package org.pathvisio.wikipathways.client;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,16 +27,12 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,9 +40,9 @@ import com.google.gwt.user.client.ui.Widget;
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
-	private TextBox searchText;
 	private DockPanel mainPanel;
 	private Panel progressPanel;
+	private ResultInfobar infoPanel;
 	
 	private ResultsTable pathwayResults;
 	
@@ -56,12 +53,14 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 		
 		mainPanel = new DockPanel();
 
-		Panel searchPanel = createSearchPanel();
+		Widget searchPanel = createSearchPanel();
 		Panel progressPanel = createProgressPanel();
+		infoPanel = new ResultInfobar();
 		Panel resultsPanel = createResultsPanel();
 
 		mainPanel.add(searchPanel, DockPanel.NORTH);
 		mainPanel.add(progressPanel, DockPanel.NORTH);
+		mainPanel.add(infoPanel, DockPanel.NORTH);
 		mainPanel.add(resultsPanel, DockPanel.CENTER);
 
 		mainPanel.setWidth("100%");
@@ -69,36 +68,36 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 		RootPanel.get().add(mainPanel);
 		
 		//Process url parameters
-		String query = Window.Location.getHash();
-		if(query != null && !"".equals(query)) {
-			if(query.startsWith("#")) query = query.substring(1);
-			searchText.setText(query);
-			search();
+		String text = Window.Location.getHash();
+		if(text != null && !"".equals(text)) {
+			if(text.startsWith("#")) text = text.substring(1);
+			Query query = Query.fromString(text);
+			showQueryPanel(query);
+			search(query);
 		}
 	}
 
 	public void onHistoryChanged(String historyToken) {
-		searchText.setText(historyToken);
+		Query query = Query.fromString(historyToken);
 		if(historyToken == null || "".equals(historyToken)) {
 			stopSearch(); //Clear all
 		} else {
-			search();
+			showQueryPanel(query);
+			search(query);
 		}
 	}
 	
 	private void showError(String title, String message) {
-		DialogBox dlg = new DialogBox();
-		dlg.setText(message);
-		dlg.setTitle(title);
-		mainPanel.add(dlg);
+		Window.alert(title + "\n" + message);
 	}
 	
-	private void search() {
+	protected void search(Query query) {
 		stopSearch();
-		doSearch(searchText.getText());
+		doSearch(query);
 	}
 
 	private void stopSearch() {
+		infoPanel.clear();
 		activeSearches.clear();
 		pathwayResults.clear();
 		refreshProgressDialog();
@@ -106,7 +105,7 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 	
 	private Set<AsyncCallback<Result[]>> activeSearches = new HashSet<AsyncCallback<Result[]>>();
 	
-	private void doSearch(String query) {
+	private void doSearch(final Query query) {
 		History.newItem(query.toString(), false);
 		if(searchSrv == null) {
 			searchSrv = GWT.create(SearchService.class);
@@ -120,6 +119,7 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 			public void onSuccess(Result[] results) {
 				//Only add results if user didn't cancel search
 				if(activeSearches.contains(this)) {
+					infoPanel.setResults(results, query);
 					pathwayResults.addResults(results);
 				}
 				removePendingSearch(this);
@@ -145,31 +145,40 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 		);
 	}
 	
-	private Panel createSearchPanel() {
-		//Panel to contain search box / button
-		HorizontalPanel searchBoxPanel = new HorizontalPanel();
-		searchBoxPanel.setStylePrimaryName(STYLE_SEARCHBOX);
+	HashMap<String, SearchPanel> type2panel = new HashMap<String, SearchPanel>();
+	
+	private void showQueryPanel(Query query) {
+		SearchPanel sp = type2panel.get(query.getType());
+		if(sp != null) {
+			sp.setQuery(query);
+			tabPanel.selectTab(tabPanel.getWidgetIndex(sp));
+		} else {
+			tabPanel.selectTab(0);
+		}
+	}
+	
+	TabPanel tabPanel;
+	
+	private Widget createSearchPanel() {
+		//Deck panel for all searches
+		tabPanel = new TabPanel();
+		tabPanel.setStylePrimaryName(STYLE_TABPANEL);
 		
-		searchText = new TextBox();
-		searchText.setFocus(true);
-		searchText.addKeyboardListener(new KeyboardListenerAdapter() {
-			public void onKeyDown(Widget sender, char keyCode, int modifiers) {
-				if(keyCode == KEY_ENTER) {
-					search();
-				}
-			}
-		});
-		Button searchButton = new Button(LABEL_SEARCH_BUTTON);
-		searchButton.addClickListener(new ClickListener() {
-			public void onClick(Widget sender) {
-				search();
-			}
-		});
-
-		searchBoxPanel.add(searchText);
-		searchBoxPanel.add(searchButton);
-
-		return searchBoxPanel;
+		//Text search
+		SearchPanel textPanel = new SearchPanel(this);
+		type2panel.put(Query.TYPE_TEXT, textPanel);
+		tabPanel.add(textPanel, "Text search");
+		textPanel.setSize("auto", "auto");
+		
+		//Id search
+		SearchPanel idPanel = new IdSearchPanel(this);
+		type2panel.put(Query.TYPE_ID, idPanel);
+		tabPanel.add(idPanel, "Identifier search");
+		idPanel.setSize("auto", "auto");
+		
+		mainPanel.add(tabPanel, DockPanel.CENTER);
+		tabPanel.selectTab(0);
+		return tabPanel;
 	}
 
 	private Panel createProgressPanel() {
@@ -181,18 +190,15 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 	}
 	
 	private Panel createResultsPanel() {
-		VerticalPanel resultsPanel = new VerticalPanel();
-		resultsPanel.setTitle(TITLE_RESULTS);
-		
 		pathwayResults = new ResultsTable();
-		
-		resultsPanel.add(pathwayResults);
-		return resultsPanel;
+		pathwayResults.setStylePrimaryName(STYLE_RESULT);
+		pathwayResults.setTitle(TITLE_RESULTS);
+		return pathwayResults;
 	}
 
 	private static final String TITLE_RESULTS = "Results";
-	private static final String LABEL_SEARCH_BUTTON = "Search";
 	
 	public static final String STYLE_PROGRESS = "search-progress";
-	public static final String STYLE_SEARCHBOX = "search-box";
+	public static final String STYLE_TABPANEL = "search-tabpanel";
+	public static final String STYLE_RESULT = "search-results";
 }

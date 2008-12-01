@@ -1,13 +1,56 @@
-/** Add css rules here for your application. */
-/** Example rules used by the template application (remove for your app) */
+.search-tabpanel {
+	width: 100%;
+	height: 100%;
+	padding: 5px;
+}
 
-.search-box {
-	padding: 1em;
+.search-progress {
+	width: 100%;
+	text-align: center;
+	background-color: #FFABAB;
+}
+
+.search-infobar {
+	width: 100%;
+	background-color: #D0E4F6;
+}
+
+.search-results {
+	width: 100%;
+}
+
+.searchpanel {	
+	padding: 2px;
+}
+
+.searchpanel-container TD {
+	padding-right: 1em;
+}
+
+.searchpanel-info {
+	color: rgb(100, 100, 100);
+	padding-bottom: 1em;
+}
+
+.searchpanel-systems {
+	width: 5em;
 }
 
 .result-description {
 	color: graytext;
 	text-align: left;
+}
+
+.result-description LI {
+	list-style: 
+}
+
+.result-filter {
+	padding: 2px;
+}
+
+.result-filter TD {
+	padding-right: 1em;
 }
 
 .result-title {
@@ -25,10 +68,4 @@
 .result-image-container {
 	padding: 1em;
 	border: thin solid #E1E1FF;
-}
-
-.search-progress {
-	width: 100%;
-	text-align: center;
-	background-color: #FFABAB;
 }

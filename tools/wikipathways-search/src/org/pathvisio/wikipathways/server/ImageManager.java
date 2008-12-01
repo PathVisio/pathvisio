@@ -39,6 +39,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapperBase;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
@@ -60,13 +61,15 @@ public class ImageManager {
 	
 	private static ImageManager imageManager;
 	
+	public static boolean isInit() {
+		return imageManager != null;
+	}
+	
+	public static void init(WikiPathwaysClient client) {
+		imageManager = new ImageManager(client);
+	}
+	
 	public static ImageManager getInstance() throws ServiceException {
-		if(imageManager == null) {
-			Engine.init();
-			imageManager = new ImageManager(
-					new WikiPathwaysClient()
-			);
-		}
 		return imageManager;
 	}
 	
@@ -136,6 +139,15 @@ public class ImageManager {
         return bytes;
     }
     
+    public Pathway getPathway(WSSearchResult wsr) throws ConverterException {
+    	downloadGpml(wsr);
+    	Pathway pathway = new Pathway();
+    	pathway.readFromXml(
+    			getGpmlFile(getGpmlId(wsr.getId(), wsr.getRevision())), true
+    	);
+    	return pathway;
+    }
+    
 	public void startDownload(final WSSearchResult wsr) {
 		final String id = getGpmlId(wsr.getId(), wsr.getRevision());
 		//Only start if we're not already downloading
@@ -188,6 +200,7 @@ public class ImageManager {
 //			}
 //		}
 		
+		PreferenceManager.init();
 		VPathway vpathway = new VPathway(new VPathwayWrapperBase());
 		vpathway.fromModel(pathway);
 		
@@ -212,6 +225,7 @@ public class ImageManager {
 	private void downloadGpml(WSSearchResult wsr) {
 		writeGpmlCache(wsr.getId(), wsr.getRevision());
 	}
+	
 	/**
 	 * Downloads the gpml cache to create images from.
 	 * @param wsr The search result to get the gpml for

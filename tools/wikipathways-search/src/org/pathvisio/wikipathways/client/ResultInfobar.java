@@ -16,8 +16,32 @@
 //
 package org.pathvisio.wikipathways.client;
 
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class ResultInfobar extends HorizontalPanel {
+	public ResultInfobar() {
+		setStylePrimaryName(STYLE_INFOBAR);
+	}
 	
+	public void setResults(Result[] results, Query query) {
+		clear();
+		
+		String label = "";
+
+		if(results.length == 0) {
+			label = "No results for '<B>" + query.getText() + "</B>'";
+		} else {
+			label = "The query '<I>" + query.getText() + 
+					"</I>' returned <B>" + results.length + "</B> result" +
+					(results.length > 1 ? "s" : "") + ".";
+		}
+		HTML numberResults = new HTML(label);
+		numberResults.setStyleName(STYLE_INFOBAR_NUMBER);
+		add(numberResults);
+		setCellHorizontalAlignment(numberResults, ALIGN_RIGHT);
+	}
+	
+	static final String STYLE_INFOBAR = "search-infobar";
+	static final String STYLE_INFOBAR_NUMBER = "search-infobar-number";
 }

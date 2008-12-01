@@ -107,7 +107,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 	 * applet session
 	 */
 	boolean firstSave = true;
-
+	boolean isUseGdb = false;
+	
 	MainPanel mainPanel;
 
 	public WikiPathways(UserInterfaceHandler uiHandler, SwingEngine swingEngine) 
@@ -122,7 +123,19 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 			}
 		});
 	}
-
+	
+	/**
+	 * Set this parameter to true if a connection
+	 * to the synonym databases is needed.
+	 */
+	public void setUseGdb(boolean use) {
+		isUseGdb = use;
+	}
+	
+	public boolean isUseGdb() {
+		return isUseGdb;
+	}
+	
 	/**
 	 * Get the parameters container, that contains the
 	 * input parameters
@@ -216,13 +229,14 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		progress.report("Connecting to database...");
 
 		//Connect to the gene database
-		DBConnectorDerbyServer.init(parameters.getValue(Parameter.GDB_SERVER), 1527);
-		DBConnector connector = new DBConnectorDerbyServer();
-		GdbManager gdbManager = swingEngine.getGdbManager();
-		gdbManager.setDBConnector(connector);
-		gdbManager.setGeneDb(getPwSpecies());
-		gdbManager.setMetaboliteDb("metabolites");
-
+		if(isUseGdb()) {
+			DBConnectorDerbyServer.init(parameters.getValue(Parameter.GDB_SERVER), 1527);
+			DBConnector connector = new DBConnectorDerbyServer();
+			GdbManager gdbManager = swingEngine.getGdbManager();
+			gdbManager.setDBConnector(connector);
+			gdbManager.setGeneDb(getPwSpecies());
+			gdbManager.setMetaboliteDb("metabolites");
+		}
 
 		isInit = false;
 		initPerformed = true;

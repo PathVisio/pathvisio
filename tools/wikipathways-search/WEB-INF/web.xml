@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<servlet>
+		<servlet-name>WikiPathwaysSearch</servlet-name>
+		<servlet-class>org.pathvisio.wikipathways.server.SearchServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>ImageService</servlet-name>
+		<servlet-class>org.pathvisio.wikipathways.server.ImageServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ImageService</servlet-name>
+		<url-pattern>/getImage</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>WikiPathwaysSearch</servlet-name>
+		<url-pattern>/wikipathwaysSearch</url-pattern>
+	</servlet-mapping>
+</web-app>

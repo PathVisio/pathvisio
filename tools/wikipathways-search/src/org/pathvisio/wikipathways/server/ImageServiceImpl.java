@@ -32,12 +32,13 @@ public class ImageServiceImpl extends HttpServlet {
 		try {
 			if(!ImageManager.isInit()) {
 				WikiPathwaysClient client = new WikiPathwaysClient(
-						SearchServiceImpl.getClientUrl()
+						SearchServiceImpl.getClientUrl(getServletContext())
 				);
 				ImageManager.init(client);
 			}
 			ImageManager imgManager = ImageManager.getInstance();
-
+			imgManager.setServerBasePath(getServletContext().getRealPath(""));
+			
 			//Update the cache
 			if(req.getParameter(ImageManager.PAR_UPDATE_CACHE) != null) {
 				imgManager.updateAllCache();

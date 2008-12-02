@@ -28,6 +28,7 @@ public class Utils {
 	public static final int OS_UNSUPPORTED = -1;
 	public static final int OS_WINDOWS = 0;
 	public static final int OS_LINUX = 1;
+	public static final int OS_MAC = 2;
 	
 	/**
 	 * Get the OS
@@ -38,6 +39,8 @@ public class Utils {
 			return OS_WINDOWS;			
 		else if		(os.startsWith("Lin"))
 			return OS_LINUX;
+		else if		(os.startsWith("Mac"))
+			return OS_MAC;
 		else
 			return OS_UNSUPPORTED;
 	}

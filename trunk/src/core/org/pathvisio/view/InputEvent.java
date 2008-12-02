@@ -37,6 +37,9 @@ public class InputEvent extends EventObject {
 		this.modifier = modifier;
 	}
 	
+	/**
+	 * returns true if the given key is pressed. 
+	 * Nb, this is a mask, so you can use key | key to check multiple keys together */
 	public boolean isKeyDown(int key) {
 		return (modifier & key) != 0;
 	}

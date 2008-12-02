@@ -16,6 +16,7 @@
 //
 package org.pathvisio.gui.wikipathways;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
@@ -96,7 +97,8 @@ public class Actions {
 			super(h, w, "Save to ", new ImageIcon(Resources.getResourceURL("savetoweb.gif")));
 			this.description = description;
 			putValue(Action.SHORT_DESCRIPTION, "Save the pathway to " + Globals.SERVER_NAME);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, ActionEvent.CTRL_MASK));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			wiki.addStatusFlagListener(this);
 			setEnabled(wiki.hasChanged());
 		}

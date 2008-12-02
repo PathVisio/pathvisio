@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
@@ -110,7 +111,8 @@ public class StandaloneActions
 			putValue(NAME, "Open");
 			putValue(SMALL_ICON, new ImageIcon (StandaloneActions.IMG_OPEN));
 			putValue(SHORT_DESCRIPTION, "Open a pathway file");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_O, 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 	
 		public void actionPerformed(ActionEvent e) 
@@ -138,7 +140,8 @@ public class StandaloneActions
 			putValue(NAME, "New");
 			putValue(SMALL_ICON, new ImageIcon(IMG_NEW));
 			putValue(SHORT_DESCRIPTION, "Start a new, empty pathway");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 	
 		public void actionPerformed(ActionEvent e) 

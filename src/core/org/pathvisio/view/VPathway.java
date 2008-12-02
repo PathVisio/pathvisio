@@ -54,6 +54,7 @@ import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.Utils;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.view.ViewActions.KeyMoveAction;
 
@@ -917,6 +918,10 @@ public class VPathway implements PathwayListener
 		selection.reset(x, y);
 	}
 
+
+	static final int MULTI_SELECT_MASK = MouseEvent.M_SHIFT |
+		(Utils.getOS() == Utils.OS_MAC ? MouseEvent.M_META : MouseEvent.M_CTRL);
+	
 	/**
 	 * Handles event when on mouseDown in case the drawing is in view mode (does
 	 * nothing yet)
@@ -933,8 +938,8 @@ public class VPathway implements PathwayListener
 
 		if (pressedObject != null)
 		{
-			// Shift pressed, add/remove from selection
-			boolean modifierPressed = e.isKeyDown(MouseEvent.M_SHIFT) || e.isKeyDown(MouseEvent.M_CTRL);
+			// Shift or Ctrl or Meta pressed, add/remove from selection
+			boolean modifierPressed = e.isKeyDown(MULTI_SELECT_MASK);
 			doClickSelect(p2d, modifierPressed);
 		}
 		else

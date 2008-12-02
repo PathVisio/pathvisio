@@ -17,6 +17,7 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.Component;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.net.URL;
@@ -306,7 +307,8 @@ public class CommonActions implements ApplicationEventListener {
 				putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVE));
 				putValue(Action.SHORT_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
 				putValue(Action.LONG_DESCRIPTION, wiki ? "Save a local copy of the pathway" : "Save the pathway");
-				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
+				putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_S, 
+						Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			}
 			swingEngine.getEngine().addApplicationEventListener(this);
 			Pathway p = swingEngine.getEngine().getActivePathway();
@@ -365,7 +367,8 @@ public class CommonActions implements ApplicationEventListener {
 			putValue(SMALL_ICON, new ImageIcon(IMG_IMPORT));
 			putValue(Action.SHORT_DESCRIPTION, "Import pathway from a file on your computer");
 			putValue(Action.LONG_DESCRIPTION, "Import a pathway from various file formats on your computer");
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionEvent.CTRL_MASK));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_M, 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		
 		public void actionPerformed(ActionEvent e) 
@@ -388,7 +391,8 @@ public class CommonActions implements ApplicationEventListener {
 			putValue(SMALL_ICON, new ImageIcon(IMG_EXPORT));
 			putValue(SHORT_DESCRIPTION, "Export pathway to a file on your computer");
 			putValue(LONG_DESCRIPTION, "Export the pathway to various file formats on your computer");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, ActionEvent.CTRL_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E, 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -561,7 +565,8 @@ public class CommonActions implements ApplicationEventListener {
 			this.swingEngine = swingEngine;
 			putValue(NAME, "Exit");
 			putValue(SHORT_DESCRIPTION, "Exit pathvisio");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N, 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 
 		public void actionPerformed(ActionEvent e) 

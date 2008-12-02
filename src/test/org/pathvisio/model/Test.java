@@ -25,6 +25,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.Utils;
 
 public class Test extends TestCase implements PathwayListener 
 {
@@ -359,7 +360,7 @@ public class Test extends TestCase implements PathwayListener
 	 */
 	public void testMapp() throws IOException, ConverterException
 	{
-		if (System.getProperty("os.name").startsWith("Windows"))
+		if (Utils.getOS() == Utils.OS_WINDOWS)
 		{
 			data.readFromMapp(new File("testData/test.mapp"));
 			assertTrue ("Loaded a bunch of objects from mapp", data.getDataObjects().size() > 20);

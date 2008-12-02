@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.io.File;
 
 import org.pathvisio.util.ColorConverter;
+import org.pathvisio.util.Utils;
 
 public enum GlobalPreference implements Preference 
 {
@@ -80,8 +81,8 @@ public enum GlobalPreference implements Preference
 	WIN_H ("600"),
 
 	// don't use system look and feel by default on linux.
-	USE_SYSTEM_LOOK_AND_FEEL(	
-			Boolean.toString(!System.getProperty("os.name").equals ("Linux"))
+	USE_SYSTEM_LOOK_AND_FEEL(
+			Boolean.toString(Utils.getOS() != Utils.OS_LINUX)
 		),
 	;
 	

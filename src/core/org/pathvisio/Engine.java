@@ -31,6 +31,7 @@ import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
+import org.pathvisio.util.Utils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapper;
 
@@ -101,7 +102,7 @@ public class Engine
 			ext = fileName.substring(dot + 1, fileName.length());
 		}
 		if (ext.toLowerCase().equals("mapp") &&
-				!System.getProperty("os.name").contains("Windows"))
+				Utils.getOS() != Utils.OS_WINDOWS)
 		{
 			throw new ConverterException ("MAPP format is only available on Windows operating systems");
 		}

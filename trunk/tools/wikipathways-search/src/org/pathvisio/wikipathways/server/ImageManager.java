@@ -29,13 +29,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.xml.rpc.ServiceException;
-
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.pathvisio.Engine;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -69,13 +66,14 @@ public class ImageManager {
 		imageManager = new ImageManager(client);
 	}
 	
-	public static ImageManager getInstance() throws ServiceException {
+	public static ImageManager getInstance() {
 		return imageManager;
 	}
 	
 	static final int SLEEP_INTERVAL = 250;
 	static final int TIMEOUT = 60000;
-	static final String IMG_PATH = "images/";
+	static final String GPML_PATH = "cache/gpml/";
+	static final String IMG_PATH = "cache/images/";
 	
 	WikiPathwaysClient client;
 	
@@ -116,6 +114,7 @@ public class ImageManager {
 	
 	public byte[] getImageData(String id) throws IOException {
 		File resized = getImageFile(id);
+		System.err.println("Getting bytes from file " + resized.getAbsolutePath());
 		return getBytesFromFile(resized);
 	}
 	
@@ -177,6 +176,8 @@ public class ImageManager {
 		if(cacheImg.exists()) return; //Cache already exists
 
 		File cacheGpml = getGpmlFile(getGpmlId(id, revision));
+
+		cacheImg.getParentFile().mkdirs();
 		
 		Pathway pathway = new Pathway();
 		pathway.readFromXml(cacheGpml, true);
@@ -219,6 +220,10 @@ public class ImageManager {
 //				}
 //			}
 //		}
+		System.err.println("Writing image from:");
+		System.err.println("\t" + cacheGpml.getAbsolutePath());
+		System.err.println("To:");
+		System.err.println("\t" + cacheImg.getAbsolutePath());
 		exp.doExport(cacheImg, vpathway, hints);
 	}
 	
@@ -233,6 +238,7 @@ public class ImageManager {
 	private void writeGpmlCache(String id, String revision) {
 		File file = getGpmlFile(getGpmlId(id, revision));
 		if(!file.exists()) {
+			file.getParentFile().mkdirs();
 			try {
 				WSPathway wsp = client.getPathway(id, Integer.parseInt(revision));
 				Pathway p = WikiPathwaysClient.toPathway(wsp);
@@ -244,7 +250,7 @@ public class ImageManager {
 	}
 	
 	private File getGpmlFile(String gpmlId) {
-		return new File(srvBasePath + "/" + gpmlId);
+		return new File(srvBasePath + "/" + GPML_PATH + gpmlId);
 	}
 	
 	private File getImageFile(String id) {
@@ -256,7 +262,7 @@ public class ImageManager {
 	}
 	
 	public static String getGpmlId(String id, String revision) {
-		return id + revision;
+		return id + "@" + revision;
 	}
 	
 	public static String getResultId(WSSearchResult wsr) {

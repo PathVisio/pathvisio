@@ -23,6 +23,7 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Properties;
 
+import javax.servlet.ServletContext;
 import javax.xml.rpc.ServiceException;
 
 import org.pathvisio.model.ConverterException;
@@ -43,25 +44,21 @@ import org.pathvisio.wikipathways.webservice.WSSearchResult;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class SearchServiceImpl extends RemoteServiceServlet implements SearchService {
-	ImageManager imageMgr;
 	WikiPathwaysClient client;
 	
 	public SearchServiceImpl() throws ServiceException {
-		if(!ImageManager.isInit()) {
-			client = new WikiPathwaysClient(getClientUrl());
-			ImageManager.init(client);
-		}
-		imageMgr = ImageManager.getInstance();
 	}
 	
-	protected static URL getClientUrl() {
+	protected static URL getClientUrl(ServletContext servlet) {
 		URL url = null;
 		try {
 			url = new URL(
 					"http://www.wikipathways.org/wpi/webservice/webservice.php"
 			);
 			Properties prop = new Properties();
-			prop.load(new FileInputStream(new File("wikipathways.props")));
+			prop.load(new FileInputStream(
+					new File(servlet.getRealPath(""), "wikipathways.props"))
+			);
 			String wsurl = (String)prop.get("webservice-url");
 			if(wsurl != null) {
 				url = new URL(wsurl);
@@ -73,7 +70,21 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	}
 	
 	private WikiPathwaysClient getClient() {
+		if(client == null) {
+			try {
+				client = new WikiPathwaysClient(getClientUrl(getServletContext()));
+			} catch(Exception e) {
+				throw new RuntimeException("Unable to create wikipathways client", e);
+			}
+		}
 		return client;
+	}
+	
+	private ImageManager getImageManager() {
+		if(!ImageManager.isInit()) {
+			ImageManager.init(getClient());
+		}
+		return ImageManager.getInstance();
 	}
 	
 	public Result[] search(Query query) throws SearchException {
@@ -89,13 +100,13 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	}
 
 	private Result createPathwayResult(final WSSearchResult wsr, String id) {
-		imageMgr.setServerBasePath(getServletContext().getRealPath("org/pathvisio/wikipathways/public/"));
+		getImageManager().setServerBasePath(getServletContext().getRealPath(""));
 
 		String pdescr = null;
 		String iddescr = null;
 		try {
 			if(id != null) {
-				Pathway pathway = imageMgr.getPathway(wsr);
+				Pathway pathway = getImageManager().getPathway(wsr);
 				String idlist = "<ul>";
 				for(WSIndexField f : wsr.getFields()) {
 					if("graphId".equals(f.getName())) {
@@ -142,7 +153,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		}
 		r.setImageId("" + ImageManager.getGpmlId(wsr.getId(), wsr.getRevision()));
 		
-		imageMgr.startDownload(wsr); //Start downloading image that will be requested by client later
+		getImageManager().startDownload(wsr); //Start downloading image that will be requested by client later
 		return r;
 	}
 
@@ -161,11 +172,11 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		String id = query.getText();
 		String system = query.getField(Query.FIELD_SYSTEM);
 		if(IdSearchPanel.SYSTEM_ALL.equals(system) || system == null) {
-			wsResults = client.findPathwaysByXref(id);
+			wsResults = getClient().findPathwaysByXref(id);
 		} else {
 			DataSource ds = DataSource.getByFullName(system);
 			Xref xref = new Xref(id, ds);
-			wsResults = client.findPathwaysByXref(xref);
+			wsResults = getClient().findPathwaysByXref(xref);
 		}
 		
 		Result[] results = new Result[wsResults.length];
@@ -177,7 +188,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	
 	public void waitForImage(String id) {
 		try {
-			imageMgr.waitForImage(id);
+			getImageManager().waitForImage(id);
 		} catch(Exception e) {
 			throw new SearchException(e);
 		}
@@ -192,7 +203,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	public String[] getOrganismNames() {
 		String[] orgs;
 		try {
-			orgs = client.listOrganisms();
+			orgs = getClient().listOrganisms();
 			Arrays.sort(orgs);
 			return orgs;
 		} catch (RemoteException e) {

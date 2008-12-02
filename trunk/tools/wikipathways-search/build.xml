@@ -29,6 +29,7 @@
 		<pathelement location="${build.dir}" />
 		<fileset refid="lib.files" />
 		<fileset refid="client.lib.files" />
+		<fileset refid="batik.lib.files" />
 	</path>
 
 	<target name="gwt-compile" depends="compile">

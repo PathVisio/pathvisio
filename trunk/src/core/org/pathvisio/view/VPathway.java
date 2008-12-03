@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
@@ -935,7 +936,6 @@ public class VPathway implements PathwayListener
 
 		pressedObject = getObjectAt(p2d);
 
-
 		if (pressedObject != null)
 		{
 			// Shift or Ctrl or Meta pressed, add/remove from selection
@@ -991,7 +991,7 @@ public class VPathway implements PathwayListener
 		if (pressedObject != null)
 		{
 			// Shift pressed, add/remove from selection
-			boolean modifierPressed = e.isKeyDown(MouseEvent.M_SHIFT) || e.isKeyDown(MouseEvent.M_CTRL);
+			boolean modifierPressed = e.isKeyDown(MULTI_SELECT_MASK);
 			// if our object is an handle, select also it's parent.
 			if (pressedObject instanceof Handle)
 			{
@@ -1097,7 +1097,7 @@ public class VPathway implements PathwayListener
 	 * if modifierPressed is true when selecting a Group object, then a 
 	 * new selection is made of the children, allowing selection into groups.
 	 * 
-	 * modifierPressed should be true when either SHIFT or CTRL is pressed.
+	 * modifierPressed should be true when either SHIFT or CTRL/COMMAND is pressed.
 	 */
 	void doClickSelect(Point2D p2d, boolean modifierPressed)
 	{
@@ -1242,7 +1242,7 @@ public class VPathway implements PathwayListener
 	}
 
 	/**
-	 * Responds to ctrl-G. First checks for current status of selection with
+	 * Responds to ctrl/command-G. First checks for current status of selection with
 	 * respect to grouping. If selection is already grouped (members of the same
 	 * parent group), then the highest-level (parent) group is removed along
 	 * with all references to the group. If the selection is not a uniform
@@ -1378,7 +1378,7 @@ public class VPathway implements PathwayListener
 
 	public static final KeyStroke KEY_SELECT_DATA_NODES = KeyStroke
 			.getKeyStroke(java.awt.event.KeyEvent.VK_D,
-					java.awt.Event.CTRL_MASK);
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
 
 	public static final KeyStroke KEY_MOVERIGHT = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_RIGHT, 0);

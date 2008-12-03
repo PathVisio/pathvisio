@@ -16,6 +16,7 @@
 //
 package org.pathvisio.view;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.net.URL;
@@ -260,7 +261,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			String descr = "Copy selected pathway objects to clipboard";
 			putValue(Action.SHORT_DESCRIPTION, descr);
 			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl C"));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('c', 
+							Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -281,7 +283,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			String descr = "Paste pathway objects from clipboard";
 			putValue(Action.SHORT_DESCRIPTION, descr);
 			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl V"));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('v', 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -329,7 +332,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 
 		public SelectAllAction() {
 			super("Select all");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl A"));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('a', 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		public void actionPerformed(ActionEvent e) {
 			vPathway.selectAll();
@@ -342,7 +346,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			vPathway.addSelectionListener(this);
 			putValue(NAME, "Add anchor");
 			putValue(SHORT_DESCRIPTION, "Add an anchor point to the selected line");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl R"));
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke('r', 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			setEnabled(false);
 		}
 
@@ -380,8 +385,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				"Create complex", "Break complex",
 				"Create a complex from selected elements",
 				"Break selected complex",
-				GroupStyle.COMPLEX, KeyStroke.getKeyStroke("ctrl P")
-			);
+				GroupStyle.COMPLEX, 
+				KeyStroke.getKeyStroke('p', 
+						Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+				);
 		}
 	}
 	
@@ -391,7 +398,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				"Group", "Ungroup",
 				"Group selected elements",
 				"Ungroup selected group",
-				GroupStyle.GROUP, KeyStroke.getKeyStroke("ctrl G")
+				GroupStyle.GROUP, 
+				KeyStroke.getKeyStroke('g', 
+						Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
 			);
 		}
 	}
@@ -488,8 +497,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			putValue(NAME, "Undo");
 			putValue(SHORT_DESCRIPTION, "Undo last action");
 			putValue(SMALL_ICON, new ImageIcon(IMG_UNDO));
-
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl Z"));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('z', 
+							Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
+					);
 			engine.addApplicationEventListener(this);
 			setEnabled(false);
 		}
@@ -528,7 +538,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			this.engine = engine;
 			putValue(NAME, "Bring to front");
 			putValue(SHORT_DESCRIPTION, "Bring the element in front of all other elements");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', 
+					InputEvent.SHIFT_DOWN_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		
 		public void actionPerformed(ActionEvent e) 
@@ -553,7 +564,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			this.engine = engine;
 			putValue(NAME, "Send to Back");
 			putValue(SHORT_DESCRIPTION, "Send the element behind all other elements");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.SHIFT_DOWN_MASK | InputEvent.CTRL_DOWN_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', 
+					InputEvent.SHIFT_DOWN_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		
 		public void actionPerformed(ActionEvent e) 
@@ -578,7 +590,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			this.engine = engine;
 			putValue(NAME, "Bring Forward");
 			putValue(SHORT_DESCRIPTION, "Bring Forward");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', InputEvent.CTRL_DOWN_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(']', 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -602,7 +615,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			this.engine = engine;
 			putValue(NAME, "Send Backward");
 			putValue(SHORT_DESCRIPTION, "Send Backward");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', InputEvent.CTRL_DOWN_MASK));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('[', 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -622,7 +636,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public ShowUnlinkedConnectors() {
 			putValue(NAME, "Highlight unlinked lines");
 			putValue(SHORT_DESCRIPTION, "Highlight all lines that are not linked");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl L"));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke('l', 
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		
 		public void actionPerformed(ActionEvent e) {

@@ -242,9 +242,10 @@ public class DoubleGdb implements Gdb
 
 	/**
 	 * returns the aggregate of all child results.
+	 * @throws DataException 
 	 */
 	public List<Xref> getIdSuggestions(String text,
-			int limit) 
+			int limit) throws DataException 
 	{
 		List<Xref> result = new ArrayList<Xref>();
 		

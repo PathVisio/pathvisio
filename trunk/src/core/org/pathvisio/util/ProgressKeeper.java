@@ -20,9 +20,18 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
+/**
+ * A method to keep track of progress of a background task.
+ * Can handle cancellation, task names and progress reports.
+ * 
+ * This class is UI independent and should be used by long-running methods
+ * that can be run either from the command line, or from the GUI, in the latter
+ * case a ProgressDialog may be used to let the user monitor and cancel the task.
+ */
 public class ProgressKeeper {
-	public static final int PROGRESS_UNKNOWN = -1;
-	public static final int PROGRESS_FINISHED = -2;
+	private static final int PROGRESS_UNKNOWN = -1;
+	private static final int PROGRESS_FINISHED = -2;
+	
 	volatile String taskName;
 	volatile boolean cancelled;
 	volatile String report;
@@ -30,22 +39,35 @@ public class ProgressKeeper {
 	int total;
 	int progress;
 	
+	/**
+	 * create a ProgressKeeper of work of indeterminate length
+	 */
+	public ProgressKeeper() {
+		total = PROGRESS_UNKNOWN;
+	}
+
+	/**
+	 * create a ProgressKeeper of work of specified length
+	 */
 	public ProgressKeeper(int totalWork) {
 		total = totalWork;
+	}
+	
+	/** returns true if work is of indeterminate length */
+	public boolean isIndeterminate()
+	{
+		return (total == PROGRESS_UNKNOWN);
 	}
 	
 	public void worked(int w) {
 		if(!isFinished()) {			
 			progress += w;
+			fireProgressEvent(ProgressEvent.PROGRESS_CHANGED);
 			if(progress >= total) {
 				progress = total; //to trigger event
 				finished();
 			}
 		}
-	}
-	
-	public final void worked(double d) {
-		worked((int)d);
 	}
 	
 	public void setTaskName(String name) {
@@ -105,11 +127,21 @@ public class ProgressKeeper {
 		return listeners;
 	}
 	
+	/**
+	 * notifies of changes to this ProgressKeeper, 
+	 * when
+	 * 
+	 * - report message has changed
+	 * - progress percentage has changed
+	 * - task has finished
+	 * - task name has changed
+	 */
 	public class ProgressEvent extends EventObject {
 
 		public static final int FINISHED = 0;
 		public static final int TASK_NAME_CHANGED = 1;
 		public static final int REPORT = 2;
+		public static final int PROGRESS_CHANGED = 3;
 		
 		private int type;
 		public ProgressEvent(ProgressKeeper source, int type) {
@@ -120,6 +152,7 @@ public class ProgressKeeper {
 		public ProgressKeeper getProgressKeeper() { return (ProgressKeeper)getSource(); }
 	}
 	
+	/** Implement this if you wish to receive ProgressEvents.*/
 	public interface ProgressListener {
 		public void progressEvent(ProgressEvent e);
 	}

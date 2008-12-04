@@ -42,7 +42,6 @@ import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
-import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Pathway;
@@ -131,7 +130,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
 	}
 	
-	public boolean processTask(SwingProgressKeeper pk, ProgressDialog d, SwingWorker<Boolean, Boolean> sw) {
+	//TODO: deprecate
+	public boolean processTask(ProgressKeeper pk, ProgressDialog d, SwingWorker<Boolean, Boolean> sw) {
 		sw.execute();
 		d.setVisible(true);
 		try {
@@ -143,7 +143,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	}
 	
 	public boolean openPathway(final URL url) {		
-		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressKeeper pk = new ProgressKeeper();
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 				"", pk, false, true);
 				
@@ -168,7 +168,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 
 	public boolean openPathway(final File f) 
 	{		
-		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressKeeper pk = new ProgressKeeper();
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 				"", pk, false, true);
 				
@@ -192,7 +192,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	}
 	
 	public boolean importPathway(final File f) {
-		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressKeeper pk = new ProgressKeeper();
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 				"", pk, false, true);
 				
@@ -268,7 +268,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	
 	public boolean exportPathway(final File f) {
 		if(mayOverwrite(f)) {
-			final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+			final ProgressKeeper pk = new ProgressKeeper();
 			final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 					"", pk, false, true);
 

@@ -29,7 +29,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
 
@@ -43,10 +45,11 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 	
 	JLabel task;
 	JLabel report;
-	SwingProgressKeeper keeper;
+	ProgressKeeper keeper;
 	JPanel dialogPane;
+	JProgressBar progressBar;
 
-	public ProgressDialog(Frame frame, String title, SwingProgressKeeper progressKeeper, boolean canCancel, boolean modal) {
+	public ProgressDialog(Frame frame, String title, ProgressKeeper progressKeeper, boolean canCancel, boolean modal) {
 		super(frame, title, modal);
 		
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -64,7 +67,17 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 		report.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 		dialogPane.add(task);
 		dialogPane.add(report);
-		dialogPane.add(keeper.getJProgressBar());
+		
+		int totalWork = progressKeeper.getTotalWork();
+		progressBar = new JProgressBar();
+		if(progressKeeper.isIndeterminate()) {
+			progressBar.setIndeterminate(true);
+		}
+		else
+		{
+			progressBar.setMaximum(totalWork < 1 ? 1 : totalWork);
+		}
+		dialogPane.add(progressBar);
 				
 		Container contentPane = getContentPane();
 		contentPane.add(dialogPane, BorderLayout.CENTER);
@@ -98,6 +111,7 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 	public void progressEvent(ProgressEvent e) {
 		switch(e.getType()) {
 		case ProgressEvent.FINISHED:
+			progressBar.setValue(keeper.getTotalWork());
 			setVisible(false);
 		case ProgressEvent.TASK_NAME_CHANGED:
 			task.setText(keeper.getTaskName());
@@ -106,6 +120,9 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 		case ProgressEvent.REPORT:
 			report.setText(keeper.getReport());
 			pack();
+			break;
+		case ProgressEvent.PROGRESS_CHANGED:
+			progressBar.setValue(keeper.getProgress());
 			break;
 		}
 	}

@@ -46,11 +46,11 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
-import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 
 
@@ -100,7 +100,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			return;
 		}
 
-		final SwingProgressKeeper progress = new SwingProgressKeeper(SwingProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressKeeper progress = new ProgressKeeper();
 		ProgressDialog dialog = new ProgressDialog(null, "Searching", progress, true, true);
 		dialog.setLocationRelativeTo(this);
 

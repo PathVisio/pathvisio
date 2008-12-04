@@ -34,6 +34,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -51,11 +52,11 @@ import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GexTxtImporter;
 import org.pathvisio.data.ImportInformation;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
 import org.pathvisio.util.swing.SimpleFileFilter;
@@ -669,7 +670,8 @@ public class GexImportWizard extends Wizard
 	    
 	    private JProgressBar progressSent;
 	    private JTextArea progressText;
-	    private SwingProgressKeeper pk;
+	    private ProgressKeeper pk;
+	    private JLabel task;
 	    
 	    @Override
 	    public void aboutToCancel()
@@ -677,7 +679,7 @@ public class GexImportWizard extends Wizard
 	    	// let the progress keeper know that the user pressed cancel.
 	    	pk.cancel();
 	    }
-	    
+
 		protected JPanel createContents()
 		{
 	    	FormLayout layout = new FormLayout(
@@ -688,11 +690,13 @@ public class GexImportWizard extends Wizard
 	    	DefaultFormBuilder builder = new DefaultFormBuilder(layout);
 	    	builder.setDefaultDialogBorder();
 	    	
-        	pk = new SwingProgressKeeper((int)1E6);
+        	pk = new ProgressKeeper((int)1E6);
         	pk.addListener(this);
-	    	progressSent = pk.getJProgressBar();
+			progressSent = new JProgressBar(0, pk.getTotalWork());
 	        builder.append(progressSent);
 	        builder.nextLine();
+	        task = new JLabel();
+	        builder.append(task);
 	        
 	        progressText = new JTextArea();
 	       
@@ -752,9 +756,21 @@ public class GexImportWizard extends Wizard
 			sw.execute();
 	    }
 
-		public void progressEvent(ProgressEvent e) {
-			if(e.getType() == ProgressEvent.REPORT) {
-				progressText.append(e.getProgressKeeper().getReport() + "\n");
+		public void progressEvent(ProgressEvent e) 
+		{
+			switch(e.getType()) 
+			{
+				case ProgressEvent.FINISHED:
+					progressSent.setValue(pk.getTotalWork());
+				case ProgressEvent.TASK_NAME_CHANGED:
+					task.setText(pk.getTaskName());
+					break;
+				case ProgressEvent.REPORT:
+					progressText.append(e.getProgressKeeper().getReport() + "\n");
+					break;
+				case ProgressEvent.PROGRESS_CHANGED:
+					progressSent.setValue(pk.getProgress());
+					break;
 			}
 		}
 

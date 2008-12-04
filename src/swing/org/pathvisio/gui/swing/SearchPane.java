@@ -48,7 +48,6 @@ import javax.swing.border.Border;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;

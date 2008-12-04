@@ -27,10 +27,9 @@ import javax.swing.SwingUtilities;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.progress.ProgressDialog;
+import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.wikipathways.PathwayPageApplet;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.util.RunnableWithProgress;
 
 public class UserInterfaceHandler {		
 	public static final int Q_CANCEL = -1;
@@ -99,7 +98,6 @@ public class UserInterfaceHandler {
 		JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
 	
-	//TODO: deprecate
 	public <T> void runWithProgress(final RunnableWithProgress<T> runnable, String title, boolean canCancel, boolean modal) {
 		ProgressKeeper pk = runnable.getProgressKeeper();
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getParent()), title, pk, canCancel, modal);

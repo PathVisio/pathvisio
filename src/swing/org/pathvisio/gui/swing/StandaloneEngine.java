@@ -28,7 +28,6 @@ import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.visualization.VisualizationManager;

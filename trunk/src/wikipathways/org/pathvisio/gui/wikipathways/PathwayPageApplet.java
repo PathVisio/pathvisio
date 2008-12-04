@@ -77,7 +77,7 @@ public class PathwayPageApplet extends JApplet {
 			final Engine engine = new Engine();
 			SwingEngine swingEngine = new SwingEngine(engine);
 			
-			uiHandler = new AppletUserInterfaceHandler(PathwayPageApplet.this);
+			uiHandler = new UserInterfaceHandler(PathwayPageApplet.this);
 			wiki = new WikiPathways(uiHandler, swingEngine);
 			
 			parseArguments();
@@ -192,7 +192,7 @@ public class PathwayPageApplet extends JApplet {
 
 	private JFrame fullScreenFrame;
 	
-	protected boolean isFullScreen() {
+	public boolean isFullScreen() {
 		return fullScreenFrame != null;		
 	}
 	
@@ -241,7 +241,7 @@ public class PathwayPageApplet extends JApplet {
 	 * to embedded mode
 	 * @see PathwayPageApplet#toFullScreen()
 	 */
-	protected void toEmbedded() {
+	public void toEmbedded() {
 		MainPanel mainPanel = wiki.getMainPanel();
 
 		fullScreenFrame.getContentPane().remove(mainPanel);

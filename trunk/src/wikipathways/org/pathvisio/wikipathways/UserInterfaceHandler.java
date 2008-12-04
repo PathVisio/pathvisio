@@ -16,28 +16,133 @@
 //
 package org.pathvisio.wikipathways;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.KeyboardFocusManager;
 import java.net.URL;
 
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
+import org.jdesktop.swingworker.SwingWorker;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.progress.ProgressDialog;
+import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
+import org.pathvisio.gui.wikipathways.PathwayPageApplet;
 import org.pathvisio.util.RunnableWithProgress;
 
-/**
- * Interface that specifies methods related to user interface tasks. This interface may be used by classes where it is
- * not desirable to couple them tightly to a UI library (e.g. SWT or Swing), but where user interaction
- * is needed.
- * @author thomas
- */
-public interface UserInterfaceHandler {		
+public class UserInterfaceHandler {		
 	public static final int Q_CANCEL = -1;
 	public static final int Q_TRUE = 0;
 	public static final int Q_FALSE = 1;
 	
-	public void showInfo(String title, String message);
-	public void showError(String title, String message);
-	public String askInput(String title, String message);
-	public boolean askQuestion(String title, String message);
-	public int askCancellableQuestion(String title, String message);
+	Component parent;
 	
-	public void runWithProgress(RunnableWithProgress runnable, String title, int totalWork, boolean canCancel, boolean modal);
-	public void showExitMessage(String string);
-	public void showDocument(URL url, String target);
+	private abstract class RunnableValue <T> implements Runnable {
+		T value;
+		public T get() { return value; }
+		public void set(T value) { this.value = value; }
+	}
+	
+	private void invoke(Runnable r) {
+		try {
+			if(SwingUtilities.isEventDispatchThread()) {
+				r.run();
+			} else {
+				SwingUtilities.invokeAndWait(r);
+			}
+		} catch(Exception e) {
+			Logger.log.error("Unable to invoke runnable", e);
+		}
+	}
+	public int askCancellableQuestion(final String title, final String message) {
+		RunnableValue<Integer> r = new RunnableValue<Integer>() {
+			public void run() {
+				int status = JOptionPane.showConfirmDialog(getParent(), message, title, 
+						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+				set(status);
+			}
+		};
+		invoke(r);
+		switch(r.get()) {
+		case JOptionPane.YES_OPTION:
+			return Q_TRUE;
+		case JOptionPane.NO_OPTION:
+			return Q_FALSE;
+		case JOptionPane.CANCEL_OPTION:
+			return Q_CANCEL;
+		}
+		return Q_FALSE;
+	}
+
+	public String askInput(final String title, final String message) {
+		RunnableValue<String> r = new RunnableValue<String>() {
+			public void run() {
+				set(JOptionPane.showInputDialog(getParent(), message, title));
+			}
+		};
+		invoke(r);
+		return r.get();
+	}
+
+	public boolean askQuestion(String title, String message) {
+		int status = JOptionPane.showConfirmDialog(getParent(), message, title, JOptionPane.YES_NO_OPTION);
+		return status == JOptionPane.YES_OPTION;
+	}
+
+	public void showError(String title, String message) {
+		JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	public void showInfo(String title, String message) {
+		JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.INFORMATION_MESSAGE);
+	}
+		
+	public <T> void runWithProgress(final RunnableWithProgress<T> runnable, String title, int totalWork, boolean canCancel, boolean modal) {
+		SwingProgressKeeper pk = new SwingProgressKeeper(runnable.getProgressKeeper());
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getParent()), title, pk, canCancel, modal);
+				
+		runnable.setProgressKeeper(pk);
+		SwingWorker<T, Void> sw = new SwingWorker<T, Void>() {
+			protected T doInBackground() throws Exception {
+				runnable.run();
+				runnable.getProgressKeeper().finished();
+				return runnable.get();
+			}
+		};
+		
+		sw.execute();
+		
+		d.setVisible(true); //If dialog is modal, method will return when progresskeeper is finished
+	}
+	
+	PathwayPageApplet applet;
+	
+	public UserInterfaceHandler(PathwayPageApplet applet) 
+	{
+		this.parent = JOptionPane.getFrameForComponent(applet);
+		this.applet = applet;
+	}
+	
+	public Component getParent() {
+		parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
+		parent = SwingUtilities.getRoot(parent);
+		return parent;
+	}
+	
+	public void showExitMessage(String msg) {
+		if(applet.isFullScreen()) {
+			applet.toEmbedded();
+		}
+		JLabel label = new JLabel(msg, JLabel.CENTER);
+		applet.getContentPane().removeAll();
+		applet.getContentPane().add(label, BorderLayout.CENTER);
+		applet.getContentPane().validate();
+		applet.getContentPane().repaint();
+	}
+
+	public void showDocument(URL url, String target) {
+		applet.getAppletContext().showDocument(url, target);
+	}
 }

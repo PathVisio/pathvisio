@@ -16,6 +16,7 @@
 //
 package org.pathvisio.util;
 
+import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -35,9 +36,9 @@ public class ProgressKeeper {
 	volatile String taskName;
 	volatile boolean cancelled;
 	volatile String report;
+	volatile int progress;
 	
 	int total;
-	int progress;
 	
 	/**
 	 * create a ProgressKeeper of work of indeterminate length
@@ -112,9 +113,16 @@ public class ProgressKeeper {
 	
 	public String getReport() { return report; }
 	
-	void fireProgressEvent(int type) {
-		for(ProgressListener l : listeners)
-			l.progressEvent(new ProgressEvent(this, type));
+	void fireProgressEvent(final int type)
+	{
+		EventQueue.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				for(ProgressListener l : listeners)
+					l.progressEvent(new ProgressEvent(ProgressKeeper.this, type));
+			}
+		});
 	}
 	
 	List<ProgressListener> listeners = new ArrayList<ProgressListener>();

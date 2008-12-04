@@ -45,7 +45,7 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.data.PubMedQuery;
 import org.pathvisio.data.PubMedResult;
-import org.pathvisio.gui.swing.progress.ProgressDialog;
+import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.util.ProgressKeeper;
 
 public class PublicationXRefDialog extends OkCancelDialog {

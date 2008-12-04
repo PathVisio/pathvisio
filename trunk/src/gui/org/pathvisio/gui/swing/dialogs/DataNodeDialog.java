@@ -44,16 +44,16 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
-import org.pathvisio.gui.swing.progress.ProgressDialog;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.util.RunnableWithProgress;
+import org.pathvisio.wikipathways.RunnableWithProgress;
 
 
 public class DataNodeDialog extends PathwayElementDialog {

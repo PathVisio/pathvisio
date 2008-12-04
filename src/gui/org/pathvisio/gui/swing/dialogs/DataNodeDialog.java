@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -40,6 +41,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
@@ -104,54 +106,53 @@ public class DataNodeDialog extends PathwayElementDialog {
 		ProgressDialog dialog = new ProgressDialog(null, "Searching", progress, true, true);
 		dialog.setLocationRelativeTo(this);
 
-		final RunnableWithProgress<List<XrefWithSymbol>> task = new RunnableWithProgress<List<XrefWithSymbol>>() {
+		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
 			private static final int QUERY_LIMIT = 200;
-			public List<XrefWithSymbol> excecuteCode() 
+			
+			protected List<XrefWithSymbol> doInBackground() throws DataException
 			{
 				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
-
 				List<XrefWithSymbol> result = gdb.freeSearch(text, QUERY_LIMIT); 
-
-				progress.finished();
 				return result;
 			}
-		};
-
-		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
-			protected List<XrefWithSymbol> doInBackground() throws Exception {
-				task.run();
-				task.getProgressKeeper().finished();
-				return task.get();
+			
+			@Override
+			public void done()
+			{
+				progress.finished();
+				if (!progress.isCancelled())
+				{
+					List<XrefWithSymbol> results = null;
+					try 
+					{
+						results = get();
+						//Show results to user
+						if(results != null && results.size() > 0) {
+							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
+							resultDialog.setVisible(true);
+							XrefWithSymbol selected = resultDialog.getSelected();
+							if(selected != null) {
+								applyAutoFill(selected);
+							}
+						} else {
+							JOptionPane.showMessageDialog(DataNodeDialog.this, 
+									"No results for '" + text + "'");
+						}
+					} catch (InterruptedException e) {
+						//Ignore, thread interrupted. Same as cancel.
+					} 
+					catch (ExecutionException e) {
+						JOptionPane.showMessageDialog(DataNodeDialog.this, 
+								"Exception occurred while searching,\n" +
+								"see error log for details.", "Error", 
+								JOptionPane.ERROR_MESSAGE);
+						Logger.log.error("Error while searching", e);
+					}
+				}				
 			}
 		};
 		sw.execute();
 		dialog.setVisible(true);
-
-		List<XrefWithSymbol> results = null;
-		try {
-			results = sw.get();
-		} catch (InterruptedException e) {
-			//Ignore, cancel pressed
-		} catch (ExecutionException e) {
-			JOptionPane.showMessageDialog(this, "Error while searching: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			Logger.log.error("Error while searching", e);
-		}
-
-		//TODO: messy. Why not InterruptedException? Why not sw.isCancelled?
-		if (!progress.isCancelled())
-		{
-			//Show results to user
-			if(results.size() > 0) {
-				DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
-				resultDialog.setVisible(true);
-				XrefWithSymbol selected = resultDialog.getSelected();
-				if(selected != null) {
-					applyAutoFill(selected);
-				}
-			} else {
-				JOptionPane.showMessageDialog(this, "No results for '" + text + "'");
-			}
-		}
 	}
 
 	protected void addCustomTabs(JTabbedPane parent) {
@@ -217,7 +218,12 @@ public class DataNodeDialog extends PathwayElementDialog {
 				if(text == null) return new Object[0];
 
 				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
-				List<String> symbols = gdb.getSymbolSuggestions(text, 100);
+				List<String> symbols = new ArrayList<String>();
+				try
+				{
+					symbols = gdb.getSymbolSuggestions(text, 100);
+				}
+				catch (DataException ignore) {}
 				return symbols.toArray();
 			}
 		}, true);
@@ -227,7 +233,12 @@ public class DataNodeDialog extends PathwayElementDialog {
 				if(text == null) return new Object[0];
 
 				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
-				List<Xref> refs = gdb.getIdSuggestions(text, 100);
+				List<Xref> refs = new ArrayList<Xref>();
+				try
+				{
+					refs = gdb.getIdSuggestions(text, 100);
+				}
+				catch (DataException ignore) {}
 				//Only take identifiers
 				String[] ids = new String[refs.size()];
 				for(int i = 0; i < refs.size(); i++) {

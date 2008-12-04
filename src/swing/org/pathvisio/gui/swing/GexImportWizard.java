@@ -671,7 +671,7 @@ public class GexImportWizard extends Wizard
 	    private JProgressBar progressSent;
 	    private JTextArea progressText;
 	    private ProgressKeeper pk;
-	    private JLabel task;
+	    private JLabel lblTask;
 	    
 	    @Override
 	    public void aboutToCancel()
@@ -684,7 +684,7 @@ public class GexImportWizard extends Wizard
 		{
 	    	FormLayout layout = new FormLayout(
 	    			"fill:[100dlu,min]:grow",
-	    			"pref, fill:pref:grow"
+	    			"pref, pref, fill:pref:grow"
 	    	);
 	    	
 	    	DefaultFormBuilder builder = new DefaultFormBuilder(layout);
@@ -695,8 +695,8 @@ public class GexImportWizard extends Wizard
 			progressSent = new JProgressBar(0, pk.getTotalWork());
 	        builder.append(progressSent);
 	        builder.nextLine();
-	        task = new JLabel();
-	        builder.append(task);
+	        lblTask = new JLabel();
+	        builder.append(lblTask);
 	        
 	        progressText = new JTextArea();
 	       
@@ -763,7 +763,7 @@ public class GexImportWizard extends Wizard
 				case ProgressEvent.FINISHED:
 					progressSent.setValue(pk.getTotalWork());
 				case ProgressEvent.TASK_NAME_CHANGED:
-					task.setText(pk.getTaskName());
+					lblTask.setText(pk.getTaskName());
 					break;
 				case ProgressEvent.REPORT:
 					progressText.append(e.getProgressKeeper().getReport() + "\n");

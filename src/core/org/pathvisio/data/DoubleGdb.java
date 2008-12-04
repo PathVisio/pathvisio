@@ -117,8 +117,10 @@ public class DoubleGdb implements Gdb
 	/**
 	 * Check if the reference exists in either one of the 
 	 * child databases
+	 * @throws DataException 
 	 */
-	public boolean xrefExists(Xref xref) {
+	public boolean xrefExists(Xref xref) throws DataException 
+	{
 		for (SimpleGdb child : gdbs)
 		{
 			if (child != null && child.isConnected())
@@ -165,7 +167,7 @@ public class DoubleGdb implements Gdb
 		return result;
 	}
 
-	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue) {
+	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue) throws DataException {
 		List<Xref> result = null;
 		
 		for (SimpleGdb child : gdbs)
@@ -204,8 +206,9 @@ public class DoubleGdb implements Gdb
 	/**
 	 * This implementation iterates over all child databases
 	 * and returns the first one that gives a non-null result.
+	 * @throws DataException 
 	 */
-	public String getGeneSymbol(Xref ref) 
+	public String getGeneSymbol(Xref ref) throws DataException 
 	{
 		String result = null;
 		// return the first database with a result.
@@ -262,9 +265,10 @@ public class DoubleGdb implements Gdb
 
 	/**
 	 * returns the aggregate of all child results.
+	 * @throws DataException 
 	 */
 	public List<String> getSymbolSuggestions(String text,
-			int limit) 
+			int limit) throws DataException 
 	{
 		List<String> result = new ArrayList<String>();
 		
@@ -285,8 +289,9 @@ public class DoubleGdb implements Gdb
 
 	/**
 	 * return first non-null child result
+	 * @throws DataException 
 	 */
-	public String getBpInfo(Xref ref) 
+	public String getBpInfo(Xref ref) throws DataException 
 	{
 		String result = null;
 		// return the first database with a result.
@@ -302,7 +307,7 @@ public class DoubleGdb implements Gdb
 		return null;
 	}
 
-	public List<XrefWithSymbol> freeSearch(String text, int limit) 
+	public List<XrefWithSymbol> freeSearch(String text, int limit) throws DataException
 	{
 		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
 		

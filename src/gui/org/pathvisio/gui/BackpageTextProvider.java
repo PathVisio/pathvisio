@@ -225,7 +225,17 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
 	
 		// find first gene database that has non-null bpInfo.
-		String bpInfo = gdb.getBpInfo(ref);		
+		String bpInfo;
+		try
+		{
+			bpInfo = gdb.getBpInfo(ref);
+		}
+		catch (DataException ex)
+		{
+			bpInfo = "Exception occurred, see log for details</br>";
+			Logger.log.error ("Error fetching backpage info", ex);
+		}
+		
 		text += bpInfo == null ? "<I>No " + type + " information found</I>" : bpInfo;
 
 		//Get the expression data information if available

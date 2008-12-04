@@ -51,23 +51,24 @@ public interface Gdb
 	 * @param id The gene id to get the symbol info for
 	 * @param code systemcode of the gene identifier
 	 * @return The gene symbol, or null if the symbol could not be found
+	 * @throws DataException 
 	 */
 	@Deprecated // this method is currently unused
-	public String getGeneSymbol(Xref ref);
+	public String getGeneSymbol(Xref ref) throws DataException;
 
 	/**
 	 * Gets the backpage info for the given gene id for display on BackpagePanel
 	 * @param ref The gene to get the backpage info for
 	 * @return String with the backpage info, null if the gene was not found
 	 */
-	public String getBpInfo(Xref ref);
+	public String getBpInfo(Xref ref) throws DataException;
 
 	/**
 	 * Checks whether the given reference exists in the database
 	 * @param xref The reference to check
 	 * @return true if the reference exists, false if not
 	 */
-	public boolean xrefExists(Xref xref);
+	public boolean xrefExists(Xref xref) throws DataException;
 	
 	/**
 	 * Get all cross-references for the given id/code pair, restricting the
@@ -98,7 +99,7 @@ public interface Gdb
 	 * @return A list with the cross-references that have this attribute name/value, or an
 	 * empty list if no cross-references could be found for this attribute name/value.
 	 */
-	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue);
+	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue) throws DataException;
 
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
@@ -109,16 +110,17 @@ public interface Gdb
 	/**
 	 * Get up to limit suggestions for a symbol autocompletion
 	 */
-	public List<String> getSymbolSuggestions(String text, int limit);
+	public List<String> getSymbolSuggestions(String text, int limit) throws DataException;
 
 	
 	/**
 	 * Get up to limit suggestions for a identifier autocompletion
 	 */
-	public List<Xref> getIdSuggestions(String text, int limit);
+	public List<Xref> getIdSuggestions(String text, int limit) throws DataException;
 	
 	/**
 	 * free text search for matching symbols or identifiers
+	 * @throws DataException 
 	 */
-	public List<XrefWithSymbol> freeSearch (String text, int limit);
+	public List<XrefWithSymbol> freeSearch (String text, int limit) throws DataException;
 }

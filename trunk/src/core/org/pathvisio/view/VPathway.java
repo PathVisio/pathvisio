@@ -1376,9 +1376,12 @@ public class VPathway implements PathwayListener
 		// Use registerKeyboardActions
 	}
 
+	//TODO: should use Toolkit.getMenuShortcutKeyMask(), but 
+	// that doesn't work in headless mode so screws up automated testing.
+	// solution: define keyboard shortcuts elsewhere
 	public static final KeyStroke KEY_SELECT_DATA_NODES = KeyStroke
 			.getKeyStroke(java.awt.event.KeyEvent.VK_D,
-					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+					java.awt.Event.CTRL_MASK);
 
 	public static final KeyStroke KEY_MOVERIGHT = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_RIGHT, 0);

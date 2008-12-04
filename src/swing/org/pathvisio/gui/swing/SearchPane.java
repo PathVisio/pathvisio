@@ -49,7 +49,6 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
-import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
@@ -241,7 +240,7 @@ public class SearchPane extends JPanel
 		
 		//TODO: here I want to use SwingEngine.openPathway, but I need to 
 		// be able to wait until the process is finished!
-		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressKeeper pk = new ProgressKeeper();
 		
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(swingEngine.getApplicationPanel()), 
 				"", pk, false, true);

@@ -125,7 +125,7 @@ public class PathwayPageApplet extends JApplet {
 				afterInit();
 			} else {
 				Logger.log.trace(this + ": Performing init in background");
-				uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);			
+				uiHandler.runWithProgress(r, "", false, true);			
 			}
 		} catch(Exception e) {
 			onError("Error: " + e.getClass() + ": " + e.getMessage(), "Error");

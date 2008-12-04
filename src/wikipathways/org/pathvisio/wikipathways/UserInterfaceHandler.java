@@ -28,8 +28,8 @@ import javax.swing.SwingUtilities;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
-import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.gui.wikipathways.PathwayPageApplet;
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.RunnableWithProgress;
 
 public class UserInterfaceHandler {		
@@ -98,9 +98,10 @@ public class UserInterfaceHandler {
 	public void showInfo(String title, String message) {
 		JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
-		
-	public <T> void runWithProgress(final RunnableWithProgress<T> runnable, String title, int totalWork, boolean canCancel, boolean modal) {
-		SwingProgressKeeper pk = new SwingProgressKeeper(runnable.getProgressKeeper());
+	
+	//TODO: deprecate
+	public <T> void runWithProgress(final RunnableWithProgress<T> runnable, String title, boolean canCancel, boolean modal) {
+		ProgressKeeper pk = runnable.getProgressKeeper();
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getParent()), title, pk, canCancel, modal);
 				
 		runnable.setProgressKeeper(pk);

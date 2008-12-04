@@ -21,7 +21,7 @@ public abstract class RunnableWithProgress<T> implements Runnable {
 	T value;
 	
 	public ProgressKeeper getProgressKeeper() {
-		if(p == null) p = new ProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		if(p == null) p = new ProgressKeeper();
 		return p;
 	}
 	public void setProgressKeeper(ProgressKeeper progress) {

@@ -464,7 +464,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 						return false;
 					}
 				};
-				uiHandler.runWithProgress(r, "", ProgressKeeper.PROGRESS_UNKNOWN, false, true);
+				uiHandler.runWithProgress(r, "", false, true);
 				return r.get();
 			}
 		}

@@ -46,7 +46,6 @@ import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.data.PubMedQuery;
 import org.pathvisio.data.PubMedResult;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
-import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.util.ProgressKeeper;
 
 public class PublicationXRefDialog extends OkCancelDialog {
@@ -104,7 +103,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	
 	protected void queryPressed() {
 		final PubMedQuery pmq = new PubMedQuery(pmId.getText());
-		final SwingProgressKeeper pk = new SwingProgressKeeper(ProgressKeeper.PROGRESS_UNKNOWN);
+		final ProgressKeeper pk = new ProgressKeeper();
 		ProgressDialog d = new ProgressDialog(
 				JOptionPane.getFrameForComponent(this), 
 				"", pk, true, true);

@@ -29,8 +29,8 @@ import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.progress.ProgressDialog;
-import org.pathvisio.gui.swing.progress.SwingProgressKeeper;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethodRegistry;
 
@@ -107,7 +107,7 @@ public class StandaloneEngine implements ApplicationEventListener, GdbEventListe
 		final SimpleGex gex = gexManager.getCurrentGex();
 		final Pathway p = swingEngine.getEngine().getActivePathway();
 		if(p != null && gex != null && swingEngine.getGdbManager().isConnected()) {
-			final SwingProgressKeeper pk = new SwingProgressKeeper(
+			final ProgressKeeper pk = new ProgressKeeper(
 					(int)1E5
 			);
 			final ProgressDialog d = new ProgressDialog(

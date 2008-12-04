@@ -21,7 +21,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.List;
 
 import org.pathvisio.debug.Logger;
@@ -60,6 +59,77 @@ class SimpleGdbImpl2 extends SimpleGdb
 	private static final int GDB_COMPAT_VERSION = 2; //Preferred schema version
 
 	/**
+	 * helper class that handles lazy initialization of all prepared statements used by SimpleGdbImpl2
+	 * Non-static, because it needs the con database connection field.
+	 */
+	private class LazyPst
+	{
+		/**
+		 * Initialize with given SQL string, but don't create PreparedStatement yet.
+		 * Valid to call before database connection is created.
+		 */
+		private LazyPst(String aSql)
+		{
+			sql = aSql;
+		}
+		
+		private PreparedStatement pst = null;
+		private final String sql;
+		
+		/**
+		 * returns a prepared statement for the given query.
+		 * Uses lazy initialization.
+		 * 
+		 * Assumes SimpleGdbImpl2.con is already valid
+		 */
+		public PreparedStatement getPreparedStatement() throws SQLException
+		{
+			if (pst == null)
+			{
+				pst = con.prepareStatement(sql);
+			}
+			return pst;
+		}
+	}
+	
+	final LazyPst pstXrefExists = new LazyPst(
+			"SELECT id FROM " + "datanode" + " WHERE " +
+			"id = ? AND code = ?"
+		);
+	final LazyPst pstGeneSymbol = new LazyPst(
+			"SELECT attrvalue FROM attribute WHERE " +
+			"attrname = 'Symbol' AND id = ? " +
+			"AND code = ?"
+		);
+	final LazyPst pstBackpage = new LazyPst(
+			"SELECT backpageText FROM datanode " +
+			" WHERE id = ? AND code = ?"
+		);
+	final LazyPst pstCrossRefs = new LazyPst (
+			"SELECT dest.idRight, dest.codeRight FROM link AS src JOIN link AS dest " +
+			"ON src.idLeft = dest.idLeft and src.codeLeft = dest.codeLeft " +
+			"WHERE src.idRight = ? AND src.codeRight = ?"
+		);
+	final LazyPst pstCrossRefsWithCode = new LazyPst (
+			"SELECT dest.idRight, dest.codeRight FROM link AS src JOIN link AS dest " +
+			"ON src.idLeft = dest.idLeft and src.codeLeft = dest.codeLeft " +
+			"WHERE src.idRight = ? AND src.codeRight = ? AND dest.codeRight = ?"
+		);
+	final LazyPst pstRefsByAttribute = new LazyPst (
+			"SELECT datanode.id, datanode.code FROM datanode " +
+			" LEFT JOIN attribute ON attribute.code = datanode.code AND attribute.id = datanode.id " +
+			"WHERE attrName = ? AND attrValue = ?"
+		);
+	final LazyPst pstIdSuggestions = new LazyPst (
+			"SELECT id, code FROM datanode WHERE " +
+			"LOWER(ID) LIKE ?"
+		);
+	final LazyPst pstSymbolSuggestions = new LazyPst (
+			"SELECT attrvalue FROM attribute WHERE " +
+			"attrname = 'Symbol' AND LOWER(attrvalue) LIKE ?"
+		);
+	
+	/**
 	 * @param id The gene id to get the symbol info for
 	 * @param code systemcode of the gene identifier
 	 * @return The gene symbol, or null if the symbol could not be found
@@ -67,13 +137,10 @@ class SimpleGdbImpl2 extends SimpleGdb
 	public String getGeneSymbol(Xref ref) throws DataException 
 	{
 		try {
-			Statement s = con.createStatement();
-
-			String query =
-				"SELECT attrvalue FROM attribute WHERE " +
-				"attrname = 'Symbol' AND id = '" + ref.getId() + "' " +
-				"AND code = '" + ref.getDataSource().getSystemCode() + "'";
-			ResultSet r = s.executeQuery(query);
+			PreparedStatement pst = pstGeneSymbol.getPreparedStatement();
+			pst.setString(1, ref.getId());
+			pst.setString(2, ref.getDataSource().getSystemCode());
+			ResultSet r = pst.executeQuery();
 
 			while(r.next()) 
 			{
@@ -84,21 +151,6 @@ class SimpleGdbImpl2 extends SimpleGdb
 		}
 		return null;
 	}
-
-	PreparedStatement pstXrefExists = null;
-	
-	// lazy initialization of prepared statement
-	private PreparedStatement getPstXrefExists () throws SQLException
-	{		
-		if (pstXrefExists == null)
-		{
-			String query =
-				"SELECT id FROM " + "datanode" + " WHERE " +
-				"id = ? AND code = ?";
-			pstXrefExists = con.prepareStatement(query);
-		}
-		return pstXrefExists;
-	}
 	
 	/**
 	 * Simply checks if an xref occurs in the datanode table.
@@ -108,7 +160,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 	{
 		try 
 		{
-			PreparedStatement pst = getPstXrefExists();
+			PreparedStatement pst = pstXrefExists.getPreparedStatement();
 			pst.setString(1, xref.getId());
 			pst.setString(2, xref.getDataSource().getSystemCode());
 			ResultSet r = pst.executeQuery();
@@ -136,42 +188,15 @@ class SimpleGdbImpl2 extends SimpleGdb
 		timer.start();
 
 		try {
-			Statement s = con.createStatement();
-			ResultSet r = s.executeQuery(
-					"SELECT backpageText FROM " + "datanode" +
-					" WHERE id = '" + ref.getId() + "' AND code = '" + 
-					ref.getDataSource().getSystemCode() + "'");
+			PreparedStatement pst = pstBackpage.getPreparedStatement();
+			pst.setString (1, ref.getId());
+			pst.setString (2, ref.getDataSource().getSystemCode());
+			ResultSet r = pst.executeQuery();
 			r.next();
 			String result = r.getString(1);
 			timer.stopToLog("> getBpInfo");
 			return result;
 		} catch	(SQLException e) { throw new DataException (e); } //Gene not found
-	}
-
-	private PreparedStatement pstCrossRefs = null;
-	private PreparedStatement getPstCrossRefs () throws SQLException
-	{
-		if (pstCrossRefs == null)
-		{
-			pstCrossRefs = con.prepareStatement(
-					"SELECT dest.idRight, dest.codeRight FROM link AS src JOIN link AS dest " +
-					"ON src.idLeft = dest.idLeft and src.codeLeft = dest.codeLeft " +
-					"WHERE src.idRight = ? AND src.codeRight = ?");
-		}
-		return pstCrossRefs;
-	}
-
-	private PreparedStatement pstCrossRefsWithCode = null;
-	private PreparedStatement getPstCrossRefsWithCode () throws SQLException
-	{
-		if (pstCrossRefsWithCode == null)
-		{
-			pstCrossRefsWithCode = con.prepareStatement(
-					"SELECT dest.idRight, dest.codeRight FROM link AS src JOIN link AS dest " +
-					"ON src.idLeft = dest.idLeft and src.codeLeft = dest.codeLeft " +
-					"WHERE src.idRight = ? AND src.codeRight = ? AND dest.codeRight = ?");
-		}
-		return pstCrossRefsWithCode;
 	}
 
 	/**
@@ -195,11 +220,11 @@ class SimpleGdbImpl2 extends SimpleGdb
 			PreparedStatement pst;
 			if (resultDs == null)
 			{
-				pst = getPstCrossRefs();
+				pst = pstCrossRefs.getPreparedStatement();
 			}
 			else
 			{
-				pst = getPstCrossRefsWithCode();
+				pst = pstCrossRefsWithCode.getPreparedStatement();
 				pst.setString(3, resultDs.getSystemCode());
 			}
 			
@@ -225,21 +250,13 @@ class SimpleGdbImpl2 extends SimpleGdb
 
 	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue) throws DataException {
 		Logger.log.trace("Fetching cross references by attribute: " + attrName + " = " + attrValue);
-		StringBuilder sb = new StringBuilder();
-		Formatter formatter = new Formatter(sb);
-
-		formatter.format(
-				"SELECT %1$s.%2$s, %1$s.%3$s FROM %1$s " +
-				"LEFT JOIN %4$s ON %4$s.%2$s = %1$s.%2$s AND %4$s.%3$s = %1$s.%3$s " +
-				"WHERE attrName = '%5$s' AND attrValue = '%6$s'",
-				"datanode", "id", "code", "Attribute", attrName, attrValue
-		);
-
-		String query = sb.toString();		
 		List<Xref> refs = new ArrayList<Xref>();
 
 		try {
-			ResultSet r = con.createStatement().executeQuery(query);
+			PreparedStatement pst = pstRefsByAttribute.getPreparedStatement();
+			pst.setString(1, attrName);
+			pst.setString(2, attrValue);
+			ResultSet r = pst.executeQuery();
 			while(r.next()) {
 				Xref ref = new Xref(r.getString(1), DataSource.getBySystemCode(r.getString(2)));
 				refs.add(ref);
@@ -387,33 +404,27 @@ class SimpleGdbImpl2 extends SimpleGdb
 	
 	public static final int NO_LIMIT = 0;
 	public static final int NO_TIMEOUT = 0;
-	public static final int QUERY_TIMEOUT = 5; //seconds
+	public static final int QUERY_TIMEOUT = 20; //seconds
 
 	/**
 	 * Get up to limit suggestions for a symbol autocompletion
+	 * case Insensitive 
+	 * 
 	 * @param text The text to base the suggestions on
 	 * @param limit The number of results to limit the search to
-	 * @param caseSensitive if true, the search will be case sensitive
+	 * 
 	 * @throws DataException 
 	 */
-	public List<String> getSymbolSuggestions(String text, int limit, boolean caseSensitive) throws DataException 
+	public List<String> getSymbolSuggestions(String text, int limit) throws DataException 
 	{		
 		List<String> result = new ArrayList<String>();
 		try {
-			Statement s = con.createStatement();
 
-			s.setQueryTimeout(QUERY_TIMEOUT);
-			if(limit > NO_LIMIT) s.setMaxRows(limit);
-
-			//TODO: use prepared statement
-			String query = String.format(
-					"SELECT attrvalue FROM attribute WHERE " +
-					"attrname = 'Symbol' AND %s LIKE '%s%%'",
-					caseSensitive ? "attrvalue" : "LOWER(attrvalue)",
-							caseSensitive ? text : text.toLowerCase()
-			);
-
-			ResultSet r = s.executeQuery(query);
+			PreparedStatement pst = pstSymbolSuggestions.getPreparedStatement();
+			pst.setQueryTimeout(QUERY_TIMEOUT);
+			if(limit > NO_LIMIT) pst.setMaxRows(limit);
+			pst.setString(1, text.toLowerCase() + "%");
+			ResultSet r = pst.executeQuery();
 
 			while(r.next()) 
 			{
@@ -423,7 +434,6 @@ class SimpleGdbImpl2 extends SimpleGdb
 		} catch (SQLException e) {
 			throw new DataException (e);
 		}
-		//if(limit > NO_LIMIT && result.size() == limit) sugg.add("...results limited to " + limit);
 		return result;
 	}
 	
@@ -433,28 +443,15 @@ class SimpleGdbImpl2 extends SimpleGdb
 	 * @param limit The number of results to limit the search to
 	 * @param caseSensitive if true, the search will be case sensitive
 	 */
-	public List<Xref> getIdSuggestions(String text, int limit, boolean caseSensitive) 
+	public List<Xref> getIdSuggestions(String text, int limit) throws DataException 
 	{		
 		List<Xref> result = new ArrayList<Xref>();
 		try {
-			Statement s = con.createStatement();
-
-			s.setQueryTimeout(QUERY_TIMEOUT);
-			if(limit > NO_LIMIT) s.setMaxRows(limit);
-
-			StringBuilder sb = new StringBuilder();
-			Formatter formatter = new Formatter(sb);
-
-			//TODO: use prepared statement
-			formatter.format(
-					"SELECT id, code FROM %1$s WHERE " +
-					"%3$s LIKE '%2$s%%'",
-					"datanode", caseSensitive ? text : text.toLowerCase(), 
-							caseSensitive ? "id" : "LOWER(id)"
-			);
-
-			String query = sb.toString();
-			ResultSet r = s.executeQuery(query);
+			PreparedStatement pst = pstIdSuggestions.getPreparedStatement();
+			pst.setQueryTimeout(QUERY_TIMEOUT);
+			if(limit > NO_LIMIT) pst.setMaxRows(limit);
+			pst.setString (1, text.toLowerCase() + "%");
+			ResultSet r = pst.executeQuery();
 
 			while(r.next()) {
 				String id = r.getString(1);
@@ -463,7 +460,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 				result.add (ref);
 			}
 		} catch (SQLException e) {
-			Logger.log.error("Unable to query suggestions", e);
+			throw new DataException (e);
 		}
 //		if(limit > NO_LIMIT && sugg.size() == limit) sugg.add("...results limited to " + limit);
 		return result;
@@ -480,19 +477,12 @@ class SimpleGdbImpl2 extends SimpleGdb
 		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
 		try {
 			PreparedStatement ps1 = con.prepareStatement(
-					"SELECT dn.id, dn.code, attr.attrvalue " +
-					"FROM " +
-							"datanode" + " AS dn " +
-					"	LEFT JOIN " +
-					"		attribute AS attr " +
-					"	ON               " +
-					"		dn.id = attr.id AND dn.code = attr.code " +
+					"SELECT attr.id, attr.code, attr.attrvalue " +
+					"FROM attribute AS attr " +
 					"WHERE " +
-					"		LOWER(dn.id) LIKE ?" +
+					"		LOWER(attr.id) LIKE ?" +
 					"	AND " +
-					"			(attr.attrname IS NULL " +
-					"		OR " +
-					"			attr.attrname = 'Symbol') "
+					"			attr.attrname = 'Symbol' "
 					);
 			ps1.setQueryTimeout(QUERY_TIMEOUT);
 			if(limit > NO_LIMIT) 
@@ -516,17 +506,15 @@ class SimpleGdbImpl2 extends SimpleGdb
 			}
 			
 			PreparedStatement ps2 = con.prepareStatement(
-					"SELECT dn.id, dn.code, attr.attrvalue " +
-					"FROM " + "datanode" + " AS dn " +
-					"	JOIN attribute AS attr " +
-					"	ON " +
-					"	dn.id = attr.id AND dn.code = attr.code " +
+					"SELECT attr.id, attr.code, attr.attrvalue " +
+					"FROM attribute AS attr " +
 					"WHERE " +
 					"		attr.attrname = 'Symbol'" +
 					" 	AND " +
 					"	LOWER(attr.attrvalue) LIKE ?"
 			);
 			ps2.setString(1, "%" + text.toLowerCase() + "%");
+			ps2.setQueryTimeout(QUERY_TIMEOUT);
 			r = ps2.executeQuery();
 
 			while(r.next()) {

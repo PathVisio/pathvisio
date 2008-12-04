@@ -148,42 +148,25 @@ public abstract class SimpleGdb implements Gdb
 	public static final int QUERY_TIMEOUT = 5; //seconds
 
 	/**
-	 * Get up to limit suggestions for a symbol autocompletion. 
-	 * the search will be case insensitive by default
-	 * @param text The text to base the suggestions on
-	 * @param limit The number of results to limit the search to
-	 * @throws DataException 
-	 */
-	final public List<String> getSymbolSuggestions(String text, int limit) throws DataException {
-		return getSymbolSuggestions(text, limit, false);
-	}
-
-	/**
 	 * Get up to limit suggestions for a symbol autocompletion
+	 * case Insensitive 
+	 * 
 	 * @param text The text to base the suggestions on
 	 * @param limit The number of results to limit the search to
-	 * @param caseSensitive if true, the search will be case sensitive
+	 * 
 	 * @throws DataException 
 	 */
-	abstract public List<String> getSymbolSuggestions(String text, int limit, boolean caseSensitive) throws DataException;
+	abstract public List<String> getSymbolSuggestions(String text, int limit) throws DataException;
 
-	/**
-	 * Get up to limit suggestions for a identifier autocompletion. 
-	 * The search will be case insensitive by default
-	 * @param text The text to base the suggestions on
-	 * @param limit The number of results to limit the search to
-	 */
-	final public List<Xref> getIdSuggestions(String text, int limit) {
-		return getIdSuggestions(text, limit, false);
-	}
-	
 	/**
 	 * Get up to limit suggestions for a identifier autocompletion
+	 * case Insensitive
+	 * 
 	 * @param text The text to base the suggestions on
 	 * @param limit The number of results to limit the search to
-	 * @param caseSensitive if true, the search will be case sensitive
+	 * @throws DataException 
 	 */
-	abstract public List<Xref> getIdSuggestions(String text, int limit, boolean caseSensitive); 
+	abstract public List<Xref> getIdSuggestions(String text, int limit) throws DataException; 
 
 	/**
 	 * free text search for matching symbols or identifiers

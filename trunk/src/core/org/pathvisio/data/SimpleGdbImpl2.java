@@ -64,7 +64,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 	 * @param code systemcode of the gene identifier
 	 * @return The gene symbol, or null if the symbol could not be found
 	 */
-	public String getGeneSymbol(Xref ref) 
+	public String getGeneSymbol(Xref ref) throws DataException 
 	{
 		try {
 			Statement s = con.createStatement();
@@ -80,7 +80,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 				return r.getString(1);
 			}
 		} catch (SQLException e) {
-			Logger.log.error("Unable to query suggestions", e);
+			throw new DataException (e);
 		}
 		return null;
 	}
@@ -102,8 +102,9 @@ class SimpleGdbImpl2 extends SimpleGdb
 	
 	/**
 	 * Simply checks if an xref occurs in the datanode table.
+	 * @throws DataException 
 	 */
-	public boolean xrefExists(Xref xref) 
+	public boolean xrefExists(Xref xref) throws DataException 
 	{
 		try 
 		{
@@ -119,7 +120,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 		} 
 		catch (SQLException e) 
 		{
-			Logger.log.error("Unable to query suggestions", e);
+			throw new DataException (e);
 		}
 		return false;
 	}
@@ -129,7 +130,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 	 * @param ref The gene to get the backpage info for
 	 * @return String with the backpage info, null if the gene was not found
 	 */
-	public String getBpInfo(Xref ref) 
+	public String getBpInfo(Xref ref) throws DataException 
 	{
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -144,7 +145,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 			String result = r.getString(1);
 			timer.stopToLog("> getBpInfo");
 			return result;
-		} catch(Exception e) { return null;	} //Gene not found
+		} catch	(SQLException e) { throw new DataException (e); } //Gene not found
 	}
 
 	private PreparedStatement pstCrossRefs = null;
@@ -222,7 +223,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 		return refs;
 	}
 
-	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue) {
+	public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue) throws DataException {
 		Logger.log.trace("Fetching cross references by attribute: " + attrName + " = " + attrValue);
 		StringBuilder sb = new StringBuilder();
 		Formatter formatter = new Formatter(sb);
@@ -244,7 +245,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 				refs.add(ref);
 			}
 		} catch(SQLException e) {
-			Logger.log.error("Unable to fetch cross-ref by attribute", e);
+			throw new DataException (e);
 		}
 		Logger.log.trace("End fetching cross references by attribute");
 		return refs;
@@ -393,8 +394,9 @@ class SimpleGdbImpl2 extends SimpleGdb
 	 * @param text The text to base the suggestions on
 	 * @param limit The number of results to limit the search to
 	 * @param caseSensitive if true, the search will be case sensitive
+	 * @throws DataException 
 	 */
-	public List<String> getSymbolSuggestions(String text, int limit, boolean caseSensitive) 
+	public List<String> getSymbolSuggestions(String text, int limit, boolean caseSensitive) throws DataException 
 	{		
 		List<String> result = new ArrayList<String>();
 		try {
@@ -419,7 +421,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 				result.add(symbol);
 			}
 		} catch (SQLException e) {
-			Logger.log.error("Unable to query suggestions", e);
+			throw new DataException (e);
 		}
 		//if(limit > NO_LIMIT && result.size() == limit) sugg.add("...results limited to " + limit);
 		return result;
@@ -471,8 +473,9 @@ class SimpleGdbImpl2 extends SimpleGdb
 	 * free text search for matching symbols or identifiers
 	 * @param text The text to base the suggestions on
 	 * @param limit The number of results to limit the search to
+	 * @throws DataException 
 	 */
-	public List<XrefWithSymbol> freeSearch (String text, int limit) 
+	public List<XrefWithSymbol> freeSearch (String text, int limit) throws DataException 
 	{		
 		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
 		try {
@@ -535,7 +538,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 			}
 			
 		} catch (SQLException e) {
-			Logger.log.error("Unable to run query", e);
+			throw new DataException(e);
 		}
 		return result;
 	}

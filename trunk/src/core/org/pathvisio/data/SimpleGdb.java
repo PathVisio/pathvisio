@@ -81,20 +81,23 @@ public abstract class SimpleGdb implements Gdb
 	 * @param id The gene id to get the symbol info for
 	 * @param code systemcode of the gene identifier
 	 * @return The gene symbol, or null if the symbol could not be found
+	 * @throws DataException 
 	 */
-	abstract public String getGeneSymbol(Xref ref); 
+	abstract public String getGeneSymbol(Xref ref) throws DataException; 
 		
 	/**
 	 * Simply checks if an xref occurs in the datanode table.
+	 * @throws DataException 
 	 */
-	abstract public boolean xrefExists(Xref xref); 
+	abstract public boolean xrefExists(Xref xref) throws DataException; 
 
 	/**
 	 * Gets the backpage info for the given gene id for display on BackpagePanel
 	 * @param ref The gene to get the backpage info for
 	 * @return String with the backpage info, null if the gene was not found
+	 * @throws DataException 
 	 */
-	abstract public String getBpInfo(Xref ref); 
+	abstract public String getBpInfo(Xref ref) throws DataException; 
 
 	/**
 	 * Get all cross-references for the given id/code pair, restricting the
@@ -120,7 +123,7 @@ public abstract class SimpleGdb implements Gdb
 	 */
 	abstract public List<Xref> getCrossRefs (Xref idc, DataSource resultDs) throws DataException; 
 
-	abstract public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue);
+	abstract public List<Xref> getCrossRefsByAttribute(String attrName, String attrValue) throws DataException;
 	
 	/**
 	 * Closes the {@link Connection} to the Gene Database if possible
@@ -149,8 +152,9 @@ public abstract class SimpleGdb implements Gdb
 	 * the search will be case insensitive by default
 	 * @param text The text to base the suggestions on
 	 * @param limit The number of results to limit the search to
+	 * @throws DataException 
 	 */
-	final public List<String> getSymbolSuggestions(String text, int limit) {
+	final public List<String> getSymbolSuggestions(String text, int limit) throws DataException {
 		return getSymbolSuggestions(text, limit, false);
 	}
 
@@ -159,8 +163,9 @@ public abstract class SimpleGdb implements Gdb
 	 * @param text The text to base the suggestions on
 	 * @param limit The number of results to limit the search to
 	 * @param caseSensitive if true, the search will be case sensitive
+	 * @throws DataException 
 	 */
-	abstract public List<String> getSymbolSuggestions(String text, int limit, boolean caseSensitive);
+	abstract public List<String> getSymbolSuggestions(String text, int limit, boolean caseSensitive) throws DataException;
 
 	/**
 	 * Get up to limit suggestions for a identifier autocompletion. 
@@ -184,8 +189,9 @@ public abstract class SimpleGdb implements Gdb
 	 * free text search for matching symbols or identifiers
 	 * @param text The text to base the suggestions on
 	 * @param limit The number of results to limit the search to
+	 * @throws DataException 
 	 */
-	abstract public List<XrefWithSymbol> freeSearch (String text, int limit); 
+	abstract public List<XrefWithSymbol> freeSearch (String text, int limit) throws DataException; 
 	/**
 	 * Add a gene to the gene database
 	 */

@@ -19,6 +19,8 @@ package org.pathvisio.gui.swing;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
@@ -51,17 +53,40 @@ import org.pathvisio.view.swing.VPathwaySwing;
 /**
  * Implementation of {@link VPathwayListener} that handles righ-click events to 
  * show a popup menu when a {@link VPathwayElement} is clicked.
- * @author thomas
- *
+ * 
+ * This class is responsible for maintaining a list of {@link PathwayElementMenuHook}'s, 
+ * There should be a single Listener per MainPanel, possibly listening to multiple {@link VPathway}'s.
  */
 public class PathwayElementMenuListener implements VPathwayListener {
+
+	private List<PathwayElementMenuHook> hooks = new ArrayList<PathwayElementMenuHook>();
+	
+	public void addPathwayElementMenuHook(PathwayElementMenuHook hook)
+	{
+		hooks.add (hook);
+	}
+
+	public void removePathwayElementMenuHook(PathwayElementMenuHook hook)
+	{
+		hooks.remove(hook);
+	}
+
+	/**
+	 * This should be implemented by plug-ins 
+	 * that wish to hook into the Pathway Element Menu
+	 */
+	public interface PathwayElementMenuHook
+	{
+		public void pathwayElementMenuHook (VPathwayElement e, JPopupMenu menu);
+	}
+	
 	/**
 	 * Get an instance of a {@link JPopupMenu} for a given {@link VPathwayElement}
 	 * @param e The {@link VPathwayElement} to create the popup menu for. If e is an instance of
 	 * {@link Handle}, the menu is based on the parent element.
 	 * @return The {@link JPopupMenu} for the given pathway element
 	 */
-	private static JPopupMenu getMenuInstance(SwingEngine swingEngine, VPathwayElement e) {
+	private JPopupMenu getMenuInstance(SwingEngine swingEngine, VPathwayElement e) {
 		if(e instanceof Citation) return null;
 		
 		if(e instanceof Handle) e = ((Handle)e).getParent();
@@ -164,9 +189,16 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			menu.addSeparator();
 			menu.add(new PropertiesAction(swingEngine, component,e));
 		}
+		
+		// give plug-ins a chance to add menu items.
+		for (PathwayElementMenuHook hook : hooks)
+		{
+			hook.pathwayElementMenuHook (e, menu);
+		}
+			
 		return menu;
 	}
-	
+		
 	private SwingEngine swingEngine;
 	
 	PathwayElementMenuListener(SwingEngine swingEngine)

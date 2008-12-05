@@ -95,6 +95,13 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	protected SwingEngine swingEngine;
 
+	private final PathwayElementMenuListener pathwayElementMenuListener;
+	
+	public PathwayElementMenuListener getPathwayElementMenuListener()
+	{
+		return pathwayElementMenuListener;
+	}
+	
 	private boolean mayAddAction(Action a) {
 		return hideActions == null || !hideActions.contains(a);
 	}
@@ -223,6 +230,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		menuBar = new JMenuBar();
 		addMenuActions(menuBar);
+		
+		pathwayElementMenuListener = new PathwayElementMenuListener(swingEngine);
 	}
 	
 	/**
@@ -415,7 +424,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		case ApplicationEvent.VPATHWAY_CREATED:
 			VPathway vp = (VPathway)e.getSource();
 			vp.addVPathwayListener(this);
-			vp.addVPathwayListener(new PathwayElementMenuListener(swingEngine));
+			vp.addVPathwayListener(pathwayElementMenuListener);
 			for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_VPATHWAY)) {
 				b.setEnabled(true);
 			}

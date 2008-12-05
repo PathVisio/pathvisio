@@ -28,6 +28,7 @@ import org.pathvisio.biopax.BiopaxEvent;
 import org.pathvisio.biopax.BiopaxListener;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 
 /**
@@ -151,8 +152,24 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 
 	protected Point2D getVPosition() {
 		PathwayElement mParent = parent.getPathwayElement();
-		Point2D mp = mParent.toAbsoluteCoordinate(rPosition);
-		return new Point2D.Double(vFromM(mp.getX()), vFromM(mp.getY()));
+
+		Point2D vp = null;
+		//Check for mappinfo object, needs a special treatment,
+		//since it has no bounds in the model
+		if(mParent.getObjectType() == ObjectType.MAPPINFO) {
+			Rectangle2D vb = parent.getVBounds();
+			double x = rPosition.getX();
+			double y = rPosition.getY();
+			if(vb.getWidth() != 0) x *= vb.getWidth() / 2;
+			if(vb.getHeight() != 0) y *= vb.getHeight() / 2;
+			x += vb.getCenterX();
+			y += vb.getCenterY();
+			vp = new Point2D.Double(x, y);
+		} else { //For other objects, use the model bounds
+			Point2D mp = mParent.toAbsoluteCoordinate(rPosition);
+			vp = new Point2D.Double(vFromM(mp.getX()), vFromM(mp.getY()));
+		}
+		return vp;
 	}
 
 	Graphics2D g2d;

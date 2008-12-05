@@ -21,6 +21,7 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.PathwayElement;
@@ -48,6 +49,7 @@ public class InfoBox extends Graphics {
 	public InfoBox (VPathway canvas, PathwayElement o) {
 		super(canvas, o);
 		canvas.setMappInfo(this);	
+		getCitation().setRPosition(new Point2D.Double(1, 0));
 	}
 	
 	//public Point getBoardSize() { return new Point((int)gdata.getMBoardWidth(), (int)gdata.getMBoardHeight()); }

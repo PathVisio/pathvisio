@@ -26,7 +26,17 @@ import javax.servlet.http.HttpServletResponse;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.client.ResultsTable;
 
+/**
+ * A servlet that provides image data for the preview
+ * images.
+ * @author thomas
+ */
 public class ImageServiceImpl extends HttpServlet {
+	/**
+	 * Process a request. The url parameter should be either:
+	 * - id, to get the image data for a given image id
+	 * - updateCache, to update the cache for all images
+	 */
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
@@ -34,10 +44,9 @@ public class ImageServiceImpl extends HttpServlet {
 				WikiPathwaysClient client = new WikiPathwaysClient(
 						SearchServiceImpl.getClientUrl(getServletContext())
 				);
-				ImageManager.init(client);
+				ImageManager.init(getServletContext().getRealPath(""), client);
 			}
 			ImageManager imgManager = ImageManager.getInstance();
-			imgManager.setServerBasePath(getServletContext().getRealPath(""));
 			
 			//Update the cache
 			if(req.getParameter(ImageManager.PAR_UPDATE_CACHE) != null) {

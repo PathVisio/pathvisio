@@ -43,6 +43,10 @@ import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+/**
+ * Implements the {@link SearchService}.
+ * @author thomas
+ */
 public class SearchServiceImpl extends RemoteServiceServlet implements SearchService {
 	WikiPathwaysClient client;
 	
@@ -82,7 +86,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	
 	private ImageManager getImageManager() {
 		if(!ImageManager.isInit()) {
-			ImageManager.init(getClient());
+			ImageManager.init(getServletContext().getRealPath(""), getClient());
 		}
 		return ImageManager.getInstance();
 	}
@@ -100,8 +104,6 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	}
 
 	private Result createPathwayResult(final WSSearchResult wsr, String id) {
-		getImageManager().setServerBasePath(getServletContext().getRealPath(""));
-
 		String pdescr = null;
 		String iddescr = null;
 		try {

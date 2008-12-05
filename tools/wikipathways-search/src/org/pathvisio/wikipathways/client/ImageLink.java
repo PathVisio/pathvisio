@@ -23,6 +23,10 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * A widget that displays an image wrapped
+ * in a link element.
+ */
 public class ImageLink extends Widget {
 
 	private Image img;

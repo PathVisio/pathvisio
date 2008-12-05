@@ -16,6 +16,10 @@
 //
 package org.pathvisio.wikipathways.client;
 
+/**
+ * An exception thrown on search errors.
+ * @author thomas
+ */
 public class SearchException extends RuntimeException {
 	public SearchException(String message) {
 		super(message);

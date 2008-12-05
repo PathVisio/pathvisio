@@ -32,7 +32,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.PNGTranscoder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -41,65 +40,93 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapperBase;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.client.SearchException;
-import org.pathvisio.wikipathways.webservice.WSIndexField;
+import org.pathvisio.wikipathways.client.SearchService;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
 /**
- * Manages the cache of preview images
+ * Manages the cache of the GPML files and preview images
  * @author thomas
  */
 public class ImageManager {
+	/**
+	 * The GET parameter that triggers complete cache update
+	 */
 	public static final String PAR_UPDATE_CACHE = "updateCache";
+	/**
+	 * The size of the preview images
+	 */
 	public static final int IMG_SIZE = 150;
-	public static final String IMG_TYPE_CACHE = "svg";
+	/**
+	 * The image format of the preview images
+	 */
 	public static final String IMG_TYPE = "png";
 	
 	private static ImageManager imageManager;
 	
+	/**
+	 * Check if the image manager is already initialized.
+	 */
 	public static boolean isInit() {
 		return imageManager != null;
 	}
 	
-	public static void init(WikiPathwaysClient client) {
-		imageManager = new ImageManager(client);
+	/**
+	 * Initialize the image manager
+	 * @param basePath The base path for storing the cache files.
+	 * @param client The client to the WikiPathways web service
+	 */
+	public static void init(String basePath, WikiPathwaysClient client) {
+		imageManager = new ImageManager(basePath, client);
 	}
 	
+	/**
+	 * Get the image manager.
+	 * @return The image manager, or null if it has not been
+	 * initialized yet.
+	 * @see #isInit()
+	 * @see #init(WikiPathwaysClient)
+	 */
 	public static ImageManager getInstance() {
 		return imageManager;
 	}
 	
 	static final int SLEEP_INTERVAL = 250;
-	static final int TIMEOUT = 60000;
 	static final String GPML_PATH = "cache/gpml/";
 	static final String IMG_PATH = "cache/images/";
 	
-	WikiPathwaysClient client;
+	private WikiPathwaysClient client;
 	
-	//Download management
+	//Manages the download threads
 	BlockingQueue<Runnable> workqueue = new LinkedBlockingQueue<Runnable>();
 	ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 3, 60, TimeUnit.SECONDS, workqueue);
 	private volatile Set<String> activeDownloads = new HashSet<String>();
 	
 	private String srvBasePath = "";
 	
-	private ImageManager(WikiPathwaysClient client) {
+	private ImageManager(String basePath, WikiPathwaysClient client) {
+		srvBasePath = basePath;
+		new File(srvBasePath + "/" + GPML_PATH).mkdirs();
+		new File(srvBasePath + "/" + IMG_PATH).mkdirs();
 		this.client = client;
 	}
 	
-	public void setServerBasePath(String path) {
-		srvBasePath = path;
-		new File(srvBasePath + "/" + IMG_PATH).mkdirs();
-	}
-	
+	/**
+	 * Block until the cached image is available. This method returns only when the cache
+	 * file is available.
+	 * @param id The image id
+	 * @throws TimeoutException When waiting longer than {@link SearchService#TIMEOUT}.
+	 * @throws TranscoderException
+	 * @throws IOException
+	 */
 	public void waitForImage(String id) throws TimeoutException, TranscoderException, IOException {
 		File cacheImg = getImageFile(id);
 		long start = System.currentTimeMillis();
 		while(!cacheImg.exists()) {
 			try {
 				Thread.sleep(SLEEP_INTERVAL);
-				if(System.currentTimeMillis() - start > TIMEOUT) {
+				if(System.currentTimeMillis() - start > SearchService.TIMEOUT) {
 					break;
 				}
 			} catch (InterruptedException e) {
@@ -112,12 +139,20 @@ public class ImageManager {
 		}
 	}
 	
+	/**
+	 * Get the data for the preview image, identified with id.
+	 * This method assumes that the cached image is already available.
+	 * @throws IOException On problems with reading the cached image.
+	 */
 	public byte[] getImageData(String id) throws IOException {
 		File resized = getImageFile(id);
 		System.err.println("Getting bytes from file " + resized.getAbsolutePath());
 		return getBytesFromFile(resized);
 	}
 	
+	/**
+	 * Read the given file into a byte array.
+	 */
     public static byte[] getBytesFromFile(File file) throws IOException {
         InputStream is = new FileInputStream(file);
         // Get the size of the file
@@ -138,6 +173,10 @@ public class ImageManager {
         return bytes;
     }
     
+    /**
+     * Get the pathway. This method updates cache if necessary.
+     * @param wsr The search result
+     */
     public Pathway getPathway(WSSearchResult wsr) throws ConverterException {
     	downloadGpml(wsr);
     	Pathway pathway = new Pathway();
@@ -147,6 +186,11 @@ public class ImageManager {
     	return pathway;
     }
     
+    /**
+     * Start updating the pathway and image cache. This method will
+     * download and convert the necessary files unless a cached version
+     * already exists.
+     */
 	public void startDownload(final WSSearchResult wsr) {
 		final String id = getGpmlId(wsr.getId(), wsr.getRevision());
 		//Only start if we're not already downloading
@@ -187,7 +231,9 @@ public class ImageManager {
 		hints.put(PNGTranscoder.KEY_WIDTH, (float)IMG_SIZE);
 		hints.put(PNGTranscoder.KEY_HEIGHT, (float)IMG_SIZE);
 		
-		//Disable highlighting for now
+		//Uncomment this to enable highlighting of the
+		//found genes. This will generate a lot more cache files
+		//(~one for each search query).
 //		Set<String> highlightIds = new HashSet<String>();
 //		
 //		WSIndexField[] fields = wsr.getFields();
@@ -205,7 +251,9 @@ public class ImageManager {
 		VPathway vpathway = new VPathway(new VPathwayWrapperBase());
 		vpathway.fromModel(pathway);
 		
-		//Disable highlighting for now
+		//Uncomment this to enable highlighting of the
+		//found genes. This will generate a lot more cache files
+		//(~one for each search query).
 //		for(String gid : highlightIds) {
 //			PathwayElement pwe = pathway.getElementById(gid);
 //			if(pwe != null) {
@@ -220,10 +268,6 @@ public class ImageManager {
 //				}
 //			}
 //		}
-		System.err.println("Writing image from:");
-		System.err.println("\t" + cacheGpml.getAbsolutePath());
-		System.err.println("To:");
-		System.err.println("\t" + cacheImg.getAbsolutePath());
 		exp.doExport(cacheImg, vpathway, hints);
 	}
 	
@@ -263,21 +307,6 @@ public class ImageManager {
 	
 	public static String getGpmlId(String id, String revision) {
 		return id + "@" + revision;
-	}
-	
-	public static String getResultId(WSSearchResult wsr) {
-		HashCodeBuilder hb = new HashCodeBuilder(17, 37);
-		hb.append(wsr.getUrl()); //Holds the pathway id and source
-		hb.append(wsr.getRevision()); //Holds the pathway version
-		WSIndexField[] fields = wsr.getFields(); //Holds the search type
-		if(fields != null) {
-			for(WSIndexField f : fields) {
-				for(String v : f.getValues()) {
-					hb.append(f.getName() + v);
-				}
-			}
-		}
-		return "" + hb.toHashCode();
 	}
 	
 	public void updateAllCache() {

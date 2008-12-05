@@ -36,16 +36,19 @@ import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
- * Entry point classes define <code>onModuleLoad()</code>.
+ * The entry point for the WikiPathways search page. Creates and displays
+ * the search widgets.
+ * @author thomas
  */
 public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
-	private DockPanel mainPanel;
-	private Panel progressPanel;
-	private ResultInfobar infoPanel;
+	private DockPanel mainPanel; //The base panel
+	private Panel progressPanel; //The panel that will be shown during searching
+	private ResultInfobar infoPanel; //Panel that displays search result info
+	private TabPanel tabPanel; //The tab panel container for the search panel widgets
 	
-	private ResultsTable pathwayResults;
+	private ResultsTable pathwayResults; //The table that displays the search results
 	
-	private SearchServiceAsync searchSrv;
+	private SearchServiceAsync searchSrv; //The RPC search service
 	
 	public void onModuleLoad() {
 		History.addHistoryListener(this);
@@ -86,15 +89,27 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 		}
 	}
 	
+	/**
+	 * Show an error.
+	 * @param title The error title
+	 * @param message The detailed error message
+	 */
 	private void showError(String title, String message) {
 		Window.alert(title + "\n" + message);
 	}
 	
+	/**
+	 * Clear the current results and start the search.
+	 * @param query The search query
+	 */
 	protected void search(Query query) {
 		stopSearch();
 		doSearch(query);
 	}
 
+	/**
+	 * Stop the current search and clear the results
+	 */
 	private void stopSearch() {
 		infoPanel.clear();
 		activeSearches.clear();
@@ -156,8 +171,10 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 		}
 	}
 	
-	TabPanel tabPanel;
 	
+	/**
+	 * Create the search panels.
+	 */
 	private Widget createSearchPanel() {
 		//Deck panel for all searches
 		tabPanel = new TabPanel();
@@ -180,6 +197,9 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 		return tabPanel;
 	}
 
+	/**
+	 * Create the panel that can be used to show search progress.
+	 */
 	private Panel createProgressPanel() {
 		progressPanel = new HorizontalPanel();
 		progressPanel.setStylePrimaryName(STYLE_PROGRESS);
@@ -188,6 +208,9 @@ public class WikiPathwaysSearch implements EntryPoint, HistoryListener {
 		return progressPanel;
 	}
 	
+	/**
+	 * Create the panel that will be used to display the results
+	 */
 	private Panel createResultsPanel() {
 		pathwayResults = new ResultsTable();
 		pathwayResults.setStylePrimaryName(STYLE_RESULT);

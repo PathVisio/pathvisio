@@ -1194,8 +1194,18 @@ public class VPathway implements PathwayListener
 		isDragging = true;
 		dragUndoState = DRAG_UNDO_NOT_RECORDING;
 		
-		selectObject(lastAdded);
-		pressedObject = newTemplate.getDragElement(this);
+		if(newObjects.length > 1) {
+			//Multiple objects: select all and use selectionbox as dragging object
+			for(PathwayElement pwe : newObjects) {
+				Graphics g = getPathwayElementView(pwe);
+				selection.addToSelection(g);
+			}
+			pressedObject = selection;
+		} else {
+			//Single object: select object and use dragelement specified by template
+			selectObject(lastAdded);
+			pressedObject = newTemplate.getDragElement(this);
+		}
 
 		vPreviousX = ve.x;
 		vPreviousY = ve.y;

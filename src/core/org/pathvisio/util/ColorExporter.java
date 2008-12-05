@@ -74,11 +74,11 @@ public class ColorExporter implements VPathwayListener {
 					Logger.log.info("Coloring " + pwe + " with " + elmColors);
 					switch(pwe.getObjectType()) {
 					case ObjectType.DATANODE:
-						doColor(e.getGraphics2D(), vpwe, elmColors);
+						doColor(e.getGraphics2D(), (Graphics)vpwe, elmColors);
 						drawLabel(e.getGraphics2D(), (Graphics)vpwe);
 						break;
 					case ObjectType.GROUP:
-						doColor(e.getGraphics2D(), vpwe, elmColors);
+						doColor(e.getGraphics2D(), (Graphics)vpwe, elmColors);
 						break;
 					}
 				}
@@ -102,7 +102,7 @@ public class ColorExporter implements VPathwayListener {
 		}
 	}
 	
-	private void doColor(Graphics2D g, VPathwayElement vpe, List<Color> colors) {
+	private void doColor(Graphics2D g, Graphics vpe, List<Color> colors) {
 		Graphics2D g2d = (Graphics2D)g.create();
 		g2d.setClip(vpe.getVBounds());
 		
@@ -119,6 +119,8 @@ public class ColorExporter implements VPathwayListener {
 					w + ((i == nr - 1) ? left : 0), area.height);
 			g2d.fill(r);
 		}
+		g2d.setColor(vpe.getPathwayElement().getColor());
+		g2d.drawRect(area.x, area.y, area.width - 1, area.height - 1);
 	}
 	
 	/**

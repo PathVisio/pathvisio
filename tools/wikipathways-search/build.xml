@@ -23,6 +23,7 @@
 			
 	<fileset id="client.lib.files" dir="../wikipathways-client">
 		<include name="**/*.jar" />
+		<exclude name="**/derby.jar" />
 	</fileset>
 
 	<path id="class.path">

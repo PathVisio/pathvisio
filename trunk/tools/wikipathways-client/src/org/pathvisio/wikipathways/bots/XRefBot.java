@@ -198,9 +198,13 @@ public class XRefBot {
 				boolean exists = false;
 				Xref xref = pwe.getXref();
 				for(Gdb gdb : gdbs.getGdbs(org)) {
-					if(gdb.xrefExists(xref)) {
-						exists = true;
-						break;
+					try {
+						if(gdb.xrefExists(xref)) {
+							exists = true;
+							break;
+						}
+					} catch (DataException e) {
+						Logger.log.error("Error checking xref exists", e);
 					}
 				}
 				report.addXref(pwe, exists);

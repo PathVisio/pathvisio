@@ -205,16 +205,16 @@ public class BiopaxElementManager {
 						elm.setId(e.getId());
 						return;
 					}
-				} else {
-					Logger.log.trace("Equal properties!");
-					//If we found this property equal to another one,
-					//change the id and return
-					if(e.propertyEquals(elm)) {
-						elm.setId(e.getId());
-						return;
-					}
+				}
+				Logger.log.trace("Equal properties!");
+				//If we found this property equal to another one,
+				//change the id and return
+				if(e.propertyEquals(elm)) {
+					elm.setId(e.getId());
+					return;
 				}
 			}
+
 		}
 		d.getRootElement().addContent(elm);
 		biopax.put(elm.getId(), elm);

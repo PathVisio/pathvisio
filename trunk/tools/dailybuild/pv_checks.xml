@@ -24,14 +24,11 @@
         <module name="ImportOrder"/>
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
-        <module name="AnonInnerLength"/>
         <module name="ExecutableStatementCount">
-            <property name="max" value="40"/>
+            <property name="max" value="80"/>
             <property name="tokens" value="INSTANCE_INIT,STATIC_INIT,METHOD_DEF,CTOR_DEF"/>
         </module>
         <module name="FileLength"/>
-        <module name="MethodLength"/>
-        <module name="ParameterNumber"/>
         <module name="CyclomaticComplexity">
             <property name="max" value="15"/>
         </module>
@@ -44,5 +41,10 @@
         <module name="IllegalType">
             <property name="tokens" value="METHOD_DEF,PARAMETER_DEF,VARIABLE_DEF"/>
         </module>
+        <module name="DefaultComesLast"/>
+        <module name="EqualsHashCode"/>
+        <module name="IllegalInstantiation"/>
+        <module name="StringLiteralEquality"/>
+        <module name="IllegalThrows"/>
     </module>
 </module>

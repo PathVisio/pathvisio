@@ -88,6 +88,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 	private void applyAutoFill(XrefWithSymbol ref) 
 	{
 		String sym = ref.getSymbol();
+		if (sym == null || sym.equals ("")) sym = ref.getId();
 		symText.setText(sym);
 		idText.setText(ref.getId());
 		dbCombo.setSelectedItem(ref.getDataSource());

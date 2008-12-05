@@ -77,6 +77,9 @@ public class VisualizationPlugin implements Plugin {
 		);
 	}
 
+	/**
+	 * Action / Menu item for opening the visualization dialog
+	 */
 	public static class VisualizationAction extends AbstractAction implements GexManagerListener {
 		private static final long serialVersionUID = 1L;
 		MainPanel mainPanel;

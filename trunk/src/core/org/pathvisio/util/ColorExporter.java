@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;

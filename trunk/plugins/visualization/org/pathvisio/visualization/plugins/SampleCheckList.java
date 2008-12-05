@@ -31,6 +31,10 @@ import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.data.SimpleGex;
 
+/**
+ * List of samples, with a checkbox in front of each so the user can select
+ * one or more.
+ */
 public class SampleCheckList extends JCheckBoxList {
 	DefaultListModel model = new DefaultListModel();
 	Map<JCheckBox, Sample> checkbox2sample = new HashMap<JCheckBox, Sample>();
@@ -135,7 +139,7 @@ public class SampleCheckList extends JCheckBoxList {
 	 */
 	public List<Sample> getSamplesInOrder() {
 		Object[] sa = model.toArray();
-		ArrayList<Sample> order = new ArrayList<Sample>();
+		List<Sample> order = new ArrayList<Sample>();
 		for(Object o : sa) {
 			order.add(checkbox2sample.get((JCheckBox)o));
 		}
@@ -148,7 +152,7 @@ public class SampleCheckList extends JCheckBoxList {
 	 */
 	public List<Sample> getSelectedSamplesInOrder() {
 		Object[] sa = model.toArray();
-		ArrayList<Sample> order = new ArrayList<Sample>();
+		List<Sample> order = new ArrayList<Sample>();
 		for(Object o : sa) {
 			JCheckBox ch = (JCheckBox)o;
 			if(ch.isSelected()) {

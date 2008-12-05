@@ -55,8 +55,6 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.ViewActions;
-import org.pathvisio.view.ViewActions.UndoAction;
-
 
 /**
  * A collection of {@link Action}s that may be used throughout the program (e.g. in

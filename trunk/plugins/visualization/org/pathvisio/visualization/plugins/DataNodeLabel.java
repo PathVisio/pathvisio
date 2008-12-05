@@ -16,6 +16,10 @@
 //
 package org.pathvisio.visualization.plugins;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -45,10 +49,15 @@ import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
+/** 
+ * Visualization method to put the label pack on a DataNode. Since
+ * visualizations are drawn on top of the original DataNode, it becomes
+ * necessary to redraw the original textLabel to see which gene / metabolite
+ * you're dealing with. 
+ * 
+ * This visualization method also lets you use the id instead of the symbol
+ * as label.
+ */
 public class DataNodeLabel extends VisualizationMethod implements ActionListener {
 	static final String DISPLAY_ID = "Identifier";
 	static final String DISPLAY_LABEL = "Text label";

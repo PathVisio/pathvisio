@@ -16,6 +16,10 @@
 //
 package org.pathvisio.visualization.plugins;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -43,10 +47,10 @@ import javax.swing.event.ListDataListener;
 
 import org.jdom.Element;
 import org.pathvisio.data.CachedData;
+import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.data.SimpleGex;
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.model.DataSource;
@@ -59,10 +63,10 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
+/**
+ * Visialization method where expression values are represented by text,
+ * i.e. the actual value written out small at or near the datanode.
+ */
 public class TextByExpression extends VisualizationMethod 
 								implements ActionListener, ListDataListener {
 	static final Font DEFAULT_FONT = new Font("Arial narrow", Font.PLAIN, 10);

@@ -31,6 +31,10 @@ import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
  
+/** 
+ * A list where each item has a checkbox in front of it.
+ * Useful for selecting a subset from a list such as a list of available Samples.
+ */
 public class JCheckBoxList extends JList
 {
     protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
@@ -91,6 +95,7 @@ public class JCheckBoxList extends JList
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
  
+    /** list cell renderer that draws item + checkbox in front of it */
     protected class CheckBoxCellRenderer implements ListCellRenderer
     {
         public Component getListCellRendererComponent(JList list, Object value, int index,

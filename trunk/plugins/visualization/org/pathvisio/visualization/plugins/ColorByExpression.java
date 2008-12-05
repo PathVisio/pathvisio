@@ -44,9 +44,9 @@ import javax.swing.JPanel;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
+import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.ColorConverter;
@@ -57,6 +57,11 @@ import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorSet;
 
+/**
+ * Visualization method for coloring by expression: can color a datanode by one or more
+ * expression values. In basic mode several samples use the same colorSet,
+ * in advanced mode each sample can have a different colorSet
+ */
 public class ColorByExpression extends VisualizationMethod {
 	static final Color DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
 	static final Color LINE_COLOR_DEFAULT = Color.BLACK;

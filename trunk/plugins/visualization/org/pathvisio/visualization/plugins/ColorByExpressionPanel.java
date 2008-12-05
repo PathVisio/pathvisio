@@ -16,6 +16,10 @@
 //
 package org.pathvisio.visualization.plugins;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -31,6 +35,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -64,10 +69,6 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.visualization.gui.ColorSetChooser;
 import org.pathvisio.visualization.gui.ColorSetCombo;
 import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Configuration panel for the ColorByExpression visualization
@@ -103,18 +104,18 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		));
 		
 		ButtonGroup buttons = new ButtonGroup();
-		JRadioButton b_basic = new JRadioButton(ACTION_BASIC);
-		b_basic.setActionCommand(ACTION_BASIC);
-		b_basic.addActionListener(this);
-		buttons.add(b_basic);
-		JRadioButton b_advanced = new JRadioButton(ACTION_ADVANCED);
-		b_advanced.setActionCommand(ACTION_ADVANCED);
-		b_advanced.addActionListener(this);
-		buttons.add(b_advanced);
+		JRadioButton rbBasic = new JRadioButton(ACTION_BASIC);
+		rbBasic.setActionCommand(ACTION_BASIC);
+		rbBasic.addActionListener(this);
+		buttons.add(rbBasic);
+		JRadioButton rbAdvanced = new JRadioButton(ACTION_ADVANCED);
+		rbAdvanced.setActionCommand(ACTION_ADVANCED);
+		rbAdvanced.addActionListener(this);
+		buttons.add(rbAdvanced);
 		
 		CellConstraints cc = new CellConstraints();
-		add(b_basic, cc.xy(2, 2));
-		add(b_advanced, cc.xy(4, 2));
+		add(rbBasic, cc.xy(2, 2));
+		add(rbAdvanced, cc.xy(4, 2));
 		
 		settings = new JPanel();
 		settings.setBorder(BorderFactory.createEtchedBorder());
@@ -129,9 +130,9 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		add(settings, cc.xyw(2, 4, 4));
 		
 		if(method.isAdvanced()) {
-			b_advanced.doClick();
+			rbAdvanced.doClick();
 		} else {
-			b_basic.doClick();
+			rbBasic.doClick();
 		}
 	}
 
@@ -150,6 +151,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		}
 	}
 	
+	/** Panel for editing colorByExpression in "basic" mode */
 	class Basic extends JPanel implements ActionListener, ListDataListener {
 		private static final long serialVersionUID = 1L;
 		
@@ -197,7 +199,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		}
 		
 		private void refreshSamples() {
-			ArrayList<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
+			List<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
 			for(Sample s : sampleList.getList().getSelectedSamplesInOrder()) {
 				ConfiguredSample cs = method.new ConfiguredSample(s);
 				
@@ -232,7 +234,8 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			refreshSamples();			
 		}
 	}
-	
+
+	/** Panel for colorByExpression configuration in "advanced" mode */
 	class Advanced extends JPanel implements ActionListener, ListDataListener, ListSelectionListener {
 		private static final long serialVersionUID = 1L;
 		SortSampleCheckList sampleList;
@@ -284,7 +287,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		}
 
 		private void refreshSamples() {
-			ArrayList<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
+			List<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
 			for(Sample s : sampleList.getList().getSelectedSamplesInOrder()) {
 				ConfiguredSample cs = method.getConfiguredSample(s);
 				if(cs == null) {
@@ -319,6 +322,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		}
 	}
 	
+	/** subPanel of the Advanced panel */
 	class SamplePanel extends JPanel implements ActionListener {
 		static final String ACTION_IMG = "Use image";
 		

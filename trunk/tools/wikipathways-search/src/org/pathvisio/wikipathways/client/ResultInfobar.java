@@ -19,11 +19,21 @@ package org.pathvisio.wikipathways.client;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
+/**
+ * A widget that displays information on the search results
+ * @author thomas
+ */
 public class ResultInfobar extends HorizontalPanel {
 	public ResultInfobar() {
 		setStylePrimaryName(STYLE_INFOBAR);
 	}
 	
+	/**
+	 * Set the search results to display the information for. This will
+	 * clear all currently displayed information.
+	 * @param results The results
+	 * @param query The query that was used to get the results
+	 */
 	public void setResults(Result[] results, Query query) {
 		clear();
 		

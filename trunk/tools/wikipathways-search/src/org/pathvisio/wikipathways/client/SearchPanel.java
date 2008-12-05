@@ -26,6 +26,12 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * Base class for the search panel. This panel displays a single text box and search button.
+ * Subclasses can implement {@link #createOptionsPanel()} and {@link #createInfoPanel()} to
+ * add custom widgets.
+ * @author thomas
+ */
 public class SearchPanel extends DockPanel {
 	private TextBox searchText;
 	private WikiPathwaysSearch search;
@@ -68,6 +74,10 @@ public class SearchPanel extends DockPanel {
 		add(searchPanel, CENTER);
 	}
 	
+	/**
+	 * Create a panel that will be displayed above the
+	 * search box and provides info/examples.
+	 */
 	protected Widget createInfoPanel() {
 		return new HTML(
 				"Search by keyword. <b>Example:</b> <i>apoptosis</i>"
@@ -75,13 +85,18 @@ public class SearchPanel extends DockPanel {
 	}
 	
 	/**
-	 * May be used by sub classes, to create an optional
+	 * Override this method to create an optional
 	 * panel between the search text and button.
+	 * Default implementation returns null.
 	 */
 	protected Widget createOptionsPanel() {
 		return null;
 	}
 	
+	/**
+	 * Creates the search text box, including the necessary
+	 * keyboard listeners.
+	 */
 	protected TextBox createSearchText() {
 		final TextBox searchText = new TextBox();
 		searchText.setFocus(true);
@@ -95,10 +110,22 @@ public class SearchPanel extends DockPanel {
 		return searchText;
 	}
 	
+	/**
+	 * Get the query based on the current widget states. Default
+	 * implementation adds the text in the search box to the
+	 * query.
+	 * Subclasses may override this method to add additional information
+	 * to the query or change the query type.
+	 */
 	protected Query getQuery() {
 		return new Query(Query.TYPE_TEXT, searchText.getText());
 	}
 	
+	/**
+	 * Set the widget states to reflect the given query.
+	 * Subclasses may override this method to set the state of
+	 * custom widgets
+	 */
 	protected void setQuery(Query query) {
 		searchText.setText(query.getField(Query.FIELD_TEXT));
 	}

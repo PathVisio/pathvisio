@@ -37,8 +37,12 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * A widget that displays search results
+ * @author thomas
+ */
 public class ResultsTable extends DockPanel {
-	int row;
+	int row; //The current row
 	
 	FlexTable table;
 	HorizontalPanel filterPanel;
@@ -47,11 +51,17 @@ public class ResultsTable extends DockPanel {
 	ListBox orgList;
 	
 	HashMap<Result, Integer> resultRows = new HashMap<Result, Integer>();
-	
+
+	/**
+	 * Create a results table. Will automatically populate the organisms
+	 * list for the filter. Call {@link #addResults(Result[])} to display
+	 *  the results.
+	 */
 	public ResultsTable() {
 		table = new FlexTable();
 		add(table, CENTER);
 		
+		//Create a panel that displays controls to filter the results
 		filterPanel = new HorizontalPanel();
 		orgList = new ListBox();
 		orgList.addChangeListener(new ChangeListener() {
@@ -94,6 +104,11 @@ public class ResultsTable extends DockPanel {
 		setCellHorizontalAlignment(filterPanel, ALIGN_LEFT);
 	}
 	
+	/**
+	 * Set the current organism to filter on. All results from other
+	 * organisms will be hidden. Use {@link #ALL_ORGANISMS} to display
+	 * all organisms.
+	 */
 	public void setOrganismFilter(String organism) {
 		orgList.setSelectedIndex(organisms.indexOf(organism));
 		for(Result r : resultRows.keySet()) {
@@ -104,6 +119,9 @@ public class ResultsTable extends DockPanel {
 		}
 	}
 	
+	/**
+	 * Add the given results to the table
+	 */
 	public void addResults(Result[] results) {
 		for(Result r : results) {
 			addLabel(r);
@@ -119,6 +137,9 @@ public class ResultsTable extends DockPanel {
 		}
 	}
 	
+	/**
+	 * Clear the contents of the table
+	 */
 	public void clear() {
 		filterPanel.setVisible(false);
 		resultRows.clear();
@@ -126,6 +147,9 @@ public class ResultsTable extends DockPanel {
 		row = 0;
 	}
 	
+	/**
+	 * Add the label for the given result
+	 */
 	private void addLabel(Result result) {
 		Panel labelPanel = new VerticalPanel();
 		labelPanel.setStylePrimaryName(STYLE_LABEL);
@@ -143,6 +167,9 @@ public class ResultsTable extends DockPanel {
 		table.setWidget(row, 1, labelPanel);
 	}
 	
+	/**
+	 * Add the preview image for the given result
+	 */
 	private void addImage(Result result) {
 		Image image = new Image(IMG_LOADER);
 		image.setStylePrimaryName(STYLE_IMAGE);
@@ -157,6 +184,10 @@ public class ResultsTable extends DockPanel {
 		loadImage(result, image);
 	}
 	
+	/**
+	 * Load the image for the result. Will wait for the image
+	 * to be generated on the server and set the url of the image widget.
+	 */
 	void loadImage(final Result result, final Image image) {
 		SearchServiceAsync srv = GWT.create(SearchService.class);
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {

@@ -20,10 +20,36 @@ package org.pathvisio.wikipathways.client;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+/**
+ * The RPC service for the wikipathways search.
+ * @author thomas
+ */
 @RemoteServiceRelativePath("wikipathwaysSearch")
 public interface SearchService extends RemoteService {
+	public static final int TIMEOUT = 60000;
+	
+	/**
+	 * Perform a search.
+	 * @param query The search query
+	 * @return The results
+	 */
 	public Result[] search(Query query);
+	
+	/**
+	 * Wait for a preview image to be converted on the server.
+	 * This method will return after the image is generated, or after 
+	 * {@link #TIMEOUT} milliseconds have passed.
+	 * @param id
+	 */
 	public void waitForImage(String id);
+	
+	/**
+	 * Get the names for all supported database systems.
+	 */
 	public String[] getSystemNames();
+	
+	/**
+	 * Get the names of all supported organisms.
+	 */
 	public String[] getOrganismNames();
 }

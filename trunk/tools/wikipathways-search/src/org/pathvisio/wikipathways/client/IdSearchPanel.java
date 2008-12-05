@@ -25,6 +25,11 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * A search panel for searching based on gene/protein/small molecule identifier.
+ * This panel displays a list of available databases in addition to the search text box.
+ * @author thomas
+ */
 public class IdSearchPanel extends SearchPanel {
 	ListBox systemList;
 	List<String> systemNames = new ArrayList<String>();
@@ -70,7 +75,7 @@ public class IdSearchPanel extends SearchPanel {
 	
 	protected Query getQuery() {
 		Query q = super.getQuery();
-		q.setField(Query.FIELD_TYPE, Query.TYPE_ID);
+		q.setField(Query.FIELD_TYPE, Query.TYPE_ID); //Make sure the query type is set correctly
 		q.setField(Query.FIELD_SYSTEM, systemList.getValue(systemList.getSelectedIndex()));
 		return q;
 	}
@@ -82,6 +87,5 @@ public class IdSearchPanel extends SearchPanel {
 	}
 	
 	public static final String SYSTEM_ALL = "All databases";
-	
 	private static final String STYLE_SYSTEMS = "searchpanel-systems";
 }

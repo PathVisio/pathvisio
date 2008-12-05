@@ -32,10 +32,17 @@ public class Result implements IsSerializable {
 	private String description;
 	private String url;
 	private String organism;
-	private int order;
 	
 	private Map<String, String[]> properties;
 	
+	/**
+	 * Create a search result.
+	 * @param pathwayId The identifier of the resulting pathway
+	 * @param title The title that should be displayed for this result
+	 * @param description The description that should be displayed for this result
+	 * @param url The url of the resulting pathway
+	 * @param organism The organism of the resulting pathway
+	 */
 	public Result(String pathwayId, String title, String description, String url, String organism) {
 		properties = new HashMap<String, String[]>();
 		this.pathwayId = pathwayId;
@@ -45,54 +52,82 @@ public class Result implements IsSerializable {
 		this.organism = organism;
 	}
 	
-	public void setOrder(int order) {
-		this.order = order;
-	}
-	
+	/**
+	 * Set the image id, that is used to retrieve the preview
+	 * image from the server.
+	 */
 	public void setImageId(String imageId) {
 		this.imageId = imageId;
 	}
 	
+	/**
+	 * Set a custom property
+	 * @param prop The property name
+	 * @param values The property values
+	 */
 	public void setProperty(String prop, String[] values) {
 		properties.put(prop, values);
 	}
 	
+	/**
+	 * Set the pathway id of the resulting pathway.
+	 */
 	public void setPathwayId(String pathwayId) {
 		this.pathwayId = pathwayId;
 	}
 	
+	/**
+	 * Set the organism of the resulting pathway;
+	 */
 	public void setOrganism(String organism) {
 		this.organism = organism;
 	}
 	
+	/**
+	 * Get the title to display
+	 */
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * Get the description to display
+	 */
 	public String getDescription() {
 		return description;
 	}
-
+	
+	/**
+	 * Get the url of the resulting pathway
+	 */
 	public String getUrl() {
 		return url;
 	}
-
+	
+	/**
+	 * Get the id of the preview image
+	 */
 	public String getImageId() {
 		return imageId;
 	}
 	
-	public int getOrder() {
-		return order;
-	}
-	
+	/**
+	 * Get the identifier of the resulting pathway
+	 */
 	public String getPathwayId() {
 		return pathwayId;
 	}
 	
+	/**
+	 * Get the organism of the resulting pathway
+	 */
 	public String getOrganism() {
 		return organism;
 	}
 	
+	/**
+	 * Get the custom properties
+	 */
 	public Map<String, String[]> getProperties() {
 		return properties;
 	}

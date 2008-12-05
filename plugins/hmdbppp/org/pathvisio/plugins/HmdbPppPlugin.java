@@ -23,9 +23,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
@@ -35,9 +34,17 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
 
+/**
+ * Generates Putative Pathway Parts based on a 
+ * HMDB metabolic network parsed and stored in MySQL by Andra.
+ */
 public class HmdbPppPlugin {
 
-	public Pathway doSuggestion()
+    private static final double HUB_X = 10000;
+    private static final double HUB_Y = 10000;
+    private static final double RADIUS = 5000;
+    
+	public Pathway doSuggestion(PathwayElement input)
 	{
 		try {
             // The newInstance() call is a work around for some
@@ -47,9 +54,6 @@ public class HmdbPppPlugin {
             // handle the error
         }
         
-        double HUB_X = 10000;
-        double HUB_Y = 10000;
-        double RADIUS = 5000;
         
 	    Pathway result = new Pathway();
 	    PathwayElement pelt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
@@ -57,13 +61,13 @@ public class HmdbPppPlugin {
 	    pelt.setMHeight (300);
 	    pelt.setMCenterX(HUB_X);
 	    pelt.setMCenterY(HUB_Y);
-	    pelt.setTextLabel("Androsterone");
-	    pelt.setDataSource(DataSource.HMDB);
-	    pelt.setGeneID("HMDB00031");
-	    Xref input = pelt.getXref();
+	    pelt.setTextLabel(input.getTextLabel());
+	    pelt.setDataSource(input.getDataSource());
+	    pelt.setGeneID(input.getGeneID());
 	    pelt.setCopyright("Human metabolome database (http://www.hmdb.ca)");
-	    pelt.setDataNodeType("Metabolite");
+	    pelt.setDataNodeType(input.getDataNodeType());
 	    result.add(pelt);
+	    Xref ref = input.getXref();
         Connection conn;
 		try {
 		    conn = 
@@ -82,7 +86,7 @@ public class HmdbPppPlugin {
 		    			"h.` Accession_No` = ? " +
 		    			"AND h.` Accession_No` = m.hmdbid");
 
-		    st.setString(1, input.getId());
+		    st.setString(1, ref.getId());
 		    ResultSet rs = st.executeQuery();
 		    
 		    double angle = 0;
@@ -90,39 +94,39 @@ public class HmdbPppPlugin {
 		    while (rs.next())
 		    {
 		    	//Each tuple is a pathway element
-		    	PathwayElement pchild_elt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+		    	PathwayElement pchildElt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		    	
 
 		    	// Split Ref_ID, which contains pubmed_id's to the selected metabolite rs.getString(1)
-		    	String [] metabolite_pmids = null;
-		    	metabolite_pmids = rs.getString(1).split("; ");
-		    	for (int i = 0 ; i < metabolite_pmids.length ; i++) {
-		            System.out.println(metabolite_pmids[i]);
+		    	String [] metabolitePmids = null;
+		    	metabolitePmids = rs.getString(1).split("; ");
+		    	for (int i = 0 ; i < metabolitePmids.length ; i++) {
+		            System.out.println(metabolitePmids[i]);
 		    	}
 		    	
 		    	// Get common_name for the metabolite (rs.getString(2))
-		    	String common_name = null;
-		    	common_name = rs.getString(2);
+		    	String commonName = null;
+		    	commonName = rs.getString(2);
 		    	System.out.println ("\t" + rs.getString(2));
 		    	
-		    	String swiss_id = rs.getString(4);
+		    	String swissId = rs.getString(4);
 		    	
-		    	int start = swiss_id.indexOf('(');
-		    	int end = swiss_id.lastIndexOf(')');
-				String actual_id = swiss_id.substring(start + 1, end);
+		    	int start = swissId.indexOf('(');
+		    	int end = swissId.lastIndexOf(')');
+				String actualId = swissId.substring(start + 1, end);
 				
 				//Get gene_name (rs.getString())
-		    	String gene_name = rs.getString(5);
+		    	String geneName = rs.getString(5);
 		    	
-		    	pchild_elt.setDataNodeType (DataNodeType.PROTEIN);
-		    	pchild_elt.setTextLabel(gene_name);
-		    	pchild_elt.setDataSource (DataSource.UNIPROT);
-		    	pchild_elt.setGeneID(actual_id);
-			    pchild_elt.setMWidth (1200);
-			    pchild_elt.setMHeight (300);
-			    pchild_elt.setMCenterX(HUB_X + RADIUS * Math.cos(angle));
-			    pchild_elt.setMCenterY(HUB_Y + RADIUS * Math.sin(angle));
-			    result.add(pchild_elt);
+		    	pchildElt.setDataNodeType (DataNodeType.PROTEIN);
+		    	pchildElt.setTextLabel(geneName);
+		    	pchildElt.setDataSource (DataSource.UNIPROT);
+		    	pchildElt.setGeneID(actualId);
+			    pchildElt.setMWidth (1200);
+			    pchildElt.setMHeight (300);
+			    pchildElt.setMCenterX(HUB_X + RADIUS * Math.cos(angle));
+			    pchildElt.setMCenterY(HUB_Y + RADIUS * Math.sin(angle));
+			    result.add(pchildElt);
 		    	angle += 0.3;
 		    }
 		    
@@ -143,7 +147,15 @@ public class HmdbPppPlugin {
 	public static void main(String[] args) throws IOException, ConverterException
 	{
 		HmdbPppPlugin hmdbPpp = new HmdbPppPlugin();
-		Pathway p = hmdbPpp.doSuggestion();
+	    
+		PathwayElement test = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+	    test.setDataNodeType(DataNodeType.METABOLITE);
+	    test.setTextLabel("Androsterone");
+		test.setGeneID("HMDB00031");
+		test.setDataSource(DataSource.HMDB);
+		
+		Pathway p = hmdbPpp.doSuggestion(test);
+		
 		File tmp = File.createTempFile("hmdbppp", ".gpml");
 		p.writeToXml(tmp, true);
 		

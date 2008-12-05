@@ -477,12 +477,14 @@ class SimpleGdbImpl2 extends SimpleGdb
 		List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
 		try {
 			PreparedStatement ps1 = con.prepareStatement(
-					"SELECT attr.id, attr.code, attr.attrvalue " +
-					"FROM attribute AS attr " +
+					"SELECT dn.id, dn.code, attr.attrvalue " +
+					"FROM datanode AS dn LEFT JOIN attribute AS attr ON " +
+					"	dn.id = attr.id AND dn.code = attr.code " +
 					"WHERE " +
-					"		LOWER(attr.id) LIKE ?" +
+					"		LOWER(dn.id) LIKE ?" +
 					"	AND " +
-					"			attr.attrname = 'Symbol' "
+					"			(attr.attrname = 'Symbol' " +
+					"	OR attr.attrname IS NULL) "
 					);
 			ps1.setQueryTimeout(QUERY_TIMEOUT);
 			if(limit > NO_LIMIT) 

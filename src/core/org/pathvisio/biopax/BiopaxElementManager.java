@@ -24,7 +24,10 @@ import java.util.Random;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.pathvisio.biopax.reflect.BiopaxElement;
+import org.pathvisio.biopax.reflect.BiopaxProperty;
 import org.pathvisio.biopax.reflect.Namespaces;
+import org.pathvisio.biopax.reflect.PropertyType;
+import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -190,12 +193,27 @@ public class BiopaxElementManager {
 		//Add this element to the document if it's not already in there
 		for(BiopaxElement e : getElements()) {
 			System.out.println("Comparing: " + e + " with " + elm);
-			if(e.propertyEquals(elm)) {
-				System.out.println("Equal properties!");
-				//If we found this property equal to another one,
-				//change the id and return
-				elm.setId(e.getId());
-				return;
+			if(e.getName().equals(elm.getName())) { //Check for equal element name
+				//Check for properties
+				if(e instanceof PublicationXRef) {
+					//If both publicationxrefs have a pubmed id, compare only
+					//by pubmed id
+					BiopaxProperty bp1 = e.getProperty(PropertyType.ID.name());
+					BiopaxProperty bp2 = elm.getProperty(PropertyType.ID.name());
+					if(bp1 != null && bp2 != null && bp1.getValue().equals(bp2.getValue())) {
+						Logger.log.trace("Equal pubmed id!");
+						elm.setId(e.getId());
+						return;
+					}
+				} else {
+					Logger.log.trace("Equal properties!");
+					//If we found this property equal to another one,
+					//change the id and return
+					if(e.propertyEquals(elm)) {
+						elm.setId(e.getId());
+						return;
+					}
+				}
 			}
 		}
 		d.getRootElement().addContent(elm);

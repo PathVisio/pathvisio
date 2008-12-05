@@ -30,7 +30,7 @@ contains information about a certain DataSource, such as
 It's full name ("Ensembl")
 It's system code ("En")
 It's main url ("http://www.ensembl.org")
-Id-specific url's ("http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q=" + id)
+Id-specific url's ("http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=" + id)
 
 The DataSource class uses the Extenisble enum pattern.
 You can't instantiate DataSources directly, instead you have to use one of
@@ -132,7 +132,7 @@ public class DataSource
 		"http://www.ebi.ac.uk/embl", "AL030996", true, false, null);
 	public static final DataSource ENSEMBL = new DataSource (
 		"En", "Ensembl", 
-		new PrefixUrlMaker("http://www.ensembl.org/Homo_sapiens/searchview?species=all&idx=Gene&q="), 
+		new PrefixUrlMaker("http://www.ensembl.org/Homo_sapiens/Gene/Summary?g="), 
 		"http://www.ensembl.org", 
 		"ENSG00000139618", true, false, null);
 	public static final DataSource FLYBASE = new DataSource (
@@ -320,7 +320,7 @@ public class DataSource
 		"http://wheat.pw.usda.gov/", "WGS-95-1333", false, false, Organism.TriticumAestivum);
 	public static final DataSource AFFY = new DataSource (
 		"X", "Affy", 
-		new PrefixUrlMaker ("http://www.ensembl.org/Homo_sapiens/featureview?type=OligoProbe;id="), 
+		new PrefixUrlMaker ("http://www.ensembl.org/Homo_sapiens/Search/Summary?species=all;idx=;q="), 
 		"http://www.affymetrix.com/", "1851_s_at", false, false, null);
 	public static final DataSource ZFIN = new DataSource (
 		"Z", "ZFIN", 

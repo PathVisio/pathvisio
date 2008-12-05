@@ -29,7 +29,6 @@ import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
-import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.VPathway;

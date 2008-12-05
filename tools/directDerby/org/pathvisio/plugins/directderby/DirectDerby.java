@@ -16,9 +16,15 @@
 //
 package org.pathvisio.plugins.directderby;
 
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.pathvisio.data.DBConnDerby;
 import org.pathvisio.data.DBConnector;
@@ -70,15 +76,15 @@ public class DirectDerby
 		return mystringbuf.toString();
 	}
 	
+	private static final int LIMIT = 100;
 	/**
 	 * Print the resultset as an ascii table.
 	 * Prints at maximum 100 rows.
 	 */
 	private void printResultSet (ResultSet r) throws SQLException
 	{
-		final int LIMIT = 100;
 		int [] maxW;
-		List <String[]> data = new ArrayList<String[]>();
+		List<String[]> data = new ArrayList<String[]>();
 		
 		// dry run to find max column lengths
 		

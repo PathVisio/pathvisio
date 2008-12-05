@@ -53,9 +53,11 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.wikipathways.RunnableWithProgress;
 
-
+/**
+ * Dialog for editing DataNodes. In addition to the standard comments and literature tabs,
+ * this has a tab for looking up accession numbers for genes and metabolites.
+ */
 public class DataNodeDialog extends PathwayElementDialog {
 
 	private final SwingEngine swingEngine;

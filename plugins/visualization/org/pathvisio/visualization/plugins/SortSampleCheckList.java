@@ -16,6 +16,10 @@
 //
 package org.pathvisio.visualization.plugins;
 
+import com.jgoodies.forms.builder.ButtonStackBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -29,10 +33,6 @@ import javax.swing.SwingConstants;
 
 import org.pathvisio.data.Sample;
 import org.pathvisio.util.Resources;
-
-import com.jgoodies.forms.builder.ButtonStackBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A SampleCheckList with buttons on the right side to

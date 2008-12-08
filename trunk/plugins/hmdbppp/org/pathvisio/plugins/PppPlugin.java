@@ -57,7 +57,7 @@ public class PppPlugin implements Plugin, PathwayElementMenuHook
 		// create new PppPane and add it to the side bar.	
 		pane = new PppPane(standaloneEngine.getSwingEngine());
 		JTabbedPane sidebarTabbedPane = standaloneEngine.getSwingEngine().getApplicationPanel().getSideBarTabbedPane();
-		sidebarTabbedPane.add("PPP", pane);
+		sidebarTabbedPane.add(PppPane.TITLE, pane);
 		
 		// register our pathwayElementMenu hook.
 		standaloneEngine.getSwingEngine().getApplicationPanel().getPathwayElementMenuListener().addPathwayElementMenuHook(this);

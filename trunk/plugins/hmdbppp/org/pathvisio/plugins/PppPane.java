@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Pathway;
@@ -40,6 +41,7 @@ import org.pathvisio.view.swing.VPathwaySwing;
  */
 public class PppPane extends JPanel
 {
+	static final String TITLE = "PPP";
 	SwingEngine se;
 	JPanel panel;
 	
@@ -49,13 +51,23 @@ public class PppPane extends JPanel
 	public void addPart(String desc, Pathway part)
 	{
 		JScrollPane scroller = new JScrollPane();
-		scroller.setSize (400, 400);
-		VPathwaySwing wrapper = new VPathwaySwing(scroller);
-		VPathway vPwy = new VPathway(wrapper);
-		vPwy.fromModel(part);
-		scroller.add(wrapper);
 		panel.add (new JLabel(desc));
 		panel.add (scroller);
+		VPathwaySwing wrapper = new VPathwaySwing(scroller);
+		VPathway vPwy = wrapper.createVPathway();
+		vPwy.setEditMode(false);
+		vPwy.setPctZoom(50);
+		vPwy.fromModel(part);
+		scroller.add(wrapper);
+
+		panel.repaint();
+		
+		JTabbedPane pane = se.getApplicationPanel().getSideBarTabbedPane();
+		int index = pane.indexOfTab(TITLE);
+		if (index > 0)
+		{
+			pane.setSelectedIndex (index);
+		}		
 	}
 	
 	/**
@@ -69,27 +81,39 @@ public class PppPane extends JPanel
 	
 		panel = new JPanel ();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		add (panel, BorderLayout.CENTER);
+		add (new JScrollPane (panel), BorderLayout.CENTER);
 		
 		// help button
-		JButton help = new JButton("What is this?");
+		JButton help = new JButton("Help");
 		panel.add (help);
 		
 		help.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e) 
 			{
-				try
-				{
-					BrowserLauncher bl = new BrowserLauncher(null);
-					bl.openURLinBrowser("http://www.pathvisio.org/Ppp");
-				}
-				catch (Exception ex)
-				{
-					JOptionPane.showMessageDialog (se.getFrame(), 
-							"Could not launch browser\nSee error log for details.", 
-							"Error", JOptionPane.ERROR_MESSAGE);
-				}
+				new Thread (new Runnable() 
+				{		
+					public void run() 
+					{
+						try
+						{
+							BrowserLauncher bl = new BrowserLauncher(null);
+							bl.openURLinBrowser("http://www.pathvisio.org/Ppp");
+						}
+						catch (Exception ex)
+						{
+							javax.swing.SwingUtilities.invokeLater(new Runnable() 
+							{		
+								public void run() 
+								{
+									JOptionPane.showMessageDialog (se.getFrame(), 
+											"Could not launch browser\nSee error log for details.", 
+											"Error", JOptionPane.ERROR_MESSAGE);
+								}
+							});
+						}
+					}
+				}).start();
 			}
 		});
 		

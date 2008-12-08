@@ -50,23 +50,23 @@ public class ParseHmdb
 			}
 			else if (key.equals("kegg_compound_id"))
 			{
-				idKegg = value;
+				idKegg = value == null ? null : value.split("; ");
 			}
 			else if (key.equals("biocyc_id"))
 			{
-				idBioc = value;
+				idBioc = value == null ? null : value.split("; ");
 			}
 			else if (key.equals("pubchem_compound_id"))
 			{
-				idPubchem = value;
+				idPubchem = value == null ? null : value.split("; ");
 			}
 			else if (key.equals("chebi_id"))
 			{
-				idChebi = value;
+				idChebi = value == null ? null : value.split("; ");
 			}
 			else if (key.equals("cas_number"))
 			{
-				idCas = value;
+				idCas = value == null ? null : value.split("; ");
 			}
 			else if (key.equals("synonyms"))
 			{
@@ -74,23 +74,24 @@ public class ParseHmdb
 			}
 			else if (key.equals("wikipedia_link"))
 			{
-				idWikipedia = value;
+				idWikipedia = value == null ? null : value.split("; ");
 			}
 			else if (key.equals("smiles_canonical"))
 			{
-				idBioc = value;
+				smiles = value;
 			}
 		}
 
 		String idHmdb = null;
 		String symbol = null;
 		String formula = null;
-		String idKegg = null;
-		String idPubchem = null;
-		String idChebi = null;
-		String idCas = null;
-		String idBioc = null;
-		String idWikipedia = null;
+		String[] idKegg = null;
+		String[] idPubchem = null;
+		String[] idChebi = null;
+		String[] idCas = null;
+		String[] idBioc = null;
+		String[] idWikipedia = null;
+		String smiles = null;
 		String[] synonyms = null;
 	}
 	

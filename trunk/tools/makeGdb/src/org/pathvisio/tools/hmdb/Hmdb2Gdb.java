@@ -139,40 +139,45 @@ public class Hmdb2Gdb
 			error += simpleGdb.addLink (ref, right);
 		}
 		
-		if (c.idKegg != null)
+		if (c.idKegg != null) for (String id : c.idKegg)
 		{
-			Xref right = new Xref (c.idKegg, DataSource.KEGG_COMPOUND);
+			Xref right = new Xref (id, DataSource.KEGG_COMPOUND);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
 		}
 		
-		if (c.idChebi != null)
+		if (c.idChebi != null) for (String id : c.idChebi)
 		{
-			Xref right = new Xref (c.idChebi, DataSource.CHEBI);
+			Xref right = new Xref (id, DataSource.CHEBI);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
 		}
 		
-		if (c.idPubchem != null)
+		if (c.idPubchem != null) for (String id : c.idPubchem)
 		{	
-			Xref right = new Xref (c.idPubchem, DataSource.PUBCHEM);
+			Xref right = new Xref (id, DataSource.PUBCHEM);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
 		}
 		
-		if (c.idCas != null)
+		if (c.idCas != null) for (String id : c.idCas)
 		{
-			Xref right = new Xref (c.idCas, DataSource.CAS);
+			Xref right = new Xref (id, DataSource.CAS);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
 		}
 
-		if (c.idWikipedia != null)
+		if (c.idWikipedia != null) for (String id : c.idWikipedia)
 		{
-			Xref right = new Xref (c.idWikipedia, DataSource.WIKIPEDIA);
+			Xref right = new Xref (id, DataSource.WIKIPEDIA);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
 		}
+		
+		if (c.smiles != null)
+		{
+			error += simpleGdb.addAttribute(ref, "SMILES", c.smiles);
+		}		
 
 		if (c.synonyms != null) for (String synonym : c.synonyms)
 		{

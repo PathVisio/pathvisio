@@ -40,9 +40,9 @@ import org.pathvisio.model.Xref;
  */
 public class HmdbPppPlugin {
 
-    private static final double HUB_X = 10000;
-    private static final double HUB_Y = 10000;
-    private static final double RADIUS = 5000;
+    private static final double HUB_X = 2000;
+    private static final double HUB_Y = 2000;
+    private static final double RADIUS = 1000;
     
 	public Pathway doSuggestion(PathwayElement input)
 	{

@@ -14,41 +14,41 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package ensembl2visio;
+package org.pathvisio.tools.hmdb;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 
-import org.pathvisio.Engine;
 import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
-import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.tools.hmdb.ParseHmdb.Compound;
+import org.pathvisio.tools.hmdb.ParseHmdb.ParseException;
 
 /**
- * Provides a main for importing hmdb data (prepated with the parse_hmdb.pl script)
- * Create a Gene database with metabolite information
+ * Program to create a metabolite database based on a  
+ * metabocards flat text file, which can be downloaded from http://www.hmdb.ca
  * 
- * @author martijn
+ * In fall '08 HMDB changed the metabocard file format,
+ * This program is requires the newer format. 
  */
 public class Hmdb2Gdb 
 {
-
 	/**
 	 * @param args command line arguments
 	 * 
 	 * Commandline:
-	 * - database directory (=dbname)
-	 * - metabolite table .txt file
-	 * 
-	 * (For example "/home/martijn/uni/wrk/metabolomics/20080507_hmdb_extracted_links.txt")
-	 * assumes database type is derby (unzipped)
+	 * - output database: .pgdb
+	 * - input metabocards .txt file
 	 */
 	public static void main(String[] args)
 	{
@@ -57,14 +57,14 @@ public class Hmdb2Gdb
 		String file = args[1];
 		
 		Hmdb2Gdb h2g = new Hmdb2Gdb();
-		Engine.init();
+		PreferenceManager.init();
 		
     	try 
     	{
 			SimpleGdb simpleGdb = SimpleGdbFactory.createInstance(dbname, new DataDerby(), DBConnector.PROP_RECREATE);
  
     		h2g.init (dbname, simpleGdb);
-    		h2g.run(file);
+    		h2g.run(new File (file));
     		h2g.done();
     	}
 		catch (DataException e) 
@@ -77,43 +77,12 @@ public class Hmdb2Gdb
 		}   	
 	}
 		
-	static class Compound
-	{
-		String idHmdb = null;
-		String symbol = null;
-		String formula = null;
-		String idKegg = null;
-		String idPubchem = null;
-		String idChebi = null;
-		String idCas = null;
-		String[] synonyms = null;
-	}
-	
 	SimpleGdb simpleGdb;
 	String dbName;
 	
-	void run (String file) throws IOException, DataException
-	{
-		BufferedReader in = new BufferedReader(new FileReader(file));
-		in.readLine(); // skip header row 
-		Compound c;
-		while ((c = parseNext (in)) != null)
-		{
-			progress++;
-			addCompound (c);
-			if(progress % PROGRESS_INTERVAL == 0) {
-				Logger.log.info("Processed " + progress + " lines");
-				simpleGdb.commit();
-			}
-			
-			Logger.log.info (c.symbol + " added");
-		}
-	}
-	
-
 	StopWatch timer;
 	
-	void init(String dbname, SimpleGdb simpleGdb) throws DataException, ClassNotFoundException
+	private void init(String dbname, SimpleGdb simpleGdb) throws DataException, ClassNotFoundException
 	{
 		timer = new StopWatch();    	
     	
@@ -128,7 +97,7 @@ public class Hmdb2Gdb
 		simpleGdb.preInsert();	
     }
 	
-	void done() throws DataException
+	private void done() throws DataException
 	{
 		simpleGdb.commit();
 
@@ -150,7 +119,7 @@ public class Hmdb2Gdb
 	int error = 0;
 	int progress = 0;
 
-	void addCompound (Compound c)
+	private void addCompound (Compound c)
 	{
 		String bpText = "<TABLE border='1'>" +
 		"<TR><TH>Metabolite:<TH>" + c.symbol +
@@ -168,7 +137,6 @@ public class Hmdb2Gdb
 			Xref right = new Xref (c.idHmdb, DataSource.NUGOWIKI);
 			error += simpleGdb.addGene (right, bpText);
 			error += simpleGdb.addLink (ref, right);
-			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
 		}
 		
 		if (c.idKegg != null)
@@ -176,7 +144,6 @@ public class Hmdb2Gdb
 			Xref right = new Xref (c.idKegg, DataSource.KEGG_COMPOUND);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
-			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
 		}
 		
 		if (c.idChebi != null)
@@ -184,7 +151,6 @@ public class Hmdb2Gdb
 			Xref right = new Xref (c.idChebi, DataSource.CHEBI);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
-			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
 		}
 		
 		if (c.idPubchem != null)
@@ -192,7 +158,6 @@ public class Hmdb2Gdb
 			Xref right = new Xref (c.idPubchem, DataSource.PUBCHEM);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
-			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
 		}
 		
 		if (c.idCas != null)
@@ -200,67 +165,52 @@ public class Hmdb2Gdb
 			Xref right = new Xref (c.idCas, DataSource.CAS);
 			error += simpleGdb.addGene(right, bpText);
 			error += simpleGdb.addLink(ref, right);
-			error += simpleGdb.addAttribute(right, "Symbol", c.symbol);
 		}
-		
-		//TODO
-		/*
-		for (String synonym : c.synonyms)
+
+		if (c.idWikipedia != null)
+		{
+			Xref right = new Xref (c.idWikipedia, DataSource.WIKIPEDIA);
+			error += simpleGdb.addGene(right, bpText);
+			error += simpleGdb.addLink(ref, right);
+		}
+
+		if (c.synonyms != null) for (String synonym : c.synonyms)
 		{
 			error += simpleGdb.addAttribute(ref, "Synonym", synonym);			
 		}
-		*/
 	}
 	
-	Compound parseNext (BufferedReader in) throws IOException
+	private void run(File f) throws IOException, DataException
 	{
-		final int COL_HMDB_ID = 0;
-		final int COL_SYMBOL = 1;
-		final int COL_FORMULA = 2;
-		final int COL_KEGG = 3;
-		final int COL_BIOCYC = 4;
-		final int COL_PUBCHEM = 5;
-		final int COL_OMIM = 6;
-		final int COL_CHEBI = 7;
-		final int COL_CAS = 8;
-		final int COL_SYNONYMS = 9;
-		final int COL_WIKIPEDIA = 10;
-		
-		String l;
-		l = in.readLine();
-		if (l == null) return null;
-		
-		Compound result = new Compound();
-		
-		String[] cols = l.split("\t");
-			
-		result.idHmdb = cols[COL_HMDB_ID]; // CAS no
-		result.symbol = cols[COL_SYMBOL];
-		result.formula = cols[COL_FORMULA];
-		result.synonyms = cols[COL_SYNONYMS].split ("; ");
-		if (cols.length > COL_KEGG && !cols[COL_KEGG].equals("Not Available"))
-		{	
-			result.idKegg = cols[COL_KEGG];
-		}
-
-		if (cols.length > COL_PUBCHEM && !cols[COL_PUBCHEM].equals("Not Available"))
+		ParseHmdb parser = new ParseHmdb();
+		StopWatch sw = new StopWatch();
+		sw.start();
+		LineNumberReader br = new LineNumberReader (new FileReader(f)); 
+		Compound c;
+		try
 		{
-			result.idPubchem = cols[COL_PUBCHEM];
+			while ((c = parser.readNext(br)) != null)
+			{
+				progress++;
+				addCompound (c);
+				if(progress % PROGRESS_INTERVAL == 0) {
+					Logger.log.info("Processed " + progress + " record");
+					simpleGdb.commit();
+				}
+				
+				Logger.log.info (c.symbol + " added");
+			}
+			Logger.log.info ("Total: " + progress);
 		}
-		
-		if (cols.length > COL_CHEBI && !cols[COL_CHEBI].equals("Not Available"))
+		catch (ParseException pe)
 		{
-			result.idChebi = cols[COL_CHEBI];
+			System.err.println (pe.getMessage());
+			System.err.println ("Please check that this is a valid metabocards file");
+			pe.printStackTrace();
 		}
+		Logger.log.info ("Finished in " + sw.stop() + "ms");
 		
-		if (cols.length > COL_CAS && !cols[COL_CAS].equals("Not Available"))
-		{
-			result.idCas = cols[COL_CAS];
-		}
-		
-		return result;
 	}
-		
+
 	private final static long PROGRESS_INTERVAL = 100;
-	
 }

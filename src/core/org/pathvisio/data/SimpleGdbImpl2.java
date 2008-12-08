@@ -180,21 +180,20 @@ class SimpleGdbImpl2 extends SimpleGdb
 	/**
 	 * Gets the backpage info for the given gene id for display on BackpagePanel
 	 * @param ref The gene to get the backpage info for
-	 * @return String with the backpage info, null if the gene was not found
+	 * @return String with the backpage info, null if no info was found
 	 */
 	public String getBpInfo(Xref ref) throws DataException 
 	{
-		StopWatch timer = new StopWatch();
-		timer.start();
-
 		try {
 			PreparedStatement pst = pstBackpage.getPreparedStatement();
 			pst.setString (1, ref.getId());
 			pst.setString (2, ref.getDataSource().getSystemCode());
 			ResultSet r = pst.executeQuery();
-			r.next();
-			String result = r.getString(1);
-			timer.stopToLog("> getBpInfo");
+			String result = null;
+			if (r.next())
+			{
+				result = r.getString(1);
+			}
 			return result;
 		} catch	(SQLException e) { throw new DataException (e); } //Gene not found
 	}
@@ -390,8 +389,7 @@ class SimpleGdbImpl2 extends SimpleGdb
 					" (   id VARCHAR(50),					" +
 					"     code VARCHAR(50),					" +
 					"     attrname VARCHAR(50),				" +
-					"	  attrvalue VARCHAR(255),			" +
-					"     PRIMARY KEY (id, code)			" +
+					"	  attrvalue VARCHAR(255)			" +
 					" )										");
 			Logger.log.info("Attribute table created");
 		} 
@@ -511,8 +509,6 @@ class SimpleGdbImpl2 extends SimpleGdb
 					"SELECT attr.id, attr.code, attr.attrvalue " +
 					"FROM attribute AS attr " +
 					"WHERE " +
-					"		attr.attrname = 'Symbol'" +
-					" 	AND " +
 					"	LOWER(attr.attrvalue) LIKE ?"
 			);
 			ps2.setString(1, "%" + text.toLowerCase() + "%");

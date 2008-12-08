@@ -93,7 +93,7 @@ public class DataSource
 		null, null, true, true, null);
 	public static final DataSource HMDB = new DataSource (
 		"Ch", "HMDB", 
-		new PrefixUrlMaker ("http://www.hmdb.ca/scripts/show_card.cgi?METABOCARD="),
+		new PrefixUrlMaker ("http://www.hmdb.ca/metabolites/"),
 		"http://www.hmdb.ca/", "HMDB00001", true, true, null); // NB: in spite of name, not Human specific!
 	public static final DataSource KEGG_COMPOUND = new DataSource (
 		"Ck", "Kegg Compound", 
@@ -306,6 +306,9 @@ public class DataSource
 		new PrefixUrlMaker ("http://www.wormbase.org/db/gene/gene?name="), 
 		"http://www.wormbase.org", "T24D1.1", 
 		true, false, Organism.CaenorhabditisElegans);
+	public static final DataSource WIKIPEDIA = new DataSource (
+			"Wi", "Wikipedia", 
+			new PrefixUrlMaker ("http://en.wikipedia.org/wiki/"), "http://www.wikipedia.org", "Acetate", true, true, null);
 	public static final DataSource WHEAT_GENE_CATALOG = new DataSource (
 		"Wc", "Wheat gene catalog (Grain Genes)", 
 		new PrefixUrlMaker ("http://wheat.pw.usda.gov/sql?sql=select+distinct+genewgcreference.number+as+WGC,+reference.name+as+Reference,+reference.title+as+Title,+journal.name+as+Journal,+reference.volume+as+Volume,+reference.pages+as+Page+from+reference+inner+join+genewgcreference+on+genewgcreference.referenceid=reference.id+inner+join+journal+on+reference.journalid=journal.id+where+genewgcreference.number="), 

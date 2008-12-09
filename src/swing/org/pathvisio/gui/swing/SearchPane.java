@@ -112,11 +112,7 @@ public class SearchPane extends JPanel
 				doSearch();
 			}
 		});
-		cbSyscode = new JComboBox();
-		for (DataSource d : DataSource.getDataSources())
-		{
-			cbSyscode.addItem(d.getFullName());
-		}
+		cbSyscode = new JComboBox(new DataSourceModel());
 		
 		DefaultFormBuilder idOptBuilder = new DefaultFormBuilder(
 			new FormLayout("pref, 4dlu, fill:pref:grow")

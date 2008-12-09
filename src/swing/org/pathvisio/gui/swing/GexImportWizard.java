@@ -45,6 +45,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DBConnector;
@@ -52,13 +54,13 @@ import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GexTxtImporter;
 import org.pathvisio.data.ImportInformation;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
+import org.pathvisio.util.swing.PermissiveComboBox;
 import org.pathvisio.util.swing.SimpleFileFilter;
 
 /**
@@ -486,7 +488,8 @@ public class GexImportWizard extends Wizard
 	    private JComboBox cbColSyscode;
 	    private JRadioButton rbSyscodeYes;
 	    private JRadioButton rbSyscodeNo;
-	    private DataSourceCombo cbDataSource;
+	    private JComboBox cbDataSource;
+	    private DataSourceModel mDataSource;
 	    
 	    public ColumnPage() 
 	    {
@@ -524,8 +527,8 @@ public class GexImportWizard extends Wizard
 			cbColId = new JComboBox();
 			cbColSyscode = new JComboBox();			
 
-			cbDataSource = new DataSourceCombo();
-			cbDataSource.initItems();
+			mDataSource = new DataSourceModel();
+			cbDataSource = new PermissiveComboBox(mDataSource);
 
 			ctm = new ColumnTableModel(importInformation);
 			tblColumn = new JTable(ctm);
@@ -554,14 +557,18 @@ public class GexImportWizard extends Wizard
 			rbSyscodeNo.addActionListener(rbAction);
 			rbSyscodeYes.addActionListener(rbAction);
 			
-			cbDataSource.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae)
+			mDataSource.addListDataListener(new ListDataListener()
+			{
+				public void contentsChanged(ListDataEvent arg0) 
 				{
-					DataSource ds = cbDataSource.getSelectedDataSource();
-					importInformation.setDataSource(ds);
-					columnPageRefresh();
+					importInformation.setDataSource(mDataSource.getSelectedDataSource());
 				}
+
+				public void intervalAdded(ListDataEvent arg0) {}
+
+				public void intervalRemoved(ListDataEvent arg0) {}
 			});
+			
 			cbColSyscode.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae)
 				{
@@ -608,7 +615,7 @@ public class GexImportWizard extends Wizard
 	    
 	    private void refreshComboBoxes()
 	    {
-	    	cbDataSource.setSelectedDataSource (importInformation.getDataSource());
+	    	mDataSource.setSelectedItem(importInformation.getDataSource());
 			cbColId.setSelectedIndex(importInformation.getIdColumn());
 			cbColSyscode.setSelectedIndex(importInformation.getCodeColumn());
 	    }
@@ -643,8 +650,7 @@ public class GexImportWizard extends Wizard
 	    	}
 	    	else
 	    	{
-		    	importInformation.setDataSource(
-		    			DataSource.getByFullName(("" + cbDataSource.getSelectedItem())));
+		    	importInformation.setDataSource(mDataSource.getSelectedDataSource());
 	    	}
 	    }
 	}

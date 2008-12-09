@@ -202,6 +202,7 @@ public class TypedProperty {
 			return lineStyleRenderer;
 		case DATASOURCE:
 		{
+			//TODO Make use of DataSourceModel for datasources
 			Set<DataSource> dataSources = DataSource.getFilteredSet(true, null, null);
 			if(dataSources.size() != datasourceRenderer.getItemCount()) {
 				Object[] labels = new Object[dataSources.size()];
@@ -373,6 +374,7 @@ public class TypedProperty {
 		}
 	}
 	
+	//TODO: merge with ComboRenderer
 	private static class ComboEditor extends DefaultCellEditor {
 		
 		Map<Object, Object> label2value;
@@ -600,6 +602,7 @@ public class TypedProperty {
 		}
 	}
 	
+	//TODO: merge with ComboEditor
 	private static class ComboRenderer extends JComboBox implements TableCellRenderer {
 
 		Map<Object, Object> value2label;

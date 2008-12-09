@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -39,11 +38,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.DataSourceModel;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
@@ -53,6 +55,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.swing.PermissiveComboBox;
 
 /**
  * Dialog for editing DataNodes. In addition to the standard comments and literature tabs,
@@ -71,17 +74,18 @@ public class DataNodeDialog extends PathwayElementDialog {
 
 	CompleterQueryTextField symText;
 	CompleterQueryTextField idText;
-	JComboBox dbCombo;
+	private PermissiveComboBox dbCombo;
+	private DataSourceModel dsm;	
 
 	public void refresh() {
 		super.refresh();
 		symText.setText(getInput().getTextLabel());
 		idText.setText(getInput().getGeneID());
-		if(input.getDataSource() != null) {
-			dbCombo.setSelectedItem(input.getDataSource());
-		} else {
-			dbCombo.setSelectedIndex(-1);
-		}
+//		if(input.getDataSource() != null) {
+			dsm.setSelectedItem(input.getDataSource());
+//		} else {
+//			dsm.setSelectedIndex(-1);
+//		}
 		pack();
 	}
 
@@ -91,7 +95,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		if (sym == null || sym.equals ("")) sym = ref.getId();
 		symText.setText(sym);
 		idText.setText(ref.getId());
-		dbCombo.setSelectedItem(ref.getDataSource());
+		dsm.setSelectedItem(ref.getDataSource());
 	}
 
 	/**
@@ -253,7 +257,9 @@ public class DataNodeDialog extends PathwayElementDialog {
 		symText.setCorrectCase(false);
 		idText.setCorrectCase(false);
 
-		dbCombo = new JComboBox(DataSource.getDataSources().toArray());
+		dsm = new DataSourceModel();
+		dsm.setPrimaryFilter(true);
+		dbCombo = new PermissiveComboBox(dsm);
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.ipadx = c.ipady = 5;
@@ -289,12 +295,26 @@ public class DataNodeDialog extends PathwayElementDialog {
 			}
 		});
 
-		dbCombo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				DataSource item = (DataSource)dbCombo.getSelectedItem();
-				getInput().setDataSource(item);
+		dsm.addListDataListener(new ListDataListener()
+		{
+
+			public void contentsChanged(ListDataEvent arg0) 
+			{
+				getInput().setDataSource((DataSource)dsm.getSelectedItem());
+				
 			}
+
+			public void intervalAdded(ListDataEvent arg0) {	}
+
+			public void intervalRemoved(ListDataEvent arg0) { }
 		});
+		
+//		dbCombo.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				DataSource item = (DataSource)dbCombo.getSelectedItem();
+//				getInput().setDataSource(item);
+//			}
+//		});
 
 		symText.setEnabled(!readonly);
 		idText.setEnabled(!readonly);

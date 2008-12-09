@@ -43,11 +43,17 @@ public class Xref implements Comparable<Xref> {
 	public String getName() { return toString(); }
 	public String toString() { return (ds == null ? "" : ds.getSystemCode()) + ":" + id;  }
 	
+	/**
+	 * hashCode calculated from id and datasource combined
+	 */
 	public int hashCode() 
 	{
-		return getName().hashCode();
+		return toString().hashCode();
 	}
 	
+	/**
+	 * Returns true if both the id and the datasource are equal. 
+	 */
 	public boolean equals(Object o) 
 	{
 		if (o == null) return false;
@@ -60,7 +66,7 @@ public class Xref implements Comparable<Xref> {
 	
 	public int compareTo (Xref idc) 
 	{
-		return getName().compareTo(idc.getName());
+		return toString().compareTo(idc.toString());
 	}
 	
 	public boolean valid() 

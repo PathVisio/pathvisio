@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.Utils;
 
 /**
@@ -31,9 +31,9 @@ public class MatchResult implements RowWithProperties<SearchTableModel.Column>
 	private File file;
 	private List<String> idsFound;
 	private List<String> namesFound;
-	private List<Xref> matches;
+	private List<XrefWithSymbol> matches;
 	
-	MatchResult (File f, List<String> idsFound, List<String> namesFound, List<Xref> matches)
+	MatchResult (File f, List<String> idsFound, List<String> namesFound, List<XrefWithSymbol> matches)
 	{
 		if (f == null) throw new NullPointerException();
 		file = f;
@@ -71,7 +71,7 @@ public class MatchResult implements RowWithProperties<SearchTableModel.Column>
 	// id's found
 	List<String> getIdsFound() { return idsFound; }
 	
-	public List<Xref> getMatches() { return matches; }
+	public List<XrefWithSymbol> getMatches() { return matches; }
 	
 	// names found (when searching by symbol
 	List<String> getNamesFound() { return namesFound; }

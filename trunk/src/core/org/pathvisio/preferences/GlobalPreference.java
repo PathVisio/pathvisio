@@ -64,6 +64,8 @@ public enum GlobalPreference implements Preference
 	DIR_LAST_USED_PGDB(new File(getDataDir().toString(), "gene databases").toString()),
 	// expr last used dir
 	DIR_LAST_USED_PGEX(new File(getDataDir().toString(), "expression datasets").toString()),
+	// seach pane last used dir
+	DIR_LAST_USED_SEARCHPANE(new File(getDataDir().toString(), "pathways").toString()),
 	
 	DIR_LAST_USED_EXPRESSION_IMPORT(new File(getDataDir().toString(), "expression datasets").toString()),
 	

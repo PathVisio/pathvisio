@@ -63,4 +63,33 @@ public class XrefWithSymbol extends Xref implements Comparable<Xref>
 		}
 		return super.compareTo(o2);
 	}	
+
+	/**
+	 * hashCode depends on symbol + id + datasource
+	 */
+	@Override
+	public int hashCode() 
+	{
+		String x = symbol + id + ds;
+		return x.hashCode();
+	}
+	
+	/**
+	 * returns true if id, datasource and systemcode are the same.
+	 * 
+	 * Note that if you try to compare a XrefWithSymbol and an Xref,
+	 * the result will always be false. 
+	 */
+	@Override
+	public boolean equals(Object o) 
+	{
+		if (o == null) return false;
+		if(!(o instanceof XrefWithSymbol)) return false;
+		XrefWithSymbol ref = (XrefWithSymbol)o;
+		return 
+			(id == null ? ref.id == null : id.equals(ref.id)) && 
+			(ds == null ? ref.ds == null : ds.equals(ref.ds)) &&
+			(symbol == null ? ref.symbol == null : symbol.equals(ref.symbol));
+	}
+
 }

@@ -51,6 +51,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
@@ -164,7 +165,7 @@ public class SearchPane extends JPanel
 		
 		searchOptBox.add (new JLabel("Directory to search:"), cc.xy (2,6));
 		txtDir = new JTextField();
-		txtDir.setText (PreferenceManager.getCurrent().get(GlobalPreference.DIR_PWFILES));
+		txtDir.setText (PreferenceManager.getCurrent().get(GlobalPreference.DIR_LAST_USED_SEARCHPANE));
 		searchOptBox.add (txtDir, cc.xyw(2,8,3));
 		btnBrowse = new JButton("Browse");
 		btnBrowse.addActionListener(new ActionListener()
@@ -273,26 +274,27 @@ public class SearchPane extends JPanel
 			if (velt instanceof GeneProduct)
 			{
 				GeneProduct gp = (GeneProduct)velt;
-				for (Xref id : mr.getMatches())
+				for (XrefWithSymbol id : mr.getMatches())
 				{
-					if (id.equals(gp.getPathwayElement().getXref()))
+					XrefWithSymbol ref = new XrefWithSymbol(
+							gp.getPathwayElement().getXref(), 
+							gp.getPathwayElement().getTextLabel()); 
+					if (id.equals(ref))
 					{
 						gp.highlight();
-						Logger.log.info ("Highlighted " + gp.getPathwayElement().getXref());
+						Logger.log.info ("Highlighted " + ref);
+						//scroll to first item found
 						if (interestingRect == null)
 						{
 							interestingRect = gp.getVBounds();
-						}
-						else
-						{
-							interestingRect.add(gp.getVBounds());
 						}
 						break;
 					}
 				}
 			}
 		}
-		vpy.getWrapper().scrollTo (interestingRect.getBounds());
+		if (interestingRect != null)
+			vpy.getWrapper().scrollTo (interestingRect.getBounds());
 		vpy.redrawDirtyRect();
 	}
 
@@ -395,11 +397,12 @@ public class SearchPane extends JPanel
 	{
 		JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		fc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_PWFILES));
+		fc.setCurrentDirectory(new File(txtDir.getText()));
 		int result = fc.showDialog(getTopLevelAncestor(), "Select");
 		if (result == JFileChooser.APPROVE_OPTION)
 		{
 			txtDir.setText("" + fc.getSelectedFile());
+			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_SEARCHPANE, fc.getCurrentDirectory());
 		}
 	}
 	

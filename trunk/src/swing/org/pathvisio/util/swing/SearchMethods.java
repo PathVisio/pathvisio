@@ -99,11 +99,14 @@ public class SearchMethods
 				//Check if one of the given ids is in the pathway
 				for (XrefWithSymbol gene : genes) 
 				{
-					if(refs.contains(gene)) 
+					//ignore symbol when comparing with refs from db.
+					Xref geneWithoutSymbol = 
+						new Xref(gene.getId(), gene.getDataSource());
+					if(refs.contains(geneWithoutSymbol)) 
 					{
 						//Gene found, add pathway to search result and break
 						List<String> idsFound = new ArrayList<String>();
-						List<Xref> matched = new ArrayList<Xref>();
+						List<XrefWithSymbol> matched = new ArrayList<XrefWithSymbol>();
 						idsFound.add(gene.getId());
 						matched.add(gene);
 						return new MatchResult(f, idsFound, null, matched);
@@ -147,7 +150,7 @@ public class SearchMethods
 				PathwayParser parser = new PathwayParser(f, xmlReader);
 				List<XrefWithSymbol> genes = parser.getGenes();
 				//Find what symbols match
-				List<Xref> matched = new ArrayList<Xref>();
+				List<XrefWithSymbol> matched = new ArrayList<XrefWithSymbol>();
 				List<String> idsFound = new ArrayList<String>();
 				List<String> namesFound = new ArrayList<String>();
 				

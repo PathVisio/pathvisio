@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -42,10 +43,10 @@ public class PluginManager {
 	
 	/**
 	 * Create a plugin manager that loads plugins from the given locations
-	 * @param pluginLocations An array of File objects pointing to jar files 
+	 * @param pluginLocations A list of Strings pointing to jar files 
 	 * or directories that will be searched recursively for jar files.
 	 */
-	public PluginManager(String[] pluginLocations, StandaloneEngine standaloneEngine) {
+	public PluginManager(List<String> pluginLocations, StandaloneEngine standaloneEngine) {
 		this.standaloneEngine = standaloneEngine;
 		
 		for(String s : pluginLocations) {

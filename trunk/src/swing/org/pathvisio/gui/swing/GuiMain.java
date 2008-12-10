@@ -156,8 +156,7 @@ public class GuiMain
 		//Create a plugin manager that loads the plugins
 		if(pluginLocations.size() > 0) {
 			PluginManager pluginManager = new PluginManager(
-					pluginLocations.toArray(new String[0]),
-					standaloneEngine
+					pluginLocations, standaloneEngine
 			);
 		}
 		
@@ -349,6 +348,9 @@ public class GuiMain
 		MIMShapes.registerShapes();
 		swingEngine.setFrame(frame);
 		swingEngine.setApplicationPanel(mps);
+		
+		// load plugins from the default plugin dir
+		pluginLocations.add("" + new File (GlobalPreference.getApplicationDir(), "plugins"));
 		processOptions();		
 	}
 	

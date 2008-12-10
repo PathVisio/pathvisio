@@ -299,6 +299,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		KeyStroke key;
 
 		public KeyMoveAction(Engine engine, KeyStroke key) {
+			this.engine = engine;
 			this.key = key; 
 		}
 

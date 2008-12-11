@@ -12,7 +12,7 @@
 		</shortcut>	
 	</information>
 	<resources>
-		 <j2se version="1.5+"/>
+		 <j2se version="1.5+" java-vm-args="-Xmx512M"/>
 		 <jar href="pathvisio.jar"/>
 		 <jar href="visplugins.jar"/>
 		 <jar href="lib/resources.jar"/>

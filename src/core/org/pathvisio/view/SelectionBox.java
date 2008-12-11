@@ -99,9 +99,7 @@ public class SelectionBox extends VPathwayElement
 			return; // Is selectionbox or already in selection
 		if (o instanceof VPoint)
 		{
-			Line l = ((VPoint)o).getLine();
-			l.select();
-			doAdd(l);
+			//skip it: don't add points; lines get added independently
 		} else
 		{
 			o.select();

@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
@@ -33,6 +34,7 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
+import java.lang.Math;
 
 /**
  * Generates Putative Pathway Parts based on a 
@@ -53,7 +55,6 @@ public class HmdbPppPlugin {
         } catch (Exception ex) {
             // handle the error
         }
-        
         
 	    Pathway result = new Pathway();
 	    PathwayElement pelt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
@@ -90,34 +91,36 @@ public class HmdbPppPlugin {
 		    ResultSet rs = st.executeQuery();
 		    
 		    double angle = 0;
-		    
-		    while (rs.next())
+		    int noRecords = 0;
+		    while (rs.next()){
+		    	noRecords += 1;
+		    }
+		    ResultSet rsf = st.executeQuery();
+		    double incrementStep = 0;
+		    incrementStep = (2* Math.PI)/noRecords;
+		    while (rsf.next())
 		    {
 		    	//Each tuple is a pathway element
 		    	PathwayElement pchildElt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-		    	
-
-		    	// Split Ref_ID, which contains pubmed_id's to the selected metabolite rs.getString(1)
-		    	String [] metabolitePmids = null;
-		    	metabolitePmids = rs.getString(1).split("; ");
-		    	for (int i = 0 ; i < metabolitePmids.length ; i++) {
-		            System.out.println(metabolitePmids[i]);
-		    	}
+		    	PathwayElement connectElement = PathwayElement.createPathwayElement(ObjectType.LINE);
 		    	
 		    	// Get common_name for the metabolite (rs.getString(2))
 		    	String commonName = null;
-		    	commonName = rs.getString(2);
-		    	System.out.println ("\t" + rs.getString(2));
+		    	commonName = rsf.getString(2);
+		    	System.out.println ("\t" + rsf.getString(2));
 		    	
-		    	String swissId = rs.getString(4);
+		    	String swissId = rsf.getString(4);
 		    	
 		    	int start = swissId.indexOf('(');
 		    	int end = swissId.lastIndexOf(')');
 				String actualId = swissId.substring(start + 1, end);
 				
 				//Get gene_name (rs.getString())
-		    	String geneName = rs.getString(5);
-		    	
+		    	String geneName = rsf.getString(5);
+		    	connectElement.setMStartX(HUB_X);
+		    	connectElement.setMStartY(HUB_Y);
+		    	connectElement.setMEndX(HUB_X + RADIUS * Math.cos(angle));
+		    	connectElement.setMEndY(HUB_Y + RADIUS * Math.sin(angle));
 		    	pchildElt.setDataNodeType (DataNodeType.PROTEIN);
 		    	pchildElt.setTextLabel(geneName);
 		    	pchildElt.setDataSource (DataSource.UNIPROT);
@@ -127,7 +130,19 @@ public class HmdbPppPlugin {
 			    pchildElt.setMCenterX(HUB_X + RADIUS * Math.cos(angle));
 			    pchildElt.setMCenterY(HUB_Y + RADIUS * Math.sin(angle));
 			    result.add(pchildElt);
-		    	angle += 0.3;
+			    result.add(connectElement);
+		    	angle += incrementStep;
+		    	System.out.println(angle);
+		    	
+		    	// Split Ref_ID, which contains pubmed_id's to the selected metabolite rs.getString(1)
+		    	String [] metabolitePmids = null;
+		    	metabolitePmids = rsf.getString(1).split("; ");
+		    	for (int i = 0 ; i < metabolitePmids.length ; i++) {
+		    		PublicationXRef xref = new PublicationXRef();
+		    		xref.setPubmedId(metabolitePmids[i]);
+		    		pchildElt.getBiopaxReferenceManager().addElementReference(xref);
+		            System.out.println(metabolitePmids[i]);
+		    	}
 		    }
 		    
 		} catch (SQLException ex) {

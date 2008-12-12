@@ -220,6 +220,7 @@ public class VPathway implements PathwayListener
 		case ObjectType.MAPPINFO:
 			InfoBox mi = new InfoBox(this, o);
 			result = mi;
+			mi.markDirty();
 			break;
 		case ObjectType.LABEL:
 			result = new Label(this, o);

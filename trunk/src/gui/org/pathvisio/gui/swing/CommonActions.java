@@ -223,6 +223,7 @@ public class CommonActions implements ApplicationEventListener {
 		exitAction = new ExitAction(se);
 	}
 
+	/** When triggered, zoom percentage is set so that the entire pathway fits in the view */
 	public static class ZoomToFitAction extends AbstractAction {
 
 		Component parent;
@@ -252,6 +253,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	/** Zooms the view to a fixed percentage. The zoom percentage is decided at creation time */
 	public static class ZoomAction extends AbstractAction {
 
 		Component parent;
@@ -281,6 +283,11 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	/** 
+	 * This action constitutes both the save and save as menu items, 
+	 * and can save both to the wiki in the case of the applet,
+	 * or to file in the case of the standalone application
+	 */
 	public static class SaveAction extends AbstractAction implements StatusFlagListener, ApplicationEventListener {
 		boolean forceDisabled;
 		boolean isSaveAs; // is either save... or save as...
@@ -354,6 +361,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	/** Import a Pathway from a different format than GPML, usually that means GenMAPP format */
 	public static class ImportAction extends AbstractAction {
 
 		SwingEngine swingEngine;
@@ -378,6 +386,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	/** Export a pathway to a different pathway, raster or vector image format */
 	public static class ExportAction extends AbstractAction {
 
 		SwingEngine swingEngine;
@@ -401,7 +410,8 @@ public class CommonActions implements ApplicationEventListener {
 			super.setEnabled(newValue);
 		}
 	}
-			
+
+	/** Create a new pathway element or elements based on a {@link Template} */ 
 	public static class NewElementAction extends AbstractAction implements VPathwayListener {
 
 		Template template;
@@ -433,6 +443,12 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	/** 
+	 * Perform simple layout operations such as 
+	 * aligning, setting common size and distributing evenly.
+	 * Note that this doesn't include graph layout algorithms.
+	 * see {@link LayoutType} for a list of possible layouts
+	 */  
 	public static class LayoutAction extends AbstractAction {
 		LayoutType type;
 
@@ -452,7 +468,14 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	/** 
+	 * This is an abstract base class for actions that are triggered from the right-click menu
+	 * on a PathwayElement. When the action is triggered, the PathwayElementDialog is shown,
+	 * but which tab is shown depends on the implementation of getSelectedPanel 
+	 */
 	private static abstract class PathwayElementDialogAction extends AbstractAction {
+		//TODO: use parameterization instead of inheritance to create different PathwayElementDialogActions
+		// inheritance is overkill because behaviour of classes is not changed
 		VPathwayElement element;
 		Component parent;
 		
@@ -491,9 +514,14 @@ public class CommonActions implements ApplicationEventListener {
 			}
 		}
 				
+		/** implement this to determine which tab is selected first when the dialog is shown */
 		protected abstract String getSelectedPanel();
 	}
 	
+	/** 
+	 * Provides direct access to the literature reference dialog ({@link PublicationXrefDialog}) from
+	 * the right click menu.
+	 */
 	public static class AddLiteratureAction extends PathwayElementDialogAction {
 		public AddLiteratureAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
 			super(swingEngine, parent, e);
@@ -521,6 +549,9 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	/** 
+	 * Pops up the pathway element dialog directly on the literature tab.
+	 */
 	public static class EditLiteratureAction extends PathwayElementDialogAction {
 
 		public EditLiteratureAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {
@@ -535,6 +566,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	/** Pops up the pathway element dialog directly on the comments tab */
 	public static class PropertiesAction extends PathwayElementDialogAction {
 
 		public PropertiesAction(SwingEngine swingEngine, Component parent, VPathwayElement e) {

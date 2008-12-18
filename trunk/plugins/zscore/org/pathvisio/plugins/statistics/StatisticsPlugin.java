@@ -119,17 +119,17 @@ public class StatisticsPlugin implements Plugin
 	 * Plugin initialization method, registers statistics action in the Data menu
 	 */
 	private SwingEngine swingEngine;
-	private PvDesktop standaloneEngine;
+	private PvDesktop desktop;
 	
-	public void init(PvDesktop aStandaloneEngine) 
+	public void init(PvDesktop aDesktop) 
 	{
-		swingEngine = aStandaloneEngine.getSwingEngine();
-		standaloneEngine = aStandaloneEngine;
+		swingEngine = aDesktop.getSwingEngine();
+		desktop = aDesktop;
 		StatisticsAction statisticsAction = new StatisticsAction(swingEngine,
-				standaloneEngine.getGexManager());
+				desktop.getGexManager());
 
 		Logger.log.info ("Initializing statistics plugin");
-		swingEngine.registerMenuAction ("Data", statisticsAction);
+		desktop.registerMenuAction ("Data", statisticsAction);
 	}
 	
 	/**

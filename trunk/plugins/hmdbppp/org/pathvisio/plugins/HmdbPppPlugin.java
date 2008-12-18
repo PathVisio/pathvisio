@@ -34,7 +34,6 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
-import java.lang.Math;
 
 /**
  * Generates Putative Pathway Parts based on a 

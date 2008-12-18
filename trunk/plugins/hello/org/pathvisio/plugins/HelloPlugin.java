@@ -37,7 +37,7 @@ public class HelloPlugin implements Plugin
 		this.desktop = desktop;
 		
 		// register our action in the "Help" menu.
-		desktop.getSwingEngine().registerMenuAction ("Help", helloAction);
+		desktop.registerMenuAction ("Help", helloAction);
 	}
 
 	private final HelloAction helloAction = new HelloAction();

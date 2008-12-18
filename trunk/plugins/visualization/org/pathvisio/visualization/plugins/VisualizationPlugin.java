@@ -39,19 +39,19 @@ import org.pathvisio.visualization.gui.VisualizationDialog;
  */
 public class VisualizationPlugin implements Plugin {
 
-	public void init(PvDesktop standaloneEngine) 
+	public void init(PvDesktop aDesktop) 
 	{
-		final PvDesktop se = standaloneEngine;
+		final PvDesktop desktop = aDesktop;
 		
 		//Register the visualization methods
 		VisualizationMethodRegistry reg = 
-			standaloneEngine.getVisualizationMethodRegistry();
+			aDesktop.getVisualizationMethodRegistry();
 
 		reg.registerMethod(
 				ColorByExpression.class.toString(), 
 				new VisualizationMethodProvider() {
 					public VisualizationMethod create(Visualization v, String registeredName) {
-						return new ColorByExpression(v, registeredName, se.getGexManager());
+						return new ColorByExpression(v, registeredName, desktop.getGexManager());
 					}
 			}
 		);
@@ -59,7 +59,7 @@ public class VisualizationPlugin implements Plugin {
 				TextByExpression.class.toString(), 
 				new VisualizationMethodProvider() {
 					public VisualizationMethod create(Visualization v, String registeredName) {
-						return new TextByExpression(v, registeredName, se.getGexManager());
+						return new TextByExpression(v, registeredName, desktop.getGexManager());
 					}
 			}
 		);
@@ -72,8 +72,8 @@ public class VisualizationPlugin implements Plugin {
 			}
 		);
 		//Register the menu items
-		se.getSwingEngine().registerMenuAction ("Data", new VisualizationAction(
-				standaloneEngine)
+		desktop.registerMenuAction ("Data", new VisualizationAction(
+				aDesktop)
 		);
 	}
 

@@ -52,15 +52,15 @@ public class PppPlugin implements Plugin, PathwayElementMenuHook
 	/**
 	 * Initialize plug-in, is called by plugin manager.
 	 */
-	public void init(PvDesktop standaloneEngine) 
+	public void init(PvDesktop desktop) 
 	{
 		// create new PppPane and add it to the side bar.	
-		pane = new PppPane(standaloneEngine.getSwingEngine());
-		JTabbedPane sidebarTabbedPane = standaloneEngine.getSwingEngine().getApplicationPanel().getSideBarTabbedPane();
+		pane = new PppPane(desktop.getSwingEngine());
+		JTabbedPane sidebarTabbedPane = desktop.getSideBarTabbedPane();
 		sidebarTabbedPane.add(PppPane.TITLE, pane);
 		
 		// register our pathwayElementMenu hook.
-		standaloneEngine.getSwingEngine().getApplicationPanel().getPathwayElementMenuListener().addPathwayElementMenuHook(this);
+		desktop.addPathwayElementMenuHook(this);
 	}
 	
 	/**

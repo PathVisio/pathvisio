@@ -35,13 +35,13 @@ import org.pathvisio.plugin.Plugin;
  */
 public class GexPlugin implements Plugin {
 
-	public void init(PvDesktop standaloneEngine) 
+	public void init(PvDesktop desktop) 
 	{
-		ImportGexDataAction importAction = new ImportGexDataAction(standaloneEngine);
-		SelectGexAction selectAction = new SelectGexAction(standaloneEngine);
+		ImportGexDataAction importAction = new ImportGexDataAction(desktop);
+		SelectGexAction selectAction = new SelectGexAction(desktop);
 		
-		standaloneEngine.getSwingEngine().registerMenuAction ("Data", importAction);
-		standaloneEngine.getSwingEngine().registerMenuAction ("Data", selectAction);
+		desktop.registerMenuAction ("Data", importAction);
+		desktop.registerMenuAction ("Data", selectAction);
 	}
 	
 	/**

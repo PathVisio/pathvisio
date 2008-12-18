@@ -1,0 +1,147 @@
+/** Add css rules here for your application. */
+
+.center-panel {
+}
+
+.root-panel {
+	width: 100%;
+	padding: 5px;
+}
+
+.root-title {
+	color: #202483;
+	font-size: x-large;
+	font-weight: bold;
+}
+
+.info-panel {
+	padding: 5px;
+}
+
+.info-panel TD {
+	padding-bottom: 5px;
+}
+
+.config-title {
+	color: #202483;
+	font-size: large;
+	font-weight: bold;
+	padding-bottom: 1em;
+}
+
+.config-panel {
+	background-color: #EAEBFF;
+	border-color: #B7BAFF;
+	border-width: 1px;
+	border-style: solid;
+	padding: 5px;
+}
+
+.config-panel TD {
+	padding-right: 5px;
+	padding-bottom: 5px;
+}
+
+.progress {
+	margin: 5em;
+}
+
+.var-label {
+	margin-right: 5px;
+	color: rgb(100, 100, 100);
+	font-weight: bold;
+}
+
+.var-value {
+	margin-right: 5px;
+	color: rgb(100, 100, 100);
+}
+
+.var-edit A {
+	background-color: #EAEBFF;
+	border-color: #B7BAFF;
+	border-width: 1px;
+	border-style: solid;
+	text-decoration:  none;
+	color: #202483;
+	padding: 1px 2px 1px 2px;
+}
+
+.gene-hover {
+	cursor: pointer;	
+}
+
+.tooltip-label {
+	font-weight: bold;
+	padding-bottom: 2px;
+}
+
+.tooltip-labelpanel TR {
+}
+
+.tooltip-ensembl {
+	padding-bottom: 5px;
+	font-style: italic;
+}
+
+.tooltip-ensembl A {
+	font-style: normal;
+	background-color: #EAEBFF;
+	border-color: #B7BAFF;
+	border-width: 1px;
+	border-style: solid;
+	text-decoration:  none;
+	color: #202483;
+	padding: 1px 2px 1px 2px;
+}
+
+.tooltip-data {
+	padding-left: 5px;
+	padding-bottom: 1.5em;
+	color: rgb(100, 100, 100);
+}
+
+.tooltip-data-factor TD {
+	font-style: bold;
+}
+
+.tooltip-data-value {
+	color: black;
+}
+
+.tooltip-data-value-up {
+	background-color: #FF9F9F;
+}
+
+.tooltip-data-value-down {
+	background-color: #D4D4FF;
+}
+
+.tooltip-data-header {
+	font-weight: bold;	
+}
+
+.legend-color {
+	width: 20px;
+	height: 20px;
+	border-color: black;
+	border-style: solid;
+	border-width: thin;
+}
+
+.legend-down {
+	background-color: blue;
+}
+
+.legend-up {
+	background-color: red;
+}
+
+.legend-updown {
+	background-color: gray;
+}
+
+.image-description {
+	padding-top: 5px;
+	padding-bottom: 5px;	
+}

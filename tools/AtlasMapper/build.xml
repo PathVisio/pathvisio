@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="AtlasMapper" default="war">
+	<property name="build.dir" value="bin" />
+	<property name="src.dir" value="src" />
+	<property name="axis.src.dir" value="axis-src" />
+	<property name="atlas.wsdl.url" value="http://www.ebi.ac.uk/microarray-as/atlas/services/AtlasWebService?wsdl"/>
+	<property name="proj.name" value="AtlasMapper" />
+	<property name="web.deploy.dir" value="www" />
+	<property name="war.file" value="atlas-mapper.war" />
+	<property name="tmp.war.dir" value="war-tmp"/>
+	
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${tmp.war.dir}" />
+	</target>
+
+	<fileset id="lib.files" dir="lib">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<fileset id="batik.lib.files" dir="../../lib">
+		<include name="batik/**/*.jar" />
+		<include name="resources.jar" />
+	</fileset>
+			
+	<fileset id="client.lib.files" dir="../wikipathways-client">
+		<include name="**/*.jar" />
+		<exclude name="**/derby.jar" />
+	</fileset>
+
+	<path id="class.path">
+		<pathelement location="${build.dir}" />
+		<fileset refid="lib.files" />
+		<fileset refid="client.lib.files" />
+		<fileset refid="batik.lib.files" />
+	</path>
+
+	<target name="gwt-compile" depends="compile">
+		<exec executable="./${proj.name}-compile" failonerror="true" />
+	</target>
+
+	<target name="generate-client">
+		<java classpathref="class.path" fork="true" failonerror="true" classname="org.apache.axis.wsdl.WSDL2Java">
+			<arg value="-o" />
+			<arg value="${axis.src.dir}" />
+			<arg value="-p" />
+			<arg value="org.ebi.arrayexpress" />
+			<arg value="${atlas.wsdl.url}" />
+		</java>
+	</target>
+		
+	<target name="compile" depends="generate-client">
+		<mkdir dir="${build.dir}" />
+		<javac destdir="${build.dir}" srcdir="${axis.src.dir}">
+				<classpath refid="class.path" />
+		</javac>
+		<javac destdir="${build.dir}" srcdir="${src.dir}">
+			<classpath refid="class.path" />
+		</javac>
+	</target>
+
+	<target name="war" depends="gwt-compile">
+		<copy flatten="true" todir="${tmp.war.dir}">
+			<fileset refid="lib.files"/>
+			<fileset refid="client.lib.files"/>
+			<fileset refid="batik.lib.files"/>
+		</copy>
+		<war destfile="${war.file}" webxml="WEB-INF/web.xml">
+			<lib dir="${tmp.war.dir}"/>
+			<classes dir="bin" />
+			<fileset dir="www/org.pathvisio.wikipathways.AtlasMapper" />
+		</war>
+	</target>
+</project>

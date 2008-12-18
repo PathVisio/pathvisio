@@ -17,105 +17,56 @@
 package org.pathvisio.wikipathways.bots;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.rmi.RemoteException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.rpc.ServiceException;
+import java.util.Properties;
 
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbProvider;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
-import org.pathvisio.wikipathways.WikiPathwaysCache;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
-import org.pathvisio.wikipathways.webservice.WSCurationTag;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 /**
  * Checks for DataNode XRef annotations and adds a curation tag for
  * pathways that contain more wrongly annotated DataNodes than a given threshold.
  */
-public class XRefBot {
+public class XRefBot extends Bot {
 	private static final String CURATIONTAG = "Curation:MissingXRef";
+	private static final String PROP_THRESHOLD = "threshold";
+	private static final String PROP_GDBS = "gdb-config";
+	
 	GdbProvider gdbs;
-	WikiPathwaysCache cache;
-	WikiPathwaysClient client;
+	double threshold;
 	
-	public static void main(String[] args) {
+	public XRefBot(Properties props) throws BotException {
+		super(props);
+		String thr = props.getProperty(PROP_THRESHOLD);
+		if(thr != null) threshold = Double.parseDouble(thr);
+		
+		File gdbFile = new File(props.getProperty(PROP_GDBS));
 		try {
-			Logger.log.trace("Starting XRefBot");
-			XRefBot bot = new XRefBot(new File(args[1]), new File(args[0]));
-			Collection<XRefReport> results = bot.scan();
-			
-			Logger.log.trace("Generating report");
-			BotReport report = bot.createReport(results);
-			
-			File txtFile = new File(args[2] + ".txt");
-			Logger.log.trace("Writing text report");
-			report.writeTextReport(txtFile);
-			
-			Logger.log.trace("Writing HTML report");
-			File htmlFile = new File(args[2] + ".html");
-			report.writeHtmlReport(htmlFile);
-			
-			if(args.length > 3) {
-				if(args.length == 6) {
-					bot.client.login(args[4], args[5]);
-				}
-				double threshold = Double.parseDouble(args[3]);
-				bot.applyCurationTags(results, threshold);
-			}
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-			printUsage();
+			gdbs = GdbProvider.fromConfigFile(gdbFile);
+		} catch (Exception e) {
+			throw new BotException(e);
 		}
 	}
 	
-	static private void printUsage() {
-		System.out.println(
-			"Usage:\n" +
-			"java org.pathvisio.wikipathways.bots.XRefBot cacheDir gdbConfig reportFile [threshold user pass]\n" +
-			"Where:\n" +
-			"-cacheDir: the directory that will be used to cache downloaded pathways\n" +
-			"-gdbConfig: a configuration file that lists the available synonym databases\n" +
-			"-reportFile: the base name of the files to save the reports to (will be appended" +
-					" with correct extension automatically).\n" +
-			"-threshold is an optional threshold percentage used to add curation tags. " +
-			"-user is the username of the WikiPathways account that will be used for tagging " +
-			"-pass is the password for the WikiPathways account" +
-			"If the percentage of valid xrefs is below this threshold, a curation tag will " +
-			"be added to the pathway. If no threshold is specified, no pathways will be tagged."
-		);
+	public String getTagName() {
+		return CURATIONTAG;
 	}
 	
-	public XRefBot(File gdbConfig, File cacheDir, WikiPathwaysClient client) throws DataException, IOException, ServiceException {
-		gdbs = GdbProvider.fromConfigFile(gdbConfig);
-		this.client = client;
-		if(client == null) {
-			this.client = new WikiPathwaysClient();
-		}
-		cache = new WikiPathwaysCache(this.client, cacheDir);
-	}
-	
-	public XRefBot(File gdbConfig, File cacheDir) throws DataException, IOException, ServiceException {
-		this(gdbConfig, cacheDir, null);
-	}
-	
-	public BotReport createReport(Collection<XRefReport> results) {
+	public BotReport createReport(Collection<Result> results) {
 		BotReport report = new BotReport(
 			new String[] {
 				"Nr Xrefs", "Nr valid", "% valid", "Invalid DataNodes"	
@@ -123,114 +74,74 @@ public class XRefBot {
 		);
 		report.setTitle("XRefBot scan report");
 		report.setDescription("The XRefBot checks for valid DataNode annotations");
-		for(XRefReport r : results) {
+		for(Result r : results) {
+			XRefResult xr = (XRefResult)r;
 			report.setRow(
 					r.getPathwayInfo(),
 					new String[] {
-						"" + r.getNrXrefs(),
-						"" + r.getNrValid(),
-						"" + (int)(r.getPercentValid() * 100) / 100, //Round to two decimals
-						"" + r.getLabelsForInvalid()
+						"" + xr.getNrXrefs(),
+						"" + xr.getNrValid(),
+						"" + (int)(xr.getPercentValid() * 100) / 100, //Round to two decimals
+						"" + xr.getLabelsForInvalid()
 					}
 			);
 		}
 		return report;
 	}
-	
-	public void applyCurationTags(Collection<XRefReport> results, double threshold) throws RemoteException {
-		Logger.log.info("Tagging pathways");
-		for(XRefReport r : results) {
-			//Find an existing tag
-			WSPathwayInfo pwi = r.getPathwayInfo();
-			String pwId = pwi.getId();
-			//First check if the existing tag is up-to-date
-			WSCurationTag[] tags = client.getCurationTags(pwId);
-			String currTagText = null;
-			for(WSCurationTag t : tags) {
-				if(CURATIONTAG.equals(t.getName())) {
-					currTagText = t.getText();
-					break;
-				}
-			}
-			
-			//Apply a tag if the % of valid xrefs is smaller than the threshold
-			if(r.getPercentValid() < threshold) {
-				String newTagText = r.getTagText();
-				if(!newTagText.equals(currTagText)) {
-					Logger.log.info("Applying tag to " + pwId);
-					client.saveCurationTag(
-							pwId,
-							CURATIONTAG, newTagText
-					);
-				}
-			} else {
-				//Remove the existing tag
-				if(currTagText != null) {
-					Logger.log.info("Removing tag from " + pwId);
-					client.removeCurationTag(pwId, CURATIONTAG);
-				}
-			}
-		}
-	}
-	
-	public Collection<XRefReport> scan() throws ConverterException, FileNotFoundException, IOException {
-		cache.update();
-		
-		List<XRefReport> reports = new ArrayList<XRefReport>();
-		
-		for(File f : cache.getFiles()) {
-			reports.add(scanPathway(f));
-		}
-		return reports;
-	}
-	
-	private XRefReport scanPathway(File pathwayFile) throws ConverterException, FileNotFoundException, IOException {
-		XRefReport report = new XRefReport(cache.getPathwayInfo(pathwayFile));
-		Pathway pathway = new Pathway();
-		pathway.readFromXml(pathwayFile, true);
-		
-		String orgName = pathway.getMappInfo().getOrganism();
-		Organism org = Organism.fromLatinName(orgName);
-		if(org == null) org = Organism.fromShortName(orgName);
 
-		for(PathwayElement pwe : pathway.getDataObjects()) {
-			if(pwe.getObjectType() == ObjectType.DATANODE) {
-				boolean exists = false;
-				Xref xref = pwe.getXref();
-				for(Gdb gdb : gdbs.getGdbs(org)) {
-					try {
-						if(gdb.xrefExists(xref)) {
-							exists = true;
-							break;
+	protected Result scanPathway(File pathwayFile) throws BotException {
+		try {
+			XRefResult report = new XRefResult(getCache().getPathwayInfo(pathwayFile));
+			Pathway pathway = new Pathway();
+			pathway.readFromXml(pathwayFile, true);
+
+			String orgName = pathway.getMappInfo().getOrganism();
+			Organism org = Organism.fromLatinName(orgName);
+			if(org == null) org = Organism.fromShortName(orgName);
+
+			for(PathwayElement pwe : pathway.getDataObjects()) {
+				if(pwe.getObjectType() == ObjectType.DATANODE) {
+					boolean exists = false;
+					Xref xref = pwe.getXref();
+					for(Gdb gdb : gdbs.getGdbs(org)) {
+						try {
+							if(gdb.xrefExists(xref)) {
+								exists = true;
+								break;
+							}
+						} catch (DataException e) {
+							Logger.log.error("Error checking xref exists", e);
 						}
-					} catch (DataException e) {
-						Logger.log.error("Error checking xref exists", e);
 					}
+					report.addXref(pwe, exists);
 				}
-				report.addXref(pwe, exists);
 			}
+
+			return report;
+		} catch(Exception e) {
+			throw new BotException(e);
 		}
-		
-		return report;
 	}
 	
-	private class XRefReport {
-		WSPathwayInfo pathwayInfo;
-		
+	private class XRefResult extends Result {
 		Map<PathwayElement, Boolean> xrefs = new HashMap<PathwayElement, Boolean>();
 		
-		public XRefReport(WSPathwayInfo pathwayInfo) {
-			this.pathwayInfo = pathwayInfo;
+		public XRefResult(WSPathwayInfo pathwayInfo) {
+			super(pathwayInfo);
+		}
+		
+		public boolean shouldTag() {
+			return getPercentValid() < threshold;
+		}
+		
+		public boolean equalsTag(String tag) {
+			return getTagText().equals(tag);
 		}
 		
 		public void addXref(PathwayElement pwe, boolean valid) {
 			xrefs.put(pwe, valid);
 		}
 		
-		public WSPathwayInfo getPathwayInfo() {
-			return pathwayInfo;
-		}
-
 		public int getNrXrefs() {
 			return xrefs.size();
 		}
@@ -301,5 +212,29 @@ public class XRefBot {
 				"<span title=\"" + labels[0] + "\">" + labels[1] + "</span>";
 			return txt;
 		}
+	}
+	
+	public static void main(String[] args) {
+		try {
+			Logger.log.trace("Starting XRefBot");
+			Properties props = new Properties();
+			props.load(new FileReader(new File(args[0])));
+			XRefBot bot = new XRefBot(props);
+			Bot.runAll(bot, new File(args[1] + ".html"), new File(args[1] + ".txt"));
+		} catch(Exception e) {
+			e.printStackTrace();
+			printUsage();
+		}
+	}
+	
+	static private void printUsage() {
+		System.out.println(
+			"Usage:\n" +
+			"java org.pathvisio.wikipathways.bots.XRefBot propsfile reportfilename\n" +
+			"Where:\n" +
+			"-propsfile: a properties file containing the bot properties\n" +
+			"-reportfilename: the base name of the file that will be used to write reports to " +
+			"(extension will be added automatically)\n"
+		);
 	}
 }

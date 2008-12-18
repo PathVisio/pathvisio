@@ -38,6 +38,7 @@ import org.pathvisio.model.Xref;
 import org.pathvisio.view.MIMShapes;
 import org.pathvisio.wikipathways.webservice.WSAuth;
 import org.pathvisio.wikipathways.webservice.WSCurationTag;
+import org.pathvisio.wikipathways.webservice.WSCurationTagHistory;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
@@ -196,6 +197,35 @@ public class WikiPathwaysClient {
 		return tags;
 	}
 	
+	/**
+	 * Get the curation tag history for the given pathway
+	 * @param id The pathway identifier
+	 * @param cutoff Only get history items that occured after the given cutoff date
+	 * @return An array with the history items
+	 * @throws RemoteException
+	 */
+	public WSCurationTagHistory[] getCurationTagHistory(String id, Date cutoff) throws RemoteException {
+		String timestamp = "0";
+		if(cutoff != null) {
+			// turn Date into expected timestamp format, in GMT:
+			SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddHHmmss");
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+			timestamp = sdf.format(cutoff);
+		}
+		WSCurationTagHistory[] hist = port.getCurationTagHistory(id, timestamp);
+		if(hist == null) hist = new WSCurationTagHistory[0];
+		return hist;
+	}
+	
+	/**
+	 * Get the curation tag history for the given pathway
+	 * @param id The pathway identifier
+	 * @return An array with the history items
+	 * @throws RemoteException
+	 */
+	public WSCurationTagHistory[] getCurationTagHistory(String id) throws RemoteException {
+		return getCurationTagHistory(id, null);
+	}
 	/**
 	 * Login using your WikiPathways account. You need to login in order
 	 * to make changes to pathways.

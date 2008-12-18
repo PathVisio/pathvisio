@@ -75,7 +75,7 @@ public class GuiMain
 	
 	private MainPanelStandalone mainPanel;
 	
-	private StandaloneEngine standaloneEngine;
+	private PvDesktop standaloneEngine;
 	private SwingEngine swingEngine;
 	
 	private static void initLog(Engine engine)
@@ -339,7 +339,7 @@ public class GuiMain
 			}
 		});
 		swingEngine.getGdbManager().initPreferred();
-		standaloneEngine = new StandaloneEngine (swingEngine);
+		standaloneEngine = new PvDesktop (swingEngine);
 		
 		MainPanelStandalone mps = new MainPanelStandalone(engine, swingEngine);
 		JFrame frame = createAndShowGUI(mps, swingEngine);

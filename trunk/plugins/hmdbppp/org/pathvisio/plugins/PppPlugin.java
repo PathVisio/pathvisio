@@ -23,7 +23,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
-import org.pathvisio.gui.swing.StandaloneEngine;
+import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.view.GeneProduct;
@@ -52,7 +52,7 @@ public class PppPlugin implements Plugin, PathwayElementMenuHook
 	/**
 	 * Initialize plug-in, is called by plugin manager.
 	 */
-	public void init(StandaloneEngine standaloneEngine) 
+	public void init(PvDesktop standaloneEngine) 
 	{
 		// create new PppPane and add it to the side bar.	
 		pane = new PppPane(standaloneEngine.getSwingEngine());

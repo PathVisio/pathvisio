@@ -61,7 +61,7 @@ import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.StandaloneEngine;
+import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Xref;
 import org.pathvisio.plugin.Plugin;
@@ -119,9 +119,9 @@ public class StatisticsPlugin implements Plugin
 	 * Plugin initialization method, registers statistics action in the Data menu
 	 */
 	private SwingEngine swingEngine;
-	private StandaloneEngine standaloneEngine;
+	private PvDesktop standaloneEngine;
 	
-	public void init(StandaloneEngine aStandaloneEngine) 
+	public void init(PvDesktop aStandaloneEngine) 
 	{
 		swingEngine = aStandaloneEngine.getSwingEngine();
 		standaloneEngine = aStandaloneEngine;

@@ -26,7 +26,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.StandaloneEngine;
+import org.pathvisio.gui.swing.PvDesktop;
 
 /**
  * This class loads and maintains a collection of plugins
@@ -39,14 +39,14 @@ public class PluginManager {
 	
 	Set<Class<Plugin>> plugins = new LinkedHashSet<Class<Plugin>>();
 	
-	final StandaloneEngine standaloneEngine;
+	final PvDesktop standaloneEngine;
 	
 	/**
 	 * Create a plugin manager that loads plugins from the given locations
 	 * @param pluginLocations A list of Strings pointing to jar files 
 	 * or directories that will be searched recursively for jar files.
 	 */
-	public PluginManager(List<String> pluginLocations, StandaloneEngine standaloneEngine) {
+	public PluginManager(List<String> pluginLocations, PvDesktop standaloneEngine) {
 		this.standaloneEngine = standaloneEngine;
 		
 		for(String s : pluginLocations) {

@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -34,6 +35,9 @@ import javax.swing.JProgressBar;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Similar to the swing progress dialog, but this has the option to 
@@ -53,20 +57,27 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 		super(frame, title, modal);
 		
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setResizable(false);
 		
 		task = new JLabel();
+		//task.setPreferredSize(new Dimension (350, 50));
 		report = new JLabel();
+		//report.setPreferredSize(new Dimension (350, 50));
 
 		keeper = progressKeeper;
 		keeper.addListener(this);
 		
 		dialogPane = new JPanel();
-		dialogPane.setLayout(new GridLayout(3, 1));
+		dialogPane.setLayout(new FormLayout(
+				"3dlu, [200dlu,pref], 3dlu",
+				"3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu"));
+		CellConstraints cc = new CellConstraints();
+		
 		dialogPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		task.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 		report.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-		dialogPane.add(task);
-		dialogPane.add(report);
+		dialogPane.add(task, cc.xy (2,2));
+		dialogPane.add(report, cc.xy (2,4));
 		
 		int totalWork = progressKeeper.getTotalWork();
 		progressBar = new JProgressBar();
@@ -77,7 +88,7 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 		{
 			progressBar.setMaximum(totalWork < 1 ? 1 : totalWork);
 		}
-		dialogPane.add(progressBar);
+		dialogPane.add(progressBar, cc.xy (2,6));
 				
 		Container contentPane = getContentPane();
 		contentPane.add(dialogPane, BorderLayout.CENTER);
@@ -90,7 +101,7 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
 			buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-			buttonPane.add(cancelButton);
+			buttonPane.add(cancelButton, cc.xy(2,8));
 			contentPane.add(buttonPane, BorderLayout.PAGE_END);
 		}
 		pack();

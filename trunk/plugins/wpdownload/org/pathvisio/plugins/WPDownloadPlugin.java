@@ -25,11 +25,13 @@ import javax.swing.JOptionPane;
 import javax.xml.rpc.ServiceException;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.data.DataException;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.plugin.Plugin;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.Preference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.wikipathways.WikiPathwaysCache;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
@@ -39,12 +41,43 @@ import org.pathvisio.wikipathways.WikiPathwaysClient;
  */
 public class WPDownloadPlugin implements Plugin
 {
+	/**
+	 * Preferences related to this plug-in that will be stored together with
+	 * other PathVisio preferences.
+	 */
+	enum WPDownloadPreference implements Preference
+	{
+		WPDL_CACHE_DIR (new File(GlobalPreference.getDataDir().toString(), "wikipathways").toString()),
+		WPDL_AUTO (Boolean.toString(false));
+		
+		WPDownloadPreference (String defaultValue) 
+		{
+			this.defaultValue = defaultValue;
+		}
+		
+		private String defaultValue;
+		
+		public String getDefault() {
+			return defaultValue;
+		}
+		
+		public void setDefault(String defValue) {
+			defaultValue = defValue;
+		}			
+	}
+	
 	private PvDesktop desktop;
 	
 	public void init(PvDesktop desktop) 
 	{
 		this.desktop = desktop;
 		desktop.registerMenuAction ("File", wpAction);
+		
+		// do automatically if preference is set.
+		if (PreferenceManager.getCurrent().getBoolean(WPDownloadPreference.WPDL_AUTO))
+		{
+			doCache(PreferenceManager.getCurrent().getFile(WPDownloadPreference.WPDL_CACHE_DIR));
+		}
 	}
 
 	private final WpAction wpAction = new WpAction();
@@ -53,12 +86,12 @@ public class WPDownloadPlugin implements Plugin
 	{
 		WpAction()
 		{
-			putValue (NAME, "Download set from WikiPathways"); 
+			putValue (NAME, "Update from WikiPathways"); 
 		}
 		
 		public void actionPerformed(ActionEvent arg0) 
 		{
-			doCache(new File ("/home/martijn/wikipathways"));
+			doCache(PreferenceManager.getCurrent().getFile(WPDownloadPreference.WPDL_CACHE_DIR));
 		}
 	}
 	
@@ -67,10 +100,10 @@ public class WPDownloadPlugin implements Plugin
 	
 	public void doCache (final File cacheDir) 
 	{
-		final ProgressKeeper pk = new ProgressKeeper();
+		final ProgressKeeper pk = new ProgressKeeper(100);
 		
 		final ProgressDialog d = new ProgressDialog(desktop.getFrame(), 
-				"", pk, false, true);
+				"", pk, true, true);
 
 		SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
 
@@ -80,10 +113,14 @@ public class WPDownloadPlugin implements Plugin
 			protected Void doInBackground() {
 				try
 				{
+					pk.setTaskName("Updating local pathay list");
 					if(client == null) {
 						client = new WikiPathwaysClient();
 					}
+					if (!cacheDir.exists())
+						cacheDir.mkdirs();
 					cache = new WikiPathwaysCache(client, cacheDir);
+					pk.worked (10);
 					cache.update(pk);
 				}
 				catch (ServiceException ex1)
@@ -111,7 +148,8 @@ public class WPDownloadPlugin implements Plugin
 				if (ex != null)
 				{ 
 					ex.printStackTrace();
-					JOptionPane.showMessageDialog(desktop.getFrame(), "Exception while updating cache\n" + ex.getMessage());
+					JOptionPane.showMessageDialog(desktop.getFrame(), 
+							"Exception while updating cache\n" + ex.getMessage());
 				}
 				
 			}

@@ -79,7 +79,7 @@ public class WikiPathwaysCache
 	/**
 	 * @deprecated use update(null) instead
 	 */
-	public List<File> update() throws ConverterException, IOException
+	public Collection<File> update() throws ConverterException, IOException
 	{
 		return update (null);
 	}
@@ -90,12 +90,13 @@ public class WikiPathwaysCache
 	 * Does nothing if there was no way to download.
 	 * @param keeper: an optional ProgressKeeper, may be null
 	 * @return A list of files that were updated (either modified, added or deleted)
+	 * 	the returned list can be partial if the task was cancelled
 	 * @throws IOException 
 	 * @throws ConverterException 
 	 */
-	public List<File> update(ProgressKeeper keeper) throws ConverterException, IOException 
+	public Collection<File> update(ProgressKeeper keeper) throws ConverterException, IOException 
 	{
-		keeper.setTaskName("Checking last modified date");
+		if (keeper != null) keeper.setTaskName("Checking last modified date");
 
 		Set<File> changedFiles = new HashSet<File>();
 		
@@ -105,48 +106,64 @@ public class WikiPathwaysCache
 		Logger.log.info("Date last modified: " + df.format(d)); 
 
 		Logger.log.info("---[Updating new and removed pathways]---");		
-		keeper.setTaskName("Fetching pathway list");
+		if (keeper != null) 
+		{
+			keeper.setTaskName("Fetching pathway list");
+			if (keeper.isCancelled()) return changedFiles;
+		}
 
 		List<WSPathwayInfo> pathways = Arrays.asList(wpClient.listPathways());
 
 		changedFiles.addAll(purgeRemoved(pathways));
-		changedFiles.addAll(downloadNew(pathways));
+		changedFiles.addAll(downloadNew(pathways, keeper));
 
-		keeper.setTaskName("Fetching recently changed pathways");
+		if (keeper != null) 
+		{
+			keeper.setTaskName("Fetching recently changed pathways");
+			if (keeper.isCancelled()) return changedFiles;
+		}
+		
 		Logger.log.info("---[Get Recently Changed pathways]---");
 		
-		changedFiles.addAll(processRecentChanges(d));
+		changedFiles.addAll(processRecentChanges(d, keeper));
 		
 		Logger.log.info("---[Ready]---");
 		Logger.log.info("Updated pathways: " + changedFiles);
 		
 		// update list of files in cache.
-		keeper.setTaskName("Updating local pathway list");
+		if (keeper != null) 
+		{
+			keeper.setTaskName("Updating local pathway list");
+			if (keeper.isCancelled()) return changedFiles;
+		}
+
 		files = FileUtils.getFiles(cacheDirectory, "gpml", true);
 		
-		return new ArrayList<File>(changedFiles);
+		return changedFiles;
 	}
 	
-	private List<File> downloadNew(Collection<WSPathwayInfo> pathways) throws ConverterException, IOException {
+	private List<File> downloadNew(Collection<WSPathwayInfo> pathways, ProgressKeeper keeper) throws ConverterException, IOException {
 		Set<WSPathwayInfo> newPathways = new HashSet<WSPathwayInfo>();
 		
-		for(WSPathwayInfo p : pathways) {
+		int i = 0;
+		for(WSPathwayInfo p : pathways) 
+		{	
 			File f = pathwayToFile(p);
 			if(!f.exists()) {
 				newPathways.add(p);
 			}
-		}
-		
-		return downloadFiles(newPathways);
+			
+		}		
+		return downloadFiles(newPathways, keeper);
 	}
 	
 	/**
 	 * In this method it is possible to download only the pathways that are recently changed. 
-	 * @return a list of files in the cache that has been updated
+	 * @return a list of files in the cache that has been updated (partial if interrupted)
 	 * @throws ConverterException 
 	 * @throws IOException 
 	 */
-	private List<File> processRecentChanges (Date d) throws ConverterException, IOException
+	private List<File> processRecentChanges (Date d, ProgressKeeper keeper) throws ConverterException, IOException
 	{
 		// given path: path to store the pathway cache
 		// and date: the date of the most recent changed 
@@ -161,20 +178,22 @@ public class WikiPathwaysCache
 				changeAndExist.add(p);
 			}
 		}
-		return downloadFiles(changeAndExist);
+		return downloadFiles(changeAndExist, keeper);
 	}
 		
 	/**
 	 * Download the latest version of all given pathways to the cache directory
-	 * @return The list of downloaded files
+	 * @return The list of downloaded files (partial list if interrupted)
 	 * @throws ConverterException 
 	 * @throws IOException 
 	 */
-	private List<File> downloadFiles (Collection<WSPathwayInfo> pathways) throws ConverterException, IOException {
+	private List<File> downloadFiles (Collection<WSPathwayInfo> pathways, ProgressKeeper keeper) throws ConverterException, IOException {
 		List<File> files = new ArrayList<File>();
 		
 		int i = 1;
 		for(WSPathwayInfo pwi : pathways) {
+			if (keeper != null) keeper.report("Downloading " + pwi.getName());			
+
 			File file = pathwayToFile(pwi);
 			WSPathway wsp = wpClient.getPathway(pwi.getId());
 			Pathway p = WikiPathwaysClient.toPathway(wsp);
@@ -184,6 +203,11 @@ public class WikiPathwaysCache
 			files.add(file);
 			Logger.log.info("Downloaded file "+(i++)+" of "+pathways.size()+ ": " + 
 					pwi.getName() + "(" + pwi.getSpecies() + ")");
+			if (keeper != null) 
+			{
+				keeper.worked (50 / pathways.size());
+				if (keeper.isCancelled()) return files;
+			}
 		}
 		return files;
 	}

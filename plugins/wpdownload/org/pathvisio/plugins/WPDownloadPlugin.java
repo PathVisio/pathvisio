@@ -44,7 +44,7 @@ public class WPDownloadPlugin implements Plugin
 	public void init(PvDesktop desktop) 
 	{
 		this.desktop = desktop;
-		desktop.getSwingEngine().registerMenuAction ("File", wpAction);
+		desktop.registerMenuAction ("File", wpAction);
 	}
 
 	private final WpAction wpAction = new WpAction();

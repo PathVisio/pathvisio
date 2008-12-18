@@ -536,20 +536,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return frame;
 	}
 	
-	public void registerMenuAction (String submenu, Action a)	
-	{
-		JMenuBar menuBar = mainPanel.getMenuBar();
-		for (int i = 0; i < menuBar.getMenuCount(); ++i)
-		{
-			JMenu menuAt = menuBar.getMenu(i);
-			if (menuAt.getText().equals (submenu))
-			{
-				menuAt.add(a);
-				break;
-			}
-		}
-	}
-
 	/**
 	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
 	 * current database type.

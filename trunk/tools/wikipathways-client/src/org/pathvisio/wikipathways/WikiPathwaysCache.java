@@ -37,6 +37,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.util.FileUtils;
+import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
@@ -76,13 +77,26 @@ public class WikiPathwaysCache
 	}
 
 	/**
+	 * @deprecated use update(null) instead
+	 */
+	public List<File> update() throws ConverterException, IOException
+	{
+		return update (null);
+	}
+	
+	/**
 	 * Check for missing / outdated pathways
 	 * and download them.
 	 * Does nothing if there was no way to download.
+	 * @param keeper: an optional ProgressKeeper, may be null
 	 * @return A list of files that were updated (either modified, added or deleted)
+	 * @throws IOException 
+	 * @throws ConverterException 
 	 */
-	public List<File> update()
+	public List<File> update(ProgressKeeper keeper) throws ConverterException, IOException 
 	{
+		keeper.setTaskName("Checking last modified date");
+
 		Set<File> changedFiles = new HashSet<File>();
 		
 		long localdate = dateLastModified (files);
@@ -90,28 +104,25 @@ public class WikiPathwaysCache
 		DateFormat df = DateFormat.getDateTimeInstance();
 		Logger.log.info("Date last modified: " + df.format(d)); 
 
-		try
-		{
-			Logger.log.info("---[Updating new and removed pathways]---");
-			
-			List<WSPathwayInfo> pathways = Arrays.asList(wpClient.listPathways());
-			changedFiles.addAll(purgeRemoved(pathways));
-			changedFiles.addAll(downloadNew(pathways));
+		Logger.log.info("---[Updating new and removed pathways]---");		
+		keeper.setTaskName("Fetching pathway list");
 
-			Logger.log.info("---[Get Recently Changed pathways]---");
-			
-			changedFiles.addAll(processRecentChanges(d));
-			
-			Logger.log.info("---[Ready]---");
-			Logger.log.info("Updated pathways: " + changedFiles);
-			
-			// update list of files in cache.
-			files = FileUtils.getFiles(cacheDirectory, "gpml", true);
-		}
-		catch (Exception e)
-		{
-			Logger.log.error("Couldn't update cache", e);
-		}
+		List<WSPathwayInfo> pathways = Arrays.asList(wpClient.listPathways());
+
+		changedFiles.addAll(purgeRemoved(pathways));
+		changedFiles.addAll(downloadNew(pathways));
+
+		keeper.setTaskName("Fetching recently changed pathways");
+		Logger.log.info("---[Get Recently Changed pathways]---");
+		
+		changedFiles.addAll(processRecentChanges(d));
+		
+		Logger.log.info("---[Ready]---");
+		Logger.log.info("Updated pathways: " + changedFiles);
+		
+		// update list of files in cache.
+		keeper.setTaskName("Updating local pathway list");
+		files = FileUtils.getFiles(cacheDirectory, "gpml", true);
 		
 		return new ArrayList<File>(changedFiles);
 	}
@@ -268,10 +279,11 @@ public class WikiPathwaysCache
 		// Set initial value.
 		long lastModified = 0;
 		// Walk through all the pathways.
-		for (File pathway:pathways)
+		for (File pathway : pathways)
 		{
 			// If pathway is more recent, use this date.
-			if (lastModified < pathway.lastModified()){
+			if (lastModified < pathway.lastModified())
+			{
 				lastModified = pathway.lastModified();
 			}
 		}

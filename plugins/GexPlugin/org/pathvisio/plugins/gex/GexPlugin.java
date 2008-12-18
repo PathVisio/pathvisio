@@ -25,7 +25,7 @@ import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.GexImportWizard;
-import org.pathvisio.gui.swing.StandaloneEngine;
+import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;
 
 /**
@@ -35,7 +35,7 @@ import org.pathvisio.plugin.Plugin;
  */
 public class GexPlugin implements Plugin {
 
-	public void init(StandaloneEngine standaloneEngine) 
+	public void init(PvDesktop standaloneEngine) 
 	{
 		ImportGexDataAction importAction = new ImportGexDataAction(standaloneEngine);
 		SelectGexAction selectAction = new SelectGexAction(standaloneEngine);
@@ -51,9 +51,9 @@ public class GexPlugin implements Plugin {
 	{
 		private static final long serialVersionUID = 1L;
 		
-		private final StandaloneEngine sae;
+		private final PvDesktop sae;
 		
-		public ImportGexDataAction(StandaloneEngine sae)
+		public ImportGexDataAction(PvDesktop sae)
 		{
 			super();
 			this.sae = sae;
@@ -75,9 +75,9 @@ public class GexPlugin implements Plugin {
 	public static class SelectGexAction extends AbstractAction 
 	{
 		private static final long serialVersionUID = 1L;
-		private final StandaloneEngine se;
+		private final PvDesktop se;
 		
-		public SelectGexAction(StandaloneEngine standaloneEngine) {
+		public SelectGexAction(PvDesktop standaloneEngine) {
 			se = standaloneEngine;
 			putValue(NAME, "Select expression dataset");
 			putValue(SHORT_DESCRIPTION, "Select expression dataset");

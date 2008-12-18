@@ -76,9 +76,9 @@ public class GexImportWizard extends Wizard
     ColumnPage cpd = new ColumnPage();
     ImportPage ipd = new ImportPage();
     
-    private final StandaloneEngine standaloneEngine;
+    private final PvDesktop standaloneEngine;
     
-	public GexImportWizard (StandaloneEngine standaloneEngine)
+	public GexImportWizard (PvDesktop standaloneEngine)
 	{
 		this.standaloneEngine = standaloneEngine;
 		

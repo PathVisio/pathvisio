@@ -16,7 +16,7 @@
 //
 package org.pathvisio.plugin;
 
-import org.pathvisio.gui.swing.StandaloneEngine;
+import org.pathvisio.gui.swing.PvDesktop;
 
 /**
  * This interface needs to be implemented by PathVisio plugins
@@ -26,5 +26,5 @@ public interface Plugin {
 	/**
 	 * Called on loading the plugin
 	 */
-	public void init(StandaloneEngine standaloneEngine);
+	public void init(PvDesktop desktop);
 }

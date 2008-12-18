@@ -17,7 +17,12 @@
 
 package org.pathvisio.gui.swing;
 
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
@@ -28,6 +33,7 @@ import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.visualization.VisualizationManager;
@@ -47,7 +53,7 @@ import org.pathvisio.visualization.VisualizationMethodRegistry;
  * 
  * //TODO: this class will probably be renamed in the future  
  */
-public class StandaloneEngine implements ApplicationEventListener, GdbEventListener
+public class PvDesktop implements ApplicationEventListener, GdbEventListener
 {
 	private final VisualizationManager visualizationManager;
 	private final GexManager gexManager;
@@ -57,7 +63,7 @@ public class StandaloneEngine implements ApplicationEventListener, GdbEventListe
 	 * During construction, visualizationManager and gexManager will be initialized.
 	 * SwingEngine needs to have been initialized already.
 	 */
-	public StandaloneEngine(SwingEngine swingEngine)
+	public PvDesktop(SwingEngine swingEngine)
 	{
 		if (swingEngine == null) throw new NullPointerException();
 		this.swingEngine = swingEngine;
@@ -159,6 +165,49 @@ public class StandaloneEngine implements ApplicationEventListener, GdbEventListe
 	public void gdbEvent(GdbEvent e) 
 	{
 		loadGexCache();			
+	}
+
+	/**
+	 * Shortcut for getSwingEngine().getFrame()
+	 * Returns frame of main application window.
+	 * Useful for positioning / parenting dialogs 
+	 */
+	public JFrame getFrame()
+	{
+		return swingEngine.getFrame();
+	}
+	
+	/**
+	 * register an action as a menu item
+	 * @param submenu one of "File", "Edit", "Data" or "Help"
+	 */
+	public void registerMenuAction (String submenu, Action a)	
+	{
+		JMenuBar menuBar = swingEngine.getApplicationPanel().getMenuBar();
+		for (int i = 0; i < menuBar.getMenuCount(); ++i)
+		{
+			JMenu menuAt = menuBar.getMenu(i);
+			if (menuAt.getText().equals (submenu))
+			{
+				menuAt.add(a);
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * Returns the JTabbedPane that corresponds to the side-bar 
+	 * shortcut for 
+	 * swingEngine.getApplicationPanel.getSideBarTabbedPane.
+	 */
+	public JTabbedPane getSideBarTabbedPane()
+	{
+		return swingEngine.getApplicationPanel().getSideBarTabbedPane();
+	}
+	
+	public void addPathwayElementMenuHook(PathwayElementMenuHook hook)
+	{
+		swingEngine.getApplicationPanel().getPathwayElementMenuListener().addPathwayElementMenuHook(hook);
 	}
 
 }

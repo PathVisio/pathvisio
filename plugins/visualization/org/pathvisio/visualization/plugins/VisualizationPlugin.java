@@ -24,7 +24,7 @@ import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
-import org.pathvisio.gui.swing.StandaloneEngine;
+import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
@@ -39,9 +39,9 @@ import org.pathvisio.visualization.gui.VisualizationDialog;
  */
 public class VisualizationPlugin implements Plugin {
 
-	public void init(StandaloneEngine standaloneEngine) 
+	public void init(PvDesktop standaloneEngine) 
 	{
-		final StandaloneEngine se = standaloneEngine;
+		final PvDesktop se = standaloneEngine;
 		
 		//Register the visualization methods
 		VisualizationMethodRegistry reg = 
@@ -83,9 +83,9 @@ public class VisualizationPlugin implements Plugin {
 	public static class VisualizationAction extends AbstractAction implements GexManagerListener {
 		private static final long serialVersionUID = 1L;
 		MainPanel mainPanel;
-		private final StandaloneEngine ste;
+		private final PvDesktop ste;
 		
-		public VisualizationAction(StandaloneEngine ste) 
+		public VisualizationAction(PvDesktop ste) 
 		{
 			this.ste = ste;
 			putValue(NAME, "Visualization options");

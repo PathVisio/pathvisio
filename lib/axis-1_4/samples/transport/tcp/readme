@@ -1,0 +1,39 @@
+To run the TCP Transport samples, do the following:
+1.  Set up your CLASSPATH.
+2.  Start a server.
+3.  Deploy the service.
+4.  Run the sample.
+
+1.  Set up your CLASSPATH.
+    The CLASSPATH must contain:  an XML parser (ie., Xerces), JUnit
+    (www.junit.org), all the jars in the lib directory, and the directory
+    containing the samples subdirectory.
+
+2.  Start a  server.
+    To run the sample, you will first need to run a server.  To run the TCP
+    server:
+        java samples.transport.tcp.TCPListener -p <SERVER_PORT>
+
+3.  Deploy the service.
+    To deploy the service, run:
+        java samples.transport.tcp.AdminClient -l tcp://<SERVER_NAME>:<SERVER_PORT> deploy.wsdd 
+    
+   TCPListner does not save the deployed services in any config files. So you have 
+   to deploy the service every time you restart the TCPListener.
+    
+   The list of currently deployed services can be seen using:
+        java samples.transport.tcp.AdminClient -l tcp://<SERVER_NAME>:<SERVER_PORT> list
+
+4.  Run the sample.
+    Finally, to run the client, run:
+	java samples.transport.tcp.GetQuote -l tcp://<SERVER_NAME>:<SERVER_PORT> <SYMBOL>
+
+
+Also note that if you use some other URL scheme, for example, http://...... in the 
+step 4, the request is sent using the HTTP protocol. Thus if you are not using the 
+TCPListener, but some HTTP server or SimpleAxisServer, you can use the same client 
+with URL = http://<SERVER_NAME>:<SERVER_PORT>/ServicePATH to invoke the service.
+
+The onwire representation of the TCP transport request is:
+<SIZE_OF_THE_MESSAGE> <NEWLINE> <SOAP_MESSAGE>
+

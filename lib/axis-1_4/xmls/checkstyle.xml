@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
+]>
+<project name="CheckStyle" default="usage">
+
+  <description>
+  this is a library task file that is only to be invoked in an ant task.
+  </description>
+
+    &properties;
+    &paths;
+    
+  <!-- Load in all standard app-wide properties -->
+
+  <property name="checkstyle.project" value="axis"/>
+
+  <property name="checkstyle.src.dir" location="${axis.home}/src"/>
+  <property name="checkstyle.dest.dir" location="${build.dir}/checkstyle/${checkstyle.project}"/>
+  <property name="checkstyle-noframes.xsl"
+            location="${axis.home}/xmls/checkstyle-noframes.xsl"/>
+
+  <property name="checkstyle.failonerror" value="false"/>            
+<!--   <path id="checkstyle.classpath">
+    <path refid="ant.classpath" />
+  </path>
+   -->
+
+
+  <!-- look for checkstyle; fail gracefully -->
+  <target name="probe_checkstyle">
+    <fail unless="axis.home">
+      axis.home is not defined; this is required
+    </fail>
+    <!-- classpathref="checkstyle.classpath" -->
+    <available property="checkstyle.found"
+      resource="checkstyletask.properties" 
+      />
+    <fail unless="checkstyle.found">
+      Unable to find the checkstyle jar on the classpath
+    </fail>
+  </target>
+
+  <target name="init" depends="probe_checkstyle" >
+    <taskdef resource="checkstyletask.properties" />
+  </target>
+  
+  <target name="checkstyle" depends="init"
+    description="Check the style of a project">
+    <echo message="Checking style of ${checkstyle.project}"/>
+    <mkdir dir="${checkstyle.dest.dir}"/>
+    <property name="report.stem" value="checkstyle-${checkstyle.project}" />
+    <property name="results.xml" value="${report.stem}.xml" />
+    <property name="resultsfile.xml" 
+      location="${checkstyle.dest.dir}/${results.xml}" />
+    <property name="resultsfile.html" 
+      location="${checkstyle.dest.dir}/${report.stem}.html" />
+      <!-- 
+        to keep the 5000+ errors manageable and so pick on the key issues 
+          line length cranked up from apache's 68 rule.
+          javadocs are unchecked
+          whitespace is ignored
+          protected data is allowed
+        some time these can be cranked back, though protected vs accessors is a major 
+        design issue, not a simple source layout problem. 
+        -->
+    <checkstyle failOnViolation="${checkstyle.failonerror}"
+                maxLineLen="100"
+                allowNoAuthor="true"
+                ignoreWhitespace="true"
+                allowProtected="true"
+                javadocScope="nothing"
+                cacheFile="${checkstyle.dest.dir}/checkstyle.cache">
+      <formatter type="plain"/>
+      <formatter type="xml" toFile="${resultsfile.xml}"/>
+      <fileset dir="${checkstyle.src.dir}" includes="**/*.java"/>
+    </checkstyle>
+    
+    <style basedir="${checkstyle.dest.dir}" destdir="${checkstyle.dest.dir}"
+           includes="${results.xml}"
+           style="${checkstyle-noframes.xsl}"/>
+     <echo>
+      Style checked, results are in ${resultsfile.html}
+     </echo>
+  </target>
+  
+  <target name="usage" >
+  <echo>
+This build file validates the source in a directory
+    
+Required properties:
+  axis.home               base of axis java project
+  checkstyle.project      name of the project
+  checkstyle.src.dir      source directory
+  checkstyle.dest.dir     dir for results
+
+Optional
+  checkstyle.failonerror  failonerror flag; default=false
+  checkstyle.classpath    path to checkstyle.jar; default=ant classpath 
+
+    </echo>
+  </target>
+</project>

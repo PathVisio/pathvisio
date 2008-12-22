@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+
+<definitions name="urn:GetQuote" 
+             targetNamespace="urn:xmltoday-delayed-quotes"
+             xmlns:tns="urn:xmltoday-delayed-quotes"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- message declns -->
+  <message name="testRequest"/>
+  <message name="testResponse">
+    <part name="testResult" type="xsd:string"/>
+  </message>
+
+  <message name="GetQuoteRequest">
+    <part name="symbol" type="xsd:string"/>
+  </message>
+
+  <message name="GetQuoteResponse">
+    <part name="result" type="xsd:float"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="GetQuote">
+    <operation name="getQuote" >
+      <input  message="tns:GetQuoteRequest"/>
+      <output message="tns:GetQuoteResponse"/>
+    </operation>
+    <operation name="test" >
+      <input message="tns:testRequest"/>
+      <output message="tns:testResponse"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="GetQuoteBinding" type="tns:GetQuote">
+    <soap:binding style="rpc" 
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getQuote">
+      <soap:operation soapAction="getQuote"/>
+      <input>
+        <soap:body use="encoded" 
+                   namespace="urn:xmltoday-delayed-quotes" 
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+                   namespace="urn:xmltoday-delayed-quotes"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="test">
+      <soap:operation soapAction="test"/>
+      <input>
+        <soap:body use="encoded" 
+                   namespace="urn:xmltoday-delayed-quotes" 
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+                   namespace="urn:xmltoday-delayed-quotes"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="GetQuoteService">
+    <port name="GetQuote" binding="tns:GetQuoteBinding">
+      <soap:address location="jms:/SampleQ1?vendor=SonicMQ;brokerURL=localhost:2506;defaultUser=Administrator;defaultPassword=Administrator"/>
+    </port>
+    <port name="GetQuoteJava" binding="tns:GetQuoteBinding">
+      <soap:address location="java:samples.stock.StockQuoteService"/>
+    </port>
+  </service>
+
+</definitions>

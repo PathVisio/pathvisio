@@ -56,7 +56,7 @@ public class PppPane extends JPanel
 		VPathwaySwing wrapper = new VPathwaySwing(scroller);
 		VPathway vPwy = wrapper.createVPathway();
 		vPwy.setEditMode(false);
-		vPwy.setPctZoom(50);
+		vPwy.setPctZoom(75);
 		vPwy.fromModel(part);
 		scroller.add(wrapper);
 

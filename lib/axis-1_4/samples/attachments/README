@@ -1,0 +1,56 @@
+To run the attachments sample, you must do the following:
+1.  Set up your CLASSPATH.
+2.  Start a server.
+3.  Deploy the service.
+4.  Run the sample.
+
+1.  Set up your CLASSPATH.
+    The CLASSPATH must contain:  an XML parser (ie., Xerces), JUnit
+    (www.junit.org), mail and activation jars (ie., Tomcat's mail.jar and
+    activation.jar), all the jars in the lib directory, and the directory
+    containing the samples subdirectory.
+
+2.  Start a server.
+    You must have a server running (ie., Tomcat) with the AXIS samples
+    available to it.  For this test, the AXIS SimplAxisServer is not enough.
+    See the documentation for your server for details.
+
+3.  Deploy the service.
+    To deploy the service, run:
+        java org.apache.axis.client.AdminClient attachdeploy.wsdd 
+
+4.  Run the sample.
+    Usage:
+      java samples.attachments.EchoAttachment [options] file | dir 
+
+    options:
+      -d           turn on debugging - more 'd means more info
+      -h<HOST>     server host name
+      -l<URL>      ie. http://localhost:80/axis/servlet/AxisServlet
+      -p<PORT#>    server port number
+      -s<SERVLET>  ie. axis/servlet/AxisServlet
+      -u<USERID>   user-id
+      -w<PASSWD>   password
+
+If you use the authorization and authentication handlers you'll need
+to add a couple of files to your Servlet Engine's current dir:
+
+users.lst
+ - list of users and passwords
+
+perms.lst
+ - list of users and allowable actions per user
+
+The demo sends the file specified as an attachment to the service which in
+turn sends the same attachment back. The file sent back is then compared 
+  to see if it matches with the original.
+
+If a directory is specified, the same is done except all the files in that 
+ directory are sent, received and compared in one call.
+
+Scripts are provided to help with the above.  Specify the above options if the
+  host is not "localhost" or the port is not 8080.
+
+deployit    Will deploy the service.
+testit      Will test the service.
+undeployit  Will undeploy the service.

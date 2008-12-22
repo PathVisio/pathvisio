@@ -1,0 +1,12 @@
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <globalConfiguration>
+  <requestFlow>
+    <!-- define the Server Signature Verification handler configuration -->
+    <handler name="track" type="java:samples.security.LogHandler">
+     <parameter name="filename" value="MyService.log"/>
+    </handler>
+  </requestFlow>
+ </globalConfiguration>
+</deployment>
+

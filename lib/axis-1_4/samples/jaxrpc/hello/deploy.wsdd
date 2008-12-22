@@ -1,0 +1,39 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from HelloWorld WSDL service -->
+
+  <service name="HelloPort" provider="java:RPC">
+      <parameter name="wsdlTargetNamespace" value="http://hello.jaxrpc.samples/"/>
+      <parameter name="wsdlServiceElement" value="HelloWorld"/>
+      <parameter name="wsdlServicePort" value="HelloPort"/>
+      <parameter name="className" value="samples.jaxrpc.hello.HelloBindingImpl"/>
+      <parameter name="wsdlPortType" value="Hello"/>
+      <parameter name="scope" value="session"/>
+      <operation name="sayHello" qname="operNS:sayHello" xmlns:operNS="http://hello.jaxrpc.samples/" returnQName="result" >
+        <parameter name="String_1" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="sayHello"/>
+      <requestFlow>
+       <handler type="java:org.apache.axis.handlers.JAXRPCHandler">
+        <parameter name="scope" value="session"/>
+        <parameter name="className" value="samples.jaxrpc.hello.ClientHandler"/>
+       </handler>
+      </requestFlow>
+      <responseFlow>
+       <handler type="java:org.apache.axis.handlers.JAXRPCHandler">
+        <parameter name="scope" value="session"/>
+        <parameter name="className" value="samples.jaxrpc.hello.ClientHandler"/>
+       </handler>
+      </responseFlow>
+  </service>
+</deployment>

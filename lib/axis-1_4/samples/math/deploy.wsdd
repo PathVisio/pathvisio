@@ -1,0 +1,20 @@
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+  <service name="Math" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://math.samples/"/>
+      <parameter name="className" value="samples.math.Math"/>
+      <operation name="add" qname="operNS:Add" 
+                 xmlns:operNS="http://math.samples/" 
+                 returnQName="retNS:AddResult" 
+                 xmlns:retNS="http://math.samples/" 
+                 returnType="rtns:float" 
+                 xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter qname="pns:A" xmlns:pns="http://math.samples/" 
+                   type="tns:float" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="pns:B" xmlns:pns="http://math.samples/" 
+                   type="tns:float" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="add"/>
+  </service>
+</deployment>

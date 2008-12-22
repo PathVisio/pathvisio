@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+        targetNamespace="http://localhost:8080/axis/services/ElementService"
+        xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:intf="http://localhost:8080/axis/services/ElementService"
+        xmlns:impl="http://localhost:8080/axis/services/ElementService-impl"
+        xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        xmlns:tns1="http://xml.apache.org/xml-soap"
+        xmlns="http://schemas.xmlsoap.org/wsdl/">
+        <types>
+          <schema xmlns="http://www.w3.org/2001/XMLSchema"
+                  targetNamespace="http://xml.apache.org/xml-soap">
+             <complexType name="Element"><all/>
+             </complexType>
+             <element name="Element" nillable="true" type="tns1:Element"/>
+          </schema>
+        </types>
+  <wsdl:message name="echoElementRequest">
+    <wsdl:part name="in0" type="xsd:string"/>
+    <wsdl:part name="in1" type="tns1:Element"/>
+  </wsdl:message>
+  <wsdl:message name="echoElementResponse">
+    <wsdl:part name="echoElementResult" type="tns1:Element"/>
+  </wsdl:message>
+  <wsdl:portType name="ElementService">
+    <wsdl:operation name="echoElement">
+      <wsdl:input message="intf:echoElementRequest"/>
+      <wsdl:output message="intf:echoElementResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ElementServiceSoapBinding" type="intf:ElementService">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="echoElement">
+      <soap:operation soapAction="" style="rpc"/>
+      <wsdl:input>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/axis/services/ElementService"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/axis/services/ElementService"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ElementServiceService">
+    <wsdl:port name="ElementService" binding="intf:ElementServiceSoapBinding">
+      <soap:address location="http://localhost:8080/axis/services/ElementService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

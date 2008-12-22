@@ -1,0 +1,96 @@
+// package samples.bidbuy;
+
+import org.apache.axis.utils.QName;
+import org.apache.axis.encoding.BeanSerializer;
+import org.apache.axis.encoding.TypeMappingRegistry;
+
+/**
+ * Big/PurchaseOrder Service
+ */
+public class BidService {
+
+    static int nextReceiptNumber = 9000;
+
+    /**
+     * Request a quote for a given quantity of a specified product
+     * @param productName name of product
+     * @param quantity number desired
+     * @return Total amount in US$ for complete purchase
+     */
+    public double RequestForQuote(String productName, int quantity) {
+        if (quantity < 100) {
+           return 1.0 * quantity;
+        } if (quantity < 1000) {
+           return 0.8 * quantity;
+        } else {
+           return 0.7 * quantity;
+        } 
+ 
+    }
+
+    /**
+     * Purchase a given quantity of a specified product
+     * @param productName name of product
+     * @param quantity number desired
+     * @param price desired price (!!!)
+     * @param customerId who you are
+     * @param shipTo where you want the goods to go
+     * @param date where you want the goods to go
+     * @return Receipt
+     */
+    public String SimpleBuy(String productName, String address, int quantity) {
+        return Integer.toString(nextReceiptNumber++) + "\n" +
+            quantity + " " + productName;
+    }
+
+    /**
+     * Register the serializers and deserializers required to implement
+     * a Buy service
+     * @param map the TypeMappingRegistry to update
+     */
+    public void BuyTypeMap(TypeMappingRegistry map) throws Exception {
+
+        // register the PurchaseOrder class
+        QName poqn = new QName("http://www.soapinterop.org/Bid", 
+                               "PurchaseOrder");
+        Class cls = PurchaseOrder.class;
+        map.addSerializer(cls, poqn, new BeanSerializer(cls));
+        map.addDeserializerFactory(poqn, cls, BeanSerializer.getFactory(cls));
+
+        // register the Address class
+        QName aqn = new QName("http://www.soapinterop.org/Bid", "Address");
+        cls = Address.class;
+        map.addSerializer(cls, aqn, new BeanSerializer(cls));
+        map.addDeserializerFactory(aqn, cls, BeanSerializer.getFactory(cls));
+
+        // register the LineItem class
+        QName liqn = new QName("http://www.soapinterop.org/Bid", "LineItem");
+        cls = LineItem.class;
+        map.addSerializer(cls, liqn, new BeanSerializer(cls));
+        map.addDeserializerFactory(liqn, cls, BeanSerializer.getFactory(cls));
+
+    }
+
+    /**
+     * Process a purchase order.
+     * @return Receipt
+     */
+    public String Buy(PurchaseOrder PO) {
+        String receipt = Integer.toString(nextReceiptNumber++);
+        System.out.println("PO: " + PO);
+
+        for (int i=0; i<PO.getItems().length; i++) {
+            LineItem item = PO.getItems()[i];
+            receipt += "\n  " + item.getQuantity() + " " + item.getName();
+        }
+
+        return receipt;
+    }
+
+    /**
+     * Let the world know that we are still alive...
+     */
+    public void Ping() {
+    }
+
+}

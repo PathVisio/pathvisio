@@ -1,0 +1,10 @@
+<!-- This file can be used to deploy the echoAttachments sample -->
+<!-- using this command: java org.apache.axis.client.AdminClient attachdeploy.wsdd -->
+
+<!-- This deploys the echo attachment service.  -->
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns1="urn:EchoAttachmentsService" >
+  <service name="urn:attachmentsTestRef" provider="java:MSG">
+    <parameter value="samples.attachments.EchoAttachmentsService" name="className"/>
+    <parameter value="attachments" name="allowedMethods"/>
+  </service>
+</deployment>

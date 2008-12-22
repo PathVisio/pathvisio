@@ -1,0 +1,12 @@
+<!-- Use this file to deploy some handlers/chains and services   -->
+<!-- on the client.  To do this simply run:                      -->
+<!--   java org.apache.axis.utils.Admin client client_deploy.xml -->
+<!--      from the same dir that the Axis client will run in     -->
+<!-- This file will be replaced by WSDD once it's ready          -->
+
+<m:deploy xmlns:m="AdminService">
+  <handler name="log" class="org.apache.axis.handlers.LogHandler" />
+
+  <service name="urn:xmltoday-delayed-quotes" request="log"
+           response="log" />
+</m:deploy>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://superflaco.com/" xmlns:flaco="http://superflaco.com/xbeans" targetNamespace="http://superflaco.com/">
+	<types>
+		<xs:schema>
+			<xs:import namespace="http://superflaco.com/xbeans" schemaLocation="starwars.xsd"/>
+		</xs:schema>
+	</types>
+	<message name="getChewbeccaRequest"/>
+	<message name="getChewbeccaResponse">
+		<part name="response" element="flaco:character"/>
+	</message>
+	<message name="stashCharRequest">
+		<part name="request" element="flaco:character"/>
+	</message>
+	<message name="stashCharResponse">
+		<part name="response" element="flaco:character"/>
+	</message>
+	<portType name="StarWarsPortType">
+		<operation name="getChewbecca">
+			<input message="tns:getChewbeccaRequest"/>
+			<output message="tns:getChewbeccaResponse"/>
+		</operation>
+		<operation name="stashChar">
+			<input message="tns:stashCharRequest"/>
+			<output message="tns:stashCharResponse"/>
+		</operation>
+	</portType>
+	<binding name="StarWarsBinding" type="tns:StarWarsPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="getChewbecca">
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="stashChar">
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="StarWars">
+		<port name="StarWarsPort" binding="tns:StarWarsBinding">
+			<soap:address location="http://localhost:8080/axis/services/StarWarsPort"/>
+		</port>
+	</service>
+</definitions>

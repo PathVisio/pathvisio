@@ -1,0 +1,20 @@
+<!-- This file can be used to deploy the echoAttachments sample -->
+<!-- using this command: java org.apache.axis.client.AdminClient attachdeploy.wsdd -->
+
+<!-- This deploys the echo attachment service.  -->
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java" xmlns:ns1="urn:EchoAttachmentsService" >
+  <service name="urn:EchoAttachmentsService" provider="java:RPC" >
+    <parameter name="className" value="samples.attachments.EchoAttachmentsService"/>
+    <parameter name="allowedMethods" value="echo echoDir"/>
+    <operation name="echo" returnQName="returnqname" returnType="ns1:DataHandler" >
+        <parameter name="dh" type="ns1:DataHandler"/>
+      </operation>
+
+ <typeMapping deserializer="org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory"
+   languageSpecificType="java:javax.activation.DataHandler" qname="ns1:DataHandler"
+    serializer="org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory" 
+    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+     />
+  </service>
+
+</deployment>

@@ -1,0 +1,35 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from PerfService WSDL service -->
+
+  <service name="PerfPort" provider="java:RPC" style="rpc" use="encoded" streaming="on">
+      <parameter name="wsdlTargetNamespace" value="http://perf.samples"/>
+      <parameter name="wsdlServiceElement" value="PerfService"/>
+      <parameter name="wsdlServicePort" value="PerfPort"/>
+      <parameter name="className" value="samples.perf.PerfPortSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="PerfService"/>
+      <operation name="handleStringArray" qname="operNS:handleStringArray" xmlns:operNS="http://perf.samples" returnQName="handleStringArrayReturn" returnType="rtns:string" xmlns:rtns="http://schemas.xmlsoap.org/soap/encoding/" soapAction="" >
+        <parameter name="s" type="tns:ArrayOf_xsd_string" xmlns:tns="http://perf.samples"/>
+      </operation>
+      <parameter name="allowedMethods" value="handleStringArray"/>
+
+      <typeMapping
+        xmlns:ns="http://perf.samples"
+        qname="ns:ArrayOf_xsd_string"
+        type="java:java.lang.String[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+  </service>
+</deployment>

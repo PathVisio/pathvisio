@@ -1,0 +1,24 @@
+ <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/"
+			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <transport name="SimpleHTTP" pivot="HTTPSender">
+   <requestFlow>
+    <handler name="HTTPActionHandler"
+             type="java:org.apache.axis.handlers.http.HTTPActionHandler"/>
+   </requestFlow>
+  </transport>
+
+  <service name="EchoService" provider="Handler">
+      <parameter name="handlerClass"
+                 value="org.apache.axis.handlers.EchoHandler"/>
+  </service>
+
+  <service name="ProxyService" provider="java:MSG" >
+    <parameter name="className" value="samples.proxy.ProxyService" />
+    <parameter name="allowedMethods" value="proxyService" />
+    <parameter name="FullMessageService" value="true" />
+    <parameter name="URL" value="tcp://localhost:8088/" />
+  </service>
+
+</deployment>
+

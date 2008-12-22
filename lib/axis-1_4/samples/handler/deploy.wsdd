@@ -1,0 +1,5 @@
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <service name="TestMimeHeaderService" provider="Handler">
+ 	<parameter name="handlerClass" value="samples.handler.TestMimeHeaderHandler"/>
+ </service>
+</deployment>

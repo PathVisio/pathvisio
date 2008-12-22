@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="Axis_SwA"
+    targetNamespace="http://swa.samples"
+    xmlns:swa="http://swa.samples"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    >
+
+    <message name="SwaRequest">
+        <part name="applicationName" type="xsd:string"/>
+        <part name="content" type="xsd:base64Binary"/>
+    </message>
+
+    <message name="SwaResponse">
+        <part name="return" type="xsd:string"/>
+    </message>
+
+    <portType name="swaPort">
+        <operation name="swaSend">
+            <input message="swa:SwaRequest"/>
+            <output message="swa:SwaResponse"/>
+        </operation>
+    </portType>
+
+    <!--
+     This binding defines a SOAP with Attachment binding of swaPort. The whole
+     message is a MIME multipart/related message, i.e. the second part of the
+     message is related to the first part.
+     - The first part of this message contains the SOAP envelope.
+     - The second part itself is another multipart MIME message. This provides a
+       very flexible way to send more than one attachment (attachment files) with
+       one SOAP request.
+
+     Due to the binding definitions the "content" part of the message (see message 
+     definition above will contain a reference to the second part. This the type
+     definition of "content" is dummy (in reality its a "xsd:anyURI").
+
+     The SOAP toolkit shall automatically perform the necessary referencing and
+     dereferencing during serialization and deserialization.
+     -->
+
+    <binding name="swaBinding" type="swa:swaPort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="swaSend">
+            <soap:operation soapAction="swaSend"/>
+            <input>
+                <mime:multipartRelated>
+                    <mime:part>
+                        <soap:body use="literal" parts="applicationName"/>
+                    </mime:part>
+                    <mime:part>
+                        <mime:content part="content" type="multipart/mixed"/>
+                    </mime:part>
+                </mime:multipartRelated>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="swaService">
+        <port name="SwaHttp" binding="swa:swaBinding">
+            <soap:address location="http://localhost:8081/axis/services/swaHttp"/>
+        </port>
+    </service>
+</definitions>

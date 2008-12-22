@@ -20,20 +20,17 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 
-import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
+
 
 /**
  * Generates Putative Pathway Parts based on a 
@@ -41,19 +38,19 @@ import org.pathvisio.model.Xref;
  */
 public class HmdbPppPlugin {
 
-    private static final double HUB_X = 2000;
-    private static final double HUB_Y = 2000;
-    private static final double RADIUS = 1000;
+    private static final double HUB_X = 4000;
+    private static final double HUB_Y = 4000;
+    private static final double RADIUS = 2500;
     
-	public Pathway doSuggestion(PathwayElement input)
+	public Pathway doSuggestion(PathwayElement input) throws IOException
 	{
-		try {
+	/*	try {
             // The newInstance() call is a work around for some
             // broken Java implementations
             Class.forName("com.mysql.jdbc.Driver").newInstance();
         } catch (Exception ex) {
             // handle the error
-        }
+        }*/
         
 	    Pathway result = new Pathway();
 	    PathwayElement pelt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
@@ -67,55 +64,33 @@ public class HmdbPppPlugin {
 	    pelt.setCopyright("Human metabolome database (http://www.hmdb.ca)");
 	    pelt.setDataNodeType(input.getDataNodeType());
 	    result.add(pelt);
-	    Xref ref = input.getXref();
-        Connection conn;
-		try {
-		    conn = 
-		       DriverManager.getConnection("jdbc:mysql://localhost/hmdb?" + 
-		                                   "user=pathvisio");
-		    
 
-		    
-		    PreparedStatement st = conn.prepareStatement (
-		    		"SELECT DISTINCT " +
-		    			"h.` Ref_ID`,h.` Common_Name`,h.` Accession_No`, " +
-		    			"m.Swissprot_ID, m.Gene_Name, m.References " +
-		    		"FROM " +
-		    			"hmdb h, macromolecular_interacting_partner m " +
-		    		"WHERE " +
-		    			"h.` Accession_No` = ? " +
-		    			"AND h.` Accession_No` = m.hmdbid");
-
-		    st.setString(1, ref.getId());
-		    ResultSet rs = st.executeQuery();
-		    
-		    double angle = 0;
-		    int noRecords = 0;
-		    while (rs.next()){
-		    	noRecords += 1;
-		    }
-		    ResultSet rsf = st.executeQuery();
-		    double incrementStep = 0;
-		    incrementStep = (2* Math.PI)/noRecords;
-		    while (rsf.next())
-		    {
-		    	//Each tuple is a pathway element
-		    	PathwayElement pchildElt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+       
+		double angle = 0;
+		int noRecords = 0;
+		String aLine;
+		
+		String urlString = "http://www.hmdb.ca/cgi-bin/extractor_runner.cgi?metabolites_hmdb_id=hmdb00101&format=csv&select_enzymes_gene_name=on&select_enzymes_swissprot_id=on";
+		URL url = new URL(urlString);
+		InputStream in = url.openStream();
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		while ((br.readLine()) != null ) {
+			noRecords += 1;
+		}
+		double incrementStep = (2* Math.PI)/noRecords;
+		int row = 0;
+		in.close();
+		InputStream in2 = url.openStream();
+		BufferedReader br2 = new BufferedReader(new InputStreamReader(in2));
+		while ((aLine = br2.readLine()) != null ) {
+			String[] velden = null;
+			velden = aLine.split(",");
+			if (row >0) { //Each row except the header
+				PathwayElement pchildElt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		    	PathwayElement connectElement = PathwayElement.createPathwayElement(ObjectType.LINE);
-		    	
-		    	// Get common_name for the metabolite (rs.getString(2))
-		    	String commonName = null;
-		    	commonName = rsf.getString(2);
-		    	System.out.println ("\t" + rsf.getString(2));
-		    	
-		    	String swissId = rsf.getString(4);
-		    	
-		    	int start = swissId.indexOf('(');
-		    	int end = swissId.lastIndexOf(')');
-				String actualId = swissId.substring(start + 1, end);
-				
-				//Get gene_name (rs.getString())
-		    	String geneName = rsf.getString(5);
+		    	String swissId = velden[3];
+		    	System.out.println(swissId);
+		    	String geneName = velden[2];
 		    	connectElement.setMStartX(HUB_X);
 		    	connectElement.setMStartY(HUB_Y);
 		    	connectElement.setMEndX(HUB_X + RADIUS * Math.cos(angle));
@@ -123,7 +98,7 @@ public class HmdbPppPlugin {
 		    	pchildElt.setDataNodeType (DataNodeType.PROTEIN);
 		    	pchildElt.setTextLabel(geneName);
 		    	pchildElt.setDataSource (DataSource.UNIPROT);
-		    	pchildElt.setGeneID(actualId);
+		    	pchildElt.setGeneID(swissId);
 			    pchildElt.setMWidth (1200);
 			    pchildElt.setMHeight (300);
 			    pchildElt.setMCenterX(HUB_X + RADIUS * Math.cos(angle));
@@ -131,24 +106,9 @@ public class HmdbPppPlugin {
 			    result.add(pchildElt);
 			    result.add(connectElement);
 		    	angle += incrementStep;
-		    	System.out.println(angle);
-		    	
-		    	// Split Ref_ID, which contains pubmed_id's to the selected metabolite rs.getString(1)
-		    	String [] metabolitePmids = null;
-		    	metabolitePmids = rsf.getString(1).split("; ");
-		    	for (int i = 0 ; i < metabolitePmids.length ; i++) {
-		    		PublicationXRef xref = new PublicationXRef();
-		    		xref.setPubmedId(metabolitePmids[i]);
-		    		pchildElt.getBiopaxReferenceManager().addElementReference(xref);
-		            System.out.println(metabolitePmids[i]);
-		    	}
-		    }
-		    
-		} catch (SQLException ex) {
-		    // handle any errors
-		    System.out.println("SQLException: " + ex.getMessage());
-		    System.out.println("SQLState: " + ex.getSQLState());
-		    System.out.println("VendorError: " + ex.getErrorCode());
+			}
+			
+			row++; //exclude row with headings
 		}
 		return result;
 	}

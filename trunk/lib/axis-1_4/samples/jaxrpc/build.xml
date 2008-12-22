@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+
+<project default="compile">
+<property name="axis.home" location="../.." />
+<property name="componentName" value="samples/jaxrpc" />
+
+        &properties;
+        &paths;
+        &taskdefs;
+	&taskdefs_post_compile;
+	&targets;
+
+<target name="clean"/>
+
+<target name="copy" depends="setenv"/>
+
+<target name="compile" depends="copy">
+    <!-- jaxrpc Dynamic proxy with bean - Bug 10824 -->
+    <wsdl2java url="${axis.home}/samples/jaxrpc/address/Address.wsdl"
+               output="${axis.home}/build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <copy todir="${build.dir}/work/samples/jaxrpc/address" overwrite="yes">
+        <fileset dir="${axis.home}/samples/jaxrpc/address">
+          <include name="**.java"/>
+        </fileset>
+    </copy>
+
+    <!-- Compile the echo sample generated java files -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
+      <classpath refid="classpath" />
+      <include name="samples/addr/**.java" />
+      <include name="samples/jaxrpc/address/**.java" />
+    </javac>
+
+    <!-- jaxrpc sample -->
+    <wsdl2java url="${axis.home}/samples/jaxrpc/hello/HelloWorld.wsdl"
+               output="${build.dir}/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <!-- jaxrpc sample -->
+    <wsdl2java url="${axis.home}/samples/jaxrpc/hello/HelloWorld.wsdl"
+               output="${build.dir}/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <copy todir="${build.dir}/work/samples/jaxrpc/hello" overwrite="yes">
+      <fileset dir="${axis.home}/samples/jaxrpc/hello">
+        <include name="ServerHandler.java"/>
+        <include name="ClientHandler.java"/>
+      </fileset>
+    </copy>
+
+    <!-- Compile the echo sample generated java files -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
+      <classpath refid="classpath" />
+      <include name="samples/jaxrpc/**/*.java" />
+      <include name="samples/jaxrpc/*.java" />
+    </javac>
+
+</target>
+
+<target name="deploy"/>
+
+<target name="run"/>
+
+<target name="undeploy"/>
+
+</project>

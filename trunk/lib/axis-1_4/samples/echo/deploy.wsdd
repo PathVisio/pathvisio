@@ -1,0 +1,198 @@
+<!-- Use this file to deploy some handlers/chains and services  -->
+<!-- Two ways to do this:                                       -->
+<!--   java org.apache.axis.utils.Admin deploy.wsdd              -->
+<!--      from the same dir that the Axis engine runs           -->
+<!-- or                                                         -->
+<!--   java org.apache.axis.client.http.AdminClient deploy.wsdd  -->
+<!--      after the axis server is running                      -->
+
+ <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/"
+			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
+  <service name="echo" provider="java:RPC" >
+    <namespace>http://soapinterop.org/</namespace>
+    <parameter name="className" value="samples.echo.InteropTestSoapBindingImpl" />
+    <parameter name="allowedMethods" value="*" />
+
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfstring"
+        type="java:java.lang.String[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfString2D"
+        type="java:java.lang.String[][]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfint"
+        type="java:int[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOffloat"
+        type="java:float[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPStruct"
+        type="java:samples.echo.SOAPStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfSOAPStruct"
+        type="java:samples.echo.SOAPStruct[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/"
+        qname="ns:ArrayOf_apachesoap_Map"
+        type="java:java.util.HashMap[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPStructStruct"
+        type="java:samples.echo.SOAPStructStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPArrayStruct"
+        type="java:samples.echo.SOAPArrayStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+
+    <requestFlow>
+        <handler type="java:samples.echo.echoHeaderStringHandler"/>
+        <handler type="java:samples.echo.echoHeaderStructHandler"/>
+    </requestFlow>
+    <responseFlow>
+        <handler type="java:samples.echo.echoHeaderStringHandler"/>
+        <handler type="java:samples.echo.echoHeaderStructHandler"/>
+    </responseFlow>
+
+      <operation name="echoString" returnQName="return" returnType="RTypeNS:string" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputString" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoStringArray" returnQName="return" returnType="RTypeNS:ArrayOfstring" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStringArray" type="tns:ArrayOfstring" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoInteger" returnQName="return" returnType="RTypeNS:int" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputInteger" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoIntegerArray" returnQName="return" returnType="RTypeNS:ArrayOfint" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputIntegerArray" type="tns:ArrayOfint" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoFloat" returnQName="return" returnType="RTypeNS:float" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputFloat" type="tns:float" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoFloatArray" returnQName="return" returnType="RTypeNS:ArrayOffloat" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputFloatArray" type="tns:ArrayOffloat" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoStruct" returnQName="return" returnType="RTypeNS:SOAPStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStruct" type="tns:SOAPStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoStructArray" returnQName="return" returnType="RTypeNS:ArrayOfSOAPStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStructArray" type="tns:ArrayOfSOAPStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoVoid" >
+      </operation>
+      <operation name="echoBase64" returnQName="return" returnType="RTypeNS:base64Binary" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputBase64" type="tns:base64Binary" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoDate" returnQName="return" returnType="RTypeNS:dateTime" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputDate" type="tns:dateTime" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoHexBinary" returnQName="return" returnType="RTypeNS:hexBinary" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputHexBinary" type="tns:hexBinary" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoDecimal" returnQName="return" returnType="RTypeNS:decimal" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputDecimal" type="tns:decimal" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoBoolean" returnQName="return" returnType="RTypeNS:boolean" xmlns:RTypeNS="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputBoolean" type="tns:boolean" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoStructAsSimpleTypes" >
+        <parameter name="inputStruct" type="tns:SOAPStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+        <parameter name="outputString" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT"/>
+        <parameter name="outputInteger" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT"/>
+        <parameter name="outputFloat" type="tns:float" xmlns:tns="http://www.w3.org/2001/XMLSchema" mode="OUT"/>
+      </operation>
+      <operation name="echoSimpleTypesAsStruct" returnQName="return" returnType="RTypeNS:SOAPStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputString" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter name="inputInteger" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter name="inputFloat" type="tns:float" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echo2DStringArray" returnQName="return" returnType="RTypeNS:ArrayOfString2D" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="input2DStringArray" type="tns:ArrayOfString2D" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoNestedStruct" returnQName="return" returnType="RTypeNS:SOAPStructStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStruct" type="tns:SOAPStructStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoNestedArray" returnQName="return" returnType="RTypeNS:SOAPArrayStruct" xmlns:RTypeNS="http://soapinterop.org/xsd" >
+        <parameter name="inputStruct" type="tns:SOAPArrayStruct" xmlns:tns="http://soapinterop.org/xsd"/>
+      </operation>
+      <operation name="echoMap" returnQName="return" returnType="RTypeNS:Map" xmlns:RTypeNS="http://xml.apache.org/xml-soap" >
+        <parameter name="input" type="tns:Map" xmlns:tns="http://xml.apache.org/xml-soap"/>
+      </operation>
+      <operation name="echoMapArray" returnQName="return" returnType="RTypeNS:ArrayOf_apachesoap_Map" xmlns:RTypeNS="http://soapinterop.org/" >
+        <parameter name="input" type="tns:ArrayOf_apachesoap_Map" xmlns:tns="http://soapinterop.org/"/>
+      </operation>
+      <operation name="echoToken" qname="operNS:echoToken" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:token" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputToken" type="tns:token" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNormalizedString" qname="operNS:echoNormalizedString" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:normalizedString" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputNormalizedString" type="tns:normalizedString" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoUnsignedLong" qname="operNS:echoUnsignedLong" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:unsignedLong" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputUnsignedLong" type="tns:unsignedLong" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoUnsignedInt" qname="operNS:echoUnsignedInt" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:unsignedInt" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputUnsignedInt" type="tns:unsignedInt" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoUnsignedShort" qname="operNS:echoUnsignedShort" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:unsignedShort" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputUnsignedShort" type="tns:unsignedShort" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoUnsignedByte" qname="operNS:echoUnsignedByte" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:unsignedByte" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputUnsignedByte" type="tns:unsignedByte" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNonNegativeInteger" qname="operNS:echoNonNegativeInteger" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:nonNegativeInteger" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputNonNegativeInteger" type="tns:nonNegativeInteger" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoPositiveInteger" qname="operNS:echoPositiveInteger" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:positiveInteger" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputPositiveInteger" type="tns:positiveInteger" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNonPositiveInteger" qname="operNS:echoNonPositiveInteger" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:nonPositiveInteger" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputNonPositiveInteger" type="tns:nonPositiveInteger" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="echoNegativeInteger" qname="operNS:echoNegativeInteger" xmlns:operNS="http://soapinterop.org/" returnQName="return" returnType="rtns:negativeInteger" xmlns:rtns="http://www.w3.org/2001/XMLSchema" >
+        <parameter name="inputNegativeInteger" type="tns:negativeInteger" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+  </service>
+</deployment>

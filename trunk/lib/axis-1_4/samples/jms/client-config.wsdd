@@ -1,0 +1,11 @@
+<!-- Use this file to deploy some handlers/chains and services  -->
+<!-- on the client.  To do this simply run:                     -->
+<!--   java org.apache.axis.utils.Admin client_deploy.xml       -->
+<!--      from the same dir that the Axis client will run in    -->
+<!-- This file will be replaced by WSDD once it's ready         -->
+
+<deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+  <handler name="JMSSender" type="java:org.apache.axis.transport.jms.JMSSender" />
+  <transport name="JMSTransport" pivot="JMSSender"/>
+</deployment>

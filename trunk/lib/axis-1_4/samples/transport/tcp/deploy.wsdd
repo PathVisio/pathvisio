@@ -1,0 +1,5 @@
+<deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+ <handler name="TCPSender" type="java:samples.transport.tcp.TCPSender"/>
+ <transport name="tcp" pivot="TCPSender"/>
+</deployment>

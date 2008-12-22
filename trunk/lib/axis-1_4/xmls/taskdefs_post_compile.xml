@@ -1,0 +1,24 @@
+  <taskdef name="foreach" classname="org.apache.axis.tools.ant.foreach.ForeachTask"
+   loaderref="axis" >
+        <classpath refid="classpath"/>
+  </taskdef>
+
+  <taskdef name="runaxisfunctionaltests" classname="org.apache.axis.tools.ant.axis.RunAxisFunctionalTestsTask"
+    loaderref="axis" >
+        <classpath refid="classpath"/>
+  </taskdef>
+
+  <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask"
+    loaderref="axis" >
+        <classpath refid="classpath"/>
+  </taskdef>
+
+  <taskdef name="java2wsdl" classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask"
+    loaderref="axis" >
+        <classpath refid="classpath"/>
+  </taskdef>
+
+  <taskdef name="adminclient" classname="org.apache.axis.tools.ant.axis.AdminClientTask"
+    loaderref="axis" >
+        <classpath refid="classpath"/>
+  </taskdef>

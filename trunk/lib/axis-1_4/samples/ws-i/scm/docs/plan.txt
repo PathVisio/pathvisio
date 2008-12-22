@@ -1,0 +1,50 @@
+Plan of implementing SCM for Axis
+
+Author: Ias 
+Current Status: Completed 3.3.1. We need your help from 3.3.2.
+
+1. Base
+
+1.1. Axis 1.2 CVS
+
+1.2. Tomcat 4.1.Latest
+
+2. Resources
+
+2.1. WS-INewdocument.doc
+
+A Guide to Developing Applications Using WS-I Basic Profile 1.0
+not yet completed but still in progress
+
+Note. ED is much older than WGAD
+
+3. Processes
+
+3.1. Making WSDLimpls
+
+3.2. WSDL to Java
+
+manufacturer's deploy.wsdd should be updated like
+<parameter name="className" value="org.apache.axis.wsi.scm.manufacturer.ManufacturerSoapBindingImplC"/>
+
+as well as warehouse's deploy.wsdd
+
+3.3. Implementing
+
+Note: No usage of DB for more ease of portability and deployment.
+
+3.3.1 Retailer
+
+3.3.2 Manufaturer
+
+3.3.3 Warehouse
+
+3.3.4 LoggingFacility
+
+3.3.5 Configurator
+
+3.3.6 Etc
+
+3.4. Testing
+
+Use testing tools from WS-I. SOAPscope from Mindreef (http://www.mindreef.com/) is also very helpful for this process.

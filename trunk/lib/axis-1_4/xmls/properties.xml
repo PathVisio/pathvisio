@@ -1,0 +1,135 @@
+<!-- This is an xml entity included in Apache Axis build files-->
+
+<property environment="env"/>
+<!-- workaround for those IDEs that dont set ant.home as per the ant script -->
+<property name="ant.home" value="env.ANT_HOME" />
+
+<!-- set axis home up -->
+<property name="axis.home" location="."/>
+
+<!-- Give user a chance to override without editing this file
+     (and without typing -D each time it compiles it) -->
+<property file="${axis.home}/build.properties"/>
+<property file="${user.home}/build.properties"/>
+
+<!-- debug flag for ant javac, values are "on" and "off" -->
+<property name="debug" value="on" />
+<property name="nowarn" value="off" />
+
+<property name="axis.version" value="1.4" />
+<!-- This should be the version # above with dots replaced by underscores -->
+<property name="axis.dirname" value="1_4" />
+
+<property name="name" value="axis" />
+<property name="Name" value="Axis" />
+<property name="year" value="2005" />
+<property name="jaxrpc" value="jaxrpc" />
+<property name="saaj" value="saaj" />
+
+<!-- what gets pulled in to the binaries: everything -->
+<property name="debuglevel" value="lines,vars,source" />
+<property name="deprecation" value="true" />
+<property name="source" value="1.3" />
+<property name="target" value="1.3" />
+
+<!-- directories -->
+<property name="src.dir" location="${axis.home}/src"/>
+<property name="docs.dir" location="${axis.home}/docs"/>
+<property name="samples.dir" location="${axis.home}/samples"/>
+<property name="test.dir" location="${axis.home}/test"/>
+
+<!-- we resolve the lib dir twice, to ensure that any
+  paths from Gump are absolute -->
+<property name="axis.lib.dir" location="${axis.home}/lib"/>
+<property name="lib.dir" location="${axis.lib.dir}"/>
+
+<!-- jar files -->
+<property name="wsdl4j.jar" location="${lib.dir}/wsdl4j-1.5.1.jar"/>
+<property name="jsse.jar" location="${lib.dir}/jsse.jar"/>
+<property name="commons-logging.jar" location="${lib.dir}/commons-logging-1.0.4.jar"/>
+<property name="commons-discovery.jar" location="${lib.dir}/commons-discovery-0.2.jar"/>
+<property name="commons-httpclient.jar" location="${lib.dir}/commons-httpclient-3.0-rc2.jar"/>
+<property name="commons-net.jar" location="${lib.dir}/commons-net-1.0.0-dev.jar"/>
+<property name="log4j-core.jar" location="${lib.dir}/log4j-1.2.8.jar"/>
+<property name="junit.jar" location="${lib.dir}/junit.jar"/>
+<property name="jimi.jar" location="${lib.dir}/JimiProClasses.zip"/>
+<property name="activation.jar" location="${lib.dir}/activation.jar"/>
+<property name="mailapi.jar" location="${lib.dir}/mailapi.jar"/>
+<!-- there is no commons-httpunit, AFAIK it is a sourceforge project -->
+<!-- <property name="httpunit.jar" location="${lib.dir}/commons-httpunit.jar"/> -->
+
+<!-- these jars are in the test lib dir -->
+<property name="xalan.jar" location="${test.dir}/lib/xalan-2.6.0.jar"/>
+<property name="regexp.jar" location="${test.dir}/lib/jakarta-oro-2.0.5.jar"/>
+<property name="xmlunit.jar" location="${test.dir}/lib/xmlunit1.0.jar"/>
+
+<!-- pull this in from the compiler -->
+<property name="tools.jar" location="${java.home}/../lib/tools.jar"/>
+
+<property name="packages" value="org.*,javax.*" />
+<property name="jaxrpc" value="jaxrpc" />
+
+
+<property name="build.file" value="build.xml" />
+<!-- directories for output -->
+
+<property name="build.dir" location="${axis.home}/build"/>
+<property name="build.dest" location="${build.dir}/classes"/>
+<property name="build.lib" location="${build.dir}/lib"/>
+<property name="build.samples" location="${build.dir}/classes/samples"/>
+<property name="build.javadocs" location="${build.dir}/javadocs"/>
+<property name="build.webapp" location="${build.dir}/webapps/axis"/>
+<property name="axis.war.filename" value="axis.war"/>
+<property name="axis.war" location="${build.dir}/${axis.war.filename}"/>
+
+<property name="webapp" location="${axis.home}/webapps/axis" />
+<property name="dist.dir" location="${axis.home}/axis-${axis.dirname}" />
+
+<property name="test.setup.dir" location="${test.dir}/setup" />
+<property name="test.build.dir" location="${build.dir}/test/" />
+<property name="test.reports.dir" location="${test.build.dir}/reports" />
+<!-- axis convention is to build into the same hierarchy as the main source -->
+<property name="test.classes.dir" location="${build.dest}"/>
+<property name="test.data.dir" location="${test.build.dir}/data"/>
+<property name="test.output.printsummary" value="withOutAndErr"/>
+
+<property name="test.functional.remote" value="no" />
+<property name="test.functional.local" value="yes" />
+<property name="test.functional.both" value="no" />
+<property name="test.functional.usefile" value="true" />
+<property name="test.functional.reportdir" location="${axis.home}/test-reports" />
+<property name="test.functional.SimpleAxisPort" value="8080" />
+<property name="test.functional.ServicePort" value="8080"/>
+<property name="test.functional.TCPListenerPort" value="8088" />
+<property name="test.functional.serverurl"
+  value="http://localhost:${test.functional.TCPListenerPort}" />
+<property name="test.functional.webapp.url"
+  value="http://localhost:${test.functional.TCPListenerPort}/axis" />
+<property name="test.functional.TCPListener.url"
+  value="tcp://localhost:${test.functional.TCPListenerPort}" />
+
+<property name="test.functional.fail" value="yes" />
+
+<property name="javax.xml.parsers.DocumentBuilderFactory" value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+<property name="javax.xml.parsers.SAXParserFactory" value="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+
+<!-- Place Holder for proxy settings -->
+<property name="http.proxyHost" value=""/>
+<property name="http.proxyPort" value=""/>
+<property name="http.nonProxyHosts" value="localhost"/>
+<property name="http.proxyUser" value=""/>
+<property name="http.proxyPassword" value=""/>
+<property name="socks.proxyHost" value=""/>
+<property name="socks.proxyPort" value="1080"/>
+
+<property name="javac.fork" value="no"/>
+<property name="foreach.fork" value="no"/>
+<property name="ant.inheritAll" value="false"/>
+<property name="ant.inheritRefs" value="false"/>
+
+<!-- to test against .NET, we need a local IIS instance-->
+<property name="iis.base" location="c:\inetpub\wwwroot" />
+<property name="iis.hostname" value="127.0.0.1"/>
+<property name="iis.port" value="80"/>
+
+<property name="exclude.log4j.configuration" value="true"/>

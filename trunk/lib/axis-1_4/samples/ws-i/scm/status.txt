@@ -1,0 +1,11 @@
+Status of WS-I SCM SA
+
+This document is written to give a hint about where to start to those who want to join developing WS-I SCM SA.
+
+Please refer to docs/plan.txt first. 
+
+Currently, we finished "3.3.1 Retailer". It means that from 3.3.2 you have a lot of things to do :-)
+
+Thanks for your interest,
+
+Ias

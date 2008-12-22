@@ -1,0 +1,65 @@
+<!-- Use this file to deploy some handlers/chains and services  -->
+<!-- Two ways to do this:                                       -->
+<!--   java org.apache.axis.utils.Admin deploy.wsdd              -->
+<!--      from the same dir that the Axis engine runs           -->
+<!-- or                                                         -->
+<!--   java org.apache.axis.client.http.AdminClient deploy.wsdd  -->
+<!--      after the axis server is running                      -->
+
+ <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/"
+			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:xsd="http://www.w3.org/2000/10/XMLSchema"
+			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
+  <service name="echoB" provider="java:RPC" >
+    <namespace>http://soapinterop.org/</namespace>
+    <parameter name="className" value="samples.echo.InteropTestSoapBindingImpl" />
+    <parameter name="allowedMethods" value="echoStructAsSimpleTypes 
+        echoSimpleTypesAsStruct 
+        echo2DStringArray 
+        echoNestedStruct 
+        echoNestedArray" />
+
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPStruct"
+        type="java:samples.echo.SOAPStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfSOAPStruct"
+        type="java:samples.echo.SOAPStruct[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPStructStruct"
+        type="java:samples.echo.SOAPStructStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPArrayStruct"
+        type="java:samples.echo.SOAPArrayStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+
+    <requestFlow>
+        <handler type="java:samples.echo.echoHeaderStringHandler"/>
+        <handler type="java:samples.echo.echoHeaderStructHandler"/>
+    </requestFlow>
+    <responseFlow>
+        <handler type="java:samples.echo.echoHeaderStringHandler"/>
+        <handler type="java:samples.echo.echoHeaderStructHandler"/>
+    </responseFlow>
+
+  </service>
+</deployment>

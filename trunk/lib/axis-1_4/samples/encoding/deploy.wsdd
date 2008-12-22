@@ -1,0 +1,9 @@
+<deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
+  <service name="ElementService" provider="java:RPC">
+    <parameter name="alias" value="ElementService"/>
+    <parameter name="className" value="samples.encoding.ElementService" />
+    <parameter name="allowedMethods" value="echoElement" />
+  </service>
+</deployment>

@@ -1,0 +1,17 @@
+To run the encoding samples, you must do the following:
+1.  Set up your CLASSPATH.
+2.  Deploy the service.
+3.  Run the sample.
+
+1.  Set up your CLASSPATH.
+    The CLASSPATH must contain:  an XML parser (ie., Xerces), JUnit
+    (www.junit.org), all the jars in the lib directory, and the directory
+    containing the samples subdirectory.
+
+3.  Deploy the service.
+    To deploy the service, run:
+        java org.apache.axis.utils.Admin server deploy.wsdd 
+
+4.  Run the sample.
+    Finally, to run the sample, run:
+	java samples.transport.FileTest XXX

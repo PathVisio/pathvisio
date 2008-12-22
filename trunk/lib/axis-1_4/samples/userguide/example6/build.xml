@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project default="compile">
+    <property name="axis.home" location="../../.."/>
+    <property name="componentName" value="samples/userguide/example6"/>
+
+    &properties;
+    &paths;
+    &taskdefs;
+    &taskdefs_post_compile;
+    &targets;
+
+    <target name="clean"/>
+
+    <target name="copy" depends="setenv"/>
+
+    <target name="compile" depends="copy">
+
+        <copy todir="${build.dir}/work/samples" overwrite="yes">
+            <fileset dir="${samples.dir}">
+                <include name="**/userguide/example6/"/>
+            </fileset>
+        </copy>
+
+        <!-- Compile the sample code -->
+        <javac srcdir="${axis.home}" destdir="${build.dest}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}"
+            debug="${debug}">
+            <classpath>
+                <pathelement location="${build.lib}/${name}.jar"/>
+                <pathelement location="${build.lib}/${jaxrpc}.jar"/>
+                <pathelement location="${build.lib}/${saaj}.jar"/>
+                <path refid="classpath"/>
+            </classpath>
+            <include name="samples/userguide/example6/*.java"/>
+            <exclude name="samples/userguide/example6/Main.java"/>
+            <exclude name="samples/userguide/example6/*Impl.java"/>
+            <exclude name="samples/userguide/example6/*TestCase.java"/>
+        </javac>
+
+        <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
+
+        <!-- WidgetPrice Java to WSDL Samples -->
+        <java2wsdl output="${axis.home}/build/work/samples/userguide/example6/WidgetPrice.wsdl"
+            className="samples.userguide.example6.WidgetPrice"
+            namespace="urn:Example6"
+            location="http://localhost:8080/axis/services/WidgetPrice">
+            <mapping namespace="urn:Example6" package="samples.userguide.example6"/>
+        </java2wsdl>
+        
+        <wsdl2java url="${axis.home}/build/work/samples/userguide/example6/WidgetPrice.wsdl"
+            output="${axis.home}/build/work"
+            deployscope="session"
+            serverSide="yes"
+            skeletonDeploy="yes"
+            noimports="no"
+            verbose="no"
+            testcase="yes">
+            <mapping namespace="urn:Example6" package="samples.userguide.example6"/>
+        </wsdl2java>
+
+        <delete dir="${build.dir}/classes/samples/userguide/example6"/>
+
+        <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+            <include name="samples/userguide/example6/**/*.java"/>
+            <exclude name="samples/userguide/example6/*TestCase.java" unless="junit.present"/>
+            <exclude name="samples/userguide/example6/Main.java" unless="junit.present"/>
+        </javac>
+    </target>
+
+    <target name="deploy"/>
+
+    <target name="run">
+        <antcall target="execute-Component"/>
+    </target>
+
+    <target name="undeploy"/>
+
+</project>

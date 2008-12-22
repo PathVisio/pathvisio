@@ -95,7 +95,7 @@ public class PppPlugin implements Plugin, PathwayElementMenuHook
 		{
 			PppPane pane = parent.getPane();
 			Pathway result = hmdbPpp.doSuggestion(elt.getPathwayElement());
-			pane.addPart("Hoi", result);
+			pane.addPart("Putative pathway part", result);
 		}
 	}
 

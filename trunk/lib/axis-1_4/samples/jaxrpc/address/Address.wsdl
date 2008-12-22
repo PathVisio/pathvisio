@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://address.jaxrpc.samples" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://address.jaxrpc.samples" xmlns:intf="http://address.jaxrpc.samples" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ <wsdl:types>
+  <schema targetNamespace="http://address.jaxrpc.samples" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <complexType name="AddressBean">
+    <sequence>
+     <element name="street" nillable="true" type="xsd:string"/>
+     <element name="postcode" type="xsd:int"/>
+    </sequence>
+   </complexType>
+   <element name="AddressBean" nillable="true" type="impl:AddressBean"/>
+  </schema>
+  <schema targetNamespace="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema">
+   <import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+   <element name="int" type="xsd:int"/>
+   <element name="string" type="xsd:string"/>
+  </schema>
+ </wsdl:types>
+
+   <wsdl:message name="updateAddressRequest">
+
+      <wsdl:part name="in0" type="intf:AddressBean"/>
+
+      <wsdl:part name="in1" type="xsd:int"/>
+
+   </wsdl:message>
+
+   <wsdl:message name="updateAddressResponse">
+
+      <wsdl:part name="return" type="xsd:string"/>
+
+   </wsdl:message>
+
+   <wsdl:portType name="AddressService">
+
+      <wsdl:operation name="updateAddress" parameterOrder="in0 in1">
+
+         <wsdl:input message="intf:updateAddressRequest" name="updateAddressRequest"/>
+
+         <wsdl:output message="intf:updateAddressResponse" name="updateAddressResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="AddressSoapBinding" type="intf:AddressService">
+
+      <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="updateAddress">
+
+         <wsdlsoap:operation soapAction=""/>
+
+         <wsdl:input name="updateAddressRequest">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://address.jaxrpc.samples" use="encoded"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="updateAddressResponse">
+
+            <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://address.jaxrpc.samples" use="encoded"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="AddressServiceService">
+
+      <wsdl:port binding="intf:AddressSoapBinding" name="Address">
+
+         <wsdlsoap:address location="http://localhost:8080/axis/services/Address"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

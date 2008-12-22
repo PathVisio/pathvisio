@@ -1,0 +1,191 @@
+------------------------------------------------------------------------
+r314867 | dims | 2005-10-12 08:47:25 -0400 (Wed, 12 Oct 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/encoding/SerializationContext.java
+   M /webservices/axis/trunk/java/test/saaj/TestSOAPFaults.java
+
+Another location to check and disable Pretty XML. Creates problems with WSS4J in Signature Verification.
+
+
+------------------------------------------------------------------------
+r314974 | dims | 2005-10-12 13:26:15 -0400 (Wed, 12 Oct 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/deployment/wsdd/WSDDDocument.java
+
+previous commit disabled pretty printing on for wsdd's.
+
+
+------------------------------------------------------------------------
+r314976 | dims | 2005-10-12 13:34:32 -0400 (Wed, 12 Oct 2005) | 1 line
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/Admin.java
+
+re-enable pretty print for wsdd - missed a spot in prev commit
+------------------------------------------------------------------------
+r327003 | dims | 2005-10-20 17:06:18 -0400 (Thu, 20 Oct 2005) | 2 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/client/Call.java
+
+Fix for AXIS-2264 - org.apache.axis.client.Call implementation Bug => CurrentModificationException if an other VM is used (e.g. http://www.cacaojvm.org)
+
+------------------------------------------------------------------------
+r328945 | dims | 2005-10-27 16:28:25 -0400 (Thu, 27 Oct 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/changelog.html
+   M /webservices/axis/trunk/java/release-notes.html
+
+sync back from the AXIS_1_3_FINAL branch.
+
+
+------------------------------------------------------------------------
+r329280 | tomj | 2005-10-28 16:06:27 -0400 (Fri, 28 Oct 2005) | 2 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/attachments/MultipartAttachmentStreams.java
+
+Remove use of variable name 'enum' to avoid Java 5 problems.
+Clean up uneeded null initializations.
+------------------------------------------------------------------------
+r329286 | tomj | 2005-10-28 16:32:49 -0400 (Fri, 28 Oct 2005) | 2 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/transport/http/QSMethodHandler.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/ByteArrayOutputStream.java
+
+Remove use of variable name 'enum' to avoid Java 5 problems.
+Fix "C style" array notation noted by jikes.
+------------------------------------------------------------------------
+r330300 | dims | 2005-11-02 13:18:58 -0500 (Wed, 02 Nov 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/JavaUtils.java
+
+Fix for AXIS-2278 - Memory leak cause by JavaUtils.enumMap
+
+
+------------------------------------------------------------------------
+r330301 | dims | 2005-11-02 13:20:05 -0500 (Wed, 02 Nov 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/docs/index.html
+
+Fix for (AXIS-2281) axis-1_3/docs/index.html says "This is the documentation for Apache Axis 1.2"
+
+
+------------------------------------------------------------------------
+r330310 | dims | 2005-11-02 13:36:39 -0500 (Wed, 02 Nov 2005) | 3 lines
+Changed paths:
+   A /webservices/axis/trunk/java/test/wsdl/faults2
+   A /webservices/axis/trunk/java/test/wsdl/faults2/FaultService.wsdl
+   A /webservices/axis/trunk/java/test/wsdl/faults2/FaultServiceSoapBindingImpl.java
+   A /webservices/axis/trunk/java/test/wsdl/faults2/FaultServiceTestCase.java
+   A /webservices/axis/trunk/java/test/wsdl/faults2/build.xml
+
+Test case for AXIS-2013 from Hans ("Deserialization of Exception fails")
+
+
+------------------------------------------------------------------------
+r330320 | dims | 2005-11-02 14:27:35 -0500 (Wed, 02 Nov 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/xmls/properties.xml
+
+update version #
+
+
+------------------------------------------------------------------------
+r330440 | dims | 2005-11-02 23:23:06 -0500 (Wed, 02 Nov 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/JavaUtils.java
+
+oops!
+
+
+------------------------------------------------------------------------
+r330452 | dims | 2005-11-03 00:00:57 -0500 (Thu, 03 Nov 2005) | 3 lines
+Changed paths:
+   A /webservices/axis/trunk/java/samples/xbeans
+   A /webservices/axis/trunk/java/samples/xbeans/StarWarsBindingImpl.java
+   A /webservices/axis/trunk/java/samples/xbeans/StarWarsTestCase.java
+   A /webservices/axis/trunk/java/samples/xbeans/build.xml
+   A /webservices/axis/trunk/java/samples/xbeans/starwars.wsdl
+   A /webservices/axis/trunk/java/samples/xbeans/starwars.xsd
+
+Sample using Xmlbeans serializer/deserializer
+
+
+------------------------------------------------------------------------
+r332063 | dug | 2005-11-09 10:08:47 -0500 (Wed, 09 Nov 2005) | 2 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/handlers/soap/MustUnderstandChecker.java
+
+Show MU headers for non-soap 1.2 clients too
+
+------------------------------------------------------------------------
+r332067 | dug | 2005-11-09 10:21:26 -0500 (Wed, 09 Nov 2005) | 2 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/handlers/soap/MustUnderstandChecker.java
+
+testing
+
+------------------------------------------------------------------------
+r332680 | dims | 2005-11-11 18:54:59 -0500 (Fri, 11 Nov 2005) | 4 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/description/TypeDesc.java
+   M /webservices/axis/trunk/java/src/org/apache/axis/i18n/resource.properties
+
+Fix for AXIS-2232 - Mappings in TypeDesc can't be GC'ed
+from Kevan Miller
+
+
+------------------------------------------------------------------------
+r332717 | dims | 2005-11-11 21:43:42 -0500 (Fri, 11 Nov 2005) | 4 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/utils/JavaUtils.java
+
+synchronized put's for enumMap. Possible fix for AXIS-2284 - thread hangs on org.apache.axis.utils.JavaUtils.isEnumClass
+
+
+
+------------------------------------------------------------------------
+r345938 | dims | 2005-11-21 12:53:18 -0500 (Mon, 21 Nov 2005) | 3 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/encoding/SerializationContext.java
+
+Fix for AXIS-2267 - Extended types in array incorrectly serialised as base type
+
+
+------------------------------------------------------------------------
+r348194 | dims | 2005-11-22 11:41:22 -0500 (Tue, 22 Nov 2005) | 4 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/handlers/soap/SOAPService.java
+
+Fix for AXIS-2314 - Axis leaking Session objects
+from Ben Gunter
+
+
+------------------------------------------------------------------------
+r354084 | dug | 2005-12-05 10:28:35 -0500 (Mon, 05 Dec 2005) | 2 lines
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/MessageContext.java
+
+Prevent a NPE when curMsg is null
+
+------------------------------------------------------------------------
+r355938 | dims | 2005-12-11 02:44:27 -0500 (Sun, 11 Dec 2005) | 1 line
+Changed paths:
+   M /webservices/axis/trunk/java/src/org/apache/axis/wsdl/toJava/JavaBeanWriter.java
+
+attributes first, then elements
+------------------------------------------------------------------------
+r356167 | dims | 2005-12-12 00:59:01 -0500 (Mon, 12 Dec 2005) | 3 lines
+Changed paths:
+   A /webservices/axis/branches/AXIS_1_4_FINAL (from /webservices/axis/trunk/java:356165)
+
+Branch for Axis 1.4 Final 
+
+
+------------------------------------------------------------------------
+r375961 | dug | 2006-02-08 08:49:24 -0500 (Wed, 08 Feb 2006) | 2 lines
+Changed paths:
+   M /webservices/axis/branches/AXIS_1_4_FINAL/junit-exclude-tests.txt
+   D /webservices/axis/branches/AXIS_1_4_FINAL/test/wsdl/faults2
+
+Remove a bad test - it causes the all-tests to fail
+
+------------------------------------------------------------------------

@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+
+<definitions name="urn:AddressFetcher"
+             targetNamespace="urn:AddressFetcher2"
+             xmlns:tns="urn:AddressFetcher2"
+             xmlns:typens="urn:AddressFetcher2"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema targetNamespace="urn:AddressFetcher2"
+                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+      <xsd:simpleType name="stateType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="TX"/>                      
+            <xsd:enumeration value="IN"/>                    
+            <xsd:enumeration value="OH"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:complexType name="phone">
+        <xsd:all>
+            <xsd:element name="areaCode" type="xsd:int"/>
+            <xsd:element name="exchange" type="xsd:string"/>
+            <xsd:element name="number" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="address">
+        <xsd:all>
+            <xsd:element name="streetNum" type="xsd:int"/>
+            <xsd:element name="streetName" type="xsd:string"/>
+            <xsd:element name="city" type="xsd:string"/>
+            <xsd:element name="state" type="typens:stateType"/>
+            <xsd:element name="zip" type="xsd:int"/>
+            <xsd:element name="phoneNumber" type="typens:phone"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="empty"/>
+
+  <message name="AddEntryRequest">
+    <part name="name" type="xsd:string"/>
+    <part name="address" type="typens:address"/>
+  </message>
+
+  <message name="GetAddressFromNameRequest">
+    <part name="name" type="xsd:string"/>
+  </message>
+
+  <message name="GetAddressFromNameResponse">
+    <part name="address" type="typens:address"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="AddressBook">
+    <operation name="addEntry">
+      <input message="tns:AddEntryRequest"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="getAddressFromName">
+      <input message="tns:GetAddressFromNameRequest"/>
+      <output message="tns:GetAddressFromNameResponse"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="AddressBookSOAPBinding" type="tns:AddressBook">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="addEntry">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:AddressFetcher2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:AddressFetcher2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getAddressFromName">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:AddressFetcher2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:AddressFetcher2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="AddressBookService">
+    <port name="AddressBook" binding="tns:AddressBookSOAPBinding">
+      <soap:address location="http://localhost:8080/axis/services/AddressBook"/>
+    </port>
+  </service>
+
+</definitions>
+

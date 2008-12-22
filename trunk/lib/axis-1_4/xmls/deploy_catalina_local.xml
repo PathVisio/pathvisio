@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+  <!ENTITY properties SYSTEM "file:properties.xml">
+  <!ENTITY paths  SYSTEM "file:path_refs.xml">
+  <!ENTITY taskdefs SYSTEM "file:taskdefs.xml">
+  <!ENTITY taskdefs_post_compile SYSTEM "xmls/taskdefs_post_compile.xml">
+]>
+
+<project name="deploy" default="default" basedir=".">
+  <description>
+    This build file deploys axis to a local version of Tomcat Catalina.
+    Because it updates stuff in the common/lib directory, this update
+    needs to restart Catalina before core changes to axis take.
+  </description>
+
+  <property name="axis.home" location=".." />
+  &properties;
+  &paths;
+
+
+  <!-- init the deploy by probing for catalina -->
+  <target name="init">
+    <fail unless="env.CATALINA_HOME"> 
+      Tomcat Catalina not found; please set CATALINA_HOME to point to it 
+    </fail>
+    <property name="deploy.lib.dir" 
+      location="${env.CATALINA_HOME}/common/lib"/>
+    <property name="deploy.webapp.dir" 
+      location="${env.CATALINA_HOME}/webapps/axis"/>
+    <mkdir dir="${deploy.webapp.dir}" />
+  </target>
+
+  <!-- deployment target -->
+  <target name="deploy" depends="init"
+    description="deploy to catalina">
+      
+    <!-- webapp unzipped -->
+    <copy todir="${deploy.webapp.dir}">
+      <fileset dir="${build.webapp}"
+        includes="**/*"/>
+    </copy>
+    
+    <!-- shared lib stuff -->
+    <copy todir="${deploy.lib.dir}">
+      <fileset dir="${build.lib}">
+        <include name="saaj.jar" />
+        <include name="jaxrpc.jar" />
+      </fileset>
+    </copy>
+    <!-- be helpful -->
+    <echo message="Axis deployed, restart Tomcat"/>
+  </target>
+
+  
+  <target name="default" depends="deploy" />
+  
+  <!-- this task can die horribly when the jars are in use
+      setting failonerror would avoid that, but we want to fail 
+      visibly so people notice. -->
+  <target name="clean" depends="init"
+    description="clean deployment">
+    <delete dir="${deploy.webapp.dir}"/>
+    <delete>
+      <fileset dir="${deploy.lib.dir}" >
+        <include name="saaj.jar" />
+        <include name="jaxrpc.jar" />
+      </fileset>
+    </delete>
+
+  </target>
+</project>

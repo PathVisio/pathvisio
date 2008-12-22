@@ -1,0 +1,10 @@
+http://localhost:8080/axis/servlet/AxisServlet
+http://nagoya.apache.org:5089/soap/servlet/rpcrouter
+http://localhost:8080/axis/RegistryService.jws
+http://localhost:81/axis/RegistryService.jws
+http://131.107.72.13/BigDog/RegistryService.soap
+http://localhost:81/BigDog/RegistryService.soap
+http://localhost:82/soap/servlet/rpcrouter
+http://nagoya.apache.org:5089/axis/servlet/AxisServlet
+http://nagoya.apache.org:5049/axis/servlet/AxisServlet
+http://nagoya.apache.org:5049/soap/servlet/rpcrouter

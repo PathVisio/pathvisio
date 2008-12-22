@@ -1,0 +1,30 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <service name="urn:xmltoday-delayed-quotes" provider="java:RPC">
+    <parameter name="className" value="samples.stock.StockQuoteService"/>
+    <parameter name="allowedMethods" value="getQuote test"/>
+    <parameter name="allowedRoles" value="user1,user2"/>
+
+    <requestFlow name="checks">
+      <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+      <handler type="java:org.apache.axis.handlers.SimpleAuthorizationHandler"/>
+    </requestFlow>
+  </service>
+
+  <service name="urn:cominfo" provider="java:RPC">
+    <parameter name="className" value="samples.stock.ComInfoService" />
+    <parameter name="allowedMethods" value="getInfo" />
+    <parameter name="allowedRoles" value="user3"/>
+    <requestFlow type="checks"/>
+  </service>
+
+</deployment>

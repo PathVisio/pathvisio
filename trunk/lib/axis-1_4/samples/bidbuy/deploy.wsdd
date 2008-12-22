@@ -1,0 +1,23 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java" xmlns:bid="http://www.soapinterop.org/Bid" xmlns:reg="http://www.soapinterop.org/Registry">
+    <service name="Bid" provider="java:RPC">
+        <namespace>http://www.soapinterop.org/Bid</namespace>
+        <parameter name="className" value="samples.bidbuy.BidService"/>
+        <parameter name="allowedMethods" value="RequestForQuote SimpleBuy Buy Ping"/>
+    </service>
+    <beanMapping qname="bid:PurchaseOrder" languageSpecificType="java:samples.bidbuy.PurchaseOrder"/>
+    <beanMapping qname="bid:Address" languageSpecificType="java:samples.bidbuy.Address"/>
+    <beanMapping qname="bid:LineItem" languageSpecificType="java:samples.bidbuy.LineItem"/>
+    <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+    <service name="BidRegistry" provider="java:RPC">
+        <parameter name="className" value="samples.bidbuy.RegistryService"/>
+        <parameter name="allowedMethods" value="Register Unregister Lookup LookupAsString"/>
+    </service>
+    <beanMapping qname="reg:Service" languageSpecificType="java:samples.bidbuy.Service"/>
+</deployment>

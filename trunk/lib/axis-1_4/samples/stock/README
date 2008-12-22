@@ -1,0 +1,73 @@
+To run the stock samples, you must do the following:
+1.  Set up your CLASSPATH.
+2.  Start a server.
+3.  Deploy the service.
+4.  Run the samples.
+
+1.  Set up your CLASSPATH.
+    The CLASSPATH must contain:  an XML parser (ie., Xerces), JUnit
+    (www.junit.org), all the jars in the lib directory, and the directory
+    containing the samples subdirectory.
+
+2.  Start a  server.
+    To run the sample, you will first need to run a server.  To run a very
+    simple server you could run, in a separate window:
+        java org.apache.axis.transport.http.SimpleAxisServer -p 8080
+
+3.  Deploy the service.
+    To deploy the service, be sure you're in the JAX-RPC samples directory (samples/stock), then run:
+        java org.apache.axis.client.AdminClient deploy.wsdd
+
+4.  Run the samples.
+
+    Run the GetInfo sample:
+        java samples.stock.GetInfo <symbol> <datatype>
+
+  where <symbol> is one of "IBM", "ALLR" (Allaire), or "CSCO" (Cisco)
+          (these are the only symbols this sample supports)
+        and <datatype> is one of "symbol", "name", or "address".
+
+    Here's a simple, explicit example:
+        java samples.stock.GetInfo IBM address
+    This should result in the following output:
+        IBM: Armonk, NY
+
+
+    Run the GetQuote sample:
+        java samples.stock.GetQuote [options] <symbol>
+
+    options:
+    -d           turn on debugging - more 'd means more info
+    -h<HOST>     server host name
+    -l<URL>      ie. http://localhost:80/axis/servlet/AxisServlet
+    -p<PORT#>    server port number
+    -s<SERVLET>  ie. axis/servlet/AxisServlet
+    -u<USERID>   user-id
+    -w<PASSWD>   password
+
+    If you use the authorization and authentication handlers (which the given
+    deploy.wsdd does) you'll need to add a couple of files to your Servlet
+    Engine's current dir:
+
+    users.lst
+     - list of users and passwords
+
+    The access control list for the authorization handler is located in the 
+    deploy.wsdd file.  the 'allowedRoles' parameter is used to specify the users
+    who have the karma required to access the service.
+    
+    If you are running the SimpleAxisServer, this means that these files must
+    be in the directory from which that program is run.  The easiest thing to
+    do is to cd to samples/stock and run SimpleAxisServer from there.
+
+    Here's an explicit example of running GetQuote using these files:
+        java samples.stock.GetQuote -uuser1 -wpass1 XXX
+    This should result in the following output:
+        XXX: 55.25
+
+
+    Run the GetQuote1 sample:
+        java samples.stock.GetQuote1 -uuser -wpass1 XXX
+
+    GetQuote1 does the same thing that GetQuote does, but it shows how to
+    make the call with and without the GetQuote.wsdl file.

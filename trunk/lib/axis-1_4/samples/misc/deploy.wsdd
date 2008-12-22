@@ -1,0 +1,9 @@
+ <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/">
+
+  <service name="EchoService" provider="Handler">
+      <parameter name="handlerClass"
+                 value="org.apache.axis.handlers.EchoHandler"/>
+  </service>
+
+</deployment>
+

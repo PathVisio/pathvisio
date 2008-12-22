@@ -1,0 +1,707 @@
+   <!-- ===================================================================
+         This is basically the <ant /> task, except that it forks
+         and the verbosity setting is not propagated down
+        =================================================================== -->
+   <target name="my-forking-ant">
+     <echo message="Forking a JVM for target ${target} in file ${file}"/>
+     <java classname="org.apache.tools.ant.Main" fork="yes" failonerror="true" dir="${dir}">
+       <!-- See if this helps with Gump test failures -->
+       <sysproperty key="build.clonevm" value="true"/>
+
+       <!-- Pass the parser settings -->
+       <jvmarg value="-Djavax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
+       <jvmarg value="-Djavax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
+       <jvmarg value="-Xbootclasspath:${sun.boot.class.path}"/>
+       <jvmarg value="-Djikes.class.path=${jikes.class.path}"/>
+
+       <!-- Pass through the proxy parameters -->
+       <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
+       <jvmarg value="-Dhttp.proxyPort=${http.proxyPort}"/>
+       <jvmarg value="-Dhttp.nonProxyHosts=${http.nonProxyHosts}"/>
+       <jvmarg value="-Dhttp.proxyUser=${http.proxyUser}"/>
+       <jvmarg value="-Dhttp.proxyPassword=${http.proxyPassword}"/>
+       <classpath refid="classpath"/>
+       <arg line="-buildfile ${file} ${target}"/>
+     </java>
+   </target>
+
+
+  <!-- ===================================================================
+    This is an accessory function to echo out fileNames
+       =================================================================== -->
+  <target name="echo-file">
+    <basename property="fileName" file="${file}"/>
+    <dirname property="dirName" file="${file}"/>
+    <echo message="Dir: ${dirName} File: ${fileName}"/>
+  </target>
+
+  <!-- ===================================================================
+        This is an accessory function to compile some given component
+       =================================================================== -->
+  <target name="component-compile">
+    <echo message="${file}"/>
+    <basename property="fileName" file="${file}"/>
+    <dirname property="dirName" file="${file}"/>
+    <ant inheritAll="false" dir="${dirName}" antfile="${fileName}" target="compile"/>
+  </target>
+
+  <!-- ===================================================================
+        This is an accessory function to exec JUST the testcase of a
+    component.
+       =================================================================== -->
+  <target name="batch-component-test">
+    <antcall target="echo-file"/>
+    <basename property="fileName" file="${file}"/>
+    <dirname property="dirName" file="${file}"/>
+    <ant inheritAll="false" dir="${dirName}" antfile="${fileName}" target="component-junit-functional"/>
+  </target>
+
+  <!-- ===================================================================
+        This is an accessory function to execs the full component test
+       =================================================================== -->
+  <target name="batch-component-run">
+    <antcall target="echo-file"/>
+    <basename property="fileName" file="${file}"/>
+    <dirname property="dirName" file="${file}"/>
+    <ant inheritAll="false" dir="${dirName}" antfile="${fileName}" target="run"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Determine what dependencies are present                             -->
+  <!-- =================================================================== -->
+
+  <target name="setenv" unless="setenv.already.executed" depends="axis-clover-setup, axis-xmlbeans-setup">
+    <property name="setenv.already.executed" value="true"/>
+
+    <condition property="ant.good">
+      <and>
+        <contains string="${ant.version}" substring="Apache Ant version"/>
+      </and>
+    </condition>
+
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.lib}"/>
+    <mkdir dir="${build.dir}/work"/>
+
+    <available property="servlet.present"
+      classname="javax.servlet.Servlet"
+      classpathref="classpath"/>
+
+    <available property="regexp.present"
+      classname="org.apache.oro.text.regex.Pattern"
+      classpathref="classpath"/>
+
+    <available property="junit.present"
+      classname="junit.framework.TestCase"
+      classpathref="classpath"/>
+
+    <available property="wsdl4j.present"
+      classname="javax.wsdl.Definition"
+      classpathref="classpath"/>
+
+    <available property="commons-logging.present"
+      classname="org.apache.commons.logging.Log"
+      classpathref="classpath"/>
+
+    <available property="commons-discovery.present"
+      classname="org.apache.commons.discovery.tools.DiscoverSingleton"
+      classpathref="classpath"/>
+
+    <available property="commons-httpclient.present"
+      classname="org.apache.commons.httpclient.HttpConnection"
+      classpathref="classpath"/>
+
+    <available property="commons-net.present"
+      classname="org.apache.commons.net.smtp.SMTPClient"
+      classpathref="classpath"/>
+
+    <available property="log4j.present"
+      classname="org.apache.log4j.Category"
+      classpathref="classpath"/>
+
+    <available property="activation.present"
+      classname="javax.activation.DataHandler"
+      classpathref="classpath"/>
+
+    <available property="security.present"
+      classname="org.apache.xml.security.Init"
+      classpathref="classpath"/>
+
+    <available property="mailapi.present"
+      classname="javax.mail.internet.MimeMessage"
+      classpathref="classpath"/>
+
+    <available property="httpunit.present"
+      classname="com.meterware.httpunit.GetMethodWebRequest"
+      classpathref="classpath"/>
+
+    <available property="jsse.present"
+      classname="javax.net.ssl.SSLSocketFactory"
+      classpathref="classpath"/>
+
+    <condition property="jetty.present" >
+      <and>
+        <available classname="javax.servlet.Servlet" classpathref="classpath" />
+        <available classname="org.mortbay.http.HttpServer" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <condition property="jdk14.jsse.present" >
+      <and>
+        <available classname="javax.net.ssl.X509TrustManager" classpathref="classpath" />
+        <available classname="javax.net.SocketFactory" classpathref="classpath" />
+        <available classname="javax.net.ssl.SSLContext" classpathref="classpath" />
+        <available classname="javax.net.ssl.SSLSocketFactory" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <condition property="sun.jsse.present" >
+      <and>
+        <available classname="com.sun.net.ssl.X509TrustManager" classpathref="classpath" />
+        <available classname="javax.net.SocketFactory" classpathref="classpath" />
+        <available classname="com.sun.net.ssl.SSLContext" classpathref="classpath" />
+        <available classname="javax.net.ssl.SSLSocketFactory" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <condition property="ibm.jsse.present" >
+      <and>
+        <available classname="com.ibm.net.ssl.X509TrustManager" classpathref="classpath" />
+        <available classname="javax.net.SocketFactory" classpathref="classpath" />
+        <available classname="com.ibm.net.ssl.SSLContext" classpathref="classpath" />
+        <available classname="javax.net.ssl.SSLSocketFactory" classpathref="classpath" />
+        <available classname="com.ibm.crypto.provider.IBMJCE" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <condition property="attachments.present" >
+      <and>
+        <available classname="javax.activation.DataHandler" classpathref="classpath" />
+        <available classname="javax.mail.internet.MimeMessage" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <condition property="sun.codec.present" >
+      <available classname="sun.awt.image.codec.JPEGImageEncoderImpl" classpathref="classpath" />
+    </condition>
+
+    <condition property="jimi.present" >
+      <available classname="com.sun.jimi.core.Jimi" classpathref="classpath" />
+    </condition>
+
+    <condition property="merlinio.present" >
+      <available classname="javax.imageio.ImageIO" classpathref="classpath" />
+    </condition>
+
+    <condition property="axis-ant.present" >
+      <available classname="org.apache.axis.tools.ant.foreach.ForeachTask">
+        <classpath>
+          <pathelement location="${build.lib}/axis-ant.jar"/>
+        </classpath>
+      </available>
+    </condition>
+
+    <condition property="jimiAndAttachments.present">
+      <and>
+        <available classname="javax.activation.DataHandler" classpathref="classpath" />
+        <available classname="javax.mail.internet.MimeMessage" classpathref="classpath" />
+        <available classname="com.sun.jimi.core.Jimi" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <condition property="jms.present" >
+      <available classname="javax.jms.Message" classpathref="classpath" />
+    </condition>
+
+    <condition property="jmsAndSonicMQ.present" >
+      <and>
+        <available classname="javax.jms.Message" classpathref="classpath" />
+        <available classname="progress.message.jclient.Message" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <available property="post-compile.present" file="post-compile.xml" />
+
+    <property environment="env"/>
+    <condition property="debug" value="on">
+    <and>
+      <equals arg1="on" arg2="${env.debug}"/>
+    </and>
+    </condition>
+
+    <condition property="castor.present" >
+      <available classname="org.exolab.castor.xml.MarshalException" classpathref="classpath" />
+    </condition>
+
+    <condition property="xmlbeans.present" >
+      <and>
+        <available classname="org.apache.xmlbeans.XmlObject" classpathref="classpath" />
+        <available classname="javax.xml.stream.XMLStreamReader" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <condition property="bsf.present" >
+      <available classname="org.apache.bsf.BSFManager" classpathref="classpath" />
+    </condition>
+
+    <condition property="combridge.present" >
+      <available classname="org.apache.axis.components.bridge.COMBridge" classpathref="classpath" />
+    </condition>
+
+    <!-- look for WSDL support on the platform -->
+    <condition property="wsdl.found">
+      <or>
+        <available file="wsdl"     filepath="${env.PATH}"/>
+        <available file="wsdl.exe" filepath="${env.PATH}"/>
+        <available file="wsdl.exe" filepath="${env.Path}"/>
+      </or>
+    </condition>
+    <echo level="verbose">wsdl.found=${wsdl.found}</echo>
+    <condition property="csc.found">
+      <or>
+        <available file="csc"     filepath="${env.PATH}"/>
+        <available file="csc.exe" filepath="${env.PATH}"/>
+        <available file="csc.exe" filepath="${env.Path}"/>
+      </or>
+    </condition>
+    <echo level="verbose">csc.found=${csc.found}</echo>
+    <condition property="dotnetapps.found">
+      <and>
+        <isset property="csc.found"/>
+        <isset property="wsdl.found"/>
+      </and>
+    </condition>
+    <echo level="verbose">dotnetapps.found=${dotnetapps.found}</echo>
+    <!-- look for IIS -->
+    <condition property="iis.found">
+      <and>
+        <os family="windows" />
+        <available file="${iis.base}" type="dir" />
+      </and>
+    </condition>
+    <echo level="verbose">iis.found=${iis.found}</echo>
+    <echo level="verbose">iis.base=${iis.base}</echo>
+
+    <!-- look for xalan -->
+    <available property="xalan2.present"
+               classname="org.apache.xalan.transformer.TransformerImpl" />
+<!--   apply the current proxy settings to the current JVM.
+  This gives in-VM code network access through any firewall
+ -->    
+    <echo level="verbose" message="-- Applying Network Settings ---"/>
+    <!-- we cannot set proxyuser and proxypassword as these are only ant1.6 -->
+<!--     <setproxy 
+      proxyhost="${http.proxyHost}"
+      proxyport="${http.proxyPort}"
+      socksProxyHost="${socks.proxyHost}"
+      socksProxyPort="${socks.proxyPort}"
+      />              
+ -->
+     <!-- these are conditions used for patternset
+          configuration of which sets of tests to run.
+          Ignore them until the functional tests use patternsets -->
+    <!-- set the flag for testing jsp pages -->
+    <condition property="test.functional.httpunit.jsp">
+      <isset property="testserver.is.appserver"/>
+    </condition>
+    <!-- set the flag for testing the admin servlet --> 
+    <condition property="test.functional.httpunit.adminservlet">
+      <isset property="testserver.is.appserver"/>
+    </condition>
+    <!-- set the online flag to true if offline is not set -->
+     <condition property="test.functional.online">
+      <not><isset property="offline"/></not>
+    </condition>       
+
+  </target>
+
+  <!-- print out the current enviroment.
+      Also, probe for javadocs being out of date and set javadoc.notrequired
+      to true if they are not needed -->
+  <target name="printEnv" depends="setenv,check-javadoc-needed" >
+
+    <echo message="-----------------------------------------------------------------"/>
+    <echo message="       Build environment for ${Name} ${axis.version} [${year}]   "/>
+    <echo message="-----------------------------------------------------------------"/>
+    <echo message="Building with ${ant.version}"/>
+    <echo message="using build file ${ant.file}"/>
+    <echo message="Java ${java.version} located at ${java.home} "/>
+    <echo message="-----------------------------------------------------------------"/>
+
+    <echo message="--- Flags (Note: If the {property name} is displayed, "/>
+    <echo message="           then the component is not present)" />
+    <echo message=""/>
+
+    <echo message="basedir = ${basedir}"/>
+    <echo message="axis.home = ${axis.home}"/>
+    <echo message="build.dir = ${build.dir}"/>
+    <echo message="build.dest = ${build.dest}"/>
+    <echo message="lib.dir = ${lib.dir}"/>
+    <echo message=""/>
+    <echo message="=== Required Libraries (for building code) ===" />
+    <echo message="activation.present=${activation.present}" />
+    <echo message="commons-discovery.present=${commons-discovery.present}" />
+    <echo message="commons-logging.present=${commons-logging.present}" />
+    <echo message="wsdl4j.present=${wsdl4j.present}" />
+    <echo message=""/>
+    <echo message="--- Optional Libraries (for building code) ---" />
+    <echo message="attachments.present=${attachments.present}" />
+    <echo message="bsf.present=${bsf.present}" />
+    <echo message="castor.present=${castor.present}" />
+    <echo message="commons-httpclient.present=${commons-httpclient.present}" />
+    <echo message="commons-net.present=${commons-net.present}" />
+    <echo message="ibm.jsse.present=${ibm.jsse.present}" />
+    <echo message="jimi.present=${jimi.present}" />
+    <echo message="jms.present=${jms.present}" />
+    <echo message="jetty.present=${jetty.present}" />
+    <echo message="jdk14.jsse.present=${jdk14.jsse.present}" />
+    <echo message="mailapi.present=${mailapi.present}" />
+    <echo message="regexp.present=${regexp.present}" />
+    <echo message="security.present=${security.present}" />
+    <echo message="servlet.present=${servlet.present}" />
+    <echo message="sun.jsse.present=${sun.jsse.present}" />
+    <echo message="xmlbeans.present=${xmlbeans.present}" />
+    <echo message=""/>
+    <echo message="--- Miscellaneous (for running tests) ---" />
+    <echo message="axis-ant.present=${axis-ant.present}" />
+    <echo message="clover.present=${clover.present}" />
+    <echo message="httpunit.present=${httpunit.present}" />
+    <echo message="junit.present=${junit.present}" />
+    <echo message="log4j.present=${log4j.present}" />
+    <echo message=""/>
+    <echo message="--- Property values ---" />
+    <echo message="debug=${debug}" />
+    <echo message="nowarn=${nowarn}" />
+    <echo message="source=${source}" />
+    <echo message="target=${target}" />
+    <echo message="deprecation=${deprecation}" />
+    <echo message="build.compiler=${build.compiler}" />
+    <echo message="javac.fork=${javac.fork}" />
+    <!-- Set environment variable axis_nojavadocs=true  to never generate javadocs. Case sensative! -->
+    <echo message="axis_nojavadocs=${env.axis_nojavadocs}"/>
+    <echo message="javax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
+    <echo message="javax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
+    <echo message="sun.boot.class.path=${sun.boot.class.path}"/>
+    <echo message="jikes.class.path=${jikes.class.path}"/>
+
+    <echo message="" />
+    <echo message="-- Network Settings ---"/>
+    <echo message="" />
+    <echo message="http.proxyHost = ${http.proxyHost}" />
+    <echo message="http.proxyPort = ${http.proxyPort}" />
+    <echo message="http.nonProxyHosts = ${http.nonProxyHosts}" />
+    <echo message="http.proxyUser = ${http.proxyUser}" />
+    <echo message="http.proxyPassword = ${http.proxyPassword}" />
+    <echo message="" />
+
+    <echo message="-- Test Environment for AXIS ---"/>
+    <echo message="" />
+    <echo message="test.functional.remote = ${test.functional.remote}" />
+    <echo message="test.functional.local = ${test.functional.local}" />
+    <echo message="test.functional.both = ${test.functional.both}" />
+    <echo message="test.functional.reportdir = ${test.functional.reportdir}" />
+    <echo message="test.functional.SimpleAxisPort = ${test.functional.SimpleAxisPort}" />
+    <echo message="test.functional.TCPListenerPort = ${test.functional.TCPListenerPort}" />
+    <echo message="test.functional.fail = ${test.functional.fail}" />
+    <echo message="" />
+
+    <pathconvert targetos="windows" property="classpath.as.string" refid="classpath"/>
+    <echo message="classpath: ${classpath.as.string}"/>
+    <echo message="" />
+
+ </target>
+
+ 
+  <!-- see if javadocs are needed by looking for the env.axis_nojavadocs flag -->
+  
+  <target name="check-javadoc-needed"  depends="setenv" >
+
+    <uptodate property="javadoc.notoutofdate"
+              targetfile="${build.javadocs}/index.html">
+      <srcfiles dir="${src.dir}" includes="**/*.java" />
+    </uptodate>
+
+    <!-- for ant1.5+, we can use <isset> here -->
+    <condition property="axis_nojavadocs" value="true">
+      <equals arg1="true" arg2="${env.axis_nojavadocs}"/>
+    </condition>
+    <condition property="axis_nojavadocs" value="false">
+      <equals arg1="${axis_nojavadocs}" arg2="$${axis_nojavadocs}"/>
+    </condition>
+
+    <condition property="javadoc.notrequired" value="true">
+    <or>
+      <equals arg1="${javadoc.notoutofdate}" arg2="true"/>
+      <equals arg1="true" arg2="${axis_nojavadocs}"/>
+    </or>
+    </condition>
+
+
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Launches the functional test TCP server -->
+  <!-- =================================================================== -->
+  <target name="start-functional-test-tcp-server" if="junit.present">
+    <echo message="Starting test tcp server."/>
+    <java classname="samples.transport.tcp.TCPListener" fork="yes" dir="${axis.home}/build">
+      <arg line="-p ${test.functional.TCPListenerPort}" /> <!-- arbitrary port -->
+      <classpath refid="classpath" />
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Launches the functional test HTTP server -->
+  <!-- =================================================================== -->
+  <target name="start-functional-test-http-server" if="junit.present">
+    <echo message="Starting test http server."/>
+    <java classname="org.apache.axis.transport.http.SimpleAxisServer" fork="yes" dir="${axis.home}/build">
+        <!-- Uncomment this to use Jikes instead of Javac for compiling JWS Files
+        <jvmarg value="-Daxis.Compiler=org.apache.axis.components.compiler.Jikes"/>
+        -->
+        <jvmarg value="-Daxis.wsdlgen.intfnamespace=http://localhost:${test.functional.ServicePort}"/>
+        <jvmarg value="-Daxis.wsdlgen.serv.loc.url=http://localhost:${test.functional.ServicePort}"/>
+        <arg line="-p ${test.functional.SimpleAxisPort}" />  <!-- arbitrary port -->
+      <classpath refid="classpath" />
+    </java>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Launches the functional test HTTP server when testing digital signature -->
+  <!-- =================================================================== -->
+  <target name="start-functional-test-http-server-secure" if="junit.present" depends="start-signature-signing-and-verification">
+    <echo message="Starting test http server."/>
+    <java classname="org.apache.axis.transport.http.SimpleAxisServer" fork="yes" dir="${axis.home}/build">
+        <!-- Uncomment this to use Jikes instead of Javac for compiling JWS Files
+        <jvmarg value="-Daxis.Compiler=org.apache.axis.components.compiler.Jikes"/>
+        -->
+        <jvmarg value="-Daxis.wsdlgen.intfnamespace=http://localhost:${test.functional.ServicePort}"/>
+        <jvmarg value="-Daxis.wsdlgen.serv.loc.url=http://localhost:${test.functional.ServicePort}"/>
+        <arg line="-p ${test.functional.SimpleAxisPort}" />  <!-- arbitrary port -->
+      <classpath refid="classpath" />
+    </java>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Stops the functional test HTTP server -->
+  <!-- =================================================================== -->
+  <target name="stop-functional-test-http-server" if="junit.present">
+    <echo message="Stopping test http server."/>
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="quit"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Stops the functional test HTTP server when testing digital signature -->
+  <!-- =================================================================== -->
+  <target name="stop-functional-test-http-server-secure" if="junit.present" depends="stop-signature-signing-and-verification">
+    <echo message="Stopping test http server."/>
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="quit"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Start Signature Signing and Verification -->
+  <!-- =================================================================== -->
+  <target name="start-signature-signing-and-verification" if="security.present">
+    <!-- Enable transparent Signing of SOAP Messages sent
+        from the client and Server-side Signature Verification.
+    -->
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="${axis.home}/samples/security/serversecuritydeploy.wsdd"/>
+    </java>
+    <java classname="org.apache.axis.utils.Admin" fork="yes">
+      <classpath refid="classpath" />
+      <arg value="client"/>
+      <arg value="${axis.home}/samples/security/clientsecuritydeploy.wsdd"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Stop Signature Signing and Verification -->
+  <!-- =================================================================== -->
+  <target name="stop-signature-signing-and-verification" if="security.present">
+    <!-- Disable transparent Signing of SOAP Messages sent
+        from the client and Server-side Signature Verification.
+    -->
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="samples/security/serversecurityundeploy.wsdd"/>
+    </java>
+    <java classname="org.apache.axis.utils.Admin" fork="yes">
+      <classpath refid="classpath" />
+      <arg value="client"/>
+      <arg value="samples/security/clientsecurityundeploy.wsdd"/>
+    </java>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the JUnit functional test -->
+  <!-- =================================================================== -->
+  <target name="component-junit-functional-prepare" if="junit.present">
+
+    <!-- first, put the JWS where the functional test can see it -->
+    <mkdir dir="${axis.home}/build/jws" />
+    <copy file="${axis.home}/samples/stock/StockQuoteService.jws" todir="${axis.home}/build/jws" />
+    <copy file="${axis.home}/test/functional/AltStockQuoteService.jws" todir="${axis.home}/build/jws" />
+    <copy file="${axis.home}/test/functional/GlobalTypeTest.jws" todir="${axis.home}/build/jws"/>
+    <copy file="${axis.home}/webapps/axis/EchoHeaders.jws" todir="${axis.home}/build/jws" />
+
+          <path id="deploy.xml.files">
+                <fileset dir="${build.dir}">
+                  <include name="work/${componentName}/**/deploy.wsdd"/>
+                  <include name="${extraServices}/deploy.wsdd" />
+                </fileset>
+          </path>
+
+          <path id="undeploy.xml.files">
+                <fileset dir="${build.dir}">
+                  <include name="work/${componentName}/**/undeploy.wsdd"/>
+                  <include name="${extraServices}/undeploy.wsdd" />
+                </fileset>
+          </path>
+
+          <property name="deploy.xml.property" refid="deploy.xml.files"/>
+          <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
+  </target>
+
+  <target name="component-test-run" if="junit.present" depends="start-signature-signing-and-verification">
+    <echo message="Execing ${componentName} Test"/>
+    <antcall target="component-junit-functional"/>
+  </target>
+
+  <!-- Runs the AdminClient to deploy/undeploy.   Set up the admin.file.exists property such that it is set -->
+  <!-- if there is a deploy.xml file, and the admin.file property to contain the actual file reference.     -->
+  <target name="adminClient" if="admin.file.exists">
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="${admin.file}"/>
+    </java>
+  </target>
+
+  <target name="component-junit-functional" if="junit.present" depends="component-junit-functional-prepare">
+   <!-- Don't bother running AdminClient unless there's something to do -->
+   <condition property="admin.file.exists">
+       <not><equals arg1="${deploy.xml.property}" arg2=""/></not>
+   </condition>
+   <antcall target="adminClient">
+      <param name="admin.file" value="${deploy.xml.property}"/>
+   </antcall>
+
+   <available file="${axis.home}/junit-exclude-tests.txt" property="junit-exclude-tests.present"/>
+   <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <classpath refid="classpath" />
+      <formatter type="xml" usefile="${test.functional.usefile}"/>
+      <batchtest todir="${test.functional.reportdir}">
+        <fileset dir="${build.dest}">
+           <include name="${extraTestCases}/*TestCase.class" />
+           <include name="${extraTestCases}/**/*TestCase.class" />
+           <include name="${componentName}/*TestCase.class" />
+           <include name="${componentName}/**/*TestCase.class" />
+           <include name="${componentName}/**/PackageTests.class" />
+           <!-- <include name="${componentName}/**/test/*TestSuite.class"/> -->
+           <excludesfile name="${axis.home}/junit-exclude-tests.txt" if="junit-exclude-tests.present"/> 
+        </fileset>
+      </batchtest>
+   </junit>
+
+   <!-- Don't bother running AdminClient unless there's something to do -->
+   <condition property="admin.file.exists">
+       <not><equals arg1="${undeploy.xml.property}" arg2=""/></not>
+   </condition>
+   <antcall target="adminClient">
+      <param name="admin.file" value="${undeploy.xml.property}"/>
+   </antcall>
+
+  </target>
+
+  <target name="execute-Component" depends="setenv" >
+    <mkdir dir="${test.functional.reportdir}" />
+    <runaxisfunctionaltests
+      url="http://localhost:${test.functional.TCPListenerPort}"
+      httpServerTarget="start-functional-test-http-server"
+      testTarget="component-test-run"
+      httpStopTarget="stop-functional-test-http-server" />
+  </target>
+
+  <target name="execute-Component-noServer" depends="setenv">
+    <mkdir dir="${test.functional.reportdir}" />
+    <runaxisfunctionaltests testTarget="component-test-run"/>
+  </target>
+
+  <target name="execute-Component-with-tcp"  depends="transport-layer" >
+    <mkdir dir="${test.functional.reportdir}" />
+    <runaxisfunctionaltests
+      url="http://localhost:${test.functional.TCPListenerPort}"
+      tcpServerTarget="start-functional-test-tcp-server"
+      httpServerTarget="start-functional-test-http-server"
+      testTarget="component-test-run"
+      httpStopTarget="stop-functional-test-http-server" />
+  </target>
+
+  <target name="transport-layer" depends="setenv" >
+    <ant inheritAll="true" dir="${axis.home}/samples/transport" 
+      antfile="build.xml" target="compile" />
+  </target>
+
+  <target name="clover-report" depends="setenv">
+     <clover-report>
+        <current outfile="${axis.home}/build/clover-report" title="Axis Clover Report" span="60m">
+           <format type="html"/> 
+        </current>	 
+     </clover-report>
+  </target>
+
+  <target name="axis-clover-setup" depends="axis-clover-setenv" if="clover.present">
+     <echo message="Registering clover tasks" />
+     <taskdef resource="clovertasks"/>
+     <clover-setup initString="${axis.home}/build/clover/axis_coverage.db"
+                   tmpdir="${axis.home}/build/clover"
+                   flushpolicy="interval"
+                   flushinterval="1000">
+       <files>
+        <include name="**/org/apache/axis/**/*.java"/>
+       </files>
+     </clover-setup>
+  </target>
+
+  <target name="axis-clover-setenv">
+     <condition property="clover.present" >
+       <available classname="com.cortexeb.tools.clover.tasks.CloverTask" classpathref="classpath" />
+     </condition>
+  </target>
+
+  <target name="axis-xmlbeans-setup" depends="axis-xmlbeans-setenv" if="generate.schema.jar">
+    <mkdir dir="${build.lib}"/>
+     <echo message="Registering xmlbeans tasks"/>
+     <taskdef name="xmlbeanbuild" 
+              classname="org.apache.xmlbeans.impl.tool.XMLBean" 
+              classpathref="classpath"/>
+	 <xmlbeanbuild
+              schema="${axis.home}/xsd"
+              classgendir="${build.dir}/schema/"
+              failonerror="true"
+              classpathref="classpath"/>
+	 <jar jarfile="${build.lib}/axis-schema.jar" basedir="${build.dir}/schema/"/>
+  </target>
+
+  <target name="axis-xmlbeans-setenv">
+     <condition property="generate.schema.jar">
+       <and>
+         <available classname="org.apache.xmlbeans.impl.tool.XMLBean" classpathref="classpath" />
+         <not>
+		    <available file="${build.lib}/axis-schema.jar"/>
+         </not>
+       </and>
+     </condition>
+  </target>

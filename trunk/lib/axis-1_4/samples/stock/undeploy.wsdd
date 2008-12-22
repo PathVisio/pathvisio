@@ -1,0 +1,4 @@
+<undeployment name="test" xmlns="http://xml.apache.org/axis/wsdd/">
+  <service name="urn:xmltoday-delayed-quotes"/>
+  <service name="urn:cominfo"/>
+</undeployment>

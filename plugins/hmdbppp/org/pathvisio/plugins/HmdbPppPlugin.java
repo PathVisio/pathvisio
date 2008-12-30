@@ -30,6 +30,7 @@ import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.Xref;
 
 
 /**
@@ -64,13 +65,15 @@ public class HmdbPppPlugin {
 	    pelt.setCopyright("Human metabolome database (http://www.hmdb.ca)");
 	    pelt.setDataNodeType(input.getDataNodeType());
 	    result.add(pelt);
+	    Xref ref = input.getXref();
 
        
 		double angle = 0;
 		int noRecords = 0;
 		String aLine;
 		
-		String urlString = "http://www.hmdb.ca/cgi-bin/extractor_runner.cgi?metabolites_hmdb_id=hmdb00101&format=csv&select_enzymes_gene_name=on&select_enzymes_swissprot_id=on";
+		String urlString = "http://www.hmdb.ca/cgi-bin/extractor_runner.cgi?metabolites_hmdb_id="+ref.getId()+"&format=csv&select_enzymes_gene_name=on&select_enzymes_swissprot_id=on";
+		 System.out.println(urlString);
 		URL url = new URL(urlString);
 		InputStream in = url.openStream();
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));

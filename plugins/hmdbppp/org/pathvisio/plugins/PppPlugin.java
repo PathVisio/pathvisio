@@ -17,13 +17,16 @@
 package org.pathvisio.plugins;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 
-import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.PvDesktop;
+import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.view.GeneProduct;
@@ -94,8 +97,16 @@ public class PppPlugin implements Plugin, PathwayElementMenuHook
 		public void actionPerformed(ActionEvent e) 
 		{
 			PppPane pane = parent.getPane();
-			Pathway result = hmdbPpp.doSuggestion(elt.getPathwayElement());
-			pane.addPart("Putative pathway part", result);
+			try {
+				Pathway result = hmdbPpp.doSuggestion(elt.getPathwayElement());
+				pane.addPart("Putative pathway part", result);
+			} catch (IOException e1) {
+				Logger.log.error("Unable to get suggestions", e1);
+				JOptionPane.showMessageDialog(
+					pane, "Unable to get suggestions: " + e1.getMessage(),
+					"Error", JOptionPane.ERROR_MESSAGE
+				);
+			}
 		}
 	}
 

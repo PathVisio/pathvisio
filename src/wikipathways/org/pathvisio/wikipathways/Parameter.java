@@ -33,6 +33,8 @@ public class Parameter {
 	public static final String USER = "user";
 	public static final String RPC_URL = "rpcUrl";
 	public static final String SITE_URL = "siteUrl";
+	public static final String PRIVATE = "private";
+	
 	/**
 	 * Parameter value: A comma seperated list of categories
 	 */
@@ -116,6 +118,7 @@ public class Parameter {
 		add(GDB_SERVER, new ParameterValue("wikipathways.org"));
 		add(REVISION, new ParameterValue());
 		add(SITE_URL, new ParameterValue());
+		add(PRIVATE, new ParameterValue(null));
 	}
 	
 	private void add(String name, ParameterValue p) {

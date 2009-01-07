@@ -341,6 +341,10 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 		);
 	}
 
+	public boolean isPrivate() {
+		return parameters.getValue(Parameter.PRIVATE) != null;
+	}
+
 	public void addCookie(String key, String value) {
 		cookie.put(key, value);
 	}
@@ -576,7 +580,8 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 			byte[] data = out.toByteArray();
 		
 			if(isNew()) {
-				Object[] params = new Object[]{ description, data };
+				Logger.log.error("IS PRIVATE: " + isPrivate());
+				Object[] params = new Object[]{ description, data, isPrivate() };
 				Object response = client.execute("WikiPathways.createPathway", params);
 				HashMap<String, String> map = (HashMap)response;
 				parameters.setValue(Parameter.REVISION, map.get("revision"));

@@ -2,36 +2,24 @@
 <project name="CytoscapeGpml" default="jar" basedir=".">
 	<property name="plugin.name" value="gpml" />
 	<property name="src.dir" value="src" />
-	<property name="src.webservice.dir" value="src-webservice" />
 	<property name="build.dir" value="build" />
 	<property name="class.dir" value="class" />
-	<property name="lib.dir" value="lib" />
 	<property name="pathvisio.dir" value="../../" />
 	<property name="pathvisio.lib.dir" value="${pathvisio.dir}/lib" />
-	<property name="webservice.dir" value="${pathvisio.dir}/tools/soap-axis2/" />
+	<property name="axis.lib.dir" value="${pathvisio.lib.dir}/axis-1_4/lib" />
 	<property name="pathvisio.class.dir" value="class.pathvisio" />
 	<property name="cytoscape.dir" value="/home/thomas/programs/cytoscape" />
 	<property name="cytoscape.plugin.dir" value="${cytoscape.dir}/plugins" />
-	<property name="wsdl.url" value="http://localhost/wikipathways/wpi/webservice/webservice.php?wsdl"/>
 	
 	<path id="class.path">
 		<path location="${build.dir}"/>
-		<fileset dir="${lib.dir}" includes="*.jar" />
+		<fileset dir="${axis.lib.dir}" includes="*.jar" />
 		<pathelement location="${pathvisio.lib.dir}/jdom.jar" />
 		<pathelement location="${pathvisio.lib.dir}/resources.jar" />
 		<pathelement location="${pathvisio.dir}/pathvisio.jar" />
 		<pathelement location="${cytoscape.dir}/cytoscape.jar" />
+		<pathelement location="${pathvisio.dir}/wikipathways-client.jar" />
 	</path>
-
-	<target name="generate-wsdl-client">
-		<java classpathref="class.path" fork="true" failonerror="true" classname="org.apache.axis.wsdl.WSDL2Java">
-			<arg value="-o" />
-			<arg value="${src.webservice.dir}" />
-			<arg value="-p" />
-			<arg value="org.pathvisio.wikipathways.webservice" />
-			<arg value="${wsdl.url}" />
-		</java>
-	</target>
 
 	<target name="prepare" description="Prepare">
 		<mkdir dir="${build.dir}" />
@@ -52,10 +40,7 @@
 		<delete dir="${class.dir}" />
 	</target>
 
-	<target name="compile" depends="prepare, generate-wsdl-client" description="Compile all sources">
-		<javac srcdir="${src.webservice.dir}" debug="true" destdir="${build.dir}">
-			<classpath refid="class.path" />
-		</javac>
+	<target name="compile" depends="prepare" description="Compile all sources">
 		<javac srcdir="src" debug="true" destdir="${build.dir}">
 			<classpath refid="class.path" />
 		</javac>
@@ -64,11 +49,12 @@
 
 	<target name="jar" depends="compile" description="Generate jar file">
 		<unjar dest="${class.dir}">
+			<fileset dir="${pathvisio.dir}" includes="wikipathways-client.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="resources.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="jdom.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="forms-1.2.0.jar" />
 			<fileset dir="${pathvisio.dir}" includes="pathvisio.jar" />
-			<fileset dir="${lib.dir}" includes="*.jar"/>
+			<fileset dir="${axis.lib.dir}" includes="*.jar"/>
 		</unjar>
 
 		<copy file="plugin.props" todir="${build.dir}/org/pathvisio/cytoscape" />

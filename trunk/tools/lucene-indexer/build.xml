@@ -1,25 +1,21 @@
 <?xml version="1.0"?>
 <project name="GPML Indexer" default="jar" basedir=".">
 	<property name="src.dir" value="src"/>
-	<property name="wpclient.dir" value="../wikipathways-client"/>
-	<property name="lib.wpclient.dir" value="${wpclient.dir}/lib"/>
 	<property name="build.dir" value="build"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="dist.dir" value="dist"/>
 	<property name="pathvisio.dir" value="../../"/>
 	<property name="lucene.jar" value="lucene-core-2.2.0.jar"/>
-	<property name="jar.class.path" value="lib/pathvisio.jar lib/wikipathways.jar lib/resources.jar lib/jdom.jar lib/derby.jar lib/${lucene.jar} lib/axis.jar lib/commons-discovery-0.2.jar lib/commons-logging-1.0.4.jar lib/jaxrpc.jar lib/log4j-1.2.8.jar lib/saaj.jar lib/wsdl4j-1.5.1.jar lib/xercesImpl.jar lib/wikipathways-client.jar"/>
 	<property name="jar.name" value="wikipathways-indexer.jar"/>
-	
+
 	<path id="class.path">
-      <pathelement location="${build.dir}"/>
+		<pathelement location="${build.dir}"/>
 		<fileset dir="lib">
 			<include name="*.jar"/>
-	  	</fileset>
-	  	<fileset dir="${wpclient.dir}">
-			<include name="**/*.jar"/>
-	  	</fileset>
+		</fileset>
 		<fileset dir="${pathvisio.dir}">
+			<include name="wikipathways-client.jar" />
+			<include name="lib/axis-1_4/lib/*.jar" />
 			<include name="pathvisio.jar"/>
 			<include name="wikipathways.jar"/>
 			<include name="lib/jdom.jar"/>
@@ -32,32 +28,43 @@
 		<mkdir dir="${build.dir}"/>
 		<mkdir dir="${dist.dir}"/>
 	</target>
-	
+
 	<target name="clean" description="Remove all generated files.">
 		<delete dir="${build.dir}"/>
 		<delete dir="${dist.dir}"/>
 	</target>
-	
+
 	<target name="compile" depends="prepare" description="Compile sources">
 		<javac srcdir="${src.dir}"
 			   includes="**"
 			   destdir="${build.dir}"
 			   debug="true"
 			   source="1.5">
-		  <classpath refid="class.path"/>
+			<classpath refid="class.path"/>
 		</javac>
 	</target>
 
 	<target name="jar" depends="compile" description="Generates executable jar file">
+		<pathconvert refid="class.path" property="class.path.manifest" pathsep=" ">
+			<mapper>
+				<chainedmapper>
+					<!-- remove absolute path -->
+					<flattenmapper />
+					<!-- add lib/ prefix -->
+					<globmapper from="*" to="lib/*" />
+				</chainedmapper>
+			</mapper>
+		</pathconvert>
+
 		<jar jarfile="${jar.name}">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.indexer.WikiPathwaysIndexer"/>
-				<attribute name="Class-Path" value="${jar.class.path}"/>
+				<attribute name="Class-Path" value="${class.path.manifest}"/>
 			</manifest>
-			<fileset dir="${build.dir}" includes="**/*.class"/>			
+			<fileset dir="${build.dir}" includes="**/*.class"/>
 		</jar>
-    </target>
-	
+	</target>
+
 	<target name="dist" depends="jar" description="Copies jar and external libraries to dist path">
 		<copy file="${jar.name}" toDir="${dist.dir}"/>
 		<copy file="${pathvisio.dir}/lib/jdom.jar" toDir="${dist.dir}/lib"/>
@@ -65,14 +72,14 @@
 		<copy file="${pathvisio.dir}/lib/resources.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/pathvisio.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/wikipathways.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/wikipathways-client.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${lib.dir}/${lucene.jar}" toDir="${dist.dir}/lib"/>
 		<copy file="gdb.config" toDir="${dist.dir}"/>
 		<copy file="indexer.config" toDir="${dist.dir}"/>
 		<copy toDir="${dist.dir}/lib">
-			<fileset dir="${lib.wpclient.dir}">
+			<fileset dir="${pathvisio.dir}/lib/axis-1_4/lib/">
 				<include name="**/*.jar"/>
 			</fileset>
-			<fileset file="${wpclient.dir}/wikipathways-client.jar"/>
 		</copy>
-    </target>
+	</target>
 </project>

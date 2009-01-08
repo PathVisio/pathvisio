@@ -45,7 +45,6 @@ import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
-import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.GpmlFormatImpl1;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
@@ -426,7 +425,7 @@ public class KeggFormat {
 	}
 
 	private double coordinateToGpml(double c) {
-		return c * GpmlFormat.pixel2model;
+		return c * GpmlFormatImpl1.PIXEL_TO_MODEL;
 	}
 
 	private double coordinateSpacing(double c) {

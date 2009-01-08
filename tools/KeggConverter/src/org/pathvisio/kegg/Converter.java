@@ -18,18 +18,18 @@ package org.pathvisio.kegg;
 
 import java.io.File;
 
-import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.preferences.PreferenceManager;
 
 public class Converter {
 	static boolean overwrite = true;
 	
 	public static void main(String[] args) {
-		Engine.init();
+		PreferenceManager.init();
 		Logger.log.setStream(System.err);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
 		if(args.length < 2) {

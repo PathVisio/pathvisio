@@ -79,7 +79,11 @@ public abstract class Bot {
 	protected abstract Result scanPathway(File pathwayFile) throws BotException;
 
 	public Collection<Result> scan() throws BotException {
-		getCache().update();
+		try {
+			getCache().update();
+		} catch(Exception e) {
+			throw new BotException(e);
+		}
 
 		List<Result> reports = new ArrayList<Result>();
 

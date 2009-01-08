@@ -21,7 +21,6 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.apache.derby.impl.sql.compile.RenameNode;
 import org.apache.lucene.analysis.SimpleAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
@@ -31,7 +30,6 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.pathvisio.Engine;
 import org.pathvisio.data.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
@@ -46,7 +44,6 @@ public class Search extends TestCase {
 			for(File f : indexDir.listFiles()) {
 				f.delete();
 			}
-			Engine.init();
 			
 			//Connect to any GDB in the preferences
 			PreferenceManager prefs = new PreferenceManager();

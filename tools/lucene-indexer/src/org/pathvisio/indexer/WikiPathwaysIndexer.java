@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -159,7 +160,7 @@ public class WikiPathwaysIndexer extends Timer{
 		update(wikiCache.update());
 	}
 	
-	void update(List<File> files) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
+	void update(Collection<File> files) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
 		if(files.size() > 0) {
 			createWriter();
 			int i = 1;

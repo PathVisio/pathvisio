@@ -19,7 +19,7 @@
 		</fileset>
 	</path>
 
-	<property name="manifest.class.path" value="lib/resources.jar lib/axis.jar lib/axis-ant.jar lib/commons-discovery-0.2.jar lib/commons-logging-1.0.4.jar lib/jaxrpc.jar lib/jdom.jar lib/keggapi.jar lib/log4j-1.2.8.jar lib/pathvisio_core.jar lib/saaj.jar lib/wsdl4j-1.5.1.jar lib/batik/batik-awt-util.jar lib/batik/batik-bridge.jar lib/batik/batik-css.jar lib/batik/batik-dom.jar lib/batik/batik-ext.jar lib/batik/batik-extension.jar lib/batik/batik-gvt.jar lib/batik/batik-parser.jar lib/batik/batik-anim.jar lib/batik/xml-apis-ext.jar lib/batik/batik-script.jar lib/batik/batik-svg-dom.jar lib/batik/batik-svggen.jar lib/batik/batik-transcoder.jar lib/batik/batik-util.jar lib/batik/batik-xml.jar lib/batik/pdf-transcoder.jar lib/batik/xml-apis.jar"/>
+	<property name="manifest.class.path" value="lib/resources.jar lib/axis.jar lib/axis-ant.jar lib/commons-discovery-0.2.jar lib/commons-logging-1.0.4.jar lib/jaxrpc.jar lib/jdom.jar lib/keggapi.jar lib/log4j-1.2.8.jar lib/pathvisio_core.jar lib/saaj.jar lib/wsdl4j-1.5.1.jar lib/batik/batik-awt-util.jar lib/batik/batik-codec.jar lib/batik/batik-bridge.jar lib/batik/batik-css.jar lib/batik/batik-dom.jar lib/batik/batik-ext.jar lib/batik/batik-extension.jar lib/batik/batik-gvt.jar lib/batik/batik-parser.jar lib/batik/batik-anim.jar lib/batik/xml-apis-ext.jar lib/batik/batik-script.jar lib/batik/batik-svg-dom.jar lib/batik/batik-svggen.jar lib/batik/batik-transcoder.jar lib/batik/batik-util.jar lib/batik/batik-xml.jar lib/batik/pdf-transcoder.jar lib/batik/xml-apis.jar"/>
 		
 	<path id="class.path">
       	<pathelement location="${build.dir}"/>

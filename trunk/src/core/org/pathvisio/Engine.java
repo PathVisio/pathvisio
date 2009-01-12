@@ -21,6 +21,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class Engine
 	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";
 	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
-	
+	private LinkedList<File> recent = new LinkedList<File>();
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
@@ -139,6 +140,14 @@ public class Engine
 	/**
 	 * Open a pathway from a gpml file
 	 */
+	
+	public void putInRecentPathwayList(File pwf)
+	{
+		recent.remove(pwf);// file should occur in recent 0 or 1 times
+        recent.add(pwf);
+        if(recent.size() > 10) recent.remove();// 10 = maximum # recent files
+	}
+	
 	public void openPathway(File pathwayFile) throws ConverterException
 	{
 		Pathway pathway = null;		
@@ -150,6 +159,7 @@ public class Engine
 		//Only set the pathway field after the data is loaded
 		//(Exception thrown on error, this part will not be reached)
 		createVPathway(pathway);
+		putInRecentPathwayList(pathwayFile);
 		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
 		if (vPathway != null)
 		{
@@ -158,6 +168,7 @@ public class Engine
 	}
 	
 	public File openPathway(URL url) throws ConverterException {
+		//TODO insert in recent pathways
 		String protocol = url.getProtocol();
 		File f = null;
 		if(protocol.equals("file")) {
@@ -185,6 +196,7 @@ public class Engine
 		// make sure there are no problems with references.
 		p.fixReferences();
 		p.writeToXml(toFile, true);
+		putInRecentPathwayList(toFile);
 	}
 	
 	/**
@@ -195,6 +207,7 @@ public class Engine
 	public void savePathway(File toFile) throws ConverterException
 	{
 		savePathway(getActivePathway(), toFile);
+		putInRecentPathwayList(toFile);
 	}
 
 	/**
@@ -353,6 +366,10 @@ public class Engine
 	{
 		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
 		fireApplicationEvent(e);
+	}
+	
+	public List<File> getRecentPathways() {
+		return recent;
 	}
 	
 	

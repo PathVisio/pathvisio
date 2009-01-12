@@ -16,10 +16,12 @@
 //
 package org.pathvisio.gui.swing;
 
-import com.mammothsoftware.frwk.ddb.DropDownButton;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.ImageIcon;
@@ -29,10 +31,14 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.util.Resources;
+
+import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 /**
  * the mainPanel for the standalone (non-applet) version of PathVisio.
@@ -43,12 +49,18 @@ public class MainPanelStandalone extends MainPanel
 	
 	private StandaloneActions standaloneActions = null;
 	
+	
 	@Override
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu fileMenu = new JMenu("File");
 		
 		addToMenu(standaloneActions.newAction, fileMenu);
 		addToMenu(standaloneActions.openAction, fileMenu);
+		
+		recentPathwaysMenu = new JMenu("Open Recent Pathway");
+		fileMenu.add(recentPathwaysMenu);
+		refreshRecentPathwaysMenu();
+		//fileMenu.add(new JMenu("Open Recent Pathways"));
 		addToMenu(actions.standaloneSaveAction, fileMenu);
 		addToMenu(actions.standaloneSaveAsAction, fileMenu);
 		fileMenu.addSeparator();
@@ -98,6 +110,33 @@ public class MainPanelStandalone extends MainPanel
 		sidebarTabbedPane.addTab ("Search", searchPane); 
 	}
 
+	@Override
+	public void applicationEvent(ApplicationEvent e) {
+		super.applicationEvent(e);
+		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) {
+			refreshRecentPathwaysMenu();
+		}
+	}
+	
+	JMenu recentPathwaysMenu;
+	
+	private void refreshRecentPathwaysMenu() {
+		List<File> recent = swingEngine.getEngine().getRecentPathways();
+		recentPathwaysMenu.removeAll();
+		      recentPathwaysMenu.setMnemonic(KeyEvent.VK_R);
+		      for (int i = 0; i < recent.size(); i++) {
+		    	  final File file = recent.get(i);
+		    	  JMenuItem menuItem = new JMenuItem(file.getName(), KeyEvent.VK_0 + i);
+                  menuItem.setAccelerator(KeyStroke.getKeyStroke(menuItem.getMnemonic(), InputEvent.CTRL_DOWN_MASK));
+                  menuItem.addActionListener(new ActionListener() {
+                	  public void actionPerformed(ActionEvent e) {
+                		swingEngine.openPathway(file);
+                	}
+                  });
+                  recentPathwaysMenu.add(menuItem);
+		      }
+	}
+	
 	@Override
 	protected void addToolBarActions(final SwingEngine swingEngine, JToolBar tb) 
 	{

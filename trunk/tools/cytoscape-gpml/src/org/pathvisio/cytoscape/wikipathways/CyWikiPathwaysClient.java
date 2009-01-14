@@ -17,28 +17,39 @@
 package org.pathvisio.cytoscape.wikipathways;
 
 
-import java.io.StringReader;
-import java.math.BigInteger;
+import giny.view.NodeView;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.rpc.ServiceException;
 
 import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.pathvisio.wikipathways.webservice.WSIndexField;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
-import org.pathvisio.wikipathways.webservice.WikiPathwaysLocator;
-import org.pathvisio.wikipathways.webservice.WikiPathwaysPortType;
 
+import cytoscape.CyEdge;
 import cytoscape.CyNetwork;
+import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.CytoscapeInit;
+import cytoscape.data.CyAttributes;
+import cytoscape.data.Semantics;
 import cytoscape.data.webservice.CyWebServiceEvent;
 import cytoscape.data.webservice.CyWebServiceEventListener;
 import cytoscape.data.webservice.CyWebServiceException;
@@ -46,24 +57,28 @@ import cytoscape.data.webservice.NetworkImportWebServiceClient;
 import cytoscape.data.webservice.WebServiceClientImplWithGUI;
 import cytoscape.data.webservice.WebServiceClientManager;
 import cytoscape.data.webservice.WebServiceClientManager.ClientType;
+import cytoscape.layout.CyLayoutAlgorithm;
+import cytoscape.layout.CyLayouts;
 import cytoscape.task.Task;
 import cytoscape.task.TaskMonitor;
 import cytoscape.task.ui.JTaskConfig;
 import cytoscape.task.util.TaskManager;
 import cytoscape.util.ModulePropertiesImpl;
+import cytoscape.view.CyNetworkView;
+import cytoscape.view.CyNodeView;
 import cytoscape.visual.VisualStyle;
 
-public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwaysPortType, WikiPathwaysClientGui> implements NetworkImportWebServiceClient {
+public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwaysClient, CyWikiPathwaysClientGui> implements NetworkImportWebServiceClient {
 	private static final String DISPLAY_NAME = "WikiPathways Web Service Client";
 	private static final String CLIENT_ID = "wikipathways";
 	protected static final String WEBSERVICE_URL = "wikipathways.webservice.uri";
 
 	public static final String ATTR_PATHWAY_URL = "wikipathways.url";
 	
-	private WikiPathwaysPortType stub;
+	private WikiPathwaysClient stub;
 	private GpmlPlugin gpmlPlugin;
 	
-	public WikiPathwaysClient(GpmlPlugin gpmlPlugin) {
+	public CyWikiPathwaysClient(GpmlPlugin gpmlPlugin) {
 		super(CLIENT_ID, DISPLAY_NAME, 
 				new ClientType[] { ClientType.NETWORK }, 
 				null, null, null 
@@ -72,17 +87,17 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 		setProperties();
 		getStub();
 		this.gpmlPlugin = gpmlPlugin;
-		setGUI(new WikiPathwaysClientGui(this));
+		setGUI(new CyWikiPathwaysClientGui(this));
 	}
 
 	private String prevURL = null;
 	
-	public WikiPathwaysPortType getStub() {
+	public WikiPathwaysClient getStub() {
 		String urlString = CytoscapeInit.getProperties().getProperty(WEBSERVICE_URL);
 		if(stub == null || prevURL == null || !prevURL.equals(urlString)) {
 			try {
 				URL url = new URL(urlString);
-				stub = new WikiPathwaysLocator().getWikiPathwaysSOAPPort_Http(url);
+				stub = new WikiPathwaysClient(url);
 				setClientStub(stub);
 				prevURL = urlString;
 				
@@ -109,6 +124,12 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 		}
 	}
 
+	public List<JMenuItem> getNodeContextMenuItems(NodeView nv) {
+		List<JMenuItem> menuList = new ArrayList<JMenuItem>();
+		menuList.add(new JMenuItem(new NodeInteractionsAction(this, nv)));
+		return menuList;
+	}
+	
 	public void executeService(CyWebServiceEvent e)
 	throws CyWebServiceException {
 		if(CLIENT_ID.equals(e.getSource())) {
@@ -133,6 +154,139 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 		TaskManager.executeTask(task, config);
 	}
 
+	private static final int LEFT = -1;
+	private static final int RIGHT = 1;
+	private static final int MEDIATOR = 0;
+	
+	public static final String ATTR_URL = "wikipathways.url";
+	public static final String ATTR_NAME = "wikipathways.pathway";
+	public static final String ATTR_SPECIES = "wikipathways.organism";
+	
+	protected void addInteractions(InteractionQuery query, WSSearchResult[] results) {
+		String attrValue = query.getAttributeValue();
+		Set<CyNode> addedNodes = new HashSet<CyNode>();
+		
+		for(WSSearchResult r : results) {
+			String[] left = new String[] {};
+			String[] right = new String[] {};
+			String[] mediator = new String[] {};
+			
+			//Find the relevant field values
+			for(WSIndexField f : r.getFields()) {
+				String pathway = r.getUrl();
+				if("left".equals(f.getName())) {
+					left = f.getValues();
+				}
+				else if("right".equals(f.getName())) {
+					right = f.getValues();
+				}
+				else if("mediator".equals(f.getName())) {
+					mediator = f.getValues();
+				}
+			}
+			
+			//Add the interactions for each interaction type
+			for(String name : left) {
+				if(attrValue.equals(name)) {
+					addedNodes.addAll(
+							addInteractions(query, r, right, RIGHT)
+					);
+				}
+			}
+			for(String name : right) {
+				if(attrValue.equals(name)) {
+					addedNodes.addAll(
+							addInteractions(query, r, left, LEFT)
+					);
+				}
+			}
+			for(String name : mediator) {
+				if(attrValue.equals(name)) {
+					addedNodes.addAll(
+							addInteractions(query, r, left, MEDIATOR)
+					);
+					addedNodes.addAll(
+							addInteractions(query, r, right, MEDIATOR)
+					);
+				}
+			}
+		}
+		
+		//Redraw the graph
+		((CyNetworkView)query.getNodeView().getGraphView()).redrawGraph(true, false);
+		
+		//Layout nodes in a circle around the source node
+		NodeView source = query.getNodeView();
+		double radius = 50 + 5 * addedNodes.size();
+		double angle = 0;
+		double dangle = (2.0 * Math.PI) / (double)addedNodes.size();
+		for(CyNode n : addedNodes) {
+			NodeView nv = source.getGraphView().getNodeView(n);
+			nv.setXPosition(source.getXPosition() + radius * Math.cos(angle), false);
+			nv.setYPosition(source.getYPosition() + radius * Math.sin(angle), false);
+			angle += dangle;
+		}
+	}
+	
+	private Set<CyNode> addInteractions(InteractionQuery query, WSSearchResult r, String[] names, int type) {
+		Set<CyNode> addedNodes = new HashSet<CyNode>();
+		
+		NodeView nv = query.getNodeView();
+		CyNetworkView view = (CyNetworkView)nv.getGraphView();
+		CyNetwork network = view.getNetwork();
+		CyNode n = (CyNode)nv.getNode();
+		
+		CyAttributes edgeAttr = Cytoscape.getEdgeAttributes();
+		CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
+		
+		String pwUrl = r.getUrl();
+		String pwName = r.getName();
+		String pwSpecies = r.getSpecies();
+		
+		for(String name : names) {
+			if(name.length() == 0 || "new group".equalsIgnoreCase(name)) {
+				continue; //Skip groups and blanks
+			}
+			CyNode nn = Cytoscape.getCyNode(name, false);
+			if(nn == null) {
+				nn = Cytoscape.getCyNode(name, true);
+				addedNodes.add(nn);
+			}
+			network.addNode(nn);
+			
+			CyNode n1 = nn;
+			CyNode n2 = n;
+			if(type == RIGHT) { //Swap order if new node is on RIGHT side
+				n1 = n; n2 = nn;
+			}
+			//Find any existing edge (regardless of interaction type)
+			CyEdge edge = null;
+			for(CyEdge e : (List<CyEdge>)Cytoscape.getCyEdgesList()) {
+				if(e.getSource() == n1 && e.getTarget() == n2) {
+					edge = e;
+				}
+			}
+			//If no edge exists, create a new one
+			if(edge == null) {
+				edge = Cytoscape.getCyEdge(
+						n1, n2, Semantics.INTERACTION, "", true, true
+				);
+			}
+
+			network.addEdge(edge);
+			
+			//Set attributes, TODO: make attributes a list
+			edgeAttr.setAttribute(edge.getIdentifier() , ATTR_URL, pwUrl);
+			edgeAttr.setAttribute(edge.getIdentifier() , ATTR_NAME, pwName);
+			edgeAttr.setAttribute(edge.getIdentifier() , ATTR_SPECIES, pwSpecies);
+			
+			nodeAttr.setAttribute(nn.getIdentifier(), ATTR_URL, pwUrl);
+			nodeAttr.setAttribute(nn.getIdentifier(), ATTR_NAME, pwName);
+			nodeAttr.setAttribute(nn.getIdentifier(), ATTR_SPECIES, pwSpecies);
+		}
+		return addedNodes;
+	}
+	
 	protected void openPathway(GetPathwayParameters query) {
 		OpenTask task = new OpenTask(query);
 		JTaskConfig config = new JTaskConfig();
@@ -151,7 +305,7 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 
 	public static class FindPathwaysByTextParameters {
 		public String query;
-		public String species = "";
+		public Organism species = null;
 	}
 	
 	public static class GetPathwayParameters {
@@ -177,10 +331,7 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 		public void run() {
 			try {
 				WSPathway r = getStub().getPathway(query.id, query.revision);
-				String gpml = r.getGpml();
-				Logger.log.trace(gpml);
-				Pathway pathway = new Pathway();
-				pathway.readFromXml(new StringReader(gpml), true);
+				Pathway pathway = WikiPathwaysClient.toPathway(r);
 				CyNetwork network = gpmlPlugin.load(pathway, true);
 				if(network != null) {
 					Cytoscape.getNetworkAttributes().setAttribute(
@@ -264,6 +415,55 @@ public class WikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathways
 			//			if (event.getEventType().equals(WSEventType.CANCEL)) {
 			//				throw new CyWebServiceException(CyWebServiceException.WSErrorCode.REMOTE_EXEC_FAILED);
 			//			}
+		}
+	}
+	
+	class SearchInteractionsTask implements Task {
+		TaskMonitor monitor;
+		InteractionQuery query;
+		
+		public SearchInteractionsTask(InteractionQuery query) {
+			this.query = query;
+		}
+		
+		public String getTitle() {
+			return "Searching interactions...";
+		}
+		
+		public void halt() {
+		}
+		
+		public void run() {
+			try {
+				WSSearchResult[] result = getStub().findInteractions(query.getAttributeValue());
+				addInteractions(query, result);
+				if(result == null || result.length == 0) {
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							JOptionPane.showMessageDialog(
+									gui, "The search didn't return any results", 
+									"No results", JOptionPane.INFORMATION_MESSAGE
+							);					
+						}
+					});
+					
+				}
+			} catch (final Exception e) {
+				Logger.log.error("Error while searching", e);
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						JOptionPane.showMessageDialog(
+								gui, "Error: " + e.getMessage() + ". See log for details",
+								"Error", JOptionPane.ERROR_MESSAGE
+						);						
+					}
+				});
+			}
+		}
+		
+		public void setTaskMonitor(TaskMonitor m)
+				throws IllegalThreadStateException {
+			monitor = m;
 		}
 	}
 }

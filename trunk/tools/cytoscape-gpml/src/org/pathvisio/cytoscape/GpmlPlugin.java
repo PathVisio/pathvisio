@@ -53,7 +53,7 @@ import org.pathvisio.cytoscape.actions.ExportAction;
 import org.pathvisio.cytoscape.actions.PasteAction;
 import org.pathvisio.cytoscape.actions.ToggleAnnotationAction;
 import org.pathvisio.cytoscape.visualmapping.GpmlVisualStyle;
-import org.pathvisio.cytoscape.wikipathways.WikiPathwaysClient;
+import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.LineType;
@@ -120,7 +120,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		gpmlMenu.add(new AttributeMapperAction(this));
 		pluginMenu.add(gpmlMenu);
 
-		WebServiceClientManager.registerClient(new WikiPathwaysClient(this));
+		WebServiceClientManager.registerClient(new CyWikiPathwaysClient(this));
 	}
 
 	public GpmlHandler getGpmlHandler() {

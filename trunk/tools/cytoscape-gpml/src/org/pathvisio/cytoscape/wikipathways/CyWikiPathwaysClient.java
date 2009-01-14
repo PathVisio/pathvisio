@@ -17,18 +17,21 @@
 package org.pathvisio.cytoscape.wikipathways;
 
 
+import edu.stanford.ejalbert.BrowserLauncher;
+import giny.view.EdgeView;
 import giny.view.NodeView;
 
+import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -56,16 +59,14 @@ import cytoscape.data.webservice.CyWebServiceException;
 import cytoscape.data.webservice.NetworkImportWebServiceClient;
 import cytoscape.data.webservice.WebServiceClientImplWithGUI;
 import cytoscape.data.webservice.WebServiceClientManager;
+import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
 import cytoscape.data.webservice.WebServiceClientManager.ClientType;
-import cytoscape.layout.CyLayoutAlgorithm;
-import cytoscape.layout.CyLayouts;
 import cytoscape.task.Task;
 import cytoscape.task.TaskMonitor;
 import cytoscape.task.ui.JTaskConfig;
 import cytoscape.task.util.TaskManager;
 import cytoscape.util.ModulePropertiesImpl;
 import cytoscape.view.CyNetworkView;
-import cytoscape.view.CyNodeView;
 import cytoscape.visual.VisualStyle;
 
 public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwaysClient, CyWikiPathwaysClientGui> implements NetworkImportWebServiceClient {
@@ -126,8 +127,88 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 
 	public List<JMenuItem> getNodeContextMenuItems(NodeView nv) {
 		List<JMenuItem> menuList = new ArrayList<JMenuItem>();
+		
+		//Add an item to find interactions
 		menuList.add(new JMenuItem(new NodeInteractionsAction(this, nv)));
+		
+		//If the node is a found interaction, add items to open the source on WP
+		CyAttributes attr = Cytoscape.getNodeAttributes();
+		String nid = nv.getNode().getIdentifier();
+		addPathwayMenuItems(attr, nid, menuList);
 		return menuList;
+	}
+	
+	public List<JMenuItem> getEdgeContextMenuItems(EdgeView ev) {
+		List<JMenuItem> menuList = new ArrayList<JMenuItem>();
+		
+		//If the edge is a found interaction, add items to open the source on WP
+		CyAttributes attr = Cytoscape.getEdgeAttributes();
+		String eid = ev.getEdge().getIdentifier();
+		addPathwayMenuItems(attr, eid, menuList);
+		
+		return menuList;
+	}
+	
+	/**
+	 * Adds menu items to open and import pathways based on the pathway info
+	 * stored in the attributes (by the find interactions function).
+	 * @param attr The attribute store
+	 * @param nid The node or edge id
+	 * @param menuList The list to add the menu items to
+	 */
+	private void addPathwayMenuItems(CyAttributes attr, String nid, List<JMenuItem> menuList) {
+		List<String> urls = attr.getListAttribute(nid, ATTR_PATHWAY_URL);
+		List<String> names = attr.getListAttribute(nid, ATTR_NAME);
+		List<String> species = attr.getListAttribute(nid, ATTR_SPECIES);
+		List<String> ids = attr.getListAttribute(nid, ATTR_ID);
+		if(urls != null) {
+			for(int i = 0; i < urls.size(); i++) {
+				final String url = urls.get(i);
+				String label = url;
+				if(names != null && names.size() == urls.size()) {
+					label = names.get(i);
+				}
+				if(species != null && species.size() == urls.size()) {
+					label += " (" + species.get(i) + ")";
+				}
+				menuList.add(new JMenuItem(new AbstractAction("View pathway " + label + " on WikiPathways") {
+					public void actionPerformed(ActionEvent e) {
+						try {
+							BrowserLauncher b = new BrowserLauncher(null);
+							b.openURLinBrowser(url);
+						} catch(Exception ex) {
+							JOptionPane.showMessageDialog(
+									null, "Unable to launch browser: " + ex.getMessage(), 
+									"Error", JOptionPane.ERROR_MESSAGE
+							);
+							Logger.log.error("Unable to open browser", ex);
+						}
+					}
+				}));
+				if(ids != null && ids.size() == urls.size()) {
+					final String id = ids.get(i);
+					menuList.add(new JMenuItem(new AbstractAction("Load pathway " + label + " as network") {
+						public void actionPerformed(ActionEvent e) {
+							GetPathwayParameters request = new GetPathwayParameters();
+							request.id = id;
+							try {
+								WebServiceClientManager.getCyWebServiceEventSupport().fireCyWebServiceEvent(
+										new CyWebServiceEvent(
+												getClientID(), WSEventType.IMPORT_NETWORK, request
+										)
+								);
+							} catch (CyWebServiceException e1) {
+								JOptionPane.showMessageDialog(
+										null, "Unable to open pathway: " + e1.getMessage(), 
+										"Error", JOptionPane.ERROR_MESSAGE
+								);
+								Logger.log.error("Unable to open pathway", e1);
+							}
+						}
+					}));
+				}
+			}
+		}
 	}
 	
 	public void executeService(CyWebServiceEvent e)
@@ -158,9 +239,9 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 	private static final int RIGHT = 1;
 	private static final int MEDIATOR = 0;
 	
-	public static final String ATTR_URL = "wikipathways.url";
 	public static final String ATTR_NAME = "wikipathways.pathway";
-	public static final String ATTR_SPECIES = "wikipathways.organism";
+	public static final String ATTR_SPECIES = "wikipathways.species";
+	public static final String ATTR_ID = "wikipathways.id";
 	
 	protected void addInteractions(InteractionQuery query, WSSearchResult[] results) {
 		String attrValue = query.getAttributeValue();
@@ -275,16 +356,32 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 
 			network.addEdge(edge);
 			
-			//Set attributes, TODO: make attributes a list
-			edgeAttr.setAttribute(edge.getIdentifier() , ATTR_URL, pwUrl);
-			edgeAttr.setAttribute(edge.getIdentifier() , ATTR_NAME, pwName);
-			edgeAttr.setAttribute(edge.getIdentifier() , ATTR_SPECIES, pwSpecies);
-			
-			nodeAttr.setAttribute(nn.getIdentifier(), ATTR_URL, pwUrl);
-			nodeAttr.setAttribute(nn.getIdentifier(), ATTR_NAME, pwName);
-			nodeAttr.setAttribute(nn.getIdentifier(), ATTR_SPECIES, pwSpecies);
+			//Add some read-only attributes to store the source pathway info
+			addToListAttribute(edgeAttr, edge.getIdentifier(), ATTR_PATHWAY_URL, r.getUrl());
+			addToListAttribute(edgeAttr, edge.getIdentifier(), ATTR_NAME, r.getName());
+			addToListAttribute(edgeAttr, edge.getIdentifier(), ATTR_SPECIES, r.getSpecies());
+			addToListAttribute(edgeAttr, edge.getIdentifier(), ATTR_ID, r.getId());
+			addToListAttribute(nodeAttr, nn.getIdentifier(), ATTR_PATHWAY_URL, r.getUrl());
+			addToListAttribute(nodeAttr, nn.getIdentifier(), ATTR_NAME, r.getName());
+			addToListAttribute(nodeAttr, nn.getIdentifier(), ATTR_SPECIES, r.getSpecies());
+			addToListAttribute(nodeAttr, nn.getIdentifier(), ATTR_ID, r.getId());
+			nodeAttr.setUserEditable(ATTR_PATHWAY_URL, false);
+			nodeAttr.setUserEditable(ATTR_NAME, false);
+			nodeAttr.setUserEditable(ATTR_SPECIES, false);
+			nodeAttr.setUserEditable(ATTR_ID, false);
+			edgeAttr.setUserEditable(ATTR_PATHWAY_URL, false);
+			edgeAttr.setUserEditable(ATTR_NAME, false);
+			edgeAttr.setUserEditable(ATTR_SPECIES, false);
+			edgeAttr.setUserEditable(ATTR_ID, false);
 		}
 		return addedNodes;
+	}
+	
+	private void addToListAttribute(CyAttributes attr, String id, String name, Object value) {
+		List list = attr.getListAttribute(id, name);
+		if(list == null) list = new ArrayList();
+		if(!list.contains(value)) list.add(value);
+		attr.setListAttribute(id, name, list);
 	}
 	
 	protected void openPathway(GetPathwayParameters query) {

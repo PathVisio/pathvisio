@@ -36,9 +36,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import org.pathvisio.cytoscape.wikipathways.WikiPathwaysClient.FindPathwaysByTextParameters;
-import org.pathvisio.cytoscape.wikipathways.WikiPathwaysClient.GetPathwayParameters;
+import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.FindPathwaysByTextParameters;
+import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.GetPathwayParameters;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.Organism;
 import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 import org.pathvisio.util.swing.RowWithProperties;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
@@ -51,15 +52,15 @@ import cytoscape.data.webservice.CyWebServiceException;
 import cytoscape.data.webservice.WebServiceClientManager;
 import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
 
-public class WikiPathwaysClientGui extends JPanel implements ActionListener {
-	final WikiPathwaysClient client;
+public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
+	final CyWikiPathwaysClient client;
 	
 	JComboBox organismCombo;
 	JTextField searchText;
 	JTable resultTable;
 	ListWithPropertiesTableModel<ResultProperty, ResultRow> tableModel;
 	
-	public WikiPathwaysClientGui(WikiPathwaysClient c) {
+	public CyWikiPathwaysClientGui(CyWikiPathwaysClient c) {
 		client = c;
 		
 		organismCombo = new JComboBox();
@@ -116,7 +117,7 @@ public class WikiPathwaysClientGui extends JPanel implements ActionListener {
 			request.query = searchText.getText();
 			String org = organismCombo.getSelectedItem().toString();
 			if(!ORGANISM_ALL.equals(org)) {
-				request.species = org;
+				request.species = Organism.fromLatinName(org);
 			}
 			try {
 				WebServiceClientManager.getCyWebServiceEventSupport().fireCyWebServiceEvent(
@@ -161,7 +162,7 @@ public class WikiPathwaysClientGui extends JPanel implements ActionListener {
 			);
 		} catch (CyWebServiceException ex) {
 			JOptionPane.showMessageDialog(
-				WikiPathwaysClientGui.this, "Error: " + ex.getErrorCode() + ". See error log for details", 
+				CyWikiPathwaysClientGui.this, "Error: " + ex.getErrorCode() + ". See error log for details", 
 				"Error", JOptionPane.ERROR_MESSAGE	
 			);
 		}

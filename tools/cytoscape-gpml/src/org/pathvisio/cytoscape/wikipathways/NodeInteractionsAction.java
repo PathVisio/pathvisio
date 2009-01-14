@@ -28,19 +28,18 @@ import cytoscape.task.ui.JTaskConfig;
 import cytoscape.task.util.TaskManager;
 
 public class NodeInteractionsAction extends AbstractAction {
-	NodeView nodeView;
+	InteractionQuery query;
 	CyWikiPathwaysClient client;
 	
 	public NodeInteractionsAction(CyWikiPathwaysClient client, NodeView nv) {
-		super("Find interactions");
-		this.nodeView = nv;
+		this.query = new InteractionQuery(nv, "canonicalName"); //TODO: make attribute a property
 		this.client = client;
+		
+		putValue(NAME, "Find interactions for " + query.getAttributeValue());
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		SearchInteractionsTask task = client.new SearchInteractionsTask(
-				new InteractionQuery(nodeView, "canonicalName")
-		);
+		SearchInteractionsTask task = client.new SearchInteractionsTask(query);
 		JTaskConfig config = new JTaskConfig();
 		config.displayCancelButton(false);
 		config.setModal(true);

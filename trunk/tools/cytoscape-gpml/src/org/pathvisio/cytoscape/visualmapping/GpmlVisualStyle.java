@@ -89,6 +89,28 @@ public class GpmlVisualStyle extends VisualStyle {
 		nd.set(VisualPropertyType.NODE_SHAPE, NodeShape.RECT);
 		nd.set(VisualPropertyType.NODE_WIDTH, 80);
 		nd.set(VisualPropertyType.NODE_HEIGHT, 20);
+
+		DiscreteMapping widthMapping = new DiscreteMapping(
+				nac.getDefaultAppearance().get(VisualPropertyType.NODE_WIDTH),
+				GpmlNetworkElement.ATTR_TYPE,
+				ObjectMapping.NODE_MAPPING
+		);
+		widthMapping.putMapValue(ObjectType.GROUP, 5);
+		widthMapping.putMapValue(GpmlAnchorNode.TYPE_ANCHOR, 5);
+		DiscreteMapping heightMapping = new DiscreteMapping(
+				nac.getDefaultAppearance().get(VisualPropertyType.NODE_HEIGHT),
+				GpmlNetworkElement.ATTR_TYPE,
+				ObjectMapping.NODE_MAPPING
+		);
+		heightMapping.putMapValue(ObjectType.GROUP, 5);
+		heightMapping.putMapValue(GpmlAnchorNode.TYPE_ANCHOR, 5);
+		
+		nac.setCalculator(
+				new BasicCalculator("Node width", widthMapping, VisualPropertyType.NODE_WIDTH)
+		);
+		nac.setCalculator(
+				new BasicCalculator("Node height", heightMapping, VisualPropertyType.NODE_HEIGHT)
+		);
 	}
 	
 	void setLineTypeMapping() {

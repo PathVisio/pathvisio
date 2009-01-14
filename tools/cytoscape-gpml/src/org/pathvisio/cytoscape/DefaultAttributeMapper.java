@@ -128,7 +128,9 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	public void attributesToProperties(String id, PathwayElement elm, CyAttributes attr) {
 		//Process defaults
 		for(PropertyType prop : defaultValues.keySet()) {
-			elm.setStaticProperty(prop, defaultValues.get(prop));
+			if(elm.getStaticPropertyKeys().contains(prop)) {
+				elm.setStaticProperty(prop, defaultValues.get(prop));
+			}
 		}
 		
 		//Process mappings

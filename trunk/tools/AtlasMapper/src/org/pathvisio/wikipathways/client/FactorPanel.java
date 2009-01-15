@@ -209,12 +209,19 @@ public class FactorPanel extends StatePanel {
 				if(currentState != null) {
 					String factorType = currentState.getValue(State.KEY_FACTOR_TYPE);
 					String valueString = currentState.getValue(State.KEY_FACTOR_VALUES);
-					if(valueString != null) {
+					FactorInfo factorInfo = factors.get(factorType);
+					
+					if(valueString != null && factorInfo != null) {
+						Set<String> existValues = new HashSet<String>();
+						for(String v : factorInfo.values) existValues.add(v);
+						
 						String[] values = valueString.split(SEP_FACTOR);
 						Set<String> selected = new HashSet<String>();
-						selectedFactors.put(factorType, selected);
 						for(String v : values) {
-							selected.add(v);
+							if(existValues.contains(v)) selected.add(v);
+						}
+						if(selected.size() > 0) {
+							selectedFactors.put(factorType, selected);
 						}
 					}
 				}

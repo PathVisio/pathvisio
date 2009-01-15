@@ -36,6 +36,8 @@ public class PathwayPanel extends StatePanel {
 	
 	Panel pathwayProgress;
 	
+	State currState;
+	
 	public PathwayPanel(AtlasMapper main) {
 		super("Select pathway", main);
 		Grid grid = new Grid(2, 3);
@@ -64,6 +66,9 @@ public class PathwayPanel extends StatePanel {
 	
 	public State getState(boolean nextPanel) {
 		State state = new State();
+		if(currState != null) {
+			state = new State(currState.toString());
+		}
 		//Try to find the pathway id
 		//Unfortunately we can't use java.util.regex
 		String txt = pathwayBox.getText() + ID_SEP;
@@ -78,6 +83,7 @@ public class PathwayPanel extends StatePanel {
 	}
 	
 	public void setState(State state) {
+		currState = state;
 		pathwayBox.setText(state.getValue(State.KEY_PATHWAY));
 	}
 	

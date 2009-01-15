@@ -86,8 +86,10 @@ public enum GlobalPreference implements Preference
 	USE_SYSTEM_LOOK_AND_FEEL(
 			Boolean.toString(Utils.getOS() != Utils.OS_LINUX)
 		),
-	;
 	
+	MAX_NR_CITATIONS ("" + 5),
+	
+	;
 	GlobalPreference(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}

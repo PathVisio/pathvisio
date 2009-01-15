@@ -45,6 +45,12 @@ public class PreferencesDlg extends AbstractPreferenceDlg
 			GlobalPreference.DATANODES_ROUNDED,
 			"Use rounded rectangles for data nodes");
 
+		builder.addIntegerField(
+				GlobalPreference.MAX_NR_CITATIONS,
+				"Maximum citations to show (use -1 to show all)",
+				-1, 1000
+		);
+		
 		builder.addBooleanField(
 				GlobalPreference.SNAP_TO_ANGLE, 
 				"Snap to angle when moving line and rotation handles");

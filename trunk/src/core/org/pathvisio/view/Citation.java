@@ -30,6 +30,8 @@ import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * Draws a citation number on top of a pathway object.
@@ -120,20 +122,32 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 	}
 
 	protected String getXRefText() {
+		int maxNr = PreferenceManager.getCurrent().getInt(GlobalPreference.MAX_NR_CITATIONS);
+		if(maxNr == 0) return ""; //Show nothing if limit is set to 0
+		
 		String xrefStr = "";
 		int lastOrdinal = -2;
 		int sequence = 0;
+		int nrShowed = 0; //Counter to check maximum citation numbers
+		
 		List<PublicationXRef> xrefs = getRefMgr().getPublicationXRefs();
 		for(int i = 0; i < xrefs.size(); i++) {
+			if(nrShowed > 0 && nrShowed >= maxNr) {
+				xrefStr = xrefStr.substring(0, xrefStr.length() - 2) + "...  ";
+				break; //Stop after maximum number of citations showed
+			}
 			int n = getRefMgr().getBiopaxElementManager().getOrdinal(xrefs.get(i));
 			if(n != lastOrdinal + 1) { //End sequence
 				if(sequence > 2) {
 					xrefStr = xrefStr.substring(0, xrefStr.length() - 2);
 					xrefStr += "-" + lastOrdinal + ", ";
+					nrShowed += 2;
 				} else if(sequence == 2){
 					xrefStr += lastOrdinal + ", ";
+					nrShowed++;
 				}
 				xrefStr += n + ", ";
+				nrShowed++;
 				sequence = 0;
 			}
 			lastOrdinal = n;

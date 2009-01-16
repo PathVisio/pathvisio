@@ -121,7 +121,8 @@ public class CommonActions implements ApplicationEventListener {
 				new ZoomAction(e, 75),
 				new ZoomAction(e, 100),
 				new ZoomAction(e, 150),
-				new ZoomAction(e, 200)
+				new ZoomAction(e, 200),
+				new ZoomAction(e, 400) 
 		};
 		
 		 layoutActions = new Action[] {

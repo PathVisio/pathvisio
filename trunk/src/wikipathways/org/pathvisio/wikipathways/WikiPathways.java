@@ -61,9 +61,9 @@ import org.pathvisio.gui.wikipathways.SaveReminder;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
@@ -84,7 +84,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 	private Parameter parameters = new Parameter();
 
 	UserInterfaceHandler uiHandler;
-	HashMap<String, String> cookie;
+	Map<String, String> cookie;
 
 	File localFile;
 
@@ -583,7 +583,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 				Logger.log.error("IS PRIVATE: " + isPrivate());
 				Object[] params = new Object[]{ description, data, isPrivate() };
 				Object response = client.execute("WikiPathways.createPathway", params);
-				HashMap<String, String> map = (HashMap)response;
+				Map<String, String> map = (HashMap<String, String>)response;
 				parameters.setValue(Parameter.REVISION, map.get("revision"));
 				parameters.setValue(Parameter.PW_ID, map.get("id"));
 				firstSave = false;
@@ -604,26 +604,26 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 	}
 
 	static class XmlRpcCookieTransportFactory implements XmlRpcTransportFactory {
-		private final XmlRpcCookieHttpTransport TRANSPORT;
+		private final XmlRpcCookieHttpTransport transport;
 
 		public XmlRpcCookieTransportFactory(XmlRpcClient pClient) {
-			TRANSPORT = new XmlRpcCookieHttpTransport(pClient);
+			transport = new XmlRpcCookieHttpTransport(pClient);
 		}
 
-		public XmlRpcTransport getTransport() { return TRANSPORT; }
+		public XmlRpcTransport getTransport() { return transport; }
 	}
 
 	/** Implementation of an HTTP transport that supports sending cookies with the
 	 * HTTP header, based on the {@link java.net.HttpURLConnection} class.
 	 */
 	public static class XmlRpcCookieHttpTransport extends XmlRpcHttpTransport {
-		private static final String userAgent = USER_AGENT + " (Sun HTTP Transport, mod Thomas)";
-		private static final String cookieHeader = "Cookie";
+		private static final String USER_AGENT_MOD = USER_AGENT + " (Sun HTTP Transport, mod Thomas)";
+		private static final String COOKIE_HEADER = "Cookie";
 		private URLConnection conn;
-		private HashMap<String, String> cookie;
+		private Map<String, String> cookie;
 
 		public XmlRpcCookieHttpTransport(XmlRpcClient pClient) {
-			super(pClient, userAgent);
+			super(pClient, USER_AGENT_MOD);
 			cookie = new HashMap<String, String>();
 		}
 
@@ -637,7 +637,7 @@ public class WikiPathways implements StatusFlagListener, VPathwayListener {
 				cookieString = (cookieString == null ? "" : cookieString + "; ") + key + "=" + cookie.get(key);
 			}
 			if(cookieString != null) {
-				conn.setRequestProperty(cookieHeader, cookieString);
+				conn.setRequestProperty(COOKIE_HEADER, cookieString);
 			}
 		}
 

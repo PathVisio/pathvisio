@@ -36,9 +36,9 @@ import javax.swing.undo.UndoManager;
 
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
-import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class DescriptionApplet extends PathwayPageApplet {

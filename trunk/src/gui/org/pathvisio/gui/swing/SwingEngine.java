@@ -24,11 +24,8 @@ import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.swing.Action;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
@@ -53,6 +50,13 @@ import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 
+/**
+ * SwingEngine ties together a number of global objects needed both in the
+ * WikiPathways applet and in the Standalone App, but not in command-line tools.
+ * 
+ * It keeps the main panel, the main frame and has
+ * helper functions for opening, closing, importing and exporting Pathways.
+ */
 public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlagListener {	
 	private MainPanel mainPanel;
 	

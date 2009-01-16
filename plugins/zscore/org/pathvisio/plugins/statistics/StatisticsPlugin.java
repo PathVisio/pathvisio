@@ -466,6 +466,11 @@ public class StatisticsPlugin implements Plugin
 							try
 							{
 								result = worker.get();
+								if (result.stm.getRowCount() == 0)
+								{
+									JOptionPane.showMessageDialog(null, 
+											"0 results found, did you choose the right directory?");
+								}
 								btnSave.setEnabled(true);
 							}
 							catch (ExecutionException ex)

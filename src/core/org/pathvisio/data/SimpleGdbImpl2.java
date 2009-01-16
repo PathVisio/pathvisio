@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pathvisio.debug.Logger;
-import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;

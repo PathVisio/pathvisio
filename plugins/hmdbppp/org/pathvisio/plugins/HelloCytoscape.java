@@ -16,15 +16,11 @@
 //
 package org.pathvisio.plugins;
 
-
-import com.agilent.*;
-
-
 /**
  * Generates Putative Pathway Parts based on a 
  * HMDB metabolic network parsed and stored in MySQL by Andra.
  */
-public class helloCytoscape {
+public class HelloCytoscape {
 
 	public static void main(String[] args) throws Exception {
         

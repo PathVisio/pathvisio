@@ -127,8 +127,8 @@ public class Actions {
 					Resources.getResourceURL("fullscreen.gif"));
 			final ImageIcon imgRestore = new ImageIcon(
 					Resources.getResourceURL("restorescreen.gif"));
-			final String tooltip_full = "Switch to fullscreen mode";
-			final String tooltip_restore = "Switch to embedded mode";
+			static final String TOOLTIP_FULL = "Switch to fullscreen mode";
+			static final String TOOLTIP_RESTORE = "Switch to embedded mode";
 
 			PathwayPageApplet applet;
 
@@ -136,7 +136,7 @@ public class Actions {
 				super(uiHandler, wiki, "Fullscreen", null);
 				this.applet = applet;
 				putValue(WikiAction.SMALL_ICON, imgFull);
-				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
+				putValue(WikiAction.SHORT_DESCRIPTION, TOOLTIP_FULL);
 			}
 
 			public void actionPerformed(ActionEvent e) {
@@ -154,7 +154,7 @@ public class Actions {
 				applet.toFullScreen();
 				
 				putValue(WikiAction.SMALL_ICON, imgRestore);
-				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_restore);
+				putValue(WikiAction.SHORT_DESCRIPTION, TOOLTIP_RESTORE);
 
 				resetDividerLocation();
 			}
@@ -172,7 +172,7 @@ public class Actions {
 				applet.toEmbedded();
 				
 				putValue(WikiAction.SMALL_ICON, imgFull);
-				putValue(WikiAction.SHORT_DESCRIPTION, tooltip_full);
+				putValue(WikiAction.SHORT_DESCRIPTION, TOOLTIP_FULL);
 
 				resetDividerLocation();
 			}

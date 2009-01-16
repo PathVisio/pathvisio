@@ -16,15 +16,25 @@
 //
 package org.pathvisio.gpmldiff;
 
-import javax.swing.*;
-import java.net.URL;
 import java.io.File;
+import java.net.URL;
 
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.FileUtils;
+import javax.swing.JApplet;
+import javax.swing.JOptionPane;
+
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.FileUtils;
 
+/**
+ * Applet class for the GpmlDiff Applet. 
+ * This applet can show two pathways side by side, comparing
+ * them and highlighting the differences.
+ * 
+ * It has two optional parameters: "old" and "new",
+ * pointing to the url's of the old and new pathway respectively.
+ */
 public class AppletMain extends JApplet
 {
 	GpmlDiffWindow panel;

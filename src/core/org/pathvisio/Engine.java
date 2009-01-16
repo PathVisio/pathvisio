@@ -55,7 +55,7 @@ public class Engine
 	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";
 	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
-	private LinkedList<File> recent = new LinkedList<File>();
+	private List<File> recent = new LinkedList<File>();
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
@@ -145,7 +145,7 @@ public class Engine
 	{
 		recent.remove(pwf);// file should occur in recent 0 or 1 times
         recent.add(pwf);
-        if(recent.size() > 10) recent.remove();// 10 = maximum # recent files
+        if(recent.size() > 10) recent.remove(0);// 10 = maximum # recent files
 	}
 	
 	public void openPathway(File pathwayFile) throws ConverterException

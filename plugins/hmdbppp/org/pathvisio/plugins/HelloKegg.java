@@ -16,15 +16,14 @@
 //
 package org.pathvisio.plugins;
 
-
-import keggapi.*;
-
+import keggapi.KEGGLocator;
+import keggapi.KEGGPortType;
 
 /**
  * Generates Putative Pathway Parts based on a 
  * HMDB metabolic network parsed and stored in MySQL by Andra.
  */
-public class helloKegg {
+public class HelloKegg {
 
 	public static void main(String[] args) throws Exception {
         KEGGLocator    locator  = new KEGGLocator();

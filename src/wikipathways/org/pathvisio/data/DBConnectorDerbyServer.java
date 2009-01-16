@@ -44,10 +44,10 @@ public class DBConnectorDerbyServer extends DBConnector {
 	 * @param host	The host on which the database resides
 	 * @param port	The port to create the connection on
 	 */
-	static public void init (String _host, int _port)
+	static public void init (String aHost, int aPort)
 	{
-		host = _host;
-		port = _port;
+		host = aHost;
+		port = aPort;
 		inited = true;
 	}
 	

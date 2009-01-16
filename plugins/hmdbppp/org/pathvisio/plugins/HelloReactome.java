@@ -17,7 +17,7 @@
 package org.pathvisio.plugins;
 
 
-public class helloReactome {
+public class HelloReactome {
 
 	/**
 	 * @param args

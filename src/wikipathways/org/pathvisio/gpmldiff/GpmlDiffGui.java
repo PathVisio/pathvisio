@@ -19,8 +19,16 @@ package org.pathvisio.gpmldiff;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import javax.swing.*;
 
+import javax.swing.JFrame;
+
+/**
+ * Standalone version of the GpmlDiff Applet,
+ * mainly used for testing purposes.
+ * 
+ * The main method takes two arguments: the file names
+ * of the two pathways to be compared.
+ */
 class GpmlDiffGui
 {
 	private static final int WINDOW_WIDTH = 1000;

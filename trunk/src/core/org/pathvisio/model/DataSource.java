@@ -132,7 +132,7 @@ public class DataSource
 		"http://www.ebi.ac.uk/embl", "AL030996", true, false, null);
 	public static final DataSource ENSEMBL = new DataSource (
 		"En", "Ensembl", 
-		new PrefixUrlMaker("http://www.ensembl.org/Homo_sapiens/Gene/Summary?g="), 
+		new PrefixUrlMaker("http://www.ensembl.org/Homo_sapiens/Search/Summary?_q="), 
 		"http://www.ensembl.org", 
 		"ENSG00000139618", true, false, null);
 	public static final DataSource FLYBASE = new DataSource (

@@ -539,7 +539,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 	<target name="test" depends="compile-core">
 		<javac srcdir="src/test" debug="true" 
 					includes="**"
-					excludes="**/visualization/** **/gui/**"
+					excludes="**/visualization/** **/gui/** **/wikipathways/**"
 					destdir="${build.core.dir}"
 					source="1.5">
 					<classpath refid="project.core.class.path"/>
@@ -555,6 +555,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 					<exclude name="org/pathvisio/data/TestOnline.java"/>
 					<exclude name="org/pathvisio/visualization/Test.java"/>
 					<exclude name="org/pathvisio/visualization/colorset/Test.java"/>
+					<exclude name="org/pathvisio/wikipathways/WikiPathwaysClientTest.java"/>
 				</fileset>
 			</batchtest>
 		</junit>

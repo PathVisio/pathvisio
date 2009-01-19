@@ -36,9 +36,9 @@ import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.util.FileUtils;
 
-import RowHeaderTable.JScrollPaneAdjuster;
-import RowHeaderTable.JTableRowHeaderResizer;
-import RowHeaderTable.RowHeaderRenderer;
+import org.pathvisio.util.rowheader.JScrollPaneAdjuster;
+import org.pathvisio.util.rowheader.JTableRowHeaderResizer;
+import org.pathvisio.util.rowheader.RowHeaderRenderer;
 
 /**
  * This class is used when in the MenuGUI the button 'pathway Overlap matrix' is chosen. When

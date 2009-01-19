@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.pathvisio.data.ImportInformation.ColumnType;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
@@ -60,7 +61,7 @@ public class GexTxtImporter
 		}
 		
 //		Open a connection to the error file
-		String errorFile = info.getDbName() + ".ex.txt";
+		String errorFile = info.getGexName() + ".ex.txt";
 		int errors = 0;
 		PrintStream error = null;
 		try {
@@ -78,7 +79,7 @@ public class GexTxtImporter
 			if (p != null) p.report("\nCreating expression dataset");
 						
 			//Create a new expression database (or overwrite existing)
-			result = new SimpleGex(info.getDbName(), true, gexManager.getDBConnector());
+			result = new SimpleGex(info.getGexName(), true, gexManager.getDBConnector());
 			
 			if (p != null)
 			{
@@ -106,11 +107,9 @@ public class GexTxtImporter
 					return;
 				}
 
+				ColumnType type = info.getColumnType(i); 
 				//skip the id and systemcode column if there is one
-				if(
-					(info.getSyscodeColumn() && i != info.getIdColumn() && i != info.getCodeColumn()) ||
-					(!info.getSyscodeColumn() && i != info.getIdColumn())
-					)
+				if(type == ColumnType.COL_NUMBER ||	type == ColumnType.COL_STRING)
 				{ 
 					String header = headers[i];
 					if (header.length() >= 50)
@@ -121,7 +120,7 @@ public class GexTxtImporter
 						result.addSample(
 							sampleId++, 
 							header, 
-							info.isStringCol(i) ? Types.CHAR : Types.REAL);
+							type == ColumnType.COL_STRING ? Types.CHAR : Types.REAL);
 						dataCols.add(i);
 					}
 					catch(Error e) { 
@@ -135,9 +134,9 @@ public class GexTxtImporter
 			if (p != null) p.report("> Processing lines");
 			
 			//Check ids and add expression data
-			for(int i = 1; i < info.getFirstDataRow(); i++) in.readLine(); //Go to line where data starts
+			for(int i = 0; i < info.getFirstDataRow(); i++) in.readLine(); //Go to line where data starts
 			String line = null;
-			int n = info.getFirstDataRow() - 1;
+			int n = info.getFirstDataRow();
 			int added = 0;
 			int worked = importWork / nrLines;
 			
@@ -146,16 +145,8 @@ public class GexTxtImporter
 			double maximum = 1; // Dummy value
 			double minimum = 1; // Dummy value
 
-			NumberFormat nf;
-			
-			if (info.digitIsDot())
-			{
-				nf = NumberFormat.getInstance(Locale.US);
-			}
-			else
-			{
-				nf = NumberFormat.getInstance(Locale.FRANCE);
-			}
+			NumberFormat nf = NumberFormat.getInstance(
+					info.digitIsDot() ? Locale.US : Locale.FRANCE);	
 			
 			while((line = in.readLine()) != null) 
 			{
@@ -182,13 +173,13 @@ public class GexTxtImporter
 				 * otherwise set the system code to the one selected (either by the user or by regular 
 				 * expressions.*/
 				DataSource ds;
-				if (info.getSyscodeColumn()) 
+				if (info.isSyscodeFixed()) 
 				{
-					ds = DataSource.getBySystemCode(data[info.getCodeColumn()].trim());
+					ds = info.getDataSource();
 				}
 				else 
 				{
-					ds = info.getDataSource();
+					ds = DataSource.getBySystemCode(data[info.getSyscodeColumn()].trim());
 				}
 				Xref ref = new Xref (id, ds);
 				

@@ -29,6 +29,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.data.ImportInformation;
+import org.pathvisio.data.ImportInformation.ColumnType;
 
 /**
  * Table model used in the column page of the Gex Import Wizard.
@@ -62,22 +63,27 @@ class ColumnTableModel extends AbstractTableModel
 			setText (value.toString());	    	
 	    }
 	    
+	    private static final Color LIGHT_RED = new Color (255, 192, 192);
+	    private static final Color LIGHT_GREEN = new Color (192, 255, 192);
+	    private static final Color LIGHT_YELLOW = new Color (255, 255, 192);
+	    private static final Color LIGHT_MAGENTA = new Color (192, 255, 255);
+	    
 		private Color getTypeColor (int row, int col)
 		{
-			Color result = java.awt.Color.WHITE; // data
-			if (row == 0)
+			Color result = Color.LIGHT_GRAY; // nothing
+			if (info.isHeaderRow(row))
 			{
-				result = java.awt.Color.YELLOW;
+				result = LIGHT_YELLOW;
 			}
-			else
+			else if (info.isDataRow(row))
 			{
-				if (info.getSyscodeColumn() && col ==  info.getCodeColumn())
+				ColumnType type = info.getColumnType(col);
+				switch (type)
 				{
-					result = java.awt.Color.RED;
-				}
-				if (col == info.getIdColumn())
-				{
-					result = java.awt.Color.GREEN;
+				case COL_ID: result = LIGHT_GREEN; break;
+				case COL_NUMBER: result = Color.WHITE; break;
+				case COL_STRING: result = LIGHT_MAGENTA; break;
+				case COL_SYSCODE: result = LIGHT_RED; break;
 				}
 			}
 			return result;

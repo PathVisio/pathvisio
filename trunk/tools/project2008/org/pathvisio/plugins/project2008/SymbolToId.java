@@ -22,6 +22,7 @@ import java.util.*;
 import org.pathvisio.model.*;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 
 /**
@@ -79,32 +80,37 @@ public class SymbolToId
 				if (elt.getObjectType() == ObjectType.DATANODE)
 				{
 					Xref ref = elt.getXref();
-					if (!gdb.xrefExists(ref))
-					{
-						List<XrefWithSymbol> searchResult = gdb.freeSearch(elt.getTextLabel(), 1);
-						if (searchResult.size() > 0)
+					try {
+						if (!gdb.xrefExists(ref))
 						{
-							XrefWithSymbol newtry = null; 
-							for (XrefWithSymbol result : searchResult)
+							List<XrefWithSymbol> searchResult = gdb.freeSearch(elt.getTextLabel(), 1);
+							if (searchResult.size() > 0)
 							{
-								if (elt.getTextLabel().equalsIgnoreCase(result.getSymbol()) &&
-									result.getDataSource() == DataSource.ENTREZ_GENE)
+								XrefWithSymbol newtry = null; 
+								for (XrefWithSymbol result : searchResult)
 								{
-									newtry = result;
+									if (elt.getTextLabel().equalsIgnoreCase(result.getSymbol()) &&
+										result.getDataSource() == DataSource.ENTREZ_GENE)
+									{
+										newtry = result;
+									}
+								}
+								
+								if (newtry != null)
+								{
+									System.out.println (ref + " should be " + newtry + " " + newtry.getSymbol());
+									elt.setDataSource(newtry.getDataSource());
+									elt.setGeneID(newtry.getId());
+								}
+								else
+								{
+									System.out.println ("No alternative found for " + ref);
 								}
 							}
-							
-							if (newtry != null)
-							{
-								System.out.println (ref + " should be " + newtry + " " + newtry.getSymbol());
-								elt.setDataSource(newtry.getDataSource());
-								elt.setGeneID(newtry.getId());
-							}
-							else
-							{
-								System.out.println ("No alternative found for " + ref);
-							}
 						}
+					} catch (DataException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 			}

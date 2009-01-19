@@ -34,14 +34,15 @@ import org.pathvisio.preferences.PreferenceManager;
  * 
  *  before    - 41.2%
  *  4 Dec '08 - 46.6%
+ *  19 Jan '09- 47.3%
  */
 public class Test extends TestCase implements GdbEventListener
 {	
 	//TODO
-	static final String gdbHuman = 
+	static final String GDB_HUMAN = 
 		System.getProperty ("user.home") + File.separator + 
 		"PathVisio-Data/gene databases/Hs_Derby_20080102.pgdb";
-	static final String gdbRat = 
+	static final String GDB_RAT = 
 		System.getProperty ("user.home") + File.separator + 
 		"PathVisio-Data/gene databases/Rn_Derby_20080102.pgdb";
 
@@ -72,10 +73,28 @@ public class Test extends TestCase implements GdbEventListener
 		//TODO
 	}
 	
+	public void testImportInformation()
+	{
+		final int base1 = 26;
+		final int base2 = 26 * 26 + 26;
+		final int base3 = 26 * 26 * 26 + 26 * 26 + 26;
+		assertEquals ("A", ImportInformation.colIndexToExcel (0));
+		assertEquals ("B", ImportInformation.colIndexToExcel (1));
+		assertEquals ("Z", ImportInformation.colIndexToExcel (25));
+		assertEquals ("AA", ImportInformation.colIndexToExcel (base1 + 0));
+		assertEquals ("BA", ImportInformation.colIndexToExcel (base1 +  1 * 26));
+		assertEquals ("ZA", ImportInformation.colIndexToExcel (base1 + 25 * 26));
+		assertEquals ("ZZ", ImportInformation.colIndexToExcel (base1 + 25 * 26 + 25));
+		assertEquals ("AAA", ImportInformation.colIndexToExcel (base2 + 0));
+		assertEquals ("ABA", ImportInformation.colIndexToExcel (base2 + 1 * 26));
+		assertEquals ("ZZZ", ImportInformation.colIndexToExcel (base2 + 25 * 26 * 26 + 25 * 26 + 25));
+		assertEquals ("AAAA", ImportInformation.colIndexToExcel (base3));
+	}
+	
 	public void testGdbConnect() throws DataException
 	{
-		assertTrue (new File (gdbHuman).exists()); // if gdb can't be found, rest of test doesn't make sense. 
-		SimpleGdb gdb = SimpleGdbFactory.createInstance (gdbHuman, new DataDerby(), 0);
+		assertTrue (new File (GDB_HUMAN).exists()); // if gdb can't be found, rest of test doesn't make sense. 
+		SimpleGdb gdb = SimpleGdbFactory.createInstance (GDB_HUMAN, new DataDerby(), 0);
 		
 		//symbol must be INSR
 		Xref ref = new Xref ("3643", DataSource.ENTREZ_GENE);				
@@ -140,23 +159,23 @@ public class Test extends TestCase implements GdbEventListener
 		assertTrue (f.exists());
 		info.setTxtFile(f);
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
-		info.setDbName(dbFileName);
-		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
+		info.setGexName(dbFileName);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance(GDB_HUMAN, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 		
 		// no errors if all genes could be looked up.
-		assertEquals (info.getErrorList().size(), 0);
+		assertEquals (0, info.getErrorList().size());
 		
 		ImportInformation info2 = new ImportInformation();
 		info2.setTxtFile(f);
 		dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
-		info2.setDbName(dbFileName);
+		info2.setGexName(dbFileName);
 		
-		gdb = SimpleGdbFactory.createInstance (gdbRat, new DataDerby(), 0);
-		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
+		gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
+		GexTxtImporter.importFromTxt(info2, null, gdb, gexManager);
 		
 		// 91 errors expected if no genes can be looked up.
-		assertEquals (info.getErrorList().size(), 91);	
+		assertEquals (91, info2.getErrorList().size());	
 	}
 
 	public void testImportAffy() throws IOException, DataException
@@ -168,19 +187,19 @@ public class Test extends TestCase implements GdbEventListener
 		info.guessSettings();
 		
 		assertEquals (info.getDataSource(), DataSource.AFFY);
-		assertFalse (info.getSyscodeColumn());
+		assertTrue (info.isSyscodeFixed());
 		assertTrue (info.digitIsDot());
 		assertEquals (info.getIdColumn(), 0);
 		
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
-		info.setDbName(dbFileName);
-		info.setSyscodeColumn(false);
+		info.setGexName(dbFileName);
+		info.setSyscodeFixed(true);
 		info.setDataSource(DataSource.AFFY);
-		SimpleGdb gdb = SimpleGdbFactory.createInstance (gdbRat, new DataDerby(), 0);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 		
 		// just 6 errors if all goes well
-		assertEquals (info.getErrorList().size(), 6);		
+		assertEquals (6, info.getErrorList().size());		
 	}
 
 	/**
@@ -196,18 +215,44 @@ public class Test extends TestCase implements GdbEventListener
 		info.guessSettings();
 		
 		assertEquals (info.getDataSource(), DataSource.ENTREZ_GENE);
-		assertFalse (info.getSyscodeColumn());
+		assertTrue (info.isSyscodeFixed());
 		assertTrue (info.digitIsDot());
-		assertEquals (info.getIdColumn(), 0);
+		assertEquals (0, info.getIdColumn());
 		
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
-		info.setDbName(dbFileName);
+		info.setGexName(dbFileName);
 		
-		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance(GDB_HUMAN, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 		
 		// 0 errors if all goes well
-		assertEquals (info.getErrorList().size(), 0);		
+		assertEquals (0, info.getErrorList().size());		
+	}
+
+	public void testImportNoHeader() throws IOException, DataException
+	{
+		ImportInformation info = new ImportInformation();
+		File f = new File ("example-data/sample_data_no_header.txt");
+		assertTrue (f.exists());
+		info.setTxtFile(f);
+		info.setFirstDataRow(0);
+		info.guessSettings();
+		
+		assertEquals (info.getDataSource(), DataSource.ENTREZ_GENE);
+		assertFalse (info.isSyscodeFixed());
+		assertTrue (info.digitIsDot());
+		assertEquals (0, info.getIdColumn());
+		assertTrue (info.getNoHeader());
+		assertEquals ("Column A", info.getColNames()[0]);
+		
+		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex5";
+		info.setGexName(dbFileName);
+		
+		SimpleGdb gdb = SimpleGdbFactory.createInstance(GDB_HUMAN, new DataDerby(), 0);
+		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
+		
+		// 0 errors if all goes well
+		assertEquals (0, info.getErrorList().size());		
 	}
 
 	/**
@@ -223,15 +268,15 @@ public class Test extends TestCase implements GdbEventListener
 		info.guessSettings();
 		
 		assertEquals (info.getDataSource(), DataSource.ENTREZ_GENE);
-		assertTrue (info.getSyscodeColumn());
-		assertEquals (info.getCodeColumn(), 1);
+		assertFalse (info.isSyscodeFixed());
+		assertEquals (info.getSyscodeColumn(), 1);
 		assertTrue (info.digitIsDot());
 		assertEquals (info.getIdColumn(), 0);
 		
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex4";
-		info.setDbName(dbFileName);
+		info.setGexName(dbFileName);
 		
-		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbHuman, new DataDerby(), 0);
+		SimpleGdb gdb = SimpleGdbFactory.createInstance(GDB_HUMAN, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 		
 		// 0 errors if all goes well

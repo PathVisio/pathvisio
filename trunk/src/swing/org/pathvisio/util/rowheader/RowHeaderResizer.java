@@ -1,4 +1,21 @@
-package RowHeaderTable;
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2009 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
+//Source: http://www.chka.de/swing/table/row-headers/
+package org.pathvisio.util.rowheader;
 
 import java.awt.Component;
 import java.awt.Cursor;
@@ -14,20 +31,21 @@ import javax.swing.event.MouseInputAdapter;
 import java.io.Serializable;
 
 
-public class JTableRowHeaderResizer
+public class RowHeaderResizer
     extends MouseInputAdapter
     implements Serializable, ContainerListener
 {
-    private JScrollPane pane;
+	private static final long serialVersionUID = 1L;
+	private JScrollPane pane;
     private JViewport   viewport;
-    private JTable      rowHeader;
-    private Component   corner;
+    private Component  rowHeader;
+    private Component  corner;
     private JTable      view;
 
     private boolean enabled;
     
 
-    public JTableRowHeaderResizer(JScrollPane pane)
+    public RowHeaderResizer(JScrollPane pane)
     {
         this.pane = pane;
 
@@ -72,7 +90,7 @@ public class JTableRowHeaderResizer
         if (viewport == null)
             this.rowHeader = null;
         else
-            this.rowHeader = (JTable)viewport.getView();
+            this.rowHeader = viewport.getView();
         this.corner = pane.getCorner(JScrollPane.UPPER_LEFT_CORNER);
     }
 
@@ -172,8 +190,8 @@ public class JTableRowHeaderResizer
         if (!active)
             return;
         
-        size = viewport.getPreferredSize();     
-
+        size = viewport.getPreferredSize();
+        
         int newX = e.getX();
         
         size.width = startWidth + e.getX() - startX;
@@ -182,11 +200,8 @@ public class JTableRowHeaderResizer
             size.width = minWidth;
         else if (size.width > maxWidth)
             size.width = maxWidth;
-
-
-        // This isn't too clean, it assumes the width bubbles up to
-        // viewport.getPreferredSize().width without changes.
-        rowHeader.getColumnModel().getColumn(0).setPreferredWidth(size.width);
+        
+        viewport.setPreferredSize(size);
         
         view.sizeColumnsToFit(-1);
         

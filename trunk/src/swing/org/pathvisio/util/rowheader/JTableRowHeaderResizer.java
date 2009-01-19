@@ -1,34 +1,50 @@
-package RowHeaderTable;
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2009 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
+//Source: http://www.chka.de/swing/table/row-headers/
+package org.pathvisio.util.rowheader;
 
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.event.ContainerListener;
 import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.MouseEvent;
 import javax.swing.JScrollPane;
-import javax.swing.JViewport;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.event.MouseInputAdapter;
 
 import java.io.Serializable;
 
 
-public class RowHeaderResizer
+public class JTableRowHeaderResizer
     extends MouseInputAdapter
     implements Serializable, ContainerListener
 {
-	private static final long serialVersionUID = 1L;
-	private JScrollPane pane;
+    private JScrollPane pane;
     private JViewport   viewport;
-    private Component  rowHeader;
-    private Component  corner;
+    private JTable      rowHeader;
+    private Component   corner;
     private JTable      view;
 
     private boolean enabled;
     
 
-    public RowHeaderResizer(JScrollPane pane)
+    public JTableRowHeaderResizer(JScrollPane pane)
     {
         this.pane = pane;
 
@@ -73,7 +89,7 @@ public class RowHeaderResizer
         if (viewport == null)
             this.rowHeader = null;
         else
-            this.rowHeader = viewport.getView();
+            this.rowHeader = (JTable)viewport.getView();
         this.corner = pane.getCorner(JScrollPane.UPPER_LEFT_CORNER);
     }
 
@@ -173,8 +189,8 @@ public class RowHeaderResizer
         if (!active)
             return;
         
-        size = viewport.getPreferredSize();
-        
+        size = viewport.getPreferredSize();     
+
         int newX = e.getX();
         
         size.width = startWidth + e.getX() - startX;
@@ -183,8 +199,11 @@ public class RowHeaderResizer
             size.width = minWidth;
         else if (size.width > maxWidth)
             size.width = maxWidth;
-        
-        viewport.setPreferredSize(size);
+
+
+        // This isn't too clean, it assumes the width bubbles up to
+        // viewport.getPreferredSize().width without changes.
+        rowHeader.getColumnModel().getColumn(0).setPreferredWidth(size.width);
         
         view.sizeColumnsToFit(-1);
         

@@ -278,7 +278,7 @@ public class GuiMain
 				
 				if(swingEngine.canDiscardPathway()) {
 					frame.dispose();
-					GuiMain.this.shutdown();
+					GuiMain.this.shutdown(swingEngine);
 				}
 			}
 		});
@@ -293,10 +293,36 @@ public class GuiMain
 		return frame;
 	}
 
-	private void shutdown() 
+	private void shutdown(SwingEngine swingEngine) 
 	{
 		PreferenceManager prefs = PreferenceManager.getCurrent();
 		prefs.store();
+		
+		//explicit clean shutdown of gex prevents file from being left open
+		if (GexManager.getCurrent().isConnected())
+		{
+			try
+			{
+				GexManager.getCurrent().getCurrentGex().close();
+			}
+			catch (DataException ex)
+			{
+				Logger.log.error ("Couldn't cleanly close pgex database", ex);
+			}
+		}
+		
+		//explicit clean shutdown of gdb prevents file from being left open
+		if (swingEngine.getGdbManager().isConnected())
+		{
+			try
+			{
+				swingEngine.getGdbManager().getCurrentGdb().close();
+			}
+			catch (DataException ex)
+			{
+				Logger.log.error ("Couldn't cleanly close pgdb database", ex);
+			}
+		}
 	}
 	
 	public MainPanel getMainPanel() { return mainPanel; }

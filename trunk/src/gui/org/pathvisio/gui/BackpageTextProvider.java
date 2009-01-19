@@ -301,8 +301,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
 		
 		String colNames = "<TR><TH>Sample name";
-		if(!gex.isConnected() || !gdb.isConnected() //and to the gene database
-		) return noDataFound;
+		if(!gex.isConnected()) return noDataFound;
 		
 		List<Data> pwData = gex.getCachedData(idc);
 		

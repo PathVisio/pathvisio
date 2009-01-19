@@ -111,7 +111,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener
 	public void loadGexCache() {
 		final SimpleGex gex = gexManager.getCurrentGex();
 		final Pathway p = swingEngine.getEngine().getActivePathway();
-		if(p != null && gex != null && swingEngine.getGdbManager().isConnected()) {
+		if(p != null && gex != null) {
 			final ProgressKeeper pk = new ProgressKeeper(
 					(int)1E5
 			);

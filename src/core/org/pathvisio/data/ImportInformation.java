@@ -38,29 +38,26 @@ import org.pathvisio.model.DataSource;
  * the {@link GexImportWizard} or can be filled automatically
  */
 public class ImportInformation {
+	
 	/**
 	 * Points to the text file containing the expression data
 	 */
 	private File txtFile;
+	
 	/**
 	 * Sets the text file containing the expression data
-	 * @param txtFile {@link File} to set
+	 * @param aTxtFile {@link File} to set
 	 */
-	public void setTxtFile(File txtFile)
+	public void setTxtFile(File aTxtFile) throws IOException
 	{
-		if (!txtFile.equals(this.txtFile))
+		if (!aTxtFile.equals(txtFile))
 		{
-			//Close the connection to the previous file if exist
-			if(in != null) {
-				try { in.close(); } catch(Exception e) { 
-					Logger.log.error("on closing file " + this.txtFile + ": " + e.getMessage(), e);
-				}
-				in = null;
-			}
-			this.txtFile = txtFile;
+			txtFile = aTxtFile;
 			readSample();
+			interpretSample();
 		}
 	}
+	
 	/**
 	 * Get the private {@link File} txtFile
 	 * @return {@link File} object pointing to the text file that contains the
@@ -68,15 +65,20 @@ public class ImportInformation {
 	 */
 	public File getTxtFile() { return txtFile; } 
 	
+	private String dbName;
+
 	/**
 	 * The database name in which the expression data is saved
 	 */
-	private String dbName;
-	public void setDbName(String value)
+	public void setGexName(String value)
 	{
 		dbName = value;
 	}
-	public String getDbName() { return dbName; }
+
+	/**
+	 * The database name in which the expression data is saved
+	 */
+	public String getGexName() { return dbName; }
 
 	private double maximum;
 	private double minimum;
@@ -91,43 +93,82 @@ public class ImportInformation {
 	
 	
 	private List<String> errorList = new ArrayList<String>();
-	private int nrErrors = 0;
 	
-	/** Returns the number of errors made during importing data, for example when no
-	 * Esembl gene is found*/
-	public int getNrErrors() {
-		return nrErrors;	
-	}
 	/** Returns a list of errors made during importing data, the same list as saved
 	 * in the error file (.ex.txt) */
-	public List<String> getErrorList() {
+	public List<String> getErrorList() 
+	{
 		return errorList;
 	}
+	
 	/** A error has been reported during importing data. The message is added to 
 	 * the list of errors. */
-	public void addError(String message) {
+	public void addError(String message) 
+	{
 		errorList.add(message);
-		nrErrors++;
 	}
 
+	private int firstDataRow = 1;
+
 	/**
-	 * linenumber (first line is 1) of the line where the data begins
+	 * linenumber (first line is 0) of the line where the data begins
 	 */
-	private int firstDataRow;
 	public int getFirstDataRow()
 	{
 		return firstDataRow;
 	}
 	
+	/**
+	 * linenumber (first line is 0) of the line where the data begins
+	 */
 	public void setFirstDataRow(int value)
 	{
+		assert (value >= 0);
 		firstDataRow = value;
+		if (firstHeaderRow > firstDataRow)
+		{
+			firstHeaderRow = firstDataRow;
+		}
+	}
+	
+	private int firstHeaderRow;
+	
+	/**
+	 * linenumber (first line is 0) of the line where the header begins.
+	 */
+	public int getFirstHeaderRow()
+	{
+		return firstHeaderRow;
+	}
+
+	/**
+	 * linenumber (first line is 0) of the line where the header begins.
+	 * firstHeaderRow must be <= firstDataRow, so it will be set to the next line if that happens.
+	 */
+	public void setFirstHeaderRow(int value)
+	{
+		assert (value >= 0);
+		firstHeaderRow = value;
+		if (firstHeaderRow > firstDataRow)
+		{
+			firstDataRow = firstHeaderRow + 1;
+		}
+	}
+
+	public boolean isHeaderRow (int row)
+	{
+		return row >= firstHeaderRow && row < firstDataRow;
+	}
+	
+	public boolean isDataRow (int row)
+	{
+		return row >= firstDataRow;
 	}
 	
 	/**
-	 * linenumber (first line is 1) of the line containing the column headers
+	 * linenumber (first line is 0) of the line containing the column headers
 	 */
-	int headerRow;
+	int headerRow = 0;
 	
 	/**
 	 * Column number (first column is 0) of the column containing the gene identifier
@@ -137,35 +178,45 @@ public class ImportInformation {
 	{
 		return idColumn;
 	}
+
 	public void setIdColumn(int value)
 	{
 		idColumn = value;
 	}
 
+	private int syscodeColumn = 1;
+	
 	/**
-	 * Column number (first column is 0) of the column containing the systemcode
+	 * Column number (first column is 0) of the column containing the system code
 	 */
-	private int codeColumn = 1;
-	
-	public int getCodeColumn()
+	public int getSyscodeColumn()
 	{
-		return codeColumn;
+		return syscodeColumn;
 	}
-	public void setCodeColumn (int value)
+
+	/**
+	 * Column number (first column is 0) of the column containing the system code
+	 */
+	public void setSysodeColumn (int value)
 	{
-		codeColumn = value;
+		syscodeColumn = value;
 	}
 	
- 	
- 	/** 
- 	 * True if there is no header in the data	
- 	*/
- 	private boolean noHeader;
+	/** Various possible column types */
+	public enum ColumnType { COL_SYSCODE, COL_ID, COL_STRING, COL_NUMBER };
+	
+	public ColumnType getColumnType (int col)
+	{
+		if (col == idColumn) return ColumnType.COL_ID;
+		if (isSyscodeFixed ? false : col == syscodeColumn) return ColumnType.COL_SYSCODE;
+		return isStringCol(col) ? ColumnType.COL_STRING : ColumnType.COL_NUMBER;
+	}
 	
 	/**
 	 * Boolean which can be set to false if there is no column for the system code is available
-	 * in the dataset. */
-	private boolean hasSyscodeColumn = true;
+	 * in the dataset. 
+	 */
+	private boolean isSyscodeFixed = false;
 	
 	/**
 	 * String containing the system code that has been set by the user in gexImportWizard 
@@ -182,70 +233,17 @@ public class ImportInformation {
 	 * Column numbers (first column is 0) of the columns of which the data should not be treated
 	 * as numberic
 	 */
-	private int[] stringCols;
+	private Set<Integer> stringCols = new HashSet<Integer>();
 
 	/**
-	 * Constructor for this class
-	 * Sets the default values
+	 * Set if the given column is of type String or not 
 	 */
-	public ImportInformation() 
+	public void setStringColumn (int col, boolean value)
 	{
-		// Set the defaults
-		firstDataRow = 2;
-		headerRow = 1;
-		idColumn = 0;
-		codeColumn = 1;
-		noHeader = false;
-	}
-
-	/**
-	 * {@link BufferedReader} to the text file, maintained while the wizard is open
-	 */
-	BufferedReader in;
-
-	/**
-	 * Get a {@link BufferedReader} to the text file containing the expression data
-	 * Creates a new one 
-	 * @return
-	 */
-	public BufferedReader getBufferedReader() throws IOException
-	{
-		if (in == null) 
-		{
-				in = new BufferedReader(new FileReader(txtFile));
-				// changed readahead from 10000 to 500000
-				// see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4616869
-				// TODO: this may still fail for long lines (more than 500000 bytes in 50 lines) 
-				in.mark(500000);
-		} 
-		else 
-		{
-			in.reset();
-		}
-		return in;
-	}
-
-	/**
-	 * Sets the private property stringCols
-	 * @param cols	Column numbers (start with 0) of columns containing data that
-	 * should not be treated as numeric
-	 */
-	public void setStringCols(int[] cols) 
-	{
-		stringCols = cols;
-	}
-
-	/**
-	 * Sets the private property stringCols
-	 * @return	Column numbers (start with 0) of columns containing data that
-	 * should not be treated as numeric, or an empty String[]
-	 */
-	//TODO: change to set.
-	public int[] getStringCols() 
-	{
-		if (stringCols == null)
-			stringCols = new int[] {};
-		return stringCols;
+		if (value)
+			stringCols.add (col);
+		else
+			stringCols.remove(col);
 	}
 
 	/**
@@ -256,14 +254,29 @@ public class ImportInformation {
 	 */
 	public boolean isStringCol(int colIndex) 
 	{
-		if (stringCols == null)
-			return false;
-		for (int col : stringCols)
-			if (col == colIndex)
-				return true;
-		return false;
+		return stringCols.contains(colIndex);
 	}
 
+	/**
+	 * Creates an excel "Column name" for a given 0-based column index.
+	 * 0 -> A, 25-> Z
+	 * 26 -> AA
+	 * 26 + 26^2 -> AAA
+	 * etc.
+	 */
+	static String colIndexToExcel (int i)
+	{
+		assert (i >= 0);
+		String result = "";
+		while (i >= 0)
+		{
+			 result = (char)('A' + i % 26) + result;
+			 i /= 26;
+			 i--;
+		}
+		return result;
+	}
+	
 	/**
 	 * Reads the column names from the text file containing the expression data at the
 	 * header row specified by the user. Multiple header rows can also be read. When no header
@@ -274,35 +287,31 @@ public class ImportInformation {
 	 * 
 	 * @return the column names
 	 */
-	public String[] getColNames() throws IOException
+	public String[] getColNames()
 	{
 		String[] result = null;
-		BufferedReader in = getBufferedReader();
-		String[] line = in.readLine().split(getDelimiter());
-		int nrCol = Math.max(line.length, sampleMaxNumCols); // Number of columns			
-		result = new String[nrCol];
+		result = new String[sampleMaxNumCols];
 		
 		// initialize columns to empty strings
-		for(int i = 0; i < nrCol; i++) result[i] = "";
+		for(int i = 0; i < sampleMaxNumCols; i++) result[i] = "";
 
 		// concatenate header rows
 		if(!getNoHeader())
 		{	
 			int i = 0;
 			// Read headerlines till the first data row
-			while (i < firstDataRow - 1) 
+			while (i < firstDataRow) 
 			{ 	boolean first = true;
-				for(int j = 0; j < line.length; j++)
+				for(int j = 0; j < cells[i].length; j++)
 				{  
 					// All header rows are added
-					if(i >= headerRow - 1) 
+					if(i >= headerRow) 
 					{
 						if (!first) result[j] += " ";
 						first = false;
-						result[j] = result[j] += line[j].trim();
+						result[j] = result[j] += cells[i][j].trim();
 					}
 				}
-				line = in.readLine().split(getDelimiter());
 				i++;
 			}
 		}
@@ -316,7 +325,7 @@ public class ImportInformation {
 			if (col.equals ("") || unique.contains(col))
 			{
 				// generate default column name
-				result[j] = "Column " + (j + 1);
+				result[j] = "Column " + colIndexToExcel(j);
 			}
 			unique.add (result[j]);
 		}		
@@ -324,43 +333,31 @@ public class ImportInformation {
 	}
 	
 	/**
-	 * Returns the boolean value which indicates whether a header is present or not
+	 * indicates whether a header is present or not
 	 * @return value of noHeader (true or false)
 	 */	
 	public boolean getNoHeader() 
 	{
-		return noHeader;
+		return firstDataRow - firstHeaderRow <= 0;
 	}
-	
+		
 	/**
-	 * Sets the value of noHeader, taken from the target as specified where the method is used.
-	 * noHeader can be set true or false
-	 * @param target
-	 */	 	
-	public void setNoHeader(boolean target) 
-	{
-		noHeader = target;
-		readSample();
-	}
-	
-	/**
-	 * Returns the boolean value set by the user which indicates whether a column 
-	 * system code column is present or not.
+	 * Returns the boolean value set by the user which indicates whether 
+	 * the system code is fixed, or specified in another column
 	 */
-	//TODO: rename, to avoid confusion with getCodeColumn
-	public boolean getSyscodeColumn() 
+	public boolean isSyscodeFixed() 
 	{
-		return hasSyscodeColumn;
+		return isSyscodeFixed;
 	}
 
 	
 	/**
-	 * Sets the boolean value syscodeColumn to 'system code present' or 'system code 
-	 * not present' in data. 
+	 * Sets the boolean value to determine if the system code
+	 * is fixed, or specified in separate column
 	 */
-	public void setSyscodeColumn(boolean target) 
+	public void setSyscodeFixed(boolean target) 
 	{
-		hasSyscodeColumn = target;
+		isSyscodeFixed = target;
 	}
 	
 	/**
@@ -398,15 +395,14 @@ public class ImportInformation {
 	public void setDelimiter(String target) 
 	{
 		delimiter = target;
-		readSample();
+		interpretSample();
 	}
 	
-	private static final int N = 50;
-	private String[] lines = null;
+	private static final int NUM_SAMPLE_LINES = 50;
+	private List<String> lines = null;
 	private String[][] cells = null;
 	
 	private int sampleMaxNumCols = 0;
-	private int sampleNumRows = 0;
 
 	public int getSampleMaxNumCols()
 	{
@@ -415,7 +411,7 @@ public class ImportInformation {
 	
 	public int getSampleNumRows()
 	{
-		return sampleNumRows;
+		return lines == null ? 0 : lines.size();
 	}
 	
 	public String getSampleData (int row, int col)
@@ -445,11 +441,11 @@ public class ImportInformation {
 	/** derive datasource from sample data */
 	public void guessSettings()
 	{
-		hasSyscodeColumn = guessHasSyscodeColumn;
+		isSyscodeFixed = !guessHasSyscodeColumn;
 		if (guessDataSource != null) setDataSource(guessDataSource);
 		if (guessHasSyscodeColumn && guessSyscodeColumn >= 0)
 		{
-			setCodeColumn(guessSyscodeColumn);
+			setSysodeColumn(guessSyscodeColumn);
 		}
 		if (guessIdColumn >= 0) setIdColumn(guessIdColumn);		
 		digitIsDot = guessDigitIsDot;
@@ -480,7 +476,7 @@ public class ImportInformation {
 		
 		void countCell (String cell, int column)
 		{
-			Matcher m = p.matcher(cell);					
+			Matcher m = p.matcher(cell);				
 			
 			// check if it matches
 			if (m.matches())
@@ -506,135 +502,135 @@ public class ImportInformation {
 	/** fraction of cells that have to match a pattern for it to be a good guess */
 	private static final double GOOD_GUESS_FRACTION = 0.9;
 	
-	/* read a sample from the selected text file to guess some parameters
-	 * and preview the table
+	/* 
+	 * read a sample from the selected text file
 	 */
-	private void readSample()
+	private void readSample() throws IOException
 	{
-		try 
+		BufferedReader in = new BufferedReader(new FileReader(txtFile));
+		lines = new ArrayList<String>();
+		String line;
+		while ((line = in.readLine()) != null && lines.size() < NUM_SAMPLE_LINES) 
 		{
-			BufferedReader in = getBufferedReader();
+			lines.add(line);
+		}
+		in.close();
+	}
+	
+	/* guess some parameters */
+	private void interpretSample()
+	{
+		//"Guess" the system code based on the first 50 lines.
+		
+		//Make regular expressions patterns for the gene ID's.
+		Map<DataSource, Pattern> patterns = DataSourcePatterns.getPatterns();
+		
+		//Make regular expressions pattern for the system code. 
+		final PatternCounter syscodeCounter = new PatternCounter (Pattern.compile("[A-Z][a-z]?"));			
+		final PatternCounter dotCounter = new PatternCounter (Pattern.compile("-?[0-9]*\\.[0-9]+"));
+		final PatternCounter commaCounter = new PatternCounter (Pattern.compile("-?[0-9]*,[0-9]+"));
+		
+		//Make count variables.
+		Map<DataSource, PatternCounter> counters = new HashMap<DataSource, PatternCounter>();
 
-			//"Guess" the system code based on the first 50 lines.
-			
-			//Make regular expressions patterns for the gene ID's.
-			Map<DataSource, Pattern> patterns = DataSourcePatterns.getPatterns();
-			
-			//Make regular expressions pattern for the system code. 
-			final PatternCounter syscodeCounter = new PatternCounter (Pattern.compile("[A-Z][a-z]?"));			
-			final PatternCounter dotCounter = new PatternCounter (Pattern.compile("-?[0-9]*\\.[0-9]+"));
-			final PatternCounter commaCounter = new PatternCounter (Pattern.compile("-?[0-9]*,[0-9]+"));
-			
-			//Make count variables.
-			Map<DataSource, PatternCounter> counters = new HashMap<DataSource, PatternCounter>();
+		for (DataSource ds : patterns.keySet())
+		{
+			counters.put (ds, new PatternCounter (patterns.get(ds)));
+		}
 
-			for (DataSource ds : patterns.keySet())
+		sampleMaxNumCols = 0;
+		int row = 0;
+		cells = new String[NUM_SAMPLE_LINES][];
+		for (String line : lines)
+		{
+			cells[row] = line.split(delimiter);
+			int numCols = cells[row].length;
+
+			if (numCols > sampleMaxNumCols)
 			{
-				counters.put (ds, new PatternCounter (patterns.get(ds)));
+				sampleMaxNumCols = numCols;
 			}
 
-			String line;
-			sampleNumRows = 0;
-			sampleMaxNumCols = 0;
-			lines = new String[N];
-			cells = new String[N][];
-			while ((line = in.readLine()) != null && sampleNumRows < N) 
+			for (int col = 0; col < cells[row].length; ++col)
 			{
-				lines[sampleNumRows] = line;
-				cells[sampleNumRows] = line.split(delimiter);
-				int numCols = cells[sampleNumRows].length;
-
-				if (numCols > sampleMaxNumCols)
+				//Count all the times that an element matches a gene identifier.
+				syscodeCounter.countCell (cells[row][col], col);
+				commaCounter.countCell (cells[row][col], col);
+				dotCounter.countCell (cells[row][col], col);
+									
+				for (DataSource ds : patterns.keySet())
 				{
-					sampleMaxNumCols = numCols;
+					counters.get(ds).countCell (cells[row][col], col);
 				}
-
-				for (int col = 0; col < cells[sampleNumRows].length; ++col)
-				{
-					//Count all the times that an element matches a gene identifier.
-					syscodeCounter.countCell (cells[sampleNumRows][col], col);
-					commaCounter.countCell (cells[sampleNumRows][col], col);
-					dotCounter.countCell (cells[sampleNumRows][col], col);
-										
-					for (DataSource ds : patterns.keySet())
-					{
-						counters.get(ds).countCell (cells[sampleNumRows][col], col);
-					}
-				}				
-				
-				sampleNumRows++;
-			}
+			}				
 			
-			/*Calculate percentage of rows where a system code is found and
-			 * compare with a given percentage*/			
-			{
-				double max = 0;
-				int maxCol = -1;
-				
-				for (int col = 0; col < sampleMaxNumCols; ++col)
-				{
-					double syscodepercentage = (double)syscodeCounter.getColumnCount(col) / (double)sampleNumRows;
-					
-					if (syscodepercentage > max)
-					{
-						max = syscodepercentage;
-						maxCol = col;
-					}
-				}
-				
-				/*Set the selection to the codeRadio button if a system code is found
-				 * in more than rows than the given percentage, otherwise set the 
-				 * selection to the syscodeRadio button*/
-				if (max >= GOOD_GUESS_FRACTION)
-				{
-					guessHasSyscodeColumn = true;
-					guessSyscodeColumn = maxCol;
-				}
-				else 
-				{
-					guessHasSyscodeColumn = false;
-					guessSyscodeColumn = -1;
-				}
-			}
-			
-			double commaTotal = commaCounter.getTotal();
-			double dotTotal = dotCounter.getTotal();
-			
-			// if more than 90% of number-like patterns use a dot, then the digit symbol is a dot. 
-			guessDigitIsDot = ((dotTotal / (commaTotal + dotTotal)) > GOOD_GUESS_FRACTION);
-			Logger.log.info ("readsample - I read " + dotTotal + " dots and " + commaTotal + " comma's. I'm guessing " + (guessDigitIsDot ? "dot" : "comma"));
-			
-			//Look for maximum.
+			row++;
+		}
+		
+		/*Calculate percentage of rows where a system code is found and
+		 * compare with a given percentage*/			
+		{
 			double max = 0;
-			DataSource maxds = null;
 			int maxCol = -1;
 			
 			for (int col = 0; col < sampleMaxNumCols; ++col)
 			{
-				for (DataSource ds : patterns.keySet())
+				double syscodepercentage = (double)syscodeCounter.getColumnCount(col) / (double)row;
+				
+				if (syscodepercentage > max)
 				{
-					//Determine the maximum of the percentages (most hits). 
-					//Sometimes, normal data can match a gene identifier, in which case percentages[i]>1. 
-					//Ignores these gene identifiers.
-					double percentage = (double)counters.get(ds).getColumnCount(col)/(double)sampleNumRows;
-					if (percentage > max && percentage <= 1)
-					{
-						max = percentage;
-						maxds = ds;
-						maxCol = col;
-					}
+					max = syscodepercentage;
+					maxCol = col;
 				}
 			}
 			
-			//Select the right entry in the drop down menu and change the system code in importInformation
-			guessDataSource = maxds;
-			guessIdColumn = maxCol;
-		} 
-		catch (IOException e) 
-		{ 		
-			//TODO: pop up error dialog
-			Logger.log.error("while generating preview for importing expression data: " + e.getMessage(), e);
+			/*Set the selection to the codeRadio button if a system code is found
+			 * in more than rows than the given percentage, otherwise set the 
+			 * selection to the syscodeRadio button*/
+			if (max >= GOOD_GUESS_FRACTION)
+			{
+				guessHasSyscodeColumn = true;
+				guessSyscodeColumn = maxCol;
+			}
+			else 
+			{
+				guessHasSyscodeColumn = false;
+				guessSyscodeColumn = -1;
+			}
 		}
+		
+		double commaTotal = commaCounter.getTotal();
+		double dotTotal = dotCounter.getTotal();
+		
+		// if more than 90% of number-like patterns use a dot, then the digit symbol is a dot. 
+		guessDigitIsDot = ((dotTotal / (commaTotal + dotTotal)) > GOOD_GUESS_FRACTION);
+		Logger.log.info ("readsample - I read " + dotTotal + " dots and " + commaTotal + " comma's. I'm guessing " + (guessDigitIsDot ? "dot" : "comma"));
+		
+		//Look for maximum.
+		double max = 0;
+		DataSource maxds = null;
+		int maxCol = -1;
+		
+		for (int col = 0; col < sampleMaxNumCols; ++col)
+		{
+			for (DataSource ds : patterns.keySet())
+			{
+				//Determine the maximum of the percentages (most hits). 
+				//Sometimes, normal data can match a gene identifier, in which case percentages[i]>1. 
+				//Ignores these gene identifiers.
+				double percentage = (double)counters.get(ds).getColumnCount(col)/(double)row;
+				if (percentage > max && percentage <= 1)
+				{
+					max = percentage;
+					maxds = ds;
+					maxCol = col;
+				}
+			}
+		}
+		
+		//Select the right entry in the drop down menu and change the system code in importInformation
+		guessDataSource = maxds;
+		guessIdColumn = maxCol;
 	}
 	
 }

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
@@ -326,9 +327,14 @@ public class LinkChecker
 		
 		for (Xref xref : xrefList)
 		{
-			if (database.xrefExists(xref) == true)
-			{
-				countTrue++;
+			try {
+				if (database.xrefExists(xref) == true)
+				{
+					countTrue++;
+				}
+			} catch (DataException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return countTrue;

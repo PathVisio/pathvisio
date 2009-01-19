@@ -26,23 +26,31 @@ import com.nexes.wizard.WizardPanelDescriptor;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
@@ -60,6 +68,7 @@ import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
+import org.pathvisio.util.rowheader.RowNumberHeader;
 import org.pathvisio.util.swing.PermissiveComboBox;
 import org.pathvisio.util.swing.SimpleFileFilter;
 
@@ -122,11 +131,21 @@ public class GexImportWizard extends Wizard
 				setErrorMessage("Specified file to import does not exist");
 				txtFileComplete = false;
 			}
-			if (!file.canRead()) 
+			else if (!file.canRead()) 
 			{
 				setErrorMessage("Can't access specified file containing expression data");
 				txtFileComplete = false;
 			}
+			else try
+			{
+				importInformation.setTxtFile(file);
+			}
+			catch (IOException e)
+			{
+				setErrorMessage("Exception while reading file: " + e.getMessage());
+				txtFileComplete = false;
+			}
+
 		    getWizard().setNextFinishButtonEnabled(txtFileComplete);
 
 		    // add .pgex.
@@ -223,9 +242,8 @@ public class GexImportWizard extends Wizard
 
 		public void aboutToHidePanel() 
 		{
-			importInformation.setTxtFile(new File (txtInput.getText()));
 			importInformation.guessSettings();
-			importInformation.setDbName (txtOutput.getText());
+			importInformation.setGexName (txtOutput.getText());
 	    }
 
 		public void actionPerformed(ActionEvent e) {
@@ -255,7 +273,7 @@ public class GexImportWizard extends Wizard
 				try {
 					DBConnector dbConn = standaloneEngine.getGexManager().getDBConnector();
 						String output = ((DBConnectorSwing)dbConn).openNewDbDialog(
-								getPanelComponent(), importInformation.getDbName()	
+								getPanelComponent(), importInformation.getGexName()	
 						);
 						if(output != null) {
 							txtOutput.setText(output);
@@ -486,8 +504,8 @@ public class GexImportWizard extends Wizard
 		
 	    private JComboBox cbColId;
 	    private JComboBox cbColSyscode;
-	    private JRadioButton rbSyscodeYes;
-	    private JRadioButton rbSyscodeNo;
+	    private JRadioButton rbFixedNo;
+	    private JRadioButton rbFixedYes;
 	    private JComboBox cbDataSource;
 	    private DataSourceModel mDataSource;
 	    
@@ -518,11 +536,11 @@ public class GexImportWizard extends Wizard
 		    
 		    CellConstraints cc = new CellConstraints();
 			
-			rbSyscodeYes = new JRadioButton("Select a column to specify system code");
-			rbSyscodeNo = new JRadioButton("Use the same system code for all rows");
+			rbFixedNo = new JRadioButton("Select a column to specify system code");
+			rbFixedYes = new JRadioButton("Use the same system code for all rows");
 			ButtonGroup bgSyscodeCol = new ButtonGroup ();
-			bgSyscodeCol.add (rbSyscodeYes);
-			bgSyscodeCol.add (rbSyscodeNo);
+			bgSyscodeCol.add (rbFixedNo);
+			bgSyscodeCol.add (rbFixedYes);
 			
 			cbColId = new JComboBox();
 			cbColSyscode = new JComboBox();			
@@ -534,14 +552,26 @@ public class GexImportWizard extends Wizard
 			tblColumn = new JTable(ctm);
 			tblColumn.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			tblColumn.setDefaultRenderer(Object.class, ctm.getTableCellRenderer());
-			JScrollPane scrTable = new JScrollPane(tblColumn);
+			tblColumn.setCellSelectionEnabled(false);
 
+			tblColumn.getTableHeader().addMouseListener(new ColumnPopupListener());
+			JTable rowHeader = new RowNumberHeader(tblColumn);
+			rowHeader.addMouseListener(new RowPopupListener());
+			JScrollPane scrTable = new JScrollPane(tblColumn);
+		    
+			JViewport jv = new JViewport();
+		    jv.setView(rowHeader);
+		    jv.setPreferredSize(rowHeader.getPreferredSize());
+		    scrTable.setRowHeader(jv);
+//		    scrTable.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, rowHeader
+//		            .getTableHeader());
+		    
 			builder.addLabel ("Select primary identifier column:", cc.xy(1,1));
 			builder.add (cbColId, cc.xy(3,1));
 
-			builder.add (rbSyscodeYes, cc.xyw(1,3,3));
+			builder.add (rbFixedNo, cc.xyw(1,3,3));
 			builder.add (cbColSyscode, cc.xy(3,5));
-			builder.add (rbSyscodeNo, cc.xyw (1,7,3));
+			builder.add (rbFixedYes, cc.xyw (1,7,3));
 			builder.add (cbDataSource, cc.xy (3,9));
 			
 			builder.add (scrTable, cc.xyw(1,11,3));
@@ -549,13 +579,13 @@ public class GexImportWizard extends Wizard
 			ActionListener rbAction = new ActionListener() {
 				public void actionPerformed (ActionEvent ae)
 				{
-					boolean result = (ae.getSource() == rbSyscodeYes);
-					importInformation.setSyscodeColumn(result);
+					boolean result = (ae.getSource() == rbFixedYes);
+					importInformation.setSyscodeFixed(result);
 			    	columnPageRefresh();
 				}
 			};
-			rbSyscodeNo.addActionListener(rbAction);
-			rbSyscodeYes.addActionListener(rbAction);
+			rbFixedYes.addActionListener(rbAction);
+			rbFixedNo.addActionListener(rbAction);
 			
 			mDataSource.addListDataListener(new ListDataListener()
 			{
@@ -572,7 +602,8 @@ public class GexImportWizard extends Wizard
 			cbColSyscode.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae)
 				{
-					importInformation.setCodeColumn(cbColSyscode.getSelectedIndex());
+					importInformation.setSyscodeFixed(false);
+					importInformation.setSysodeColumn(cbColSyscode.getSelectedIndex());
 					columnPageRefresh();
 				}
 			});
@@ -586,25 +617,148 @@ public class GexImportWizard extends Wizard
 			return builder.getPanel();
 		}
 	    
+	    private class ColumnPopupListener extends MouseAdapter
+	    {
+	    	@Override public void mousePressed (MouseEvent e) 
+			{
+				showPopup(e);
+			}
+		
+			@Override public void mouseReleased (MouseEvent e)
+			{
+				showPopup(e);
+			}
+
+			int clickedCol;
+			
+			private void showPopup(MouseEvent e) 
+			{
+				if (e.isPopupTrigger())
+				{
+					JPopupMenu popup;
+					popup = new JPopupMenu();
+					clickedCol = tblColumn.columnAtPoint(e.getPoint()); 
+					if (clickedCol != importInformation.getSyscodeColumn())
+						popup.add(new SyscodeColAction());
+					if (clickedCol != importInformation.getIdColumn())
+						popup.add(new IdColAction());
+					popup.show(e.getComponent(),
+							e.getX(), e.getY());
+				}
+			}
+
+			private class SyscodeColAction extends AbstractAction
+			{
+				public SyscodeColAction() 
+				{
+					putValue(Action.NAME, "SystemCode column");
+				}
+				
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					// if id and code column are about to be the same, swap them
+					if (clickedCol == importInformation.getIdColumn())
+						importInformation.setIdColumn(importInformation.getSyscodeColumn());
+					importInformation.setSysodeColumn(clickedCol);
+					columnPageRefresh();
+				}	
+			}
+
+			private class IdColAction extends AbstractAction
+			{
+				public IdColAction() 
+				{
+					putValue(Action.NAME, "Identifier column");
+				}
+				
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					// if id and code column are about to be the same, swap them
+					if (clickedCol == importInformation.getSyscodeColumn())
+						importInformation.setSysodeColumn(importInformation.getIdColumn());
+					importInformation.setIdColumn(clickedCol); 
+					columnPageRefresh();
+				}	
+			}
+	    }
+		
+	    private class RowPopupListener extends MouseAdapter
+	    {
+	    	@Override public void mousePressed (MouseEvent e) 
+			{
+				showPopup(e);
+			}
+		
+			@Override public void mouseReleased (MouseEvent e)
+			{
+				showPopup(e);
+			}
+
+			int clickedRow;
+			
+			private void showPopup(MouseEvent e) 
+			{
+				if (e.isPopupTrigger())
+				{
+					JPopupMenu popup;
+					popup = new JPopupMenu();
+					clickedRow = tblColumn.rowAtPoint(e.getPoint()); 
+					popup.add(new DataStartAction());
+					popup.add(new HeaderStartAction());
+					popup.show(e.getComponent(),
+							e.getX(), e.getY());
+				}
+			}
+
+			private class DataStartAction extends AbstractAction
+			{
+				public DataStartAction() 
+				{
+					putValue(Action.NAME, "First data row");
+				}
+				
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					importInformation.setFirstDataRow(clickedRow);
+					columnPageRefresh();
+				}	
+			}
+
+			private class HeaderStartAction extends AbstractAction
+			{
+				public HeaderStartAction() 
+				{
+					putValue(Action.NAME, "First header row");
+				}
+				
+				public void actionPerformed(ActionEvent arg0) 
+				{
+					importInformation.setFirstHeaderRow(clickedRow);
+					columnPageRefresh();
+				}
+			}
+			
+	    }
+
 	    private void columnPageRefresh()
 	    {
 	    	String error = null;
-			if (importInformation.getSyscodeColumn())
+			if (importInformation.isSyscodeFixed())
 			{
-				rbSyscodeYes.setSelected (true);
-				cbColSyscode.setEnabled (true);
-				cbDataSource.setEnabled (false);
-
-				if (importInformation.getIdColumn() == importInformation.getCodeColumn())
-	    		{
-	    			error = "System code column and Id column can't be the same";
-	    		}
+				rbFixedYes.setSelected (true);
+				cbColSyscode.setEnabled (false);
+				cbDataSource.setEnabled (true);
 			}
 			else
 			{
-				rbSyscodeNo.setSelected (true);
-				cbColSyscode.setEnabled (false);
-				cbDataSource.setEnabled (true);
+				rbFixedNo.setSelected (true);
+				cbColSyscode.setEnabled (true);
+				cbDataSource.setEnabled (false);
+
+				if (importInformation.getIdColumn() == importInformation.getSyscodeColumn())
+	    		{
+	    			error = "System code column and Id column can't be the same";
+	    		}
 			}
 		    getWizard().setNextFinishButtonEnabled(error == null);
 		    getWizard().setErrorMessage(error == null ? "" : error);
@@ -617,21 +771,67 @@ public class GexImportWizard extends Wizard
 	    {
 	    	mDataSource.setSelectedItem(importInformation.getDataSource());
 			cbColId.setSelectedIndex(importInformation.getIdColumn());
-			cbColSyscode.setSelectedIndex(importInformation.getCodeColumn());
+			cbColSyscode.setSelectedIndex(importInformation.getSyscodeColumn());
 	    }
 	    
+	    /** 
+	     * A simple cell Renderer for combo boxes that use the
+	     * column index integer as value,
+	     * but will display the column name String
+	     */
+	    private class ColumnNameRenderer extends JLabel implements ListCellRenderer 
+	    {
+			public ColumnNameRenderer() 
+			{
+				setOpaque(true);
+				setHorizontalAlignment(CENTER);
+				setVerticalAlignment(CENTER);
+			}
+		
+			/*
+			* This method finds the image and text corresponding
+			* to the selected value and returns the label, set up
+			* to display the text and image.
+			*/
+			public Component getListCellRendererComponent(
+			                        JList list,
+			                        Object value,
+			                        int index,
+			                        boolean isSelected,
+			                        boolean cellHasFocus) 
+			{
+				//Get the selected index. (The index param isn't
+				//always valid, so just use the value.)
+				int selectedIndex = ((Integer)value).intValue();
+				
+				if (isSelected) 
+				{
+					setBackground(list.getSelectionBackground());
+					setForeground(list.getSelectionForeground());
+				} else {
+					setBackground(list.getBackground());
+					setForeground(list.getForeground());
+				}
+				
+				String[] cn = importInformation.getColNames();
+				String column = cn[selectedIndex];
+				setText(column);
+				setFont(list.getFont());
+				
+				return this;
+			}
+		}
+
 	    public void aboutToDisplayPanel()
 	    {			
-	    	String[] cn;
-	    	try
-	    	{
-	    		cn = importInformation.getColNames();
-	    	}
-	    	catch (IOException e)
-	    	{
-	    		Logger.log.error ("getting column names", e);
-	    		cn = new String[importInformation.getSampleMaxNumCols()];
-	    	}
+	    	// create an array of size getSampleMaxNumCols()
+	    	Integer[] cn;
+	    	int max = importInformation.getSampleMaxNumCols();
+    		cn = new Integer[max];
+    		for (int i = 0; i < max; ++i) cn[i] = i;
+    		
+	    	cbColId.setRenderer(new ColumnNameRenderer());
+	    	cbColSyscode.setRenderer(new ColumnNameRenderer());
 	    	cbColId.setModel(new DefaultComboBoxModel(cn));
 	    	cbColSyscode.setModel(new DefaultComboBoxModel(cn));
 			
@@ -644,8 +844,8 @@ public class GexImportWizard extends Wizard
 	    @Override
 	    public void aboutToHidePanel()
 	    {
-	    	importInformation.setSyscodeColumn(rbSyscodeYes.isSelected());
-	    	if (rbSyscodeYes.isSelected())
+	    	importInformation.setSyscodeFixed(rbFixedNo.isSelected());
+	    	if (rbFixedNo.isSelected())
 	    	{
 	    	}
 	    	else
@@ -738,7 +938,7 @@ public class GexImportWizard extends Wizard
 					try 
 					{
 						GexTxtImporter.importFromTxt(
-								importInformation, 
+								importInformation,
 								pk, 
 								standaloneEngine.getSwingEngine().getGdbManager().getCurrentGdb(),
 								standaloneEngine.getGexManager()

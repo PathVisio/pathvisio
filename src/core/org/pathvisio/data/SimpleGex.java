@@ -279,15 +279,24 @@ public class SimpleGex
 				// get all cross-refs for this id
 				
 				Set<Xref> destRefs = new HashSet<Xref>();
-				for (Xref destRef : gdb.getCrossRefs(srcRef))
+				if (gdb.isConnected())
 				{
-					// add only the ones that are in the dest filter.
-					if (destFilter.contains(destRef.getDataSource()))
+					for (Xref destRef : gdb.getCrossRefs(srcRef))
 					{
-						destRefs.add(destRef);
+						// add only the ones that are in the dest filter.
+						if (destFilter.contains(destRef.getDataSource()))
+						{
+							destRefs.add(destRef);
+						}
+					
 					}
 				}
-				//destRefs.addAll(gdb.getCrossRefs(srcRef));
+				// also the srcRef, in case we can't look up cross references
+				if (destFilter.contains(srcRef.getDataSource()))
+				{
+					destRefs.add(srcRef);
+				}
+				
 				Map<Integer, Data> groupData = new HashMap<Integer, Data>();
 				
 				if(destRefs.size() > 0)

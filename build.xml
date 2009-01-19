@@ -245,7 +245,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 		</javac>
 	</target>
 		
-	<target name="all" depends="jar,visplugins-jar,compile-wikipathways,jar-wpclient" description="Compile all versions of this project" />
+	<target name="all" depends="jar,visplugins-jar,compile-wikipathways" description="Compile all versions of this project" />
 
 	<target name="resources-jar" depends="prepare" description="Generates jar with resources">
 		<jar jarfile="lib/resources.jar">

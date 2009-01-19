@@ -17,7 +17,7 @@
 package org.pathvisio.wikipathways.bots;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.Properties;
 
@@ -84,7 +84,7 @@ public class DescriptionBot extends Bot {
 		try {
 			Logger.log.trace("Starting DescriptionBot");
 			Properties props = new Properties();
-			props.load(new FileReader(new File(args[0])));
+			props.load(new FileInputStream(new File(args[0])));
 			DescriptionBot bot = new DescriptionBot(props);
 			Bot.runAll(bot, new File(args[1] + ".html"), new File(args[1] + ".txt"));
 		} catch(Exception e) {

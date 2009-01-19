@@ -250,6 +250,7 @@ public class GexTxtImporter
 				}
 				if (p != null) p.worked(worked);
 			}
+			in.close();
 			
 			//Data is read and written to the database
 			

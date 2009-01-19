@@ -132,6 +132,15 @@ public abstract class SimpleGdb implements Gdb
 	{
 		if (con == null) throw new DataException("Database connection already closed");
 		dbConnector.closeConnection(con);
+		try
+		{
+			con.close();
+		}
+		catch (SQLException ex)
+		{
+			throw new DataException (ex);
+		}
+		con = null;
 	}
 
 	/**

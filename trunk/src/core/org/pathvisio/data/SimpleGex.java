@@ -408,6 +408,14 @@ public class SimpleGex
 		if(con != null)
 		{
 			dbConnector.closeConnection(con);
+			try
+			{
+				con.close();
+			}
+			catch (SQLException ex)
+			{
+				throw new DataException (ex);
+			}
 			con = null;
 		}
 	}

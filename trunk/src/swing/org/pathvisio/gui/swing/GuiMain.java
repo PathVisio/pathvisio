@@ -323,6 +323,7 @@ public class GuiMain
 				Logger.log.error ("Couldn't cleanly close pgdb database", ex);
 			}
 		}
+		Logger.log.info ("PathVisio was shut down cleanly");
 	}
 	
 	public MainPanel getMainPanel() { return mainPanel; }

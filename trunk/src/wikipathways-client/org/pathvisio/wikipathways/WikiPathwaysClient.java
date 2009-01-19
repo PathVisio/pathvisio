@@ -40,6 +40,7 @@ import org.pathvisio.wikipathways.webservice.WSAuth;
 import org.pathvisio.wikipathways.webservice.WSCurationTag;
 import org.pathvisio.wikipathways.webservice.WSCurationTagHistory;
 import org.pathvisio.wikipathways.webservice.WSPathway;
+import org.pathvisio.wikipathways.webservice.WSPathwayHistory;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
 import org.pathvisio.wikipathways.webservice.WikiPathwaysLocator;
@@ -112,6 +113,12 @@ public class WikiPathwaysClient {
 	public WSPathway getPathway(String id, int revision) throws RemoteException, ConverterException {
 		WSPathway wsp = port.getPathway(id, revision);
 		return wsp;
+	}
+	
+	public WSPathwayHistory getPathwayHistory(String id, Date start) throws RemoteException {
+		String timestamp = dateToTimestamp(start);
+		WSPathwayHistory hist = port.getPathwayHistory(id, timestamp);
+		return hist;
 	}
 	
 	public byte[] getPathwayAs(String fileType, String id, int revision) throws RemoteException {
@@ -243,13 +250,17 @@ public class WikiPathwaysClient {
 	 * @throws RemoteException
 	 */
 	public WSPathwayInfo[] getRecentChanges(Date cutoff) throws RemoteException {
-		// turn Date into expected timestamp format, in GMT:
-		SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddHHmmss");
-		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-		String timestamp = sdf.format(cutoff);
+		String timestamp = dateToTimestamp(cutoff);
 		WSPathwayInfo[] changes = port.getRecentChanges(timestamp);
 		if(changes == null) changes = new WSPathwayInfo[0];
 		return changes;
+	}
+	
+	private static String dateToTimestamp(Date date) {
+		// turn Date into expected timestamp format, in GMT:
+		SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddHHmmss");
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return sdf.format(date);
 	}
 	
 	public WSSearchResult[] findPathwaysByText(String query) throws RemoteException {

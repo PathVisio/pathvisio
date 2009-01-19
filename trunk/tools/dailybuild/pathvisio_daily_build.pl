@@ -147,7 +147,7 @@ eval
 		}
 	);
 
-	# Next step: test the compile-v1 ant target
+	# Next step: compile the main project
 	do_step (
 		name => "COMPILE ALL",
 		log => "$dir/compile1.txt",
@@ -156,6 +156,20 @@ eval
 			# compile
 			system ("ant all > $dir/compile1.txt") == 0 or 
 				die ("compile all failed with error code ", $? >> 8, "\n");
+		}
+	);
+
+	# Next step: compile the webservice client library
+	do_step (
+		name => "COMPILE WEBSERVICE CLIENT LIB",
+		log => "$dir/compile-wpc.txt",
+		action => sub
+		{
+			# compile
+			system ("ant jar-wpclient " . 
+				"-Dwsdl.url=http://137.120.89.38/wikipathways-test/wpi/webservice/webservice.php?wsdl " .
+				"> $dir/compile-wpc.txt") == 0 or 
+				die ("compile webservice client lib failed with error code ", $? >> 8, "\n");
 		}
 	);
 

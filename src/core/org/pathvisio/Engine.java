@@ -141,12 +141,6 @@ public class Engine
 	 * Open a pathway from a gpml file
 	 */
 	
-	public void putInRecentPathwayList(File pwf)
-	{
-		recent.remove(pwf);// file should occur in recent 0 or 1 times
-        recent.add(pwf);
-        if(recent.size() > 10) recent.remove(0);// 10 = maximum # recent files
-	}
 	
 	public void openPathway(File pathwayFile) throws ConverterException
 	{
@@ -159,7 +153,6 @@ public class Engine
 		//Only set the pathway field after the data is loaded
 		//(Exception thrown on error, this part will not be reached)
 		createVPathway(pathway);
-		putInRecentPathwayList(pathwayFile);
 		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
 		if (vPathway != null)
 		{
@@ -196,7 +189,7 @@ public class Engine
 		// make sure there are no problems with references.
 		p.fixReferences();
 		p.writeToXml(toFile, true);
-		putInRecentPathwayList(toFile);
+
 	}
 	
 	/**
@@ -207,7 +200,6 @@ public class Engine
 	public void savePathway(File toFile) throws ConverterException
 	{
 		savePathway(getActivePathway(), toFile);
-		putInRecentPathwayList(toFile);
 	}
 
 	/**
@@ -368,9 +360,7 @@ public class Engine
 		fireApplicationEvent(e);
 	}
 	
-	public List<File> getRecentPathways() {
-		return recent;
-	}
+
 	
 	
 	//TODO:

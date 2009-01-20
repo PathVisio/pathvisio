@@ -58,7 +58,7 @@ public class MainPanelStandalone extends MainPanel
 		addToMenu(standaloneActions.openAction, fileMenu);
 		
 		recentPathwaysMenu = new JMenu("Open Recent Pathway");
-		fileMenu.add(recentPathwaysMenu);
+		//fileMenu.add(recentPathwaysMenu);
 		refreshRecentPathwaysMenu();
 		//fileMenu.add(new JMenu("Open Recent Pathways"));
 		addToMenu(actions.standaloneSaveAction, fileMenu);

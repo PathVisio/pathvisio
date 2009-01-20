@@ -181,11 +181,12 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		orderMenu.add(vActions.orderDown);
 		menu.add(orderMenu);
 		
-		JMenu litMenu = new JMenu("Literature");
-		litMenu.add(new AddLiteratureAction(swingEngine, component, e));
-		litMenu.add(new EditLiteratureAction(swingEngine, component, e));
-		menu.add(litMenu);
 		if(e instanceof Graphics) {
+			JMenu litMenu = new JMenu("Literature");
+			litMenu.add(new AddLiteratureAction(swingEngine, component, e));
+			litMenu.add(new EditLiteratureAction(swingEngine, component, e));
+			menu.add(litMenu);
+			
 			menu.addSeparator();
 			menu.add(new PropertiesAction(swingEngine, component,e));
 		}

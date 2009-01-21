@@ -17,6 +17,7 @@
 			<include name="wikipathways-client.jar" />
 			<include name="lib/axis-1_4/lib/*.jar" />
 			<include name="pathvisio.jar"/>
+			<include name="lib/resources.jar"/>
 			<include name="wikipathways.jar"/>
 			<include name="lib/jdom.jar"/>
 			<include name="lib/derby.jar"/>

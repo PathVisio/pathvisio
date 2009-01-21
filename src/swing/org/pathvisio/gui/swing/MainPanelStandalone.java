@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Action;
@@ -39,8 +38,6 @@ import javax.swing.KeyStroke;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Resources;
 
 /**
@@ -51,14 +48,7 @@ public class MainPanelStandalone extends MainPanel
 	protected JMenuBar menuBar;
 	
 	private StandaloneActions standaloneActions = null;
-	private List<File> recent;
-	public static GlobalPreference[] mostRecentArray = new GlobalPreference[] {
-    	GlobalPreference.MOST_RECENT_1, GlobalPreference.MOST_RECENT_2,
-    	GlobalPreference.MOST_RECENT_3, GlobalPreference.MOST_RECENT_4,
-    	GlobalPreference.MOST_RECENT_5, GlobalPreference.MOST_RECENT_6,
-    	GlobalPreference.MOST_RECENT_7, GlobalPreference.MOST_RECENT_8,
-    	GlobalPreference.MOST_RECENT_9, GlobalPreference.MOST_RECENT_10,
-    };
+	
 	
 	@Override
 	protected void addMenuActions(JMenuBar mb) {
@@ -67,10 +57,9 @@ public class MainPanelStandalone extends MainPanel
 		addToMenu(standaloneActions.newAction, fileMenu);
 		addToMenu(standaloneActions.openAction, fileMenu);
 		
-		recentPathwaysMenu = new JMenu("Open Recent");
+		recentPathwaysMenu = new JMenu("Open Recent Pathway");
 		//fileMenu.add(recentPathwaysMenu);
-		initRecentPathwayList();
-		//refreshRecentPathwaysMenu();
+		refreshRecentPathwaysMenu();
 		//fileMenu.add(new JMenu("Open Recent Pathways"));
 		addToMenu(actions.standaloneSaveAction, fileMenu);
 		addToMenu(actions.standaloneSaveAsAction, fileMenu);
@@ -125,40 +114,27 @@ public class MainPanelStandalone extends MainPanel
 	public void applicationEvent(ApplicationEvent e) {
 		super.applicationEvent(e);
 		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) {
-			putInRecentPathwayList(swingEngine.getEngine().getActivePathway().getSourceFile());
-			refreshRecentPathwaysMenu();
-		}
-		if(e.getType() == ApplicationEvent.PATHWAY_SAVE) {
-			putInRecentPathwayList(swingEngine.getEngine().getActivePathway().getSourceFile());
 			refreshRecentPathwaysMenu();
 		}
 	}
 	
 	JMenu recentPathwaysMenu;
 	
-	private void refreshRecentPathwaysMenu() 
-	{
-		PreferenceManager prefs = PreferenceManager.getCurrent();
-		
+	private void refreshRecentPathwaysMenu() {
+		List<File> recent = swingEngine.getEngine().getRecentPathways();
 		recentPathwaysMenu.removeAll();
-		recentPathwaysMenu.setMnemonic(KeyEvent.VK_R);
-		for (int i = 0; i < 10; i++) 
-		{
-			if (!prefs.get(mostRecentArray[i]).equals ("" + null))
-			{
-				final File file = prefs.getFile(mostRecentArray[i]);
-				JMenuItem menuItem = new JMenuItem(file.getName(), KeyEvent.VK_0 + i);
-				menuItem.setAccelerator(KeyStroke.getKeyStroke(menuItem.getMnemonic(), InputEvent.CTRL_DOWN_MASK));
-				menuItem.addActionListener(new ActionListener() 
-				{
-					public void actionPerformed(ActionEvent e) 
-					{
-						swingEngine.openPathway(file);
-					}
-				});
-				recentPathwaysMenu.add(menuItem);
-			}
-		}
+		      recentPathwaysMenu.setMnemonic(KeyEvent.VK_R);
+		      for (int i = 0; i < recent.size(); i++) {
+		    	  final File file = recent.get(i);
+		    	  JMenuItem menuItem = new JMenuItem(file.getName(), KeyEvent.VK_0 + i);
+                  menuItem.setAccelerator(KeyStroke.getKeyStroke(menuItem.getMnemonic(), InputEvent.CTRL_DOWN_MASK));
+                  menuItem.addActionListener(new ActionListener() {
+                	  public void actionPerformed(ActionEvent e) {
+                		swingEngine.openPathway(file);
+                	}
+                  });
+                  recentPathwaysMenu.add(menuItem);
+		      }
 	}
 	
 	@Override
@@ -238,33 +214,5 @@ public class MainPanelStandalone extends MainPanel
 		
 		addToToolbar(actions.layoutActions);
 	}
-
-	public void putInRecentPathwayList(File pwf)
-	{ 
-		PreferenceManager prefs = PreferenceManager.getCurrent();
-        recent.remove(pwf);
-		recent.add(0,pwf);
-		if(recent.size() > 10) recent.remove(recent.size()-1);
-		
-	    for (int i = 0; i < recent.size(); ++i)
-	    {
-	    	
-	    	prefs.setFile(mostRecentArray[i], recent.get(i));
-	    }
-	}
-
-public void initRecentPathwayList()
-{
-	PreferenceManager prefs = PreferenceManager.getCurrent();
-	recent = new LinkedList<File>();
-	for (int i = 0; i < 10; ++i){
-		if (!prefs.get(mostRecentArray[i]).equals ("" + null)){
-			recent.add(prefs.getFile(mostRecentArray[i]));
-		}
-		
-	}
-	refreshRecentPathwaysMenu();
-
+	
 }
-}
-

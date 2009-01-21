@@ -18,6 +18,7 @@ package org.pathvisio.indexer;
 
 import java.io.IOException;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
@@ -110,6 +111,13 @@ public abstract class IndexerBase {
 		doc.add(new Field(FIELD_INDEXERID, getIndexerName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
 		
 		writer.addDocument(doc);
+	}
+	
+	protected final void addDocument(Document doc, Analyzer analyzer) throws CorruptIndexException, IOException {
+		doc.add(new Field(FIELD_SOURCE, source, Field.Store.YES, Field.Index.UN_TOKENIZED));
+		doc.add(new Field(FIELD_INDEXERID, getIndexerName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+		
+		writer.addDocument(doc, analyzer);
 	}
 	
 	/**

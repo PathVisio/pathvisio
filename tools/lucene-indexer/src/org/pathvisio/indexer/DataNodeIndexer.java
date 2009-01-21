@@ -17,8 +17,15 @@
 package org.pathvisio.indexer;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharTokenizer;
+import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
@@ -45,6 +52,7 @@ public class DataNodeIndexer extends IndexerBase {
 	 * An identifier of a DataNode xref that is on the pathway
 	 */
 	public static final String FIELD_ID = "id";
+	
 	/**
 	 * An identifier/code combination
 	 * of a DataNode xref that is on the pathway.
@@ -68,8 +76,11 @@ public class DataNodeIndexer extends IndexerBase {
 	 */
 	public static final String FIELD_XID_CODE = "x.id.database";
 	
+	XrefAnalyzer analyzer;
+	
 	public DataNodeIndexer(String source, Pathway pathway, IndexWriter writer) {
 		super(source, pathway, writer);
+		analyzer = new XrefAnalyzer();
 	}
 	
 	public void indexPathway() throws CorruptIndexException, IOException {
@@ -81,8 +92,9 @@ public class DataNodeIndexer extends IndexerBase {
 	}
 	
 	void indexDataNode(PathwayElement pe) throws CorruptIndexException, IOException {
+		Set<Xref> addedXrefs = new HashSet<Xref>();
+		
 		Document doc = new Document();
-		doc.add(new Field(FIELD_SOURCE, source, Store.YES, Index.NO));
 		doc.add(new Field(FIELD_GRAPHID, pe.getGraphId(), Store.YES, Index.NO));
 		
 		Xref xref = pe.getXref();
@@ -97,7 +109,10 @@ public class DataNodeIndexer extends IndexerBase {
 					try {
 						List<Xref> crossRefs = gdb.getCrossRefs(xref);
 						for(Xref c : crossRefs) {
-							addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
+							if(!addedXrefs.contains(c)) {
+								addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);
+								addedXrefs.add(c);
+							}
 						}
 					} catch(DataException e) {
 						Logger.log.error("Unable to fetch cross references", e);
@@ -105,7 +120,7 @@ public class DataNodeIndexer extends IndexerBase {
 				}
 			}
 		}
-		addDocument(doc);
+		addDocument(doc, analyzer);
 	}
 
 	void addCrossRef(Xref xref, Document doc, String field_id, String field_id_code) {
@@ -122,9 +137,9 @@ public class DataNodeIndexer extends IndexerBase {
 			doc.add(
 				new Field(
 						field_id_code,
-						xref2string(xref), 
-						Field.Store.YES, 
-						Field.Index.UN_TOKENIZED
+						xref2string(xref),
+						Field.Store.YES,
+						Field.Index.TOKENIZED
 				)
 			);
 		}
@@ -137,5 +152,21 @@ public class DataNodeIndexer extends IndexerBase {
 			code = xref.getDataSource().getSystemCode();
 		}
 		return id + ":" + code;
+	}
+	
+	class XrefAnalyzer extends Analyzer {
+		SimpleAnalyzer simpleAnalyzer = new SimpleAnalyzer();
+		
+		public TokenStream tokenStream(String field, Reader reader) {
+			if(FIELD_XID_CODE.equals(field) || FIELD_ID_CODE.equals(field)) {
+				return new CharTokenizer(reader) {
+					protected boolean isTokenChar(char c) {
+						return c != ':';
+					}
+				};
+			} else {
+				return simpleAnalyzer.tokenStream(field, reader);
+			}
+		}
 	}
 }

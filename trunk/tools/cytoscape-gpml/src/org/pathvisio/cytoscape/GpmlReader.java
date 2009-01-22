@@ -18,6 +18,9 @@ package org.pathvisio.cytoscape;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.pathvisio.model.Pathway;
 
@@ -31,15 +34,27 @@ public class GpmlReader extends AbstractGraphReader {
 	GpmlConverter converter;
 	GpmlHandler gpmlHandler;
 	
+	URLConnection urlCon;
+	
 	public GpmlReader(String fileName, GpmlHandler gpmlHandler) {
 		super(fileName);
 		this.gpmlHandler = gpmlHandler;
 	}
 
+	public GpmlReader(URLConnection con, URL url, GpmlHandler gpmlHandler) {
+		super(url.toString());
+		urlCon = con;
+		this.gpmlHandler = gpmlHandler;
+	}
+	
 	public void read() throws IOException {
 		try {
 			Pathway pathway = new Pathway();
-			pathway.readFromXml(new File(fileName), true);
+			if(urlCon != null) {
+				pathway.readFromXml(new InputStreamReader(urlCon.getInputStream()), true);
+			} else {
+				pathway.readFromXml(new File(fileName), true);
+			}
 			converter = new GpmlConverter(gpmlHandler, pathway);
 		} catch(Exception ex) {
 			ex.printStackTrace();

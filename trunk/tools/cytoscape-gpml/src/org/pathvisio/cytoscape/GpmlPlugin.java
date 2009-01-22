@@ -29,6 +29,8 @@ import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -134,6 +136,14 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 
 		public GraphReader getReader(String fileName) {
 			return new GpmlReader(fileName, gpmlHandler);
+		}
+		
+		public boolean accept(URL url, String contentType) {
+			return "application/xml".equals(contentType);
+		}
+		
+		public GraphReader getReader(URL url, URLConnection conn) {
+			return new GpmlReader(conn, url, gpmlHandler);
 		}
 	}
 

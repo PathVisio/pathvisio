@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.model.Organism;
@@ -51,7 +50,8 @@ public class LocalGdbManager
 		init();
 	}
 	
-	private static final String dbExtension = ".pgdb";
+	//TODO: use global constant
+	private static final String DB_EXTENSION = ".pgdb";
 
 	private List<SimpleGdb> databases          = new ArrayList<SimpleGdb>();
 	private List<String>    databasesFilenames = new ArrayList<String>();
@@ -61,7 +61,7 @@ public class LocalGdbManager
 		/**
 		 * Get a new list of files of pathways.
 		 */ 
-		List<File> dbFilenames = FileUtils.getFiles(dbDir, dbExtension, true);
+		List<File> dbFilenames = FileUtils.getFiles(dbDir, DB_EXTENSION, true);
 				
 		/**
 		 * In the following for-loop, all databases are loaded in in List<SimpleGdb> databases 

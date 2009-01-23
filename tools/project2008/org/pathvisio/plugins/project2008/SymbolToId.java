@@ -18,12 +18,20 @@ package org.pathvisio.plugins.project2008;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import org.pathvisio.model.*;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
-import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
+import java.util.List;
+
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.DataSource;
+import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.Organism;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
+import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
 
 /**
  * This program was used to convert two pathways that used the entrez symbol as gene id
@@ -34,7 +42,7 @@ import org.pathvisio.data.SimpleGdb;
  */
 public class SymbolToId 
 {
-	static final String[] pwyNames = 
+	static final String[] PWY_NAMES = 
 	{	//"Homo_sapiens:Notch_signaling_KEGG",
 //		"Homo_sapiens:Focal_adhesion_KEGG",
 //		"Rattus_norvegicus:Gluthation_Metabolism_KEGG",
@@ -44,7 +52,7 @@ public class SymbolToId
 		
 	};
 	
-	static final File dbDir = new File("/home/martijn/PathVisio-Data/gene databases");
+	static final File DB_DIR = new File("/home/martijn/PathVisio-Data/gene databases");
 	
 	/**
 	 * args[0] -> wikipathways username
@@ -55,9 +63,9 @@ public class SymbolToId
 		WikiPathwaysClient wp = new WikiPathwaysClient();
 		wp.login (args[0], args[1]);
 		
-		LocalGdbManager localGdbManager = new LocalGdbManager(dbDir);
+		LocalGdbManager localGdbManager = new LocalGdbManager(DB_DIR);
 		
-		for (String pwyName : pwyNames)
+		for (String pwyName : PWY_NAMES)
 		{
 			File tmp = File.createTempFile(pwyName, ".gpml");
 			int revision = wp.downloadPathway(pwyName, tmp);

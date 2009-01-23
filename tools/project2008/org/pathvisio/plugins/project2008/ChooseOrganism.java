@@ -41,15 +41,15 @@ public class ChooseOrganism {
 			JPanel canvasButtons = new JPanel();
 			
 			// create two new buttons, using the makeButton method
-			JButton CeButton = ShowMenuGUI.makeBigButton("Caenorhabditis elegans");
-			JButton DrButton = ShowMenuGUI.makeBigButton("Drosophila melanogaster");
-			JButton HsButton = ShowMenuGUI.makeBigButton("Homo sapiens");
-			JButton MmButton = ShowMenuGUI.makeBigButton("Mus musculus");
-			JButton RnButton = ShowMenuGUI.makeBigButton("Rattus norvegicus");
-			JButton ScButton = ShowMenuGUI.makeBigButton("Saccharomyces cerevisiae");
+			JButton btnCe = ShowMenuGUI.makeBigButton("Caenorhabditis elegans");
+			JButton btnDr = ShowMenuGUI.makeBigButton("Drosophila melanogaster");
+			JButton btnHs = ShowMenuGUI.makeBigButton("Homo sapiens");
+			JButton btnMm = ShowMenuGUI.makeBigButton("Mus musculus");
+			JButton btnRn = ShowMenuGUI.makeBigButton("Rattus norvegicus");
+			JButton btnSc = ShowMenuGUI.makeBigButton("Saccharomyces cerevisiae");
 			
 			// add the functionality to the Pathway overlap Matrix button
-			CeButton.addActionListener(
+			btnCe.addActionListener(
 					new ActionListener(){
 						public void actionPerformed(ActionEvent ae){
 							System.out.println("CE");
@@ -60,7 +60,7 @@ public class ChooseOrganism {
 					);
 			
 			// add the functionality to the Pathway overlap Matrix button
-			DrButton.addActionListener(
+			btnDr.addActionListener(
 					new ActionListener(){
 						public void actionPerformed(ActionEvent ae){
 							System.out.println("DR");
@@ -70,7 +70,7 @@ public class ChooseOrganism {
 					);
 			
 			// add the functionality to the Pathway overlap Matrix button
-			HsButton.addActionListener(
+			btnHs.addActionListener(
 					new ActionListener(){
 						public void actionPerformed(ActionEvent ae){
 							System.out.println("HS");
@@ -80,7 +80,7 @@ public class ChooseOrganism {
 					);
 			
 			// add the functionality to the Pathway overlap Matrix button
-			MmButton.addActionListener(
+			btnMm.addActionListener(
 					new ActionListener(){
 						public void actionPerformed(ActionEvent ae){
 							System.out.println("MM");
@@ -90,7 +90,7 @@ public class ChooseOrganism {
 					);
 			
 			// add the functionality to the Pathway overlap Matrix button
-			RnButton.addActionListener(
+			btnRn.addActionListener(
 					new ActionListener(){
 						public void actionPerformed(ActionEvent ae){
 							System.out.println("RN");
@@ -101,7 +101,7 @@ public class ChooseOrganism {
 					);
 			
 			// add the functionality to the Pathway overlap Matrix button
-			ScButton.addActionListener(
+			btnSc.addActionListener(
 					new ActionListener(){
 						public void actionPerformed(ActionEvent ae){
 							System.out.println("SC");
@@ -112,12 +112,12 @@ public class ChooseOrganism {
 					);
 
 			// add the buttons to the canvas
-			canvasButtons.add(CeButton);
-			canvasButtons.add(DrButton);
-			canvasButtons.add(HsButton);
-			canvasButtons.add(MmButton);
-			canvasButtons.add(RnButton);
-			canvasButtons.add(ScButton);
+			canvasButtons.add(btnCe);
+			canvasButtons.add(btnDr);
+			canvasButtons.add(btnHs);
+			canvasButtons.add(btnMm);
+			canvasButtons.add(btnRn);
+			canvasButtons.add(btnSc);
 			
 			return canvasButtons;
 		}

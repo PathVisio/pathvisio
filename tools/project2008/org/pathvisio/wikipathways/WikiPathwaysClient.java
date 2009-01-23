@@ -41,14 +41,17 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
  */
 public class WikiPathwaysClient 
 {
-	private static URL DEFAULT_RPCURL;
+	private static final URL DEFAULT_RPCURL;
+	
 	static {
+		URL url = null;
 		try {
-			DEFAULT_RPCURL = new URL("http://137.120.89.38/wikipathways-test/wpi/wpi_rpc.php");
+			url = new URL("http://137.120.89.38/wikipathways-test/wpi/wpi_rpc.php");
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 			//Shouldn't happen
 		}
+		DEFAULT_RPCURL = url;
 	}
 	
 	private URL rpcUrl = DEFAULT_RPCURL;
@@ -235,7 +238,7 @@ public class WikiPathwaysClient
 	static private long lastRequest = 0;
 	
 	/** minimum number of milliseconds between requests */ 
-	private final long REQUEST_WAIT_MILLIS = 3000;
+	private static final long REQUEST_WAIT_MILLIS = 3000;
 	
 	/** waits before new request */
 	private void beforeRequest()

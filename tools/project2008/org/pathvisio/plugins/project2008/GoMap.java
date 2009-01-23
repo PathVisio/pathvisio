@@ -17,8 +17,15 @@
 package org.pathvisio.plugins.project2008;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+/**
+ * maintains mappings from go to ensembl and vice versa
+ */
 public class GoMap 
 {
 
@@ -53,7 +60,7 @@ public class GoMap
 	 * Calculate n, m for root,
 	 * and for the children that you encounter as well.
 	 */
-	public void calculateNM(Collection <GoTerm> roots, Set<String> genidInPway)
+	public void calculateNM(Collection<GoTerm> roots, Set<String> genidInPway)
 	{
 		for (GoTerm root : roots)
 		{
@@ -110,7 +117,5 @@ public class GoMap
 	{
 		return nMap.get (term);
 	}
-
-	
 	
 }

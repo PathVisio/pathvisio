@@ -17,9 +17,14 @@
 package org.pathvisio.plugins.project2008;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.*;
 import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The class GoReader contains two methods to read the data of the GO terms. 
@@ -41,8 +46,8 @@ public class GoReader
 		 */
 		String line; 
 		terms = new HashSet<GoTerm>();
-		Map<GoTerm, Set<String>> goTerm_Parents = new HashMap<GoTerm,Set<String>>();
-		Map<String, GoTerm> id_goTerm = new HashMap<String,GoTerm>();
+		Map<GoTerm, Set<String>> goTermParents = new HashMap<GoTerm,Set<String>>();
+		Map<String, GoTerm> idGoTerm = new HashMap<String,GoTerm>();
 		
 		/**
 		 * Start reading the file (buffered).
@@ -83,13 +88,13 @@ public class GoReader
 					// only add the term if it isn't obsolete
 					if (!obsolete){
 						// if the term isn't obsolete, create the GoTerm
-						GoTerm new_GoTerm = new GoTerm(id,name,namespace);
+						GoTerm newGoTerm = new GoTerm(id,name,namespace);
 						// and add this term to the 'terms' set
-						terms.add(new_GoTerm);
+						terms.add(newGoTerm);
 						// and at this term and it's list of parents to the first map
-						goTerm_Parents.put(new_GoTerm, isa);
+						goTermParents.put(newGoTerm, isa);
 						// and add this term's id and the term itself to the second map
-						id_goTerm.put(id, new_GoTerm);
+						idGoTerm.put(id, newGoTerm);
 					}
 				}				
 		    }		
@@ -114,14 +119,14 @@ public class GoReader
 		// now loop through all GoTerms
 		for (GoTerm thisTerm : terms){
 			// get the parents (strings) of this goTerm
-			Set<String> parents = goTerm_Parents.get(thisTerm);
+			Set<String> parents = goTermParents.get(thisTerm);
 			if (!parents.isEmpty()){
 				// loop through all these parent strings
 				for(String parent : parents){
 					// get the goTerm beloning to the parent string (the parent string
 					// contains the id of the parent, the second map contains the id's
 					// with the goterms belonging to this id)
-					GoTerm ouder = id_goTerm.get(parent);
+					GoTerm ouder = idGoTerm.get(parent);
 					// add the found parent GoTerm as a parent for the read GoTerm
 					thisTerm.addParent(ouder);
 					// the read GoTerm is a child of it's parent; so add a child to

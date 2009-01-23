@@ -16,10 +16,12 @@
 //
 package org.pathvisio.plugins.project2008;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 
 import org.jdom.JDOMException;
-import org.pathvisio.gpmldiff.*;
+import org.pathvisio.gpmldiff.GpmlDiff;
+import org.pathvisio.gpmldiff.PatchMain;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Organism;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
@@ -33,8 +35,8 @@ import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
  */
 public class IntegrateSjoerdsWork 
 {
-	static final File sjoerdDir = new File("/home/martijn/Desktop/sjoerd");
-	static final File cacheDir = new File ("/home/martijn/wikipathways");
+	static final File SJOERD_DIR = new File("/home/martijn/Desktop/sjoerd");
+	static final File CACHE_DIR = new File ("/home/martijn/wikipathways");
 	
 	public static void main (String[] args) throws IOException, JDOMException, ConverterException, WikiPathwaysException, InterruptedException
 	{
@@ -43,7 +45,7 @@ public class IntegrateSjoerdsWork
 		wpClient.login (args[0], args[1]);
 				
 		// go through all sjoerds file
-		for (File sjoerdPwy : sjoerdDir.listFiles())
+		for (File sjoerdPwy : SJOERD_DIR.listFiles())
 		{
 			// skip non-pathways
 			if (!sjoerdPwy.getName().endsWith(".gpml")) { continue; }

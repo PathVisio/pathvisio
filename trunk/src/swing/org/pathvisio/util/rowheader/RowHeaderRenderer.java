@@ -20,14 +20,14 @@ package org.pathvisio.util.rowheader;
 
 import java.awt.Component;
 import java.awt.Insets;
-import javax.swing.ListCellRenderer;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.JTable;
+import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.plaf.BorderUIResource;
+import javax.swing.table.DefaultTableCellRenderer;
 
 
 public class RowHeaderRenderer

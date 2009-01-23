@@ -23,6 +23,10 @@ package org.pathvisio.plugins.project2008;
  * SimpleTableDemo.java requires no other files.
  */
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,10 +34,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * When running this class, it is possible to choose which function will be executed. A little
@@ -141,13 +141,13 @@ public class ShowMenuGUI extends JPanel {
 		JPanel canvasButtons = new JPanel();
 		
 		// create two new buttons, using the makeButton method
-		JButton PomButton = makeBigButton("Pathway overlap Matrix");
-		JButton LCButton = makeBigButton("Link Checker");
-		JButton PugButton = makeBigButton("Percentage used genes");
-		JButton GtdButton = makeBigButton("Go Term Distribution");
+		JButton btnPom = makeBigButton("Pathway overlap Matrix");
+		JButton btnLC = makeBigButton("Link Checker");
+		JButton btnPug = makeBigButton("Percentage used genes");
+		JButton btnGtd = makeBigButton("Go Term Distribution");
 				
 		// add the functionality to the Pathway overlap Matrix button
-		PomButton.addActionListener(
+		btnPom.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to Pathway overlap Matrix");
@@ -158,7 +158,7 @@ public class ShowMenuGUI extends JPanel {
 				);
 		
 		// add the functionality to the Link Checker button
-		LCButton.addActionListener(
+		btnLC.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae)
 					{
@@ -169,7 +169,7 @@ public class ShowMenuGUI extends JPanel {
 			);
 		
 		// add the functionality to the Go Term Distribution button
-		PugButton.addActionListener(
+		btnPug.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						String[] organism=ChooseOrganism.getOrganism();
@@ -179,7 +179,7 @@ public class ShowMenuGUI extends JPanel {
 				);
 		
 		// add the functionality to the Go Term Distribution button
-		GtdButton.addActionListener(
+		btnGtd.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent ae){
 						System.out.println("Go to The Go Term Distribution function");
@@ -200,10 +200,10 @@ public class ShowMenuGUI extends JPanel {
 		
 		
 		// add the buttons to the canvas
-		canvasButtons.add(LCButton);
-		canvasButtons.add(PomButton);
-		canvasButtons.add(PugButton);
-		canvasButtons.add(GtdButton);
+		canvasButtons.add(btnLC);
+		canvasButtons.add(btnPom);
+		canvasButtons.add(btnPug);
+		canvasButtons.add(btnGtd);
 		
 		return canvasButtons;
 	}

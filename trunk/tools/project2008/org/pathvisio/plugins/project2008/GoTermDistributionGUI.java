@@ -20,16 +20,18 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.AbstractButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.TreeSelectionModel;
-import java.io.File;
+
 import org.pathvisio.data.DataException;
 import org.pathvisio.model.ConverterException;
 

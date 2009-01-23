@@ -20,16 +20,15 @@ package org.pathvisio.util.rowheader;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.event.ContainerListener;
 import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.MouseEvent;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.JTable;
-import javax.swing.event.MouseInputAdapter;
-
 import java.io.Serializable;
 
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.event.MouseInputAdapter;
 
 public class RowHeaderResizer
     extends MouseInputAdapter

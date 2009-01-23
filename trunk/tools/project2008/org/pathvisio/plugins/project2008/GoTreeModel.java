@@ -16,7 +16,7 @@
 //
 package org.pathvisio.plugins.project2008;
 
-import java.util.*;
+import java.util.List;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -36,9 +36,6 @@ public class GoTreeModel implements TreeModel
 	{
 		this.roots = roots;
 	}
-
-	private static final long serialVersionUID = 1L;
-
 	
 	public void addTreeModelListener(TreeModelListener arg0) 
 	{

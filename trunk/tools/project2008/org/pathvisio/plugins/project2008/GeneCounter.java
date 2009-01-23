@@ -25,7 +25,6 @@ import java.util.Set;
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
-import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;

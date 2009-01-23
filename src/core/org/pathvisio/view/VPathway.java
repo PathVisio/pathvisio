@@ -208,27 +208,27 @@ public class VPathway implements PathwayListener
 		Graphics result = null;
 		switch (o.getObjectType())
 		{
-		case ObjectType.DATANODE:
+		case DATANODE:
 			result = new GeneProduct(this, o);
 			break;
-		case ObjectType.SHAPE:
+		case SHAPE:
 			result = new Shape(this, o);
 			break;
-		case ObjectType.LINE:
+		case LINE:
 			result = new Line(this, o);
 			break;
-		case ObjectType.MAPPINFO:
+		case MAPPINFO:
 			InfoBox mi = new InfoBox(this, o);
 			result = mi;
 			mi.markDirty();
 			break;
-		case ObjectType.LABEL:
+		case LABEL:
 			result = new Label(this, o);
 			break;
-		case ObjectType.GROUP:
+		case GROUP:
 			result = new Group(this, o);
 			break;
-		case ObjectType.STATE:
+		case STATE:
 			result = new State (this, o);
 		}
 		return result;
@@ -1623,11 +1623,11 @@ public class VPathway implements PathwayListener
 
 		switch (elm.getObjectType())
 		{
-		case ObjectType.LINE:
+		case LINE:
 			mx = Math.max(elm.getMEndX(), elm.getMStartX());
 			my = Math.max(elm.getMEndY(), elm.getMStartY());
 			break;
-		case ObjectType.MAPPINFO:
+		case MAPPINFO:
 			mx = elm.getMLeft() + mFromV(200); //Initial size for mappinfo (has zero size in model);
 			my = elm.getMTop() + mFromV(200);
 			break;

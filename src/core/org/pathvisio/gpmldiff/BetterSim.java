@@ -34,8 +34,8 @@ class BetterSim extends SimilarityFunction
 	*/
 	public int getSimScore (PathwayElement oldE, PathwayElement newE)
 	{
-		int oldOt = oldE.getObjectType();
-		int newOt = newE.getObjectType();
+		ObjectType oldOt = oldE.getObjectType();
+		ObjectType newOt = newE.getObjectType();
 		Set<PropertyType> oldProps = oldE.getStaticPropertyKeys();
 		Set<PropertyType> newProps = newE.getStaticPropertyKeys();
 

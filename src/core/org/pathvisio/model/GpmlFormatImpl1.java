@@ -431,8 +431,8 @@ public class GpmlFormatImpl1
 	public PathwayElement mapElement(Element e, Pathway p) throws ConverterException
 	{
 		String tag = e.getName();
-		int ot = ObjectType.getTagMapping(tag);
-		if (ot == -1)
+		ObjectType ot = ObjectType.getTagMapping(tag);
+		if (ot == null)
 		{
 			// do nothing. This could be caused by
 			// tags <comment> or <graphics> that appear
@@ -448,7 +448,7 @@ public class GpmlFormatImpl1
 
 		switch (o.getObjectType())
 		{
-			case ObjectType.DATANODE:
+			case DATANODE:
 				mapShapeData(o, e, "DataNode");
 				mapColor(o, e);
 				mapComments(o, e);
@@ -458,7 +458,7 @@ public class GpmlFormatImpl1
 				mapBiopaxRef(o, e);
 				mapAttributes(o, e);
 				break;
-			case ObjectType.STATE:
+			case STATE:
 				mapShapeColor(o, e);
 				mapStateData(o, e);
 				mapColor(o, e);
@@ -467,7 +467,7 @@ public class GpmlFormatImpl1
 				mapBiopaxRef(o, e);
 				mapAttributes(o, e);
 				break;
-			case ObjectType.LABEL:
+			case LABEL:
 				mapShapeData(o, e, "Label");
 				mapColor(o, e);
 				mapLabelData(o, e);
@@ -477,7 +477,7 @@ public class GpmlFormatImpl1
 				mapBiopaxRef(o, e);
 				mapAttributes(o, e);
 				break;
-			case ObjectType.LINE:
+			case LINE:
 				mapLineData(o, e);
 				mapColor(o, e);
 				mapGraphId(o, e);
@@ -486,13 +486,13 @@ public class GpmlFormatImpl1
 				mapBiopaxRef(o, e);
 				mapAttributes(o, e);
 				break;
-			case ObjectType.MAPPINFO:
+			case MAPPINFO:
 				mapMappInfoData(o, e);
 				mapBiopaxRef(o, e);
 				mapComments(o, e);
 				mapAttributes(o, e);
 				break;
-			case ObjectType.SHAPE:
+			case SHAPE:
 				mapShapeData(o, e, "Shape");
 				mapShapeColor (o, e);
 				mapColor(o, e);
@@ -503,20 +503,20 @@ public class GpmlFormatImpl1
 				mapBiopaxRef(o, e);
 				mapAttributes(o, e);
 				break;
-			case ObjectType.LEGEND:
+			case LEGEND:
 				mapSimpleCenter(o, e);
 				break;
-			case ObjectType.INFOBOX:
+			case INFOBOX:
 				mapSimpleCenter (o, e);
 				break;
-			case ObjectType.GROUP:
+			case GROUP:
 				mapGroupRef(o, e);
 				mapGroup (o, e);
 				mapComments(o, e);
 				mapBiopaxRef(o, e);
 				mapAttributes(o, e);
 				break;
-			case ObjectType.BIOPAX:
+			case BIOPAX:
 				mapBiopax(o, e);
 				break;
 			default:
@@ -1087,7 +1087,7 @@ public class GpmlFormatImpl1
 		Element e = null;
 		switch (o.getObjectType())
 		{
-			case ObjectType.DATANODE:
+			case DATANODE:
 				e = new Element("DataNode", ns);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
@@ -1100,7 +1100,7 @@ public class GpmlFormatImpl1
 				updateGraphId(o, e);				
 				updateGroupRef(o, e);
 				break;
-			case ObjectType.STATE:
+			case STATE:
 				e = new Element("State", ns);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
@@ -1112,7 +1112,7 @@ public class GpmlFormatImpl1
 				updateShapeColor(o, e);
 				updateGraphId(o, e);				
 				break;
-			case ObjectType.SHAPE:
+			case SHAPE:
 				e = new Element ("Shape", ns);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
@@ -1125,7 +1125,7 @@ public class GpmlFormatImpl1
 				updateGraphId(o, e);
 				updateGroupRef(o, e);
 				break;
-			case ObjectType.LINE:
+			case LINE:
 				e = new Element("Line", ns);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
@@ -1136,7 +1136,7 @@ public class GpmlFormatImpl1
 				updateColor(o, e);
 				updateGroupRef(o, e);
 				break;
-			case ObjectType.LABEL:
+			case LABEL:
 				e = new Element("Label", ns);
 				updateComments(o, e);			
 				updateBiopaxRef(o, e);
@@ -1148,15 +1148,15 @@ public class GpmlFormatImpl1
 				updateGraphId(o, e);
 				updateGroupRef(o, e);
 				break;
-			case ObjectType.LEGEND:
+			case LEGEND:
 				e = new Element ("Legend", ns);
 				updateSimpleCenter (o, e);
 				break;
-			case ObjectType.INFOBOX:
+			case INFOBOX:
 				e = new Element ("InfoBox", ns);
 				updateSimpleCenter (o, e);
 				break;
-			case ObjectType.GROUP:
+			case GROUP:
 				e = new Element ("Group", ns);
 				updateGroup (o, e);
 				updateGroupRef(o, e);
@@ -1164,7 +1164,7 @@ public class GpmlFormatImpl1
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
 				break;
-			case ObjectType.BIOPAX:
+			case BIOPAX:
 				e = new Element ("Biopax", ns);
 				updateBiopax(o, e);
 				break;

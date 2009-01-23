@@ -169,23 +169,17 @@ public class Test extends TestCase implements PathwayListener
 	{
 		assertEquals ("getObjectType() test", o.getObjectType(), ObjectType.DATANODE);
 		
-		try
-		{
-			PathwayElement.createPathwayElement (-1);
-			fail ("Shouldn't be able to set invalid object type");
-		}
-		catch (IllegalArgumentException e)
-		{
-		}
+		assertEquals (ObjectType.SHAPE, ObjectType.getTagMapping("Shape"));
+		assertNull (ObjectType.getTagMapping("Non-existing tag"));
 		
 		try
 		{
-			PathwayElement.createPathwayElement (100);
-			fail ("Shouldn't be able to set invalid object type");
+			PathwayElement.createPathwayElement (null);
+			fail ("Shouldn't be able to create invalid object type");
 		}
-		catch (IllegalArgumentException e)
+		catch (NullPointerException e)
 		{
-		}
+		}		
 	}
 	
 	public void testParent()

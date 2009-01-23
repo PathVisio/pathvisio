@@ -18,6 +18,7 @@ package org.pathvisio.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -85,7 +86,7 @@ public class PluginManager {
 		Logger.log.trace("Attempt to load plugin jar: " + file);
 		if(file.getName().endsWith(".jar")) {
 			try {
-				loadFromJar(new JarFile(file));
+				loadFromJar(file);
 			} catch (IOException e) {
 				Logger.log.error("\tUnable to load jar file '" + file + "'", e);
 			}
@@ -94,7 +95,8 @@ public class PluginManager {
 		}
 	}
 	
-	void loadFromJar(JarFile jarFile) {
+	void loadFromJar(File file) throws IOException {
+		JarFile jarFile = new JarFile(file);
 		Logger.log.trace("\tLoading from jar file " + jarFile);
 		Enumeration<?> e = jarFile.entries();
 		while (e.hasMoreElements()) {
@@ -103,7 +105,17 @@ public class PluginManager {
 			String entryname = entry.getName();
 			if(entryname.endsWith(".class")) {
 				String cn = removeClassExt(entryname.replace('/', '.'));
-				loadAsClass(cn);
+				URL u = new URL("jar", "", file.toURL() + "!/");
+				ClassLoader cl = new PluginClassLoader(u);
+				try {
+					Class<?> c = cl.loadClass(cn);
+					if(isPlugin(c)) {
+						Class<Plugin> pluginClass = (Class<Plugin>)c;
+						loadPlugin(pluginClass);
+					}
+				} catch(Throwable ex) {
+					Logger.log.error("\tUnable to load plugin", ex);
+				}
 			}
 		}
 	}

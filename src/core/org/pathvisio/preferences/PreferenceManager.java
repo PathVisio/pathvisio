@@ -154,9 +154,7 @@ public class PreferenceManager
 	 */
 	public boolean isDefault (Preference p)
 	{
-		String key = p.name();
-		String value = properties.getProperty(key);
-		return (value == null ? p.getDefault() == null : value.equals (p.getDefault()));
+		return !properties.containsKey(p.name());
 	}	
 
 	

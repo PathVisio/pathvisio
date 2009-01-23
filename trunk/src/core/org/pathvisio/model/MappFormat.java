@@ -382,7 +382,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		
 		for (PathwayElement o : data.getDataObjects())
 		{
-			int objectType = o.getObjectType();
+			ObjectType objectType = o.getObjectType();
 			String[] row = new String[18];
 			
 			// init:
@@ -397,30 +397,30 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 			
 			switch (objectType)
 			{
-				case ObjectType.LINE:
+				case LINE:
 					unmapNotesAndComments (o, row);
 					unmapLineType(o, row);
 					result.add(row);
 					break;
-				case ObjectType.DATANODE:	
+				case DATANODE:	
 					unmapNotesAndComments (o, row);
 					unmapGeneProductType(o, row);
 					result.add(row);
 					break;
-				case ObjectType.INFOBOX:
+				case INFOBOX:
 					unmapInfoBoxType(o, row);
 					result.add(row);
 					break;
-				case ObjectType.LABEL:
+				case LABEL:
 					unmapNotesAndComments (o, row);
 					unmapLabelType(o, row);
 					result.add(row);
 					break;
-				case ObjectType.LEGEND:
+				case LEGEND:
 					unmapLegendType(o, row);
 					result.add(row);
 					break;
-				case ObjectType.SHAPE:					
+				case SHAPE:					
 					unmapNotesAndComments (o, row);
 					ShapeType s = o.getShapeType();
 					if (s == ShapeType.BRACE)

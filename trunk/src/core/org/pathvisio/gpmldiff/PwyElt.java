@@ -32,7 +32,7 @@ class PwyElt
 	static String summary(PathwayElement elt)
 	{
 		if (elt == null) return "null"; // TODO, why is this necessary?
-		String result = "[" + ObjectType.getTagMapping (elt.getObjectType());
+		String result = "[" + elt.getObjectType().getTag();
 		Set<PropertyType> props = elt.getStaticPropertyKeys();
 		if (props.contains(PropertyType.TEXTLABEL))
 			result += ",lbl=" + elt.getStaticProperty(PropertyType.TEXTLABEL);

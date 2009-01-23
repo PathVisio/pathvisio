@@ -73,11 +73,11 @@ public class ColorExporter implements VPathwayListener {
 				if(elmColors != null && elmColors.size() > 0) {
 					Logger.log.info("Coloring " + pwe + " with " + elmColors);
 					switch(pwe.getObjectType()) {
-					case ObjectType.DATANODE:
+					case DATANODE:
 						doColor(e.getGraphics2D(), (Graphics)vpwe, elmColors);
 						drawLabel(e.getGraphics2D(), (Graphics)vpwe);
 						break;
-					case ObjectType.GROUP:
+					case GROUP:
 						doColor(e.getGraphics2D(), (Graphics)vpwe, elmColors);
 						break;
 					}
@@ -133,7 +133,7 @@ public class ColorExporter implements VPathwayListener {
 				PathwayElement pwe = ((Graphics)vpe).getPathwayElement();
 				List<Color> elmColors = colors.get(pwe);
 				if(elmColors != null && elmColors.size() > 0) {
-					int ot = pwe.getObjectType();
+					ObjectType ot = pwe.getObjectType();
 					if(ot != ObjectType.DATANODE && ot != ObjectType.GROUP) {
 						vpe.highlight(elmColors.get(0));
 					}

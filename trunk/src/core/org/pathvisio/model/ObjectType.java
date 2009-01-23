@@ -16,41 +16,78 @@
 //
 package org.pathvisio.model;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
    Possible values for PathwayElement.getObjectType(), such as "DataNode" or "Shape"
  */   
-public class ObjectType
+public enum ObjectType
 {	 
-	//TODO: enum
-	public static final int MIN_VALID = 0; // lowest valid value
-	public static final int SHAPE = 0;
-	public static final int DATANODE = 1;
-	public static final int LABEL = 2;
-	public static final int LINE = 3;
-	public static final int LEGEND = 4;
-	public static final int INFOBOX = 5;
-	public static final int MAPPINFO = 6;
-	public static final int GROUP = 7;
-	public static final int BIOPAX = 8;
-	public static final int STATE = 9;
-	public static final int MAX_VALID = 9;
-	 
-	// Some mappings to Gpml TAGS
-	private static final List<String> TAG_MAPPINGS = Arrays.asList(new String[] {
-		"Shape", "DataNode", "Label", "Line", "Legend", "InfoBox", 
-		"Pathway", "Group", "Biopax", "State"
-	});
-
-	public static int getTagMapping(String value)
+	/** any shape with width and height */
+	SHAPE ("Shape"),
+	/** a rectangle that contains a link to an online biological database */
+	DATANODE ("DataNode"),
+	/** a piece of text */
+	LABEL ("Label"),
+	/** a connector. Can be straight, or can consist of multiple line segments */ 
+	LINE ("Line"),
+	/** One per pathway.
+	 * TODO unused */
+	LEGEND ("Legend"),
+	/** One per pathway
+	 * TODO unused */
+	INFOBOX ("InfoBox"),
+	/** The pathway description, one per pathway. In GPML this is the root tag */
+	MAPPINFO ("Pathway"),
+	/** a grouping of pathway elements */
+	GROUP ("Group"),
+	/** a pool of BioPAX definitions */
+	BIOPAX ("Biopax"),
+	/** similar to DataNode, but State is always 
+	 * attached to - and specified relative to - another DataNode */
+	STATE ("State");
+	
+	private String tag;
+	static private final Map<String, ObjectType> TAG_MAP = new HashMap<String, ObjectType>();
+	static
 	{
-		return TAG_MAPPINGS.indexOf(value);
+		for (ObjectType o : ObjectType.values())
+		{
+			TAG_MAP.put (o.tag, o);
+		}
 	}
 	
-	public static String getTagMapping(int value)
+	/**
+	 * @param aTag tag used in Gpml for this object type.
+	 */
+	private ObjectType (String aTag)
 	{
-		return (String)TAG_MAPPINGS.get(value);
+		tag = aTag;
+	}
+
+	/**
+	 * return the ObjectType that corresponds to a certain tag.
+	 * Returns null if no such ObjectType exists.
+	 */
+	public static ObjectType getTagMapping(String value)
+	{
+		if (TAG_MAP.containsKey(value))
+		{
+			return TAG_MAP.get (value);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	/**
+	 * returns the GPML tag corresponding to this object type,
+	 * can also function as a human-readable description.
+	 */
+	public String getTag()
+	{
+		return tag;
 	}
 }

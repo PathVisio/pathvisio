@@ -580,7 +580,7 @@ public class Pathway implements PathwayListener
 		
 		for(PathwayElement e : dataObjects) {
 			switch(e.getObjectType()) {
-			case ObjectType.LINE:
+			case LINE:
 				mw = Math.max(mw, Math.max(e.getMStartX(), e.getMEndX()));
 				mh = Math.max(mh, Math.max(e.getMStartY(), e.getMEndY()));
 				break;
@@ -774,7 +774,7 @@ public class Pathway implements PathwayListener
 			String code = pe.toString();
 			code = code.substring (code.lastIndexOf ('@'), code.length() - 1);
 			result += "\n      " + code + " " +
-				ObjectType.getTagMapping(pe.getObjectType()) + " " + pe.getParent();
+				pe.getObjectType().getTag() + " " + pe.getParent();
 		}
 		return result;
 	}

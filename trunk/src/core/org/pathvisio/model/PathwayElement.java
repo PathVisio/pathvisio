@@ -22,6 +22,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -563,26 +564,26 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * default z order for newly created objects
 	 */
-	private static int getDefaultZOrder(int value)
+	private static int getDefaultZOrder(ObjectType value)
 	{
 		switch (value)
 		{
-		case ObjectType.SHAPE:
+		case SHAPE:
 			return Z_ORDER_SHAPE;
-		case ObjectType.STATE:
+		case STATE:
 			return Z_ORDER_GENEPRODUCT + 10;
-		case ObjectType.DATANODE:
+		case DATANODE:
 			return Z_ORDER_GENEPRODUCT;
-		case ObjectType.LABEL:
+		case LABEL:
 			return Z_ORDER_LABEL;
-		case ObjectType.LINE:
+		case LINE:
 			return Z_ORDER_LINE;
-		case ObjectType.LEGEND:
-		case ObjectType.INFOBOX:
-		case ObjectType.MAPPINFO:
-		case ObjectType.BIOPAX:
+		case LEGEND:
+		case INFOBOX:
+		case MAPPINFO:
+		case BIOPAX:
 			return Z_ORDER_DEFAULT;
-		case ObjectType.GROUP:
+		case GROUP:
 			return Z_ORDER_GROUP;
 		default: 
 			throw new IllegalArgumentException("Invalid object type " + value);
@@ -597,16 +598,16 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * @param ot
 	 *            Type of object, one of the ObjectType.* fields
 	 */
-	public static PathwayElement createPathwayElement(int ot) {
+	public static PathwayElement createPathwayElement(ObjectType ot) {
 		PathwayElement e = null;
-		switch(ot) {
-		case ObjectType.GROUP:
+		switch (ot) {
+		case GROUP:
 			e = new MGroup();
 			break;
-		case ObjectType.LINE:
+		case LINE:
 			e = new MLine();
 			break;
-		case ObjectType.STATE:
+		case STATE:
 			e = new MState();
 			break;
 		default:
@@ -616,13 +617,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return e;
 	}
 	
-	protected PathwayElement(int ot)
+	protected PathwayElement(ObjectType ot)
 	{
-		if (ot < ObjectType.MIN_VALID || ot > ObjectType.MAX_VALID)
-		{
-			throw new IllegalArgumentException("Trying to set objectType to "
-					+ ot);
-		}
 		/* set default value for transparency */
 		if (ot == ObjectType.LINE || ot == ObjectType.LABEL)
 		{
@@ -769,7 +765,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return result;
 	}
 
-	private static final Map<Integer, Set<PropertyType>> ALLOWED_PROPS;
+	private static final Map<ObjectType, Set<PropertyType>> ALLOWED_PROPS;
 
 	static {		
 		Set<PropertyType> propsCommon = new HashSet<PropertyType>();
@@ -789,7 +785,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				PropertyType.COLOR,
 			}));
 		
-		ALLOWED_PROPS = new HashMap<Integer, Set<PropertyType>>();		
+		ALLOWED_PROPS = new EnumMap<ObjectType, Set<PropertyType>>(ObjectType.class);
 		{
 			Set<PropertyType> propsMappinfo = new HashSet<PropertyType>();
 			propsMappinfo.addAll (Arrays.asList(new PropertyType[] {						
@@ -1448,9 +1444,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return result;
 	}
 
-	protected int objectType = ObjectType.DATANODE;
+	protected ObjectType objectType = ObjectType.DATANODE;
 
-	public int getObjectType()
+	public ObjectType getObjectType()
 	{
 		return objectType;
 	}
@@ -2833,7 +2829,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		switch (objectType)
 		{
-		case ObjectType.SHAPE:
+		case SHAPE:
 			if (shapeType == ShapeType.BRACE)
 			{
 				setMWidth(M_INITIAL_BRACE_WIDTH);
@@ -2844,11 +2840,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				setMHeight(M_INITIAL_SHAPE_SIZE);
 			}
 			break;
-		case ObjectType.DATANODE:
+		case DATANODE:
 			setMWidth(M_INITIAL_GENEPRODUCT_WIDTH);
 			setMHeight(M_INITIAL_GENEPRODUCT_HEIGHT);
 			break;
-		case ObjectType.LINE:
+		case LINE:
 			setMEndX(getMStartX() + M_INITIAL_SHAPE_SIZE);
 			setMEndY(getMStartY() + M_INITIAL_SHAPE_SIZE);
 			break;

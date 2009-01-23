@@ -69,7 +69,7 @@ public class SvgFormat implements PathwayExporter
 	}
 
 	private static class SvgComparator implements Comparator<PathwayElement> {		
-		List<Integer> order = Arrays.asList(
+		List<ObjectType> order = Arrays.asList(
 			ObjectType.INFOBOX,
 			ObjectType.LEGEND,
 			ObjectType.DATANODE,
@@ -82,8 +82,8 @@ public class SvgFormat implements PathwayExporter
 		);
 		public int compare(PathwayElement d1, PathwayElement d2) 
 		{
-			int ot1 = d1.getObjectType();
-			int ot2 = d2.getObjectType();
+			ObjectType ot1 = d1.getObjectType();
+			ObjectType ot2 = d2.getObjectType();
 			if(ot1 == ObjectType.SHAPE && ot2 == ObjectType.SHAPE) {
 				return shapeOrder.indexOf(d1.getShapeType()) - shapeOrder.indexOf(d2.getShapeType());
 			}
@@ -97,19 +97,19 @@ public class SvgFormat implements PathwayExporter
 	{		
 		switch (o.getObjectType())
 		{
-			case ObjectType.SHAPE:
+			case SHAPE:
 				mapShape(root, o);
 				break;
-			case ObjectType.DATANODE:
+			case DATANODE:
 				mapDataNode(root, o);
 				break;
-			case ObjectType.LINE:
+			case LINE:
 				mapLine(root, o);
 				break;
-			case ObjectType.LABEL:
+			case LABEL:
 				mapLabel(root, o);
 				break;
-			case ObjectType.MAPPINFO:
+			case MAPPINFO:
 				mapInfo(root, o);
 				break;
 		}

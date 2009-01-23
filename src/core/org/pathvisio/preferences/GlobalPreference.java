@@ -76,7 +76,13 @@ public enum GlobalPreference implements Preference
 	MOST_RECENT_2 ((File)null),
 	MOST_RECENT_3 ((File)null),
 	MOST_RECENT_4 ((File)null),
-
+	MOST_RECENT_5 ((File)null),
+	MOST_RECENT_6 ((File)null),
+	MOST_RECENT_7 ((File)null),
+	MOST_RECENT_8 ((File)null),
+	MOST_RECENT_9 ((File)null),
+	MOST_RECENT_10 ((File)null),
+	
 	WIN_X ("50"),
 	WIN_Y ("50"),
 	WIN_W ("800"),
@@ -136,5 +142,7 @@ public enum GlobalPreference implements Preference
 		}
 		return dirData;
 	}
+	
+
 
 }

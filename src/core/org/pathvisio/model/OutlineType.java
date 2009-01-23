@@ -19,6 +19,10 @@ package org.pathvisio.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Different possible outlines for Labels.
+ * These can be set/get on the outlineType property of PathwayElements
+ */
 public enum OutlineType
 {
 	NONE ("None"),

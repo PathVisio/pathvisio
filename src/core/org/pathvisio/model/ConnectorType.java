@@ -21,6 +21,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Different Connector types 
+ * 
+ * This is an extensible enum type, you can't instantiate ConnectorType directly,
+ * you have to use the getInstance() method.
+ * 
+ * default connector types are 
+ * STRAIGHT -> the shortest path between two points
+ * ELBOW -> connects with horizontal or vertical segments and 90-degree angles
+ * CURVED -> uses splines to generate a smooth curve while keeping the end-points 
+ * 	perpendicular to the connecting element. 
+ */
 public class ConnectorType implements Comparable<ConnectorType> {
 	private static Map<String, ConnectorType> nameMappings = new HashMap<String, ConnectorType>();
 	private static Set<ConnectorType> values = new TreeSet<ConnectorType>();
@@ -41,13 +53,18 @@ public class ConnectorType implements Comparable<ConnectorType> {
 	}
 
 	/**
-	   Create an object and add it to the list.
-
-	   For extending the enum.
+	 * returns a connectorType with a given name.
+	 * If the connectorType doesn't exist yet, it is created. 
+	 * for extending the enum.
 	 */
-	public static ConnectorType create (String name)
+	public static ConnectorType getInstance (String name)
 	{
-		return new ConnectorType(name);
+		if (nameMappings.containsKey (name))
+		{
+			return nameMappings.get(name);
+		}
+		else
+			return new ConnectorType(name);
 	}
 
 	/**

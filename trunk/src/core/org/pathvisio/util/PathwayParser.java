@@ -83,20 +83,18 @@ public class PathwayParser extends DefaultHandler
 	
 	public String getName() { return name; }
 	
-	XrefWithSymbol currentGene = null;
+	DataSource currentDs = null;
+	String currentSymbol = null;
+	String currentId = null;
 	
 	public void startElement(String uri, String localName, String qName, Attributes attributes)
 			throws SAXException 
 	{
 		if(localName.equals("DataNode")) 
 		{ 
-			// the only way this can be not null
-			// is when two consecutive DataNode opening tags don't have an Xref in between
-			assert (currentGene != null);				
-			currentGene = new XrefWithSymbol(null, null, null);
-
-			String symbol = attributes.getValue("TextLabel");
-			currentGene.setSymbol(symbol);		
+			currentId = null;
+			currentDs = null;
+			currentSymbol = attributes.getValue("TextLabel");
 		}
 		else if(localName.equals("Pathway")) 
 		{
@@ -106,13 +104,12 @@ public class PathwayParser extends DefaultHandler
 		{
 			String sysName = attributes.getValue("Database");
 			assert (sysName != null);
-			DataSource ds = DataSource.getByFullName (sysName);
-			String geneId = attributes.getValue("ID");
-			assert (geneId != null);
+			currentDs = DataSource.getByFullName (sysName);
+			currentId = attributes.getValue("ID");
+			assert (currentId != null);
 			
-			currentGene.setDataSource(ds);
-			currentGene.setId(geneId);
-			
+			XrefWithSymbol currentGene = new XrefWithSymbol (
+					currentId, currentDs, currentSymbol);
 			if(!genes.contains(currentGene)) //Don't add duplicate genes
 				genes.add(currentGene);
 			currentGene = null;

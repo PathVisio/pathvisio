@@ -88,9 +88,7 @@ public abstract class Bot {
 		List<Result> reports = new ArrayList<Result>();
 
 		for(File f : getCache().getFiles()) {
-			if(f.getName().contains("WP513")) {
-				reports.add(scanPathway(f));
-			}
+			reports.add(scanPathway(f));
 		}
 		return reports;
 	}

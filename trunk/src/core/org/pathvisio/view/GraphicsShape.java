@@ -329,7 +329,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider {
 	protected Shape getShape(boolean rotate, boolean stroke)
 	{
 		if(stroke) {
-			return getShape(rotate, defaultStroke.getLineWidth());			
+			return getShape(rotate, DEFAULT_STROKE.getLineWidth());			
 		} else {
 			return getShape(rotate, 0);
 		}

@@ -36,7 +36,7 @@ import org.pathvisio.preferences.PreferenceManager;
  */
 public abstract class VPathwayElement implements Comparable<VPathwayElement>
 {	
-	protected BasicStroke defaultStroke = new BasicStroke();
+	protected static final BasicStroke DEFAULT_STROKE = new BasicStroke();
 	
 	protected VPathway canvas;
 	
@@ -84,7 +84,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 				
 		//Prevent element from drawing outside its bounds
 		g.clip(getVBounds());
-		g.setStroke(defaultStroke);
+		g.setStroke(DEFAULT_STROKE);
 		//Perform the drawing
 		doDraw(g);
 		

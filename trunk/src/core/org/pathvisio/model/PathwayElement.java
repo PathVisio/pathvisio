@@ -623,11 +623,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		/* set default value for transparency */
 		if (ot == ObjectType.LINE || ot == ObjectType.LABEL)
 		{
-			setTransparent (false);
+			fillColor = Color.WHITE;
 		}
 		else
 		{
-			setTransparent (true);
+			fillColor = null;
 		}
 		objectType = ot;
 		zOrder = getDefaultZOrder (ot);

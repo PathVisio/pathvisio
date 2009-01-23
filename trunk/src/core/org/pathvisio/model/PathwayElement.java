@@ -23,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -768,27 +769,23 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	private static final Map<ObjectType, Set<PropertyType>> ALLOWED_PROPS;
 
 	static {		
-		Set<PropertyType> propsCommon = new HashSet<PropertyType>();
-		propsCommon.addAll (Arrays.asList(new PropertyType[] {						
+		Set<PropertyType> propsCommon = EnumSet.of(
 				PropertyType.COMMENTS,
 				PropertyType.GRAPHID,
 				PropertyType.GROUPREF,
 				PropertyType.BIOPAXREF,
-				PropertyType.ZORDER,
-			}));
-		Set<PropertyType> propsCommonShape = new HashSet<PropertyType>();
-		propsCommonShape.addAll (Arrays.asList(new PropertyType[] {						
+				PropertyType.ZORDER
+			);
+		Set<PropertyType> propsCommonShape = EnumSet.of(
 				PropertyType.CENTERX,
 				PropertyType.CENTERY,
 				PropertyType.WIDTH,
 				PropertyType.HEIGHT,
-				PropertyType.COLOR,
-			}));
-		
+				PropertyType.COLOR
+			);
 		ALLOWED_PROPS = new EnumMap<ObjectType, Set<PropertyType>>(ObjectType.class);
 		{
-			Set<PropertyType> propsMappinfo = new HashSet<PropertyType>();
-			propsMappinfo.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsMappinfo = EnumSet.of (
 					PropertyType.COMMENTS,
 					PropertyType.MAPINFONAME,
 					PropertyType.ORGANISM,
@@ -802,13 +799,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.BOARDWIDTH,
 					PropertyType.BOARDHEIGHT,
 					PropertyType.WINDOWWIDTH,
-					PropertyType.WINDOWHEIGHT,
-				}));
+					PropertyType.WINDOWHEIGHT
+				);
 			ALLOWED_PROPS.put (ObjectType.MAPPINFO, propsMappinfo);
 		}
 		{
-			Set<PropertyType> propsState = new HashSet<PropertyType>();
-			propsState.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsState = EnumSet.of(
 					PropertyType.RELX,
 					PropertyType.RELY,
 					PropertyType.WIDTH,
@@ -819,41 +815,38 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.TEXTLABEL,
 					PropertyType.MODIFICATIONTYPE,
 					PropertyType.LINESTYLE,
-					PropertyType.GRAPHREF,
-				}));
+					PropertyType.GRAPHREF
+				);
 			propsState.addAll (propsCommon);
 			ALLOWED_PROPS.put (ObjectType.STATE, propsState);
 		}
 		{			
-			Set<PropertyType> propsShape = new HashSet<PropertyType>();
-			propsShape.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsShape = EnumSet.of(
 					PropertyType.FILLCOLOR,
 					PropertyType.SHAPETYPE,
 					PropertyType.ROTATION,
 					PropertyType.TRANSPARENT,
-					PropertyType.LINESTYLE,
-			}));
+					PropertyType.LINESTYLE
+				);
 			propsShape.addAll (propsCommon);
 			propsShape.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.SHAPE, propsShape);
 		}
 		{
-			Set<PropertyType> propsDatanode = new HashSet<PropertyType>();
-			propsDatanode.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsDatanode = EnumSet.of (
 					PropertyType.GENEID,
 					PropertyType.DATASOURCE,
 					PropertyType.TEXTLABEL,
 					// PropertyType.XREF,
 					PropertyType.BACKPAGEHEAD,
-					PropertyType.TYPE,
-			}));
+					PropertyType.TYPE
+				);
 			propsDatanode.addAll (propsCommon);
 			propsDatanode.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.DATANODE, propsDatanode);
 		}
 		{
-			Set<PropertyType> propsLine = new HashSet<PropertyType>();
-			propsLine.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsLine = EnumSet.of(
 					PropertyType.COLOR,
 					PropertyType.STARTX,
 					PropertyType.STARTY,
@@ -863,55 +856,51 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					PropertyType.ENDLINETYPE,
 					PropertyType.LINESTYLE,
 					PropertyType.STARTGRAPHREF,
-					PropertyType.ENDGRAPHREF,
-			}));
+					PropertyType.ENDGRAPHREF
+				);
 			propsLine.addAll (propsCommon);
 			ALLOWED_PROPS.put (ObjectType.LINE, propsLine);
 		}
 		{
-			Set<PropertyType> propsLabel = new HashSet<PropertyType>();
-			propsLabel.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsLabel = EnumSet.of(
 					PropertyType.GENMAPP_XREF,
 					PropertyType.TEXTLABEL,
 					PropertyType.FONTNAME,
 					PropertyType.FONTWEIGHT,
 					PropertyType.FONTSTYLE,
 					PropertyType.FONTSIZE,
-					PropertyType.OUTLINE,
-			}));
+					PropertyType.OUTLINE
+				);
 			propsLabel.addAll (propsCommon);
 			propsLabel.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.LABEL, propsLabel);
 		}
 		{			
-			Set<PropertyType> propsGroup = new HashSet<PropertyType>();
-			propsGroup.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsGroup = EnumSet.of(						
 					PropertyType.GROUPID,
 					PropertyType.GROUPREF,
 					PropertyType.BIOPAXREF,
 					PropertyType.GROUPSTYLE,
 					PropertyType.TEXTLABEL,
 					PropertyType.COMMENTS,
-					PropertyType.ZORDER,
-			}));
+					PropertyType.ZORDER
+				);
 			ALLOWED_PROPS.put (ObjectType.GROUP, propsGroup);
 		}
 		{			
-			Set<PropertyType> propsInfobox = new HashSet<PropertyType>();
-			propsInfobox.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsInfobox = EnumSet.of(						
 					PropertyType.CENTERX,
 					PropertyType.CENTERY,
-					PropertyType.ZORDER,
-			}));
+					PropertyType.ZORDER
+				);
 			ALLOWED_PROPS.put (ObjectType.INFOBOX, propsInfobox);
 		}
 		{			
-			Set<PropertyType> propsLegend = new HashSet<PropertyType>();
-			propsLegend.addAll (Arrays.asList(new PropertyType[] {						
+			Set<PropertyType> propsLegend = EnumSet.of(						
 					PropertyType.CENTERX,
 					PropertyType.CENTERY,
-					PropertyType.ZORDER,
-			}));
+					PropertyType.ZORDER
+				);
 			ALLOWED_PROPS.put (ObjectType.LEGEND, propsLegend);
 		}
 	};

@@ -192,7 +192,7 @@ public class Label extends GraphicsShape
 		Rectangle area = getBoxBounds(true).getBounds();
 
 		Shape outline = null;
-		double lw = defaultStroke.getLineWidth();
+		double lw = DEFAULT_STROKE.getLineWidth();
 		switch (gdata.getOutline())
 		{
 		case RECTANGLE:

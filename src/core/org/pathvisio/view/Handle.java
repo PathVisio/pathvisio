@@ -262,7 +262,7 @@ public class Handle extends VPathwayElement
 	}
 			
 	public Shape calculateVOutline() {
-		return getFillShape((int)Math.ceil(defaultStroke.getLineWidth())).getBounds();
+		return getFillShape((int)Math.ceil(DEFAULT_STROKE.getLineWidth())).getBounds();
 	}
 		
 	private Shape getFillShape() {

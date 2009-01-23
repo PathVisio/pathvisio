@@ -267,6 +267,7 @@ public class GuiMain
 			@Override
 			public void windowClosing(WindowEvent we)
 			{
+				
 				PreferenceManager prefs = PreferenceManager.getCurrent();
 				JFrame frame = swingEngine.getFrame();
 				Dimension size = frame.getSize();
@@ -275,6 +276,7 @@ public class GuiMain
 				prefs.setInt(GlobalPreference.WIN_H, size.height);
 				prefs.setInt(GlobalPreference.WIN_X, p.x);
 				prefs.setInt(GlobalPreference.WIN_Y, p.y);
+	
 				
 				if(swingEngine.canDiscardPathway()) {
 					frame.dispose();

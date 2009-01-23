@@ -69,6 +69,7 @@ public class MainPanelStandalone extends MainPanel
 		
 		recentPathwaysMenu = new JMenu("Open Recent");
 		initRecentPathwayList();
+		fileMenu.add (recentPathwaysMenu);
 		addToMenu(actions.standaloneSaveAction, fileMenu);
 		addToMenu(actions.standaloneSaveAsAction, fileMenu);
 		fileMenu.addSeparator();
@@ -138,6 +139,7 @@ public class MainPanelStandalone extends MainPanel
 		PreferenceManager prefs = PreferenceManager.getCurrent();
 		
 		recentPathwaysMenu.removeAll();
+		int added = 0;
 		recentPathwaysMenu.setMnemonic(KeyEvent.VK_R);
 		for (int i = 0; i < 10; i++) 
 		{
@@ -150,12 +152,17 @@ public class MainPanelStandalone extends MainPanel
 				{
 					public void actionPerformed(ActionEvent e) 
 					{
-						swingEngine.openPathway(file);
+						if (swingEngine.canDiscardPathway())
+						{
+							swingEngine.openPathway(file);
+						}
 					}
 				});
 				recentPathwaysMenu.add(menuItem);
+				added++;
 			}
 		}
+		recentPathwaysMenu.setEnabled (added != 0);
 	}
 	
 	@Override

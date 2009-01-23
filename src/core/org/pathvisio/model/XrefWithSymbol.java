@@ -17,26 +17,37 @@
 package org.pathvisio.model;
 
 /**
- * Stores a combination of DataSource, id and symbol. Extension of Xref,
+ * Stores a combination of DataSource, id and symbol. See also Xref,
  * which only stores DataSource and id.
+ * 
+ * Immutable class, thread-safe
  */
-public class XrefWithSymbol extends Xref implements Comparable<Xref> 
+public final class XrefWithSymbol implements Comparable<XrefWithSymbol> 
 {
-	private String symbol;
+	final private String symbol;
+	final private Xref xref;
+
+	// String representation
+	final private String rep;
 	
 	public XrefWithSymbol(Xref xref, String symbol)
 	{
-		this (xref.id, xref.ds, symbol);
+		this.symbol = symbol;
+		this.xref = xref;
+		rep = xref + "[" + symbol + "]";
+	}
+	
+	public Xref asXref()
+	{
+		return xref;
 	}
 	
 	/**
 	 * null values for all three params are allowed,
-	 * because many times you build an XrefWithSymbol on the go.
 	 */
 	public XrefWithSymbol(String id, DataSource ds, String symbol) 
 	{
-		super (id, ds);
-		this.symbol = symbol;
+		this (new Xref (id, ds), symbol);
 	}
 
 	public String getSymbol() 
@@ -44,24 +55,22 @@ public class XrefWithSymbol extends Xref implements Comparable<Xref>
 		return symbol;
 	}
 	
-	public void setSymbol(String value) 
-	{ 
-		symbol = value; 
-	}
-
-	/**
-	 * Override to search by symbol first, then on the value of the xref
-	 */
-	@Override
-	public int compareTo (Xref o2) 
+	public DataSource getDataSource()
 	{
-		if (o2 instanceof XrefWithSymbol)
-		{
-			XrefWithSymbol p2 = (XrefWithSymbol)o2;
-			if(symbol != null && p2.symbol != null)
-				return symbol.compareTo(p2.symbol);
-		}
-		return super.compareTo(o2);
+		return xref.getDataSource();
+	}
+	
+	public String getId()
+	{
+		return xref.getId();
+	}
+	
+	/**
+	 * compares on the string representation
+	 */
+	public int compareTo (XrefWithSymbol o2) 
+	{
+		return rep.compareTo(o2.rep);
 	}	
 
 	/**
@@ -70,26 +79,26 @@ public class XrefWithSymbol extends Xref implements Comparable<Xref>
 	@Override
 	public int hashCode() 
 	{
-		String x = symbol + id + ds;
-		return x.hashCode();
+		return rep.hashCode();
 	}
 	
 	/**
 	 * returns true if id, datasource and systemcode are the same.
-	 * 
-	 * Note that if you try to compare a XrefWithSymbol and an Xref,
-	 * the result will always be false. 
 	 */
 	@Override
 	public boolean equals(Object o) 
 	{
 		if (o == null) return false;
-		if(!(o instanceof XrefWithSymbol)) return false;
+		if (!(o instanceof XrefWithSymbol)) return false;
 		XrefWithSymbol ref = (XrefWithSymbol)o;
 		return 
-			(id == null ? ref.id == null : id.equals(ref.id)) && 
-			(ds == null ? ref.ds == null : ds.equals(ref.ds)) &&
+			(xref == null ? ref.xref == null : xref.equals(ref.xref)) && 
 			(symbol == null ? ref.symbol == null : symbol.equals(ref.symbol));
 	}
-
+	
+	@Override
+	public String toString()
+	{
+		return rep;
+	}
 }

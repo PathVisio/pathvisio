@@ -20,18 +20,22 @@ package org.pathvisio.model;
 /**
  * Class to store an id/code combination, which represents
  * an unique gene product
+ * 
+ * Immutable class, thread safe
  */
-public class Xref implements Comparable<Xref> {
-	String id;
-	DataSource ds;
+public class Xref implements Comparable<Xref> 
+{	
+	final private String id;
+	final private DataSource ds;
+	
+	// String representation of this xref
+	final private String rep;
 	
 	public Xref(String id, DataSource ds) {
 		this.id = id;
 		this.ds = ds;
+		rep = (ds == null ? "" : ds.getSystemCode()) + ":" + id; 
 	}
-	
-	public void setDataSource (DataSource value) { ds = value; }
-	public void setId (String value) { id = value; }
 	
 	public DataSource getDataSource() { return ds; }
 	public String getId() { return id; }
@@ -41,14 +45,14 @@ public class Xref implements Comparable<Xref> {
 	 * use Xref.toString
 	 */
 	public String getName() { return toString(); }
-	public String toString() { return (ds == null ? "" : ds.getSystemCode()) + ":" + id;  }
+	public String toString() { return rep;  }
 	
 	/**
 	 * hashCode calculated from id and datasource combined
 	 */
 	public int hashCode() 
 	{
-		return toString().hashCode();
+		return rep.hashCode();
 	}
 	
 	/**
@@ -66,16 +70,19 @@ public class Xref implements Comparable<Xref> {
 	
 	public int compareTo (Xref idc) 
 	{
-		return toString().compareTo(idc.toString());
+		return rep.compareTo(idc.rep);
 	}
 	
+	/**
+		@deprecated unused
+	*/
 	public boolean valid() 
 	{
 		return ds.getSystemCode().length() > 0 && id.length() > 0;
 	}
 
 	/**
-	 * @deprecated: use this.getDataSource().getFullName() instead.
+	 * @deprecated use this.getDataSource().getFullName() instead.
 	 */
 	public String getDatabaseName() 
 	{

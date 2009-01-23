@@ -229,6 +229,68 @@ public class Test extends TestCase implements PathwayListener
 	}
 	
 	/**
+	 * test that Xref and XrefWithSymbol obey the equals contract
+	 */
+	public void testXRefEquals()
+	{
+		Object[] testList = new Object[] {
+				new Xref("1007_at", DataSource.AFFY),
+				new Xref("3456", DataSource.AFFY),
+				new Xref("1007_at", DataSource.ENTREZ_GENE),
+				new Xref ("3456", DataSource.ENTREZ_GENE),
+				new Xref ("3456", DataSource.ENTREZ_GENE),
+				new XrefWithSymbol("3456", DataSource.ENTREZ_GENE, "INSR"),
+				new XrefWithSymbol("3456", DataSource.ENTREZ_GENE, "Insulin Receptor"),
+		};
+		                           
+		for (int i = 0; i < testList.length; ++i)
+		{
+			Object refi = testList[i];
+			// equals must be reflexive
+			assertTrue (refi.equals(refi));
+			// never equal to null
+			assertFalse (refi.equals(null));
+		}
+		for (int i = 1; i < testList.length; ++i)
+			for (int j = 0; j < i; ++j)
+			{
+				// equals must be symmetric
+				Object refi = testList[i];
+				Object refj = testList[j];
+				assertEquals ("Symmetry fails for " + refj + " and " + refi, 
+						refi.equals(refj), refj.equals(refi) 
+						);
+
+				// hashcode contract
+				if (refi.equals(refj))
+				{
+					assertEquals (refi.hashCode(), refj.hashCode());
+				}
+			}
+		// equals must be transitive
+		for (int i = 2; i < testList.length; ++i)
+			for (int j = 1; j < i; ++j)
+				for (int k = 0; k < j; ++k)
+				{
+					Object refi = testList[i];
+					Object refj = testList[j];
+					Object refk = testList[k];
+					if (refi.equals (refj) && refj.equals (refk))
+					{
+						assertTrue (refk.equals (refi));
+					}
+					if (refj.equals (refk) && refk.equals (refi))
+					{
+						assertTrue (refi.equals (refj));
+					}
+					if (refk.equals (refi) && refi.equals (refj))
+					{
+						assertTrue (refk.equals (refj));
+					}
+				}
+	}
+	
+	/**
 	 * Test for maintaining list of unique id's per Pathway.
 	 *
 	 */

@@ -64,6 +64,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
@@ -590,7 +591,7 @@ public class StatisticsPlugin implements Plugin
 				Logger.log.info ("Calculating statistics for " + pwyParser.getName());
 				
 				List <Xref> srcRefs = new ArrayList<Xref>();
-				srcRefs.addAll (pwyParser.getGenes());
+				for (XrefWithSymbol x : pwyParser.getGenes()) srcRefs.add (x.asXref());
 				
 				try
 				{

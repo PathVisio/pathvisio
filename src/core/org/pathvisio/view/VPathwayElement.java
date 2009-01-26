@@ -382,9 +382,12 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		}
 	}
 	
+	private boolean removeMe = false;
+	boolean toBeRemoved() { return removeMe; }
+	
 	protected void destroy() { 
 		//Remove from canvas
-		canvas.getDrawingObjects().remove(this);
+		removeMe = true;
 		destroyHandles();
 	}
 

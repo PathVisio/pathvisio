@@ -393,4 +393,10 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		}
 		return null;
 	}
+
+	@Override protected void destroy()
+	{
+		super.destroy();
+		canvas.removeVElementMouseListener(this);
+	}
 }

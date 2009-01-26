@@ -227,4 +227,11 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 		refresh();
 		canvas.redrawDirtyRect();
 	}
+	
+	@Override protected void destroy()
+	{
+		super.destroy();
+		getRefMgr().removeBiopaxListener(this);
+		canvas.removeVElementMouseListener(this);
+	}
 }

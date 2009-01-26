@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -328,6 +329,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		if (dirtyRect != null && parent != null)
 			parent.redraw(dirtyRect);
 		dirtyRect = null;
+		cleanUp();
 	}
 
 	/**
@@ -2371,6 +2373,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			l.vPathwayEvent(e);
 		}
+		cleanUp();
 	}
 
 	/**
@@ -2489,7 +2492,21 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public void dispose()
 	{
 		assert (!disposed);
+		for (VPathwayElement elt : getDrawingObjects())
+		{
+			elt.destroy();
+		}
+		cleanUp();
 		if (data != null) data.removeListener(this);
 		disposed = true;
+	}
+	
+	private void cleanUp()
+	{
+		for (Iterator<VPathwayElement> i = drawingObjects.iterator(); i.hasNext(); )
+		{
+			VPathwayElement elt = i.next();
+			if (elt.toBeRemoved()) { i.remove(); }
+		}
 	}
 }

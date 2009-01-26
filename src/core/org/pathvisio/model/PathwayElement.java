@@ -241,7 +241,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		public void setGraphId(String v)
 		{
-			GraphLink.setGraphId(v, this, PathwayElement.this);
+			GraphLink.setGraphId(v, this, PathwayElement.this.parent);
 			graphId = v;
 			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
 					PathwayEvent.MODIFIED_GENERAL));
@@ -2664,7 +2664,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public void setGraphId(String v)
 	{
-		GraphLink.setGraphId(v, this, this);
+		GraphLink.setGraphId(v, this, parent);
 		graphId = v;
 		fireObjectModifiedEvent(new PathwayEvent(this,
 				PathwayEvent.MODIFIED_GENERAL));

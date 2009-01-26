@@ -280,8 +280,13 @@ public class GuiMain
 				
 				if(swingEngine.canDiscardPathway()) {
 					frame.dispose();
-					GuiMain.this.shutdown(swingEngine);
 				}
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent we)
+			{
+				GuiMain.this.shutdown(swingEngine);
 			}
 		});
 		

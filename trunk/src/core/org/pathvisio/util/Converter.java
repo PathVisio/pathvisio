@@ -33,6 +33,7 @@ import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
+import org.pathvisio.model.RasterImageExporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.MIMShapes;
@@ -75,7 +76,7 @@ public class Converter {
 		engine.addPathwayExporter(new MappFormat());
     	engine.addPathwayExporter(new GpmlFormat());
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
-		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PNG));
+		engine.addPathwayExporter(new RasterImageExporter(ImageExporter.TYPE_PNG));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
 		engine.addPathwayExporter(new EUGeneExporter());

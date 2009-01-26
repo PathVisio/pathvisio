@@ -525,6 +525,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				((VPathway)e.getSource()).getUndoManager().addListener(this);
 			}
 		}
+		
+		public void dispose()
+		{
+			engine.removeApplicationEventListener(this);
+		}
 	}
 
 	/**
@@ -658,5 +663,17 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				}
 			vPathway.redrawDirtyRect();
 		}
+	}
+
+	private boolean disposed = false;
+	/**
+	 * free all resources (such as listeners) held by this class. 
+	 * Owners of this class must explicitly dispose of it to clean up.
+	 */
+	public void dispose()
+	{
+		assert (!disposed);
+		undo.dispose();
+		disposed = true;
 	}
 }

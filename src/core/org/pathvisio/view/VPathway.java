@@ -2498,6 +2498,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 		cleanUp();
 		if (data != null) data.removeListener(this);
+		if (viewActions != null) viewActions.dispose();
 		disposed = true;
 	}
 	

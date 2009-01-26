@@ -89,10 +89,10 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
-	public final Action saveAction;
-	public final Action saveAsAction;
-	public final Action standaloneSaveAction;
-	public final Action standaloneSaveAsAction;
+	public final SaveAction saveAction;
+	public final SaveAction saveAsAction;
+	public final SaveAction standaloneSaveAction;
+	public final SaveAction standaloneSaveAsAction;
 	
 	public final Action importAction;
 	public final Action exportAction;
@@ -100,7 +100,7 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action copyAction;
 	public final Action pasteAction;
 	
-	public final Action undoAction;
+	public final ViewActions.UndoAction undoAction;
 	public final Action exitAction;
 
 	public final Action[] zoomActions;
@@ -363,6 +363,11 @@ public class CommonActions implements ApplicationEventListener {
 				handleStatus(p.hasChanged());
 			}
 		}
+		
+		public void dispose()
+		{
+			swingEngine.getEngine().removeApplicationEventListener(this);
+		}
 	}
 	
 	/** Import a Pathway from a different format than GPML, usually that means GenMAPP format */
@@ -613,10 +618,19 @@ public class CommonActions implements ApplicationEventListener {
 	}
 
 	private boolean disposed = false;
+	/**
+	 * free all resources (such as listeners) held by this class. 
+	 * Owners of this class must explicitly dispose of it to clean up.
+	 */
 	public void dispose()
 	{
 		assert (!disposed);
 		swingEngine.getEngine().removeApplicationEventListener (this);
+		saveAction.dispose();
+		saveAsAction.dispose();
+		standaloneSaveAction.dispose();
+		standaloneSaveAsAction.dispose();
+		undoAction.dispose();
 		disposed = true;
 	}
 }

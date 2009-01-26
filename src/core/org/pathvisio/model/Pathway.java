@@ -45,7 +45,7 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 * to always have exactly one object of the type MAPPINFO and exactly
 * one object of the type INFOBOX.
 */
-public class Pathway implements PathwayListener
+public class Pathway
 {		
 	private boolean changed = true;
 	/**
@@ -251,7 +251,6 @@ public class Pathway implements PathwayListener
 	private void forceAddObject(PathwayElement o) {
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
-		o.addListener(this);
 		o.setParent(this);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
@@ -286,7 +285,9 @@ public class Pathway implements PathwayListener
 		return zmin;
 	}
 
-	public void gmmlObjectModified (PathwayEvent e)
+	/** only used by children of this Pathway to 
+	 * notify the parent of modifications */
+	void childModified (PathwayEvent e)
 	{
 		markChanged();
 	}
@@ -329,7 +330,6 @@ public class Pathway implements PathwayListener
 	 * @param o the object to remove
 	 */
 	private void forceRemove(PathwayElement o) {
-		o.removeListener(this);
 		dataObjects.remove(o);
 		List<GraphRefContainer> references = getReferringObjects(o.getGraphId());
 		for(GraphRefContainer refc : references) {
@@ -745,7 +745,7 @@ public class Pathway implements PathwayListener
 		markChanged();
 		for (PathwayListener g : listeners)
 		{
-			g.gmmlObjectModified(e);
+			g.pathwayModified(e);
 		}
 	}	
 	

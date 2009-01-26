@@ -46,6 +46,7 @@ import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
@@ -66,7 +67,7 @@ import org.pathvisio.view.ViewActions.KeyMoveAction;
  * It's necessary to call PreferenceManager.init() before you can instantiate
  * this class.
  */
-public class VPathway implements PathwayListener
+public class VPathway implements PathwayListener, PathwayElementListener
 {
 	static final int ZORDER_SELECTIONBOX = Integer.MAX_VALUE;
 	static final int ZORDER_HANDLE = Integer.MAX_VALUE - 1;
@@ -1560,6 +1561,11 @@ public class VPathway implements PathwayListener
 
 	private Graphics lastAdded = null;
 
+	public void pathwayModified(PathwayEvent e)
+	{
+		gmmlObjectModified (e);
+	}
+	
 	public void gmmlObjectModified(PathwayEvent e)
 	{
 		switch (e.getType())

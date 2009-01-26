@@ -36,6 +36,7 @@ import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.Xref;
@@ -52,7 +53,7 @@ import org.pathvisio.view.VPathwayElement;
  * listeners when needed (e.g. a datanode is selected). 
  * @author thomas
  */
-public class BackpageTextProvider implements ApplicationEventListener, SelectionListener, PathwayListener 
+public class BackpageTextProvider implements ApplicationEventListener, SelectionListener, PathwayElementListener 
 {
 	PathwayElement input;
 	final static int MAX_THREADS = 1;

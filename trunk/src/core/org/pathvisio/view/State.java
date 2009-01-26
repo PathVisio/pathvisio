@@ -26,6 +26,9 @@ import java.awt.geom.RectangularShape;
 
 import org.pathvisio.model.PathwayElement;
 
+/**
+ * represents the view of a PathwayElement with ObjectType.STATE.
+ */
 public class State extends GraphicsShape
 {
 	public static final Color INITIAL_FILL_COLOR = Color.WHITE;

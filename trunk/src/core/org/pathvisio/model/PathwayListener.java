@@ -18,6 +18,16 @@ package org.pathvisio.model;
 
 import java.util.EventListener;
 
+/**
+ * Implement this if you want to be notified of changes to a Pathway.
+ * 
+ * This means addition of new elements to a Pathway and
+ * removal of elements from a Pathway, but not 
+ * changes to properties of a single PathwayElement
+ * 
+ * For example this is used by VPathway to refresh itself when a new
+ * element is added.
+ */
 public interface PathwayListener extends EventListener 
 {
 	//TODO: PathwayListener and PathwayElementListener share PathwayEvent

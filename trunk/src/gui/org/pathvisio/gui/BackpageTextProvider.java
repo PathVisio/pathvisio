@@ -38,7 +38,6 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.Resources;
 import org.pathvisio.util.Utils;
@@ -168,7 +167,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 	}
 	
-	class QueryThread extends Thread {
+	private class QueryThread extends Thread {
 		PathwayElement e;
 		QueryThread(PathwayElement e) {
 			super(threads, e.getGeneID() + e.hashCode());

@@ -54,9 +54,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.data.GexManager;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
@@ -71,6 +69,12 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 
+/**
+ * this is the contents of the main window in the WikiPathways applet,
+ * and contains the editor window, side panels, toolbar and menu.
+ * 
+ * For the standalone application, the derived class MainPanelStandalone is used.
+ */
 public class MainPanel extends JPanel implements VPathwayListener, ApplicationEventListener {
 
 	private JSplitPane splitPane;

@@ -27,7 +27,6 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.panels.CommentPanel;
 import org.pathvisio.gui.swing.panels.LitReferencePanel;
 import org.pathvisio.gui.swing.panels.PathwayElementPanel;
-import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;

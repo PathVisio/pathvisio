@@ -18,6 +18,12 @@ package org.pathvisio.model;
 
 import java.util.EventListener;
 
+/**
+ * Implement this if you want to be notified of changes to properties of a PathwayElement.
+ * 
+ * For example, this is used by DatanodeDialog or by PropertyTableModel 
+ * to keep up to date with changes in the selected PathwayElement.
+ */
 public interface PathwayElementListener extends EventListener 
 {
 	//TODO: PathwayListener and PathwayElementListener share PathwayEvent

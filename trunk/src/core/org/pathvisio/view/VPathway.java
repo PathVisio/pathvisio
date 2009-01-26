@@ -47,11 +47,11 @@ import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.preferences.GlobalPreference;
@@ -661,7 +661,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	private Set<VPathwayElement> lastMouseOver = new HashSet<VPathwayElement>();
 	private HoverManager hoverManager = new HoverManager();
 	
-	class HoverManager implements ActionListener {
+	private class HoverManager implements ActionListener {
 		static final int DELAY = 1000; //tooltip delay in ms
 		boolean tooltipDisplayed = false;
 		

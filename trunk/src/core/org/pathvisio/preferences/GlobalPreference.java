@@ -22,6 +22,16 @@ import java.io.File;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.Utils;
 
+/** 
+ * Type-safe set of preferences.
+ * The preferences of PathVisio are backed by a standard Properties() object,
+ * but that uses String as key, which is not safe.
+ * 
+ * This enum is used to access the preferences in a type safe way.
+ *
+ * The preferences in this enum are used by the 
+ * core and the GUI application, but not by plug-ins.
+ */
 public enum GlobalPreference implements Preference 
 {
 	FILE_LOG(new File (getApplicationDir(), "PathVisio.log")),

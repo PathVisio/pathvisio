@@ -37,7 +37,6 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;

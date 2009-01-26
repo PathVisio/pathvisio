@@ -16,7 +16,6 @@
 //
 package org.pathvisio.gui.swing.propertypanel;
 
-import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,13 +39,21 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.view.VPathway;
 
+/**
+ * The model for the table in the Properties side panel.
+ * Each row corresponds to a Property, the first column is the name of the
+ * property and the second column its value.
+ * 
+ * This will pass through the properties for zero, one or many selected
+ * PathwayElements. If many are selected, the subset of shared Properties
+ * is used as row set. 
+ */
 public class PathwayTableModel extends AbstractTableModel implements SelectionListener, 
 									PathwayElementListener, 
 									ApplicationEventListener {

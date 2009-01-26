@@ -25,8 +25,6 @@ import java.awt.geom.Rectangle2D;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PathwayListener;
-
 
 /**
  * This class is a parent class for all graphics

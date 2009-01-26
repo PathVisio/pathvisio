@@ -33,6 +33,13 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MPoint;
 
+/**
+ * This represents the view of a PathwayElement with ObjectType.GROUP.
+ * This can be drawn as a shaded area, or the group can be invisible.
+ * 
+ * Also contains the getGroupGraphics method to quickly access all Graphics' that
+ * are in this group.  
+ */
 public class Group extends Graphics implements LinkProvider, VElementMouseListener
 {
 	public static final int FLAG_SELECTED = 1 << 0;

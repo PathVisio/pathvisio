@@ -31,6 +31,9 @@ import java.text.AttributedString;
 
 import org.pathvisio.model.PathwayElement;
 
+/**
+ * Represents the view of a PathwayElement with ObjectType.LABEL.
+ */
 public class Label extends GraphicsShape
 {
 	

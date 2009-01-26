@@ -46,6 +46,9 @@ public class ApplicationEvent extends EventObject
 	public static final int VPATHWAY_OPENED = 5;
 	public static final int VPATHWAY_NEW = 6;
 	public static final int PATHWAY_SAVE = 7;
+
+	/** whenever a VPathway is closed. */ 
+	public static final int VPATHWAY_DISPOSED = 8;
 	
 	private int type;
 	/**

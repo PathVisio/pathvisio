@@ -248,6 +248,7 @@ public class VPathway implements PathwayListener
 		for(SelectionListener l : selectionListeners) {
 			selection.addListener(l);
 		}
+		data.removeListener(this);
 		pressedObject = null;
 		data = null;
 		pointsMtoV = new HashMap<MPoint, VPoint>();
@@ -2472,5 +2473,17 @@ public class VPathway implements PathwayListener
 	public void undo()
 	{
 		undoManager.undo();
+	}
+
+	private boolean disposed = false;
+	/**
+	 * free all resources (such as listeners) held by this class. 
+	 * Owners of this class must explicitly dispose of it to clean up.
+	 */
+	public void dispose()
+	{
+		assert (!disposed);
+		if (data != null) data.removeListener(this);
+		disposed = true;
 	}
 }

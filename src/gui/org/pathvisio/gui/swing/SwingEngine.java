@@ -621,4 +621,16 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		public void openUrl(URL url);
 	}
 	
+	private boolean disposed = false;
+	/**
+	 * free all resources (such as listeners) held by this class. 
+	 * Owners of this class must explicitly dispose of it to clean up.
+	 */
+	public void dispose()
+	{
+		assert (!disposed);
+		actions.dispose();
+		engine.removeApplicationEventListener(this);
+		disposed = true;
+	}
 }

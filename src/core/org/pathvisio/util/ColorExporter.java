@@ -56,6 +56,7 @@ public class ColorExporter implements VPathwayListener {
 		this.colors = colors;
 		vPathway = new VPathway(new VPathwayWrapperBase());
 		vPathway.fromModel(pathway);
+		vPathway.dispose();
 	}
 	
 	public void export(BatikImageExporter exporter, File outputFile) throws ConverterException {

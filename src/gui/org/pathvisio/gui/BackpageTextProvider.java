@@ -61,6 +61,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	
 	private GdbManager gdbManager;
 	private GexManager gexManager;
+	private Engine engine;
 	
 	public BackpageTextProvider(Engine engine, GdbManager gdbManager, GexManager gexManager) 
 	{
@@ -68,7 +69,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		engine.addApplicationEventListener(this);
 		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
-		
+	
+		this.engine = engine;
 		this.gdbManager = gdbManager;
 		this.gexManager = gexManager;
 	}
@@ -136,9 +138,19 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 	}
 
-	public void applicationEvent(ApplicationEvent e) {
-		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
-			((VPathway)e.getSource()).addSelectionListener(this);
+	public void applicationEvent(ApplicationEvent e) 
+	{
+		switch (e.getType())
+		{
+			case ApplicationEvent.VPATHWAY_CREATED:
+			{
+				((VPathway)e.getSource()).addSelectionListener(this);
+			}
+			break;
+			case ApplicationEvent.VPATHWAY_DISPOSED:
+			{
+				((VPathway)e.getSource()).removeSelectionListener(this);
+			}
 		}
 	}
 	
@@ -347,6 +359,14 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");
 		}
 		return crt.toString();
+	}
+
+	private boolean disposed = false;
+	public void dispose()
+	{
+		assert (!disposed);
+		engine.removeApplicationEventListener(this);
+		disposed = true;
 	}
 	
 }

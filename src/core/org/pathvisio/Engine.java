@@ -215,7 +215,16 @@ public class Engine
 		else
 		{
 			double zoom = 100;
-			if(hasVPathway()) zoom = getActiveVPathway().getPctZoom();
+			if(hasVPathway()) 
+			{
+				// save zoom Level
+				zoom = getActiveVPathway().getPctZoom();
+				
+				// signal destruction of vPathway
+				fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_DISPOSED));
+				vPathway.dispose();
+				vPathway = null;
+			}
 			
 			vPathway = wrapper.createVPathway();
 			vPathway.registerKeyboardActions(this);
@@ -360,7 +369,17 @@ public class Engine
 		fireApplicationEvent(e);
 	}
 	
-
+	private boolean disposed = false;
+	/**
+	 * free all resources (such as listeners) held by this class. 
+	 * Owners of this class must explicitly dispose of it to clean up.
+	 */
+	public void dispose()
+	{
+		assert (!disposed);
+		if (vPathway != null) vPathway.dispose();
+		disposed = true;
+	}
 	
 	
 	//TODO:

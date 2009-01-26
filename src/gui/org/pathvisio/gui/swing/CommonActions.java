@@ -109,8 +109,11 @@ public class CommonActions implements ApplicationEventListener {
 	
 	public final Action[][] newElementActions;
 	
+	private final SwingEngine swingEngine;
+	
 	public CommonActions(SwingEngine se) 
 	{
+		swingEngine = se;
 		Engine e = se.getEngine();
 		e.addApplicationEventListener(this);
 		zoomActions = new Action[] {
@@ -609,4 +612,11 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 
+	private boolean disposed = false;
+	public void dispose()
+	{
+		assert (!disposed);
+		swingEngine.getEngine().removeApplicationEventListener (this);
+		disposed = true;
+	}
 }

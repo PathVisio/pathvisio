@@ -219,6 +219,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener
 	{
 		assert (!disposed);
 		swingEngine.getEngine().removeApplicationEventListener(this);
+		visualizationManager.dispose();
 		disposed = true;
 	}
 	

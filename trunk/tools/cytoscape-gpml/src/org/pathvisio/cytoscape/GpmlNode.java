@@ -101,18 +101,18 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 		Annotation a = null;
 		
 		switch(pwElmOrig.getObjectType()) {
-		case ObjectType.SHAPE:
+		case SHAPE:
 			a = new Shape(pwElmOrig, dview);
 			break;
-		case ObjectType.LABEL:
+		case LABEL:
 			a = new Label(pwElmOrig, dview);
 			break;
-		case ObjectType.LINE:
+		case LINE:
 			a = new Line(pwElmOrig, dview);
 			break;
-		case ObjectType.LEGEND:
-		case ObjectType.MAPPINFO:
-		case ObjectType.INFOBOX:
+		case LEGEND:
+		case MAPPINFO:
+		case INFOBOX:
 			//Only hide the node
 			view.hideGraphObject(nv);
 			break;

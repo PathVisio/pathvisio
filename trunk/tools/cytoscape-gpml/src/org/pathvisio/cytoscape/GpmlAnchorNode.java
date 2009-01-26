@@ -38,7 +38,7 @@ import cytoscape.CyNode;
  *
  */
 public class GpmlAnchorNode extends GpmlNode {
-	public static final int TYPE_ANCHOR = ObjectType.MAX_VALID + 1;
+	public static final int TYPE_ANCHOR = ObjectType.values().length + 1;
 	
 	/**
 	 * Constructor for this class. Creates a new GpmlNode, based on the given

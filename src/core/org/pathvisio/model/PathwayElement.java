@@ -462,8 +462,16 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setRelativePosition(relX, relY);
 		}
 		
-		public void unlink() {
-			setGraphRef(null);
+		/** note that this may be called any number of times when this point is already unlinked */
+		public void unlink() 
+		{
+			if (graphRef != null)
+			{
+				Point2D abs = getAbsolute();
+				moveTo(abs.getX(), abs.getY());
+				relativeSet = false;
+				setGraphRef(null);
+			}
 		}
 
 		public Point2D toAbsoluteCoordinate(Point2D p) {

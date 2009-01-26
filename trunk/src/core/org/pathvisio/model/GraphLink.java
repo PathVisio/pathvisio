@@ -96,9 +96,8 @@ public abstract class GraphLink
 	 * @param c the object to is going to get the new graphId
 	 * @param gd the pathway model, which is maintaining a complete list of all graphId's in this pathway
 	 */
-	protected static void setGraphId(String v, GraphIdContainer c, PathwayElement gd) 
+	protected static void setGraphId(String v, GraphIdContainer c, Pathway data) 
 	{
-		Pathway data = gd.getParent();
 		String graphId = c.getGraphId();
 		if (graphId == null || !graphId.equals(v))
 		{
@@ -106,7 +105,7 @@ public abstract class GraphLink
 			{
 				if (graphId != null)
 				{
-					data.removeId(v);
+					data.removeId(graphId);
 				}
 				if (v != null)
 				{

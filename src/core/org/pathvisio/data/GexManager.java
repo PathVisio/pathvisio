@@ -177,7 +177,12 @@ public class GexManager
 	{
 		listeners.add(l);
 	}
-	
+
+	public void removeListener(GexManagerListener l) 
+	{
+		listeners.remove(l);
+	}
+
 	/**
 	 * Events in the centralized Gex.
 	 */

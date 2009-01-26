@@ -380,10 +380,27 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	}
 
 	public void applicationEvent(ApplicationEvent e) {
-		if (e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
-			VPathway vp = (VPathway)e.getSource();
-			vp.addVPathwayListener(this);
+		switch (e.getType())
+		{
+		case ApplicationEvent.VPATHWAY_CREATED:
+			((VPathway)e.getSource()).addVPathwayListener(this);
+			break;
+		case ApplicationEvent.VPATHWAY_DISPOSED:
+			((VPathway)e.getSource()).removeVPathwayListener(this);
+			break;
 		}
 	}
-	
+
+	private boolean disposed = false;
+	/**
+	 * free all resources (such as listeners) held by this class. 
+	 * Owners of this class must explicitly dispose of it to clean up.
+	 */
+	public void dispose()
+	{
+		assert (!disposed);
+		gexManager.removeListener(this);
+		engine.removeApplicationEventListener(this);
+		disposed = true;
+	}
 }

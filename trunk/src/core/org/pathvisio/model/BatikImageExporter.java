@@ -118,5 +118,6 @@ public class BatikImageExporter extends ImageExporter {
 		vPathway.fromModel(pathway);
 		
 		doExport(file, vPathway);
+		vPathway.dispose();
 	}
 }

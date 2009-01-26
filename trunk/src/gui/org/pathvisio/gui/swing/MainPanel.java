@@ -90,6 +90,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	protected BackpagePane backpagePane;
 	
 	protected CommonActions actions;
+
+	private final PathwayTableModel model;
 	
 	Set<Action> hideActions;
 	
@@ -169,7 +171,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		// set background color when no VPathway is loaded, override l&f because it is usually white.
 		pathwayScrollPane.getViewport().setBackground(Color.LIGHT_GRAY); 
 
-		final PathwayTableModel model = new PathwayTableModel(swingEngine);
+		model = new PathwayTableModel(swingEngine);
 		propertyTable = new JTable(model) {
 
 			public TableCellRenderer getCellRenderer(int row, int column) {
@@ -189,7 +191,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
-		backpagePane = new BackpagePane(new BackpageTextProvider (swingEngine.getEngine(), swingEngine.getGdbManager(), GexManager.getCurrent()));
+		backpagePane = new BackpagePane(swingEngine);
 		backpagePane.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -422,14 +424,23 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public void applicationEvent(ApplicationEvent e) {
 		switch(e.getType()) {
 		case ApplicationEvent.VPATHWAY_CREATED:
-			VPathway vp = (VPathway)e.getSource();
-			vp.addVPathwayListener(this);
-			vp.addVPathwayListener(pathwayElementMenuListener);
-			for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_VPATHWAY)) {
-				b.setEnabled(true);
+			{
+				VPathway vp = (VPathway)e.getSource();
+				vp.addVPathwayListener(this);
+				vp.addVPathwayListener(pathwayElementMenuListener);
+				for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_VPATHWAY)) {
+					b.setEnabled(true);
+				}
+			}
+			break;
+		case ApplicationEvent.VPATHWAY_DISPOSED:
+			{
+				VPathway vp = (VPathway)e.getSource();
+				vp.removeVPathwayListener(this);
 			}
 			break;
 		}
+
 	}
 
 	public JMenuBar getMenuBar() {
@@ -441,4 +452,17 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		return sidebarTabbedPane;
 	}
 
+	private boolean disposed = false;
+	/**
+	 * free all resources (such as listeners) held by this class. 
+	 * Owners of this class must explicitly dispose of it to clean up.
+	 */
+	public void dispose()
+	{
+		assert (!disposed);
+		backpagePane.dispose();
+		model.dispose();
+		swingEngine.getEngine().removeApplicationEventListener(this);
+		disposed = true;
+	}
 }

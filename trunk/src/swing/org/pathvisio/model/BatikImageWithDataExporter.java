@@ -127,5 +127,6 @@ public class BatikImageWithDataExporter extends ImageExporter
 		} catch(Exception e) {
 			throw new ConverterException(e);
 		}
+		vPathway.dispose();
 	}
 }

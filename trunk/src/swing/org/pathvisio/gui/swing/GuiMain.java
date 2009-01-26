@@ -211,7 +211,7 @@ public class GuiMain
 	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
 	 * @param mainPanel The main panel to show in the frame
 	 */
-	protected JFrame createAndShowGUI(MainPanelStandalone mainPanel, final SwingEngine swingEngine) 
+	protected JFrame createAndShowGUI(final MainPanelStandalone mainPanel, final SwingEngine swingEngine) 
 	{
 		//Create and set up the window.
 		final JFrame frame = new JFrame(Globals.APPLICATION_NAME);
@@ -277,7 +277,6 @@ public class GuiMain
 				prefs.setInt(GlobalPreference.WIN_X, p.x);
 				prefs.setInt(GlobalPreference.WIN_Y, p.y);
 	
-				
 				if(swingEngine.canDiscardPathway()) {
 					frame.dispose();
 				}
@@ -286,6 +285,7 @@ public class GuiMain
 			@Override
 			public void windowClosed(WindowEvent we)
 			{
+				mainPanel.dispose();
 				GuiMain.this.shutdown(swingEngine);
 			}
 		});
@@ -330,6 +330,9 @@ public class GuiMain
 				Logger.log.error ("Couldn't cleanly close pgdb database", ex);
 			}
 		}
+		standaloneEngine.dispose();
+		swingEngine.getEngine().dispose();
+		swingEngine.dispose();
 		Logger.log.info ("PathVisio was shut down cleanly");
 	}
 	

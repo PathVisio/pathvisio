@@ -16,6 +16,7 @@
 //
 package org.pathvisio.gui.swing.propertypanel;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -240,9 +241,28 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		refresh();
 	}
 
-	public void applicationEvent(ApplicationEvent e) {
-		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+	public void applicationEvent(ApplicationEvent e) 
+	{
+		switch(e.getType()) 
+		{
+		case ApplicationEvent.VPATHWAY_CREATED:
 			((VPathway)e.getSource()).addSelectionListener(this);
+			break;
+		case ApplicationEvent.VPATHWAY_DISPOSED:
+			((VPathway)e.getSource()).removeSelectionListener(this);
+			break;
 		}
+	}
+
+	private boolean disposed = false;
+	/**
+	 * free all resources (such as listeners) held by this class. 
+	 * Owners of this class must explicitly dispose of it to clean up.
+	 */
+	public void dispose()
+	{
+		assert (!disposed);
+		swingEngine.getEngine().removeApplicationEventListener(this);
+		disposed = true;
 	}
 }

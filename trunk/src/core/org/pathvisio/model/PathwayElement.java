@@ -2782,14 +2782,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		noFire = times;
 	}
 
-	private List<PathwayListener> listeners = new ArrayList<PathwayListener>();
+	private List<PathwayElementListener> listeners = new ArrayList<PathwayElementListener>();
 
-	public void addListener(PathwayListener v)
+	public void addListener(PathwayElementListener v)
 	{
 		if(!listeners.contains(v)) listeners.add(v);
 	}
 
-	public void removeListener(PathwayListener v)
+	public void removeListener(PathwayElementListener v)
 	{
 		listeners.remove(v);
 	}
@@ -2801,7 +2801,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			noFire -= 1;
 			return;
 		}
-		for (PathwayListener g : listeners)
+		if (parent != null) parent.childModified(e);
+		for (PathwayElementListener g : listeners)
 		{
 			g.gmmlObjectModified(e);
 		}

@@ -36,6 +36,7 @@ import javax.swing.undo.UndoManager;
 
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayElement.Comment;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
@@ -71,7 +72,7 @@ public class DescriptionApplet extends PathwayPageApplet {
 			}
 		});
 		
-		mappInfo.addListener(new PathwayListener() {
+		mappInfo.addListener(new PathwayElementListener() {
 			public void gmmlObjectModified(PathwayEvent e) {
 				if(noupdate) {
 					noupdate = false;

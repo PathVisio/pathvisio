@@ -38,6 +38,7 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.gui.VisibleProperties;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.model.PropertyType;
@@ -47,7 +48,7 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.view.VPathway;
 
 public class PathwayTableModel extends AbstractTableModel implements SelectionListener, 
-									PathwayListener, 
+									PathwayElementListener, 
 									ApplicationEventListener {
 
 	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());

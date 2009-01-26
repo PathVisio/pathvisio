@@ -23,6 +23,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 
@@ -31,7 +32,7 @@ import org.pathvisio.model.PathwayListener;
  * This class is a parent class for all graphics
  * that can be added to a VPathway.
  */
-public abstract class Graphics extends VPathwayElement implements PathwayListener
+public abstract class Graphics extends VPathwayElement implements PathwayElementListener
 {	
 	protected PathwayElement gdata = null;
 	private Citation citation;

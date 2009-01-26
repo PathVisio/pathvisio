@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
 
-public class Test extends TestCase implements PathwayListener 
+public class Test extends TestCase implements PathwayListener, PathwayElementListener
 {
 
 	Pathway data;
@@ -596,6 +596,11 @@ public class Test extends TestCase implements PathwayListener
 	{
 		// store all received events
 		received.add(e);
+	}
+
+	public void pathwayModified(PathwayEvent e) 
+	{
+		gmmlObjectModified (e);
 	}
 	
 	public void testDataSource()

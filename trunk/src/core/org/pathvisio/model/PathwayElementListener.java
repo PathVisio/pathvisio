@@ -18,8 +18,8 @@ package org.pathvisio.model;
 
 import java.util.EventListener;
 
-public interface PathwayListener extends EventListener 
+public interface PathwayElementListener extends EventListener 
 {
 	//TODO: PathwayListener and PathwayElementListener share PathwayEvent
-	public void pathwayModified(PathwayEvent e);	
+	public void gmmlObjectModified(PathwayEvent e);	
 }

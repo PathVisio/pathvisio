@@ -100,7 +100,7 @@ public abstract class GpmlNetworkElement<T> {
 	public void updateFromGpml(AttributeMapper attributeMapper) {
 		Logger.log.trace("Resetting " + this + " to GPML");
 		attributeMapper.propertiesToAttributes(getParentIdentifier(), pwElmOrig, getCyAttributes());
-		getCyAttributes().setAttribute(getParentIdentifier(), ATTR_TYPE, pwElmOrig.getObjectType());
+		getCyAttributes().setAttribute(getParentIdentifier(), ATTR_TYPE, pwElmOrig.getObjectType().ordinal());
 		pwElmCy = pwElmOrig.copy();
 	}
 	

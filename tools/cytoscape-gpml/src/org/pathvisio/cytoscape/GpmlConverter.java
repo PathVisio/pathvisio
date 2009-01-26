@@ -108,7 +108,7 @@ public class GpmlConverter {
 	
 	private void findNodes() {
 		for(PathwayElement o : pathway.getDataObjects()) {
-			int type = o.getObjectType();
+			ObjectType type = o.getObjectType();
 			if(
 					type == ObjectType.BIOPAX ||
 					type == ObjectType.LEGEND || 
@@ -121,7 +121,7 @@ public class GpmlConverter {
 
 			CyNode n = null;
 			switch(type) {
-			case ObjectType.GROUP:
+			case GROUP:
 				Logger.log.trace("Creating group: " + id);
 				n = addGroup(o);
 				if(n == null) {
@@ -130,7 +130,7 @@ public class GpmlConverter {
 					Logger.log.trace("Created group node: " + n.getIdentifier());
 				}
 				break;
-			case ObjectType.LINE:
+			case LINE:
 				if(isEdge(o)) {
 					continue; //Don't add an annotation node for an edge
 				}
@@ -160,7 +160,7 @@ public class GpmlConverter {
 			//only valid if the parent line is an edge
 			return isEdge(((MAnchor)idc).getParent());
 		} else if(idc instanceof PathwayElement) {
-			int ot = ((PathwayElement)idc).getObjectType();
+			ObjectType ot = ((PathwayElement)idc).getObjectType();
 			return 
 				ot == ObjectType.DATANODE ||
 				ot == ObjectType.GROUP;

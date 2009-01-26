@@ -50,6 +50,8 @@ import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine.Browser;
 import org.pathvisio.model.BatikImageWithDataExporter;
+import org.pathvisio.model.RasterImageExporter;
+import org.pathvisio.model.RasterImageWithDataExporter;
 import org.pathvisio.model.DataNodeListExporter;
 import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.GpmlFormat;
@@ -414,8 +416,8 @@ public class GuiMain
 	{
 		engine.addPathwayExporter(new MappFormat());
 		engine.addPathwayExporter(new GpmlFormat());
+		engine.addPathwayExporter(new RasterImageWithDataExporter(ImageExporter.TYPE_PNG, standaloneEngine.getVisualizationManager()));
 		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_SVG, standaloneEngine.getVisualizationManager()));
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PNG, standaloneEngine.getVisualizationManager()));
 		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_TIFF, standaloneEngine.getVisualizationManager()));
 		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PDF, standaloneEngine.getVisualizationManager()));	
 		engine.addPathwayExporter(new DataNodeListExporter(gdbManager));

@@ -459,6 +459,20 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	}
 
 	/**
+	 * test exporting of .png
+	 */
+	public void testPng2() throws IOException, ConverterException
+	{
+		data.readFromXml(new File("testData/test.gpml"), false);
+		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
+		File temp = File.createTempFile ("data.test", ".png");
+		temp.deleteOnExit();
+		
+		RasterImageExporter exporter = new RasterImageExporter(BatikImageExporter.TYPE_PNG);
+		exporter.doExport(temp, data);
+	}
+
+	/**
 	 * test exporting of .pdf
 	 */
 	public void testPdf() throws IOException, ConverterException

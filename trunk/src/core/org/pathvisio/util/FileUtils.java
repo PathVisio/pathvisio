@@ -31,6 +31,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.List;
 
 import org.pathvisio.debug.Logger;
 
@@ -41,7 +42,7 @@ public class FileUtils {
 	/**
 	 * Get all files in a directory
 	 * @param directory	The directory to get the files from
-	 * @param extension	The extension of the files to get
+	 * @param extension	The extension of the files to get, without the dot so e.g. "gpml"
 	 * @param recursive	Whether to include subdirectories or not
 	 * @return A list of files with given extension present in the given directory
 	 */
@@ -173,5 +174,35 @@ public class FileUtils {
 		
 		Logger.log.info ("Created temporary directory " + result.getAbsolutePath());
 		return result;
+	}
+
+	/**
+	 * Maps a file from one point in the directory tree to another point.
+	 * For example, with this function you can map from
+	 * 
+	 * /home/username/input/pathways/human/metabolomic/pathway.gpml
+	 * to
+	 * /tmp/output/pathways/human/metabolomic/pathway.gpml
+	 * 
+	 */
+	public static File mapFileTree (File f, File srcDir, File destDir)
+	{
+		List<String> components = new ArrayList<String>();
+		File dest = destDir;
+		File src = f;
+		
+		// unwind source
+		while (!src.equals(srcDir) && src != null)
+		{
+			components.add(f.getName());
+			src = src.getParentFile();
+		}
+		
+		// rewind dest
+		for (String s : components)
+		{
+			dest = new File (destDir, s);
+		}
+		return dest;
 	}
 }

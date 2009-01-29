@@ -59,10 +59,24 @@ public class ProgressKeeper {
 	{
 		return (total == PROGRESS_UNKNOWN);
 	}
-	
+
+	//TODO use setProgress instead?
 	public void worked(int w) {
 		if(!isFinished()) {			
 			progress += w;
+			fireProgressEvent(ProgressEvent.PROGRESS_CHANGED);
+			if(progress >= total) {
+				progress = total; //to trigger event
+				finished();
+			}
+		}
+	}
+	
+	public void setProgress(int val)
+	{
+		if(!isFinished()) 
+		{
+			progress = val;
 			fireProgressEvent(ProgressEvent.PROGRESS_CHANGED);
 			if(progress >= total) {
 				progress = total; //to trigger event

@@ -19,21 +19,12 @@ package org.pathvisio.plugins.statistics;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -48,42 +39,25 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ProgressMonitor;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableCellRenderer;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.jdesktop.swingworker.SwingWorker.StateValue;
-import org.pathvisio.data.CachedData.Data;
-import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.model.Xref;
-import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.FileUtils;
-import org.pathvisio.util.PathwayParser;
-import org.pathvisio.util.PathwayParser.ParseException;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.util.Stats;
-import org.pathvisio.util.swing.ListWithPropertiesTableModel;
-import org.pathvisio.util.swing.PropertyColumn;
-import org.pathvisio.util.swing.RowWithProperties;
 import org.pathvisio.util.swing.SimpleFileFilter;
 import org.pathvisio.util.swing.TextFieldUtils;
 import org.pathvisio.visualization.colorset.Criterion;
-import org.pathvisio.visualization.colorset.Criterion.CriterionException;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * A PathVisio plugin that lets you do simple overrepresentation analysis on pathways.
@@ -134,7 +108,7 @@ public class StatisticsPlugin implements Plugin
 	}
 	
 	/**
-	 * Statistics action
+	 * Statistics menu action in the Data menu
 	 */
 	private static class StatisticsAction extends AbstractAction 
 	{
@@ -278,7 +252,7 @@ public class StatisticsPlugin implements Plugin
 		
 		private CriterionPanel critPanel; 
 		private JButton btnSave;
-		private Result result = null;
+		private StatisticsResult result = null;
 		private JButton btnCalc;
 		private GexManager gm;
 		private SwingEngine se;
@@ -314,7 +288,7 @@ public class StatisticsPlugin implements Plugin
 				}
 			}
 		}
-				
+
 		/**
 		 * Pop up the statistics dialog
 		 */
@@ -374,7 +348,7 @@ public class StatisticsPlugin implements Plugin
 				public void mouseClicked(MouseEvent me) 
 				{
 					int row = tblResult.getSelectedRow();
-					final StatisticsResult sr = ((StatisticsTableModel)(tblResult.getModel())).getRow(row);
+					final StatisticsPathwayResult sr = ((StatisticsTableModel)(tblResult.getModel())).getRow(row);
 						
 						//TODO: here I want to use SwingEngine.openPathway, but I need to 
 						// be able to wait until the process is finished!
@@ -407,482 +381,103 @@ public class StatisticsPlugin implements Plugin
 			dlg.setVisible(true);
 		}
 
-		
 		/**
 		 * asynchronous statistics calculation function
 		 */
 		private void doCalculate(final File pwDir, final Criterion crit)
 		{			
-			final ProgressMonitor pmon = new ProgressMonitor(
-					dlg, "Pathway search", "searching pathways...",
-					0, 100);
 			btnSave.setEnabled (false);
-			
-			final StatisticsTableModel stm = new StatisticsTableModel();
-			stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
-			tblResult.setModel (stm);
-
-			final ZScoreCalculator worker = new ZScoreCalculator(crit, stm, pwDir, gm.getCurrentGex(), se.getGdbManager().getCurrentGdb());
-			worker.addPropertyChangeListener(new ZScoreCalculatorPropListener(pmon, worker));
+		    
+			ProgressKeeper pk = new ProgressKeeper(100);
+			final ZScoreWorker worker = new ZScoreWorker(crit, pwDir, gm.getCurrentGex(), se.getGdbManager().getCurrentGdb(), pk);
+			ProgressDialog d = new ProgressDialog(
+					JOptionPane.getFrameForComponent(dlg), 
+					"Calculating Z-scores", pk, true, true
+			);
 			worker.execute();			
+			d.setVisible(true);
 		}
 		
-		private class ZScoreCalculatorPropListener implements PropertyChangeListener
+		private class ZScoreWorker extends SwingWorker <StatisticsResult, StatisticsPathwayResult>
 		{
-			private ProgressMonitor pmon;
-			private ZScoreCalculator worker;
+			private final ZScoreCalculator calculator;
+			private ProgressKeeper pk;
 			
-			public ZScoreCalculatorPropListener (ProgressMonitor aPmon, ZScoreCalculator aWorker)
+			// temporary model that will be filled with intermediate results.
+			private StatisticsTableModel temp;
+			
+			ZScoreWorker(Criterion crit, File pwDir, SimpleGex gex, Gdb gdb, ProgressKeeper pk)
 			{
-				pmon = aPmon;
-				worker = aWorker;
+				this.pk = pk;
+				calculator = new ZScoreCalculator (crit, pwDir, gex, gdb, pk);
+				temp = new StatisticsTableModel();
+				temp.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
+				tblResult.setModel(temp);
+			}
+
+			@Override
+			protected StatisticsResult doInBackground()
+			{
+				while (calculator.hasNext())
+				{
+					StatisticsPathwayResult sr = calculator.next();
+					publish (sr);
+					if (pk.isCancelled()) return null;
+				}
+				
+				pk.setProgress (100);
+				return calculator.getResult();
 			}
 			
-			public void propertyChange(PropertyChangeEvent evt) 
+			@Override
+			protected void process (List<StatisticsPathwayResult> srs)
 			{
-				String strPropertyName = evt.getPropertyName();
-				if ("progress".equals(strPropertyName)) 
+				// add intermediate rows to temporary table
+				for (StatisticsPathwayResult sr : srs)
 				{
-					int progress = (Integer) evt.getNewValue();
-					
-					StatisticsTableModel.packRows(tblResult, 2); // pack table rows
-					pmon.setProgress(progress);
-					if (pmon.isCanceled())
-					{
-						worker.cancel(true);
-						Logger.log.info ("Calculation cancelled");
-					}
+					temp.addRow (sr);
 				}
-				else if ("note".equals(strPropertyName)) 
+				temp.sort();
+				StatisticsTableModel.packRows(tblResult, 2); // pack table rows
+			}
+
+			@Override
+			protected void done()
+			{
+				if (!pk.isCancelled())
 				{
-					String note = (String) evt.getNewValue();
-					pmon.setNote(note);
-				}
-				else if ("state".equals(strPropertyName))
-				{
-					if (worker.getState() == StateValue.DONE)
-					{
-						if (!worker.isCancelled())
+					StatisticsResult result;
+					try {
+						result = get();
+						if (result.stm.getRowCount() == 0)
 						{
-							try
-							{
-								result = worker.get();
-								if (result.stm.getRowCount() == 0)
-								{
-									JOptionPane.showMessageDialog(null, 
-											"0 results found, did you choose the right directory?");
-								}
-								btnSave.setEnabled(true);
-							}
-							catch (ExecutionException ex)
-							{
-								JOptionPane.showMessageDialog(null, "Execution exception: " + ex.getMessage());
-								Logger.log.error ("Execution exception", ex);
-							}
-							catch (InterruptedException ex)
-							{
-								JOptionPane.showMessageDialog(null, "Interrupted: " + ex.getMessage());
-								Logger.log.error ("Interrupted.", ex);
-							}
+							JOptionPane.showMessageDialog(null, 
+							"0 results found, did you choose the right directory?");
 						}
-						pmon.close();
-						btnCalc.setEnabled(true);
-					}
-				}
-			}
-		}
-		
-	}
-
-	private static class Result 
-	{
-		StatisticsTableModel stm;
-		int bigN = 0;
-		int bigR = 0;
-		Criterion crit;
-		File pwDir;
-		SimpleGex gex;
-		Gdb gdb;
-		
-		void save (File f) throws IOException
-		{
-			PrintStream out = new PrintStream (new FileOutputStream(f));
-			
-			out.println ("Statistics results for " + new Date());
-			out.println ("Dataset: " + gex.getDbName());
-			out.println ("Pathway directory: " + pwDir);
-			out.println ("Gene database: " + gdb.getDbName());
-			out.println ("Criterion: " + crit.getExpression());
-			out.println ("Rows in data (N): " + bigN);
-			out.println ("Rows meeting criterion (R): " + bigR);
-			out.println();
-			
-			stm.printData(out);
-		}
-	}
-	
-	private static class ZScoreCalculator extends SwingWorker <Result, StatisticsResult> 
-	{			
-		private Result result;
-		private String note = null;
-		
-		private void setNote(String value)
-		{
-			String oldNote = note;
-			note = value;
-			firePropertyChange ("note", oldNote, note);
-		}
-		
-		ZScoreCalculator(Criterion crit, StatisticsTableModel stm, File pwDir, SimpleGex gex, Gdb gdb)
-		{
-			result = new Result();
-			result.crit = crit;
-			result.stm = stm;
-			result.pwDir = pwDir;
-			result.gex = gex;
-			result.gdb = gdb;
-		}
-		
-		/**
-		 * calculate bigN and bigR
-		 */
-		private void doCalculateTotals()
-		{
-			try
-			{
-				int maxRow = result.gex.getMaxRow();
-				for (int i = 0; i < maxRow; ++i)
-				{
-					if (isCancelled()) return;
-					try
-					{
-						Data d = result.gex.getRow(i);
-						result.bigN++;
-						boolean eval = result.crit.evaluate(d.getSampleData());
-						if (eval)
+						else
 						{
-							result.bigR++;
-						}		
-//							Logger.log.trace ("Row " + i +  " (" + d.getXref() + ") = " + result);
-					}
-					catch (CriterionException e)
-					{
-						Logger.log.error ("Problem during row handling ", e);
-					}
-					
-					setProgress ((int)(0.2 * (double)i / (double)maxRow * 100.0));
-				}
-			}
-			catch (DataException e)
-			{
-				Logger.log.error ("Problem during calculation of R/N ", e);
-				//TODO: better error handling
-			}
-
-			Logger.log.info ("N: " + result.bigN + ", R: " + result.bigR);
-		}
-		
-		private void doCalculatePathway(File file)
-		{
-			try
-			{
-				PathwayParser pwyParser = new PathwayParser(file, xmlReader);
-				
-				Logger.log.info ("Calculating statistics for " + pwyParser.getName());
-				
-				List <Xref> srcRefs = new ArrayList<Xref>();
-				for (XrefWithSymbol x : pwyParser.getGenes()) srcRefs.add (x.asXref());
-				
-				try
-				{
-					result.gex.cacheData(srcRefs, new ProgressKeeper(1000), result.gdb);
-				}
-				catch (DataException e)
-				{
-					Logger.log.error ("Exception while caching data", e);
-				}
-
-				int cPwyTotal = srcRefs.size();
-				int cPwyMeasured = 0;
-				
-				double cPwyPositive = 0;
-				
-				for (Xref srcRef : srcRefs)
-				{
-					if (isCancelled()) return;
-					
-					List<Data> rows = result.gex.getCachedData().getData(srcRef);
-					
-					if (rows != null)
-					{
-						int cGeneTotal = rows.size();
-						if (cGeneTotal > 0) { cPwyMeasured++; }
-						int cGenePositive = 0;
-						
-						for (Data row : rows)
-						{
-							if (isCancelled()) return;
-							Logger.log.info ("Data found: " + row.getXref() + ", for sample 1: " + row.getSampleData(1));
-							try
-							{	
-								boolean eval = result.crit.evaluate(row.getSampleData());
-								if (eval) cGenePositive++;
-							}
-							catch (CriterionException e)
-							{
-								Logger.log.error ("Unknown error during statistics", e);
-							}
+							// replace temp tableModel with definitive one
+							tblResult.setModel(result.stm);
 						}
-					
-						// Map the rows back to the corresponding genes. 
-						// "yes" is counted, weighed by the # of rows per gene. 
-						// This is our "r".
-						
-						//This line is different from MAPPFinder: if 2 out of 3 probes are positive, count only 2/3
-						cPwyPositive += (double)cGenePositive / (double)cGeneTotal;
-						
-						//The line below is the original MAPPFinder behaviour: 
-						//  count as fully positive if at least one probe is positive
-						//if (cGenePositive > 0) cPwyPositive += 1;
-					}
-				}
-				
-				double z = Stats.zscore (cPwyMeasured, cPwyPositive, result.bigN, result.bigR);						
-				
-				StatisticsResult sr = new StatisticsResult (file, pwyParser.getName(), cPwyMeasured, (int)Math.round (cPwyPositive), cPwyTotal, z);
-				publish (sr);
-			}
-			catch (ParseException pe)
-			{
-				Logger.log.warn ("Could not parse " + file + ", ignoring", pe);
-			}
-		}
-		
-		private XMLReader xmlReader = null;
-		
-		@Override
-		protected Result doInBackground()
-		{
-			setProgress (0);
-			setNote("Analyzing data");
-						
-			// first we calculate N and R
-			doCalculateTotals();
-			if (isCancelled()) return null;
-			
-			// now we calculate n and r for each pwy				
-			List<File> files = FileUtils.getFiles(result.pwDir, "gpml", true);
-			
-			try
-			{
-				xmlReader = XMLReaderFactory.createXMLReader();
-			}
-			catch (SAXException e)
-			{
-				Logger.log.error("Problem while searching pathways", e);
-				return null;
-			}
-	
-			int i = 0;
-
-			setNote ("Analyzing pathways");
-
-			for (File file : files)
-			{
-				doCalculatePathway (file);
-				if (isCancelled()) return null;
-				i++;
-				setProgress((int)((0.2 + (0.8 * (double)i / (double)files.size())) * 100.0));				
-			}
-			setProgress (100);
-			return result;
-		}
-		
-		@Override
-		protected void process (List<StatisticsResult> srs)
-		{
-			for (StatisticsResult sr : srs)
-			{
-				result.stm.addRow (sr);
-				result.stm.sort();
-				
-			}
-		}		
-	}
-	
-	/**
-	 * Statistics calculation for a single pathway,
-	 * to be shown as a row in the statistics result table
-	 */
-	private static class StatisticsResult implements RowWithProperties<Column> 
-	{
-		private int r = 0;
-		private int n = 0;
-		private int total = 0;
-		private String name;
-		private double z = 0;
-		private File f;
-
-		File getFile() { return f; }
-		
-		StatisticsResult (File f, String name, int n, int r, int total, double z)
-		{
-			this.f = f;
-			this.r = r;
-			this.n = n;
-			this.total = total;
-			this.name = name;
-			this.z = z;
-		}
-
-		public String getProperty(Column prop) 
-		{
-			switch (prop)
-			{
-			case N: return "" + n;
-			case R: return "" + r;
-			case TOTAL: return "" + total;
-			case PATHWAY_NAME: return name;
-			case PVAL: return "0.01"; //TODO
-			case ZSCORE: return String.format ("%3.2f", (float)z);
-			case PCT: return String.format("%3.2f%%", (n == 0 ? Float.NaN : 100.0 * (float)r / (float)n));
-			default : throw new IllegalArgumentException("Unknown property");
-			}
-		}
-	}
-
-	/**
-	 * Table Model for showing statistics results 
-	 */
-	private static class StatisticsTableModel extends ListWithPropertiesTableModel<StatisticsPlugin.Column, StatisticsResult>
-	{
-		private static final long serialVersionUID = 1L;
-		
-		public void printData(PrintStream out) throws IOException
-		{
-			// array of columns we are going to save
-			Column[] saveColumns = new Column[] {
-					Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE 
-			};
-
-			// print table header
-			{
-				boolean first = true;
-				for (Column col : saveColumns)
-				{
-					if (!first)
+					} 
+					catch (InterruptedException e) 
 					{
-						out.print ("\t");
-					}
-					first = false;
-					out.print (col.title);
-				}
-				out.println ();
-			}
-			
-			// print table rows	
-			for (StatisticsResult sr : rows)
-			{
-				boolean first = true;
-				for (Column col : saveColumns)
-				{
-					if (!first)
+						JOptionPane.showMessageDialog(null, 
+								"Exception while calculating statistics\n" + e.getMessage());
+						Logger.log.error ("Statistics calculation exception", e);
+					} 
+					catch (ExecutionException e) 
 					{
-						out.print ("\t");
+						JOptionPane.showMessageDialog(null, 
+							"Exception while calculating statistics\n" + e.getMessage());
+						Logger.log.error ("Statistics calculation exception", e);
 					}
-					first = false;
-					out.print (sr.getProperty(col));
 				}
-				out.println();
+				btnCalc.setEnabled(true);
+				btnSave.setEnabled(true);
 			}
 		}
 		
-		/**
-		 * Sort results on z-score
-		 */
-		public void sort()
-		{
-			Collections.sort (rows, new Comparator<StatisticsResult>()
-			{
-
-				public int compare(StatisticsResult arg0, StatisticsResult arg1) 
-				{
-					return Double.compare(arg1.z, arg0.z);
-				}
-			});
-			fireTableDataChanged();
-		}
-		
-		/**
-	    // Returns the preferred height of a row.
-	    // The result is equal to the tallest cell in the row.
-	     */
-	    public static int getPreferredRowHeight(JTable table, int rowIndex, int margin) {
-	        // Get the current default height for all rows
-	        int height = table.getRowHeight();
-	    
-	        // Determine highest cell in the row
-	        for (int c=0; c<table.getColumnCount(); c++) {
-	            TableCellRenderer renderer = table.getCellRenderer(rowIndex, c);
-	            Component comp = table.prepareRenderer(renderer, rowIndex, c);
-	            int h = comp.getPreferredSize().height + 2*margin;
-	            height = Math.max(height, h);
-	        }
-	        return height;
-	    }
-	    
-	    /**
-	     * The height of each row is set to the preferred height of the
-	     * tallest cell in that row.
-	     */
-	    static public void packRows(JTable table, int margin) 
-	    {
-	        packRows(table, 0, table.getRowCount(), margin);
-	    }
-	    
-	    /**
-	    // For each row >= start and < end, the height of a
-	    // row is set to the preferred height of the tallest cell
-	    // in that row.
-	     */
-	    public static void packRows(JTable table, int start, int end, int margin) {
-	        for (int r=0; r<table.getRowCount(); r++) {
-	            // Get the preferred height
-	            int h = getPreferredRowHeight(table, r, margin);
-	    
-	            // Now set the row height using the preferred height
-	            if (table.getRowHeight(r) != h) {
-	                table.setRowHeight(r, h);
-	            }
-	        }
-	    }
-
-	}
-
-	/**
-	 * Enum for possible columns in the statistics result table
-	 */
-	private static enum Column implements PropertyColumn
-	{
-		N("measured (n)"),
-		R("positive (r)"),
-		TOTAL("total"),
-		PATHWAY_NAME("Pathway"),
-		PCT("%"),
-		PVAL("pval"),
-		ZSCORE ("Z Score");
-		
-		private String title;
-		
-		private Column(String title)
-		{
-			this.title = title;
-		}
-		
-		public String getTitle() 
-		{
-			return title;
-		}
 	}
 	
 }

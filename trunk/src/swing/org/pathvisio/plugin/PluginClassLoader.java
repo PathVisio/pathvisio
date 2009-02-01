@@ -43,32 +43,32 @@ public class PluginClassLoader extends URLClassLoader
      * @exception ClassNotFoundException if the specified class could not
      *            be found
      */
-    @Override public Class<?> loadClass(String name) throws ClassNotFoundException 
-    {
-        Logger.log.debug("Loading from plugin jar: " + name);
-        Class<?> aClass = null;
-        try 
-        {
-            aClass = super.findClass(name);
-            Logger.log.debug("  found: " + aClass);
-            return aClass;
-        } 
-        catch (ClassNotFoundException ex) 
-        {
-            Logger.log.debug("  not found in plugin jar");
-        }
-        
-        try 
-        {
-            aClass = super.loadClass(name);
-            Logger.log.debug("  found: " + aClass);
-        } 
-        catch (ClassNotFoundException ex) 
-        {
-            Logger.log.error("  not found in elsewhere", ex);
-            throw ex;
-        }
-        return aClass;
-    }
+//    @Override public Class<?> loadClass(String name) throws ClassNotFoundException 
+//    {
+//        Logger.log.debug("Loading from plugin jar: " + name);
+//        Class<?> aClass = null;
+//        try 
+//        {
+//            aClass = super.findClass(name);
+//            Logger.log.debug("  found: " + aClass);
+//            return aClass;
+//        } 
+//        catch (ClassNotFoundException ex) 
+//        {
+//            Logger.log.debug("  not found in plugin jar");
+//        }
+//        
+//        try 
+//        {
+//            aClass = super.loadClass(name);
+//            Logger.log.debug("  found: " + aClass);
+//        } 
+//        catch (ClassNotFoundException ex) 
+//        {
+//            Logger.log.error("  not found in elsewhere", ex);
+//            throw ex;
+//        }
+//        return aClass;
+//    }
 
 }

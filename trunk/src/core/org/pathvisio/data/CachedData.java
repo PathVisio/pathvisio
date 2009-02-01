@@ -105,33 +105,32 @@ public class CachedData {
 	 * @return a HashMap where the keys represent the sample ids and the values the averaged data
 	 * @see Data#getSampleData()
 	 */
-	public Map<Integer, Object> getAverageSampleData(Xref idc)
+	public CachedData.Data getAverageSampleData(Xref idc)
 	{
-		Map<Integer, Object> averageData = new HashMap<Integer, Object>();
+		CachedData.Data result = new CachedData.Data(null, -1);
 		List<Data> dlist = data.get(idc);
-		if(dlist != null) {
-			Map<Integer, Sample> samples = GexManager.getCurrent().getCurrentGex().getSamples();
-			for(int idSample : samples.keySet())
+		if(dlist != null && dlist.size() > 0) {
+			for(Sample key : dlist.get(0).getSampleData().keySet())
 			{
-				int dataType = samples.get(idSample).getDataType();
+				int dataType = key.getDataType();
 				if(dataType == Types.REAL) {
-					averageData.put(idSample, averageDouble(dlist, idSample));
+					result.setSampleAsObject(key, averageDouble(dlist, key));
 				} else {
-					averageData.put(idSample, averageString(dlist, idSample));
+					result.setSampleAsObject(key, averageString(dlist, key));
 				}
 			}
 		}
-		return averageData;
+		return result;
 	}
 	
 	
-	private Object averageDouble(List<Data> dlist, int idSample)
+	private Object averageDouble(List<Data> dlist, Sample s)
 	{
 		double avg = 0;
 		int n = 0;
 		for(Data d : dlist) {
 			try { 
-				Double value = (Double)d.getSampleData(idSample);
+				Double value = (Double)d.getSampleData(s);
 				if( !value.isNaN() ) {
 					avg += value;
 					n++;
@@ -145,11 +144,11 @@ public class CachedData {
 		}
 	}
 	
-	private Object averageString(List<Data> dlist, int idSample)
+	private Object averageString(List<Data> dlist, Sample s)
 	{
 		StringBuilder sb = new StringBuilder();
 		for(Data d : dlist) {
-			sb.append(d.getSampleData(idSample) + ", ");
+			sb.append(d.getSampleData(s) + ", ");
 		}
 		int end = sb.lastIndexOf(", ");
 		return end < 0 ? "" : sb.substring(0, end).toString();
@@ -159,22 +158,21 @@ public class CachedData {
 	 * This class represents cached expression data for a reporter in the dataset.
 	 * The data is stored in a {@link HashMap} where the keys are the sample ids and the value
 	 * is an object of class {@link String} or {@link Double} for text and numeric data respectively.
-	 * @author Thomas
 	 */
 	public static class Data {
 		Xref idc;
 		int group;
-		Map<Integer, Object> sampleData;
-		
+		Map<Sample, Object> sampleData;
+
 		/**
 		 * Constructor for this class. Creates a new {@link Data} object for the given reporter
 		 * @param ref The IdCodePair that represents the reporter
 		 * @param groupId An id that groups the expression data from duplicate reporters
 		 */
-		protected Data(Xref ref, int groupId) {
+		Data(Xref ref, int groupId) {
 			idc = ref;
 			group = groupId;
-			sampleData = new HashMap<Integer, Object>();
+			sampleData = new HashMap<Sample, Object>();
 		}
 		
 		public void setXref(Xref value) { idc = value; }
@@ -199,8 +197,22 @@ public class CachedData {
 		 * @see Sample#getDataType()
 		 * @see Sample#getId()
 		 */
-		public Map<Integer, Object> getSampleData() {
+		public Map<Sample, Object> getSampleData() {
 			return sampleData;
+		}
+		
+		/**
+		 * returns the same info as getSampleData(), but
+		 * using the sample name instead of the sample object as key.
+		 */
+		public Map<String, Object> getByName()
+		{
+			Map<String, Object> result = new HashMap<String, Object>();
+			for (Sample s : sampleData.keySet())
+			{
+				result.put (s.getName(), sampleData.get(s));
+			}
+			return result;
 		}
 		
 		/**
@@ -210,8 +222,9 @@ public class CachedData {
 		 * @see Sample#getDataType()
 		 * @see Sample#getId()
 		 */
-		public Object getSampleData(int sampleId) {
-			return sampleData.get(sampleId);
+		public Object getSampleData(Sample key)
+		{
+			return sampleData.get(key);
 		}
 		
 		/**
@@ -220,11 +233,16 @@ public class CachedData {
 		 * @param data The {@link String} representation of the data to add
 		 * @see SimpleGex#cacheData
 		 */
-		protected void setSampleData(int sampleId, String data) {
+		void setSampleData(Sample sample, String data) {
 			Object parsedData = null;
 			try { parsedData = Double.parseDouble(data); }
 			catch(Exception e) { parsedData = data; }
-			sampleData.put(sampleId, parsedData);
+			sampleData.put(sample, parsedData);
+		}
+		
+		private void setSampleAsObject (Sample sample, Object data)
+		{
+			sampleData.put(sample, data);
 		}
 		
 	}

@@ -158,7 +158,7 @@ public class ZScoreCalculator
 				{
 					Data d = result.gex.getRow(i);
 					result.bigN++;
-					boolean eval = result.crit.evaluate(d.getSampleData());
+					boolean eval = result.crit.evaluate(d.getByName());
 					if (eval)
 					{
 						result.bigR++;
@@ -224,10 +224,9 @@ public class ZScoreCalculator
 					for (Data row : rows)
 					{
 						if (pk != null && pk.isCancelled()) return null;
-						Logger.log.info ("Data found: " + row.getXref() + ", for sample 1: " + row.getSampleData(1));
 						try
 						{	
-							boolean eval = result.crit.evaluate(row.getSampleData());
+							boolean eval = result.crit.evaluate(row.getByName());
 							if (eval) cGenePositive++;
 						}
 						catch (CriterionException e)

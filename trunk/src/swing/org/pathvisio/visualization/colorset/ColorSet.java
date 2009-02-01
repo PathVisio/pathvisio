@@ -22,9 +22,10 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.jdom.Element;
+import org.pathvisio.data.CachedData;
+import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -161,10 +162,10 @@ public class ColorSet
 	 * @param sampleId	the id of the sample that will be visualized
 	 * @return	an {@link RGB} object representing the color for the given data
 	 */
-	public Color getColor(Map<Integer, Object> data, int sampleId)
+	public Color getColor(CachedData.Data data, Sample key)
 	{
 		if(data == null) return colorNoDataFound;
-		Object value = data.get(sampleId);
+		Object value = data.getSampleData(key);
 		if(value == null || value.equals(Double.NaN)) return colorNoDataFound;
 		
 		Color rgb = colorNoCriteriaMet; //The color to return
@@ -174,7 +175,7 @@ public class ColorSet
 		{
 			ColorSetObject gc = it.next();
 			try{ 
-				Color gcRgb = gc.getColor(data, sampleId);
+				Color gcRgb = gc.getColor(data, key);
 				if(gcRgb != null) {
 					return gcRgb;
 				}

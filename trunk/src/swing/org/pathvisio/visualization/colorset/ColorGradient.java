@@ -24,9 +24,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.jdom.Element;
+import org.pathvisio.data.CachedData;
+import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
 
@@ -192,11 +193,11 @@ public class ColorGradient extends ColorSetObject {
 		return rgb;
 	}
 	
-	public Color getColor(Map<Integer, Object> data, int idSample)
+	@Override public Color getColor(CachedData.Data data, Sample key)
 	{
-		Object o = data.get(idSample);
+		Object o = data.getSampleData(key);
 		double value;
-		if (o instanceof Double) value = (Double)data.get(idSample);
+		if (o instanceof Double) value = (Double)o;
 		else value = Double.NaN;
 		return getColor(value);
 	}

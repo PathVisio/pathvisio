@@ -27,9 +27,11 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.Sample;
 import org.pathvisio.data.SimpleGex;
+import org.pathvisio.debug.Logger;
 
 /**
  * List of samples, with a checkbox in front of each so the user can select
@@ -45,7 +47,16 @@ public class SampleCheckList extends JCheckBoxList {
 		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 		if(gex != null) {
 			List<Sample> samples = new ArrayList<Sample>();
-			samples.addAll(gex.getSamples().values());
+			try
+			{
+				samples.addAll(gex.getSamples().values());
+			}
+			catch (DataException ex)
+			{
+				//TODO: notify user with popup
+				Logger.log.error ("Could not fetch samples from database", ex);
+			}
+			
 			Collections.sort(samples);
 			
 			setSamples(

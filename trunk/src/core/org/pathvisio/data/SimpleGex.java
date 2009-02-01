@@ -91,27 +91,9 @@ public class SimpleGex
 	 * (Connection is not reset)
 	 */
 	private void setDbName(String name) { dbName = name; }
-						    
+
+	// cache of samples
 	private Map<Integer, Sample> samples;
-	/**
-	 * Loads the samples used in the expression data (Sample table) in memory
-	 */
-	public void setSamples()
-	{		
-		try {
-			ResultSet r = con.createStatement().executeQuery(
-					"SELECT idSample, name, dataType FROM samples"
-			);
-			samples = new HashMap<Integer, Sample>();
-			while(r.next())
-			{
-				int id = r.getInt(1);
-				samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));					
-			}
-		} catch (Exception e) {
-			Logger.log.error("while loading data from the 'samples' table: " + e.getMessage(), e);
-		}
-	}
 	
 	PreparedStatement pstSample = null;
 	PreparedStatement pstExpr = null;
@@ -168,13 +150,35 @@ public class SimpleGex
 		if (++commitCount % 1000 == 0) con.commit();
 	}
 	
-	public Sample getSample(int id) {
+	public Sample getSample(int id) throws DataException
+	{
 		return getSamples().get(id);
 	}
-	
-	public Map<Integer, Sample> getSamples()
+
+	/**
+	 * Reads a list of Samples from the database,
+	 * and returns them, indexed by key.
+	 * 
+	 * This data is cached, so you can safely call this repeatedly.
+	 */
+	public Map<Integer, Sample> getSamples() throws DataException
 	{
-		if(samples == null) setSamples();
+		if(samples == null) 
+		{
+			try {
+				ResultSet r = con.createStatement().executeQuery(
+						"SELECT idSample, name, dataType FROM samples"
+				);
+				samples = new HashMap<Integer, Sample>();
+				while(r.next())
+				{
+					int id = r.getInt(1);
+					samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));					
+				}
+			} catch (SQLException e) {
+				throw new DataException ("SQL exception while setting samples", e);
+			}
+		}
 		return samples;
 	}
 	
@@ -246,6 +250,7 @@ public class SimpleGex
 	 */
 	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, Gdb gdb) throws DataException
 	{	
+		Map<Integer, Sample> samples = getSamples();
 		try
 		{
 			cachedData = new CachedData();
@@ -321,7 +326,7 @@ public class SimpleGex
 							}
 							
 							int idSample = r.getInt("idSample");					
-							data.setSampleData(idSample, r.getString("data"));
+							data.setSampleData(samples.get(idSample), r.getString("data"));
 						}
 					}
 				}			
@@ -374,7 +379,7 @@ public class SimpleGex
 		else 
 		{
 			con = dbConnector.createConnection(dbName, DBConnector.PROP_NONE);
-			setSamples();
+			getSamples(); // init samples cache
 		}
 //		try
 //		{
@@ -576,6 +581,7 @@ public class SimpleGex
 	
 	public Data getRow(int rowId) throws DataException
 	{
+		Map<Integer, Sample> samples = getSamples();
 		try
 		{
 			Data result;
@@ -597,7 +603,7 @@ public class SimpleGex
 				
 				int sample = rs.getInt(3);
 				String value = rs.getString (4);
-				result.setSampleData(sample, value);
+				result.setSampleData(samples.get(sample), value);
 			}
 			
 			return result;

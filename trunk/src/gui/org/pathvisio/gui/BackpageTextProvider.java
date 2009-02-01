@@ -249,15 +249,15 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 		
 		text += bpInfo == null ? "<I>No " + type + " information found</I>" : bpInfo;
-
-		//Get the expression data information if available
-		if(gex != null) {
-			text += "<H1>Expression data</H1>";
-			text += getDataString(ref, gdb, gex);
-		}
 		
 		try
 		{
+			//Get the expression data information if available
+			if(gex != null) {
+				text += "<H1>Expression data</H1>";
+				text += getDataString(ref, gdb, gex);
+			}
+			
 			text += getCrossRefText (gdb, ref);
 		}
 		catch (DataException ex)
@@ -307,7 +307,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	private String getDataString(Xref idc, Gdb gdb, SimpleGex gex)
+	private String getDataString(Xref idc, Gdb gdb, SimpleGex gex) throws DataException
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
@@ -329,7 +329,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			dataString += "<TR><TH>" + s.getName();
 			for(Data d : pwData)
 			{
-				dataString += "<TH>" + d.getSampleData(s.getId());
+				dataString += "<TH>" + d.getSampleData(s);
 			}
 		}
 		

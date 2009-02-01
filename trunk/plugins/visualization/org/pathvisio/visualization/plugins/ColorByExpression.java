@@ -270,7 +270,7 @@ public class ColorByExpression extends VisualizationMethod {
 	
 	void drawSampleAvg(ConfiguredSample s, Xref idc, CachedData cache, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
-		Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getId());
+		Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getSample());
 		drawColoredRectangle(area, rgb, g2d);
 	}
 	
@@ -281,7 +281,7 @@ public class ColorByExpression extends VisualizationMethod {
 		int left = area.height % n;
 		int h = area.height / n;
 		for(int i = 0; i < n; i++) {
-			Color rgb = cs.getColor(refdata.get(i).getSampleData(), s.getId());
+			Color rgb = cs.getColor(refdata.get(i), s.getSample());
 			Rectangle r = new Rectangle(
 					area.x, area.y + i*h,
 					area.width, h + (i == n-1 ? left : 0));
@@ -308,7 +308,7 @@ public class ColorByExpression extends VisualizationMethod {
 		ColorSet cs = s.getColorSet();
 		
 		if(s.hasImage()) {
-			Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getId());
+			Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getSample());
 			drawImage(s, rgb, area, g2d);
 		} else {
 			if(cache.hasMultipleData(idc)) {
@@ -321,8 +321,7 @@ public class ColorByExpression extends VisualizationMethod {
 					break;
 				}
 			} else {
-				Map<Integer, Object> data = cache.getSingleData(idc).getSampleData();
-				Color rgb = cs.getColor(data, s.getId());
+				Color rgb = cs.getColor(cache.getSingleData(idc), s.getSample());
 				drawColoredRectangle(area, rgb, g2d);
 			}
 		}

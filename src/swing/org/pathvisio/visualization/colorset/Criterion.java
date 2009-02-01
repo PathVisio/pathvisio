@@ -19,8 +19,6 @@ package org.pathvisio.visualization.colorset;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 
 /**
@@ -44,7 +42,10 @@ public class Criterion
 	}
 	
 	private static final String DISPLAY_SAMPLE = "|Displayed sample|";
+	
+	/** operators that can be used in a Criterion */
 	public static final String[] TOKENS = {"AND", "OR", "=", "<", ">", "<=", ">="};
+	
 	private Map<String, Double> symTab = new HashMap<String, Double>();
 
 	private String expression = "";
@@ -58,7 +59,8 @@ public class Criterion
 	}
 	
 	/**
-	 * set and expression and available symbols
+	 * set and expression and available symbols.
+	 * The symbols do not need to be mapped to values at this point.
 	 * The expression will be parsed and checked for syntax errors
 	 * 
 	 * Returns an error String, or null if there was no error.
@@ -79,20 +81,24 @@ public class Criterion
 		}
 	}
 	
-	//TODO: externalize reference to GexManager here...
-	private void setSampleData(Map<Integer, Object> data) 
+	/** 
+	 * Set symbol values. Filters out any values that are not of type Double,
+	 * currently Criterion can not do calculations with them.
+	 * 
+	 * You have to set all symbol values together. Any previously set
+	 * symbol values are cleared.
+	 */
+	private void setSampleData(Map<String, Object> data)
 	{
-		// Add current sample values to symTab if they are of type Double
-		Map<Integer, Sample> samples = GexManager.getCurrent().getCurrentGex().getSamples();
 		symTab.clear();
-		for(Sample s : samples.values()) 
+		for(String key : data.keySet()) 
 		{
-			Object value = data.get(s.getId());
-			if(value instanceof Double) symTab.put (s.getName(), (Double)value);
+			Object value = data.get(key);
+			if(value instanceof Double) symTab.put (key, (Double)value);
 		}
 	}
 	
-	public boolean evaluate(Map<Integer, Object> data, int displaySampleId) throws CriterionException 
+	public boolean evaluate(Map<String, Object> data, String displaySampleId) throws CriterionException 
 	{
 		if (expression == null) throw new NullPointerException();
 		setSampleData(data);
@@ -102,7 +108,7 @@ public class Criterion
 		return evaluate();
 	}
 	
-	public boolean evaluate(Map<Integer, Object> data) throws CriterionException {
+	public boolean evaluate(Map<String, Object> data) throws CriterionException {
 		setSampleData(data);
 		return evaluate();
 	}

@@ -19,10 +19,11 @@ package org.pathvisio.visualization.colorset;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.Map;
 
 import org.jdom.Element;
+import org.pathvisio.data.CachedData;
 import org.pathvisio.data.GexManager;
+import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
@@ -69,8 +70,8 @@ public class ColorRule extends ColorSetObject
 		super(parent, xml);
 	}
 	
-	Color getColor(Map<Integer, Object> data, int idSample) throws CriterionException {
-		if(criterion.evaluate(data, idSample)) return color;
+	@Override Color getColor(CachedData.Data data, Sample key) throws CriterionException {
+		if(criterion.evaluate(data.getByName(), key.getName())) return color;
 		return null;
 	}
 	

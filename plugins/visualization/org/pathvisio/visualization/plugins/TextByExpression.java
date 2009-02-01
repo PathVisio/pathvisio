@@ -181,16 +181,16 @@ public class TextByExpression extends VisualizationMethod
 	}
 	
 	Object getSampleData(Sample s, Data data) {
-		return data.getSampleData(s.getId());
+		return data.getSampleData(s);
 	}
 	
 	Object getSampleStringMult(Sample s, Xref idc, CachedData cache, String sep) {
-		if(mean) return cache.getAverageSampleData(idc).get(s.getId());
+		if(mean) return cache.getAverageSampleData(idc).getSampleData(s);
 		
 		List<Data> refdata = cache.getData(idc);
 		StringBuilder strb = new StringBuilder();
 		for(Data d : refdata) {
-			String str = formatData(d.getSampleData().get(s.getId())).toString();
+			String str = formatData(d.getSampleData(s)).toString();
 			if(!str.equals("NaN")) {
 				strb.append(str + sep);
 			}

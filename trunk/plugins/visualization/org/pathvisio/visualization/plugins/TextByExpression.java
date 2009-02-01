@@ -47,8 +47,8 @@ import javax.swing.event.ListDataListener;
 
 import org.jdom.Element;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.GexManager;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.Sample;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
@@ -180,16 +180,16 @@ public class TextByExpression extends VisualizationMethod
 		return str == null ? "" : str.toString();
 	}
 	
-	Object getSampleData(Sample s, Data data) {
+	Object getSampleData(Sample s, ReporterData data) {
 		return data.getSampleData(s);
 	}
 	
 	Object getSampleStringMult(Sample s, Xref idc, CachedData cache, String sep) {
 		if(mean) return cache.getAverageSampleData(idc).getSampleData(s);
 		
-		List<Data> refdata = cache.getData(idc);
+		List<ReporterData> refdata = cache.getData(idc);
 		StringBuilder strb = new StringBuilder();
-		for(Data d : refdata) {
+		for(ReporterData d : refdata) {
 			String str = formatData(d.getSampleData(s)).toString();
 			if(!str.equals("NaN")) {
 				strb.append(str + sep);

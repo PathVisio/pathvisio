@@ -21,8 +21,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import org.jdom.Element;
-import org.pathvisio.data.CachedData;
 import org.pathvisio.data.GexManager;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
@@ -70,7 +70,7 @@ public class ColorRule extends ColorSetObject
 		super(parent, xml);
 	}
 	
-	@Override Color getColor(CachedData.Data data, Sample key) throws CriterionException {
+	@Override Color getColor(ReporterData data, Sample key) throws CriterionException {
 		if(criterion.evaluate(data.getByName(), key.getName())) return color;
 		return null;
 	}

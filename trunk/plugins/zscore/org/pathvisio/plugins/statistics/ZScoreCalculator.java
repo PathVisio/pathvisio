@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
@@ -156,7 +156,7 @@ public class ZScoreCalculator
 				if (pk != null && pk.isCancelled()) return;
 				try
 				{
-					Data d = result.gex.getRow(i);
+					ReporterData d = result.gex.getRow(i);
 					result.bigN++;
 					boolean eval = result.crit.evaluate(d.getByName());
 					if (eval)
@@ -213,7 +213,7 @@ public class ZScoreCalculator
 			{
 				if (pk != null && pk.isCancelled()) return null;
 				
-				List<Data> rows = result.gex.getCachedData().getData(srcRef);
+				List<ReporterData> rows = result.gex.getCachedData().getData(srcRef);
 				
 				if (rows != null)
 				{
@@ -221,7 +221,7 @@ public class ZScoreCalculator
 					if (cGeneTotal > 0) { cPwyMeasured++; }
 					int cGenePositive = 0;
 					
-					for (Data row : rows)
+					for (ReporterData row : rows)
 					{
 						if (pk != null && pk.isCancelled()) return null;
 						try

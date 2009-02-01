@@ -218,6 +218,20 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener
 	public void dispose()
 	{
 		assert (!disposed);
+		
+		//explicit clean shutdown of gex prevents file from being left open
+		if (gexManager.isConnected())
+		{
+			try
+			{
+				gexManager.getCurrentGex().close();
+			}
+			catch (DataException ex)
+			{
+				Logger.log.error ("Couldn't cleanly close pgex database", ex);
+			}
+		}
+
 		swingEngine.getEngine().removeApplicationEventListener(this);
 		visualizationManager.dispose();
 		disposed = true;

@@ -19,6 +19,7 @@ package org.pathvisio.data;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -35,6 +36,7 @@ import org.pathvisio.preferences.PreferenceManager;
  *  before    - 41.2%
  *  4 Dec '08 - 46.6%
  *  19 Jan '09- 47.3%
+ *  1 Feb '09 - 53.7%
  */
 public class Test extends TestCase implements GdbEventListener
 {	
@@ -166,12 +168,48 @@ public class Test extends TestCase implements GdbEventListener
 		// no errors if all genes could be looked up.
 		assertEquals (0, info.getErrorList().size());
 		
+		// Now test caching data		
+		SimpleGex gex = gexManager.getCurrentGex();
+		Xref ref1 = new Xref("7124", DataSource.ENTREZ_GENE);
+		Xref ref2 = new Xref("1909_at", DataSource.AFFY); 
+		List<Xref> refs = Arrays.asList(new Xref[] { ref1, ref2 }); 
+		gex.cacheData(refs, null, gdb);
+		
+		Sample s = gex.getSample(1);
+		assertEquals (1, s.getId());
+		
+		//TODO: extra space here is a bug
+		assertEquals (" Control 2", s.getName());
+
+		//check that there is only one row of data
+		List<ReporterData> data1 = gex.getCachedData(ref1);
+		assertEquals (1, data1.size());
+		// another way of saying the same thing:
+		assertFalse (gex.getCachedData().hasMultipleData(ref1)); 
+		
+		// looking up a particular data point in two different ways: L:7124, sample "Control 2"
+		assertEquals (0.993159836, (Double)data1.get(0).getSampleData(s), 0.001);
+		assertEquals (0.993159836, (Double)data1.get(0).getByName().get(" Control 2"), 0.001);
+		
+		// test for aggregating data (in this case we're averaging over just one row)
+		ReporterData row = gex.getCachedData().getAverageSampleData(ref2);
+		// check data point for X:1909_at, which corresponds to L:596
+		assertEquals (0.045334852, (Double)(row.getSampleData().get(s)), 0.001);
+		
+	}
+
+		
+	public void testImportSimplyWrong() throws IOException, DataException
+	{
 		ImportInformation info2 = new ImportInformation();
+		File f = new File ("example-data/sample_data_1.txt");
+		assertTrue (f.exists());
 		info2.setTxtFile(f);
-		dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
+		
+		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info2.setGexName(dbFileName);
 		
-		gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
+		Gdb gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info2, null, gdb, gexManager);
 		
 		// 91 errors expected if no genes can be looked up.

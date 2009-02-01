@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jdom.Element;
-import org.pathvisio.data.CachedData;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
@@ -193,7 +193,7 @@ public class ColorGradient extends ColorSetObject {
 		return rgb;
 	}
 	
-	@Override public Color getColor(CachedData.Data data, Sample key)
+	@Override public Color getColor(ReporterData data, Sample key)
 	{
 		Object o = data.getSampleData(key);
 		double value;

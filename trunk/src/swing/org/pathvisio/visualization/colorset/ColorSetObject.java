@@ -20,7 +20,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import org.jdom.Element;
-import org.pathvisio.data.CachedData;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.Sample;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
@@ -81,7 +81,7 @@ public abstract class ColorSetObject {
 	 * null if the input data doesn't result in a valid color
 	 * @throws Exception 
 	 */
-	abstract Color getColor(CachedData.Data data, Sample key) throws CriterionException;
+	abstract Color getColor(ReporterData data, Sample key) throws CriterionException;
 	
 	/**
 	 * Returns the parent colorset

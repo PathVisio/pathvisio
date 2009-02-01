@@ -26,11 +26,11 @@ import java.util.Set;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GexManager;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.Sample;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
@@ -315,11 +315,11 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		String colNames = "<TR><TH>Sample name";
 		if(!gex.isConnected()) return noDataFound;
 		
-		List<Data> pwData = gex.getCachedData(idc);
+		List<ReporterData> pwData = gex.getCachedData(idc);
 		
 		if(pwData == null) return noDataFound;
 		
-		for(Data d : pwData){
+		for(ReporterData d : pwData){
 			colNames += "<TH>" + d.getXref().getId();
 		}
 		
@@ -327,7 +327,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		for(Sample s : gex.getSamples().values())
 		{
 			dataString += "<TR><TH>" + s.getName();
-			for(Data d : pwData)
+			for(ReporterData d : pwData)
 			{
 				dataString += "<TH>" + d.getSampleData(s);
 			}

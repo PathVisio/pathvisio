@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jdom.Element;
-import org.pathvisio.data.CachedData;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
@@ -162,7 +162,7 @@ public class ColorSet
 	 * @param sampleId	the id of the sample that will be visualized
 	 * @return	an {@link RGB} object representing the color for the given data
 	 */
-	public Color getColor(CachedData.Data data, Sample key)
+	public Color getColor(ReporterData data, Sample key)
 	{
 		if(data == null) return colorNoDataFound;
 		Object value = data.getSampleData(key);

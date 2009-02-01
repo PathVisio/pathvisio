@@ -43,20 +43,18 @@ import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GdbManager.GdbEventListener;
-import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine.Browser;
 import org.pathvisio.model.BatikImageWithDataExporter;
-import org.pathvisio.model.RasterImageExporter;
-import org.pathvisio.model.RasterImageWithDataExporter;
 import org.pathvisio.model.DataNodeListExporter;
 import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
+import org.pathvisio.model.RasterImageWithDataExporter;
 import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -69,7 +67,7 @@ import org.pathvisio.view.MIMShapes;
  * @author thomas
  *
  */
-public class GuiMain
+public class GuiMain implements GexManagerListener
 {
 	private GuiMain()
 	{
@@ -208,7 +206,27 @@ public class GuiMain
 		gdbLabel.setToolTipText(gdb != null ? gdb : "");
 		mdbLabel.setToolTipText(mdb != null ? mdb : "");
 	}
-	
+
+	public void gexManagerEvent(GexManagerEvent e) 
+	{
+		if(e.getType() == GexManagerEvent.CONNECTION_OPENED ||
+				e.getType() == GexManagerEvent.CONNECTION_CLOSED) 
+		{
+			SimpleGex gex = standaloneEngine.getGexManager().getCurrentGex();
+			if(gex != null && gex.isConnected()) {
+				gexLabel.setText(" | Dataset: " + shortenString(gex.getDbName()));
+				gexLabel.setToolTipText(gex.getDbName());
+			} else {
+				gexLabel.setText("");
+				gexLabel.setToolTipText("");
+			}
+		}
+	}
+
+	private JLabel gdbLabel;
+	private JLabel mdbLabel;
+	private JLabel gexLabel;
+
 	/**
 	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
 	 * @param mainPanel The main panel to show in the frame
@@ -226,9 +244,9 @@ public class GuiMain
 		statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
 		frame.add(statusBar, BorderLayout.SOUTH);
 		
-		final JLabel gdbLabel = new JLabel();
-		final JLabel mdbLabel = new JLabel();
-		final JLabel gexLabel = new JLabel();
+		gdbLabel = new JLabel();
+		mdbLabel = new JLabel();
+		gexLabel = new JLabel();
 		statusBar.add(gdbLabel);
 		statusBar.add(mdbLabel);
 		statusBar.add(gexLabel);
@@ -242,21 +260,7 @@ public class GuiMain
 			}
 		});
 		
-		GexManager.getCurrent().addListener(new GexManagerListener() {
-				public void gexManagerEvent(GexManagerEvent e) {
-					if(e.getType() == GexManagerEvent.CONNECTION_OPENED ||
-							e.getType() == GexManagerEvent.CONNECTION_CLOSED) {
-						SimpleGex gex = GexManager.getCurrent().getCurrentGex();
-						if(gex != null && gex.isConnected()) {
-							gexLabel.setText(" | Dataset: " + shortenString(gex.getDbName()));
-							gexLabel.setToolTipText(gex.getDbName());
-						} else {
-							gexLabel.setText("");
-							gexLabel.setToolTipText("");
-						}
-					}
-				}
-		});
+		standaloneEngine.getGexManager().addListener(this);
 		
 		frame.setJMenuBar(mainPanel.getMenuBar());
 		frame.pack();
@@ -306,19 +310,6 @@ public class GuiMain
 	{
 		PreferenceManager prefs = PreferenceManager.getCurrent();
 		prefs.store();
-		
-		//explicit clean shutdown of gex prevents file from being left open
-		if (GexManager.getCurrent().isConnected())
-		{
-			try
-			{
-				GexManager.getCurrent().getCurrentGex().close();
-			}
-			catch (DataException ex)
-			{
-				Logger.log.error ("Couldn't cleanly close pgex database", ex);
-			}
-		}
 		
 		//explicit clean shutdown of gdb prevents file from being left open
 		if (swingEngine.getGdbManager().isConnected())

@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;
@@ -208,7 +207,7 @@ public class SimpleGex
 		return smps;
 	}
 	
-	public List<Data> getCachedData(Xref idc)
+	public List<ReporterData> getCachedData(Xref idc)
 	{
 		if(cachedData != null) {
 			return cachedData.getData(idc);
@@ -302,7 +301,7 @@ public class SimpleGex
 					destRefs.add(srcRef);
 				}
 				
-				Map<Integer, Data> groupData = new HashMap<Integer, Data>();
+				Map<Integer, ReporterData> groupData = new HashMap<Integer, ReporterData>();
 				
 				if(destRefs.size() > 0)
 				{								
@@ -319,9 +318,9 @@ public class SimpleGex
 						while(r.next())
 						{
 							int group = r.getInt("groupId");
-							Data data = groupData.get(group);
+							ReporterData data = groupData.get(group);
 							if(data == null) {
-								groupData.put(group, data = new Data(destRef, group));
+								groupData.put(group, data = new ReporterData(destRef, group));
 								cachedData.addData(srcRef, data);
 							}
 							
@@ -579,18 +578,18 @@ public class SimpleGex
 		return pstRow;
 	}
 	
-	public Data getRow(int rowId) throws DataException
+	public ReporterData getRow(int rowId) throws DataException
 	{
 		Map<Integer, Sample> samples = getSamples();
 		try
 		{
-			Data result;
+			ReporterData result;
 			PreparedStatement ps = getPstRow();
 			ps.setInt(1, rowId);
 			ResultSet rs = ps.executeQuery();
 			
 			Xref ref = null;			
-			result = new Data (null, rowId);
+			result = new ReporterData (null, rowId);
 			
 			while (rs.next())
 			{

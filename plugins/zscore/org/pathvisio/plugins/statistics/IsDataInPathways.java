@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GexManager;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.data.SimpleGex;
@@ -92,7 +92,7 @@ public class IsDataInPathways
 		
 		for (int i = 0; i < gex.getMaxRow(); ++i) 
 		{
-			Data data = gex.getRow(i);
+			ReporterData data = gex.getRow(i);
 			Xref src = data.getXref();
 			counts.put (src, new ArrayList<String>());
 			for (Xref dest : gdb.getCrossRefs(data.getXref()))
@@ -119,7 +119,7 @@ public class IsDataInPathways
 		PrintStream out = new PrintStream(new FileOutputStream(outFile));
 		for (int i = 0; i < gex.getMaxRow(); ++i) 
 		{
-			Data data = gex.getRow(i);
+			ReporterData data = gex.getRow(i);
 			Xref ref = data.getXref();
 			String bpText = gdb.getBpInfo(ref);
 			String desc = "";

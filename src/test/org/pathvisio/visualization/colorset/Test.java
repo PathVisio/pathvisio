@@ -16,8 +16,8 @@
 //
 package org.pathvisio.visualization.colorset;
 
-import junit.framework.TestCase;
 import java.awt.Color;
+import junit.framework.TestCase;
 
 public class Test extends TestCase 
 {

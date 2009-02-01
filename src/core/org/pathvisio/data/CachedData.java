@@ -30,17 +30,17 @@ import org.pathvisio.model.Xref;
  * The caching of expression data will occur when a pathway is opened and an expression dataset is loaded.
  * The cache will be refreshed when another dataset is selected, another gene database is selected or another
  * pathway is opened.
- * A CachedData object will contain a list of {@link Data} object for every gene-product on the pathway for 
+ * A CachedData object will contain a list of {@link ReporterData} object for every gene-product on the pathway for 
  * which data is available in the expression dataset
  * @author Thomas
  * @see SimpleGex#cacheData
  */
 public class CachedData {
 	
-	Map<Xref, List<Data>> data; //Data objects for gene-products on the pathway
+	Map<Xref, List<ReporterData>> data; //Data objects for gene-products on the pathway
 		
 	protected CachedData() {
-		data = new HashMap<Xref, List<Data>>();
+		data = new HashMap<Xref, List<ReporterData>>();
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class CachedData {
 	 * @return true if multiple data is available for the gene-product, false if not
 	 */
 	public boolean hasMultipleData(Xref pwId) {
-		List<Data> d = data.get(pwId);
+		List<ReporterData> d = data.get(pwId);
 		if(d != null) {
 			return d.size() > 1;
 		} else {
@@ -70,19 +70,19 @@ public class CachedData {
 	/**
 	 * Get the cached data the given gene-product
 	 * @param idc The IdCodePair that represents the gene-product for which the data has to be returned
-	 * @return a list of {@link Data} object containing the cached data, or null when no data is available
+	 * @return a list of {@link ReporterData} object containing the cached data, or null when no data is available
 	 */
-	public List<Data> getData(Xref idc) {
+	public List<ReporterData> getData(Xref idc) {
 		return data.get(idc);
 	}
 	
 	/**
-	 * Get the first {@link Data} instance of the cached data for this gene-product.
+	 * Get the first {@link ReporterData} instance of the cached data for this gene-product.
 	 * @param idc The IdCodePair that represents the gene-product for which the data has to be returned
-	 * @return a {@link Data} instance that contains the cached data
+	 * @return a {@link ReporterData} instance that contains the cached data
 	 */
-	public Data getSingleData(Xref idc) {
-		List<Data> dlist = data.get(idc);
+	public ReporterData getSingleData(Xref idc) {
+		List<ReporterData> dlist = data.get(idc);
 		if(dlist != null && dlist.size() > 0) return dlist.get(0);
 		return null;
 	}
@@ -92,10 +92,10 @@ public class CachedData {
 	 * @param idc The IdCodePair that represents the gene-product for which the data has to be added
 	 * @param d The data that has to be added
 	 */
-	protected void addData(Xref idc, Data d) {
-		List<Data> dlist = data.get(idc);
+	protected void addData(Xref idc, ReporterData d) {
+		List<ReporterData> dlist = data.get(idc);
 		if(dlist == null) 
-			data.put(idc, dlist = new ArrayList<Data>());
+			data.put(idc, dlist = new ArrayList<ReporterData>());
 		dlist.add(d);
 	}
 	
@@ -103,12 +103,12 @@ public class CachedData {
 	 * Get the averaged sample data for the given gene-product
 	 * @param idc The IdCodePair that represents the gene-product to get the data for
 	 * @return a HashMap where the keys represent the sample ids and the values the averaged data
-	 * @see Data#getSampleData()
+	 * @see ReporterData#getSampleData()
 	 */
-	public CachedData.Data getAverageSampleData(Xref idc)
+	public ReporterData getAverageSampleData(Xref idc)
 	{
-		CachedData.Data result = new CachedData.Data(null, -1);
-		List<Data> dlist = data.get(idc);
+		ReporterData result = new ReporterData(null, -1);
+		List<ReporterData> dlist = data.get(idc);
 		if(dlist != null && dlist.size() > 0) {
 			for(Sample key : dlist.get(0).getSampleData().keySet())
 			{
@@ -124,11 +124,11 @@ public class CachedData {
 	}
 	
 	
-	private Object averageDouble(List<Data> dlist, Sample s)
+	private Object averageDouble(List<ReporterData> dlist, Sample s)
 	{
 		double avg = 0;
 		int n = 0;
-		for(Data d : dlist) {
+		for(ReporterData d : dlist) {
 			try { 
 				Double value = (Double)d.getSampleData(s);
 				if( !value.isNaN() ) {
@@ -144,106 +144,13 @@ public class CachedData {
 		}
 	}
 	
-	private Object averageString(List<Data> dlist, Sample s)
+	private Object averageString(List<ReporterData> dlist, Sample s)
 	{
 		StringBuilder sb = new StringBuilder();
-		for(Data d : dlist) {
+		for(ReporterData d : dlist) {
 			sb.append(d.getSampleData(s) + ", ");
 		}
 		int end = sb.lastIndexOf(", ");
 		return end < 0 ? "" : sb.substring(0, end).toString();
-	}
-	
-	/**
-	 * This class represents cached expression data for a reporter in the dataset.
-	 * The data is stored in a {@link HashMap} where the keys are the sample ids and the value
-	 * is an object of class {@link String} or {@link Double} for text and numeric data respectively.
-	 */
-	public static class Data {
-		Xref idc;
-		int group;
-		Map<Sample, Object> sampleData;
-
-		/**
-		 * Constructor for this class. Creates a new {@link Data} object for the given reporter
-		 * @param ref The IdCodePair that represents the reporter
-		 * @param groupId An id that groups the expression data from duplicate reporters
-		 */
-		Data(Xref ref, int groupId) {
-			idc = ref;
-			group = groupId;
-			sampleData = new HashMap<Sample, Object>();
-		}
-		
-		public void setXref(Xref value) { idc = value; }
-		
-		/**
-		 * Get the reporter this object contains data for
-		 * @return The IdCodePair that represents the reporter this object contains data for
-		 */
-		public Xref getXref() { return idc; }
-		
-		/**
-		 * Get the group id for this object
-		 * @return a group id that can be used to distinct identical reporters that occur more
-		 * than once in the dataset
-		 */
-		public int getGroup() { return group; }
-		
-		/**
-		 * Get the data for each sample
-		 * @return A {@link HashMap} that contains the data for each sample. The key is a sampleId and value
-		 * is an object of class {@link String} or {@link Double}, depending on the data type of the sample.
-		 * @see Sample#getDataType()
-		 * @see Sample#getId()
-		 */
-		public Map<Sample, Object> getSampleData() {
-			return sampleData;
-		}
-		
-		/**
-		 * returns the same info as getSampleData(), but
-		 * using the sample name instead of the sample object as key.
-		 */
-		public Map<String, Object> getByName()
-		{
-			Map<String, Object> result = new HashMap<String, Object>();
-			for (Sample s : sampleData.keySet())
-			{
-				result.put (s.getName(), sampleData.get(s));
-			}
-			return result;
-		}
-		
-		/**
-		 * Get the cached data for the given sample (shortcut for getSampleData().get(sampleId))
-		 * @param sampleId The id of the sample to get the data for
-		 * @return An object of class {@link String} or {@link Double}, depending on the datatype of the sample.
-		 * @see Sample#getDataType()
-		 * @see Sample#getId()
-		 */
-		public Object getSampleData(Sample key)
-		{
-			return sampleData.get(key);
-		}
-		
-		/**
-		 * Set the data for the given sample. Data will be parsed to double if possible
-		 * @param sampleId The id of the sample to set the data for
-		 * @param data The {@link String} representation of the data to add
-		 * @see SimpleGex#cacheData
-		 */
-		void setSampleData(Sample sample, String data) {
-			Object parsedData = null;
-			try { parsedData = Double.parseDouble(data); }
-			catch(Exception e) { parsedData = data; }
-			sampleData.put(sample, parsedData);
-		}
-		
-		private void setSampleAsObject (Sample sample, Object data)
-		{
-			sampleData.put(sample, data);
-		}
-		
 	}
 }

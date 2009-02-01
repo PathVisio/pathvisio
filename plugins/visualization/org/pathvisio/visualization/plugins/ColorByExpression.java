@@ -44,8 +44,8 @@ import javax.swing.JPanel;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.data.CachedData;
-import org.pathvisio.data.CachedData.Data;
 import org.pathvisio.data.GexManager;
+import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
@@ -276,7 +276,7 @@ public class ColorByExpression extends VisualizationMethod {
 	
 	void drawSampleBar(ConfiguredSample s, Xref idc, CachedData cache, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
-		List<Data> refdata = cache.getData(idc);
+		List<ReporterData> refdata = cache.getData(idc);
 		int n = refdata.size();
 		int left = area.height % n;
 		int h = area.height / n;

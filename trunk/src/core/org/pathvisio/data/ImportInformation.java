@@ -300,18 +300,19 @@ public class ImportInformation {
 		{	
 			int i = 0;
 			// Read headerlines till the first data row
+			boolean first = true;
 			while (i < firstDataRow) 
-			{ 	boolean first = true;
+			{ 	
 				for(int j = 0; j < cells[i].length; j++)
 				{  
 					// All header rows are added
 					if(i >= headerRow) 
 					{
 						if (!first) result[j] += " ";
-						first = false;
 						result[j] = result[j] += cells[i][j].trim();
 					}
 				}
+				first = false;
 				i++;
 			}
 		}

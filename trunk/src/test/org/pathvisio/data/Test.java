@@ -178,8 +178,7 @@ public class Test extends TestCase implements GdbEventListener
 		Sample s = gex.getSample(1);
 		assertEquals (1, s.getId());
 		
-		//TODO: extra space here is a bug
-		assertEquals (" Control 2", s.getName());
+		assertEquals ("Control 2", s.getName());
 
 		//check that there is only one row of data
 		List<ReporterData> data1 = gex.getCachedData(ref1);
@@ -189,7 +188,7 @@ public class Test extends TestCase implements GdbEventListener
 		
 		// looking up a particular data point in two different ways: L:7124, sample "Control 2"
 		assertEquals (0.993159836, (Double)data1.get(0).getSampleData(s), 0.001);
-		assertEquals (0.993159836, (Double)data1.get(0).getByName().get(" Control 2"), 0.001);
+		assertEquals (0.993159836, (Double)data1.get(0).getByName().get("Control 2"), 0.001);
 		
 		// test for aggregating data (in this case we're averaging over just one row)
 		ReporterData row = gex.getCachedData().getAverageSampleData(ref2);

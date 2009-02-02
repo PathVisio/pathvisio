@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="5157-L" Version="20090129">
+  <Graphics BoardWidth="5890.5" BoardHeight="2854.5" WindowWidth="18000.0" WindowHeight="12000.0" />
+  <DataNode TextLabel="PDGFRL" Type="GeneProduct" GraphId="c3115">
+    <Graphics Color="000000" CenterX="4755.0" CenterY="2445.0" Width="1200.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="5157" />
+  </DataNode>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

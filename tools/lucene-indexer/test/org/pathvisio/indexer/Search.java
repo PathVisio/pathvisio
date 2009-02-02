@@ -26,10 +26,12 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
+import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
@@ -46,11 +48,12 @@ public class Search extends TestCase {
 			}
 			
 			//Connect to any GDB in the preferences
-			PreferenceManager prefs = new PreferenceManager();
-			prefs.load();
+			PreferenceManager.init();
+			GdbManager gdbmgr = new GdbManager();
+			gdbmgr.initPreferred();
 			
 			GdbProvider gdbs = new GdbProvider();
-			//TODO: use test database!
+			gdbs.addGlobalGdb(gdbmgr.getCurrentGdb());
 			
 			GpmlIndexer indexer = new GpmlIndexer(indexDir, pathwayDir, gdbs);
 			indexer.update();
@@ -138,9 +141,22 @@ public class Search extends TestCase {
 		Query q1 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID, "32786_at"));
 		Query q2 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID, "GO:0003700"));
 		Hits hits = query(q1);
-		assertTrue(searchHits(hits, PathwayIndexer.FIELD_SOURCE, "Oxidative Stress"));
+		assertTrue("Hits length: " + hits.length(), hits.length() > 0);
 		hits = query(q2);
-		assertTrue(searchHits(hits, PathwayIndexer.FIELD_SOURCE, "Oxidative Stress"));
+		assertTrue("Hits length: " + hits.length(), hits.length() > 0);
+	}
+	
+	public void testCrossRefByCode() {
+		//Search for 5157 L -> should get pathway 5157-L.gpml
+		Query q1 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID_CODE, "5157:L"));
+		Hits hits = query(q1);
+		assertTrue("Hits length: " + hits.length(), hits.length() == 1);
+		
+		//Search for 5157 H -> should get pathway 5157-H.gpml
+		Query q2 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID_CODE, "5157:H"));
+		hits = query(q1);
+		assertTrue("Hits length: " + hits.length(), hits.length() == 1);
+		
 	}
 	
 	boolean xrefInPathway(Hits hits, String pwName) throws CorruptIndexException, IOException {

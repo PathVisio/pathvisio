@@ -142,6 +142,15 @@ public class DataNodeIndexer extends IndexerBase {
 						Field.Index.TOKENIZED
 				)
 			);
+			//Also add untokenized for exact searches
+			doc.add(
+					new Field(
+							field_id_code,
+							xref2string(xref),
+							Field.Store.YES,
+							Field.Index.UN_TOKENIZED
+					)
+			);
 		}
 	}
 	

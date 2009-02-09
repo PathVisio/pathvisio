@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
@@ -98,8 +100,14 @@ public abstract class Bot {
 			Logger.log.trace("No user account");
 			return;
 		}
-
+		
 		try {
+			WSCurationTag[] allTags = client.getCurationTagsByName(getTagName());
+			Map<String, WSCurationTag> tagsByPathway = new HashMap<String, WSCurationTag>();
+			for(WSCurationTag t : allTags) {
+				tagsByPathway.put(t.getPathway().getId(), t);
+			}
+
 			Set<WSPathwayInfo> overrides = new TreeSet<WSPathwayInfo>();
 			int i = 0;
 			int size = results.size();
@@ -110,19 +118,12 @@ public abstract class Bot {
 				String pwId = pwi.getId();
 
 				//First check if the existing tag is up-to-date
-				WSCurationTag[] tags = client.getCurationTags(pwId);
-				String currTagText = null;
-				for(WSCurationTag t : tags) {
-					if(getTagName().equals(t.getName())) {
-						currTagText = t.getText();
-						break;
-					}
-				}
+				WSCurationTag tag = tagsByPathway.get(pwId);
 
 				if(r.shouldTag()) { //Add or update tag
-					if(currTagText != null) { //We found an existing tag
+					if(tag != null) { //We found an existing tag
 						//See if it's up-to-date
-						if(r.equalsTag(currTagText)) {
+						if(r.equalsTag(tag.getText())) {
 							//No action needed
 							Logger.log.info("Existing tag is up-to-date");
 							continue;
@@ -131,7 +132,7 @@ public abstract class Bot {
 							Logger.log.info("Applying updated tag to " + pwId);
 							client.saveCurationTag(
 									pwId,
-									getTagName(),r.getTagText()
+									getTagName(), r.getTagText()
 							);
 						}
 					} else { //No existing tag
@@ -160,12 +161,9 @@ public abstract class Bot {
 						}
 					}
 				} else { //Remove tag if needed
-					if(currTagText != null) {
-						//Remove the existing tag
-						if(currTagText != null) {
-							Logger.log.info("Removing tag from " + pwId);
-							client.removeCurationTag(pwId, getTagName());
-						}
+					if(tag != null) {
+						Logger.log.info("Removing tag from " + pwId);
+						client.removeCurationTag(pwId, getTagName());
 					}
 				}
 			}

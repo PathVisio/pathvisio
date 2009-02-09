@@ -204,6 +204,12 @@ public class WikiPathwaysClient {
 		return tags;
 	}
 	
+	public WSCurationTag[] getCurationTagsByName(String tagName) throws RemoteException {
+		WSCurationTag[] tags = port.getCurationTagsByName(tagName);
+		if(tags == null) tags = new WSCurationTag[0];
+		return tags;
+	}
+	
 	/**
 	 * Get the curation tag history for the given pathway
 	 * @param id The pathway identifier

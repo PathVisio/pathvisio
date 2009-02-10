@@ -495,19 +495,27 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 		<delete file="${srcbase}.tar"/>
 	</target>
 
-	<target name="tarbin" depends="jar" description="create binary tarball">
+	<target name="tarbin" depends="jar,visplugins-jar" description="create binary tarball">
 		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
 		<tar tarfile="${binbase}.tar">
 			<tarfileset dir="." prefix="pathvisio-${pathvisio.version}">
-				<include name="plugins/**/*"/>
-				<include name="lib/**/*"/>
-				<include name="resources/**/*"/>
+				<include name="lib/batik/*.jar"/>
+				<include name="lib/BrowserLauncher.jar"/>
+				<include name="lib/derby.jar"/>
+				<include name="lib/forms-1.2.0.jar"/>
+				<include name="lib/jdom.jar"/>
+<!--				<include name="lib/paxtools/*.jar"/> -->
+				<include name="lib/resources.jar"/>
+				<include name="lib/swing-worker-1.1.jar"/>
+				<include name="lib/licenses/*"/>
 				<include name="GPML.xsd"/>
 				<include name="LICENSE-2.0.txt"/>
 				<include name="NOTICE.txt"/>
 				<include name="readme.txt"/>
 				<include name="pathvisio.sh"/>
 				<include name="pathvisio.bat"/>
+				<include name="pathvisio.jar"/>
+				<include name="visplugins.jar"/>
 			</tarfileset>
 		</tar>
 		<gzip src="${binbase}.tar" zipfile="${binbase}.tar.gz"/>

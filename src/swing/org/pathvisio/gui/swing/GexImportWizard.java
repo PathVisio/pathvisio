@@ -844,11 +844,8 @@ public class GexImportWizard extends Wizard
 	    @Override
 	    public void aboutToHidePanel()
 	    {
-	    	importInformation.setSyscodeFixed(rbFixedNo.isSelected());
-	    	if (rbFixedNo.isSelected())
-	    	{
-	    	}
-	    	else
+	    	importInformation.setSyscodeFixed(rbFixedYes.isSelected());
+	    	if (rbFixedYes.isSelected())
 	    	{
 		    	importInformation.setDataSource(mDataSource.getSelectedDataSource());
 	    	}

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.EventListener;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -760,9 +761,10 @@ public class Pathway
 		if(sourceFile != null) {
 			result.sourceFile = new File(sourceFile.getAbsolutePath());
 		}
-		for(StatusFlagListener l : statusFlagListeners) {
-			result.addStatusFlagListener(l);
-		}
+		// do not copy status flag listeners
+//		for(StatusFlagListener l : statusFlagListeners) {
+//			result.addStatusFlagListener(l);
+//		}
 		return result;
 	}
 
@@ -834,5 +836,21 @@ public class Pathway
 			Logger.log.warn("Pathway.fixReferences fixed " + result + " reference(s)");
 		}
 		return result;
+	}
+	
+	/**
+	 * Transfer statusflag listeners from one pathway to another.
+	 * This is used needed when copies of the pathway are created / returned 
+	 * by UndoManager. The status flag listeners are only interested in status flag
+	 * events of the active copy.
+	 */
+	public void transferStatusFlagListeners(Pathway dest)
+	{
+		for (Iterator<StatusFlagListener> i = statusFlagListeners.iterator(); i.hasNext(); )
+		{
+			StatusFlagListener l = i.next();
+			dest.addStatusFlagListener(l);
+			i.remove();
+		}
 	}
 }

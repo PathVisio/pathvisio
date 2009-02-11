@@ -366,6 +366,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	{
 		assert (!disposed);
 		engine.removeApplicationEventListener(this);
+		engine.getActiveVPathway().removeSelectionListener(this);
 		disposed = true;
 	}
 	

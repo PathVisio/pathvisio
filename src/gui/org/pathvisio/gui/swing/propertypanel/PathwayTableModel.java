@@ -271,6 +271,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	{
 		assert (!disposed);
 		swingEngine.getEngine().removeApplicationEventListener(this);
+		swingEngine.getEngine().getActiveVPathway().removeSelectionListener(this);
 		disposed = true;
 	}
 }

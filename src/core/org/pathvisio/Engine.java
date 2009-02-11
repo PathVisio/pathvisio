@@ -203,6 +203,18 @@ public class Engine
 	}
 
 	/**
+	 * opposite of createVPathway
+	 */
+	public void disposeVPathway()
+	{
+		assert (vPathway != null);
+		// signal destruction of vPathway
+		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_DISPOSED));
+		vPathway.dispose();
+		vPathway = null;
+	}
+	
+	/**
 	   Try to make a vpathway,
 	   replacing pathway with a new one.
 	 */
@@ -220,10 +232,7 @@ public class Engine
 				// save zoom Level
 				zoom = getActiveVPathway().getPctZoom();
 				
-				// signal destruction of vPathway
-				fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_DISPOSED));
-				vPathway.dispose();
-				vPathway = null;
+				disposeVPathway();
 			}
 			
 			vPathway = wrapper.createVPathway();
@@ -377,7 +386,7 @@ public class Engine
 	public void dispose()
 	{
 		assert (!disposed);
-		if (vPathway != null) vPathway.dispose();
+		if (vPathway != null) disposeVPathway();
 		disposed = true;
 	}
 	

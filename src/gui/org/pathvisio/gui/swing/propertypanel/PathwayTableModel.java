@@ -258,6 +258,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			break;
 		case ApplicationEvent.VPATHWAY_DISPOSED:
 			((VPathway)e.getSource()).removeSelectionListener(this);
+			reset(); // clear selected set
 			break;
 		}
 	}

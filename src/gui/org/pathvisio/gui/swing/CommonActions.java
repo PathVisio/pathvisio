@@ -362,12 +362,7 @@ public class CommonActions implements ApplicationEventListener {
 				p.addStatusFlagListener(this);
 				handleStatus(p.hasChanged());
 			}
-		}
-		
-		public void dispose()
-		{
-			swingEngine.getEngine().removeApplicationEventListener(this);
-		}
+		}		
 	}
 	
 	/** Import a Pathway from a different format than GPML, usually that means GenMAPP format */
@@ -616,22 +611,5 @@ public class CommonActions implements ApplicationEventListener {
 				swingEngine.getFrame().dispose();
 			}
 		}
-	}
-
-	private boolean disposed = false;
-	/**
-	 * free all resources (such as listeners) held by this class. 
-	 * Owners of this class must explicitly dispose of it to clean up.
-	 */
-	public void dispose()
-	{
-		assert (!disposed);
-		swingEngine.getEngine().removeApplicationEventListener (this);
-		saveAction.dispose();
-		saveAsAction.dispose();
-		standaloneSaveAction.dispose();
-		standaloneSaveAsAction.dispose();
-		undoAction.dispose();
-		disposed = true;
 	}
 }

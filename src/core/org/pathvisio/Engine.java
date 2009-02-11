@@ -387,6 +387,7 @@ public class Engine
 	{
 		assert (!disposed);
 		if (vPathway != null) disposeVPathway();
+		applicationEventListeners.clear();
 		disposed = true;
 	}
 	

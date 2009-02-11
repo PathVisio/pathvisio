@@ -293,7 +293,6 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			@Override
 			public void windowClosed(WindowEvent we)
 			{
-				mainPanel.dispose();
 				GuiMain.this.shutdown(swingEngine);
 			}
 		});

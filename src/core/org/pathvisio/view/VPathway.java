@@ -2506,7 +2506,8 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 		cleanUp();
 		if (data != null) data.removeListener(this);
-		if (viewActions != null) viewActions.dispose();
+		listeners.clear();
+		selection.getListeners().clear();
 		viewActions = null;
 		parent.dispose();
 		parent = null; // disconnect from VPathwaySwing

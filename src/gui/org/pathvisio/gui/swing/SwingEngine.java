@@ -629,7 +629,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public void dispose()
 	{
 		assert (!disposed);
-		actions.dispose();
 		engine.removeApplicationEventListener(this);
 		disposed = true;
 	}

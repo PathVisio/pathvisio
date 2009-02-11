@@ -456,24 +456,4 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	{
 		return sidebarTabbedPane;
 	}
-
-	private boolean disposed = false;
-	/**
-	 * free all resources (such as listeners) held by this class. 
-	 * Owners of this class must explicitly dispose of it to clean up.
-	 */
-	public void dispose()
-	{
-		assert (!disposed);
-		backpagePane.dispose();
-		model.dispose();
-		swingEngine.getEngine().removeApplicationEventListener(this);
-		VPathway vpwy = swingEngine.getEngine().getActiveVPathway();
-		if (vpwy != null)
-		{
-			vpwy.removeVPathwayListener(this);
-			vpwy.removeVPathwayListener(pathwayElementMenuListener);
-		}
-		disposed = true;
-	}
 }

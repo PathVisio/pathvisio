@@ -160,6 +160,7 @@ public class UndoManager
 	{
 		assert (!disposed);
 		undoList.clear();
+		listeners.clear();
 		disposed = true;
 	}
 	

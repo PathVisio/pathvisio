@@ -261,17 +261,4 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 			break;
 		}
 	}
-
-	private boolean disposed = false;
-	/**
-	 * free all resources (such as listeners) held by this class. 
-	 * Owners of this class must explicitly dispose of it to clean up.
-	 */
-	public void dispose()
-	{
-		assert (!disposed);
-		swingEngine.getEngine().removeApplicationEventListener(this);
-		swingEngine.getEngine().getActiveVPathway().removeSelectionListener(this);
-		disposed = true;
-	}
 }

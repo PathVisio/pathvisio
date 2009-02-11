@@ -44,18 +44,5 @@ public class BackpagePane extends JEditorPane implements BackpageListener {
 
 	public void textChanged(String oldText, String newText) {
 		setText(newText);
-	}
-	
-	private boolean disposed = false;
-	/**
-	 * free all resources (such as listeners) held by this class. 
-	 * Owners of this class must explicitly dispose of it to clean up.
-	 */
-	public void dispose()
-	{
-		assert (!disposed);
-		bpt.removeListener(this);
-		bpt.dispose();
-		disposed = true;
-	}
+	}	
 }

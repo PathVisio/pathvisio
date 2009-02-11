@@ -63,6 +63,8 @@ import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
+import weka.filters.unsupervised.attribute.RemoveType;
+
 /**
  * swing-dependent implementation of VPathway.
  */
@@ -362,8 +364,21 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 	public void dispose()
 	{
 		assert (!disposed);
+		if (container != null && container instanceof JScrollPane)
+			((JScrollPane)container).remove(this);
 		child.removeVPathwayListener(this);
 		child.removeVElementMouseListener(this);
+		
+		removeMouseListener(this);
+		removeMouseMotionListener(this);
+		removeKeyListener(this);
+		setTransferHandler(null);
+
+		// clean up actions, inputs registered earlier for this component 
+		// (otherwise VPathway won't get GC'ed, because actions contain reference to VPathay)
+		getActionMap().clear();
+		getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).clear();
+		
 		child = null; // free VPathway for GC
 		disposed = true;
 	}

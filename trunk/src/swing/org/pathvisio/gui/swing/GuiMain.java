@@ -42,6 +42,7 @@ import org.pathvisio.Revision;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
+import org.pathvisio.data.GexManager;
 import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.data.GexManager.GexManagerEvent;
 import org.pathvisio.data.GexManager.GexManagerListener;
@@ -67,7 +68,7 @@ import org.pathvisio.view.MIMShapes;
  * @author thomas
  *
  */
-public class GuiMain implements GexManagerListener
+public class GuiMain implements GdbEventListener, GexManagerListener
 {
 	private GuiMain()
 	{
@@ -206,7 +207,13 @@ public class GuiMain implements GexManagerListener
 		gdbLabel.setToolTipText(gdb != null ? gdb : "");
 		mdbLabel.setToolTipText(mdb != null ? mdb : "");
 	}
-
+	
+	public void gdbEvent(GdbEvent e) {
+		if(e.getType() == GdbEvent.GDB_CONNECTED) {
+			setGdbStatus(gdbLabel, mdbLabel);
+		}
+	}
+	
 	public void gexManagerEvent(GexManagerEvent e) 
 	{
 		if(e.getType() == GexManagerEvent.CONNECTION_OPENED ||
@@ -247,18 +254,13 @@ public class GuiMain implements GexManagerListener
 		gdbLabel = new JLabel();
 		mdbLabel = new JLabel();
 		gexLabel = new JLabel();
+
 		statusBar.add(gdbLabel);
 		statusBar.add(mdbLabel);
 		statusBar.add(gexLabel);
 		setGdbStatus(gdbLabel, mdbLabel);
 		
-		swingEngine.getGdbManager().addGdbEventListener(new GdbEventListener() {
-			public void gdbEvent(GdbEvent e) {
-				if(e.getType() == GdbEvent.GDB_CONNECTED) {
-					setGdbStatus(gdbLabel, mdbLabel);
-				}
-			}
-		});
+		swingEngine.getGdbManager().addGdbEventListener(this);
 		
 		standaloneEngine.getGexManager().addListener(this);
 		
@@ -323,6 +325,8 @@ public class GuiMain implements GexManagerListener
 				Logger.log.error ("Couldn't cleanly close pgdb database", ex);
 			}
 		}
+		swingEngine.getGdbManager().removeGdbEventListener(this);
+		GexManager.getCurrent().removeListener(this);
 		standaloneEngine.dispose();
 		swingEngine.getEngine().dispose();
 		swingEngine.dispose();

@@ -155,6 +155,14 @@ public class UndoManager
 		}
 	}
 
+	private boolean disposed = false;
+	public void dispose()
+	{
+		assert (!disposed);
+		undoList.clear();
+		disposed = true;
+	}
+	
 	/**
 	   debugging helper function
 	 */

@@ -47,4 +47,7 @@ public abstract interface VPathwayWrapper
 	
 	/** make sure r is visible */
 	public void scrollTo(Rectangle r);
+	
+	/** called by VPathway.dispose() */
+	public void dispose();
 }

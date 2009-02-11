@@ -358,4 +358,13 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		}
 	}
 
+	private boolean disposed = false;
+	public void dispose()
+	{
+		assert (!disposed);
+		child.removeVPathwayListener(this);
+		child.removeVElementMouseListener(this);
+		child = null; // free VPathway for GC
+		disposed = true;
+	}
 }

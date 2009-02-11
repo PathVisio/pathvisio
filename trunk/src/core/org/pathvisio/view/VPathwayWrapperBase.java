@@ -82,5 +82,7 @@ public class VPathwayWrapperBase implements VPathwayWrapper {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void dispose() {}
 
 }

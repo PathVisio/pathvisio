@@ -441,6 +441,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			{
 				VPathway vp = (VPathway)e.getSource();
 				vp.removeVPathwayListener(this);
+				vp.removeVPathwayListener(pathwayElementMenuListener);
 			}
 			break;
 		}
@@ -467,6 +468,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		backpagePane.dispose();
 		model.dispose();
 		swingEngine.getEngine().removeApplicationEventListener(this);
+		VPathway vpwy = swingEngine.getEngine().getActiveVPathway();
+		if (vpwy != null)
+		{
+			vpwy.removeVPathwayListener(this);
+			vpwy.removeVPathwayListener(pathwayElementMenuListener);
+		}
 		disposed = true;
 	}
 }

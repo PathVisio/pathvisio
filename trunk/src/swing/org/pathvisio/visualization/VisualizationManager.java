@@ -401,6 +401,11 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		assert (!disposed);
 		gexManager.removeListener(this);
 		engine.removeApplicationEventListener(this);
+		VPathway vpwy = engine.getActiveVPathway();
+		if (vpwy != null)
+		{
+			vpwy.removeVPathwayListener(this);
+		}
 		disposed = true;
 	}
 }

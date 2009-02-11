@@ -421,7 +421,8 @@ public class CommonActions implements ApplicationEventListener {
 	}
 
 	/** Create a new pathway element or elements based on a {@link Template} */ 
-	public static class NewElementAction extends AbstractAction implements VPathwayListener {
+	public static class NewElementAction extends AbstractAction //implements VPathwayListener 
+	{
 
 		Template template;
 		
@@ -440,16 +441,16 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) {
-				vp.addVPathwayListener(this);
+//				vp.addVPathwayListener(this);
 				vp.setNewTemplate(template);
 			}
 		}
 		
-		public void vPathwayEvent(VPathwayEvent e) {
-			if(e.getType() == VPathwayEvent.ELEMENT_ADDED) {
-				e.getVPathway().setNewTemplate(null);
-			}
-		}
+//		public void vPathwayEvent(VPathwayEvent e) {
+//			if(e.getType() == VPathwayEvent.ELEMENT_ADDED) {
+//				e.getVPathway().setNewTemplate(null);
+//			}
+//		}
 	}
 	
 	/** 

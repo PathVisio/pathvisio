@@ -245,13 +245,18 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		
 		clearSelection();
 		drawingObjects = new ArrayList<VPathwayElement>();
-		List<SelectionListener> selectionListeners = selection.getListeners();
-		selection = new SelectionBox(this);
-		for(SelectionListener l : selectionListeners) {
-			selection.addListener(l);
+		// transfer selectionBox with corresponding listeners
+		SelectionBox newSelection = new SelectionBox(this);
+		for(Iterator<SelectionListener> i = selection.getListeners().iterator(); i.hasNext(); ) 
+		{
+			SelectionListener l = i.next();
+			newSelection.addListener(l);
+			i.remove();
 		}
+		selection = newSelection;
 		data.removeListener(this);
 		pressedObject = null;
+		data.transferStatusFlagListeners(originalState);
 		data = null;
 		pointsMtoV = new HashMap<MPoint, VPoint>();
 		fromModel(originalState);
@@ -260,7 +265,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			data.fireStatusFlagEvent(new StatusFlagEvent(originalState.hasChanged()));
 		}
 	}
-
+	
 	/**
 	 * @deprecated use fromModel instead
 	 */
@@ -1217,6 +1222,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 		fireVPathwayEvent(new VPathwayEvent(this, lastAdded,
 				VPathwayEvent.ELEMENT_ADDED));
+		setNewTemplate(null);
 	}
 
 	public void mouseEnter(MouseEvent e)
@@ -2316,7 +2322,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public void addVPathwayListener(VPathwayListener l)
 	{
 		if (!listeners.contains(l))
+		{
 			listeners.add(l);
+		}
 	}
 
 	public void removeVPathwayListener(VPathwayListener l)
@@ -2453,7 +2461,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 	}
 	
-	UndoManager undoManager = new UndoManager();
+	private UndoManager undoManager = new UndoManager();
 
 	/**
 	 * Activates the undo manager by providing an engine
@@ -2499,6 +2507,12 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		cleanUp();
 		if (data != null) data.removeListener(this);
 		if (viewActions != null) viewActions.dispose();
+		viewActions = null;
+		parent.dispose();
+		parent = null; // disconnect from VPathwaySwing
+		undoManager.dispose();
+		undoManager = null;
+		hoverManager.stop();
 		disposed = true;
 	}
 	

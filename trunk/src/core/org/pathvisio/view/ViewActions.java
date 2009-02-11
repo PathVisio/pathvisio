@@ -96,7 +96,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final OrderDownAction orderDown;
 	public final ShowUnlinkedConnectors showUnlinked;
 	
+	private final Engine engine;
+	
 	ViewActions(Engine engine, VPathway vp) {
+		this.engine = engine;
 		vPathway = vp;
 
 		vp.addSelectionListener(this);
@@ -378,6 +381,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				vPathway.redrawDirtyRect();
 			}
 		}
+		
+		public void dispose()
+		{
+			vPathway.removeSelectionListener(this);
+		}
 	}
 
 	private class ComplexAction extends GroupActionBase {
@@ -458,7 +466,12 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				putValue(Action.NAME, ungroupLbl);
 				putValue(SHORT_DESCRIPTION, ungroupTt);
 			}
-		}		
+		}
+		
+		public void dispose()
+		{
+			vPathway.removeSelectionListener(this);
+		}
 	}
 
 	private class DeleteAction extends AbstractAction {
@@ -515,20 +528,24 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 
 		public void undoManagerEvent(UndoManagerEvent e) {
 			String msg = e.getMessage();
-			putValue(SHORT_DESCRIPTION, "Undo: " + msg);
+			putValue(NAME, "Undo: " + msg);
 			setEnabled(!msg.equals(UndoManager.CANT_UNDO));
-			//TODO: why isn't this called?
 		}
 
 		public void applicationEvent(ApplicationEvent e) {
 			if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
 				((VPathway)e.getSource()).getUndoManager().addListener(this);
 			}
+			if(e.getType() == ApplicationEvent.VPATHWAY_DISPOSED) {
+				((VPathway)e.getSource()).getUndoManager().removeListener(this);
+			}
 		}
 		
 		public void dispose()
 		{
 			engine.removeApplicationEventListener(this);
+			VPathway vPwy = engine.getActiveVPathway();
+			if (vPwy != null) vPwy.getUndoManager().removeListener(this);
 		}
 	}
 
@@ -674,6 +691,16 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	{
 		assert (!disposed);
 		undo.dispose();
+		addAnchor.dispose();
+		toggleGroup.dispose();
+		toggleComplex.dispose();
+		vPathway.removeSelectionListener(this);
+		VPathway vpwy = engine.getActiveVPathway();
+		if (vpwy != null)
+		{
+			vpwy.removeVPathwayListener(this);
+			vpwy = null; // disconnect and make available for GC
+		}
 		disposed = true;
 	}
 }

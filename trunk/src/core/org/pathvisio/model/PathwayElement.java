@@ -1448,10 +1448,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return objectType;
 	}
 
-	// only for lines:
-	private MPoint[] defaultPoints = { new MPoint(0, 0), new MPoint(0, 0) };
-
-	private List<MPoint> mPoints = Arrays.asList(defaultPoints);
+	// only for lines
+	private List<MPoint> mPoints = Arrays.asList(new MPoint(0, 0), new MPoint(0, 0));
 
 	public void setMPoints(List<MPoint> points) {
 		if(points != null) {

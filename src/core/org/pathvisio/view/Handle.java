@@ -39,10 +39,10 @@ public class Handle extends VPathwayElement
 	 * I added this variable isVisible. It should be set automatically by its parent
 	 * through calls of show() and hide()
 	 */
-	private boolean isVisible = false;
+	private boolean isVisible = true;
 	
 	//The direction this handle is allowed to move in
-	int direction;
+	private int direction;
 	public static final int DIRECTION_FREE = 0;
 	public static final int DIRECTION_X	 = 1;
 	public static final int DIRECTION_Y  = 2; 
@@ -56,19 +56,18 @@ public class Handle extends VPathwayElement
 	public static final int STYLE_DEFAULT = 0;
 	public static final int STYLE_SEGMENT = 1;
 	public static final int STYLE_ROTATE = 2;
+	public static final int STYLE_INVISIBLE = 3; // invisible handles for selectionbox
 	
 	Adjustable parent;
 	
-	double mCenterx;
-	double mCentery;
+	private double mCenterx;
+	private double mCentery;
 	
 	double rotation;
 	
-	boolean visible;
+	private int style = STYLE_DEFAULT;
 	
-	int style = STYLE_DEFAULT;
-	
-	int cursor = Cursor.DEFAULT_CURSOR;
+	private int cursor = Cursor.DEFAULT_CURSOR;
 	
 	/**
 	 * Constructor for this class, creates a handle given the parent, direction and canvas
@@ -143,48 +142,12 @@ public class Handle extends VPathwayElement
 	}
 	
 	/**
-	 * returns the visibility of this handle
-	 * @see hide(), show()
-	 */
-	public boolean isVisible()
-	{
-		return isVisible;
-	}
-	
-	/**
-	 * call show() to cause this handle to show up and mark its area dirty 
-	 * A handle should show itself only if it's parent object is active / selected
-	 * @see hide(), isvisible()
-	 */
-	public void show()
-	{
-		if (!isVisible)
-		{
-			isVisible = true;
-			markDirty();
-		}
-	}
-	
-	/**
-	 * hide handle, and also mark its area dirty
-	 * @see show(), isvisible()
-	 */
-	public void hide()
-	{
-		if (isVisible)
-		{
-			isVisible = false;
-			markDirty();
-		}
-	}
-	
-	/**
-	 * draws itself, but only if isVisible() is true, there is 
-	 * no need for a check for isVisible() before calling draw().
+	 * draws itself, the look depends on style. If
+	 * there style is STYLE_INVISIBLE, nothing is drawn at all
 	 */
 	public void doDraw(Graphics2D g)
 	{
-		if(!isVisible) return;
+		if(style == STYLE_INVISIBLE) return; // nothing to draw
 		
 		Shape fillShape = getFillShape();
 		

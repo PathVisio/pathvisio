@@ -1012,15 +1012,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				//Special treatment for anchor
 				if(parent instanceof VAnchor) 
 				{
-
 					doClickSelect(p2d, modifierPressed);
 				}
-			} else if (pressedObject instanceof VPoint) {
-				Handle vph = ((VPoint)pressedObject).getHandle();
-				pressedObject = ((VPoint)pressedObject).getLine();
-				doClickSelect(p2d, modifierPressed);
-				pressedObject = vph;
-			} else
+			} 
+			else
 			{
 				doClickSelect(p2d, modifierPressed);
 			}

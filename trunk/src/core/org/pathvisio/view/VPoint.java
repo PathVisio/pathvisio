@@ -17,9 +17,7 @@
 package org.pathvisio.view;
 
 import java.awt.Cursor;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
@@ -29,13 +27,46 @@ import org.pathvisio.view.LinAlg.Point;
 /**
  * One of the two endpoints of a line. Carries a single handle.
  */
-public class VPoint extends VPathwayElement implements Adjustable {
+public class VPoint implements Adjustable {
 	Handle handle;
 	Line line;
 	MPoint mPoint;
+	final VPathway canvas;
+
+	public Rectangle2D getVBounds()
+	{
+		return null; 
+		// this method does not need to be implemented, because the Handle of a 
+		// VPoint is always DIRECTION_FREE
+	}
+	
+	private boolean isHighlighted = false;
+	
+	public boolean isHighlighted()
+	{
+		return isHighlighted;
+	}
+	
+	public void highlight()
+	{
+		if (!isHighlighted)
+		{
+			isHighlighted = true;
+			line.markDirty();
+		}
+	}
+	
+	public void unhighlight()
+	{
+		if (isHighlighted)
+		{
+			isHighlighted = false;
+			line.markDirty();
+		}
+	}
 	
 	VPoint(VPathway canvas, MPoint mPoint, Line line) {
-		super(canvas);
+		this.canvas = canvas;
 		this.mPoint = mPoint;
 		this.line = line;
 		handle = new Handle(Handle.DIRECTION_FREE, this, canvas);
@@ -46,16 +77,16 @@ public class VPoint extends VPathwayElement implements Adjustable {
 		mPoint.setGraphRef(null);
 	}
 	
-	protected double getVX() { return vFromM(getMPoint().getX()); }
-	protected double getVY() { return vFromM(getMPoint().getY()); }
+	protected double getVX() { return canvas.vFromM(getMPoint().getX()); }
+	protected double getVY() { return canvas.vFromM(getMPoint().getY()); }
 	
 	protected void setVLocation(double vx, double vy) {
-		mPoint.setX(mFromV(vx));
-		mPoint.setY(mFromV(vy));
+		mPoint.setX(canvas.mFromV(vx));
+		mPoint.setY(canvas.mFromV(vy));
 	}
 	
 	protected void vMoveBy(double dx, double dy) {
-		mPoint.moveBy(mFromV(dx), mFromV(dy));
+		mPoint.moveBy(canvas.mFromV(dx), canvas.mFromV(dy));
 	}
 	
 	protected void setHandleLocation() {
@@ -73,8 +104,8 @@ public class VPoint extends VPathwayElement implements Adjustable {
 	
 	public void adjustToHandle(Handle h, double vnewx, double vnewy)
 	{
-		double mcx = mFromV (vnewx);
-		double mcy = mFromV (vnewy);
+		double mcx = canvas.mFromV (vnewx);
+		double mcy = canvas.mFromV (vnewy);
 
 		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
 			canvas.isSnapToAngle())
@@ -111,41 +142,9 @@ public class VPoint extends VPathwayElement implements Adjustable {
 		mPoint.setY(mcy);
 	}
 	
-	protected Handle getHandle() {
+	protected Handle getHandle() 
+	{
 		return handle;
 	}
-	
-	protected Handle[] getHandles() {
-		return new Handle[] { handle };
-	}
-	
-	protected void doDraw(Graphics2D g2d) {
-		if(isHighlighted()) {
-			int size = 20;
-			g2d.setColor(getHighlightColor());
-			g2d.fill(new Ellipse2D.Double(
-					vFromM(mPoint.getX()) - size / 2,
-					vFromM(mPoint.getY()) - size / 2, 
-					size, 
-					size)
-			);
-		}
-	}
-	
-	protected Shape calculateVOutline() {
-		return handle.calculateVOutline();
-	}
-
-	protected void destroy() {
-		//Check if we can legally destroy this point
-		//TK: Disable this for now, until we implemented poly-lines
-//		if(lines.size() > 0) 
-//			throw new RuntimeException("VPoint cannot be destroyed: still linked to " + lines);
-
-		super.destroy();
-	}
-	
-	protected int getZOrder() {
-		return line.getZOrder() + 1;
-	}
+		
 }

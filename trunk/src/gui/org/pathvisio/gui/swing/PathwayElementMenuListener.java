@@ -90,7 +90,6 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		if(e instanceof Citation) return null;
 		
 //		if(e instanceof Handle) e = ((Handle)e).getParent();
-		if(e instanceof VPoint) e = ((VPoint)e).getLine();
 		
 		VPathway vp = e.getDrawing();
 		VPathwaySwing component = (VPathwaySwing)vp.getWrapper();

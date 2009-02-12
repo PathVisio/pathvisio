@@ -245,13 +245,6 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 			markDirty();			
 		}
 	}
-
-	/**
-	 * Get all the handles belonging to this object
-	 * @return an array of GmmlHandles, an empty array if the object
-	 * has no handles
-	 */
-	protected Handle[] getHandles() { return new Handle[] {}; }
 	
 	protected void createHandles() {}
 
@@ -373,11 +366,11 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 * */
 	protected double vFromM(double m) { return canvas.vFromM(m); } 
 	
-	protected void destroyHandles() {
-		for(Handle h : getHandles()) {
-			h.destroy();
-		}
-	}
+	/** 
+	 * called automatically by #destroy(), and also by #deselect()
+	 * This should be overridden if you create any Handles in createHandles()
+	 */
+	protected void destroyHandles() {}
 	
 	private boolean removeMe = false;
 	boolean toBeRemoved() { return removeMe; }

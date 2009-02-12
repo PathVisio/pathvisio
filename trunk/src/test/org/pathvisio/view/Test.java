@@ -155,7 +155,8 @@ public class Test extends TestCase {
     	assertTrue(eltDn.getZOrder() > eltSh.getZOrder());
     	assertTrue(eltSh.getZOrder() > eltLi.getZOrder());
     	
-    	VPathwayElement h = vLi.getHandles()[0];
+    	vDn.select();
+    	VPathwayElement h = ((GeneProduct)vDn).getHandles()[0];
 //    	VPoint pnt = ((Line)vLi).getEnd();
     	
     	List<VPathwayElement> elements = vPwy.getDrawingObjects();

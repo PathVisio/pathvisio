@@ -74,20 +74,28 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 		line.removeVAnchor(this);
 	}
 	
-	protected Handle[] getHandles() {
-		return new Handle[] { handle };
+	@Override protected void destroyHandles()
+	{
+		if (handle != null) 
+		{
+			handle.destroy();
+			handle = null;
+		}
 	}
 
 	protected void createHandles()
 	{
 		handle = new Handle(Handle.DIRECTION_FREE, this, getDrawing());		
+		double lc = mAnchor.getPosition();
+		Point2D position = line.vFromL(lc);
+		handle.setVLocation(position.getX(), position.getY());
 	}
 	
 	void updatePosition() {
 		double lc = mAnchor.getPosition();
 			
 		Point2D position = line.vFromL(lc);
-		handle.setVLocation(position.getX(), position.getY());
+		if (handle != null) handle.setVLocation(position.getX(), position.getY());
 		
 		mx = mFromV(position.getX());
 		my = mFromV(position.getY());
@@ -103,11 +111,10 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 		}
 	}
 	
-	public void adjustToHandle(Handle h, double vx, double vy) {
-		if(h == handle) {
-			double position = line.lFromV(new Point2D.Double(vx, vy));
-			mAnchor.setPosition(position);
-		}
+	public void adjustToHandle(Handle h, double vx, double vy) 
+	{
+		double position = line.lFromV(new Point2D.Double(vx, vy));
+		mAnchor.setPosition(position);
 	}
 
 	private AnchorShape getAnchorShape() {

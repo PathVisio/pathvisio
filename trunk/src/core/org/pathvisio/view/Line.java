@@ -18,6 +18,7 @@ package org.pathvisio.view;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -55,6 +56,7 @@ public class Line extends Graphics implements Adjustable
 {	
 	
 	private List<VPoint> points;
+	
 	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();
 	
 	List<Handle> segmentHandles = new ArrayList<Handle>();
@@ -74,14 +76,14 @@ public class Line extends Graphics implements Adjustable
 		addPoint(o.getMEnd());
 		setAnchors();
 		getConnectorShape().recalculateShape(getMLine());
-		updateSegmentHandles();
+//		updateSegmentHandles();
 		updateCitationPosition();
 	}
 	
 	private void addPoint(MPoint mp) {
 		VPoint vp = canvas.newPoint(mp, this);
 		points.add(vp);
-		vp.setHandleLocation();
+		setHandleLocation(vp);
 	}
 	
 	private MLine getMLine() {
@@ -90,10 +92,47 @@ public class Line extends Graphics implements Adjustable
 	
 	public void createHandles()
 	{
-		updateSegmentHandles();
-		getHandles();
+		createSegmentHandles();
+		
+		for (VPoint vp : points)
+		{
+			vp.handle = new Handle(Handle.DIRECTION_FREE, vp, canvas);
+			vp.handle.setCursorHint(Cursor.MOVE_CURSOR);
+			setHandleLocation(vp);
+		}
 	}
 	
+	/**
+	 * Update the segment handles to be placed on the current
+	 * connector segments
+	 */
+	private void createSegmentHandles() {
+		ConnectorShape cs = getConnectorShape();
+		WayPoint[] waypoints = cs.getWayPoints();
+		
+		//Destroy and recreate the handles if the number
+		//doesn't match the waypoints number
+//		if(waypoints.length != segmentHandles.size()) {
+
+			//Destroy the old handles, just to be sure
+			for(Handle h : segmentHandles) h.destroy();
+			segmentHandles.clear();
+			
+			//Create the new handles
+			for(int i = 0; i < waypoints.length; i++) {
+				Handle h = new Handle(Handle.DIRECTION_FREE, this, this.canvas);
+				h.setStyle(Handle.STYLE_SEGMENT);
+				segmentHandles.add(h);
+			}
+//		}
+
+		//Put the handles in the right place
+		for(int i = 0; i < waypoints.length; i++) {
+			Handle h = segmentHandles.get(i);
+			h.setMLocation(waypoints[i].getX(), waypoints[i].getY());
+		}
+	}
+
 	/**
 	 * Update the segment handles to be placed on the current
 	 * connector segments
@@ -105,7 +144,8 @@ public class Line extends Graphics implements Adjustable
 		//Destroy and recreate the handles if the number
 		//doesn't match the waypoints number
 		if(waypoints.length != segmentHandles.size()) {
-			//Destroy the old handles
+
+			//Destroy the old handles, just to be sure
 			for(Handle h : segmentHandles) h.destroy();
 			segmentHandles.clear();
 			
@@ -116,6 +156,7 @@ public class Line extends Graphics implements Adjustable
 				segmentHandles.add(h);
 			}
 		}
+
 		//Put the handles in the right place
 		for(int i = 0; i < waypoints.length; i++) {
 			Handle h = segmentHandles.get(i);
@@ -443,18 +484,6 @@ public class Line extends Graphics implements Adjustable
 	protected void setVScaleRectangle(Rectangle2D r) {
 		setVLine(r.getX(), r.getY(), r.getX() + r.getWidth(), r.getY() + r.getHeight());
 	}
-	
-	public Handle[] getHandles()
-	{
-		List<Handle> handles = new ArrayList<Handle>();
-		for(VPoint p : points) {
-			handles.add(p.getHandle());
-		}
-		for(Handle h : segmentHandles) {
-			handles.add(h);
-		}
-		return handles.toArray(new Handle[handles.size()]);
-	}
 		
 	public List<VPoint> getPoints() { return points; }
 	
@@ -519,13 +548,18 @@ public class Line extends Graphics implements Adjustable
 		}
 	}
 	
+	private void setHandleLocation(VPoint vp)
+	{
+		if (vp.handle == null) return;
+		MPoint mp = vp.getMPoint();
+		vp.handle.setMLocation(mp.getX(), mp.getY());
+	}
+	
 	public void recalculateConnector() {
 		getConnectorShape().recalculateShape(getMLine());
 		updateAnchorPositions();
 		updateCitationPosition();
-		for(VPoint vp : points) {
-			vp.setHandleLocation();
-		}
+		for (VPoint vp : points) setHandleLocation(vp);
 		markDirty();
 	}
 	
@@ -543,7 +577,7 @@ public class Line extends Graphics implements Adjustable
 		updateSegmentHandles();
 		markDirty();
 		for(VPoint p : points) {
-			p.setHandleLocation();
+			setHandleLocation(p);
 		}
 		if(gdata.getMAnchors().size() != anchors.size()) {
 			setAnchors();
@@ -557,6 +591,10 @@ public class Line extends Graphics implements Adjustable
 		
 		for(Handle h : getSegmentHandles()) {
 			h.destroy();
+		}
+		for(VPoint p : points) {
+			if (p.handle != null)
+				p.handle.destroy();
 		}
 	}
 	

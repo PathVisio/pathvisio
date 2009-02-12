@@ -24,11 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.jdom.Document;
 import org.pathvisio.biopax.BiopaxReferenceManager;
@@ -86,7 +86,9 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
  */
 public class PathwayElement implements GraphIdContainer, Comparable<PathwayElement>
 {
-	private Map<String, String> attributes = new HashMap<String, String>();
+	//TreeMap has better performance than HashMap
+	//in the (common) case where no attributes are present
+	private Map<String, String> attributes = new TreeMap<String, String>();
 	
 	/**
 	 * Get a map of arbitrary key / value pairs
@@ -1356,7 +1358,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public void copyValuesFrom(PathwayElement src)
 	{
-		attributes = new HashMap<String, String>(src.attributes); // create copy
+		attributes = new TreeMap<String, String>(src.attributes); // create copy
 		author = src.author;
 		copyright = src.copyright;
 		backpageHead = src.backpageHead;

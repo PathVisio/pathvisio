@@ -59,7 +59,6 @@ public class Label extends GraphicsShape
 	public Label(VPathway canvas, PathwayElement o)
 	{
 		super(canvas, o);
-		setHandleLocation();
 	}
 	
 	public String getLabelText() {

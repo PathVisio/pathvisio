@@ -55,11 +55,16 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	Handle handleNW;
 	//Rotation handle
 	Handle handleR;
+	
+	Handle[] handles = new Handle[] {};
 			
 	public GraphicsShape(VPathway canvas, PathwayElement o)
 	{
-		super(canvas, o);
-		
+		super(canvas, o);		
+	}
+	
+	protected void createHandles()
+	{
 		handleN	= new Handle(Handle.DIRECTION_Y, this, canvas);
 		handleE	= new Handle(Handle.DIRECTION_X, this, canvas);
 		handleS	= new Handle(Handle.DIRECTION_Y, this, canvas);
@@ -82,6 +87,27 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
 		
 		handleR.setCursorHint(Cursor.MOVE_CURSOR);
+
+		if(	this instanceof GeneProduct || 
+				this instanceof Label)
+		{
+			// No rotation handle for these objects
+			handles = new Handle[]
+			{
+					handleN, handleNE, handleE, handleSE,
+					handleS, handleSW, handleW,	handleNW,
+			};
+		}
+		else
+		{
+			handles = new Handle[]
+			{
+					handleN, handleNE, handleE, handleSE,
+					handleS, handleSW, handleW,	handleNW,
+					handleR
+			};
+		}
+		setHandleLocation();
 	}
 	
 	protected void setVScaleRectangle(Rectangle2D r) {
@@ -108,22 +134,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		
 	public Handle[] getHandles()
 	{
-		if(	this instanceof GeneProduct || 
-			this instanceof Label)
-		{
-			// No rotation handle for these objects
-			return new Handle[]
-			{
-					handleN, handleNE, handleE, handleSE,
-					handleS, handleSW, handleW,	handleNW,
-			};
-		}
-		return new Handle[]
-		{
-				handleN, handleNE, handleE, handleSE,
-				handleS, handleSW, handleW,	handleNW,
-				handleR
-		};
+		return handles;
 	}
 	
 	/**
@@ -361,7 +372,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	public void gmmlObjectModified(PathwayEvent e)
 	{
 		markDirty(); // mark everything dirty
-		setHandleLocation();
+		if (handles.length > 0) setHandleLocation();
 	}
 	
 	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
@@ -421,6 +432,12 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			}
 		}
 		return null;
+	}
+	
+	@Override protected void destroyHandles()
+	{
+		super.destroyHandles();
+		handles = new Handle[] {};
 	}
 	
 	protected void doDraw(Graphics2D g2d) {

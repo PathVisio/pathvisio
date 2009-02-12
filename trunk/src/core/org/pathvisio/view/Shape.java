@@ -44,7 +44,6 @@ public class Shape extends GraphicsShape
 	public Shape(VPathway canvas, PathwayElement o)
 	{
 		super(canvas, o);
-		setHandleLocation();
 	}
 
 	public void doDraw(Graphics2D g)

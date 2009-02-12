@@ -159,6 +159,9 @@ public class Test extends TestCase {
     	VPathwayElement h = ((GeneProduct)vDn).getHandles()[0];
 //    	VPoint pnt = ((Line)vLi).getEnd();
     	
+    	// this call is necessary for the vDn handles to get added to the drawingObjects
+    	// TODO: unsatisfactory solution...
+    	vPwy.redrawDirtyRect(); 
     	List<VPathwayElement> elements = vPwy.getDrawingObjects();
     	
     	//Test natural / z order

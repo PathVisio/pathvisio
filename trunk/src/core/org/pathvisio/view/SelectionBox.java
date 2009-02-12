@@ -42,6 +42,8 @@ import org.pathvisio.model.PathwayElement;
 public class SelectionBox extends VPathwayElement implements Adjustable
 {
 	// Corner handles
+	// These handles are not actually visible, they are just dummy objects to
+	// mark which corner is being dragged.
 	Handle handleNE;
 
 	Handle handleSE;
@@ -59,11 +61,6 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	boolean isSelecting;
 
 	boolean isVisible;
-
-	public Handle[] getHandles()
-	{
-		return new Handle[] { handleNE, handleSE, handleSW, handleNW };
-	}
 
 	public SelectionBox(VPathway canvas)
 	{
@@ -258,32 +255,18 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	{
 		isSelecting = false;
 		fitToSelection();
-		deselect();
-		hide(false);
+//		deselect();
+		hide();
 	}
 
 	public void select()
 	{
-		super.select();
-		for (Handle h : getHandles())
-		{
-			h.show();
-		}
-		for (VPathwayElement o : selection)
-		{
-			o.select();
-			for (Handle h : o.getHandles())
-				h.hide();
-		}
+		// Do nothing
 	}
 
 	public void deselect()
 	{
-		super.deselect();
-		for (Handle h : getHandles())
-		{
-			h.hide();
-		}
+		// Do nothing
 	}
 
 	/**
@@ -294,6 +277,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 		if (selection.size() == 0)
 		{ // No objects in selection
 			hide();
+			reset();
 			return;
 		}
 		if (!hasMultipleSelection())
@@ -339,22 +323,10 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 		markDirty();
 	}
 
-	/**
-	 * Hide the selectionbox
-	 */
 	public void hide()
 	{
-		hide(true);
-	}
-
-	public void hide(boolean reset)
-	{
-		for (Handle h : getHandles())
-			h.hide();
 		markDirty();
 		isVisible = false;
-		if (reset)
-			reset();
 	}
 
 	/**

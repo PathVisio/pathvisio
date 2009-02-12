@@ -97,10 +97,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	{
 		if (o == this || selection.contains(o))
 			return; // Is selectionbox or already in selection
-		if (o instanceof VPoint)
-		{
-			//skip it: don't add points; lines get added independently
-		} else
+		else
 		{
 			o.select();
 			doAdd(o);

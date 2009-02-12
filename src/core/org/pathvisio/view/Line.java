@@ -41,6 +41,8 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
  
 /**
  * This class represents a line on the pathway.
@@ -209,8 +211,29 @@ public class Line extends Graphics implements Adjustable
 			if (he != null) g.draw(he.getShape());
 			if (hs != null) g.draw(hs.getShape());
 		}
+		
+		// highlight unlinked points, after pressing Ctrl+L 
+		for (VPoint vp : points)
+		{
+			if(vp.isHighlighted()) {
+				int size = 8;
+				g.setColor(PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_HIGHLIGHTED));
+				g.fill(new Rectangle2D.Double(
+						vp.getVX() - size / 2,
+						vp.getVY() - size / 2, 
+						size, 
+						size)
+				);
+			}
+		}
 	}
 
+	@Override public void unhighlight()
+	{
+		super.unhighlight();
+		for (VPoint vp : points) vp.unhighlight();
+	}
+	
 	/**
 	 * Be careful to prevent infinite recursion when
 	 * Line.getVOutline triggers recalculation of a connector.
@@ -521,7 +544,6 @@ public class Line extends Graphics implements Adjustable
 		updateSegmentHandles();
 		markDirty();
 		for(VPoint p : points) {
-			p.markDirty();
 			p.setHandleLocation();
 		}
 		if(gdata.getMAnchors().size() != anchors.size()) {
@@ -542,9 +564,6 @@ public class Line extends Graphics implements Adjustable
 	protected void destroy() {
 		super.destroy();
 		
-		for(VPoint p : points) {
-			p.destroy();
-		}
 		for(MPoint p : gdata.getMPoints()) {
 			canvas.pointsMtoV.remove(p);
 		}

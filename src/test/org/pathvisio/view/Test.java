@@ -156,23 +156,23 @@ public class Test extends TestCase {
     	assertTrue(eltSh.getZOrder() > eltLi.getZOrder());
     	
     	VPathwayElement h = vLi.getHandles()[0];
-    	VPoint pnt = ((Line)vLi).getEnd();
+//    	VPoint pnt = ((Line)vLi).getEnd();
     	
     	List<VPathwayElement> elements = vPwy.getDrawingObjects();
     	
     	//Test natural / z order
     	Collections.sort(elements);    	    	
-    	checkDrawingOrder(new VPathwayElement[] { vLi, pnt, vSh, vLa, vDn, h }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, h }, elements);
     	
     	//order should not change when selecting
     	vLi.select();
     	Collections.sort(elements);
-    	checkDrawingOrder(new VPathwayElement[] { vLi, pnt, vSh, vLa, vDn, h }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, h }, elements);
     	
     	//Test reset after unselected
     	vLi.deselect();
     	Collections.sort(elements);
-    	checkDrawingOrder(new VPathwayElement[] { vLi, pnt, vSh, vLa, vDn, h }, elements);
+    	checkDrawingOrder(new VPathwayElement[] { vLi, vSh, vLa, vDn, h }, elements);
     }
     
     public void checkDrawingOrder(VPathwayElement[] order, List<VPathwayElement> elements) {

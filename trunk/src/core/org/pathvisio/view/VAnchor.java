@@ -50,7 +50,6 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 
 		linkAnchor = new LinkAnchor(canvas, mAnchor, 0, 0);
 		
-		handle = new Handle(Handle.DIRECTION_FREE, this, getDrawing());
 		updatePosition();
 	}
 	
@@ -79,14 +78,9 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 		return new Handle[] { handle };
 	}
 
-	public void select() {
-		handle.show();
-		super.select();
-	}
-	
-	public void deselect() {
-		handle.hide();
-		super.deselect();
+	protected void createHandles()
+	{
+		handle = new Handle(Handle.DIRECTION_FREE, this, getDrawing());		
 	}
 	
 	void updatePosition() {

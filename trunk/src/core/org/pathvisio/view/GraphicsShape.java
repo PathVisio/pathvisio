@@ -75,7 +75,6 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		handleSW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		
-		handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);
 		
 		handleN.setCursorHint(Cursor.N_RESIZE_CURSOR);
 		handleE.setCursorHint(Cursor.E_RESIZE_CURSOR);
@@ -86,8 +85,6 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		handleSW.setCursorHint(Cursor.SW_RESIZE_CURSOR);
 		handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
 		
-		handleR.setCursorHint(Cursor.MOVE_CURSOR);
-
 		if(	this instanceof GeneProduct || 
 				this instanceof Label)
 		{
@@ -100,6 +97,9 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		else
 		{
+			handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);
+			handleR.setCursorHint(Cursor.MOVE_CURSOR);
+			
 			handles = new Handle[]
 			{
 					handleN, handleNE, handleE, handleSE,
@@ -308,8 +308,11 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		p = mToExternal(-gdata.getMWidth()/2, -gdata.getMHeight()/2);
 		handleNW.setMLocation(p.x, p.y);
 
-		p = mToExternal(gdata.getMWidth()/2 + M_ROTATION_HANDLE_POSITION, 0);
-		handleR.setMLocation(p.x, p.y);
+		if (handleR != null)
+		{
+			p = mToExternal(gdata.getMWidth()/2 + M_ROTATION_HANDLE_POSITION, 0);
+			handleR.setMLocation(p.x, p.y);
+		}
 		
 		for(Handle h : getHandles()) h.rotation = gdata.getRotation();
 	}

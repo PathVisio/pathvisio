@@ -1048,14 +1048,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			if (o.vContains(p2d))
 			{
-				// select this object, unless it is an invisible gmmlHandle
-				if (o instanceof Handle) {
-					if (((Handle) o).isVisible()) {
-						probj = o; //For the rest, only visible handles
-					}
-				} else {
-					probj = o;
-				}
+				probj = o;
 			}
 		}
 		return probj;
@@ -1075,11 +1068,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			if (o.vContains(p2d))
 			{
-				// select this object, unless it is an invisible gmmlHandle
-				if (o instanceof Handle && !((Handle) o).isVisible())
-					;
-				else
-					result.add(o);
+				result.add(o);
 			}
 		}
 		return result;

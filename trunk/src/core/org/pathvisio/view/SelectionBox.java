@@ -72,6 +72,12 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 		handleSE = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleSW = new Handle(Handle.DIRECTION_FREE, this, canvas);
 		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		
+		// handles of selectionbox are invisible
+		handleNE.setStyle(Handle.STYLE_INVISIBLE);
+		handleSE.setStyle(Handle.STYLE_INVISIBLE);
+		handleSW.setStyle(Handle.STYLE_INVISIBLE);
+		handleNW.setStyle(Handle.STYLE_INVISIBLE);
 	}
 
 	public Set<VPathwayElement> getSelection()

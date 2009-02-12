@@ -44,24 +44,6 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		citation = new Citation(canvas, this, new Point2D.Double(1, -1));
 	}
 	
-	public void select()
-	{
-		super.select();
-		for (Handle h : getHandles())
-		{
-			h.show();
-		}
-	}
-	
-	public void deselect()
-	{
-		super.deselect();
-		for (Handle h : getHandles())
-		{
-			h.hide();
-		}
-	}
-	
 	protected void markDirty() {
 		super.markDirty();
 		citation.markDirty();

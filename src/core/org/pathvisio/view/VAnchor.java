@@ -35,7 +35,7 @@ import org.pathvisio.model.PathwayElement.MPoint;
  * @author thomas
  *
  */
-public class VAnchor extends VPathwayElement implements LinkProvider {
+public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable {
 	private MAnchor mAnchor;
 	private Line line;
 	private Handle handle;
@@ -109,7 +109,7 @@ public class VAnchor extends VPathwayElement implements LinkProvider {
 		}
 	}
 	
-	protected void adjustToHandle(Handle h, double vx, double vy) {
+	public void adjustToHandle(Handle h, double vx, double vy) {
 		if(h == handle) {
 			double position = line.lFromV(new Point2D.Double(vx, vy));
 			mAnchor.setPosition(position);

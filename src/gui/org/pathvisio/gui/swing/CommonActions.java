@@ -501,10 +501,6 @@ public class CommonActions implements ApplicationEventListener {
 					element = element.getDrawing().getMappInfo();
 				}
 			}
-			//If handle, select parent
-			if(element instanceof Handle) {
-				element = ((Handle)element).getParent();
-			}
 		}
 		
 		public void actionPerformed(ActionEvent e) {

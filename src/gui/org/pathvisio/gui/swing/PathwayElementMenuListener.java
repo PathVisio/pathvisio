@@ -89,7 +89,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 	private JPopupMenu getMenuInstance(SwingEngine swingEngine, VPathwayElement e) {
 		if(e instanceof Citation) return null;
 		
-		if(e instanceof Handle) e = ((Handle)e).getParent();
+//		if(e instanceof Handle) e = ((Handle)e).getParent();
 		if(e instanceof VPoint) e = ((VPoint)e).getLine();
 		
 		VPathway vp = e.getDrawing();

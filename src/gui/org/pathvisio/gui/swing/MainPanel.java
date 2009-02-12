@@ -401,9 +401,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		switch(e.getType()) {
 		case VPathwayEvent.ELEMENT_DOUBLE_CLICKED:
 			VPathwayElement pwe = e.getAffectedElement();
-			if(pwe instanceof Handle) {
-				pwe = ((Handle)pwe).getParent();
-			}
 			if(pwe instanceof Graphics && 
 					!(pwe instanceof SelectionBox)) {
 				PathwayElement p = ((Graphics)pwe).getPathwayElement();

@@ -39,7 +39,7 @@ import org.pathvisio.model.PathwayElement;
  * is important to call adjustToZoom when the zoom pct has changed, so the view
  * coordinates can be recalculated.
  */
-public class SelectionBox extends VPathwayElement
+public class SelectionBox extends VPathwayElement implements Adjustable
 {
 	// Corner handles
 	Handle handleNE;

@@ -16,7 +16,6 @@
 //
 package org.pathvisio.view;
 
-import java.awt.Cursor;
 import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.PathwayElement.MPoint;
@@ -27,7 +26,10 @@ import org.pathvisio.view.LinAlg.Point;
 /**
  * One of the two endpoints of a line. Carries a single handle.
  */
-public class VPoint implements Adjustable {
+public class VPoint implements Adjustable 
+{
+	// the handle that goes with this VPoint. 
+	// This Handle is created, destroyed and generally managed by Line, not by VPoint
 	Handle handle;
 	Line line;
 	MPoint mPoint;
@@ -69,10 +71,8 @@ public class VPoint implements Adjustable {
 		this.canvas = canvas;
 		this.mPoint = mPoint;
 		this.line = line;
-		handle = new Handle(Handle.DIRECTION_FREE, this, canvas);
-		handle.setCursorHint(Cursor.MOVE_CURSOR);
 	}
-
+	
 	protected void unlink() {
 		mPoint.setGraphRef(null);
 	}
@@ -87,11 +87,6 @@ public class VPoint implements Adjustable {
 	
 	protected void vMoveBy(double dx, double dy) {
 		mPoint.moveBy(canvas.mFromV(dx), canvas.mFromV(dy));
-	}
-	
-	protected void setHandleLocation() {
-		MPoint mp = getMPoint();
-		handle.setMLocation(mp.getX(), mp.getY());
 	}
 	
 	public MPoint getMPoint() {
@@ -145,6 +140,5 @@ public class VPoint implements Adjustable {
 	protected Handle getHandle() 
 	{
 		return handle;
-	}
-		
+	}	
 }

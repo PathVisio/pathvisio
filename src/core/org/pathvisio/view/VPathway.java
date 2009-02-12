@@ -115,6 +115,8 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	public List<VPathwayElement> getDrawingObjects()
 	{
+		addScheduled();
+		cleanUp();
 		return drawingObjects;
 	}
 
@@ -1080,7 +1082,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			if (o instanceof LinkProvider && o.getVBounds().contains(p))
 			{
-				// select this object, unless it is an invisible gmmlHandle
 				result.add((LinkProvider)o);
 			}
 		}

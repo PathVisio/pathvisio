@@ -439,7 +439,9 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	
 	@Override protected void destroyHandles()
 	{
-		super.destroyHandles();
+		for(Handle h : handles) {
+			h.destroy();
+		}
 		handles = new Handle[] {};
 	}
 	

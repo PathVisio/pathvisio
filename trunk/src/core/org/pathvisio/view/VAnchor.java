@@ -32,8 +32,9 @@ import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
  * VAnchor is the view representation of {@link MAnchor}.
- * @author thomas
- *
+ * 
+ * It is stuck to a Line and can move one-dimensionally across it. It has a handle
+ * so the user can drag it.
  */
 public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable {
 	private MAnchor mAnchor;
@@ -85,7 +86,7 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 
 	protected void createHandles()
 	{
-		handle = new Handle(Handle.DIRECTION_FREE, this, this, getDrawing());		
+		handle = new Handle(Handle.Freedom.FREE, this, this);		
 		double lc = mAnchor.getPosition();
 		Point2D position = line.vFromL(lc);
 		handle.setVLocation(position.getX(), position.getY());

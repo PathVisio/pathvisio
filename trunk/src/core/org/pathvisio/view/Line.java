@@ -46,7 +46,12 @@ import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
  
 /**
- * This class represents a line on the pathway.
+ * This class represents a Line on the pathway, or rather
+ * a series of line segments that are joined together.
+ *  
+ * It has two VPoints with a Handle. It may have zero or more anchors, each with their own Handle.
+ * It has one or more segments, any segment in excess of two will get a Segment Handle.
+ * 
  * The actual implementation of the path is done by implementations
  * of the {@link ConnectorShape} interface.
  * @see ConnectorShape
@@ -54,7 +59,6 @@ import org.pathvisio.preferences.PreferenceManager;
  */
 public class Line extends Graphics implements Adjustable
 {	
-	
 	private List<VPoint> points;
 	
 	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();
@@ -96,35 +100,30 @@ public class Line extends Graphics implements Adjustable
 		
 		for (VPoint vp : points)
 		{
-			vp.handle = new Handle(Handle.DIRECTION_FREE, this, vp, canvas);
+			vp.handle = new Handle(Handle.Freedom.FREE, this, vp);
 			vp.handle.setCursorHint(Cursor.MOVE_CURSOR);
 			setHandleLocation(vp);
 		}
 	}
 	
 	/**
-	 * Update the segment handles to be placed on the current
-	 * connector segments
+	 * Create new segment handles
 	 */
-	private void createSegmentHandles() {
+	private void createSegmentHandles() 
+	{
 		ConnectorShape cs = getConnectorShape();
 		WayPoint[] waypoints = cs.getWayPoints();
 		
-		//Destroy and recreate the handles if the number
-		//doesn't match the waypoints number
-//		if(waypoints.length != segmentHandles.size()) {
-
-			//Destroy the old handles, just to be sure
-			for(Handle h : segmentHandles) h.destroy();
-			segmentHandles.clear();
+		//Destroy the old handles, just to be sure
+		for(Handle h : segmentHandles) h.destroy();
+		segmentHandles.clear();
 			
-			//Create the new handles
-			for(int i = 0; i < waypoints.length; i++) {
-				Handle h = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
-				h.setStyle(Handle.STYLE_SEGMENT);
-				segmentHandles.add(h);
-			}
-//		}
+		//Create the new handles
+		for(int i = 0; i < waypoints.length; i++) {
+			Handle h = new Handle(Handle.Freedom.FREE, this, this);
+			h.setStyle(Handle.Style.SEGMENT);
+			segmentHandles.add(h);
+		}
 
 		//Put the handles in the right place
 		for(int i = 0; i < waypoints.length; i++) {
@@ -134,8 +133,9 @@ public class Line extends Graphics implements Adjustable
 	}
 
 	/**
-	 * Update the segment handles to be placed on the current
-	 * connector segments
+	 * Update the segment handles, if the ConnectorShape has changed so much that
+	 * the number of segment handles doesn't match the number of segments anymore, 
+	 * number of segments, they will be destroyed and recreated.
 	 */
 	private void updateSegmentHandles() {
 		ConnectorShape cs = getConnectorShape();
@@ -143,24 +143,18 @@ public class Line extends Graphics implements Adjustable
 		
 		//Destroy and recreate the handles if the number
 		//doesn't match the waypoints number
-		if(waypoints.length != segmentHandles.size()) {
-
-			//Destroy the old handles, just to be sure
-			for(Handle h : segmentHandles) h.destroy();
-			segmentHandles.clear();
-			
-			//Create the new handles
-			for(int i = 0; i < waypoints.length; i++) {
-				Handle h = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
-				h.setStyle(Handle.STYLE_SEGMENT);
-				segmentHandles.add(h);
-			}
+		if(waypoints.length != segmentHandles.size()) 
+		{
+			// clear and create from scratch
+			createSegmentHandles();
 		}
-
-		//Put the handles in the right place
-		for(int i = 0; i < waypoints.length; i++) {
-			Handle h = segmentHandles.get(i);
-			h.setMLocation(waypoints[i].getX(), waypoints[i].getY());
+		else
+		{
+			// just adjust the positions
+			for(int i = 0; i < waypoints.length; i++) {
+				Handle h = segmentHandles.get(i);
+				h.setMLocation(waypoints[i].getX(), waypoints[i].getY());
+			}
 		}
 	}
 
@@ -268,6 +262,7 @@ public class Line extends Graphics implements Adjustable
 		}
 	}
 
+	/** Overridden, to unhighlight VPoints as well */
 	@Override public void unhighlight()
 	{
 		super.unhighlight();

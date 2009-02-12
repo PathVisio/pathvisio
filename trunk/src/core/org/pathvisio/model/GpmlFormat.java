@@ -37,9 +37,6 @@ import org.pathvisio.debug.Logger;
  * Contains all gpml-specific constants,
  * and should be the only class (apart from svgFormat)
  * that needs to import jdom
- *  
- * @author Martijn
- *
  */
 public class GpmlFormat implements PathwayImporter, PathwayExporter
 {

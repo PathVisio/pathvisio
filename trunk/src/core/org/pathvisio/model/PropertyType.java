@@ -28,8 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author Martijn
+ * Types for Static properties on {@link PathwayElement}
  */
 public enum PropertyType 
 {

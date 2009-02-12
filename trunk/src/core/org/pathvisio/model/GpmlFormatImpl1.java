@@ -57,9 +57,6 @@ import org.xml.sax.SAXException;
  * Contains all gpml-specific constants,
  * and should be the only class (apart from svgFormat)
  * that needs to import jdom
- *  
- * @author Martijn
- *
  */
 public class GpmlFormatImpl1
 {
@@ -320,8 +317,6 @@ public class GpmlFormatImpl1
 	 * 
 	 * This Comparator can sort jdom Elements so that they are in the correct order
 	 * for the xsd.
-	 *  
-	 * @author Martijn.vanIersel
 	 */
 	private static class ByElementName implements Comparator<Element>
 	{

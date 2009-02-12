@@ -245,13 +245,6 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	}
 
 	/**
-	 * Transforms this object to fit to the coordinates
-	 * passed on by the given handle
-	 * @param h	The Handle to adjust to
-	 */
-	protected void adjustToHandle(Handle h, double vx, double vy) {}
-
-	/**
 	 * Get all the handles belonging to this object
 	 * @return an array of GmmlHandles, an empty array if the object
 	 * has no handles

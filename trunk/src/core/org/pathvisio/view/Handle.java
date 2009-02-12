@@ -57,7 +57,7 @@ public class Handle extends VPathwayElement
 	public static final int STYLE_SEGMENT = 1;
 	public static final int STYLE_ROTATE = 2;
 	
-	VPathwayElement parent;
+	Adjustable parent;
 	
 	double mCenterx;
 	double mCentery;
@@ -76,7 +76,7 @@ public class Handle extends VPathwayElement
 	 * @param parent	The object this handle belongs to
 	 * @param canvas	The {@link VPathway} to draw this handle on
 	 */
-	public Handle(int direction, VPathwayElement parent, VPathway canvas)
+	public Handle(int direction, Adjustable parent, VPathway canvas)
 	{
 		super(canvas);		
 		this.direction = direction;
@@ -106,7 +106,7 @@ public class Handle extends VPathwayElement
 		return cursor;
 	}
 	
-	public VPathwayElement getParent() {
+	public Adjustable getParent() {
 		return parent;
 	}
 		

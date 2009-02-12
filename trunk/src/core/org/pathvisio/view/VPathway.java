@@ -1004,8 +1004,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			// if our object is an handle, select also it's parent.
 			if (pressedObject instanceof Handle)
 			{
-				VPathwayElement parent = ((Handle) pressedObject).parent;
-				parent.select();
+				Adjustable parent = ((Handle) pressedObject).parent;
+				if (parent instanceof VPathwayElement)
+				{
+					((VPathwayElement)parent).select();
+				}
 				//Special treatment for anchor
 				if(parent instanceof VAnchor) 
 				{
@@ -1139,7 +1142,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				clearSelection();
 				//If the object is a handle, select the parent instead
 				if(pressedObject instanceof Handle) {
-					selection.addToSelection(((Handle)pressedObject).parent);
+					Adjustable parent = ((Handle)pressedObject).parent;
+					if (parent instanceof VPathwayElement)
+					{
+						selection.addToSelection((VPathwayElement)parent);
+					}
 				} else {
 					selection.addToSelection(pressedObject);
 				}

@@ -29,7 +29,7 @@ import org.pathvisio.view.LinAlg.Point;
 /**
  * One of the two endpoints of a line. Carries a single handle.
  */
-public class VPoint extends VPathwayElement {
+public class VPoint extends VPathwayElement implements Adjustable {
 	Handle handle;
 	Line line;
 	MPoint mPoint;
@@ -71,7 +71,7 @@ public class VPoint extends VPathwayElement {
 		return line;
 	}
 	
-	protected void adjustToHandle(Handle h, double vnewx, double vnewy)
+	public void adjustToHandle(Handle h, double vnewx, double vnewy)
 	{
 		double mcx = mFromV (vnewx);
 		double mcy = mFromV (vnewy);

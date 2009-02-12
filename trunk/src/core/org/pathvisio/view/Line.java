@@ -49,7 +49,7 @@ import org.pathvisio.model.PathwayEvent;
  * @see ConnectorShape
  * @see ConnectorShapeFactory
  */
-public class Line extends Graphics
+public class Line extends Graphics implements Adjustable
 {	
 	
 	private List<VPoint> points;
@@ -118,7 +118,7 @@ public class Line extends Graphics
 	/**
 	 * Updates the segment preferences to the new handle position
 	 */
-	protected void adjustToHandle(Handle h, double vx, double vy) {
+	public void adjustToHandle(Handle h, double vx, double vy) {
 		WayPoint[] waypoints = getConnectorShape().getWayPoints();
 		int index = segmentHandles.indexOf(h);
 		if(index > -1) {

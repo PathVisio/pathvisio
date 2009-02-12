@@ -39,7 +39,7 @@ import org.pathvisio.view.LinAlg.Point;
  * and provides implementation for containing 8 handles placed in a 
  * (rotated) rectangle around the shape and a rotation handle
  */
-public abstract class GraphicsShape extends Graphics implements LinkProvider {
+public abstract class GraphicsShape extends Graphics implements LinkProvider, Adjustable {
 
 	private static final double M_ROTATION_HANDLE_POSITION = 20.0 * 15;
 

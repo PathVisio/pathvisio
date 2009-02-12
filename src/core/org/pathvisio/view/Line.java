@@ -88,6 +88,12 @@ public class Line extends Graphics implements Adjustable
 		return (MLine)gdata;
 	}
 	
+	public void createHandles()
+	{
+		updateSegmentHandles();
+		getHandles();
+	}
+	
 	/**
 	 * Update the segment handles to be placed on the current
 	 * connector segments
@@ -141,13 +147,6 @@ public class Line extends Graphics implements Adjustable
 		}
 	}
 
-	public void select() {
-		super.select();
-		if(isSelected()) {
-			updateSegmentHandles();
-		}
-	}
-	
 	private List<Handle> getSegmentHandles() {
 		return segmentHandles;
 	}

@@ -111,6 +111,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 * excluding the legend, mappInfo and selectionBox objects
 	 */
 	private List<VPathwayElement> drawingObjects;
+	private List<VPathwayElement> toAdd = new ArrayList<VPathwayElement>();
 
 	public List<VPathwayElement> getDrawingObjects()
 	{
@@ -296,6 +297,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		fireVPathwayEvent(new VPathwayEvent(this, VPathwayEvent.MODEL_LOADED));
 		data.addListener(this);
 		undoManager.setPathway(data);
+		addScheduled();
 		Logger.log.trace("Done creating view structure");
 	}
 
@@ -334,6 +336,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		if (dirtyRect != null && parent != null)
 			parent.redraw(dirtyRect);
 		dirtyRect = null;
+		addScheduled();
 		cleanUp();
 	}
 
@@ -364,10 +367,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 */
 	public void addObject(VPathwayElement o)
 	{
-		if (!drawingObjects.contains(o))
-		{ // Don't add duplicates!
-			drawingObjects.add(o);
-		}
+		toAdd.add (o);
 	}
 
 	/**
@@ -1201,7 +1201,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		double my = mFromV((double) ve.y);
 
 		PathwayElement[] newObjects = newTemplate.addElements(data, mx, my);
-		newObject = newTemplate.getDragElement(this) == null ? null : newObjects[0];
 		
 		isDragging = true;
 		dragUndoState = DRAG_UNDO_NOT_RECORDING;
@@ -1218,6 +1217,8 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			selectObject(lastAdded);
 			pressedObject = newTemplate.getDragElement(this);
 		}
+
+		newObject = newTemplate.getDragElement(this) == null ? null : newObjects[0];
 
 		vPreviousX = ve.x;
 		vPreviousY = ve.y;
@@ -2519,12 +2520,24 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		disposed = true;
 	}
 	
+	private void addScheduled()
+	{
+		for (VPathwayElement elt : toAdd) 
+		{
+			if (!drawingObjects.contains(elt))
+			{ // Don't add duplicates!
+				drawingObjects.add(elt);
+			}
+		}
+		toAdd.clear();		
+	}
+	
 	private void cleanUp()
 	{
 		for (Iterator<VPathwayElement> i = drawingObjects.iterator(); i.hasNext(); )
 		{
 			VPathwayElement elt = i.next();
 			if (elt.toBeRemoved()) { i.remove(); }
-		}
+		}		
 	}
 }

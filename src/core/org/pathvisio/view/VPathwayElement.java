@@ -227,7 +227,8 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		if (isSelected)
 		{
 			isSelected = false;
-			markDirty();			
+			markDirty();
+			destroyHandles();
 		}
 	}
 
@@ -239,6 +240,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	{
 		if (!isSelected)
 		{
+			createHandles();
 			isSelected = true;
 			markDirty();			
 		}
@@ -251,6 +253,8 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	 */
 	protected Handle[] getHandles() { return new Handle[] {}; }
 	
+	protected void createHandles() {}
+
 	/**
 	 * Moves this object by specified increments
 	 * @param dx - the value of x-increment
@@ -381,6 +385,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	protected void destroy() { 
 		//Remove from canvas
 		removeMe = true;
+		markDirty();
 		destroyHandles();
 	}
 

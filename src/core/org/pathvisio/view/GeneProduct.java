@@ -43,7 +43,6 @@ public class GeneProduct extends GraphicsShape
 		
 	public GeneProduct (VPathway canvas, PathwayElement o) {
 		super(canvas, o);		
-		setHandleLocation();
 	}
 	
 	/**

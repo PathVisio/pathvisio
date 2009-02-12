@@ -65,15 +65,15 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	
 	protected void createHandles()
 	{
-		handleN	= new Handle(Handle.DIRECTION_Y, this, canvas);
-		handleE	= new Handle(Handle.DIRECTION_X, this, canvas);
-		handleS	= new Handle(Handle.DIRECTION_Y, this, canvas);
-		handleW	= new Handle(Handle.DIRECTION_X, this, canvas);
+		handleN	= new Handle(Handle.DIRECTION_Y, this, this, canvas);
+		handleE	= new Handle(Handle.DIRECTION_X, this, this, canvas);
+		handleS	= new Handle(Handle.DIRECTION_Y, this, this, canvas);
+		handleW	= new Handle(Handle.DIRECTION_X, this, this, canvas);
 				
-		handleNE = new Handle(Handle.DIRECTION_FREE, this, canvas);
-		handleSE = new Handle(Handle.DIRECTION_FREE, this, canvas);
-		handleSW = new Handle(Handle.DIRECTION_FREE, this, canvas);
-		handleNW = new Handle(Handle.DIRECTION_FREE, this, canvas);
+		handleNE = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
+		handleSE = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
+		handleSW = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
+		handleNW = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
 		
 		
 		handleN.setCursorHint(Cursor.N_RESIZE_CURSOR);
@@ -97,7 +97,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		else
 		{
-			handleR = new Handle(Handle.DIRECTION_ROT, this, canvas);
+			handleR = new Handle(Handle.DIRECTION_ROT, this, this, canvas);
 			handleR.setCursorHint(Cursor.MOVE_CURSOR);
 			
 			handles = new Handle[]

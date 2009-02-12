@@ -85,7 +85,7 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 
 	protected void createHandles()
 	{
-		handle = new Handle(Handle.DIRECTION_FREE, this, getDrawing());		
+		handle = new Handle(Handle.DIRECTION_FREE, this, this, getDrawing());		
 		double lc = mAnchor.getPosition();
 		Point2D position = line.vFromL(lc);
 		handle.setVLocation(position.getX(), position.getY());

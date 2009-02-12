@@ -96,7 +96,7 @@ public class Line extends Graphics implements Adjustable
 		
 		for (VPoint vp : points)
 		{
-			vp.handle = new Handle(Handle.DIRECTION_FREE, vp, canvas);
+			vp.handle = new Handle(Handle.DIRECTION_FREE, this, vp, canvas);
 			vp.handle.setCursorHint(Cursor.MOVE_CURSOR);
 			setHandleLocation(vp);
 		}
@@ -120,7 +120,7 @@ public class Line extends Graphics implements Adjustable
 			
 			//Create the new handles
 			for(int i = 0; i < waypoints.length; i++) {
-				Handle h = new Handle(Handle.DIRECTION_FREE, this, this.canvas);
+				Handle h = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
 				h.setStyle(Handle.STYLE_SEGMENT);
 				segmentHandles.add(h);
 			}
@@ -151,7 +151,7 @@ public class Line extends Graphics implements Adjustable
 			
 			//Create the new handles
 			for(int i = 0; i < waypoints.length; i++) {
-				Handle h = new Handle(Handle.DIRECTION_FREE, this, this.canvas);
+				Handle h = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
 				h.setStyle(Handle.STYLE_SEGMENT);
 				segmentHandles.add(h);
 			}

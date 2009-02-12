@@ -58,7 +58,8 @@ public class Handle extends VPathwayElement
 	public static final int STYLE_ROTATE = 2;
 	public static final int STYLE_INVISIBLE = 3; // invisible handles for selectionbox
 	
-	Adjustable parent;
+	Adjustable adjustable;
+	VPathwayElement parent;
 	
 	private double mCenterx;
 	private double mCentery;
@@ -75,10 +76,11 @@ public class Handle extends VPathwayElement
 	 * @param parent	The object this handle belongs to
 	 * @param canvas	The {@link VPathway} to draw this handle on
 	 */
-	public Handle(int direction, Adjustable parent, VPathway canvas)
+	public Handle(int direction, VPathwayElement parent, Adjustable adjustable, VPathway canvas)
 	{
 		super(canvas);		
 		this.direction = direction;
+		this.adjustable = adjustable;
 		this.parent = parent;
 		if(direction == DIRECTION_ROT) {
 			setStyle(STYLE_ROTATE);
@@ -105,10 +107,14 @@ public class Handle extends VPathwayElement
 		return cursor;
 	}
 	
-	public Adjustable getParent() {
+	public Adjustable getAdjustable() {
+		return adjustable;
+	}
+
+	public VPathwayElement getParent() {
 		return parent;
 	}
-		
+
 	/**
 	 * Get the direction this handle is allowed to move in
 	 * @return one of DIRECTION_*
@@ -191,7 +197,7 @@ public class Handle extends VPathwayElement
 
 		if(direction != DIRECTION_FREE && direction != DIRECTION_ROT) {
 			Point v = new Point(0,0);
-			Rectangle2D b = parent.getVBounds();
+			Rectangle2D b = adjustable.getVBounds();
 			Point base = new Point (b.getCenterX(), b.getCenterY());
 			if (direction == DIRECTION_X)
 			{
@@ -214,12 +220,12 @@ public class Handle extends VPathwayElement
 			vnx = prj.x; vny = prj.y;
 		}
 
-		parent.adjustToHandle(this, vnx, vny);
-		if (parent instanceof Graphics)  { // notify parents of any resized children!
-			((Graphics) parent).getPathwayElement().notifyParentGroup();
+		adjustable.adjustToHandle(this, vnx, vny);
+		if (adjustable instanceof Graphics)  { // notify parents of any resized children!
+			((Graphics) adjustable).getPathwayElement().notifyParentGroup();
 		}
-		else if (parent instanceof VPoint){ // same, but for lines
-			((VPoint) parent).getLine().getPathwayElement().notifyParentGroup();
+		else if (adjustable instanceof VPoint){ // same, but for lines
+			((VPoint) adjustable).getLine().getPathwayElement().notifyParentGroup();
 		}
 		markDirty();
 	}
@@ -256,7 +262,7 @@ public class Handle extends VPathwayElement
 	}
 	
 	public String toString() { 
-		return 	"Handle with parent: " + parent.toString() +
+		return 	"Handle with parent: " + adjustable.toString() +
 		" and direction " + direction; 
 	}
 

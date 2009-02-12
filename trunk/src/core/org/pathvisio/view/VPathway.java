@@ -533,8 +533,8 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		//Remove the group from the list of linkproviders
 		//Also remove the line anchors to prevent linking a line
 		//to it's own anchors
-		if(g.getParent() instanceof VPoint) {
-			Line l = ((VPoint)g.getParent()).getLine();
+		if(g.getAdjustable() instanceof VPoint) {
+			Line l = ((VPoint)g.getAdjustable()).getLine();
 			PathwayElement pe = l.getPathwayElement();
 			if(pe.getGroupRef() != null) {
 				PathwayElement group = getPathwayModel().getGroupById(pe.getGroupRef());
@@ -545,7 +545,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 		}
 		
-		VPoint p = (VPoint) g.parent;
+		VPoint p = (VPoint) g.adjustable;
 		GraphIdContainer idc = null;
 		for (LinkProvider lp : objects)
 		{
@@ -626,7 +626,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 			if (pressedObject instanceof Handle
 					&& newTemplate == null
-					&& ((Handle) pressedObject).parent instanceof VPoint)
+					&& ((Handle) pressedObject).adjustable instanceof VPoint)
 			{
 				linkPointToObject(new Point2D.Double(ve.getX(), ve.getY()),
 						(Handle) pressedObject);
@@ -1006,11 +1006,8 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			// if our object is an handle, select also it's parent.
 			if (pressedObject instanceof Handle)
 			{
-				Adjustable parent = ((Handle) pressedObject).parent;
-				if (parent instanceof VPathwayElement)
-				{
-					((VPathwayElement)parent).select();
-				}
+				VPathwayElement parent = ((Handle) pressedObject).parent;
+				parent.select();
 				//Special treatment for anchor
 				if(parent instanceof VAnchor) 
 				{
@@ -1127,11 +1124,8 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				clearSelection();
 				//If the object is a handle, select the parent instead
 				if(pressedObject instanceof Handle) {
-					Adjustable parent = ((Handle)pressedObject).parent;
-					if (parent instanceof VPathwayElement)
-					{
-						selection.addToSelection((VPathwayElement)parent);
-					}
+					VPathwayElement parent = ((Handle)pressedObject).parent;
+					selection.addToSelection((VPathwayElement)parent);
 				} else {
 					selection.addToSelection(pressedObject);
 				}

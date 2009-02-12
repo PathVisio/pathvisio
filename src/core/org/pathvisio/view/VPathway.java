@@ -113,10 +113,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	private List<VPathwayElement> drawingObjects;
 	private List<VPathwayElement> toAdd = new ArrayList<VPathwayElement>();
 
+	/**
+	 * Obtain all VPathwayElements on this VPathway
+	 */
 	public List<VPathwayElement> getDrawingObjects()
 	{
-		addScheduled();
-		cleanUp();
 		return drawingObjects;
 	}
 

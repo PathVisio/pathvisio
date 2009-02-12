@@ -382,7 +382,9 @@ public class Line extends Graphics implements Adjustable
 		}
 	}
 	
-	private void updateCitationPosition() {
+	private void updateCitationPosition() 
+	{
+		if (getCitation() == null) return;
 		Point2D p = getConnectorShape().fromLineCoordinate(0.7);
 		p.setLocation(p.getX() - 15 * 5, p.getY());
 		Point2D r = gdata.toRelativeCoordinate(p);

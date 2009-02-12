@@ -21,7 +21,9 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 
+import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
@@ -41,12 +43,31 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		gdata = o;
 		gdata.addListener(canvas);
 		canvas.checkBoardSize(gdata);
-		citation = new Citation(canvas, this, new Point2D.Double(1, -1));
+		checkCitation();
+	}
+	
+	protected Citation createCitation()
+	{
+		return new Citation(canvas, this, new Point2D.Double(1, -1));
+	}
+	
+	public final void checkCitation()
+	{
+		List<PublicationXRef> xrefs = gdata.getBiopaxReferenceManager().getPublicationXRefs();
+		if (xrefs.size() > 0 && citation == null)
+		{
+			citation = createCitation();
+		}
+		else if (xrefs.size() == 0 && citation != null)
+		{
+			citation.destroy();
+			citation = null;
+		}
 	}
 	
 	protected void markDirty() {
 		super.markDirty();
-		citation.markDirty();
+		if (citation != null) citation.markDirty();
 	}
 	
 	protected Citation getCitation() {
@@ -70,7 +91,11 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		
 	boolean listen = true;
 	public void gmmlObjectModified(PathwayEvent e) {
-		if(listen) markDirty(); // mark everything dirty
+		if(listen)
+		{
+			markDirty(); // mark everything dirty
+			checkCitation();
+		}
 	}
 	
 	public Area createVisualizationRegion() {
@@ -182,16 +207,12 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		}
 		return style;
 	}
-	
-	protected void destroyCitation() {
-		citation.destroy();
-	}
-	
+		
 	protected void destroy() {
 		super.destroy();
 		gdata.removeListener(canvas);
 		gdata.removeListener(this);
-		destroyCitation();
+		if (citation != null) citation.destroy();
 		//View should not remove its model
 //		Pathway parent = gdata.getParent();
 //		if(parent != null) parent.remove(gdata);

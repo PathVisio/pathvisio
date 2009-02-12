@@ -49,8 +49,13 @@ public class InfoBox extends Graphics {
 	public InfoBox (VPathway canvas, PathwayElement o) {
 		super(canvas, o);
 		canvas.setMappInfo(this);	
-		getCitation().setRPosition(new Point2D.Double(1, 0));
 	}
+	
+	protected Citation createCitation()
+	{
+		return new Citation(canvas, this, new Point2D.Double(1, 0));
+	}
+	
 	
 	//public Point getBoardSize() { return new Point((int)gdata.getMBoardWidth(), (int)gdata.getMBoardHeight()); }
 	

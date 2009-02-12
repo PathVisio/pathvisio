@@ -80,9 +80,6 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
  * 
  * most static properties cannot be set to null. Notable exceptions are graphId,
  * startGraphRef and endGraphRef.
- * 
- * @author Martijn
- * 
  */
 public class PathwayElement implements GraphIdContainer, Comparable<PathwayElement>
 {

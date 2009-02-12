@@ -68,16 +68,16 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 
 		selection = new HashSet<VPathwayElement>();
 
-		handleNE = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
-		handleSE = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
-		handleSW = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
-		handleNW = new Handle(Handle.DIRECTION_FREE, this, this, canvas);
+		handleNE = new Handle(Handle.Freedom.FREE, this, this);
+		handleSE = new Handle(Handle.Freedom.FREE, this, this);
+		handleSW = new Handle(Handle.Freedom.FREE, this, this);
+		handleNW = new Handle(Handle.Freedom.FREE, this, this);
 		
 		// handles of selectionbox are invisible
-		handleNE.setStyle(Handle.STYLE_INVISIBLE);
-		handleSE.setStyle(Handle.STYLE_INVISIBLE);
-		handleSW.setStyle(Handle.STYLE_INVISIBLE);
-		handleNW.setStyle(Handle.STYLE_INVISIBLE);
+		handleNE.setStyle(Handle.Style.INVISIBLE);
+		handleSE.setStyle(Handle.Style.INVISIBLE);
+		handleSW.setStyle(Handle.Style.INVISIBLE);
+		handleNW.setStyle(Handle.Style.INVISIBLE);
 	}
 
 	public Set<VPathwayElement> getSelection()

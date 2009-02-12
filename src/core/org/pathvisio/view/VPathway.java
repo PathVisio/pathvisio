@@ -545,7 +545,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 		}
 		
-		VPoint p = (VPoint) g.adjustable;
+		VPoint p = (VPoint) g.getAdjustable();
 		GraphIdContainer idc = null;
 		for (LinkProvider lp : objects)
 		{
@@ -626,7 +626,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 			if (pressedObject instanceof Handle
 					&& newTemplate == null
-					&& ((Handle) pressedObject).adjustable instanceof VPoint)
+					&& ((Handle) pressedObject).getAdjustable() instanceof VPoint)
 			{
 				linkPointToObject(new Point2D.Double(ve.getX(), ve.getY()),
 						(Handle) pressedObject);
@@ -787,7 +787,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				String message = "Drag Object";
 				if (pressedObject instanceof Handle)
 				{
-					if (((Handle) pressedObject).getDirection() == Handle.DIRECTION_ROT)
+					if (((Handle) pressedObject).getFreedom() == Handle.Freedom.ROTATION)
 					{
 						message = "Rotate Object";
 					} else
@@ -1006,7 +1006,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			// if our object is an handle, select also it's parent.
 			if (pressedObject instanceof Handle)
 			{
-				VPathwayElement parent = ((Handle) pressedObject).parent;
+				VPathwayElement parent = ((Handle) pressedObject).getParent();
 				parent.select();
 				//Special treatment for anchor
 				if(parent instanceof VAnchor) 
@@ -1124,7 +1124,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				clearSelection();
 				//If the object is a handle, select the parent instead
 				if(pressedObject instanceof Handle) {
-					VPathwayElement parent = ((Handle)pressedObject).parent;
+					VPathwayElement parent = ((Handle)pressedObject).getParent();
 					selection.addToSelection((VPathwayElement)parent);
 				} else {
 					selection.addToSelection(pressedObject);

@@ -27,76 +27,106 @@ import java.awt.geom.Rectangle2D;
 import org.pathvisio.view.LinAlg.Point;
 
 /**
- * This class implements and handles handles for 
- * objects on the drawing which are used to 
- * resize them or change their location.
+ * A Handle is a little marker (like a little
+ * yellow square) that the user can grab with the mouse
+ * and drag around, and in that way adjust some property
+ * of an object (such as its width, rotation, etc.)
  */
 public class Handle extends VPathwayElement
-{
-	
-	/** 
-	 * because isSelected really doesn't make sense for GmmlHandles, 
-	 * I added this variable isVisible. It should be set automatically by its parent
-	 * through calls of show() and hide()
-	 */
-	private boolean isVisible = true;
-	
+{	
 	//The direction this handle is allowed to move in
-	private int direction;
-	public static final int DIRECTION_FREE = 0;
-	public static final int DIRECTION_X	 = 1;
-	public static final int DIRECTION_Y  = 2; 
-	public static final int DIRECTION_ROT = 3;
-	public static final int DIRECTION_XY = 4;
-	public static final int DIRECTION_MINXY = 5;
+	final private Freedom freedom;
 	
-	public static final int WIDTH 	= 8;
-	public static final int HEIGHT	= 8;
+	/**
+	 * Freedom determines the freedom of movement of
+	 * a Handle. The freedom of a Handle is
+	 * specified at creation time and does not change during
+	 * the life of a Handle.
+	 */
+	enum Freedom {
+		/** a FREE handle can move to any location on the canvas */
+		FREE,
+		/** an X handle can only move horizontally */
+		X,
+		/** an Y handle can only move vertically */
+		Y,
+		/** a ROTATION handle can only move in a circle with a fixed radius */
+		ROTATION,
+		/** an XY handle can only move diagonally */
+		XY,
+		/** an NEGXY handle can only move diagonally, perpendicular to XY */
+		NEGXY,
+	};
 	
-	public static final int STYLE_DEFAULT = 0;
-	public static final int STYLE_SEGMENT = 1;
-	public static final int STYLE_ROTATE = 2;
-	public static final int STYLE_INVISIBLE = 3; // invisible handles for selectionbox
+	// Typical size of handle, in pixels
+	private static final int WIDTH 	= 8;
+	private static final int HEIGHT	= 8;
 	
-	Adjustable adjustable;
-	VPathwayElement parent;
+	/**
+	 * Style determines the visual appearance of a Handle 
+	 */
+	enum Style
+	{
+		/** 
+		 * The default appearance: a yellow square,
+		 * suitable for adjusting width / height / scale of an object 
+		 */
+		DEFAULT,
+		/** Appearance for handles on line segments, a blue diamond */
+		SEGMENT,
+		/** Appearance for rotation handles, a green circle */
+		ROTATE,
+		/** Invisible handles are on the corners of a selectionbox */
+		INVISIBLE,
+	};
+
+	private Style style = Style.DEFAULT;
 	
+	final private Adjustable adjustable;
+	final private VPathwayElement parent;
+	
+	// location of this handle
 	private double mCenterx;
 	private double mCentery;
 	
+	// used for calculations related to rotating parent objects
 	double rotation;
 	
-	private int style = STYLE_DEFAULT;
-	
+	// the appearance of the mouse cursor when
+	// the mouse hovers over / drags this handle
 	private int cursor = Cursor.DEFAULT_CURSOR;
-	
+
 	/**
 	 * Constructor for this class, creates a handle given the parent, direction and canvas
-	 * @param direction	Direction this handle can be moved in (one of DIRECTION_*)
-	 * @param parent	The object this handle belongs to
-	 * @param canvas	The {@link VPathway} to draw this handle on
+	 * @param aFreedom	 Direction this handle can be moved in (one of the Freedom enum)
+	 * @param parent	 The {@link VPathwayElement} this handle belongs to, and which 
+	 *                   will be selected when this handle is clicked
+	 * @param adjustable The object that is being adjusted by this handle. This is usually,
+	 *                   but not always, the same as parent. For example, a Handle on a {@link VPoint}
+	 *                   has a {@link Line} as parent but the {@link VPoint} as adjustable  
 	 */
-	public Handle(int direction, VPathwayElement parent, Adjustable adjustable, VPathway canvas)
+	public Handle(Freedom aFreedom, VPathwayElement parent, Adjustable adjustable)
 	{
-		super(canvas);		
-		this.direction = direction;
+		super(parent.canvas);		
+		freedom = aFreedom;
 		this.adjustable = adjustable;
 		this.parent = parent;
-		if(direction == DIRECTION_ROT) {
-			setStyle(STYLE_ROTATE);
+		if(freedom == Freedom.ROTATION) {
+			setStyle(Style.ROTATE);
 		}
 	}
 
 	/**
 	 * Set the appearance style of the handle.
-	 * @param style One of the STYLE_* constants
+	 * @param style One of the styles defined in {@link Style}
 	 */
-	public void setStyle(int style) {
+	public void setStyle(Style style) {
 		this.style = style;
 	}
 	
 	/**
-	 * Set a hint for a cursor to use by the front-end.
+	 * Set a hint for a cursor to use by the front-end while
+	 * dragging or hovering over this handle.
 	 * @param cursor One of the Swing cursor types
 	 */
 	public void setCursorHint(int cursor) {
@@ -107,22 +137,29 @@ public class Handle extends VPathwayElement
 		return cursor;
 	}
 	
+	/** 
+	 * The object being adjusted by this Handle. Usually, but
+	 * not always, the same as the Parent
+	 */
 	public Adjustable getAdjustable() {
 		return adjustable;
 	}
-
+	
+	/**
+	 * The parent of this Handle, this is the object that this Handle is
+	 * near, and will be selected when clicking this Handle.
+	 */
 	public VPathwayElement getParent() {
 		return parent;
 	}
 
 	/**
-	 * Get the direction this handle is allowed to move in
-	 * @return one of DIRECTION_*
+	 * Get the type of freedom of movement that this handle has
+	 * @return one of {@link Freedom}
 	 */
-	public int getDirection() { return direction; }
-	
-	public void setDirection(int direction) { this.direction = direction; }
-	
+	public Freedom getFreedom() { return freedom; }
+		
+	/** Set the handle location in view coordinates */
 	public void setVLocation(double vx, double vy)
 	{
 		markDirty();
@@ -131,6 +168,7 @@ public class Handle extends VPathwayElement
 		markDirty();
 	}
 
+	/** Set the handle location in model coordinates */
 	public void setMLocation(double mx, double my)
 	{
 		markDirty();
@@ -139,29 +177,31 @@ public class Handle extends VPathwayElement
 		markDirty();
 	}
 	
+	/** get the center x in view coordinates */
 	public double getVCenterX() {
 		return vFromM(mCenterx);
 	}
 	
+	/** get the center y in view coordinates */
 	public double getVCenterY() {
 		return vFromM(mCentery);
 	}
 	
 	/**
-	 * draws itself, the look depends on style. If
-	 * there style is STYLE_INVISIBLE, nothing is drawn at all
+	 * Draws itself, the look depends on style. If
+	 * the style is Style.INVISIBLE, nothing is drawn at all
 	 */
 	public void doDraw(Graphics2D g)
 	{
-		if(style == STYLE_INVISIBLE) return; // nothing to draw
+		if(style == Style.INVISIBLE) return; // nothing to draw
 		
 		Shape fillShape = getFillShape();
 		
 		switch(style) {
-		case STYLE_ROTATE:
+		case ROTATE:
 			g.setColor(Color.GREEN);
 			break;
-		case STYLE_SEGMENT:
+		case SEGMENT:
 			g.setColor(new Color(0, 128, 255));
 			break;
 		default:
@@ -189,29 +229,31 @@ public class Handle extends VPathwayElement
 	/**
 	   Called when a mouse event forces the handle to move.
 	   Note: this doesn't cause the handle itself to move,
-	   rather, it passes the information to the underlying object.
+	   rather, it passes the information to the underlying {@link Adjustable}
+	   It is the responsibility of the {@link Adjustable} to
+	   update the position of this Handle again.
 	 */
 	public void vMoveTo (double vnx, double vny)
 	{
 		markDirty();
 
-		if(direction != DIRECTION_FREE && direction != DIRECTION_ROT) {
+		if(freedom != Freedom.FREE && freedom != Freedom.ROTATION) {
 			Point v = new Point(0,0);
 			Rectangle2D b = adjustable.getVBounds();
 			Point base = new Point (b.getCenterX(), b.getCenterY());
-			if (direction == DIRECTION_X)
+			if (freedom == Freedom.X)
 			{
 				v = new Point (1, 0);
 			}
-			else if	(direction == DIRECTION_Y)
+			else if	(freedom == Freedom.Y)
 			{
 				v = new Point (0, 1);
 			}
-			else if (direction == DIRECTION_XY)
+			else if (freedom == Freedom.XY)
 			{
 				v = new Point (b.getWidth(), b.getHeight());
 			}
-			else if (direction == DIRECTION_MINXY)
+			else if (freedom == Freedom.NEGXY)
 			{
 				v = new Point (b.getHeight(), -b.getWidth());
 			}
@@ -221,15 +263,12 @@ public class Handle extends VPathwayElement
 		}
 
 		adjustable.adjustToHandle(this, vnx, vny);
-		if (adjustable instanceof Graphics)  { // notify parents of any resized children!
-			((Graphics) adjustable).getPathwayElement().notifyParentGroup();
-		}
-		else if (adjustable instanceof VPoint){ // same, but for lines
-			((VPoint) adjustable).getLine().getPathwayElement().notifyParentGroup();
+		if (parent instanceof Graphics)  { // notify parents of any resized children!
+			((Graphics) parent).getPathwayElement().notifyParentGroup();
 		}
 		markDirty();
 	}
-			
+
 	public Shape calculateVOutline() {
 		return getFillShape((int)Math.ceil(DEFAULT_STROKE.getLineWidth())).getBounds();
 	}
@@ -238,14 +277,17 @@ public class Handle extends VPathwayElement
 		return getFillShape(0);
 	}
 	
+	/** get the FillShape
+	 * @param sw the stroke width 
+	 */
 	private Shape getFillShape(int sw) {
 		Shape s = null;
 		switch(style) {
-		case STYLE_ROTATE:
+		case ROTATE:
 			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
 					WIDTH + sw, HEIGHT + sw);
 			break;
-		case STYLE_SEGMENT:
+		case SEGMENT:
 			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
 					WIDTH + sw, HEIGHT + sw);
 			
@@ -261,15 +303,14 @@ public class Handle extends VPathwayElement
 		return s;
 	}
 	
+	/** prints some extra debug info */
 	public String toString() { 
 		return 	"Handle with parent: " + adjustable.toString() +
-		" and direction " + direction; 
+		" and direction " + freedom; 
 	}
 
 	protected int getZOrder() {
 		return VPathway.ZORDER_HANDLE;
 	}
 	
-} // end of class
-
-
+}

@@ -63,8 +63,6 @@ import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
-import weka.filters.unsupervised.attribute.RemoveType;
-
 /**
  * swing-dependent implementation of VPathway.
  */

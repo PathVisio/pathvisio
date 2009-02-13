@@ -122,6 +122,9 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 	}
 
 	protected String getXRefText() {
+		if(getParent().getPathwayElement().getParent() == null) {
+			return ""; //In case a redraw is called after deletion of the model element
+		}
 		int maxNr = PreferenceManager.getCurrent().getInt(GlobalPreference.MAX_NR_CITATIONS);
 		if(maxNr == 0) return ""; //Show nothing if limit is set to 0
 		

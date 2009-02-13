@@ -84,6 +84,9 @@ class StatisticsTableModel extends ListWithPropertiesTableModel<Column, Statisti
 
 			public int compare(StatisticsPathwayResult arg0, StatisticsPathwayResult arg1) 
 			{
+				if (Double.isNaN(arg1.z) && Double.isNaN(arg0.z)) return 0;
+				if (Double.isNaN(arg1.z)) return -1;
+				if (Double.isNaN(arg0.z)) return 1;
 				return Double.compare(arg1.z, arg0.z);
 			}
 		});

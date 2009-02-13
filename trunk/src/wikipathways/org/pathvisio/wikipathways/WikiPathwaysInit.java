@@ -24,6 +24,7 @@ import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.RasterImageExporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
@@ -64,8 +65,8 @@ public class WikiPathwaysInit
 	
 	public static void registerXmlRpcExporters(URL rpcUrl, Engine engine) {
 		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PDF));
-		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PNG));
 		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_SVG));
+		engine.addPathwayExporter(new RasterImageExporter(ImageExporter.TYPE_PNG));
 		if(Utils.getOS() == Utils.OS_WINDOWS) {
 			engine.addPathwayExporter(new MappFormat());
 		}

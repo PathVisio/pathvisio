@@ -458,6 +458,7 @@ public class StatisticsPlugin implements Plugin
 						{
 							// replace temp tableModel with definitive one
 							tblResult.setModel(result.stm);
+							StatisticsDlg.this.result = result;
 						}
 					} 
 					catch (InterruptedException e) 

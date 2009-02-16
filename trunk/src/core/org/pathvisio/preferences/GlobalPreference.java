@@ -50,6 +50,7 @@ public enum GlobalPreference implements Preference
 	DB_GDB_CURRENT("none"),
 	DB_METABDB_CURRENT("none"),
 	
+	ENABLE_DOUBLE_BUFFERING(Boolean.toString(true)),
 	SHOW_ADVANCED_PROPERTIES(Boolean.toString(false)),
 	MIM_SUPPORT(Boolean.toString(true)),
 	SNAP_TO_ANGLE (Boolean.toString(false)),

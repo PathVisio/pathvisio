@@ -71,6 +71,10 @@ public class PreferencesDlg extends AbstractPreferenceDlg
 				GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL,									   
 				"Use Java System look-and-feel at program start");
 
+		builder.addBooleanField(
+				GlobalPreference.ENABLE_DOUBLE_BUFFERING, 
+				"Enable double-buffering (pathway is drawn slower, but flickerless)");
+		
 		JPanel displayPanel = builder.getPanel();
 		
 		builder = createBuilder();

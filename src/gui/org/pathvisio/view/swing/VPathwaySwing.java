@@ -54,6 +54,8 @@ import javax.swing.UIManager;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.VElementMouseEvent;
 import org.pathvisio.view.VElementMouseListener;
@@ -85,6 +87,10 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		setFocusable(true);
 		setRequestFocusEnabled(true);
 		setTransferHandler(new PathwayImportHandler());
+		
+		setDoubleBuffered(
+				PreferenceManager.getCurrent().getBoolean(
+						GlobalPreference.ENABLE_DOUBLE_BUFFERING));
 	}
 
 	public void setChild(VPathway c) {

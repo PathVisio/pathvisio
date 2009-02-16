@@ -95,14 +95,14 @@ public class GpmlVisualStyle extends VisualStyle {
 				GpmlNetworkElement.ATTR_TYPE,
 				ObjectMapping.NODE_MAPPING
 		);
-		widthMapping.putMapValue(ObjectType.GROUP, 5);
+		widthMapping.putMapValue(ObjectType.GROUP.ordinal(), 5);
 		widthMapping.putMapValue(GpmlAnchorNode.TYPE_ANCHOR, 5);
 		DiscreteMapping heightMapping = new DiscreteMapping(
 				nac.getDefaultAppearance().get(VisualPropertyType.NODE_HEIGHT),
 				GpmlNetworkElement.ATTR_TYPE,
 				ObjectMapping.NODE_MAPPING
 		);
-		heightMapping.putMapValue(ObjectType.GROUP, 5);
+		heightMapping.putMapValue(ObjectType.GROUP.ordinal(), 5);
 		heightMapping.putMapValue(GpmlAnchorNode.TYPE_ANCHOR, 5);
 		
 		nac.setCalculator(
@@ -218,7 +218,7 @@ public class GpmlVisualStyle extends VisualStyle {
 			GpmlNetworkElement.ATTR_TYPE,
 			ObjectMapping.NODE_MAPPING
 		);
-		typeMapping.putMapValue(ObjectType.GROUP, 5);
+		typeMapping.putMapValue(ObjectType.GROUP.ordinal(), 5);
 		typeMapping.putMapValue(GpmlAnchorNode.TYPE_ANCHOR, 5);
 		
 		nac.setCalculator(

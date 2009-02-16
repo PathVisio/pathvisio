@@ -602,7 +602,6 @@ public class GexImportWizard extends Wizard
 			cbColSyscode.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae)
 				{
-					importInformation.setSyscodeFixed(false);
 					importInformation.setSysodeColumn(cbColSyscode.getSelectedIndex());
 					columnPageRefresh();
 				}

@@ -126,6 +126,7 @@ public class TextByExpression extends VisualizationMethod
 			for(Sample s : useSamples) {
 				String str = getDataString(s, idc, cache, SEP + "\n") + 
 					(++i == useSamples.size() ? "" : SEP);
+				if (str.length() == 0) continue;
 				TextLayout tl = new TextLayout(str, f, g2d.getFontRenderContext());
 				Rectangle2D tb = tl.getBounds();
 				g2d.drawString(str, startx + w, starty + th / 2);
@@ -190,7 +191,7 @@ public class TextByExpression extends VisualizationMethod
 		List<ReporterData> refdata = cache.getData(idc);
 		StringBuilder strb = new StringBuilder();
 		for(ReporterData d : refdata) {
-			String str = formatData(d.getSampleData(s)).toString();
+			String str = "" + formatData(d.getSampleData(s));
 			if(!str.equals("NaN")) {
 				strb.append(str + sep);
 			}
@@ -371,7 +372,8 @@ public class TextByExpression extends VisualizationMethod
 		for(Object o : xml.getChildren(XML_ELM_ID)) {
 			try {
 				int id = Integer.parseInt(((Element)o).getText());
-				useSamples.add(gexManager.getCurrentGex().getSample(id));
+				Sample s = gexManager.getCurrentGex().getSample(id);
+				if (s != null) useSamples.add(s);
 			} catch(Exception e) { Logger.log.error("Unable to add sample", e); }
 		}
 		roundTo = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ROUND));

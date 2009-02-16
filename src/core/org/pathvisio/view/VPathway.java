@@ -874,16 +874,17 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				area = new Rectangle(0, 0, size.width, size.height);
 			}
 		}
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
 
 		if (erase)
 		{
 			g2d.setColor(java.awt.Color.WHITE);
 			g2d.fillRect(area.x, area.y, area.width, area.height);
 		}
+
+		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
 
 		g2d.clip(area);
 		g2d.setColor(java.awt.Color.BLACK);

@@ -105,8 +105,12 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 			a = new Shape(pwElmOrig, dview);
 			break;
 		case LABEL:
-			a = new Label(pwElmOrig, dview);
-			break;
+			if(GpmlConverter.labelAsNode()) {
+				break; //don't add annotation for label
+			} else {
+				a = new Label(pwElmOrig, dview);
+				break;
+			}
 		case LINE:
 			a = new Line(pwElmOrig, dview);
 			break;

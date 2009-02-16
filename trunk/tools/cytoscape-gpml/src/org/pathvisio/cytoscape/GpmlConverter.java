@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
@@ -36,11 +37,14 @@ import org.pathvisio.model.PathwayElement.MAnchor;
 import cytoscape.CyEdge;
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
+import cytoscape.CytoscapeInit;
 import cytoscape.groups.CyGroup;
 import cytoscape.groups.CyGroupManager;
 import cytoscape.view.CyNetworkView;
 
 public class GpmlConverter {
+	public static String PROP_LABEL_AS_NODE = "gpml.label.as.node";
+	
 	List<CyEdge> edges = new ArrayList<CyEdge>();
 	
 	HashMap<GraphIdContainer, CyNode> nodeMap = new HashMap<GraphIdContainer, CyNode>();
@@ -163,10 +167,23 @@ public class GpmlConverter {
 			ObjectType ot = ((PathwayElement)idc).getObjectType();
 			return 
 				ot == ObjectType.DATANODE ||
-				ot == ObjectType.GROUP;
+				ot == ObjectType.GROUP ||
+				(labelAsNode() && ot == ObjectType.LABEL);
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Should labels be treated as nodes or as annotations?
+	 * This can be controlled by the Cytoscape property named
+	 * {@link #PROP_LABEL_AS_NODE}. If set to "true", labels will
+	 * be treated as nodes.
+	 */
+	public static boolean labelAsNode() {
+		Properties p = CytoscapeInit.getProperties();
+		String value = (String)p.get(PROP_LABEL_AS_NODE);
+		return Boolean.parseBoolean(value); //Defaults to false
 	}
 	
 	private void findEdges() {

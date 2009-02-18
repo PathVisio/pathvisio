@@ -26,14 +26,16 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Globals;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Resources;
-import org.pathvisio.view.VPathway;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 
@@ -62,10 +64,7 @@ public class Actions {
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			if(wiki.getSwingEngine().importPathway()) {
-				VPathway vp = wiki.getEngine().getActiveVPathway();
-				wiki.setPathwayView(vp);
-			}
+			wiki.getSwingEngine().importPathway();
 		}
 	}
 
@@ -92,10 +91,12 @@ public class Actions {
 
 	public static class SaveToServerAction extends WikiAction implements StatusFlagListener {
 		String description;
-
+		SwingEngine swingEngine;
+		
 		public SaveToServerAction(UserInterfaceHandler h, WikiPathways w, String description) {
 			super(h, w, "Save to ", new ImageIcon(Resources.getResourceURL("savetoweb.gif")));
 			this.description = description;
+			this.swingEngine = wiki.getSwingEngine();
 			putValue(Action.SHORT_DESCRIPTION, "Save the pathway to " + Globals.SERVER_NAME);
 			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, 
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -115,6 +116,16 @@ public class Actions {
 		public void statusFlagChanged(StatusFlagEvent e) {
 			setEnabled(e.getNewStatus());
 		}
+		
+		public void applicationEvent(ApplicationEvent e) {
+			if(e.getType() == ApplicationEvent.PATHWAY_NEW ||
+					e.getType() == ApplicationEvent.PATHWAY_OPENED) 
+			{
+				Pathway p = swingEngine.getEngine().getActivePathway();
+				p.addStatusFlagListener(this);
+				setEnabled(p.hasChanged());
+			}
+		}	
 	}
 
 		/**

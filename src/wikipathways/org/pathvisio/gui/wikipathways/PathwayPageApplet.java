@@ -113,20 +113,8 @@ public class PathwayPageApplet extends JApplet {
 				}
 			});
 
-			if(wiki.initPerformed()) {
-				Logger.log.trace(this + ": Init already performed");
-				while(wiki.isInit()) {
-					try {
-						Thread.sleep(10);
-					} catch(InterruptedException e) {
-						//ignore
-					}
-				}
-				afterInit();
-			} else {
-				Logger.log.trace(this + ": Performing init in background");
-				uiHandler.runWithProgress(r, "", false, true);			
-			}
+			Logger.log.trace(this + ": Performing init in background");
+			uiHandler.runWithProgress(r, "", false, true);			
 		} catch(Exception e) {
 			onError("Error: " + e.getClass() + ": " + e.getMessage(), "Error");
 		}
@@ -144,7 +132,12 @@ public class PathwayPageApplet extends JApplet {
 	
 	public void destroy() {
 		Logger.log.trace("Applet.destroy called, stopping save reminder");
-		if(wiki != null) SaveReminder.stopSaveReminder(wiki);
+		if(wiki != null) {
+			SaveReminder.stopSaveReminder(wiki);
+			wiki.dispose();
+			wiki = null;
+		}
+		uiHandler = null;
 	}
 	
 	private void onError(String msg, String title) {

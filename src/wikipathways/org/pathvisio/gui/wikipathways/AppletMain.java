@@ -86,5 +86,6 @@ public class AppletMain extends PathwayPageApplet {
 	public void destroy() {
 		getContentPane().remove(mainPanel);
 		super.destroy();
+		mainPanel = null;
 	}
 }

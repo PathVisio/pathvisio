@@ -60,6 +60,7 @@ public class SaveReminder extends Timer {
 		SaveReminder reminder = reminders.get(wiki);
 		if(reminder != null) {
 			reminder.cancel();
+			reminders.remove(wiki);
 		}
 	}
 	

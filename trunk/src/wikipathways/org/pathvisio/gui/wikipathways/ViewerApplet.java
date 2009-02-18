@@ -61,14 +61,6 @@ public class ViewerApplet extends PathwayPageApplet {
 		saveButton.setText("");
 		mainPanel.getToolBar().add(saveButton, 2);
 		
-		//Add custom import button
-		if(wiki.isNew() && !wiki.isReadOnly()) {
-			Action importAction = new Actions.ImportAction(uiHandler, wiki);
-			JButton importButton = new JButton(importAction);
-			importButton.setText("");
-			mainPanel.getToolBar().add(importButton, 0);
-		}
-
 		//Create a maximize button
 		JButton btn = new JButton(new Actions.FullScreenAction(uiHandler, wiki, this));
 		btn.setText("");

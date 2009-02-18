@@ -348,6 +348,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public JButton addToToolbar(Action a, String group) {
 		if(mayAddAction(a)) {
 			JButton b = getToolBar().add(a);
+			b.setFocusable(false);
 			addToToolbarGroup(b, group);
 			return b;
 		}

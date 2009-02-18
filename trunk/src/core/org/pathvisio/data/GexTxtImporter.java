@@ -265,7 +265,11 @@ public class GexTxtImporter
 			} else {
 				new File(errorFile).delete(); // If no errors were found, delete the error file
 			}
-			if (p != null) p.setTaskName("Closing database connection");
+			if (p != null) 
+			{
+				p.setTaskName("Finalizing database (this may take some time)");
+				p.report ("Finalizing database");
+			}
 
 			result.finalize();
 			if (p != null) p.worked(finalizeWork);
@@ -274,7 +278,12 @@ public class GexTxtImporter
 			error.close();
 			
 			gexManager.setCurrentGex(result.getDbName(), false);
-			if (p != null) p.finished();
+			if (p != null) 
+			{
+				p.setTaskName ("Done.");
+				p.report ("Done.");
+				p.finished();
+			}
 		} 
 		catch(Exception e) 
 		{ 

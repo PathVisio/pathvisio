@@ -18,6 +18,7 @@ package org.pathvisio.plugins;
 
 import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
+import keggapi.LinkDBRelation;
 
 /**
  * Generates Putative Pathway Parts based on a 

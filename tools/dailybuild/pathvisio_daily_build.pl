@@ -167,7 +167,7 @@ eval
 		{
 			# compile
 			system ("ant jar-wpclient " . 
-				"-Dwsdl.url=http://137.120.89.38/wikipathways-test/wpi/webservice/webservice.php?wsdl " .
+				"-Dwsdl.url=http://137.120.14.24/wikipathways-test/wpi/webservice/webservice.php?wsdl " .
 				"> $dir/compile-wpc.txt") == 0 or 
 				die ("compile webservice client lib failed with error code ", $? >> 8, "\n");
 		}

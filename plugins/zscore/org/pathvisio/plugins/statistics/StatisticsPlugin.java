@@ -421,7 +421,7 @@ public class StatisticsPlugin implements Plugin
 				while (calculator.hasNext())
 				{
 					StatisticsPathwayResult sr = calculator.next();
-					publish (sr);
+					if (sr != null)	publish (sr);
 					if (pk.isCancelled()) return null;
 				}
 				

@@ -101,6 +101,10 @@ public class ZScoreCalculator
 		return getIterator().hasNext();
 	}
 	
+	/**
+	 * @return May be null if the result could not be calculated, 
+	 * e.g. if a Parser Exception occurred
+	 */
 	public StatisticsPathwayResult next()
 	{
 		File f = getIterator().next();
@@ -111,8 +115,11 @@ public class ZScoreCalculator
 		}
 
 		StatisticsPathwayResult spr = doCalculatePathway(f);
-		result.stm.addRow (spr);
-		result.stm.sort();
+		if (spr != null)
+		{
+			result.stm.addRow (spr);
+			result.stm.sort();
+		}
 		
 		return spr;
 	}
@@ -138,7 +145,7 @@ public class ZScoreCalculator
 				pk.setProgress((int)((0.2 + (0.8 * (double)i / (double)files.size())) * 100.0));
 			}
 			StatisticsPathwayResult spr = doCalculatePathway(f);
-			result.stm.addRow (spr);
+			if (spr != null) result.stm.addRow (spr);
 		}
 		result.stm.sort();
 		return result;
@@ -182,6 +189,9 @@ public class ZScoreCalculator
 		Logger.log.info ("N: " + result.bigN + ", R: " + result.bigR);
 	}
 	
+	/**
+	 * @return returns null if the pathway could not be parsed 
+	 */
 	private StatisticsPathwayResult doCalculatePathway(File file)
 	{
 		try
@@ -240,11 +250,11 @@ public class ZScoreCalculator
 					// This is our "r".
 					
 					//This line is different from MAPPFinder: if 2 out of 3 probes are positive, count only 2/3
-					cPwyPositive += (double)cGenePositive / (double)cGeneTotal;
+//					cPwyPositive += (double)cGenePositive / (double)cGeneTotal;
 					
 					//The line below is the original MAPPFinder behaviour: 
 					//  count as fully positive if at least one probe is positive
-					//if (cGenePositive > 0) cPwyPositive += 1;
+					if (cGenePositive > 0) cPwyPositive += 1.0;
 				}
 			}
 			

@@ -43,6 +43,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.Gdb;
 import org.pathvisio.data.GexManager;
 import org.pathvisio.data.SimpleGex;
@@ -71,8 +72,9 @@ public class StatisticsPlugin implements Plugin
 	enum StatisticsPreference implements Preference
 	{
 		STATS_DIR_LAST_USED_PATHWAY (PreferenceManager.getCurrent().get(GlobalPreference.DIR_PWFILES)),
-		STATS_DIR_LAST_USED_RESULTS (PreferenceManager.getCurrent().get(GlobalPreference.DIR_LAST_USED_PGEX));
-		
+		STATS_DIR_LAST_USED_RESULTS (PreferenceManager.getCurrent().get(GlobalPreference.DIR_LAST_USED_PGEX)),
+		MAPPFINDER_COMPATIBILITY (Boolean.toString(true));
+
 		StatisticsPreference (String defaultValue) 
 		{
 			this.defaultValue = defaultValue;
@@ -398,13 +400,14 @@ public class StatisticsPlugin implements Plugin
 			d.setVisible(true);
 		}
 		
-		private class ZScoreWorker extends SwingWorker <StatisticsResult, StatisticsPathwayResult>
+		private class ZScoreWorker extends SwingWorker <StatisticsResult, Void>
 		{
 			private final ZScoreCalculator calculator;
 			private ProgressKeeper pk;
 			
 			// temporary model that will be filled with intermediate results.
 			private StatisticsTableModel temp;
+			private boolean useMappFinder;
 			
 			ZScoreWorker(Criterion crit, File pwDir, SimpleGex gex, Gdb gdb, ProgressKeeper pk)
 			{
@@ -413,32 +416,23 @@ public class StatisticsPlugin implements Plugin
 				temp = new StatisticsTableModel();
 				temp.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
 				tblResult.setModel(temp);
+				useMappFinder = PreferenceManager.getCurrent().getBoolean(StatisticsPreference.MAPPFINDER_COMPATIBILITY);
 			}
 
 			@Override
-			protected StatisticsResult doInBackground()
+			protected StatisticsResult doInBackground() throws DataException
 			{
-				while (calculator.hasNext())
-				{
-					StatisticsPathwayResult sr = calculator.next();
-					if (sr != null)	publish (sr);
-					if (pk.isCancelled()) return null;
-				}
+				StatisticsResult result;
 				
-				pk.setProgress (100);
-				return calculator.getResult();
-			}
-			
-			@Override
-			protected void process (List<StatisticsPathwayResult> srs)
-			{
-				// add intermediate rows to temporary table
-				for (StatisticsPathwayResult sr : srs)
+				if (useMappFinder)
 				{
-					temp.addRow (sr);
+					result = calculator.calculateMappFinder();
 				}
-				temp.sort();
-				StatisticsTableModel.packRows(tblResult, 2); // pack table rows
+				else
+				{
+					result = calculator.calculateAlternative();
+				}				
+				return result;
 			}
 
 			@Override

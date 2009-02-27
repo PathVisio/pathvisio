@@ -36,7 +36,7 @@ class StatisticsTableModel extends ListWithPropertiesTableModel<Column, Statisti
 	
 	// array of columns we are going to save
 	private static final Column[] SAVE_COLUMNS = new Column[] {
-			Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE 
+			Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE, 
 	};
 	
 	public void printData(PrintStream out) throws IOException
@@ -84,10 +84,13 @@ class StatisticsTableModel extends ListWithPropertiesTableModel<Column, Statisti
 
 			public int compare(StatisticsPathwayResult arg0, StatisticsPathwayResult arg1) 
 			{
-				if (Double.isNaN(arg1.z) && Double.isNaN(arg0.z)) return 0;
-				if (Double.isNaN(arg1.z)) return -1;
-				if (Double.isNaN(arg0.z)) return 1;
-				return Double.compare(arg1.z, arg0.z);
+				double z1 = arg1.getZScore();
+				double z0 = arg0.getZScore();
+				
+				if (Double.isNaN(z1) && Double.isNaN(z0)) return 0;
+				if (Double.isNaN(z1)) return -1;
+				if (Double.isNaN(z0)) return 1;
+				return Double.compare(z1, z0);
 			}
 		});
 		fireTableDataChanged();

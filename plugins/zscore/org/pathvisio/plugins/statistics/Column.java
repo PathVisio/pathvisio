@@ -28,7 +28,8 @@ enum Column implements PropertyColumn
 	TOTAL("total"),
 	PATHWAY_NAME("Pathway"),
 	PCT("%"),
-	PVAL("pval"),
+	PERMPVAL("Permute p-value"),
+	ADJPVAL("Adjusted p-value"),
 	ZSCORE ("Z Score");
 	
 	String title;

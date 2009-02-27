@@ -30,9 +30,11 @@ class StatisticsPathwayResult implements RowWithProperties<Column>
 	private int n = 0;
 	private int total = 0;
 	private String name;
-	double z = 0;
+	private double z = 0;
 	private File f;
-
+	double permP = 0;
+	double adjP = 0;
+	
 	File getFile() { return f; }
 	
 	StatisticsPathwayResult (File f, String name, int n, int r, int total, double z)
@@ -53,10 +55,16 @@ class StatisticsPathwayResult implements RowWithProperties<Column>
 		case R: return "" + r;
 		case TOTAL: return "" + total;
 		case PATHWAY_NAME: return name;
-		case PVAL: return "0.01"; //TODO
+		case PERMPVAL: return String.format ("%3.2f", (float)permP);
+		case ADJPVAL: return String.format ("%3.2f", (float)adjP);
 		case ZSCORE: return String.format ("%3.2f", (float)z);
 		case PCT: return String.format("%3.2f%%", (n == 0 ? Float.NaN : 100.0 * (float)r / (float)n));
 		default : throw new IllegalArgumentException("Unknown property");
 		}
+	}
+	
+	public double getZScore()
+	{
+		return z;
 	}
 }

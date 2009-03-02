@@ -190,25 +190,7 @@ public class MainPanelStandalone extends MainPanel
 		combo.setMaximumSize(combo.getPreferredSize());
 		combo.setEditable(true);
 		combo.setSelectedIndex(5); // 100%
-		combo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JComboBox combo = (JComboBox) e.getSource();
-				Object s = combo.getSelectedItem();
-				if (s instanceof Action) {
-					((Action) s).actionPerformed(e);
-				} else if (s instanceof String) {
-					String zs = (String) s;
-					try {
-						double zf = Double.parseDouble(zs);
-						ZoomAction za = new ZoomAction(swingEngine.getEngine(), zf);
-						za.setEnabled(true);
-						za.actionPerformed(e);
-					} catch (Exception ex) {
-						// Ignore bad input
-					}
-				}
-			}
-		});
+		combo.addActionListener(new ZoomComboListener());
 		addToToolbar(combo, TB_GROUP_SHOW_IF_VPATHWAY);
 
 		tb.addSeparator();

@@ -19,6 +19,7 @@ package org.pathvisio.visualization.colorset;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.List;
 
 import org.jdom.Element;
 import org.pathvisio.data.GexManager;
@@ -54,11 +55,11 @@ public class ColorRule extends ColorSetObject
 	/**
 	 * Returns error message or null if there was no error.
 	 */
-	public String setExpression(String expression, String[] symbols)
+	public String setExpression(String expression, List<String> symbols)
 	{
 		return criterion.setExpression(expression, symbols);
 	}
-	
+
 	public String getExpression() { return criterion.getExpression(); }
 	
 	public ColorRule(ColorSet parent) {
@@ -91,7 +92,7 @@ public class ColorRule extends ColorSetObject
 		try {
 			String expression = xml.getAttributeValue(XML_ATTR_EXPRESSION);
 			criterion = new Criterion();
-			String[] sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames().toArray(new String[0]);
+			List<String> sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames();
 			criterion.setExpression(expression, sampleNames);
 			Element ce = xml.getChild(XML_ELM_COLOR);
 			if(ce != null) color = ColorConverter.parseColorElement(ce);

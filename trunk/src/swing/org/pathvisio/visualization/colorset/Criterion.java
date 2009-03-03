@@ -16,7 +16,9 @@
 //
 package org.pathvisio.visualization.colorset;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.debug.Logger;
@@ -65,7 +67,7 @@ public class Criterion
 	 * 
 	 * Returns an error String, or null if there was no error.
 	 */
-	public String setExpression(String expression, String[] symbols) 
+	public String setExpression(String expression, List<String> symbols) 
 	{
 		if (expression == null) throw new NullPointerException();
 		this.expression = expression;

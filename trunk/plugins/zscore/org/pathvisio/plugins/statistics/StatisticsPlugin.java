@@ -167,8 +167,7 @@ public class StatisticsPlugin implements Plugin
 			private void updateCriterion()
 			{
 				String error = myCriterion.setExpression(
-						txtExpr.getText(), 
-						sampleNames.toArray(new String[0]));
+						txtExpr.getText(), sampleNames);
 				if (error != null)
 				{
 					lblError.setText(error);

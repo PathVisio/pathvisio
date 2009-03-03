@@ -68,7 +68,7 @@ public class ColorRulePanel extends JPanel
 	 */
 	private void setExpresion()
 	{
-		String[] sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames().toArray(new String[0]);
+		List<String> sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames();
 		String expr = txtExpr.getText();
 		
 		String error = cr.setExpression(expr, sampleNames);

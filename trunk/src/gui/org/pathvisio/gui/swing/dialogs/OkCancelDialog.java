@@ -22,13 +22,16 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 /**
@@ -82,6 +85,8 @@ public class OkCancelDialog extends JDialog implements ActionListener {
 		
 		//Make buttons respond to pressing 'Enter'
 		UIManager.put("Button.defaultButtonFollowsFocus", Boolean.TRUE);
+		KeyStroke esc = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0);
+		contentPanel.registerKeyboardAction(this, CANCEL, esc,JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);				
 	}
 	
 	public OkCancelDialog(Frame frame, String title, Component locationComp, boolean modal) {

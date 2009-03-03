@@ -104,7 +104,6 @@ public class GexManager
 		setCurrentGex (gex);
 	}
 
-	@Deprecated
 	public DBConnector getDBConnector() throws 
 		ClassNotFoundException, 
 		InstantiationException, 

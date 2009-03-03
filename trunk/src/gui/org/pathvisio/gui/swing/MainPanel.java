@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.ImageIcon;
@@ -250,6 +249,11 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		this(swingEngine, null);
 	}
 
+	/**
+	 * {@link ActionListener} for the Zoom combobox on the toolbar. The user can select one
+	 * of the predefined ZoomActions (50%, 100%, 200%, Zoom to fit, etc.), 
+	 * or enter a number or percentage manually. 
+	 */
 	protected class ZoomComboListener implements ActionListener {
 		
 		public void actionPerformed(ActionEvent e){

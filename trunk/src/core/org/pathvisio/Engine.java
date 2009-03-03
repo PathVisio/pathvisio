@@ -55,7 +55,7 @@ public class Engine
 	public static final String PATHWAY_FILTER_NAME = "PathVisio Pathway (*." + PATHWAY_FILE_EXTENSION + ")";
 	public static final String GENMAPP_FILE_EXTENSION = "mapp";
 	public static final String GENMAPP_FILTER_NAME = "GenMAPP Pathway (*." + GENMAPP_FILE_EXTENSION + ")";
-	private List<File> recent = new LinkedList<File>();
+
 	/**
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */

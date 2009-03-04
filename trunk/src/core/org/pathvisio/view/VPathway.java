@@ -1192,6 +1192,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		dragUndoState = DRAG_UNDO_NOT_RECORDING;
 		
 		if(newObjects.length > 1) {
+			clearSelection();
 			//Multiple objects: select all and use selectionbox as dragging object
 			for(PathwayElement pwe : newObjects) {
 				Graphics g = getPathwayElementView(pwe);

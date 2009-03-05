@@ -122,7 +122,7 @@ public class DataSource
 		"E", "EC Number",
 		new PrefixUrlMaker ("http://www.brenda-enzymes.info/php/result_flat.php4?ecno="),
 		"http://www.brenda-enzymes.info/"
-		, "2.7.1.71", false, false, null);
+		, "2.7.1.71", true, false, null);
 	public static final DataSource ECOLI = new DataSource (
 		"Ec", "Ecoli", 
 		null, null, null, true, false, Organism.EscherichiaColi);

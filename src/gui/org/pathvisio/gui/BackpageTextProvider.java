@@ -339,6 +339,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	private String getCrossRefText(Gdb gdb, Xref ref) throws DataException 
 	{
 		List<Xref> crfs = gdb.getCrossRefs(ref);
+		crfs.add(ref);
 		if(crfs.size() == 0) return "";
 		StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
 		for(Xref cr : crfs) {

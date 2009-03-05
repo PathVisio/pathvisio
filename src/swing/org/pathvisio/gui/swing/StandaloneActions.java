@@ -47,13 +47,11 @@ public class StandaloneActions
 	public final Action newAction;
 	public final Action selectGeneDbAction;
 	public final Action selectMetaboliteDbAction;
-	public final Action aboutAction;
 	public final Action preferencesAction;
 	public final Action searchAction;
 
 	StandaloneActions (SwingEngine swingEngine)
 	{
-		aboutAction = new AboutAction(swingEngine);
 		openAction = new OpenAction(swingEngine);
 		helpAction = new HelpAction();
 		newAction = new NewAction(swingEngine);
@@ -187,27 +185,7 @@ public class StandaloneActions
 	 * Open the about dialog,
 	 * showing a list of authors and the current program version
 	 */
-	public static class AboutAction extends AbstractAction 
-	{
-
-		SwingEngine swingEngine;
-		
-		public AboutAction(SwingEngine swingEngine)
-		{
-			super();
-			this.swingEngine = swingEngine;
-			putValue(NAME, "About");
-			putValue(SHORT_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
-			putValue(LONG_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
-		}
-
-		public void actionPerformed(ActionEvent e) 
-		{
-			AboutDlg dlg = new AboutDlg (swingEngine);
-			dlg.createAndShowGUI();
-		}
-	}
-
+	
 	/**
 	 * Show preferences dialog.
 	 * Invoked in menu->edit->preferences

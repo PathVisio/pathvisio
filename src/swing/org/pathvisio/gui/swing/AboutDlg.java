@@ -61,7 +61,7 @@ public class AboutDlg
 		JTextArea label = new JTextArea();
 		label.setEditable(false);
 		label.setText("R.M.H. Besseling\nS.P.M.Crijns\nI. Kaashoek\nM.M. Palm\n" +
-			"E.D. Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nE. Neuteboom\nE.J. Creusen\nP. Moeskops\nBiGCaT");
+			"E.D. Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nE. Neuteboom\nE.J. Creusen\nP. Moeskops\nA. Bilican\nBiGCaT");
 		JLabel iconLbl = new JLabel(new ImageIcon (IMG_ABOUT_LOGO));
 		label.setBackground(UIManager.getColor("Label.background"));
 		

@@ -29,6 +29,7 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
+import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
@@ -87,6 +88,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 	
+	public final AboutAction aboutAction;
 	public final SaveAction saveAction;
 	public final SaveAction saveAsAction;
 	public final SaveAction standaloneSaveAction;
@@ -221,6 +223,7 @@ public class CommonActions implements ApplicationEventListener {
 		
 		exportAction = new ExportAction(se);
 		importAction = new ImportAction(se);
+		aboutAction = new AboutAction(se);
 		
 		exitAction = new ExitAction(se);
 	}
@@ -584,6 +587,27 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 
+	public static class AboutAction extends AbstractAction 
+	{
+
+		SwingEngine swingengine;
+		
+		public AboutAction(SwingEngine swingengine)
+		{
+			super();
+			this.swingengine = swingengine;
+			putValue(NAME, "About");
+			putValue(SHORT_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
+			putValue(LONG_DESCRIPTION, "About " + Globals.APPLICATION_NAME);
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			AboutDlg dlg = new AboutDlg (swingengine);
+			dlg.createAndShowGUI();
+		}
+	}
+	
 	/**
 	 * Exit menu item. Quit the program with System.exit after checking
 	 * for unsaved changes

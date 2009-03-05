@@ -21,13 +21,18 @@ import java.net.URL;
 
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.MainPanel;
+import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.view.Graphics;
+import org.pathvisio.view.VPathwayElement;
 
 public class AppletMain extends PathwayPageApplet {	
 
@@ -71,6 +76,21 @@ public class AppletMain extends PathwayPageApplet {
 			mainPanel.getToolBar().add(importButton, 0);
 		}
 
+		// add about... to right-click menu
+		PathwayElementMenuHook about = new PathwayElementMenuHook()
+		{
+			private CommonActions.AboutAction aboutAction = 
+				new CommonActions.AboutAction(wiki.getSwingEngine());
+			
+			public void pathwayElementMenuHook(VPathwayElement e, JPopupMenu menu) {
+				if (!(e instanceof Graphics))
+				{
+					menu.add(aboutAction);
+				}			
+			}
+		};
+		mainPanel.getPathwayElementMenuListener().addPathwayElementMenuHook(about);
+		
 		//Create a maximize button
 		JButton btn = new JButton(new Actions.FullScreenAction(uiHandler, wiki, this));
 		btn.setText("");

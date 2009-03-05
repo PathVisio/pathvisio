@@ -40,7 +40,7 @@ import org.pathvisio.model.Xref;
 
 /**
  * Generates Putative Pathway Parts based on a 
- * HMDB metabolic network parsed and stored in MySQL by Andra.
+ * Phasar.
  */
 public class KeggPppPlugin_getGenesByEnzymes {
 

@@ -80,7 +80,7 @@ public class PhasarPppPlugin {
 	    pelt.setTextLabel(input.getTextLabel());
 	    pelt.setDataSource(input.getDataSource());
 	    pelt.setGeneID(input.getGeneID());
-	    pelt.setCopyright("Human metabolome database (http://www.hmdb.ca)");
+	    pelt.setCopyright("Phasar (http://www.phasar.cs.ru.nl/)");
 	    pelt.setDataNodeType(input.getDataNodeType());
 	    result.add(pelt);
 	    Xref ref = input.getXref();
@@ -90,14 +90,14 @@ public class PhasarPppPlugin {
 		int noRecords = 0;
 		String aLine;
 		
-		//InputStream urlInputStream = null;
+		InputStream urlInputStream = null;
  
 		
 		
-		/*String urlString = "http://www.bioinformatics.nl/biometa/webservice/connections/getsuggestion/"+ref.getId();
+		String urlString = "http://www.bioinformatics.nl/biometa/webservice/connections/getsuggestion/"+ref.getId();
 		 System.out.println(urlString);
 		URL url = new URL(urlString);
-		//urlInputStream = url.openConnection().getInputStream();
+		urlInputStream = url.openConnection().getInputStream();
 				
 		InputStream in = url.openStream();
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -110,7 +110,7 @@ public class PhasarPppPlugin {
 		}
 		
 		File tmp = File.createTempFile("phasartempresult", ".xml");
-		System.out.println(tmp.getName());*/
+		System.out.println(tmp.getName());
 		DOMParser parser = new DOMParser();
 		try {
 			parser.parse("/temp/phasar.xml");

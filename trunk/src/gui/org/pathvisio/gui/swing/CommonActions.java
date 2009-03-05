@@ -294,7 +294,6 @@ public class CommonActions implements ApplicationEventListener {
 	 * or to file in the case of the standalone application
 	 */
 	public static class SaveAction extends AbstractAction implements StatusFlagListener, ApplicationEventListener {
-		boolean forceDisabled;
 		boolean isSaveAs; // is either save... or save as...
 		
 		SwingEngine swingEngine;
@@ -311,7 +310,7 @@ public class CommonActions implements ApplicationEventListener {
 				putValue(Action.SHORT_DESCRIPTION, wiki ? "Save the pathway under a new name" : "Save a local copy of the pathway");
 				putValue(Action.LONG_DESCRIPTION, wiki ? "Save the pathway under a new name" : "Save a local copy of the pathway");
 			}
-			else
+			else 
 			{
 				putValue(Action.NAME, "Save");
 				putValue(Action.SMALL_ICON, new ImageIcon(IMG_SAVE));
@@ -326,7 +325,6 @@ public class CommonActions implements ApplicationEventListener {
 				p.addStatusFlagListener(this);
 				handleStatus(p.hasChanged());
 			} else {
-				forceDisabled = true;
 				setEnabled(false);
 			}
 		}
@@ -335,24 +333,22 @@ public class CommonActions implements ApplicationEventListener {
 		{
 			if (isSaveAs)
 				swingEngine.savePathwayAs();
-			else
+			else 
 				swingEngine.savePathway();
 		}
 
 		private void handleStatus(boolean status) {
-			forceDisabled = !status;
-			setEnabled(status);
+			if (isSaveAs)
+			{
+				setEnabled(enabled);
+			}
+			else {
+				setEnabled(status);
+			}
 		}
 		
 		public void statusFlagChanged(StatusFlagEvent e) {
 			handleStatus(e.getNewStatus());
-		}
-		
-		public void setEnabled(boolean enabled) {
-			if(enabled && forceDisabled) {
-				return;
-			}
-			super.setEnabled(enabled);
 		}
 		
 		public void applicationEvent(ApplicationEvent e) {
@@ -361,7 +357,7 @@ public class CommonActions implements ApplicationEventListener {
 			{
 				Pathway p = swingEngine.getEngine().getActivePathway();
 				p.addStatusFlagListener(this);
-				handleStatus(p.hasChanged());
+				handleStatus(p.hasChanged());	
 			}
 		}		
 	}

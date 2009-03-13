@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -243,109 +244,133 @@ public class SimpleGex
 	}
 
 	/**
+	 * get all datasouces used in this gex.
+	 */
+	public Set<DataSource> getUsedDatasources() throws DataException
+	{
+		try
+		{
+			Set<DataSource> destFilter = new HashSet<DataSource>();
+			PreparedStatement pst = getPst2();
+			ResultSet r = pst.executeQuery();
+			while (r.next())
+			{
+				destFilter.add(DataSource.getBySystemCode(r.getString(1)));
+			}
+			return destFilter;
+		}
+		catch (SQLException ex)
+		{
+			throw new DataException (ex);
+		}
+	}
+	
+	private Collection<ReporterData> getDataForXref(Xref srcRef, Gdb gdb, Set<DataSource> destFilter) throws DataException
+	{
+		try
+		{
+			PreparedStatement pst = getPst1();
+			
+			// get all cross-refs for this id				
+			Set<Xref> destRefs = new HashSet<Xref>();
+			if (gdb.isConnected())
+			{
+				for (Xref destRef : gdb.getCrossRefs(srcRef))
+				{
+					// add only the ones that are in the dest filter.
+					if (destFilter.contains(destRef.getDataSource()))
+					{
+						destRefs.add(destRef);
+					}
+				
+				}
+			}
+			// also the srcRef, in case we can't look up cross references
+			if (destFilter.contains(srcRef.getDataSource()))
+			{
+				destRefs.add(srcRef);
+			}
+			
+			
+			if(destRefs.size() > 0)
+			{								
+				Map<Integer, ReporterData> groupData = new HashMap<Integer, ReporterData>();
+	
+				for (Xref destRef : destRefs)
+				{	
+					pst.setString(1, destRef.getId());
+					pst.setString(2, destRef.getDataSource().getSystemCode());
+					ResultSet r = pst.executeQuery();
+					
+					//r contains all data mapping to the destref
+					//there could be multiple data items
+					while(r.next())
+					{
+						int group = r.getInt("groupId");
+						ReporterData data = groupData.get(group);
+						if(data == null) {
+							data = new ReporterData(destRef, group);
+							groupData.put(group, data);
+						}
+						int idSample = r.getInt("idSample");					
+						data.setSampleData(samples.get(idSample), r.getString("data"));
+					}
+				}
+	
+				return groupData.values();
+			}
+			else
+				return Arrays.asList();
+		}
+		catch (SQLException ex)
+		{
+			throw new DataException (ex);
+		}
+	}
+	
+	/**
 	 * Loads expression data for all the given gene ids into memory
 	 * @param srcRefs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
 	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, Gdb gdb) throws DataException
 	{	
-		Map<Integer, Sample> samples = getSamples();
-		try
-		{
-			cachedData = new CachedData();
-			StopWatch timer = new StopWatch();
-			timer.start();
-	
+		// seed samples cache
+		getSamples();
+		
+		cachedData = new CachedData();
+		StopWatch timer = new StopWatch();
+		timer.start();
+
+		
+		/* 
+		 * since datasets often use only one or a few system codes,
+		 * we get a big efficiency improvement if we only look at cross-refs
+		 * that occur in the dataset.  We create a destFilter to filter out
+		 * those cross-refs
+		 */
+		Set<DataSource> destFilter = getUsedDatasources();
+		
+		
+		for(Xref srcRef : srcRefs)
+		{				
+			if(cachedData.hasData(srcRef)) continue;
 			
-			/* 
-			 * since datasets often use only one or a few system codes,
-			 * we get a big efficiency improvement if we only look at cross-refs
-			 * that occur in the dataset.  We create a destFilter to filter out
-			 * those cross-refs
-			 */
-			Set<DataSource> destFilter = new HashSet<DataSource>();
+			for (ReporterData r : getDataForXref(srcRef, gdb, destFilter)) 
+				cachedData.addData(srcRef, r);
 			
+			if(p != null)
 			{
-				PreparedStatement pst = getPst2();
-				ResultSet r = pst.executeQuery();
-				while (r.next())
+				if (p.isCancelled()) //Check if the process is interrupted
 				{
-					destFilter.add(DataSource.getBySystemCode(r.getString(1)));
+					return;
 				}
+				p.worked(p.getTotalWork() / srcRefs.size()); //Update the progress
 			}
-			
-			PreparedStatement pst = getPst1();
-			
-			for(Xref srcRef : srcRefs)
-			{				
-				if(cachedData.hasData(srcRef)) continue;
-				
-				// get all cross-refs for this id
-				
-				Set<Xref> destRefs = new HashSet<Xref>();
-				if (gdb.isConnected())
-				{
-					for (Xref destRef : gdb.getCrossRefs(srcRef))
-					{
-						// add only the ones that are in the dest filter.
-						if (destFilter.contains(destRef.getDataSource()))
-						{
-							destRefs.add(destRef);
-						}
-					
-					}
-				}
-				// also the srcRef, in case we can't look up cross references
-				if (destFilter.contains(srcRef.getDataSource()))
-				{
-					destRefs.add(srcRef);
-				}
-				
-				Map<Integer, ReporterData> groupData = new HashMap<Integer, ReporterData>();
-				
-				if(destRefs.size() > 0)
-				{								
-					groupData.clear();
-	
-					for (Xref destRef : destRefs)
-					{	
-						pst.setString(1, destRef.getId());
-						pst.setString(2, destRef.getDataSource().getSystemCode());
-						ResultSet r = pst.executeQuery();
-						
-						//r contains all data mapping to the destref
-						//there could be multiple data items
-						while(r.next())
-						{
-							int group = r.getInt("groupId");
-							ReporterData data = groupData.get(group);
-							if(data == null) {
-								groupData.put(group, data = new ReporterData(destRef, group));
-								cachedData.addData(srcRef, data);
-							}
-							
-							int idSample = r.getInt("idSample");					
-							data.setSampleData(samples.get(idSample), r.getString("data"));
-						}
-					}
-				}			
-				if(p != null)
-				{
-					if (p.isCancelled()) //Check if the process is interrupted
-					{
-						return;
-					}
-					p.worked(p.getTotalWork() / srcRefs.size()); //Update the progress
-				}
-			}
-			if (p != null) p.finished();
-			timer.stopToLog("Caching expression data\t\t\t");
-			Logger.log.trace("> Nr of ids queried:\t" + srcRefs.size());
 		}
-		catch (SQLException e)
-		{
-			throw new DataException (e);
-		}
+		if (p != null) p.finished();
+		timer.stopToLog("Caching expression data\t\t\t");
+		Logger.log.trace("> Nr of ids queried:\t" + srcRefs.size());
 	}
 				
 	/**

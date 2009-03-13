@@ -29,13 +29,13 @@ public class DataException extends Exception
 {
 
 	/** See Exception(Throwable) */
-	DataException (Throwable t)
+	public DataException (Throwable t)
 	{
 		super (t);
 	}
 	
 	/** See Exception(String, Throwable) */
-	DataException (String msg, Throwable t)
+	public DataException (String msg, Throwable t)
 	{
 		super (msg, t);
 	}

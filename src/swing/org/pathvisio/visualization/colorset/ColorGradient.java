@@ -26,9 +26,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jdom.Element;
-import org.pathvisio.data.ReporterData;
-import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.ReporterData;
+import org.pathvisio.gex.Sample;
 import org.pathvisio.util.ColorConverter;
 
 /**

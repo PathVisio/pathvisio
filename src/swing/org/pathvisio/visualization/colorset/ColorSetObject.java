@@ -20,8 +20,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import org.jdom.Element;
-import org.pathvisio.data.ReporterData;
-import org.pathvisio.data.Sample;
+import org.pathvisio.gex.ReporterData;
+import org.pathvisio.gex.Sample;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
 /**

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.data;
+package org.pathvisio.gex;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,9 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.pathvisio.data.ImportInformation.ColumnType;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
+import org.pathvisio.gex.ImportInformation.ColumnType;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.FileUtils;

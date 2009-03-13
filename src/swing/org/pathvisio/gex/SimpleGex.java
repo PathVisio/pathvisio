@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.data;
+package org.pathvisio.gex;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.DataSource;

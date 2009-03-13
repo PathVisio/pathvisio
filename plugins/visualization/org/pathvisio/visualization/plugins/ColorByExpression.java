@@ -43,11 +43,11 @@ import javax.swing.JPanel;
 
 import org.jdom.Element;
 import org.pathvisio.Engine;
-import org.pathvisio.data.CachedData;
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.ReporterData;
-import org.pathvisio.data.Sample;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.CachedData;
+import org.pathvisio.gex.GexManager;
+import org.pathvisio.gex.ReporterData;
+import org.pathvisio.gex.Sample;
 import org.pathvisio.model.Xref;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.Resources;

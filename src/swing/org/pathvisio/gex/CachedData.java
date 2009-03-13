@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.data;
+package org.pathvisio.gex;
 
 import java.sql.Types;
 import java.util.ArrayList;
@@ -32,8 +32,6 @@ import org.pathvisio.model.Xref;
  * pathway is opened.
  * A CachedData object will contain a list of {@link ReporterData} object for every gene-product on the pathway for 
  * which data is available in the expression dataset
- * @author Thomas
- * @see SimpleGex#cacheData
  */
 public class CachedData {
 	

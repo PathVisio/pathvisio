@@ -20,9 +20,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.pathvisio.data.GexManager.GexManagerEvent;
-import org.pathvisio.data.GexManager.GexManagerListener;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.GexManager.GexManagerEvent;
+import org.pathvisio.gex.GexManager.GexManagerListener;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;

@@ -18,25 +18,19 @@ package org.pathvisio.gui.swing;
 
 import javax.swing.JEditorPane;
 
-import org.pathvisio.data.GexManager;
 import org.pathvisio.gui.BackpageListener;
 import org.pathvisio.gui.BackpageTextProvider;
 
 /**
  * The backpage panel for the Swing version of PathVisio. This pane shows annotation
  * information from the Gene Database when a datanode is clicked
- * @author thomas
- *
  */
 public class BackpagePane extends JEditorPane implements BackpageListener {	
 
-	private BackpageTextProvider bpt;
-	
-	public BackpagePane(SwingEngine swingEngine) 
+	public BackpagePane(BackpageTextProvider bpt) 
 	{
 		super();
-		bpt = new BackpageTextProvider (swingEngine.getEngine(), swingEngine.getGdbManager(), GexManager.getCurrent());
-				
+		
 		setEditable(false);
 		setContentType("text/html");
 		bpt.addListener(this);

@@ -14,12 +14,14 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.data;
+package org.pathvisio.gex;
 
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.pathvisio.data.DBConnector;
+import org.pathvisio.data.DataException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;

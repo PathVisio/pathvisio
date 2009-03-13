@@ -38,6 +38,8 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
+import org.pathvisio.gex.BackpageExpression;
+import org.pathvisio.gex.GexManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Resources;
@@ -116,6 +118,9 @@ public class MainPanelStandalone extends MainPanel
 		
 		SearchPane searchPane = new SearchPane(engine, swingEngine);
 		sidebarTabbedPane.addTab ("Search", searchPane); 
+
+		// backpage hook for showing expression data.
+		bpt.addBackpageHook(new BackpageExpression(swingEngine.getGdbManager(), GexManager.getCurrent()));
 	}
 
 	@Override

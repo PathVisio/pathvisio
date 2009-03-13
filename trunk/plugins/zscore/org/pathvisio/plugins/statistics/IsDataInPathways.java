@@ -29,12 +29,12 @@ import java.util.regex.Pattern;
 
 import org.pathvisio.data.DataDerby;
 import org.pathvisio.data.DataException;
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.ReporterData;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.data.SimpleGdbFactory;
-import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.GexManager;
+import org.pathvisio.gex.ReporterData;
+import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.preferences.PreferenceManager;

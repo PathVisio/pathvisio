@@ -28,10 +28,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 
 import org.pathvisio.data.DataException;
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.Sample;
-import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.GexManager;
+import org.pathvisio.gex.Sample;
+import org.pathvisio.gex.SimpleGex;
 
 /**
  * List of samples, with a checkbox in front of each so the user can select

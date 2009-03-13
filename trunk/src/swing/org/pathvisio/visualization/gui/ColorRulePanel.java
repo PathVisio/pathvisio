@@ -38,8 +38,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.SimpleGex;
+import org.pathvisio.gex.GexManager;
+import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.util.swing.TextFieldUtils;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.Criterion;

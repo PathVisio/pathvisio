@@ -18,7 +18,8 @@ package org.pathvisio.gui.swing;
 
 
 import javax.swing.table.AbstractTableModel;
-import org.pathvisio.data.ImportInformation;
+
+import org.pathvisio.gex.ImportInformation;
 
 /**
  * for table used in the header page of the GexImportWizard.

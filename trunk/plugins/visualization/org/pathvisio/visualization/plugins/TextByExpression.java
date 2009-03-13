@@ -46,12 +46,12 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.jdom.Element;
-import org.pathvisio.data.CachedData;
-import org.pathvisio.data.GexManager;
-import org.pathvisio.data.ReporterData;
-import org.pathvisio.data.Sample;
-import org.pathvisio.data.SimpleGex;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.CachedData;
+import org.pathvisio.gex.GexManager;
+import org.pathvisio.gex.ReporterData;
+import org.pathvisio.gex.Sample;
+import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;

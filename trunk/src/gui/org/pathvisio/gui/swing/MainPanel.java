@@ -55,6 +55,7 @@ import javax.swing.table.TableCellRenderer;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
@@ -92,6 +93,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	private JTable propertyTable;
 
 	protected BackpagePane backpagePane;
+	protected BackpageTextProvider bpt;
 	
 	protected CommonActions actions;
 
@@ -195,7 +197,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
-		backpagePane = new BackpagePane(swingEngine);
+		bpt = new BackpageTextProvider (swingEngine.getEngine(), swingEngine.getGdbManager());
+		backpagePane = new BackpagePane(bpt);
 		backpagePane.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

@@ -31,7 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
-import org.pathvisio.data.Sample;
+import org.pathvisio.gex.Sample;
 import org.pathvisio.util.Resources;
 
 /**

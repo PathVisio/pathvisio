@@ -18,7 +18,9 @@ package org.pathvisio.util;
 
 import java.awt.Font;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Various utility functions
@@ -84,5 +86,41 @@ public class Utils {
 		else if (f.isItalic()) style = "ITALIC";
 		String fs = f.getName() + "-" + style + "-" + f.getSize();
 		return fs;
+	}
+	
+	/**
+	 * Helper function to print the contents of maps or collections,
+	 * or maps of maps, collections of maps, collections of collections etc.
+	 * Useful for debugging.
+	 * Similar in idea to the perl Data::Dumper module 
+	 * @param indent is for recursive use, e.g. to prefix each line with "\t" 
+	 */
+	public static void printx (PrintStream out, String indent, Object o)
+	{
+		if (o instanceof Map)
+		{
+			Map<?, ?> map = (Map<?, ?>)o;
+			for (Object key : map.keySet())
+			{
+				printx (out, indent, key);
+				out.println (indent + "=>");
+				Object value = map.get (key);
+				printx (out, indent + "\t", value); 
+			}
+		} 
+		else if (o instanceof Collection)
+		{
+			Collection<?> col = (Collection<?>)o;
+			out.println (indent + "(");
+			for (Object item : col)
+			{
+				printx (out, indent + "\t", item);
+			}
+			out.println (indent + ")");
+		}
+		else
+		{
+			out.println (indent + o.toString());
+		}
 	}
 }

@@ -19,63 +19,113 @@ package org.pathvisio.go;
 import java.io.File;
 import java.util.Set;
 
+import org.pathvisio.data.DataDerby;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.Gdb;
+import org.pathvisio.data.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.DataSource;
+import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.Xref;
 
+/**
+ * Run GoPathway with the following command line arguments (5 or more):
+ * 
+ * Argument 1: file name of gene ontology obo definition file. The latest one can be downloaded from 
+ * 	http://www.geneontology.org/GO.downloads.ontology.shtml
+ * 
+ * Argument 2: a mapping of ensembl to gene ontology, which can be downloaded from 
+ * Ensembl BioMart (http://www.ensembl.org/biomart/martview/)
+ * This should be a tab-delimited text file with 
+ * exactly one header row, with the following columns:
+ * 	Column 1: Ensembl gene ID
+ *  Column 2: GO ID
+ *  Any more columns are ignored if present.
+ *  (NB: Make sure you don't have a column with Ensembl transcript ID's)
+ *  
+ * Argument 3: file name of a PathVisio pgdb database for the correct species.
+ * 
+ * Argument 4: output directory, This should be an existing directory
+ * 
+ * Argument 5 and on: GO ID to make pathways of
+ * 
+ * For example
+ * 
+		/home/martijn/db/go/gene_ontology.obo
+		/home/martijn/Desktop/rest/hs_e50_goid_mart.txt
+		"/home/martijn/PathVisio-Data/gene databases/Hs_Derby_20080102_ens_workaround.pgdb"
+		/home/martijn/Desktop
+		GO:0045086
+		GO:0051260
+		GO:0045404
+		GO:0030154
+ */
 public class GoPathway 
 {
 	private GoMap map;
 	private GoReader reader;
 	
-	private void run (String[] args)
+	private void run (String[] args) throws DataException
 	{
 		File obo = new File (args[0]);
 		File mart = new File (args[1]);
-		String goid = args[2];
-		
-		reader = new GoReader(obo);
-		map = new GoMap(mart);
+		String gdbname = args[2]; 
+		File destDir = new File (args[3]);
 
-		Logger.log.info ("Go terms read: " + reader.getTerms().size());
-		
-		GoTerm term = reader.findTerm(goid);
-		Pathway p = makeGoPathway (reader, map, term);
-		
-		try
+		if (!obo.exists() || !mart.exists() || !destDir.isDirectory())
 		{
-			p.writeToXml(new File ("/home/martijn/Desktop/gotest.gpml"), true);
+			throw new IllegalArgumentException();
 		}
-		catch (ConverterException e)
+
+		Gdb gdb = SimpleGdbFactory.createInstance(gdbname, new DataDerby(), 0); 
+		for (int i = 4; i < args.length; ++i)
 		{
-			Logger.log.error ("",e);
+			String goid = args[i];
+			
+			
+			reader = new GoReader(obo);
+			map = new GoMap(mart);
+	
+			Logger.log.info ("Go terms read: " + reader.getTerms().size());
+			
+			GoTerm term = reader.findTerm(goid);
+			Logger.log.info (goid);
+			if (term == null) throw new NullPointerException();
+			
+			Pathway p = makeGoPathway (reader, map, term, gdb);
+			p.getMappInfo().setAuthor("Martijn van Iersel");
+			p.getMappInfo().setMapInfoDataSource("Gene Ontology");
+			p.getMappInfo().setEmail("martijn.vaniersel@bigcat.unimaas.nl");
+			
+			String name = "Hs_GO_" + term.getName();
+			if (name.length() >= 50) name = name.substring (0, 50);
+			
+			p.getMappInfo().setMapInfoName(name);
+			
+			try
+			{
+				p.writeToXml(new File (destDir, "Hs_GO_" + term.getName() + ".gpml"), true);
+			}
+			catch (ConverterException e)
+			{
+				Logger.log.error ("",e);
+			}
 		}
 	}
 	
-	Pathway makeGoPathway (GoReader reader, GoMap map, GoTerm base)
+	Pathway makeGoPathway (GoReader reader, GoMap map, GoTerm base, Gdb gdb)
 	{
 		Pathway result = new Pathway();
 
 		double top = 1000.0;
 		double left = 1000.0;
 
-		PathwayElement pelt = PathwayElement.createPathwayElement(ObjectType.LABEL);
-		
-		pelt.setMCenterX(left);
-		pelt.setMCenterY(top - DATANODEHEIGHT);
-		pelt.setMWidth(DATANODEWIDTH * 2);
-		pelt.setMHeight(DATANODEHEIGHT);		
-		pelt.setTextLabel(base.getId() + " " + base.getName());
-	
-		result.add(pelt);
-
-		Set<String> ensIds = map.getRefsRecursive(base);
-
-		addIds (result, ensIds, left, top);
+		addIds (result,  base, left, top, gdb, null);
 		
 		return result;
 	}
@@ -88,39 +138,96 @@ public class GoPathway
 	static final double MARGIN = 100;
 	static final double COLWIDTH = MAXCOLNUM * (DATANODEWIDTH + MARGIN);
 
-	double addIds (Pathway p, Set<String> ensIds, double left, double top)
+	double addIds (Pathway p, GoTerm term, double left, double top, Gdb gdb, String parentGroup)
 	{
+		// ignore if there are no genes corresponding to this tree.
+		if (map.getRefsRecursive(term).size() == 0) return top; 
+		
+		Set<String> ensIds = map.getRefs(term);
+
 		double xco = 0;
 		double yco = 0;
+
+		PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
+		group.setGroupStyle(GroupStyle.COMPLEX);
+		group.setTextLabel(term.getId());
+
+		if (parentGroup != null)
+		{
+			group.setGroupRef(parentGroup);
+		}
+		
+		p.add (group);
+		String groupRef = group.createGroupId();
+		
+		PathwayElement label = PathwayElement.createPathwayElement(ObjectType.LABEL);
+		
+		label.setMCenterX(left + LABELWIDTH / 2);
+		label.setMCenterY(top + LABELHEIGHT / 2);
+		label.setMWidth(LABELWIDTH);
+		label.setMHeight(LABELHEIGHT);		
+		label.setTextLabel(term.getId() + " " + term.getName());
+		label.setGroupRef(groupRef);
+		
+		top += LABELHEIGHT + MARGIN;
+		
+		p.add(label);
 		
 		for (String ensId : ensIds)
 		{
 			PathwayElement pelt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 			
-			pelt.setMCenterX(left + xco);
-			pelt.setMCenterY(top + yco);
+			Xref ref = new Xref (ensId, DataSource.ENSEMBL);
+			String symbol = null;
+			try
+			{
+				symbol = gdb.getGeneSymbol(ref);
+			}
+			catch (DataException ex)
+			{
+				Logger.log.warn ("Failed lookup of gene symbol", ex);
+			}
+			if (symbol == null) symbol = ensId;
+			
+			pelt.setMCenterX(left + xco + DATANODEWIDTH / 2);
+			pelt.setMCenterY(top + yco + DATANODEHEIGHT / 2);
 			pelt.setMWidth(DATANODEWIDTH);
 			pelt.setMHeight(DATANODEHEIGHT);
 			
 			pelt.setDataSource(DataSource.ENSEMBL);
 			pelt.setGeneID(ensId);
 			pelt.setDataNodeType(DataNodeType.GENEPRODUCT);
-			pelt.setTextLabel(ensId);
-		
+			pelt.setTextLabel(symbol);
+			pelt.setGroupRef (groupRef);
+			
 			p.add(pelt);
 			
 			xco += DATANODEWIDTH + MARGIN;
+			
 			if (xco >= COLWIDTH)
 			{
 				xco = 0;
 				yco += DATANODEHEIGHT;
 			}
 		}
-		return yco + top;
+		
+		double bottom = top + yco;
+		
+		if (ensIds.size() > 0)
+		{
+			bottom += DATANODEHEIGHT * 2;
+		}
+		
+		for (GoTerm child : term.getChildren())
+		{
+			bottom = addIds (p, child, left + 500, bottom, gdb, groupRef);
+		}
+		
+		return bottom + DATANODEHEIGHT;
 	}
 	
 	
-	public static void main(String [] args)
+	public static void main(String [] args) throws DataException
 	{
 		GoPathway pathway = new GoPathway();
 		pathway.run (args);

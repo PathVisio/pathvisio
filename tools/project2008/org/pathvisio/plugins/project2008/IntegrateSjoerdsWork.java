@@ -25,7 +25,6 @@ import org.pathvisio.gpmldiff.PatchMain;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Organism;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
-import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
 
 /**
  * One time script to take a set of pathways that were linked up,
@@ -38,7 +37,7 @@ public class IntegrateSjoerdsWork
 	static final File SJOERD_DIR = new File("/home/martijn/Desktop/sjoerd");
 	static final File CACHE_DIR = new File ("/home/martijn/wikipathways");
 	
-	public static void main (String[] args) throws IOException, JDOMException, ConverterException, WikiPathwaysException, InterruptedException
+	public static void main (String[] args) throws IOException, JDOMException, ConverterException, InterruptedException
 	{
 		
 		WikiPathwaysClient wpClient = new WikiPathwaysClient();

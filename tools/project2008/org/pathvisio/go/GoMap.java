@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.plugins.project2008;
+package org.pathvisio.go;
 
 import java.io.File;
 import java.util.Collection;
@@ -23,13 +23,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.pathvisio.debug.Logger;
+
 /**
  * maintains mappings from go to ensembl and vice versa
  */
 public class GoMap 
 {
 
-	GoMap (File martexport)
+	public GoMap (File martexport)
 	{
 		if (!martexport.exists())
 		{
@@ -39,7 +41,29 @@ public class GoMap
 	}
 	
 	Map<String,Set<String>> geneByGO = null;
+
+	/**
+	 * Returns empty hashset if there are none
+	 */
+	public Set<String> getRefs(GoTerm term)
+	{		
+		Set<String> result = geneByGO.get(term.getId());
+		if (result == null)	result = new HashSet<String>();
+		return result;
+	}
 	
+	public Set<String> getRefsRecursive(GoTerm term)
+	{
+		Set<String> result = new HashSet<String>();
+		for (GoTerm child : term.getChildren())
+		{
+			result.addAll(getRefsRecursive(child));
+		}
+		result.addAll (getRefs (term));
+		Logger.log.info (term.getName() + " has " + result.size() + " ids");
+		
+		return result;
+	}
 	
 	/**
 	 * add the genes to the set of terms

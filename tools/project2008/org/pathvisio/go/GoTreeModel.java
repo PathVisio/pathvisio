@@ -14,13 +14,14 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.plugins.project2008;
+package org.pathvisio.go;
 
 import java.util.List;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+
 
 /**
  * A simple static TreeModel for displaying the Gene Ontology as a tree.

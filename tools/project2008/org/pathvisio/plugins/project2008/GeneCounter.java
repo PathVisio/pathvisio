@@ -30,6 +30,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;
@@ -179,9 +180,9 @@ public class GeneCounter {
 			Logger.log.info ("Reading pathway " + filename);
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 			PathwayParser p = new PathwayParser(filename, xmlReader);
-			for (Xref gene : p.getGenes())
+			for (XrefWithSymbol gene : p.getGenes())
 			{
-				List<Xref> cRef = db.getCrossRefs(gene,DataSource.ENSEMBL);		
+				List<Xref> cRef = db.getCrossRefs(gene.asXref(),DataSource.ENSEMBL);		
 				s.addAll(cRef);
 			}
 		}

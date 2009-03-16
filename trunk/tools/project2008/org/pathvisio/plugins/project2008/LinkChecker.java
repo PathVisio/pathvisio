@@ -29,6 +29,7 @@ import org.pathvisio.data.DataException;
 import org.pathvisio.data.SimpleGdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Xref;
+import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;
@@ -192,7 +193,7 @@ public class LinkChecker
 			try
 			{
 				PathwayParser pwy = new PathwayParser (filename, xmlReader);
-				xrefList.addAll (pwy.getGenes());
+				for (XrefWithSymbol sym : pwy.getGenes()) xrefList.add (sym.asXref());
 				result.parseOk = true;
 				result.name = pwy.getName();
 				result.organism = filename.getName().substring (0, 2);

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.plugins.project2008;
+package org.pathvisio.go;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,6 +25,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ *
+ * This is a helper class for GoMap
+ * 
  * In this class the file is read that contains information about genId's and GOId's. There are 
  * two sets created:
  * - In the first set, the geneId's are the keys and the GOId's are the values that belong to 
@@ -35,7 +38,7 @@ import java.util.Set;
  *   for a given GOId. 
  */
 
-public class GenesGOid {
+class GenesGOid {
 
 	// args[0] should refer to 2D mart_export.txt
 	public static void main(String[] args)

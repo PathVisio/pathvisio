@@ -31,7 +31,6 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Xref;
 import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
-import org.pathvisio.wikipathways.WikiPathwaysClient.WikiPathwaysException;
 
 /**
  * This program was used to convert two pathways that used the entrez symbol as gene id
@@ -58,7 +57,7 @@ public class SymbolToId
 	 * args[0] -> wikipathways username
 	 * args[1] -> wikipathways password
 	 */
-	public static void main (String [] args) throws ConverterException, IOException, WikiPathwaysException
+	public static void main (String [] args) throws ConverterException, IOException
 	{
 		WikiPathwaysClient wp = new WikiPathwaysClient();
 		wp.login (args[0], args[1]);

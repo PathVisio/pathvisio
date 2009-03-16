@@ -23,7 +23,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -31,8 +30,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.TreeSelectionModel;
-
 import org.pathvisio.data.DataException;
+import org.pathvisio.go.GoMap;
+import org.pathvisio.go.GoReader;
+import org.pathvisio.go.GoTerm;
+import org.pathvisio.go.GoTreeModel;
 import org.pathvisio.model.ConverterException;
 
 /**
@@ -236,5 +238,3 @@ public class GoTermDistributionGUI {
 	}
 
 }
-
-		

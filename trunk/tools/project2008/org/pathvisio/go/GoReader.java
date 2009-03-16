@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.plugins.project2008;
+package org.pathvisio.go;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,7 +31,14 @@ import java.util.Set;
  */
 public class GoReader 
 {
-	private Set<GoTerm> terms;
+	private final Set<GoTerm> terms;
+	private final Map<String, GoTerm> idGoTerm;
+	
+	public GoTerm findTerm (String id)
+	{
+		return idGoTerm.get(id);
+	}
+	
 	public Set<GoTerm> getTerms()
 	{
 		return terms;
@@ -40,14 +47,14 @@ public class GoReader
 	public GoReader (File obo)
 	{		
 		/**
-		 * Each line is readed as a string.
+		 * Each line is read as a string.
 		 * A map with a GoTerm and the parents (isa's) of this term stored as strings.
 		 * A map with a string (containing the goTerm's id) and the goterm.
 		 */
 		String line; 
 		terms = new HashSet<GoTerm>();
 		Map<GoTerm, Set<String>> goTermParents = new HashMap<GoTerm,Set<String>>();
-		Map<String, GoTerm> idGoTerm = new HashMap<String,GoTerm>();
+		idGoTerm = new HashMap<String,GoTerm>();
 		
 		/**
 		 * Start reading the file (buffered).

@@ -201,7 +201,7 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
 		if(g instanceof GeneProduct) {
 			String label = getLabelText((GeneProduct) g);
-			if(label == null) {
+			if(label == null || label.length() == 0) {
 				return;
 			}
 			

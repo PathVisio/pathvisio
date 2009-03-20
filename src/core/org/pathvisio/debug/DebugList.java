@@ -57,10 +57,11 @@ public class DebugList<E> implements List<E>
 	{
 		final private DebugList<E> parent;
 		final private ListIterator<E> delegate;
-		final int expectedModCount;
+		int expectedModCount;
 		
 		DebugIterator(DebugList<E> aParent)
 		{
+			helper();
 			parent = aParent;
 			delegate = parent.delegate.listIterator();
 			expectedModCount = parent.modCount;
@@ -68,6 +69,7 @@ public class DebugList<E> implements List<E>
 
 		DebugIterator(DebugList<E> aParent, int start)
 		{
+			helper();
 			parent = aParent;
 			delegate = parent.delegate.listIterator(start);
 			expectedModCount = parent.modCount;
@@ -75,21 +77,25 @@ public class DebugList<E> implements List<E>
 		
 		public void add(E arg0) 
 		{
+			helper();
 			delegate.add(arg0);
 		}
 
 		public boolean hasNext() 
 		{
+			helper();
 			return delegate.hasNext();
 		}
 
 		public boolean hasPrevious() 
 		{
+			helper();
 			return delegate.hasPrevious();
 		}
 
 		public E next() 
 		{
+			helper();
 			if (parent.modCount != expectedModCount)
 			{
 				ConcurrentModificationException ex = new ConcurrentModificationException();
@@ -104,26 +110,34 @@ public class DebugList<E> implements List<E>
 
 		public int nextIndex() 
 		{
+			helper();
 			return delegate.nextIndex();
 		}
 
 		public E previous() 
 		{
+			helper();
 			return delegate.previous();
 		}
 
 		public int previousIndex() 
 		{
+			helper();
 			return delegate.previousIndex();
 		}
 
 		public void remove() 
 		{
+			helper();
+			parent.cause = new Throwable();
+			parent.modCount++;
+			expectedModCount++;
 			delegate.remove();
 		}
 
 		public void set(E arg0) 
 		{
+			helper();
 			delegate.set(arg0);
 		}
 	}
@@ -141,6 +155,7 @@ public class DebugList<E> implements List<E>
 	
 	public boolean add(E arg0) 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		return delegate.add (arg0);
@@ -148,6 +163,7 @@ public class DebugList<E> implements List<E>
 
 	public void add(int arg0, E arg1) 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		delegate.add (arg0, arg1);
@@ -155,6 +171,7 @@ public class DebugList<E> implements List<E>
 
 	public boolean addAll(Collection<? extends E> arg0) 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		return delegate.addAll(arg0);
@@ -162,6 +179,7 @@ public class DebugList<E> implements List<E>
 
 	public boolean addAll(int arg0, Collection<? extends E> arg1) 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		return delegate.addAll (arg0, arg1);
@@ -169,6 +187,7 @@ public class DebugList<E> implements List<E>
 
 	public void clear() 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		delegate.clear();
@@ -176,51 +195,61 @@ public class DebugList<E> implements List<E>
 
 	public boolean contains(Object arg0) 
 	{
+		helper();
 		return delegate.contains (arg0);
 	}
 
 	public boolean containsAll(Collection<?> arg0) 
 	{
+		helper();
 		return delegate.containsAll(arg0);
 	}
 
 	public E get(int arg0) 
 	{
+		helper();
 		return delegate.get(arg0);
 	}
 
 	public int indexOf(Object arg0) 
 	{
+		helper();
 		return delegate.indexOf (arg0);
 	}
 
 	public boolean isEmpty() 
 	{
+		helper();
 		return delegate.isEmpty();
 	}
 
 	public Iterator<E> iterator() 
 	{
+		helper();
 		return new DebugIterator<E>(this);
 	}
 
 	public int lastIndexOf(Object arg0) 
 	{
+		helper();
 		return delegate.lastIndexOf(arg0);
 	}
 
 	public ListIterator<E> listIterator() 
 	{
+		helper();
 		return new DebugIterator<E>(this);
 	}
 
 	public ListIterator<E> listIterator(int arg0) 
 	{
+		helper();
 		return new DebugIterator<E>(this, arg0);
 	}
 
 	public boolean remove(Object arg0) 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		return delegate.remove(arg0);
@@ -228,6 +257,7 @@ public class DebugList<E> implements List<E>
 
 	public E remove(int arg0) 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		return delegate.remove(arg0);
@@ -235,6 +265,7 @@ public class DebugList<E> implements List<E>
 
 	public boolean removeAll(Collection<?> arg0) 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		return delegate.removeAll(arg0);
@@ -242,6 +273,7 @@ public class DebugList<E> implements List<E>
 
 	public boolean retainAll(Collection<?> arg0) 
 	{
+		helper();
 		cause = new Throwable();
 		modCount++;
 		return delegate.retainAll(arg0);
@@ -249,27 +281,43 @@ public class DebugList<E> implements List<E>
 
 	public E set(int arg0, E arg1) 
 	{
+		helper();
 		return delegate.set(arg0, arg1);
 	}
 
 	public int size() 
 	{
+		helper();
 		return delegate.size();
 	}
 
 	public List<E> subList(int arg0, int arg1) 
 	{
+		helper();
 		return delegate.subList(arg0, arg1);
 	}
 
 	public Object[] toArray() 
 	{
+		helper();
 		return delegate.toArray();
 	}
 
 	public <T> T[] toArray(T[] arg0) 
 	{
+		helper();
 		return delegate.toArray(arg0);
+	}
+	
+	private static void helper() 
+	{
+//		Throwable x = new Throwable();
+//		StackTraceElement[] elts = x.getStackTrace();
+//		for (int i = 1; i < Math.min (elts.length, 4); ++i)
+//		{
+//			System.out.print (" -> " + elts[i].getClassName() + "." + elts[i].getMethodName() + ":" + elts[i].getLineNumber());
+//		}
+//		System.out.println ();
 	}
 
 }

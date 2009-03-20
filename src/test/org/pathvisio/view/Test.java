@@ -28,6 +28,8 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.pathvisio.Engine;
+import org.pathvisio.biopax.BiopaxReferenceManager;
+import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -254,6 +256,29 @@ public class Test extends TestCase {
     public void testConnector()
     {
     	//TODO
+    }
+    
+    public void testLitRef()
+    {
+    	// test that addition of a reference in the model leads to the creation of a Citation object
+    	// in the view.
+    	// See also bug 855: http://www.bigcat.unimaas.nl/tracprojects/pathvisio/ticket/855
+
+    	assertNull (vDn.getCitation());
+    
+		BiopaxReferenceManager m = eltDn.getBiopaxReferenceManager();
+		PublicationXRef cit = new PublicationXRef();
+		cit.setPubmedId("18651794"); // Just a dummy value, no query is sent
+		m.addElementReference(cit);		
+		
+    	assertNotNull (vDn.getCitation());
+    	assertEquals (vDn.getCitation().getRefMgr().getPublicationXRefs().get(0).getPubmedId(), 
+    			"18651794");
+    	
+    	// now remove it again
+    	m.removeElementReference(cit);
+    	
+    	assertNull (vDn.getCitation());
     }
     
 }

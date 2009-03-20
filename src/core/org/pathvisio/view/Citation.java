@@ -37,7 +37,7 @@ import org.pathvisio.preferences.PreferenceManager;
  * Draws a citation number on top of a pathway object.
  * @author thomas
  */
-public class Citation extends VPathwayElement implements BiopaxListener, VElementMouseListener {
+public class Citation extends VPathwayElement implements VElementMouseListener {
 	static final int MFONT_SIZE = 8 * 15;
 	static final String FONT_NAME = "Arial";
 	static final Color FONT_COLOR = new Color(0, 0, 128);
@@ -54,7 +54,7 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 		super(canvas);
 		this.parent = parent;
 		this.rPosition = rPosition;
-		getRefMgr().addBiopaxListener(this);
+//		getRefMgr().addBiopaxListener(this);
 		refresh();
 		canvas.addVElementMouseListener(this);
 	}
@@ -226,15 +226,15 @@ public class Citation extends VPathwayElement implements BiopaxListener, VElemen
 		markDirty();
 	}
 
-	public void biopaxEvent(BiopaxEvent e) {
-		refresh();
-		canvas.redrawDirtyRect();
-	}
+//	public void biopaxEvent(BiopaxEvent e) {
+//		refresh();
+//		canvas.redrawDirtyRect();
+//	}
 	
 	@Override protected void destroy()
 	{
 		super.destroy();
-		getRefMgr().removeBiopaxListener(this);
+//		getRefMgr().removeBiopaxListener(this);
 		canvas.removeVElementMouseListener(this);
 	}
 }

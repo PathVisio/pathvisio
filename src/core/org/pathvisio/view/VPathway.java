@@ -29,6 +29,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -889,6 +890,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		g2d.clip(area);
 		g2d.setColor(java.awt.Color.BLACK);
 		Collections.sort(drawingObjects);
+		cleanUp();
 		for (VPathwayElement o : drawingObjects)
 		{
 			if (o.vIntersects(area))
@@ -2371,7 +2373,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			l.vPathwayEvent(e);
 		}
-		cleanUp();
 	}
 
 	/**

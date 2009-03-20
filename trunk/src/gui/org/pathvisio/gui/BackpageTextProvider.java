@@ -313,7 +313,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 	 */
 	private String getBackpageHTML(PathwayElement e) 
 	{
-		if (e == null || e.getObjectType() != ObjectType.DATANODE) return "<p>No data</p>";
+		if (e == null || e.getObjectType() != ObjectType.DATANODE ||
+				e.getDataSource() == null) return "<p>No data</p>";
 
 		String text = getBackpagePanelHeader();
 		if (text == null) text = "";

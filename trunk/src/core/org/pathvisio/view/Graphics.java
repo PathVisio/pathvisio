@@ -23,6 +23,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import org.pathvisio.biopax.BiopaxEvent;
+import org.pathvisio.biopax.BiopaxListener;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementListener;
@@ -32,7 +34,7 @@ import org.pathvisio.model.PathwayEvent;
  * This class is a parent class for all graphics
  * that can be added to a VPathway.
  */
-public abstract class Graphics extends VPathwayElement implements PathwayElementListener
+public abstract class Graphics extends VPathwayElement implements PathwayElementListener, BiopaxListener 
 {	
 	protected PathwayElement gdata = null;
 	private Citation citation;
@@ -42,6 +44,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		o.addListener(this);
 		gdata = o;
 		gdata.addListener(canvas);
+		gdata.getBiopaxReferenceManager().addBiopaxListener(this);
 		canvas.checkBoardSize(gdata);
 		checkCitation();
 	}
@@ -62,6 +65,14 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		{
 			citation.destroy();
 			citation = null;
+		}
+		
+		if (citation != null)
+		{
+			// already exists, no need to create / destroy
+			// just redraw...
+			citation.refresh();
+			canvas.redrawDirtyRect();
 		}
 	}
 	
@@ -213,6 +224,8 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		gdata.removeListener(canvas);
 		gdata.removeListener(this);
 		if (citation != null) citation.destroy();
+		gdata.getBiopaxReferenceManager().removeBiopaxListener(this);
+		
 		//View should not remove its model
 //		Pathway parent = gdata.getParent();
 //		if(parent != null) parent.remove(gdata);
@@ -224,4 +237,10 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	protected int getZOrder() {
 		return gdata.getZOrder();
 	}
+	
+	public void biopaxEvent(BiopaxEvent e) 
+	{
+		checkCitation();
+	}
+	
 }

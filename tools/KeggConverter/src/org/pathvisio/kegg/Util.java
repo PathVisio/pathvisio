@@ -53,6 +53,30 @@ public class Util {
 			return "mmu";
 		case SaccharomycesCerevisiae:
 			return "sce";
+		case ArabidopsisThaliana:
+			return "ath";
+		case BosTaurus:
+			return "bta";
+		case CaenorhabditisElegans:
+			return "cel";
+		case CanisFamiliaris:
+			return "cfa";
+		case DanioRero:
+			return "dre";
+		case DrosophilaMelanogaster:
+			return "dme";
+		case EscherichiaColi:
+			return "eco";
+		case GallusGallus:
+			return "gga";
+		case OryzaSativa:
+			return "osa";
+		case TriticumAestivum:
+			return "etae";
+		case XenopusTropicalis:
+			return "xtr";
+		case ZeaMays:
+			return "ezma";
 		default:
 			throw new ConverterException("No KEGG code for organism " + organism);
 		}

@@ -19,8 +19,8 @@
 		</fileset>
 	</path>
 
-	<property name="manifest.class.path" value="lib/resources.jar lib/axis.jar lib/axis-ant.jar lib/commons-discovery-0.2.jar lib/commons-logging-1.0.4.jar lib/jaxrpc.jar lib/jdom.jar lib/keggapi.jar lib/log4j-1.2.8.jar lib/pathvisio_core.jar lib/saaj.jar lib/wsdl4j-1.5.1.jar lib/batik/batik-awt-util.jar lib/batik/batik-codec.jar lib/batik/batik-bridge.jar lib/batik/batik-css.jar lib/batik/batik-dom.jar lib/batik/batik-ext.jar lib/batik/batik-extension.jar lib/batik/batik-gvt.jar lib/batik/batik-parser.jar lib/batik/batik-anim.jar lib/batik/xml-apis-ext.jar lib/batik/batik-script.jar lib/batik/batik-svg-dom.jar lib/batik/batik-svggen.jar lib/batik/batik-transcoder.jar lib/batik/batik-util.jar lib/batik/batik-xml.jar lib/batik/pdf-transcoder.jar lib/batik/xml-apis.jar"/>
-		
+	<property name="manifest.class.path" value="lib/jsr173_1.0_api.jar lib/args4j-2.0.10.jar lib/google-collect-snapshot-20090211.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/activation.jar lib/resources.jar lib/jdom.jar lib/axis.jar lib/axis-ant.jar lib/commons-discovery-0.2.jar lib/commons-logging-1.0.4.jar lib/jaxrpc.jar lib/keggapi.jar lib/log4j-1.2.8.jar lib/pathvisio_core.jar lib/saaj.jar lib/wsdl4j-1.5.1.jar"/>
+
 	<path id="class.path">
       	<pathelement location="${build.dir}"/>
 		<fileset dir="lib">
@@ -88,11 +88,6 @@
 		<copy file="KGML_v0.6.1_.dtd" toDir="${dist.dir}"/>
 		<copy toDir="${dist.dir}/lib">
 			<fileset dir="${lib.dir}">
-				<include name="*.jar"/>
-			</fileset>
-		</copy>
-		<copy toDir="${dist.dir}/lib/batik">
-			<fileset dir="${pathvisio.dir}/lib/batik">
 				<include name="*.jar"/>
 			</fileset>
 		</copy>

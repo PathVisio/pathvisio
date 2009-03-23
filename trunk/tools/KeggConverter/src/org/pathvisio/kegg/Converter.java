@@ -132,6 +132,18 @@ public class Converter {
 		//Check for overwrite
 		Logger.log.trace("Processing " + file);
 		
+		//Check for overwrite
+		String fileAdd = useMap ? "_map" : "";
+		File gpmlFile = new File(outPath, file.getName() + fileAdd + ".gpml");
+		
+		if(!overwrite && gpmlFile.exists()) {
+			Logger.log.trace("Skipping " + file + ", " + 
+					gpmlFile + "already exists (use -overwrite to overwrite)."
+			);
+			return;
+		}
+		Logger.log.trace("Converting to " + gpmlFile.getAbsolutePath());
+
 		Pathway pathway = (Pathway)Util.unmarshal(Pathway.class, 
 				new BufferedInputStream(new FileInputStream(file)));
 	    
@@ -162,17 +174,6 @@ public class Converter {
 			Logger.log.trace("Skipping " + file);
 			return;
 		}
-		
-		//Check for overwrite
-		File gpmlFile = new File(outPath, file.getName() + "_map.gpml");
-		
-		if(!overwrite && gpmlFile.exists()) {
-			Logger.log.trace("Skipping " + file + ", " + 
-					gpmlFile + "already exists (use -overwrite to overwrite)."
-			);
-			return;
-		}
-		Logger.log.trace("Writing to " + gpmlFile.getAbsolutePath());
 		
 		try {
 			GpmlFormat.writeToXml(gpmlPathway, gpmlFile, true);

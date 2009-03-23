@@ -17,6 +17,7 @@ package org.pathvisio.util;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.pathvisio.debug.Logger;
@@ -29,8 +30,6 @@ import org.pathvisio.view.LayoutType;
 import org.pathvisio.view.MIMShapes;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapperBase;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class ResizeForGenMAPP {
 	static final double MAX_WIDTH = 35000;

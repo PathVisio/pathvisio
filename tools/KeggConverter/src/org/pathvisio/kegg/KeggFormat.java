@@ -129,7 +129,7 @@ public class KeggFormat {
 		
 		//Convert pathway attributes
 		PathwayElement mappInfo = gpmlPathway.getMappInfo();
-		String title = pathway.getName();
+		String title = pathway.getTitle();
 		if(title != null) {
 			if(title.length() > 50) {
 				mappInfo.addComment(mappInfo.new Comment("Name truncated from: " + title, COMMENT_SOURCE));
@@ -440,8 +440,18 @@ public class KeggFormat {
 			return; //ECrel is redundant with reaction
 		case MAPLINK:
 			if("compound".equals(subtype.getName())) {
-				e2 = id2gpml.get(subtype.getValue());
-				String maplinkid = relation.getEntry1() + subtype.getValue();
+				String maplinkid = null;
+				//Find out which entry is the map
+				//NOTE: the arrow direction sometimes doesn't match
+				//that on the image on the kegg site. As far as I could
+				//see, this is just incorrectly defined in the KGML.
+				if(e2.getObjectType() == ObjectType.LABEL) { //entry2 is map
+					e1 = id2gpml.get(subtype.getValue());
+					maplinkid = relation.getEntry2() + subtype.getValue();
+				} else { //entry1 = map
+					e2 = id2gpml.get(subtype.getValue());
+					maplinkid = relation.getEntry1() + subtype.getValue();
+				}
 				if(!addedMapLinks.contains(maplinkid)) {
 					addedMapLinks.add(maplinkid);
 				} else {
@@ -455,7 +465,7 @@ public class KeggFormat {
 			PathwayElement line = createPathwayLine(e1, e2);
 			line.setConnectorType(ConnectorType.STRAIGHT);
 			line.addComment(line.new Comment(
-					relation.getType(),
+					relation.getType() + ";" + relation.getEntry1() + ";" + relation.getEntry2(),
 					COMMENT_SOURCE
 			));
 			if(subtype != null) {
@@ -584,8 +594,8 @@ public class KeggFormat {
 				PathwayElement pwElm = createDataNode(
 						graphics,
 						DataNodeType.GENEPRODUCT,
-						graphics.getName(),
-						label,
+						name == null ? "" : name,
+						label == null ? "" : label,
 						DataSource.getByFullName("Kegg " + entry.getType())
 				);
 
@@ -771,7 +781,7 @@ public class KeggFormat {
 			line.setEndLineType(LineType.ARROW);
 		}
 
-		line.addComment(line.new Comment(name, COMMENT_SOURCE));
+		line.addComment(line.new Comment(name + "; " + value, COMMENT_SOURCE));
 	}
 	
 	private static enum Type { 

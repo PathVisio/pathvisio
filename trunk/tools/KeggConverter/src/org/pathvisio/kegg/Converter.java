@@ -13,94 +13,187 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 //See the License for the specific language governing permissions and 
 //limitations under the License.
-
 package org.pathvisio.kegg;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.rmi.RemoteException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.rpc.ServiceException;
+
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.BatikImageExporter;
+import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.Organism;
-import org.pathvisio.model.Pathway;
+import org.pathvisio.model.RasterImageExporter;
 import org.pathvisio.preferences.PreferenceManager;
+import org.xml.sax.SAXException;
+
+import dtd.kegg.Pathway;
 
 public class Converter {
-	static boolean overwrite = true;
+	private static final Pattern KGML_PATTERN = 
+		Pattern.compile("[a-z]{3}([0-9]{5}).(xml|kgml)$", Pattern.CASE_INSENSITIVE); 
+	
+	@Option(name = "-useMap", required = false, usage = "Use the reference 'map' pathways to improve conversion" +
+			" of the species specific pathways.")
+	private boolean useMap;
+	
+	@Option(name = "-kgml", required = true, usage = "The path that contains the KGML files")
+	private File keggPath;
+	
+	@Option(name = "-out", required = false, usage = "The output path to convert the files to")
+	private File outPath;
+	
+	@Option(name = "-species", required = true, usage = "The species of the pathways (e.g. 'Homo sapiens')")
+	private String species;
+	
+	@Option(name = "-overwrite", required = false, usage = "Overwrite existing files")
+	private boolean overwrite;
+	
+	@Option(name = "-offline", required = false, usage = "Don't use the web service")
+	private boolean offline;
+	
+	@Option(name = "-spacing", required = false, usage = "Multiplier for the coordinates to get more spacing between the elements (default = 2).")
+	private double spacing = 2;
 	
 	public static void main(String[] args) {
 		PreferenceManager.init();
-		Logger.log.setStream(System.err);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
-		if(args.length < 2) {
-			printHelp();
+		
+		Converter converter = new Converter();
+		CmdLineParser parser = new CmdLineParser(converter);
+		try {
+			parser.parseArgument(args);
+			if(converter.outPath == null) converter.outPath = converter.keggPath;
+			
+		} catch(CmdLineException e) {
+			e.printStackTrace();
+			parser.printUsage(System.err);
 			System.exit(-1);
 		}
-		Organism organism = Organism.fromLatinName(args[0]);
+		
+		try {
+			converter.recursiveConversion();
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.exit(-2);
+		}
+	}
+	
+	public Converter() {
+	}
+	
+	private Organism getOrganism() {
+		Organism organism = Organism.fromLatinName(species);
 		if(organism == null) {
 			//try by short name
-			organism = Organism.fromShortName(args[0]);
+			organism = Organism.fromShortName(species);
 		}
 		if(organism == null) {
 			//finally, try by code
-			organism = Organism.fromCode(args[0]);
+			organism = Organism.fromCode(species);
 		}
 		if(organism == null) {
 			//give up and print help
-			Logger.log.error("Couldn't find organism for: " + args[0]);
-			printHelp();
-			System.exit(-2);
+			throw new IllegalArgumentException("Couldn't find species: " + species);
 		}
-		
-		if(args.length == 3) {
-			overwrite = Boolean.parseBoolean(args[2].trim());
-		}
-		
-		File file = new File(args[1]);
-		recursiveConversion(file, organism);
+		return organism;
 	}
 	
-	private static void printHelp() {
-		Logger.log.error("Invalid arguments! Usage:\n " +
-				"java -jar kegg_converter.jar organism kgml_dir [overwrite]\n" +
-				"-> organism: The full species name, e.g. 'Homo sapiens'\n" +
-				"-> kgml_dir: either a kgml file or a directory which will be converted recursively\n" +
-				"-> overwrite: if true, existing gpml files will be overwritten (true by default)"
-		);
+	private void recursiveConversion() throws FileNotFoundException, RemoteException, JAXBException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
+		recursiveConversion(keggPath);
 	}
 	
-	private static void recursiveConversion(File dir, Organism organism) {
+	private void recursiveConversion(File dir) throws FileNotFoundException, JAXBException, RemoteException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
 		if(dir.isDirectory()) {
 			for(File f : dir.listFiles()) {
-				recursiveConversion(f, organism);
+				recursiveConversion(f);
 			}
 		} else {
 			if(dir.getName().endsWith(".xml") ||
 					dir.getName().endsWith(".kgml")) {
-				doConversion(dir, organism);
+				convert(dir);
 			}
 		}
 	}
 	
-	private static void doConversion(File file, Organism organism) {
+	private void convert(File file) throws JAXBException, FileNotFoundException, RemoteException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
 		//Check for overwrite
 		Logger.log.trace("Processing " + file);
-		File gpmlFile = new File(file.getAbsolutePath() + ".gpml");
+		
+		Pathway pathway = (Pathway)Util.unmarshal(Pathway.class, 
+				new BufferedInputStream(new FileInputStream(file)));
+	    
+		org.pathvisio.model.Pathway gpmlPathway = null;
+		
+		if(useMap && !file.getName().startsWith("map")) {
+			//Try to find the corresponding map file
+			Matcher m = KGML_PATTERN.matcher(file.getName());
+			if(m.matches()) {
+				File mapFile = new File(
+						file.getParentFile(), "map" + m.group(1) + "." + m.group(2)
+				);
+				if(!mapFile.exists()) {
+					throw new FileNotFoundException("Unable to find reference map file for " + file.getName() +
+							"\nExpected " + mapFile.getName());
+				}
+				Logger.log.trace("Using map " + mapFile);
+				
+				Pathway map = (Pathway)Util.unmarshal(Pathway.class, 
+						new BufferedInputStream(new FileInputStream(mapFile)));
+				gpmlPathway = convert(map, pathway);
+			} else {
+				Logger.log.info("Couldn't parse map file for " + file.getAbsolutePath());
+			}
+		} else if(!useMap) {
+			gpmlPathway = convert(pathway);
+		} else {
+			Logger.log.trace("Skipping " + file);
+			return;
+		}
+		
+		//Check for overwrite
+		File gpmlFile = new File(outPath, file.getName() + "_map.gpml");
 		
 		if(!overwrite && gpmlFile.exists()) {
-			Logger.log.trace("Skipping " + file + " since overwrite if false and " + 
-					gpmlFile + "already exists"
+			Logger.log.trace("Skipping " + file + ", " + 
+					gpmlFile + "already exists (use -overwrite to overwrite)."
 			);
 			return;
 		}
+		Logger.log.trace("Writing to " + gpmlFile.getAbsolutePath());
+		
 		try {
-			Pathway pathway = KeggFormat.readFromKegg(file, organism);
-			GpmlFormat.writeToXml(pathway, gpmlFile, true);	
-			BatikImageExporter imageExporter = new BatikImageExporter(BatikImageExporter.TYPE_PNG);
-			imageExporter.doExport(new File(file.getAbsolutePath() + ".png"), pathway);
+			GpmlFormat.writeToXml(gpmlPathway, gpmlFile, true);
+			ImageExporter imageExporter = new RasterImageExporter(ImageExporter.TYPE_PNG);
+			imageExporter.doExport(new File(outPath, gpmlFile.getName() + ".png"), gpmlPathway);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	private org.pathvisio.model.Pathway convert(Pathway pathway) throws RemoteException, ConverterException, ServiceException {
+		KeggFormat kf = new KeggFormat(pathway, getOrganism());
+		kf.setUseWebservice(!offline);
+		kf.setSpacing(spacing);
+		return kf.convert();
+	}
+	
+	private org.pathvisio.model.Pathway convert(Pathway map, Pathway ko) throws RemoteException, ConverterException, ServiceException {
+		KeggFormat kf = new KeggFormat(map, ko, getOrganism());
+		kf.setUseWebservice(!offline);
+		kf.setSpacing(spacing);
+		return kf.convert();
+	}
 }
-

@@ -910,6 +910,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				);
 			ALLOWED_PROPS.put (ObjectType.LEGEND, propsLegend);
 		}
+		{
+			Set<PropertyType> propsBiopax = EnumSet.noneOf(PropertyType.class);
+			ALLOWED_PROPS.put(ObjectType.BIOPAX, propsBiopax);
+		}
 	};
 	
 	

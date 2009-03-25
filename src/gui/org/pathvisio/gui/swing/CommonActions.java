@@ -341,7 +341,7 @@ public class CommonActions implements ApplicationEventListener {
 		private void handleStatus(boolean status) {
 			if (isSaveAs)
 			{
-				setEnabled(enabled);
+				setEnabled(true);
 			}
 			else {
 				setEnabled(status);

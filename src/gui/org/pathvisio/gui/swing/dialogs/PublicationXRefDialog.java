@@ -48,6 +48,10 @@ import org.pathvisio.data.PubMedResult;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.util.ProgressKeeper;
 
+/**
+ * Dialog for entering citations. For convenience, you
+ * can enter a pubmed id and query the details from pubmed.
+ */
 public class PublicationXRefDialog extends OkCancelDialog {
 
 	final static String ADD = "Add";

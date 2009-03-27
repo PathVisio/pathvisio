@@ -29,8 +29,8 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.Globals;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.Globals;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.gui.swing.dialogs.AboutDlg;

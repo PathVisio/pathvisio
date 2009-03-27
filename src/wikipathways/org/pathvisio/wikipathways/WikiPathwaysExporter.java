@@ -33,8 +33,13 @@ import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.Pathway;
 
+/**
+ * Special exporter that uses the WikiPathways XMLRPC interface to
+ * convert to SVG and other image formats. By letting the server
+ * do all the heavy work, we don't need libraries such as Batik
+ * in the Applet and thus we can keep the Applet small. 
+ */
 public class WikiPathwaysExporter extends ImageExporter {
-	public final static String TYPE_MAPP = "mapp";
 	
 	URL rpcUrl;
 	

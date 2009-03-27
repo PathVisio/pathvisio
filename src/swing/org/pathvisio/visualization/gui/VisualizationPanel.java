@@ -38,6 +38,11 @@ import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethod;
 
+/**
+ * Main component of the {@link VisualizationDialog}. Has capabilities to
+ * add / remove / rename visualizations,
+ * and has a subpanel for all available Visualization Methods 
+ */
 public class VisualizationPanel extends JPanel implements ActionListener 
 {
 	static final String ACTION_NEW = "New";

@@ -25,6 +25,12 @@ import org.pathvisio.model.PropertyType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 
+/**
+ * The Properties side-panel shows a list of properties of the current PathwayElement,
+ * but depending on the user preferences not all properties will be shown. By default,
+ * some of the advanced properties are hidden. VisibleProperties is a Utility class that
+ * knows how to filter advanced attributes.
+ */
 public class VisibleProperties 
 {
 	/**
@@ -38,8 +44,6 @@ public class VisibleProperties
 	 * false:
 	 * 	returns only static properties, and excludes certain properties considered "advanced"
 	 * 	such as graphId and graphRef.
-	 * 
-	 * NB this method is used both by the Swing and SWT Properties tables
 	 */
 	public static Set<Object> getVisiblePropertyKeys (PathwayElement e)
 	{

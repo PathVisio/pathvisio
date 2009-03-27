@@ -16,7 +16,14 @@
 //
 package org.pathvisio.model;
 
-
+/** 
+ * Base class for a couple of image exporters.
+ * This class adds the ability to remember (a) valid extension(s) for a
+ * certain image type, using that information it is possible to select the
+ * right exporter depending on the chosen extension.
+ * 
+ * Subclass this to implement specific image types.
+ */
 public abstract class ImageExporter implements PathwayExporter {
 	public static final String TYPE_PNG = "png";
 	public static final String TYPE_TIFF = "tiff";

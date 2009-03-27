@@ -25,6 +25,9 @@ import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 
+/**
+ * Dialog for editing dataset visualization options.
+ */
 public class VisualizationDialog extends OkCancelDialog 
 {
 	

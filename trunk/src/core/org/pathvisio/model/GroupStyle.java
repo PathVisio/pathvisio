@@ -21,6 +21,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+/**
+ * Extensible enum type for Group Styles.
+ * 
+ * Groups can have different biological meanings (e.g. protein Complex), and
+ * can be rendered in different ways based on that.
+ */
 public class GroupStyle implements Comparable<GroupStyle> {
 	private static Map<String, GroupStyle> nameMappings = new HashMap<String, GroupStyle>();
 	private static Set<GroupStyle> values = new TreeSet<GroupStyle>();

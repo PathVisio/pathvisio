@@ -22,6 +22,10 @@ import java.awt.geom.Point2D;
 import org.pathvisio.view.LinAlg;
 import org.pathvisio.view.LinAlg.Point;
 
+/**
+ * Implements a straight connector Shape, i.e. a Connector with
+ * only 90-degree angles.
+ */
 public class StraightConnectorShape extends AbstractConnector {
 
 	public void recalculateShape(ConnectorRestrictions restrictions) {

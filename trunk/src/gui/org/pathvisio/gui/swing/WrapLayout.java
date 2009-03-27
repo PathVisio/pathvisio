@@ -25,6 +25,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.LayoutManager;
 
+/**
+ * Special Layout specifically for {@Link JToolbars},
+ * If there isn't enough space, the buttons will be wrapped across several rows.
+ */
 public class WrapLayout implements LayoutManager {
 
     protected int hgap;

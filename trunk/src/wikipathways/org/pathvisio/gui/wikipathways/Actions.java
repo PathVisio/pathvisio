@@ -43,7 +43,13 @@ import org.pathvisio.wikipathways.WikiPathways;
  * A collection of actions related to WikiPathways
  * @author thomas
  */
-public class Actions {
+public class Actions 
+{
+	/**
+	 * Base class for Actions on the applet - so that they are all initialized
+	 * with a reference to a {@link UserInterfaceHandler} and a
+	 * {@link WikiPathways}
+	 */
 	public static abstract class WikiAction extends AbstractAction {
 		UserInterfaceHandler uiHandler;
 		WikiPathways wiki;
@@ -54,6 +60,11 @@ public class Actions {
 		}
 	}
 
+	/**
+	 * Action to Import a local pathway into the applet. This action
+	 * is only available when you created a new Pathway, because
+	 * there is no easy way to merge imported content with existing content.
+	 */
 	public static class ImportAction extends WikiAction {
 
 		public ImportAction(UserInterfaceHandler h, WikiPathways w) {

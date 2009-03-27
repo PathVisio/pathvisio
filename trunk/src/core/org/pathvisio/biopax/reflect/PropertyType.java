@@ -16,6 +16,10 @@
 //
 package org.pathvisio.biopax.reflect;
 
+/**
+ * Properties in BioPAX, only the properties
+ * that are accessed by PathVisio need to be listed here.
+ */
 public enum PropertyType {
 	TITLE("http://www.w3.org/2001/XMLSchema#string", 1),
 	YEAR("http://www.w3.org/2001/XMLSchema#string", 1),

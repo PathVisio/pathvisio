@@ -19,8 +19,6 @@ package org.pathvisio.plugin;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-import org.pathvisio.debug.Logger;
-
 /**
  * A class loader for loading classes from a plugin jar files.
  * 

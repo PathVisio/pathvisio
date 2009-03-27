@@ -325,7 +325,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			}
 		}
 		swingEngine.getGdbManager().removeGdbEventListener(this);
-		GexManager.getCurrent().removeListener(this);
+		standaloneEngine.getGexManager().removeListener(this);
 		standaloneEngine.dispose();
 		swingEngine.getEngine().dispose();
 		swingEngine.dispose();

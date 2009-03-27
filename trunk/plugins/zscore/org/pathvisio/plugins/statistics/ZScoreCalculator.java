@@ -29,11 +29,11 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.model.Xref;
+import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.Stats;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
-import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
 
 /**
  * Calculates statistics on a set of Pathways, either step by step with intermediate results,

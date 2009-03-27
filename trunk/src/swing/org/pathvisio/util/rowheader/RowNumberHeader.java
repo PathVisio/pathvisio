@@ -44,7 +44,8 @@ public class RowNumberHeader extends JTable
 	  return mainTable.getRowHeight();
 	}
 	
-	class RowNumberTableModel extends AbstractTableModel {
+	/** Simple Table model: just one column, cell values are numbers starting from 1 */
+	private class RowNumberTableModel extends AbstractTableModel {
 	
 	  public int getRowCount() {
 	    return mainTable.getModel().getRowCount();

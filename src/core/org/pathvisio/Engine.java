@@ -407,7 +407,7 @@ public class Engine
 //	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
 //	public static final String SERVER_NAME = "WikiPathways.org";
 	// for inclusion in certain error messages.
-//	public static final String DEVELOPER_EMAIL = "thomas.kelder@bigcat.unimaas.nl";
+//	public static final String DEVELOPER_EMAIL = "wikipathways-discuss@googlegroups.com";
 //	public static final boolean IS_APPLET = true;
 
 }

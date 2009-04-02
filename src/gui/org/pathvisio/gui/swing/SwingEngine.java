@@ -260,7 +260,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 					jfc.getCurrentDirectory());
 
 			ImporterExporterFileFilter ff = (ImporterExporterFileFilter)jfc.getFileFilter();
-			if(!f.toString().toUpperCase().endsWith(ff.getDefaultExtension().toUpperCase())) {
+			if(!f.toString().toUpperCase().endsWith("." + ff.getDefaultExtension().toUpperCase())) {
 				f = new File(f.toString() + "." + ff.getDefaultExtension());
 			}
 			return exportPathway(f);

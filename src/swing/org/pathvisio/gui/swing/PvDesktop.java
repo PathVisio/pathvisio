@@ -36,6 +36,7 @@ import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethodRegistry;
@@ -244,7 +245,8 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	public void visualizationEvent(VisualizationEvent e) 
 	{
 		// redraw Pathway
-		swingEngine.getEngine().getActiveVPathway().redraw();
+		VPathway vPwy = swingEngine.getEngine().getActiveVPathway();
+		if (vPwy != null) vPwy.redraw();
 	}
 	
 }

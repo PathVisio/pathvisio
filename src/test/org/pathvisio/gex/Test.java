@@ -22,15 +22,15 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.DataDerby;
-import org.pathvisio.data.DataDerbyDirectory;
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
-import org.pathvisio.data.SimpleGdb;
-import org.pathvisio.data.SimpleGdbFactory;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Xref;
+import org.bridgedb.DBConnector;
+import org.bridgedb.DataDerby;
+import org.bridgedb.DataDerbyDirectory;
+import org.bridgedb.DataException;
+import org.bridgedb.DataSource;
+import org.bridgedb.Gdb;
+import org.bridgedb.SimpleGdb;
+import org.bridgedb.SimpleGdbFactory;
+import org.bridgedb.Xref;
 import org.pathvisio.preferences.PreferenceManager;
 
 import junit.framework.TestCase;

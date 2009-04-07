@@ -24,6 +24,10 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Organism;
+import org.bridgedb.Xref;
+import org.bridgedb.XrefWithSymbol;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
 

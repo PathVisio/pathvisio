@@ -26,13 +26,13 @@ import java.util.regex.Pattern;
 import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
 
+import org.bridgedb.DataException;
+import org.bridgedb.Gdb;
+import org.bridgedb.Xref;
+import org.bridgedb.XrefWithSymbol;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Xref;
-import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;

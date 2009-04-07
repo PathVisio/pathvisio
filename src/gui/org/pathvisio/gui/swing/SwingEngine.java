@@ -29,12 +29,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import org.bridgedb.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.Globals;
-import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;

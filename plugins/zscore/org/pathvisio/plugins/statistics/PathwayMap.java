@@ -22,9 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bridgedb.Xref;
+import org.bridgedb.XrefWithSymbol;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Xref;
-import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;

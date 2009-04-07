@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Xref;
 import org.jdom.Document;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.model.GraphLink.GraphIdContainer;

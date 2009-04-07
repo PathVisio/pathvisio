@@ -20,8 +20,8 @@ import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.DataException;
+import org.bridgedb.DBConnector;
+import org.bridgedb.DataException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;

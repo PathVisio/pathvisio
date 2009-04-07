@@ -45,6 +45,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Xref;
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.CachedData;
@@ -53,8 +55,6 @@ import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Xref;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.FontChooser;
 import org.pathvisio.view.GeneProduct;

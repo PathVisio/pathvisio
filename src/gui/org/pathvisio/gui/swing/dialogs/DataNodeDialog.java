@@ -41,19 +41,19 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.bridgedb.DataException;
+import org.bridgedb.DataSource;
+import org.bridgedb.Gdb;
+import org.bridgedb.Xref;
+import org.bridgedb.XrefWithSymbol;
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.DataSourceModel;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
-import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.PermissiveComboBox;
 

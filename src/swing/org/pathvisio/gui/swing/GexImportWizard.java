@@ -56,8 +56,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.bridgedb.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.data.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexTxtImporter;

@@ -31,13 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
+import org.bridgedb.DBConnector;
+import org.bridgedb.DataException;
+import org.bridgedb.DataSource;
+import org.bridgedb.Gdb;
+import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Xref;
 import org.pathvisio.util.ProgressKeeper;
 
 /**

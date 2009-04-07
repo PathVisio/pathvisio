@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Organism;
 import org.pathvisio.debug.Logger;
 
 /**

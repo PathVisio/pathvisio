@@ -24,7 +24,9 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
-import org.pathvisio.data.DataException;
+import org.bridgedb.DataException;
+import org.bridgedb.DataSource;
+import org.bridgedb.Xref;
 import org.pathvisio.data.GdbManager;
 
 /**

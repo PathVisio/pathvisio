@@ -49,14 +49,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Organism;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.model.DataNodeType;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;

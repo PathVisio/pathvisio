@@ -24,10 +24,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
+import org.bridgedb.DataException;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.data.DataException;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.debug.Logger;

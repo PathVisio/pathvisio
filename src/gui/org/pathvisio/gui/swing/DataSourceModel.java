@@ -25,8 +25,8 @@ import javax.swing.ComboBoxModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Organism;
+import org.bridgedb.DataSource;
+import org.bridgedb.Organism;
 
 /**
  * Stick this into a ComboBox to let the user

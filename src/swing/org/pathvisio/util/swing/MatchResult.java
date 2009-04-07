@@ -19,8 +19,8 @@ package org.pathvisio.util.swing;
 import java.io.File;
 import java.util.List;
 
+import org.bridgedb.XrefWithSymbol;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.XrefWithSymbol;
 import org.pathvisio.util.Utils;
 
 /**

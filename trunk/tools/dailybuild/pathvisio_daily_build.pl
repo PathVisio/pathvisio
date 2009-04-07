@@ -184,19 +184,6 @@ eval
 		}
 	);
 
-	# Next step: ogretest (test dependencies of core)
-	do_step (
-		name => "OGRETEST",
-		log => "$dir/ogretest.txt",
-		action => sub
-		{
-			# compile
-			system ("ant ogretest > $dir/ogretest.txt") == 0 or 
-				die ("compile all failed with error code ", $? >> 8, "\n");
-		}
-	);
-
-
 	# Next step: create javadocs and upload them to the web
 	do_step (
 		name => "DAILY ONLINE JAVADOCS",

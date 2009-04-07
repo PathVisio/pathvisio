@@ -28,13 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
+import org.bridgedb.DataException;
+import org.bridgedb.DataSource;
+import org.bridgedb.Gdb;
+import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.gex.ImportInformation.ColumnType;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Xref;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper;
 

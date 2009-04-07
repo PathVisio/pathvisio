@@ -19,7 +19,7 @@ package org.pathvisio.gex;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pathvisio.model.Xref;
+import org.bridgedb.Xref;
 
 /**
  * This class represents a row of cached expression data for a reporter in the dataset.

@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.XrefWithSymbol;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.XrefWithSymbol;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

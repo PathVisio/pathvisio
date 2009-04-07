@@ -18,12 +18,12 @@ package org.pathvisio.gex;
 
 import java.util.List;
 
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
+import org.bridgedb.DataException;
+import org.bridgedb.Gdb;
+import org.bridgedb.Xref;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
 
 /**
  * Backpage hook to show gene expression data in tabular format.

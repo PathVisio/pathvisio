@@ -41,6 +41,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import org.bridgedb.Xref;
 import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
@@ -48,7 +49,6 @@ import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
-import org.pathvisio.model.Xref;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.GeneProduct;

@@ -25,6 +25,8 @@ import java.util.Properties;
 
 import javax.naming.OperationNotSupportedException;
 
+import org.bridgedb.DBConnector;
+import org.bridgedb.DataException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 

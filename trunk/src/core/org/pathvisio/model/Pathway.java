@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.bridgedb.Xref;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.pathvisio.biopax.BiopaxElementManager;

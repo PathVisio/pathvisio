@@ -23,12 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
+import org.bridgedb.DataException;
+import org.bridgedb.Gdb;
+import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.SimpleGex;
-import org.pathvisio.model.Xref;
 import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.Stats;

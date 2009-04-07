@@ -149,31 +149,6 @@ public class FileUtils {
 			out.close();
 		}
 	}
-	
-	/**
-	 * Attempts to create a directory in the right temporary directory,
-	 * with a random name that starts with prefix.
-	 */
-	public static File createTempDir(String prefix, String postfix) throws IOException
-	{
-		File result;
-		Random rng = new Random();
-		int i = rng.nextInt(100000);
-		// check for a filename that is free
-		do
-		{
-			result = new File (System.getProperty("java.io.tmpdir"), prefix + i + postfix);
-			i++;
-		}
-		while (result.exists());
-		result.mkdir();
-		
-		if (!result.exists()) throw new IOException();
-		if (!result.isDirectory()) throw new IOException();
-		
-		Logger.log.info ("Created temporary directory " + result.getAbsolutePath());
-		return result;
-	}
 
 	/**
 	 * Maps a file from one point in the directory tree to another point.

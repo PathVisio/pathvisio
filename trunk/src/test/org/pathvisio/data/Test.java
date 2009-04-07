@@ -21,10 +21,15 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.bridgedb.DataDerby;
+import org.bridgedb.DataException;
+import org.bridgedb.DataSource;
+import org.bridgedb.DataSourcePatterns;
+import org.bridgedb.SimpleGdb;
+import org.bridgedb.SimpleGdbFactory;
+import org.bridgedb.Xref;
+import org.bridgedb.XrefWithSymbol;
 import org.pathvisio.data.GdbManager.GdbEventListener;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Xref;
-import org.pathvisio.model.XrefWithSymbol;
 
 /*
  * Coverage of src/core/org/pathvisio/data, as reported by EMMA plugin:

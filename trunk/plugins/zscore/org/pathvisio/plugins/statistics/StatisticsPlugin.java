@@ -42,9 +42,9 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.bridgedb.DataException;
+import org.bridgedb.Gdb;
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;

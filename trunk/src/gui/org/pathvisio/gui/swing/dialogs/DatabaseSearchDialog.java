@@ -36,7 +36,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.AbstractTableModel;
 
-import org.pathvisio.model.XrefWithSymbol;
+import org.bridgedb.XrefWithSymbol;
 
 public class DatabaseSearchDialog extends OkCancelDialog {
 	List<XrefWithSymbol> xrefs = new ArrayList<XrefWithSymbol>();

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Date;
 
-import org.pathvisio.data.Gdb;
+import org.bridgedb.Gdb;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.visualization.colorset.Criterion;
 

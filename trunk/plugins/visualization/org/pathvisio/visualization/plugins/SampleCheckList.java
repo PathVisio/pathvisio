@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 
-import org.pathvisio.data.DataException;
+import org.bridgedb.DataException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.Sample;

@@ -29,9 +29,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.pathvisio.data.DataSourcePatterns;
+import org.bridgedb.DataSource;
+import org.bridgedb.DataSourcePatterns;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.DataSource;
 
 /**
  * This class contains the information needed to start importing a delimited

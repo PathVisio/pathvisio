@@ -26,15 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
-import org.pathvisio.data.GdbProvider;
+import org.bridgedb.DataException;
+import org.bridgedb.Gdb;
+import org.bridgedb.GdbProvider;
+import org.bridgedb.Organism;
+import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 /**

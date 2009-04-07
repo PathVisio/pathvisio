@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.bridgedb.DataSource;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 

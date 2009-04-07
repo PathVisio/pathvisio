@@ -31,13 +31,10 @@
 	<property name="diffview.applet.dir" value="applet"/>
 	<property name="diffview.applet.dest" value="${wikipathways.applet.dest}"/>
 	<property name="diffview.applet.class.path" value="lib/jdom.jar lib/derbyclient.jar lib/swing-worker-1.1.jar lib/resources.jar"/>
-	<property name="lib.dir" value="lib"/>
-	<property name="exec.perl" value="perl"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
-	<property name="exec.inno.setup" value="iscc"/>
 	<property name="checkstyle.output.file" value="warnings.txt"/>
 	<property name="wikipathways.class.path" value="lib/bridgedb.jar lib/forms-1.2.0.jar lib/jdom.jar lib/resources.jar lib/derbyclient.jar lib/swing-worker-1.1.jar lib/apache/commons-codec-1.3.jar lib/apache/commons-httpclient-3.0.1.jar lib/apache/commons-logging-1.1.jar lib/apache/ws-commons-util-1.0.1.jar lib/apache/xmlrpc-client-3.0.jar lib/apache/xmlrpc-common-3.0.jar"/>
-	<property name="jar.class.path" value="${wikipathways.class.path} lib/derby.jar lib/R-resources.jar lib/hsqldb.jar lib/BrowserLauncher.jar lib/plugins.jar lib/batik/batik-awt-util.jar lib/batik/batik-bridge.jar lib/batik/batik-css.jar lib/batik/batik-dom.jar lib/batik/batik-ext.jar lib/batik/batik-extension.jar lib/batik/batik-gvt.jar lib/batik/batik-parser.jar lib/batik/batik-anim.jar lib/batik/xml-apis-ext.jar lib/batik/batik-script.jar lib/batik/batik-svg-dom.jar lib/batik/batik-svggen.jar lib/batik/batik-transcoder.jar lib/batik/batik-util.jar lib/batik/batik-xml.jar lib/batik/pdf-transcoder.jar lib/batik/xml-apis.jar lib/batik/batik-codec.jar"/>
+	<property name="jar.class.path" value="${wikipathways.class.path} lib/derby.jar lib/hsqldb.jar lib/BrowserLauncher.jar lib/plugins.jar lib/batik/batik-awt-util.jar lib/batik/batik-bridge.jar lib/batik/batik-css.jar lib/batik/batik-dom.jar lib/batik/batik-ext.jar lib/batik/batik-extension.jar lib/batik/batik-gvt.jar lib/batik/batik-parser.jar lib/batik/batik-anim.jar lib/batik/xml-apis-ext.jar lib/batik/batik-script.jar lib/batik/batik-svg-dom.jar lib/batik/batik-svggen.jar lib/batik/batik-transcoder.jar lib/batik/batik-util.jar lib/batik/batik-xml.jar lib/batik/pdf-transcoder.jar lib/batik/xml-apis.jar lib/batik/batik-codec.jar"/>
 
 	<path id="project.core.class.path">
       <pathelement location="${build.core.dir}"/>
@@ -51,66 +48,38 @@
 	  </fileset>
 	</path>
 
-	<path id="wikipathways.class.path2">
-	  <fileset dir="lib">
-		<include name="jdom.jar"/>
-		<include name="resources.jar"/>
-		<include name="derbyclient.jar"/>
-		<include name="swing-worker-1.1.jar"/>
-		<include name="apache/*.jar"/>
-	  </fileset>
-	</path>
-
-	<path id="jar.class.path2">
-	  <fileset dir="lib">
-		<include name="*.jar"/>
-		<include name="apache/*.jar"/>
-		<include name="batik/*.jar"/>
-		<include name="apache/*.jar"/>
-	  </fileset>
+	<path id="project.gui.class.path">
+		<path refid="project.core.class.path"/>
+		<pathelement location="${build.gui.dir}"/>
+		<fileset dir="lib">
+			<include name="forms-1.2.0.jar"/>
+			<include name="swing-worker-1.1.jar"/>
+		</fileset>
 	</path>
 
 	<path id="project.swing.class.path">
-		<pathelement location="${build.core.dir}"/>
-		<pathelement location="${build.gui.dir}"/>
+		<path refid="project.gui.class.path"/>
 		<pathelement location="${build.swing.dir}"/>
 		<fileset dir="lib">
-		        <include name="**/*.jar"/>
+			<include name="BrowserLauncher.jar"/>
 		</fileset>
 	</path>
 
 	<path id="wpclient.class.path">
 		<path location="${build.wpclient.dir}"/>
 		<fileset dir="${lib.axis.dir}" includes="*.jar" />
-		<pathelement location="${lib.dir}/jdom.jar" />
-		<pathelement location="${lib.dir}/resources.jar" />
-		<pathelement location="${lib.dir}/derby.jar" />
+		<pathelement location="lib/jdom.jar" />
+		<pathelement location="lib/resources.jar" />
+		<pathelement location="lib/derby.jar" />
 		<pathelement location="pathvisio.jar" />
 		<pathelement location="wikipathways.jar" />
 	</path>
 
-	<path id="all.libs.class.path">
-	  <fileset dir="lib">
-		<include name="**/*.jar"/>
-	  </fileset>
-	</path>
-	<pathconvert refid="all.libs.class.path"
-				 property="all.libs.class.path.unix.prop"
-				 targetos="unix">
-	  <map from="${basedir}/" to=""/>
-	</pathconvert>
-	<pathconvert refid="all.libs.class.path"
-				 property="all.libs.class.path.windows.prop"
-				 targetos="windows">
-	  <map from="${basedir}/" to=""/>
-	</pathconvert>
-			
 	<path id="project.wikipathways.class.path">
-		<pathelement location="${build.core.dir}"/>
-		<pathelement location="${build.gui.dir}"/>
+		<path refid="project.gui.class.path"/>
 		<pathelement location="${build.wikipathways.dir}"/>
 		<fileset dir="lib">
-			<include name="**/*.jar"/>
+			<include name="apache/**/*.jar"/>
 		</fileset>
 	</path>
 
@@ -140,20 +109,7 @@ public class Revision
 {
 	public static final String REVISION = "${subversion_revision}";
 };
-	    </echo>
-<!--		<exec executable="${exec.perl}" failifexecutionfails="false" output="classpath.sh">
-		  <arg line="-e '$cp = &quot;.&quot;; foreach(@ARGV) { $cp .= &quot;:$_&quot;; } print &quot;export PATHVISIO_CP=\&quot;$cp\&quot;\n&quot;' ${jar.class.path}"/>
-		</exec> !-->
-		<echo file="classpath.sh">#!/bin/sh
-# Do not modify, this file is automatically generated
-export PATHVISIO_CP=${all.libs.class.path.unix.prop}
-		</echo>
-		
-		<echo file="classpath.bat">
-SET MY_CLASS_PATH=${all.libs.class.path.windows.prop};${build.v1.dir};${build.core.dir}
-' Do not modify, this file is automatically generated
-java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
-		  </echo>
+	  </echo>
 	</target>
 	
 	<target name="clean" description="Remove all intermediate files.">
@@ -170,8 +126,6 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 	</target>
 
 	<target name="dist-clean" depends="clean" description="Cleaner than clean: remove all generated files">
-		<delete file="classpath.sh"/>
-		<delete file="classpath.bat"/>
 		<delete file="lib/resources.jar"/>
 		<delete file="src/core/org/pathvisio/Revision.java"/>
 		<delete file="visplugins.jar"/>
@@ -199,7 +153,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 			   destdir="${build.gui.dir}"
 			   debug="true"
 			   source="1.5">
-			<classpath refid="project.swing.class.path"/>
+			<classpath refid="project.gui.class.path"/>
 		</javac>
 	</target>
 
@@ -305,7 +259,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 	    <mkdir dir="${diffview.applet.dir}/lib"/>
 		<copy file="diffview.jar" toDir="${diffview.applet.dir}"/>
 		<copy toDir="${diffview.applet.dir}/lib">
-			<fileset dir="${lib.dir}">
+			<fileset dir="lib">
 				<include name="jdom.jar"/>
 				<include name="swing-worker-1.1.jar"/>
 				<include name="derbyclient.jar"/>
@@ -313,7 +267,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 			</fileset>
 		</copy>
 		<signjar alias="PV" lazy = "true" 
-			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
+			storepass="PathVisio" keystore="lib/visioKeyStore">
 			<fileset dir="${diffview.applet.dir}" includes="**/*.jar"/>
 		</signjar>
 		<!-- copy to .../www/diffview -->
@@ -357,25 +311,18 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
 		<copy file="visplugins.jar" toDir="${webstart.dir}/www"/>
 		<signjar jar="pathvisio.jar" lazy="true" 
-			alias="PV" storepass="PathVisio" keystore="${lib.dir}/visioKeyStore"/>
+			alias="PV" storepass="PathVisio" keystore="lib/visioKeyStore"/>
 		<copy toDir="${webstart.dir}/www/lib">
-			<fileset dir="${lib.dir}" includes="**/*.jar"/>
+			<fileset dir="lib" includes="**/*.jar"/>
 		</copy>
 		<signjar alias="PV" lazy = "true" 
-			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
+			storepass="PathVisio" keystore="lib/visioKeyStore">
 			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>
 		</signjar>
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
 		<copy file="${webstart.dir}/pathvisio_with_plugins.jnlp" toDir="${webstart.dir}/www"/>
 	</target>
 	
-	<target name="webstart" depends="prepare-webstart" description="Upload webstart files">
-                <!-- Run perl script to upload to server !-->
-		<exec executable="${exec.perl}" dir="${webstart.dir}" failifexecutionfails="true">
-			<arg line="autoftp.pl"/>
-		</exec>
-	</target>
-
 	<target name="wikipathways-dest" depends="jar, jar-wikipathways" description="Build the applet for WikiPathways">
 		<fail message="You must specify a destination path for WikiPathways to run this task:    ant -Dwikipathways.dest=/path/to/wikipathways [ant target]">
 			<condition>
@@ -385,7 +332,7 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 		<copy file="wikipathways.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy file="preloader.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy toDir="${wikipathways.applet.dir}/lib">
-			<fileset dir="${lib.dir}">
+			<fileset dir="lib">
 				<include name="apache/*.jar"/>
 				<include name="jdom.jar"/>
 				<include name="swing-worker-1.1.jar"/>
@@ -394,12 +341,12 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 			</fileset>	
 		</copy>
 		<copy toDir="${wikipathways.bin.dir}/lib">
-			<fileset dir="${lib.dir}">
+			<fileset dir="lib">
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
 		<signjar alias="PV" lazy = "true" 
-			storepass="PathVisio" keystore="${lib.dir}/visioKeyStore">
+			storepass="PathVisio" keystore="lib/visioKeyStore">
 			<fileset dir="${wikipathways.applet.dir}" includes="**/*.jar"/>
 			<fileset dir="${wikipathways.bin.dir}" includes="**/*.jar"/>
 		</signjar>
@@ -443,35 +390,45 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 			<classpath refid="project.swing.class.path"/>
 			<package name="org.pathvisio"/>
 			<package name="org.pathvisio.biopax"/>
-			<package name="org.pathvisio.biopax.gui"/>
+			<package name="org.pathvisio.biopax.reflect"/>
 			<package name="org.pathvisio.data"/>
 			<package name="org.pathvisio.debug"/>
 			<package name="org.pathvisio.gui"/>
 			<package name="org.pathvisio.gui.swing"/>
+			<package name="org.pathvisio.gui.swing.completer"/>
+			<package name="org.pathvisio.gui.swing.dialogs"/>
+			<package name="org.pathvisio.gui.swing.dnd"/>
+			<package name="org.pathvisio.gui.swing.panels"/>
 			<package name="org.pathvisio.gui.swing.propertypanel"/>
+			<package name="org.pathvisio.gui.wikipathways"/>
 			<package name="org.pathvisio.model"/>
+			<package name="org.pathvisio.plugin"/>
 			<package name="org.pathvisio.preferences"/>
 			<package name="org.pathvisio.preferences.swing"/>
-			<package name="org.pathvisio.search"/>
 			<package name="org.pathvisio.util"/>
-			<package name="org.pathvisio.util.tableviewer"/>
+			<package name="org.pathvisio.util.rowheader"/>
+			<package name="org.pathvisio.util.swing"/>
 			<package name="org.pathvisio.view"/>
 			<package name="org.pathvisio.view.swing"/>
 			<package name="org.pathvisio.visualization"/>
 			<package name="org.pathvisio.visualization.colorset"/>
 			<package name="org.pathvisio.visualization.plugins"/>
+			<package name="org.pathvisio.wikipathways"/>
+			<package name="org.pathvisio.wikipathways.bots"/>
 			<sourcepath>			
 				<pathelement location="${src.dir}/core"/>
 				<pathelement location="${src.dir}/gui"/>
 				<pathelement location="${src.dir}/swing"/>
+				<pathelement location="${src.dir}/wikipathways"/>
+				<pathelement location="${src.dir}/wikipathways-client"/>
 			</sourcepath>
 		</javadoc>		
 	</target>
 	
 	<target name="tarsrc" depends="svnversion" description="create source tarball">
 		<property name="srcbase" value="pathvisio_src-${pathvisio.version}-r${subversion_revision}"/>
-		<tar tarfile="${srcbase}.tar">
-			<tarfileset dir="." prefix="pathvisio-${pathvisio.version}">
+		<zip destfile="${srcbase}.zip">
+			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
 				<include name="src/**/*.java"/>
 				<include name="plugins/**/*"/>
 				<exclude name="plugins/**/*.class"/>
@@ -487,19 +444,17 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 				<include name="build.xml"/>
 				<include name="pathvisio.sh"/>
 				<include name="pathvisio.bat"/>
-			</tarfileset>
-		</tar>
-		<gzip src="${srcbase}.tar" zipfile="${srcbase}.tar.gz"/>
-		<zip destfile="${srcbase}.zip">
-			<tarfileset src="${srcbase}.tar"/>
+			</zipfileset>
 		</zip>
-		<delete file="${srcbase}.tar"/>
+		<tar destfile="${srcbase}.tar.gz" compression="gzip">
+			<tarfileset src="${srcbase}.zip"/>
+		</tar>
 	</target>
 
 	<target name="tarbin" depends="jar,visplugins-jar" description="create binary tarball">
 		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
-		<tar tarfile="${binbase}.tar">
-			<tarfileset dir="." prefix="pathvisio-${pathvisio.version}">
+		<zip destfile="${binbase}.zip">
+			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
 				<include name="lib/batik/*.jar"/>
 				<include name="lib/BrowserLauncher.jar"/>
 				<include name="lib/derby.jar"/>
@@ -517,35 +472,15 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 				<include name="pathvisio.bat"/>
 				<include name="pathvisio.jar"/>
 				<include name="visplugins.jar"/>
-			</tarfileset>
-		</tar>
-		<gzip src="${binbase}.tar" zipfile="${binbase}.tar.gz"/>
-		<zip destfile="${binbase}.zip">
-			<tarfileset src="${binbase}.tar"/>
+			</zipfileset>
 		</zip>
-		<delete file="${binbase}.tar"/>
+		<tar destfile="${binbase}.tar.gz" compression="gzip">
+			<zipfileset src="${binbase}.zip"/>
+		</tar>
 	</target>
 
 	<target name="tar" depends="tarsrc, tarbin" description="create dist tarballs"/>
 
-        <!--
-	<target name="dist" depends="jar-v1, jar-v2" description="Creates distribution zip and installer">
-
-		--><!-- query the repository for the revision nr. !--><!--
-		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
-			<arg line="-n ."/>
-		</exec>
-		<echo>Current Revision ${subversion_revision}</echo>
-
-		--><!-- create a windows installer using inno-setup and pathvisio.iss!--><!--
-		<exec executable="${exec.inno.setup}">
-			<arg line="pathvisio.iss"/>
-		</exec>		
-		<move file="${dist.dir}/PathVisio-Setup.exe" 
-			tofile="${dist.dir}/PathVisio-Setup.${subversion_revision}.exe" 
-			overwrite="true"/>			
-	</target> -->
-		
 	<target name="test" depends="compile-core">
 		<javac srcdir="src/test" debug="true" 
 					includes="**"
@@ -573,62 +508,6 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 	</target>
 
 	<property name="ogretest.dir" value="temp_ogretest"/>
-	
-	<!--
-		test to find out if core is properly separated from the rest.
-		This copies the src/core and src/test to a temporary directory
-		and compiles + tests it with only the following libraries/resources:
-		- jdom
-		- batik
-		- junit
-		- derby
-		- GPML.xsd
-		!-->
-	<target name="ogretest">
-	  <!-- copy src/core to a separate dir !-->
-	  <delete dir="${ogretest.dir}"/>
-	  <mkdir dir="${ogretest.dir}"/>
-	  <mkdir dir="${ogretest.dir}/build"/>
-	  <copy toDir="${ogretest.dir}/src">
-		<fileset dir="${src.dir}/core"/>
-		<fileset dir="${src.dir}/test">
-		  <include name="*.java"/>
-		  <!-- note: packages visualization and visualization.colorset don't belong to
-			   core, so they don't need to be in the ogretest !-->
-		  <exclude name="**/visualization/**"/>
-		</fileset>
-		
-	  </copy>
-	  <copy toDir="${ogretest.dir}/build">
-		<fileset dir="." includes="GPML.xsd"/>
-	  </copy>
-	  <path id="ogretest.class.path">
-		<pathelement location="${ogretest.dir}/build"/>
-		<fileset dir="lib">
-		  <include name="batik/*.jar"/>
-		  <include name="jdom.jar"/>
-		  <include name="derby.jar"/>
-		  <include name="junit.jar"/>
-		  <include name="resources.jar"/> <!-- TODO: this is not necessary, only GPML.xsd !-->
-		</fileset>
-	  </path>
-	  <javac srcdir="${ogretest.dir}/src"
-			 debug="true"
-			 destdir="${ogretest.dir}/build"
-			 source="1.5">	  
-			 <classpath refid="ogretest.class.path"/>
-	  </javac>
-	  <junit printsummary="on" haltonfailure="true" fork="true">
-		<formatter type="brief" usefile="false"/>
-		<classpath refid="ogretest.class.path"/>
-		<batchtest>
-		  <fileset dir="${ogretest.dir}/src">
-			<include name="**/Test.java"/>
-		  </fileset>
-		</batchtest>
-	  </junit>
-	  <delete dir="${ogretest.dir}"/>
-	</target>
 
 	<taskdef resource="checkstyletask.properties"
 			 classpath="lib-build/checkstyle-all-5.0-beta01.jar"/>
@@ -686,23 +565,21 @@ java -cp %MY_CLASS_PATH% org.pathvisio.gui.swing.GuiMain
 	<target name="tarbin-wpclient" depends="jar-wpclient" description="Create a binary tarball for the WikiPathways client">
 		<property name="binbase" value="wikipathways_client_bin-${pathvisio.version}-r${subversion_revision}" />
 		
-		<tar tarfile="${binbase}.tar">
-			<tarfileset dir="." prefix="wikipathways_client-${pathvisio.version}">
+		<zip destfile="${binbase}.zip">
+			<zipfileset dir="." prefix="wikipathways_client-${pathvisio.version}">
 				<include name="wikipathways-client.jar" />
-				<include name="${lib.dir}/jdom.jar" />
-				<include name="${lib.dir}/derby.jar" />
+				<include name="lib/jdom.jar" />
+				<include name="lib/derby.jar" />
 				<include name="pathvisio.jar" />
 				<include name="wikipathways.jar" />
 				<include name="${lib.axis.dir}/*.jar" />
-				<include name="${lib.dir}/resources.jar"/>
+				<include name="lib/resources.jar"/>
 				<include name="resources/botresult.css" />
 				<include name="resources/sorttable.js" />
-			</tarfileset>
-		</tar>
-		<gzip src="${binbase}.tar" zipfile="${binbase}.tar.gz"/>
-		<zip destfile="${binbase}.zip">
-			<tarfileset src="${binbase}.tar"/>
+			</zipfileset>
 		</zip>
-		<delete file="${binbase}.tar"/>
+		<tar destfile="${binbase}.tar.gz" compression="gzip">
+		  <zipfileset src="${binbase}.zip"/>
+		</tar>
 	</target>
 </project>

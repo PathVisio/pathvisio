@@ -30,11 +30,11 @@ import java.util.TimeZone;
 
 import javax.xml.rpc.ServiceException;
 
+import org.bridgedb.Organism;
+import org.bridgedb.Xref;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.Xref;
 import org.pathvisio.view.MIMShapes;
 import org.pathvisio.wikipathways.webservice.WSAuth;
 import org.pathvisio.wikipathways.webservice.WSCurationTag;

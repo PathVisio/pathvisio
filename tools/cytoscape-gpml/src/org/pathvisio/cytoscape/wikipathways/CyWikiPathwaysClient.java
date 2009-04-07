@@ -37,9 +37,9 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.rpc.ServiceException;
 
+import org.bridgedb.Organism;
 import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSIndexField;

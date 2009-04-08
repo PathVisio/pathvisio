@@ -221,7 +221,62 @@ eval
 				checkout_or_update ($subdir, $BRIDGEDB_REPO, "$subdir/svnerr.txt");
 			}
 		);
+	}
+	
+	if ($pvNewer)
+	{
+		my $subdir = "$dir/pathvisio";
+		chdir ($subdir);
+		
+		# First step: do a fresh checkout
+		do_step ( 
+			name => "PATHVISIO SVN CHECKOUT",
+			log => "$subdir/svnerr.txt",
+			action => sub
+			{
+				checkout_or_update ($subdir, $PV_REPO, "$subdir/svnerr.txt");
+			}
+		);
+	}
+	
+	if ($wpNewer)
+	{
+		my $subdir = "$dir/wikipathways";
+		chdir ($subdir);
+		
+		# First step: do a fresh checkout
 
+		do_step ( 
+			name => "WIKIPATHWAYS SVN CHECKOUT",
+			log => "$subdir/svnerr.txt",
+			action => sub
+			{
+				checkout_or_update ($subdir, $WP_REPO, "$subdir/svnerr.txt");
+			}
+		);
+
+	}
+
+	if ($pvpluginsNewer)
+	{
+		my $subdir = "$dir/pvplugins";
+		chdir ($subdir);
+		
+		# First step: do a fresh checkout
+
+		do_step ( 
+			name => "PVPLUGINS SVN CHECKOUT",
+			log => "$subdir/svnerr.txt",
+			action => sub
+			{
+				checkout_or_update ($subdir, $PVPLUGINS_REPO, "$subdir/svnerr.txt");
+			}
+		);
+	}
+
+	if ($bridgedbNewer)
+	{
+		my $subdir = "$dir/bridgedb";
 		chdir ("$subdir/corelib");
 		
 		# Next step: compile the main project
@@ -277,16 +332,6 @@ eval
 		my $subdir = "$dir/pathvisio";
 		chdir ($subdir);
 		
-		# First step: do a fresh checkout
-		do_step ( 
-			name => "PATHVISIO SVN CHECKOUT",
-			log => "$subdir/svnerr.txt",
-			action => sub
-			{
-				checkout_or_update ($subdir, $PV_REPO, "$subdir/svnerr.txt");
-			}
-		);
-
 		# Next step: compile the main project
 		do_step (
 			name => "PATHVISIO COMPILE ALL",
@@ -548,19 +593,6 @@ eval
 	if ($pvpluginsNewer)
 	{
 		my $subdir = "$dir/pvplugins";
-		chdir ($subdir);
-		
-		# First step: do a fresh checkout
-
-		do_step ( 
-			name => "PVPLUGINS SVN CHECKOUT",
-			log => "$subdir/svnerr.txt",
-			action => sub
-			{
-				checkout_or_update ($subdir, $PVPLUGINS_REPO, "$subdir/svnerr.txt");
-			}
-		);
-
 		chdir ("$subdir/ppp");
 		
 		# Next step: compile the main project
@@ -581,18 +613,9 @@ eval
 		my $subdir = "$dir/wikipathways";
 		chdir ($subdir);
 		
-		# First step: do a fresh checkout
-
-		do_step ( 
-			name => "WIKIPATHWAYS SVN CHECKOUT",
-			log => "$subdir/svnerr.txt",
-			action => sub
-			{
-				checkout_or_update ($subdir, $WP_REPO, "$subdir/svnerr.txt");
-			}
-		);
-
+		# Add tests here...
 	}
+
 };
 
 # send email in case of failures

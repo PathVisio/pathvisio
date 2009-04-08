@@ -138,7 +138,6 @@ sub check_revision
 	return 0;	
 }
 
-
 # makes sure a clean, up-to-date working copy of $repo is in $dir
 # if $dir doesn't exist it is created
 # if $dir is empty a fresh checkout is done
@@ -178,7 +177,6 @@ sub checkout_or_update
 		print "SVN co failed, trying again...\n";
 		sleep ($fail_delay);
 	}
-	
 }
 
 ##################
@@ -535,7 +533,7 @@ eval
 		# Next step: checkstyle
 		do_step (
 			name => "CHECKSTYLE",
-			log => "$dir/cs_result.txt",
+			log => "$subdir/cs_result.txt",
 			action => sub
 			{
 				system ("ant checkstyle") == 0 or 
@@ -552,10 +550,10 @@ eval
 				my %lOld =  map { $_ =~ s#^.*/src/#src/#; $_ => 1 } <OLD>;
 				close OLD;
 				
-				open OUTPUT, ">$dir/cs_result.txt" or die $!;
+				open OUTPUT, ">$subdir/cs_result.txt" or die $!;
 				print OUTPUT "New warnings:\n";
 				
-				open NEW, "$dir/warnings.txt" or die $!;			
+				open NEW, "$subdir/warnings.txt" or die $!;			
 				while (my $line = <NEW>)
 				{
 					# filter out the path before /src/ as it's different each run
@@ -569,7 +567,7 @@ eval
 				close NEW;
 				close OUTPUT;
 				
-				system ("mv $dir/warnings.txt $fnCheckstyle" ) == 0 or 
+				system ("mv $subdir/warnings.txt $fnCheckstyle" ) == 0 or 
 					die ("mv [checkstyle] failed with error code ", $? >> 8, "\n");
 				
 				# here is the logic bit: we bail out if there are any NEW warnings.

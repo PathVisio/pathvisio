@@ -26,8 +26,8 @@ import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
 import keggapi.LinkDBRelation;
 
+import org.bridgedb.Organism;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Organism;
 
 public class KeggService {
 	private static KEGGLocator keggLocator = new KEGGLocator();

@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.rpc.ServiceException;
 
+import org.bridgedb.Organism;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -34,7 +35,6 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.RasterImageExporter;
 import org.pathvisio.preferences.PreferenceManager;
 import org.xml.sax.SAXException;

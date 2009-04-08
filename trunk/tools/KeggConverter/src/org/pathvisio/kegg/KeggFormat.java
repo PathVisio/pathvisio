@@ -18,7 +18,9 @@ package org.pathvisio.kegg;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,17 +31,17 @@ import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.GpmlFormatImpl1;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ConnectorShape.Segment;
@@ -69,6 +71,10 @@ public class KeggFormat {
 	}
 	
 	private static final String COMMENT_SOURCE = "KeggConverter";
+	private static final String KEGG_ID = "KeggId";
+	private static final String CONVERSION_DATE = "ConversionDate";
+	
+	private static final SimpleDateFormat CONVERSION_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
 	
 	private double spacing = 2;
 	
@@ -138,6 +144,12 @@ public class KeggFormat {
 			mappInfo.setMapInfoName(title);
 		}
 		mappInfo.setMapInfoDataSource(pathway.getLink());
+		
+		//Some information to track which kegg id and version was used
+		mappInfo.setDynamicProperty(KEGG_ID, pathway.getName());
+		mappInfo.setDynamicProperty(
+				CONVERSION_DATE, CONVERSION_DATE_FORMAT.format(Calendar.getInstance().getTime())
+		);
 		
 		//Convert entries from organism specific pathway
 		for(Entry entry : pathway.getEntry()) {

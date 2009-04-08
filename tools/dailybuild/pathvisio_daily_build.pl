@@ -193,15 +193,15 @@ eval
 	my $WP_REPO = "http://svn.bigcat.unimaas.nl/wikipathways/trunk";
 	my $BRIDGEDB_REPO = "http://svn.bigcat.unimaas.nl/bridgedb/trunk";
 	my $PVPLUGINS_REPO = "http://svn.bigcat.unimaas.nl/pvplugins/trunk";
-	my $CYTOSCAPE26_REPO = "http://chianti.ucsd.edu/svn/cytoscape/trunk";
+	#~ my $CYTOSCAPE26_REPO = "http://chianti.ucsd.edu/svn/cytoscape/trunk";
 
 	my $pvNewer = check_revision ("/home/martijn/pv_curr_revision", $PV_REPO);
 	my $wpNewer = check_revision ("/home/martijn/wp_curr_revision", $WP_REPO);
 	my $pvpluginsNewer = check_revision ("/home/martijn/pvplugins_curr_revision", $PVPLUGINS_REPO);
 	my $bridgedbNewer = check_revision ("/home/martijn/bridgedb_curr_revision", $BRIDGEDB_REPO);
-	my $cytoscape26Newer = check_revision ("/home/martijn/cytoscape26_curr_revision", $CYTOSCAPE26_REPO);
+	#~ my $cytoscape26Newer = check_revision ("/home/martijn/cytoscape26_curr_revision", $CYTOSCAPE26_REPO);
 
-	if (!$pvNewer && !$wpNewer && !$pvpluginsNewer && !$bridgedbNewer && !$cytoscape26Newer)
+	if (!$pvNewer && !$wpNewer && !$pvpluginsNewer && !$bridgedbNewer)
 	{
 		exit;
 	}
@@ -316,7 +316,7 @@ eval
 		# Next step: do all JUnit unit tests
 		do_step (
 			name => "PATHVISIO JUNIT TEST",
-			log => "$dir/junit.txt",
+			log => "$subdir/junit.txt",
 			action => sub
 			{
 				system ("ant test > $dir/junit.txt") == 0 or 
@@ -327,11 +327,11 @@ eval
 		# Next step: create javadocs and upload them to the web
 		do_step (
 			name => "PATHVISIO DAILY ONLINE JAVADOCS",
-			log => "$dir/docs.txt",
+			log => "$subdir/docs.txt",
 			action => sub
 			{
 				#generate docs
-				system ("ant docs > $dir/docs.txt") == 0 or 
+				system ("ant docs > $subdir/docs.txt") == 0 or 
 					die ("docs failed with error code ", $? >> 8, "\n");
 					
 				#copy docs to website				
@@ -343,7 +343,7 @@ eval
 					$i++;
 					eval 
 					{
-						system ("scp -r $dir/apidoc/* pathvisio\@www.pathvisio.org:/home/pathvisio/apidoc 2>> $dir/docs.txt") == 0 or 
+						system ("scp -r $subdir/apidoc/* pathvisio\@www.pathvisio.org:/home/pathvisio/apidoc 2>> $subdir/docs.txt") == 0 or 
 							die ("Could not copy javadocs, with error code " , $? >> 8, "\n");		
 					};
 					unless ($@) { last; } # break if success
@@ -361,15 +361,15 @@ eval
 		# Next step: create a webstart and upload that to the web as well.
 		do_step (
 			name => "DAILY WEBSTART",
-			log => "$dir/webstart.txt",
+			log => "$subdir/webstart.txt",
 			action => sub
 			{
-				system ("ant prepare-webstart > $dir/webstart.txt") == 0 or 
+				system ("ant prepare-webstart > $subdir/webstart.txt") == 0 or 
 					die ("prepare-webstart failed with error code ", $? >> 8, "\n");
 				
 				# substitute webstart codebase url
 				
-				system ("sed -i 's#codebase=\"http://www.pathvisio.org/webstart\"#codebase=\"http://www.pathvisio.org/webstart/daily\"#' $dir/webstart/www/*.jnlp") == 0 or
+				system ("sed -i 's#codebase=\"http://www.pathvisio.org/webstart\"#codebase=\"http://www.pathvisio.org/webstart/daily\"#' $subdir/webstart/www/*.jnlp") == 0 or
 					die ("Couldn't substitute codebase url, with error code ", $? >> 8, "\n");
 					
 				# copy files to website
@@ -382,7 +382,7 @@ eval
 					$i++;
 					eval 
 					{
-						system ("scp -r $dir/webstart/www/* pathvisio\@www.pathvisio.org:/home/pathvisio/webstart/daily") == 0 or 				
+						system ("scp -r $subdir/webstart/www/* pathvisio\@www.pathvisio.org:/home/pathvisio/webstart/daily") == 0 or 				
 							die ("Could not copy webstart, with error code " , $? >> 8, "\n");		
 					};
 					unless ($@) { last; } # break if success
@@ -575,7 +575,24 @@ eval
 			}
 		);
 	}
-	
+
+	if ($wpNewer)
+	{
+		my $subdir = "$dir/wikipathways";
+		chdir ($subdir);
+		
+		# First step: do a fresh checkout
+
+		do_step ( 
+			name => "WIKIPATHWAYS SVN CHECKOUT",
+			log => "$subdir/svnerr.txt",
+			action => sub
+			{
+				checkout_or_update ($subdir, $WP_REPO, "$subdir/svnerr.txt");
+			}
+		);
+
+	}
 };
 
 # send email in case of failures

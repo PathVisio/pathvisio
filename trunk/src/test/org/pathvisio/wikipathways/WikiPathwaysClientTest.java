@@ -22,11 +22,11 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.Xref;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;

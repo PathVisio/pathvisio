@@ -25,7 +25,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;

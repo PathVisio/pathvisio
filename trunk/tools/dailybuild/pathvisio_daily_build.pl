@@ -585,6 +585,20 @@ eval
 					die ("metrics.sh failed with error code ", $? >> 8, "\n");
 			}
 		);
+		
+		# test compilation of kegg converter
+		do_step (
+			name => "KEGG CONVERTER",
+			log => "$subdir/keggconverter.txt",
+			action => sub
+			{
+				my $cmd = 'ant -f tools/KeggConverter/build.xml ' .
+					"> $subdir/keggconverter.txt";
+				print $cmd;
+				system ($cmd) == 0 or 
+					die ("kegg converter compilation failed with error code ", $? >> 8, "\n");
+			}
+		);
 
 	}
 	

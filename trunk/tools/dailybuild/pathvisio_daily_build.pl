@@ -2,8 +2,8 @@
 #
 # Simple Daily build script
 #
-# - make a fresh checkout of pathvisio-trunk in a temp dir
-# - compile v1 and v2, check for errors
+# - make a fresh checkout of pathvisio, bridgedb, pvplugins, wikipathways and cytoscape
+# - compile
 # - run unit tests
 # - if a step goes wrong, send email
 #
@@ -17,6 +17,7 @@
 
 use warnings;
 use strict;
+use Data::Dumper;
 
 ###############
 #   globals
@@ -45,7 +46,6 @@ my @steps;
 my $fSendEmail = 1;
 
 my $basedir = "/home/martijn";
-my $cytoscapedir= "$basedir/etc/cytoscape-v2.6.0";
 my $fnCheckstyle = "$basedir/cs_pathvisio.txt";
 my $defaultDir = "$basedir/temp2";
 
@@ -80,6 +80,7 @@ print "Location: $dir\n";
 sub do_step
 {
 	my %args = @_;
+	die "Illegal argument" if !defined $args{action};
 	
 	eval {
 		&{$args{action}}();
@@ -104,21 +105,31 @@ sub do_step
 }
 
 # returns true if revision is newer than last time
+# takes one hashref like so:
+# { repo => "url to repo",
+#   wc => "path to working copy",
+#   stamp => "stamp file containing last checked revision"
+# }
+#
+# The hashref will be updated with these new fields:
+#    new_revision
+#    old_revision
+#    newer => true if new_revision > old_revision
 sub check_revision
 {
-	my $fnStore = shift;
 	my $repo = shift;
+	die "Illegal argument" if !defined $repo->{wc};
 	
 	my $old = 0;
-	if (-e $fnStore)
+	if (-e $repo->{stamp})
 	{
-		open IN, "< $fnStore" or die $!;
+		open IN, $repo->{stamp} or die $!;
 		$old = <IN>;
 		close IN;
 	}
 	
 	my $new = 0;
-	open IN2, "svn info $repo|" or die $!;
+	open IN2, "svn info ". $repo->{repo} . "|" or die $!;
 	while (my $line = <IN2>)
 	{
 		if ($line =~ /Revision: (\d+)/) { $new = $1; }
@@ -127,30 +138,48 @@ sub check_revision
 	
 	print "New: $new\nOld: $old\n";
 	
-	if ($new > $old)
-	{
-		open OUT, "> $fnStore" or die $!;
-		print OUT $new;
-		close OUT;
+	$repo->{new_revision} = $new;
+	$repo->{old_revision} = $old;
+	$repo->{newer} = ($new > $old);
 		
-		return 1;
-	}
-	return 0;	
+	return ($new > $old);
 }
 
-# makes sure a clean, up-to-date working copy of $repo is in $dir
-# if $dir doesn't exist it is created
-# if $dir is empty a fresh checkout is done
-# if $dir already contains a working copy it's cleaned and updated
+# write stamp file containging last checked revision
+# takes one hashref like so:
+# { 
+#   stamp => "stamp file containing last checked revision"
+#   new_revision => "latest revision"
+# }
+sub write_stamp
+{
+	my $repo = shift;
+	die "Illegal argument" if !defined $repo->{new_revision};
+
+	open OUT, "> " . $repo->{stamp} or die $!;
+	print OUT $repo->{new_revision};
+	close OUT;
+}
+
+
+# takes one hashref like so:
+# { repo => "url to repo",
+#   wc => "path to working copy",
+#   stamp => "stamp file containing last checked revision"
+#	log => "log progress of operation"
+# }
+# makes sure a clean, up-to-date working copy of repo is in wc
+# if wc doesn't exist it is created
+# if wc is empty a fresh checkout is done
+# if wc already contains a working copy it's cleaned and updated
 # tries 5 times before giving up
 sub checkout_or_update
 {
-	my $dir = shift;
 	my $repo = shift;
-	my $log = shift;
+	die "Illegal argument" if !defined $repo->{wc};
 	
-	mkpath ($dir);
-	chdir ($dir);
+	mkpath ($repo->{wc});
+	chdir ($repo->{wc});
 	
 	# clean the working copy if we can. Ignore failure, we'll do a checkout anyway.
 	system ("svn-clean .");
@@ -160,13 +189,13 @@ sub checkout_or_update
 	my $retries = 5;
 	my $fail_delay = 5;
 	my $i = 0;
-	unlink "$log";
+	unlink $repo->{log};
 	while (1)
 	{
 		$i++;
 
 		eval {
-			system ("svn checkout $repo . 2>>$log") == 0
+			system ("svn checkout " . $repo->{repo}. " . 2>>" . $repo->{log}) == 0
 				or die "svn checkout failed: $?";
 		};
 		unless ($@) { last; } # break if success
@@ -179,6 +208,77 @@ sub checkout_or_update
 	}
 }
 
+# Simplified version of do_step for running shell commands
+# instead of name, log and action, takes name, log and cmd where cmd is
+# a simple shell command.
+# redirection to log will be appended automatically.
+sub do_command_step
+{
+	my %args = @_;
+	die "Illegal argument" if !defined $args{cmd};
+	
+	do_step (
+		name => $args{name},
+		log => $args{log},
+		action => sub
+		{
+			my $cmd = $args{cmd};
+			if (defined $args{log})
+			{
+				$cmd .= " > " . $args{log}
+			}
+			# run command
+			system ($cmd) == 0 or 
+				die ($args{name} . "failed with error code ", $? >> 8, "\n");
+		}
+	);
+
+}
+
+# scp a direcotory recursively
+# takes three arguments
+#
+# src
+# dest
+# log
+#
+# that will be substituted in a command like this
+# scp -r [src] [dest] 2>> [log]
+#
+# tries 5 times before giving up
+sub scp_dir
+{
+	my %args = @_;
+	die "Illegal argument" if !defined $args{src};
+
+	my $src = $args{src};
+	my $dest = $args{dest};
+	my $log = $args{log};
+	
+	#securely copy file tree
+	my $retries = 5;
+	my $fail_delay = 5;
+	my $i = 0;
+	while (1)
+	{
+		$i++;
+		eval 
+		{
+			system ("scp -r $src $dest 2>> $log") == 0 or 
+				die ("Could not copy $src, with error code " , $? >> 8, "\n");		
+		};
+		unless ($@) { last; } # break if success
+		if ($i == $retries)
+		{
+			die ("Upload of javadoc failed after $i attempts\n");
+		}
+		print "scp failed, trying again...\n";
+		sleep ($fail_delay);
+	}
+	
+}
+
+
 ##################
 #  main
 ##################
@@ -187,106 +287,93 @@ sub checkout_or_update
 # one step dies, which causes a break out of the eval statement.
 eval
 {	
-	my $PV_REPO = "http://svn.bigcat.unimaas.nl/pathvisio/trunk";
-	my $WP_REPO = "http://svn.bigcat.unimaas.nl/wikipathways/trunk";
-	my $BRIDGEDB_REPO = "http://svn.bigcat.unimaas.nl/bridgedb/trunk";
-	my $PVPLUGINS_REPO = "http://svn.bigcat.unimaas.nl/pvplugins/trunk";
-	#~ my $CYTOSCAPE26_REPO = "http://chianti.ucsd.edu/svn/cytoscape/trunk";
+	my %repos = (
+		PV => {
+				repo => "http://svn.bigcat.unimaas.nl/pathvisio/trunk",
+				wc => "$dir/pathvisio",
+				log => "$dir/pv_svnerr.txt",
+				stamp => "/home/martijn/pv_curr_revision"
+			},
+		WP => {
+				repo => "http://svn.bigcat.unimaas.nl/wikipathways/trunk",
+				wc => "$dir/wikipathways",
+				log => "$dir/wp_svnerr.txt",
+				stamp => "/home/martijn/wp_curr_revision",
+			},
+		CYTOSCAPE26 => {
+				repo => "http://chianti.ucsd.edu/svn/cytoscape/trunk",
+				wc => "$dir/cytoscape2.6",
+				log => "$dir/cytoscape26_svnerr.txt",
+				stamp => "/home/martijn/cytoscape26_curr_revision",
+			},
+		PVPLUGINS => {
+				repo => "http://svn.bigcat.unimaas.nl/pvplugins/trunk",
+				wc => "$dir/pvplugins",
+				log => "$dir/pvplugins_svnerr.txt",
+				stamp => "/home/martijn/pvplugins_curr_revision",
+			},
+		BRIDGEDB => {
+				repo => "http://svn.bigcat.unimaas.nl/bridgedb/trunk",
+				wc => "$dir/bridgedb",
+				log => "$dir/bridgedb_svnerr.txt",
+				stamp => "/home/martijn/bridgedb_curr_revision",
+			},
+	);
 
-	my $pvNewer = check_revision ("/home/martijn/pv_curr_revision", $PV_REPO);
-	my $wpNewer = check_revision ("/home/martijn/wp_curr_revision", $WP_REPO);
-	my $pvpluginsNewer = check_revision ("/home/martijn/pvplugins_curr_revision", $PVPLUGINS_REPO);
-	my $bridgedbNewer = check_revision ("/home/martijn/bridgedb_curr_revision", $BRIDGEDB_REPO);
-	#~ my $cytoscape26Newer = check_revision ("/home/martijn/cytoscape26_curr_revision", $CYTOSCAPE26_REPO);
+	my $cytoscapedir= $repos{CYTOSCAPE26}->{wc};
+	my $pathvisiodir= $repos{PV}->{wc};
 
-	if (!$pvNewer && !$wpNewer && !$pvpluginsNewer && !$bridgedbNewer)
+	my $anyNewer = 0;
+	for my $key (keys %repos)
 	{
-		exit;
-	}
-	
-	if ($bridgedbNewer)
-	{
-		my $subdir = "$dir/bridgedb";
-		chdir ($subdir);
-		
-		# First step: do a fresh checkout
-
-		do_step ( 
-			name => "BRIDGEDB SVN CHECKOUT",
-			log => "$subdir/svnerr.txt",
-			action => sub
-			{
-				checkout_or_update ($subdir, $BRIDGEDB_REPO, "$subdir/svnerr.txt");
-			}
-		);
-	}
-	
-	if ($pvNewer)
-	{
-		my $subdir = "$dir/pathvisio";
-		chdir ($subdir);
-		
-		# First step: do a fresh checkout
-		do_step ( 
-			name => "PATHVISIO SVN CHECKOUT",
-			log => "$subdir/svnerr.txt",
-			action => sub
-			{
-				checkout_or_update ($subdir, $PV_REPO, "$subdir/svnerr.txt");
-			}
-		);
-	}
-	
-	if ($wpNewer)
-	{
-		my $subdir = "$dir/wikipathways";
-		chdir ($subdir);
-		
-		# First step: do a fresh checkout
-
-		do_step ( 
-			name => "WIKIPATHWAYS SVN CHECKOUT",
-			log => "$subdir/svnerr.txt",
-			action => sub
-			{
-				checkout_or_update ($subdir, $WP_REPO, "$subdir/svnerr.txt");
-			}
-		);
-
+		if (check_revision ($repos{$key}))
+		{
+			print $key . " is newer\n";
+			$anyNewer = 1;
+			
+			do_step ( 
+				name => "$key SVN CHECKOUT",
+				log => $repos{$key}->{log},
+				action => sub
+				{
+					checkout_or_update ($repos{$key});
+				}
+			);
+		}
 	}
 
-	if ($pvpluginsNewer)
+	if (!$anyNewer)
 	{
-		my $subdir = "$dir/pvplugins";
-		chdir ($subdir);
-		
-		# First step: do a fresh checkout
+		exit; # nothing to do
+	}
 
-		do_step ( 
-			name => "PVPLUGINS SVN CHECKOUT",
-			log => "$subdir/svnerr.txt",
-			action => sub
-			{
-				checkout_or_update ($subdir, $PVPLUGINS_REPO, "$subdir/svnerr.txt");
-			}
+	if ($repos{CYTOSCAPE26}->{newer})
+	{
+		write_stamp($repos{CYTOSCAPE26});
+
+		my $subdir = $repos{CYTOSCAPE26}->{wc};
+		chdir ("$subdir");
+		
+		# Next step: compile the main project
+		do_command_step (
+			name => "CYTOSCAPE COMPILE",
+			log => "$subdir/compile1.txt",
+			cmd => "ant",
 		);
 	}
 
-	if ($bridgedbNewer)
+	if ($repos{BRIGDEDB}->{newer})
 	{
-		my $subdir = "$dir/bridgedb";
+		write_stamp($repos{BRIDGEDB});
+		
+		my $subdir = $repos{BRIDGEDB}->{wc};
 		chdir ("$subdir/corelib");
 		
 		# Next step: compile the main project
-		do_step (
+		do_command_step (
 			name => "BRIDGEDB COMPILE",
 			log => "$subdir/compile1.txt",
-			action => sub
-			{
-				# compile
-				system ("ant > $subdir/compile1.txt") == 0 or 
-					die ("compile all failed with error code ", $? >> 8, "\n");
-			}
+			cmd => "ant",
 		);
 
 		# Next step: create javadocs and upload them to the web
@@ -298,73 +385,44 @@ eval
 				#generate docs
 				system ("ant doc > $subdir/docs.txt") == 0 or 
 					die ("docs failed with error code ", $? >> 8, "\n");
-					
-				#copy docs to website				
-				my $retries = 5;
-				my $fail_delay = 5;
-				my $i = 0;
-				while (1)
-				{
-					$i++;
-					eval 
-					{
-						system ("scp -r $subdir/corelib/doc/* pathvisio\@www.pathvisio.org:/home/pathvisio/apidoc/bridgedb 2>> $subdir/docs.txt") == 0 or 
-							die ("Could not copy javadocs, with error code " , $? >> 8, "\n");		
-					};
-					unless ($@) { last; } # break if success
-					if ($i == $retries)
-					{
-						die ("Upload of javadoc failed after $i attempts\n");
-					}
-					print "scp failed, trying again...\n";
-					sleep ($fail_delay);
-				}
-
+				
+				scp_dir (
+					src => "$subdir/corelib/doc/*",
+					dest => "pathvisio\@www.pathvisio.org:/home/pathvisio/apidoc/bridgedb",
+					log => "$subdir/docs.txt",
+				);
 			}
 		);
 
 	}
 	
-	if ($pvNewer)
+	if ($repos{PV}->{newer} || $repos{CYTOSCAPE26}->{newer})
 	{
-		my $subdir = "$dir/pathvisio";
+		write_stamp($repos{PV});
+
+		my $subdir = $repos{PV}->{wc};
 		chdir ($subdir);
 		
 		# Next step: compile the main project
-		do_step (
+		do_command_step (
 			name => "PATHVISIO COMPILE ALL",
-			log => "$dir/compile1.txt",
-			action => sub
-			{
-				# compile
-				system ("ant all > $dir/compile1.txt") == 0 or 
-					die ("compile all failed with error code ", $? >> 8, "\n");
-			}
+			log => "$subdir/compile1.txt",
+			cmd => "ant all",
 		);
 
 		# Next step: compile the webservice client library
-		do_step (
+		do_command_step (
 			name => "PATHVISIO COMPILE WEBSERVICE CLIENT LIB",
 			log => "$dir/compile-wpc.txt",
-			action => sub
-			{
-				# compile
-				system ("ant jar-wpclient " . 
-					"-Dwsdl.url=http://137.120.14.24/wikipathways-test/wpi/webservice/webservice.php?wsdl " .
-					"> $dir/compile-wpc.txt") == 0 or 
-					die ("compile webservice client lib failed with error code ", $? >> 8, "\n");
-			}
+			cmd => "ant jar-wpclient " . 
+				"-Dwsdl.url=http://137.120.14.24/wikipathways-test/wpi/webservice/webservice.php?wsdl",
 		);
 
 		# Next step: do all JUnit unit tests
-		do_step (
+		do_command_step (
 			name => "PATHVISIO JUNIT TEST",
 			log => "$subdir/junit.txt",
-			action => sub
-			{
-				system ("ant test > $dir/junit.txt") == 0 or 
-					die ("test failed with error code ", $? >> 8, "\n");
-			}
+			cmd => "ant test",
 		);
 
 		# Next step: create javadocs and upload them to the web
@@ -377,27 +435,13 @@ eval
 				system ("ant docs > $subdir/docs.txt") == 0 or 
 					die ("docs failed with error code ", $? >> 8, "\n");
 					
+				
 				#copy docs to website				
-				my $retries = 5;
-				my $fail_delay = 5;
-				my $i = 0;
-				while (1)
-				{
-					$i++;
-					eval 
-					{
-						system ("scp -r $subdir/apidoc/* pathvisio\@www.pathvisio.org:/home/pathvisio/apidoc 2>> $subdir/docs.txt") == 0 or 
-							die ("Could not copy javadocs, with error code " , $? >> 8, "\n");		
-					};
-					unless ($@) { last; } # break if success
-					if ($i == $retries)
-					{
-						die ("Upload of javadoc failed after $i attempts\n");
-					}
-					print "scp failed, trying again...\n";
-					sleep ($fail_delay);
-				}
-
+				scp_dir (
+					src => "$subdir/apidoc/*",
+					dest => "pathvisio\@www.pathvisio.org:/home/pathvisio/apidoc",
+					log => "$subdir/docs.txt",
+				);
 			}
 		);
 
@@ -416,27 +460,12 @@ eval
 					die ("Couldn't substitute codebase url, with error code ", $? >> 8, "\n");
 					
 				# copy files to website
+				scp_dir (
+					src => "$subdir/webstart/www/*",
+					dest => "pathvisio\@www.pathvisio.org:/home/pathvisio/webstart/daily",
+					log => "$subdir/webstart.txt",
+				);
 				
-				my $retries = 5;
-				my $fail_delay = 5;
-				my $i = 0;
-				while (1)
-				{
-					$i++;
-					eval 
-					{
-						system ("scp -r $subdir/webstart/www/* pathvisio\@www.pathvisio.org:/home/pathvisio/webstart/daily") == 0 or 				
-							die ("Could not copy webstart, with error code " , $? >> 8, "\n");		
-					};
-					unless ($@) { last; } # break if success
-					if ($i == $retries)
-					{
-						die ("Upload of webstart files failed after $i attempts\n");
-					}
-					print "scp failed, trying again...\n";
-					sleep ($fail_delay);
-				}
-
 			}
 		);
 
@@ -481,20 +510,13 @@ eval
 			}
 		);
 		
-		# test compilation of cytoscape-gpml
-		do_step (
+		# test compilation of kegg converter
+		do_command_step (
 			name => "CYTOSCAPE-GPML",
-			log => "$dir/cytoscape-gpml.txt",
-			action => sub
-			{
-				my $cmd = 'ant -f tools/cytoscape-gpml/build.xml '.
-					"-Dcytoscape.dir=$cytoscapedir ".
-					'-Dwsdl.url=http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl '.
-					"> $dir/cytoscape-gpml.txt";
-				print $cmd;
-				system ($cmd) == 0 or 
-					die ("cytoscape-gpml failed with error code ", $? >> 8, "\n");
-			}
+			log => "$subdir/cytoscape-gpml.txt",
+			cmd => 'ant -f tools/cytoscape-gpml/build.xml '.
+					"-Dcytoscape.dir=$cytoscapedir " .
+					'-Dwsdl.url=http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl',
 		);
 		
 		# Next step: check that java files have svn propset svn:eol-style native
@@ -575,54 +597,48 @@ eval
 			}
 		);
 		
-		# Next step: metrics
-		do_step (
+		do_command_step (
 			name => "METRICS",
 			log => undef,
-			action => sub
-			{
-				system ("cd tools/dailybuild && ./metric.sh") == 0 or 
-					die ("metrics.sh failed with error code ", $? >> 8, "\n");
-			}
+			cmd => "cd tools/dailybuild && ./metric.sh",
 		);
-		
+
 		# test compilation of kegg converter
-		do_step (
+		do_command_step (
 			name => "KEGG CONVERTER",
 			log => "$subdir/keggconverter.txt",
-			action => sub
-			{
-				my $cmd = 'ant -f tools/KeggConverter/build.xml ' .
-					"> $subdir/keggconverter.txt";
-				print $cmd;
-				system ($cmd) == 0 or 
-					die ("kegg converter compilation failed with error code ", $? >> 8, "\n");
-			}
+			cmd => "ant -f tools/KeggConverter/build.xml",
 		);
 
 	}
 	
-	if ($pvpluginsNewer)
+	if ($repos{PV}->{newer} || $repos{PVPLUGINS}->{newer})
 	{
-		my $subdir = "$dir/pvplugins";
-		chdir ("$subdir/ppp");
+		write_stamp($repos{PVPLUGINS});
+
+		my $subdir = $repos{PVPLUGINS}->{wc};
+		chdir ("$subdir");
 		
-		# Next step: compile the main project
-		do_step (
-			name => "PVPLUGINS COMPILE",
-			log => "$subdir/compile1.txt",
-			action => sub
-			{
-				# compile
-				system ("ant > $subdir/compile1.txt") == 0 or 
-					die ("compile failed with error code ", $? >> 8, "\n");
-			}
+		# test compilation of ppp
+		do_command_step (
+			name => "PVPLUGINS PPP COMPILE",
+			log => "$subdir/compile_ppp.txt",
+			cmd => "ant -f ppp/build.xml -Dpathvisio.dir=$pathvisiodir",
+		);
+
+		# test compilation of MappBUILDER
+		do_command_step (
+			name => "PVPLUGINS MAPPBUILDER COMPILE",
+			log => "$subdir/compile_mappbuilder.txt",
+			cmd => "ant -f MAPPBuilder/build.xml -Dpathvisio.dir=$pathvisiodir",
 		);
 	}
 
-	if ($wpNewer)
+	if ($repos{WP}->{newer})
 	{
-		my $subdir = "$dir/wikipathways";
+		write_stamp($repos{WP});
+
+		my $subdir = $repos{WP}->{wc};
 		chdir ($subdir);
 		
 		# Add tests here...

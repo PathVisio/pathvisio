@@ -47,12 +47,21 @@ my $fSendEmail = 1;
 
 my $basedir = "/home/martijn";
 my $fnCheckstyle = "$basedir/cs_pathvisio.txt";
-my $fnLock = "$basedir/pv_dailybuild_lock";
 my $defaultDir = "$basedir/temp2";
 
 # checkout dir
 my $dir;
 
+#################
+# process lock
+#################
+
+use Fcntl qw(:flock);
+
+open(SELF,"<",$0) or die "Cannot open $0 - $!";
+
+flock(SELF, LOCK_EX|LOCK_NB) or die "Already running.";
+		
 #################
 # initialization
 #################
@@ -287,16 +296,6 @@ sub scp_dir
 # one step dies, which causes a break out of the eval statement.
 eval
 {	
-	# create a lock
-	if (-e $fnLock)
-	{
-		exit;
-	}
-	else
-	{
-		system ("touch $fnLock") == 0 or die;
-	}
-
 	my %repos = (
 		PV => {
 				repo => "http://svn.bigcat.unimaas.nl/pathvisio/trunk",
@@ -349,6 +348,8 @@ eval
 					checkout_or_update ($repos{$key});
 				}
 			);
+			
+			write_stamp($repos{$key});
 		}
 	}
 
@@ -361,8 +362,6 @@ eval
 
 	if ($repos{CYTOSCAPE26}->{newer})
 	{
-		write_stamp($repos{CYTOSCAPE26});
-
 		my $subdir = $repos{CYTOSCAPE26}->{wc};
 		chdir ("$subdir");
 		
@@ -375,9 +374,7 @@ eval
 	}
 
 	if ($repos{BRIGDEDB}->{newer})
-	{
-		write_stamp($repos{BRIDGEDB});
-		
+	{		
 		my $subdir = $repos{BRIDGEDB}->{wc};
 		chdir ("$subdir/corelib");
 		
@@ -423,8 +420,6 @@ eval
 	
 	if ($repos{PV}->{newer} || $repos{CYTOSCAPE26}->{newer} || $repos{BRIDGEDB}->{newer})
 	{
-		write_stamp($repos{PV});
-
 		my $subdir = $repos{PV}->{wc};
 		chdir ($subdir);
 		
@@ -535,7 +530,7 @@ eval
 			}
 		);
 		
-		# test compilation of kegg converter
+		# test compilation of cytoscape plugin
 		do_command_step (
 			name => "CYTOSCAPE-GPML",
 			log => "$subdir/cytoscape-gpml.txt",
@@ -543,7 +538,14 @@ eval
 					"-Dcytoscape.dir=$cytoscapedir " .
 					'-Dwsdl.url=http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl',
 		);
-		
+
+		# test compilation of lucene indexer
+		do_command_step (
+			name => "LUCENE-INDEXER",
+			log => "$subdir/lucene.txt",
+			cmd => 'ant -f tools/lucene-indexer/build.xml -Dpathvisio.dir=$pathvisiodir',
+		);
+
 		# Next step: check that java files have svn propset svn:eol-style native
 		# Note: disabled because git-svn doesn't support propset atm.
 		#~ do_step (
@@ -639,8 +641,6 @@ eval
 	
 	if ($repos{PV}->{newer} || $repos{PVPLUGINS}->{newer} || $repos{BRIDGEDB}->{newer})
 	{
-		write_stamp($repos{PVPLUGINS});
-
 		my $subdir = $repos{PVPLUGINS}->{wc};
 		chdir ("$subdir");
 		
@@ -661,8 +661,6 @@ eval
 
 	if ($repos{WP}->{newer})
 	{
-		write_stamp($repos{WP});
-
 		my $subdir = $repos{WP}->{wc};
 		chdir ($subdir);
 		
@@ -747,10 +745,3 @@ The build system reported: $msg
 	close $out;
 }
 
-END 
-{
-	# remove lock file
-	unlink $fnLock;
-	print "Lock file removed";
-
-}

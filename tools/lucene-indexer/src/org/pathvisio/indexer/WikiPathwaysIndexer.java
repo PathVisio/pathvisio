@@ -37,7 +37,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
-import org.pathvisio.data.GdbProvider;
+import org.bridgedb.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.util.FileUtils;

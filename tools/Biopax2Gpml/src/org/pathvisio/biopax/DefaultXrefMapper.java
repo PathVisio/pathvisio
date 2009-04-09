@@ -18,9 +18,7 @@ package org.pathvisio.biopax;
 
 import org.biopax.paxtools.model.level2.entity;
 import org.biopax.paxtools.model.level2.xref;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
 
 public class DefaultXrefMapper implements XrefMapper {
 	public void mapXref(entity e, PathwayElement pwElm) {

@@ -32,15 +32,15 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
+import org.bridgedb.DataException;
+import org.bridgedb.DataSource;
+import org.bridgedb.Gdb;
+import org.bridgedb.Organism;
+import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
 
 /**
  * Indexes every DataNode, including

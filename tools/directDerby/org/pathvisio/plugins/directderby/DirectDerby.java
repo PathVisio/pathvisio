@@ -26,9 +26,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bridgedb.DBConnector;
+import org.bridgedb.DataException;
 import org.pathvisio.data.DBConnDerby;
-import org.pathvisio.data.DBConnector;
-import org.pathvisio.data.DataException;
 
 /**
  * Run this to open a simple command shell where

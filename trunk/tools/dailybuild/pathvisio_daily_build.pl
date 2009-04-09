@@ -47,6 +47,7 @@ my $fSendEmail = 1;
 
 my $basedir = "/home/martijn";
 my $fnCheckstyle = "$basedir/cs_pathvisio.txt";
+my $fnLock = "$basedir/pv_dailybuild_lock";
 my $defaultDir = "$basedir/temp2";
 
 # checkout dir
@@ -66,8 +67,6 @@ else
 	
 	mkpath ($dir); # make sure dir exists	
 }
-
-print "Location: $dir\n";
 
 #################
 #  subroutines
@@ -119,6 +118,7 @@ sub check_revision
 {
 	my $repo = shift;
 	die "Illegal argument" if !defined $repo->{wc};
+	die "Illegal argument" if !defined $repo->{stamp};
 	
 	my $old = 0;
 	if (-e $repo->{stamp})
@@ -135,9 +135,7 @@ sub check_revision
 		if ($line =~ /Revision: (\d+)/) { $new = $1; }
 	}
 	close IN2;
-	
-	print "New: $new\nOld: $old\n";
-	
+
 	$repo->{new_revision} = $new;
 	$repo->{old_revision} = $old;
 	$repo->{newer} = ($new > $old);
@@ -155,7 +153,9 @@ sub write_stamp
 {
 	my $repo = shift;
 	die "Illegal argument" if !defined $repo->{new_revision};
+	die "Illegal argument" if !defined $repo->{stamp};
 
+	print "Writing stamp to " . $repo->{stamp} . "\n";
 	open OUT, "> " . $repo->{stamp} or die $!;
 	print OUT $repo->{new_revision};
 	close OUT;
@@ -235,7 +235,7 @@ sub do_command_step
 
 }
 
-# scp a direcotory recursively
+# scp a directory recursively
 # takes three arguments
 #
 # src
@@ -287,36 +287,46 @@ sub scp_dir
 # one step dies, which causes a break out of the eval statement.
 eval
 {	
+	# create a lock
+	if (-e $fnLock)
+	{
+		exit;
+	}
+	else
+	{
+		system ("touch $fnLock") == 0 or die;
+	}
+
 	my %repos = (
 		PV => {
 				repo => "http://svn.bigcat.unimaas.nl/pathvisio/trunk",
 				wc => "$dir/pathvisio",
 				log => "$dir/pv_svnerr.txt",
-				stamp => "/home/martijn/pv_curr_revision"
+				stamp => "$basedir/pv_curr_revision"
 			},
 		WP => {
 				repo => "http://svn.bigcat.unimaas.nl/wikipathways/trunk",
 				wc => "$dir/wikipathways",
 				log => "$dir/wp_svnerr.txt",
-				stamp => "/home/martijn/wp_curr_revision",
+				stamp => "$basedir/wp_curr_revision",
 			},
 		CYTOSCAPE26 => {
 				repo => "http://chianti.ucsd.edu/svn/cytoscape/trunk",
 				wc => "$dir/cytoscape2.6",
 				log => "$dir/cytoscape26_svnerr.txt",
-				stamp => "/home/martijn/cytoscape26_curr_revision",
+				stamp => "$basedir/cytoscape26_curr_revision",
 			},
 		PVPLUGINS => {
 				repo => "http://svn.bigcat.unimaas.nl/pvplugins/trunk",
 				wc => "$dir/pvplugins",
 				log => "$dir/pvplugins_svnerr.txt",
-				stamp => "/home/martijn/pvplugins_curr_revision",
+				stamp => "$basedir/pvplugins_curr_revision",
 			},
 		BRIDGEDB => {
 				repo => "http://svn.bigcat.unimaas.nl/bridgedb/trunk",
 				wc => "$dir/bridgedb",
 				log => "$dir/bridgedb_svnerr.txt",
-				stamp => "/home/martijn/bridgedb_curr_revision",
+				stamp => "$basedir/bridgedb_curr_revision",
 			},
 	);
 
@@ -347,6 +357,8 @@ eval
 		exit; # nothing to do
 	}
 
+	print "Location: $dir\n";
+
 	if ($repos{CYTOSCAPE26}->{newer})
 	{
 		write_stamp($repos{CYTOSCAPE26});
@@ -376,6 +388,13 @@ eval
 			cmd => "ant",
 		);
 
+		# Next step: compile the main project
+		do_command_step (
+			name => "BRIDGEDB TEST",
+			log => "$subdir/junit.txt",
+			cmd => "ant test",
+		);
+
 		# Next step: create javadocs and upload them to the web
 		do_step (
 			name => "BRIDGEDB DAILY ONLINE JAVADOCS",
@@ -393,10 +412,16 @@ eval
 				);
 			}
 		);
-
+		
+		# copy bridgedb.jar from bridgedb repository to pathvisio repository
+		do_command_step (
+			name => "COPY BRIDGEDB",
+			log => undef,
+			cmd => "cp " . $repos{BRIDGEDB}->{wc} . "/corelib/bridgedb.jar " . $repos{PV}->{wc} . "/lib"
+		);
 	}
 	
-	if ($repos{PV}->{newer} || $repos{CYTOSCAPE26}->{newer})
+	if ($repos{PV}->{newer} || $repos{CYTOSCAPE26}->{newer} || $repos{BRIDGEDB}->{newer})
 	{
 		write_stamp($repos{PV});
 
@@ -612,7 +637,7 @@ eval
 
 	}
 	
-	if ($repos{PV}->{newer} || $repos{PVPLUGINS}->{newer})
+	if ($repos{PV}->{newer} || $repos{PVPLUGINS}->{newer} || $repos{BRIDGEDB}->{newer})
 	{
 		write_stamp($repos{PVPLUGINS});
 
@@ -720,4 +745,12 @@ The build system reported: $msg
 	print $out @svnlog;
 	
 	close $out;
+}
+
+END 
+{
+	# remove lock file
+	unlink $fnLock;
+	print "Lock file removed";
+
 }

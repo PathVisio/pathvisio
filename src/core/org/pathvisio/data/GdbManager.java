@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.bridgedb.DBConnector;
 import org.bridgedb.DataException;
+import org.bridgedb.DoubleGdb;
 import org.bridgedb.Gdb;
 import org.bridgedb.SimpleGdb;
 import org.bridgedb.SimpleGdbFactory;
@@ -76,6 +77,10 @@ public class GdbManager
 		{
 			SimpleGdb gdb = connect (dbName);
 			currentGdb.setMetaboliteDb(gdb);
+			if (gdb != null)
+			{
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_METABDB_CURRENT, gdb.getDbName());
+			}
 		}
 		
 		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED);
@@ -132,6 +137,10 @@ public class GdbManager
 		{
 			SimpleGdb gdb = connect (dbName);
 			currentGdb.setGeneDb(gdb);
+			if (gdb != null)
+			{
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_GDB_CURRENT, gdb.getDbName());
+			}
 		}
 		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED);
 		fireGdbEvent (e);

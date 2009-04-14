@@ -47,6 +47,7 @@ my $fSendEmail = 1;
 
 my $basedir = "/home/martijn";
 my $fnCheckstyle = "$basedir/cs_pathvisio.txt";
+my $fnBridgeDbCheckstyle = "$basedir/cs_bridgedb.txt";
 my $defaultDir = "$basedir/temp2";
 
 # checkout dir
@@ -286,8 +287,7 @@ sub scp_dir
 	}
 	
 }
-
-
+	
 ##################
 #  main
 ##################
@@ -410,15 +410,54 @@ eval
 			}
 		);
 		
-		# copy bridgedb.jar from bridgedb repository to pathvisio repository
-		do_command_step (
-			name => "COPY BRIDGEDB",
-			log => undef,
-			cmd => "cp " . $repos{BRIDGEDB}->{wc} . "/corelib/bridgedb.jar " . $repos{PV}->{wc} . "/lib"
+		# Next step: checkstyle
+		do_step (
+			name => "BRIDGEDB CHECKSTYLE",
+			log => "$subdir/cs_result.txt",
+			action => sub
+			{
+				system ("ant checkstyle") == 0 or 
+					die ("ant [checkstyle] failed with error code ", $? >> 8, "\n");
+					
+				#Now do a bit of magic so we only report NEW errors.
+				my $cNew = 0;
+				
+				system ("touch $fnBridgeDbCheckstyle") == 0 or die ("Can't touch. Look ma, no hands? $!");
+				open OLD, "$fnBridgeDbCheckstyle" or die $!;
+				
+				# create a hash of all old warnings
+				# filter out the path before /src/ as it's different each run
+				my %lOld =  map { $_ =~ s#^.*/src/#src/#; $_ => 1 } <OLD>;
+				close OLD;
+				
+				open OUTPUT, ">$subdir/cs_result.txt" or die $!;
+				print OUTPUT "New warnings:\n";
+				
+				open NEW, "$subdir/corelib/warnings.txt" or die $!;			
+				while (my $line = <NEW>)
+				{
+					# filter out the path before /src/ as it's different each run
+					$line =~ s#^.*/src/#src/#;
+					if (!exists $lOld{$line})
+					{
+						$cNew++;
+						print OUTPUT $line;
+					}
+				}
+				close NEW;
+				close OUTPUT;
+				
+				system ("mv $subdir/corelib/warnings.txt $fnBridgeDbCheckstyle" ) == 0 or 
+					die ("mv [checkstyle] failed with error code ", $? >> 8, "\n");
+				
+				# here is the logic bit: we bail out if there are any NEW warnings.
+				if ($cNew > 0) { die "$cNew new checkstyle warnings" };
+			}
 		);
+
 	}
 	
-	if ($repos{PV}->{newer} || $repos{CYTOSCAPE26}->{newer} || $repos{BRIDGEDB}->{newer})
+	if ($repos{PV}->{newer})
 	{
 		my $subdir = $repos{PV}->{wc};
 		chdir ($subdir);
@@ -530,15 +569,6 @@ eval
 			}
 		);
 		
-		# test compilation of cytoscape plugin
-		do_command_step (
-			name => "CYTOSCAPE-GPML",
-			log => "$subdir/cytoscape-gpml.txt",
-			cmd => 'ant -f tools/cytoscape-gpml/build.xml '.
-					"-Dcytoscape.dir=$cytoscapedir " .
-					'-Dwsdl.url=http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl',
-		);
-
 		# test compilation of lucene indexer
 		do_command_step (
 			name => "LUCENE-INDEXER",
@@ -581,7 +611,7 @@ eval
 
 		# Next step: checkstyle
 		do_step (
-			name => "CHECKSTYLE",
+			name => "PV CHECKSTYLE",
 			log => "$subdir/cs_result.txt",
 			action => sub
 			{
@@ -639,7 +669,23 @@ eval
 
 	}
 	
-	if ($repos{PV}->{newer} || $repos{PVPLUGINS}->{newer} || $repos{BRIDGEDB}->{newer})
+	if ($repos{PV}->{newer} || $repos{CYTOSCAPE26}->{newer})
+	{
+		my $subdir = $repos{PV}->{wc};
+		chdir ($subdir);
+
+		# test compilation of cytoscape plugin
+		do_command_step (
+			name => "CYTOSCAPE-GPML",
+			log => "$subdir/cytoscape-gpml.txt",
+			cmd => 'ant -f tools/cytoscape-gpml/build.xml '.
+					"-Dcytoscape.dir=$cytoscapedir " .
+					'-Dwsdl.url=http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl',
+		);
+
+	}
+
+	if ($repos{PV}->{newer} || $repos{PVPLUGINS}->{newer})
 	{
 		my $subdir = $repos{PVPLUGINS}->{wc};
 		chdir ("$subdir");

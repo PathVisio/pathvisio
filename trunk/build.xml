@@ -580,6 +580,7 @@ public class Revision
 				<include name="lib/resources.jar"/>
 				<include name="resources/botresult.css" />
 				<include name="resources/sorttable.js" />
+				<include name="lib/bridgedb.jar"/>
 			</zipfileset>
 		</zip>
 		<tar destfile="${binbase}.tar.gz" compression="gzip">

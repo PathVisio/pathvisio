@@ -35,8 +35,8 @@ import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
  * @author thomas
  */
 public class ConnectorBot extends Bot {
-	private static final String CURATIONTAG = "Curation:NoInteractions";
-	private static final String PROP_THRESHOLD = "threshold";
+	static final String CURATIONTAG = "Curation:NoInteractions";
+	static final String PROP_THRESHOLD = "threshold";
 	
 	double threshold;
 	

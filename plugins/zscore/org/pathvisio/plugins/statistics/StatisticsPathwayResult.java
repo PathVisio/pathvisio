@@ -24,7 +24,7 @@ import org.pathvisio.util.swing.RowWithProperties;
  * Statistics calculation for a single pathway,
  * to be shown as a row in the statistics result table
  */
-class StatisticsPathwayResult implements RowWithProperties<Column> 
+public class StatisticsPathwayResult implements RowWithProperties<Column> 
 {
 	private int r = 0;
 	private int n = 0;
@@ -35,7 +35,10 @@ class StatisticsPathwayResult implements RowWithProperties<Column>
 	double permP = 0;
 	double adjP = 0;
 	
-	File getFile() { return f; }
+	/**
+	 * Get the pathway file.
+	 */
+	public File getFile() { return f; }
 	
 	StatisticsPathwayResult (File f, String name, int n, int r, int total, double z)
 	{

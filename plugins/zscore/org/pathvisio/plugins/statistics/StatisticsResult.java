@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.bridgedb.Gdb;
 import org.pathvisio.gex.SimpleGex;
@@ -54,5 +56,17 @@ public class StatisticsResult
 		out.println();
 		
 		stm.printData(out);
-	}		
+	}	
+	
+	/**
+	 * Get a list containing the statistics results per pathway.
+	 */
+	public List<StatisticsPathwayResult> getPathwayResults() {
+		List<StatisticsPathwayResult> results = 
+			new ArrayList<StatisticsPathwayResult>(stm.getRowCount());
+		for(int i = 0; i < stm.getRowCount(); i++) {
+			results.add(results.get(i));
+		}
+		return results;
+	}
 }

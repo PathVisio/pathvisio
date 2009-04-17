@@ -506,6 +506,7 @@ public class Revision
 					<exclude name="org/pathvisio/visualization/Test.java"/>
 					<exclude name="org/pathvisio/visualization/colorset/Test.java"/>
 					<exclude name="org/pathvisio/wikipathways/WikiPathwaysClientTest.java"/>
+					<exclude name="org/pathvisio/wikipathways/bots/BotsTest.java"/>
 				</fileset>
 			</batchtest>
 		</junit>

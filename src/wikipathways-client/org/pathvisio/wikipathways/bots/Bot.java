@@ -22,11 +22,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.wikipathways.WikiPathwaysCache;
@@ -108,7 +108,7 @@ public abstract class Bot {
 				tagsByPathway.put(t.getPathway().getId(), t);
 			}
 
-			Set<WSPathwayInfo> overrides = new TreeSet<WSPathwayInfo>();
+			Set<WSPathwayInfo> overrides = new HashSet<WSPathwayInfo>();
 			int i = 0;
 			int size = results.size();
 			for(Result r : results) {
@@ -116,7 +116,6 @@ public abstract class Bot {
 				WSPathwayInfo pwi = r.getPathwayInfo();
 				Logger.log.info("Processing pathway " + pwi.getId() + ", "+ i++ + " out of " + size);
 				String pwId = pwi.getId();
-
 				//First check if the existing tag is up-to-date
 				WSCurationTag tag = tagsByPathway.get(pwId);
 
@@ -170,7 +169,7 @@ public abstract class Bot {
 			
 			StringBuilder strb = new StringBuilder();
 			for(WSPathwayInfo pwi : overrides) {
-				strb.append("<a href='" + pwi.getUrl() + ">" + pwi.getId() + "</a>, ");
+				strb.append("<a href='" + pwi.getUrl() + "'>" + pwi.getId() + "</a>, ");
 			}
 			if(strb.length() > 0) {
 				report.setComment("User override tagging for pathways", strb.toString());

@@ -160,6 +160,21 @@ public class WikiPathwaysClient {
 	}
 	
 	/**
+	 * Creates a new pathway on WikiPathways.
+	 * Note: you need to login first, see: {@link #login(String, String)}.
+	 * @param pathway The pathway to create on WikiPathways
+	 * @return The WSPathwayInfo object, containing the identifier and revision of the created pathway.
+	 * @throws RemoteException
+	 * @throws ConverterException
+	 */
+	public WSPathwayInfo createPathway(Pathway pathway) throws RemoteException, ConverterException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		GpmlFormat.writeToXml(pathway, out, true);
+		String gpml = out.toString();
+		return port.createPathway(gpml, auth);
+	}
+	
+	/**
 	 * Apply a curation tag to a pathway. Will overwrite existing tags with the same name.
 	 * @param id The pathway identifier
 	 * @param tagName The name of the tag (e.g. CurationTag:Approved)

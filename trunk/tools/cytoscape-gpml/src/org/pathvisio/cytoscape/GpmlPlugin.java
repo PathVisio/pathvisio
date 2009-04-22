@@ -46,8 +46,6 @@ import java.util.regex.Pattern;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
-import org.pathvisio.biopax.BiopaxElementManager;
-import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.cytoscape.actions.AttributeMapperAction;
 import org.pathvisio.cytoscape.actions.CopyAction;
@@ -97,7 +95,30 @@ import ding.view.InnerCanvas;
 public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListener, PropertyChangeListener {
 	GpmlHandler gpmlHandler;
 
+	private static GpmlPlugin instance;
+	
+	/**
+	 * Can be used by other plugins to get an instance of the GpmlPlugin.
+	 * @return The instance of GpmlPlugin, or null if the plugin wasn't initialized
+	 * yet by the PluginManager.
+	 */
+	public static GpmlPlugin getInstance() {
+		return instance;
+	}
+	
+	/**
+	 * Initializes the GpmlPlugin. Should only be called by Cytoscape's plugin manager!
+	 * 
+	 * Only one instance of this class is allowed, but this constructor can't be made 
+	 * private because it's need by the Cytoscape plugin mechanism.
+	 */
 	public GpmlPlugin() {
+		if(instance != null) {
+			throw new RuntimeException("GpmlPlugin is already instantiated! Use static" +
+					" method getInstance instead!");
+		}
+		instance = this;
+		
 		Logger.log.setLogLevel(true, false, true, true, true, true);
 		MIMShapes.registerShapes();
 

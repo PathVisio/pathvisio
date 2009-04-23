@@ -573,7 +573,7 @@ eval
 		do_command_step (
 			name => "LUCENE-INDEXER",
 			log => "$subdir/lucene.txt",
-			cmd => 'ant -f tools/lucene-indexer/build.xml -Dpathvisio.dir=$pathvisiodir',
+			cmd => "ant -f tools/lucene-indexer/build.xml",
 		);
 
 		# Next step: check that java files have svn propset svn:eol-style native

@@ -62,6 +62,7 @@ public class StatisticsPathwayResult implements RowWithProperties<Column>
 		case ADJPVAL: return String.format ("%3.2f", (float)adjP);
 		case ZSCORE: return String.format ("%3.2f", (float)z);
 		case PCT: return String.format("%3.2f%%", (n == 0 ? Float.NaN : 100.0 * (float)r / (float)n));
+		case FILE_NAME: return f.getName();
 		default : throw new IllegalArgumentException("Unknown property");
 		}
 	}

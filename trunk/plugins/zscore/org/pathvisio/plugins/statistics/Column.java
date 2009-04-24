@@ -27,6 +27,7 @@ enum Column implements PropertyColumn
 	R("positive (r)"),
 	TOTAL("total"),
 	PATHWAY_NAME("Pathway"),
+	FILE_NAME("File"),
 	PCT("%"),
 	PERMPVAL("Permute p-value"),
 	ADJPVAL("Adjusted p-value"),

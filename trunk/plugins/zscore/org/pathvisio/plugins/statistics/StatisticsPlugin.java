@@ -16,9 +16,6 @@
 //
 package org.pathvisio.plugins.statistics;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -60,6 +57,9 @@ import org.pathvisio.util.swing.SimpleFileFilter;
 import org.pathvisio.util.swing.TextFieldUtils;
 import org.pathvisio.visualization.colorset.Criterion;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 /**
  * A PathVisio plugin that lets you do simple overrepresentation analysis on pathways.
  */
@@ -73,8 +73,9 @@ public class StatisticsPlugin implements Plugin
 	{
 		STATS_DIR_LAST_USED_PATHWAY (PreferenceManager.getCurrent().get(GlobalPreference.DIR_PWFILES)),
 		STATS_DIR_LAST_USED_RESULTS (PreferenceManager.getCurrent().get(GlobalPreference.DIR_LAST_USED_PGEX)),
-		MAPPFINDER_COMPATIBILITY (Boolean.toString(true));
-
+		MAPPFINDER_COMPATIBILITY (Boolean.toString(true)),
+		STATS_RESULT_INCLUDE_FILENAME(Boolean.toString(false));
+		
 		StatisticsPreference (String defaultValue) 
 		{
 			this.defaultValue = defaultValue;

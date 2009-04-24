@@ -25,6 +25,8 @@ import java.util.Comparator;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import org.pathvisio.plugins.statistics.StatisticsPlugin.StatisticsPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 
 /**
@@ -35,9 +37,22 @@ class StatisticsTableModel extends ListWithPropertiesTableModel<Column, Statisti
 	private static final long serialVersionUID = 1L;
 	
 	// array of columns we are going to save
-	private static final Column[] SAVE_COLUMNS = new Column[] {
-			Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE, 
-	};
+	private Column[] saveColumns;
+	
+	public StatisticsTableModel() {
+		if(PreferenceManager.getCurrent().getBoolean(
+				StatisticsPreference.STATS_RESULT_INCLUDE_FILENAME)) {
+			saveColumns = new Column[] {
+					Column.PATHWAY_NAME, Column.FILE_NAME, Column.R, 
+					Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE, 
+			};
+		} else {
+			saveColumns = new Column[] {
+					Column.PATHWAY_NAME, Column.R, Column.N, 
+					Column.TOTAL, Column.PCT, Column.ZSCORE, 
+			};
+		}
+	}
 	
 	public void printData(PrintStream out) throws IOException
 	{
@@ -45,7 +60,7 @@ class StatisticsTableModel extends ListWithPropertiesTableModel<Column, Statisti
 		// print table header
 		{
 			boolean first = true;
-			for (Column col : SAVE_COLUMNS)
+			for (Column col : saveColumns)
 			{
 				if (!first)
 				{
@@ -61,7 +76,7 @@ class StatisticsTableModel extends ListWithPropertiesTableModel<Column, Statisti
 		for (StatisticsPathwayResult sr : rows)
 		{
 			boolean first = true;
-			for (Column col : SAVE_COLUMNS)
+			for (Column col : saveColumns)
 			{
 				if (!first)
 				{

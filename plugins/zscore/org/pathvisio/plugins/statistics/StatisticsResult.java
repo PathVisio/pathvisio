@@ -65,7 +65,7 @@ public class StatisticsResult
 		List<StatisticsPathwayResult> results = 
 			new ArrayList<StatisticsPathwayResult>(stm.getRowCount());
 		for(int i = 0; i < stm.getRowCount(); i++) {
-			results.add(results.get(i));
+			results.add(stm.getRow(i));
 		}
 		return results;
 	}

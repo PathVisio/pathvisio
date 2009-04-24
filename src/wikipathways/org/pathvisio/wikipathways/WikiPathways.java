@@ -48,9 +48,9 @@ import org.apache.xmlrpc.util.HttpUtil;
 import org.bridgedb.DBConnector;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
+import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
@@ -63,9 +63,9 @@ import org.pathvisio.gui.wikipathways.SaveReminder;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.Pathway.StatusFlagListener;
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
@@ -80,7 +80,8 @@ import org.xml.sax.SAXException;
 public class WikiPathways implements StatusFlagListener, ApplicationEventListener {		
 	public static final String COMMENT_DESCRIPTION = "WikiPathways-description";
 	public static final String COMMENT_CATEGORY = "WikiPathways-category";
-
+	static final String APPLICATION_NAME = "WikiPathways pathway editor";
+	
 	private boolean disposed;
 	
 	private Parameter parameters = new Parameter();

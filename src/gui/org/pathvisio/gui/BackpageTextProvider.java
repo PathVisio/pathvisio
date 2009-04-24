@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.bridgedb.DataException;
+import org.bridgedb.Gdb;
 import org.bridgedb.Xref;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
@@ -38,10 +39,10 @@ import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.util.Resources;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.SelectionBox.SelectionEvent;
-import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
+import org.pathvisio.view.SelectionBox.SelectionEvent;
+import org.pathvisio.view.SelectionBox.SelectionListener;
 
 /**
  * This class fetches and distributes the backpage text to all registered
@@ -59,7 +60,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		public String getHtml (PathwayElement e);
 	}
 	
-	private static class BackpageAttributes implements BackpageHook
+	public static class BackpageAttributes implements BackpageHook
 	{
 		private final GdbManager gdbManager;
 		
@@ -68,8 +69,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			this.gdbManager = gdbManager;
 		}
 
-		public String getHtml(PathwayElement e) 
-		{
+		public static String getHtml(PathwayElement e, Gdb gdb) {
 			String text = "";
 			String type = e.getDataNodeType(); 
 			
@@ -88,7 +88,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 
 			try
 			{
-				String bpInfo = gdbManager.getCurrentGdb().getBpInfo(e.getXref());
+				String bpInfo = gdb.getBpInfo(e.getXref());
 				text += (bpInfo != null ? bpInfo :  "<I>No " + type + " information found</I>"); 
 			}
 			catch (DataException ex)
@@ -98,9 +98,14 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			}
 			return text;
 		}
+		
+		public String getHtml(PathwayElement e) 
+		{
+			return getHtml(e, gdbManager.getCurrentGdb());
+		}
 	}
 	
-	private static class BackpageXrefs implements BackpageHook
+	public static class BackpageXrefs implements BackpageHook
 	{
 		private final GdbManager gdbManager;
 		
@@ -109,11 +114,10 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			this.gdbManager = gdbManager;
 		}
 
-		public String getHtml(PathwayElement e) 
-		{
+		public static String getHtml(PathwayElement e, Gdb gdb) {
 			try
 			{
-				List<Xref> crfs = gdbManager.getCurrentGdb().getCrossRefs(e.getXref());
+				List<Xref> crfs = gdb.getCrossRefs(e.getXref());
 				crfs.add(e.getXref());
 				if(crfs.size() == 0) return "";
 				StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
@@ -141,6 +145,11 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 				return "Exception occured while getting cross-references</br>\n" 
 					+ ex.getMessage() + "\n";
 			}
+		}
+		
+		public String getHtml(PathwayElement e) 
+		{
+			return getHtml(e, gdbManager.getCurrentGdb());
 		}
 	}
 	

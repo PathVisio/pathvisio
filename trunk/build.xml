@@ -268,6 +268,7 @@ public class Revision
 				<include name="swing-worker-1.1.jar"/>
 				<include name="derbyclient.jar"/>
 				<include name="resources.jar"/>
+				<include name="bridgedb.jar"/>
 			</fileset>
 		</copy>
 		<signjar alias="PV" lazy = "true" 
@@ -342,6 +343,7 @@ public class Revision
 				<include name="swing-worker-1.1.jar"/>
 				<include name="derbyclient.jar"/>
 				<include name="forms-1.2.0.jar"/>
+				<include name="bridgedb.jar"/>
 			</fileset>	
 		</copy>
 		<copy toDir="${wikipathways.bin.dir}/lib">

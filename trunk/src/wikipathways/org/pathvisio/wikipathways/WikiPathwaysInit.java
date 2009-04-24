@@ -61,6 +61,8 @@ public class WikiPathwaysInit
 		if(Utils.getOS() == Utils.OS_WINDOWS) {
 			engine.addPathwayImporter(new MappFormat());
 		}
+		
+		engine.setApplicationName(WikiPathways.APPLICATION_NAME);
 	}
 	
 	public static void registerXmlRpcExporters(URL rpcUrl, Engine engine) {

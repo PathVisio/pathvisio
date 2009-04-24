@@ -300,7 +300,7 @@ public class Revision
 		</jar>
 		<!-- different resources.jar, only with minimal data -->
 		<jar jarfile="${wikipathways.applet.dir}/lib/resources.jar" index="true">
-			<fileset dir="resources" excludes="logo*, *.bmp, *.ai"/>
+			<fileset dir="resources" excludes="logo-*, *.bmp, *.ai"/>
 			<fileset dir="." includes="GPML.xsd"/>
 			<fileset dir="." includes="GPML2007.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>

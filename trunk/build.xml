@@ -453,7 +453,7 @@ public class Revision
 			</zipfileset>
 		</zip>
 		<tar destfile="${srcbase}.tar.gz" compression="gzip">
-			<tarfileset src="${srcbase}.zip"/>
+			<zipfileset src="${srcbase}.zip"/>
 		</tar>
 	</target>
 

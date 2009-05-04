@@ -373,7 +373,7 @@ eval
 		);
 	}
 
-	if ($repos{BRIGDEDB}->{newer})
+	if ($repos{BRIDGEDB}->{newer})
 	{		
 		my $subdir = $repos{BRIDGEDB}->{wc};
 		chdir ("$subdir/corelib");

@@ -404,7 +404,7 @@ eval
 				
 				scp_dir (
 					src => "$subdir/corelib/doc/*",
-					dest => "pathvisio\@www.pathvisio.org:/home/pathvisio/apidoc/bridgedb",
+					dest => "bridgedb\@www.bridgedb.org:/home/bridgedb/apidoc",
 					log => "$subdir/docs.txt",
 				);
 			}

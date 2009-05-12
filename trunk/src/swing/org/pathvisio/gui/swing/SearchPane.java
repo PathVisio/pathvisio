@@ -85,9 +85,9 @@ public class SearchPane extends JPanel
 	private Engine engine;
 	private SwingEngine swingEngine;
 	
-	public SearchPane(Engine engine, SwingEngine swingEngine)
+	public SearchPane(SwingEngine swingEngine)
 	{
-		this.engine = engine;
+		this.engine = swingEngine.getEngine();
 		this.swingEngine = swingEngine;
 		
 		txtSymbol = new JTextField();

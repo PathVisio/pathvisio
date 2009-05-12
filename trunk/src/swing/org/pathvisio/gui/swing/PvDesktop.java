@@ -17,6 +17,8 @@
 
 package org.pathvisio.gui.swing;
 
+import java.util.List;
+
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -35,6 +37,7 @@ import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationEvent;
@@ -248,5 +251,17 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		VPathway vPwy = swingEngine.getEngine().getActiveVPathway();
 		if (vPwy != null) vPwy.redraw();
 	}
+
+	private PluginManager manager = null;
 	
+	public void initPlugins(List<String> locations)
+	{
+		if (manager != null) throw new IllegalStateException ("Can't initialize plugin manager twice!");
+		manager = new PluginManager(locations, this);	
+	}
+	
+	public PluginManager getPluginManager()
+	{
+		return manager;
+	}
 }

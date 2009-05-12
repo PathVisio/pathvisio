@@ -39,8 +39,19 @@ public class PluginManager {
 	//static final String PKG_DIR = PLUGIN_PKG.replace('.', '/');
 	
 	Set<Class<Plugin>> plugins = new LinkedHashSet<Class<Plugin>>();
+	final List<String> pluginLocations;
 	
 	final PvDesktop standaloneEngine;
+	
+	public List<String> getLocations ()
+	{
+		return pluginLocations;
+	}
+	
+	public Set<Class<Plugin>> getPluginClasses ()
+	{
+		return plugins;
+	}
 	
 	/**
 	 * Create a plugin manager that loads plugins from the given locations
@@ -49,6 +60,8 @@ public class PluginManager {
 	 */
 	public PluginManager(List<String> pluginLocations, PvDesktop standaloneEngine) {
 		this.standaloneEngine = standaloneEngine;
+	
+		this.pluginLocations = pluginLocations;
 		
 		for(String s : pluginLocations) {
 			loadPlugins(s);

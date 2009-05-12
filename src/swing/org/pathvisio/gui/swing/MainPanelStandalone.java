@@ -50,7 +50,7 @@ import org.pathvisio.util.Resources;
 public class MainPanelStandalone extends MainPanel 
 {
 	protected JMenuBar menuBar;
-	
+
 	private StandaloneActions standaloneActions = null;
 	private List<File> recent;
 	public static GlobalPreference[] mostRecentArray = new GlobalPreference[] {
@@ -103,6 +103,7 @@ public class MainPanelStandalone extends MainPanel
 
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.add(actions.aboutAction);
+		helpMenu.add(standaloneActions.pluginManagerAction);
 		helpMenu.add(standaloneActions.helpAction);
 		
 		mb.add(fileMenu);
@@ -112,11 +113,19 @@ public class MainPanelStandalone extends MainPanel
 		mb.add(helpMenu);
 	}
 	
-	public MainPanelStandalone(Engine engine, final SwingEngine swingEngine)
+	public MainPanelStandalone(PvDesktop desktop)
 	{
-		super(swingEngine, null);
+		super(desktop.getSwingEngine(), null);
 		
-		SearchPane searchPane = new SearchPane(engine, swingEngine);
+		standaloneActions = new StandaloneActions(desktop);
+	}
+	
+	@Override
+	public void createAndShowGUI()
+	{
+		super.createAndShowGUI();
+
+		SearchPane searchPane = new SearchPane(swingEngine);
 		sidebarTabbedPane.addTab ("Search", searchPane); 
 
 		// backpage hook for showing expression data.
@@ -171,10 +180,8 @@ public class MainPanelStandalone extends MainPanel
 	
 	@Override
 	protected void addToolBarActions(final SwingEngine swingEngine, JToolBar tb) 
-	{
+	{		
 		tb.setLayout(new WrapLayout(1, 1));
-
-		standaloneActions = new StandaloneActions(swingEngine);		
 
 		addToToolbar(standaloneActions.newAction);
 		addToToolbar(standaloneActions.openAction);

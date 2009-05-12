@@ -159,7 +159,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	{
 		this.hideActions = hideActions;
 		this.swingEngine = swingEngine;
-		
+		pathwayElementMenuListener = new PathwayElementMenuListener(swingEngine);
+		model = new PathwayTableModel(swingEngine);
+	}
+	
+	public void createAndShowGUI()
+	{	
 		setLayout(new BorderLayout());
 		setTransferHandler(new PathwayImportHandler());
 		swingEngine.getEngine().addApplicationEventListener(this);
@@ -177,7 +182,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		// set background color when no VPathway is loaded, override l&f because it is usually white.
 		pathwayScrollPane.getViewport().setBackground(Color.LIGHT_GRAY); 
 
-		model = new PathwayTableModel(swingEngine);
 		propertyTable = new JTable(model) {
 
 			public TableCellRenderer getCellRenderer(int row, int column) {
@@ -238,9 +242,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		}
 		
 		menuBar = new JMenuBar();
-		addMenuActions(menuBar);
-		
-		pathwayElementMenuListener = new PathwayElementMenuListener(swingEngine);
+		addMenuActions(menuBar);		
 	}
 	
 	/**

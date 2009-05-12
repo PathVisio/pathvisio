@@ -49,9 +49,11 @@ public class StandaloneActions
 	public final Action selectMetaboliteDbAction;
 	public final Action preferencesAction;
 	public final Action searchAction;
-
-	StandaloneActions (SwingEngine swingEngine)
+	public final Action pluginManagerAction;
+	
+	StandaloneActions (PvDesktop desktop)
 	{
+		SwingEngine swingEngine = desktop.getSwingEngine();
 		openAction = new OpenAction(swingEngine);
 		helpAction = new HelpAction();
 		newAction = new NewAction(swingEngine);
@@ -59,6 +61,7 @@ public class StandaloneActions
 		selectMetaboliteDbAction = new SelectGeneDbAction(swingEngine, "Metabolite");
 		preferencesAction = new PreferencesAction(swingEngine);
 		searchAction = new SearchAction(swingEngine);
+		pluginManagerAction = new PluginManagerAction(desktop);
 	}
 	
 	/**
@@ -90,6 +93,26 @@ public class StandaloneActions
 			{
 				ex.printStackTrace();
 			}
+		}
+	}
+
+	public static class PluginManagerAction extends AbstractAction 
+	{
+		PvDesktop pvDesktop;
+		
+		public PluginManagerAction(PvDesktop desktop)
+		{
+			super();
+			this.pvDesktop = desktop;
+			putValue(NAME, "About plugins");
+			putValue(SHORT_DESCRIPTION, "About Plugins");
+			putValue(LONG_DESCRIPTION, "About Plugins");
+		}
+
+		public void actionPerformed(ActionEvent e) 
+		{
+			PluginManagerDlg dlg = new PluginManagerDlg (pvDesktop);
+			dlg.createAndShowGUI();
 		}
 	}
 

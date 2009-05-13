@@ -16,83 +16,83 @@
 //
 package org.pathvisio.gui.swing;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
-import org.pathvisio.Globals;
-import org.pathvisio.Revision;
 import org.pathvisio.plugin.Plugin;
+import org.pathvisio.plugin.PluginManager.PluginInfo;
 
 /**
- * Creates and displays the About dialog,
- * showing some general information about the application.
+ * Creates and displays the Plugin Manager dialog,
+ * showing information about each plugin,
+ * where they were found, and if there was an error during initialization
  */
 public class PluginManagerDlg 
 {
 	private PvDesktop pvDesktop;
 
 	
-	
 	/**
 	 * call this to open the dialog
 	 */
 	public void createAndShowGUI()
 	{
-		final JFrame aboutDlg = new JFrame();
-		
-		FormLayout layout = new FormLayout(
-				"4dlu, pref, 4dlu, pref, 4dlu",
-				"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
+		final JFrame dlg = new JFrame();
 		
 		JTextArea label = new JTextArea();
 		label.setEditable(false);
 		label.setBackground(UIManager.getColor("Label.background"));
 		
-		CellConstraints cc = new CellConstraints();
-		
-		JPanel dialogBox = new JPanel();
-		dialogBox.setLayout (layout);
-		dialogBox .add (label, cc.xy(4,2));
+		dlg.setLayout (new BorderLayout());
+		dlg.add (new JScrollPane (label), BorderLayout.CENTER);
 		
 		JButton btnOk = new JButton();
 		btnOk.setText("OK");
 		btnOk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e)
 			{
-				aboutDlg.setVisible (false);
-				aboutDlg.dispose();
+				dlg.setVisible (false);
+				dlg.dispose();
 			}
 		});
 		
-		dialogBox.add (btnOk, cc.xyw (2, 6, 3, "center, top"));			
+		dlg.add (btnOk, BorderLayout.SOUTH);			
 		
-		label.append ("Locations:\n");
-		for (String location : pvDesktop.getPluginManager().getLocations())
-		{
-			label.append("\t" + location + "\n");
-		}
+//		label.append ("Locations:\n");
+//		for (String location : pvDesktop.getPluginManager().getLocations())
+//		{
+//			label.append("\t" + location + "\n");
+//		}
 
 		label.append ("Plugin Classes:\n");
 		for (Class<Plugin> pluginClass : pvDesktop.getPluginManager().getPluginClasses())
 		{
 			label.append("\t" + pluginClass + "\n");
 		}
+		
+		label.append ("Plugin Info:\n");
+		{
+			for (PluginInfo inf : pvDesktop.getPluginManager().getPluginInfo())
+			{
+				label.append ("\tParam: " + inf.param + "\n");				
+				label.append ("\tClass: " + inf.plugin + "\n");				
+				if (inf.jar != null) label.append ("\tJar: " + inf.jar.getAbsolutePath() + "\n");
+				if (inf.errorMsg != null) label.append ("\tError: " + inf.errorMsg + "\n");
+				label.append ("\n");
+			}
+		}
 
-		aboutDlg.setTitle("About Plugins");
-		aboutDlg.add (dialogBox);
-		aboutDlg.pack();
-		aboutDlg.setLocationRelativeTo(pvDesktop.getFrame());
-		aboutDlg.setVisible(true);		
+		dlg.setTitle("About Plugins");
+		dlg.pack();
+		dlg.setLocationRelativeTo(pvDesktop.getFrame());
+		dlg.setVisible(true);		
 	}
 		
 	public PluginManagerDlg(PvDesktop desktop) 

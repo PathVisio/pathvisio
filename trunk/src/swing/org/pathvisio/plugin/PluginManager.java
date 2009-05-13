@@ -19,6 +19,7 @@ package org.pathvisio.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
@@ -66,7 +67,6 @@ public class PluginManager {
 	{
 		public Class<Plugin> plugin;
 		public File jar; // may be null if it wasn't a jar
-		public String errorMsg; // null if there was no error
 		public Throwable error; // null if there was no error
 		public String param; // parameter that caused this plugin to be loaded 
 	}
@@ -143,7 +143,7 @@ public class PluginManager {
 				if(entryname.endsWith(".class")) {
 					String cn = removeClassExt(entryname.replace('/', '.'));
 					URL u = new URL("jar", "", file.toURL() + "!/");
-					ClassLoader cl = new PluginClassLoader(u);
+					ClassLoader cl = new URLClassLoader(new URL[] { u }, this.getClass().getClassLoader());
 					
 					loadByClassName (cn, inf, cl);
 					// start building a new pluginInfo, it is possible that there
@@ -156,7 +156,6 @@ public class PluginManager {
 		}
 		catch (IOException ex)
 		{
-			inf.errorMsg = ex.getMessage();
 			inf.error = ex;
 		}
 	}
@@ -199,7 +198,6 @@ public class PluginManager {
 		} catch(Throwable ex) {
 			Logger.log.error("\tUnable to load plugin", ex);
 			inf.error = ex;
-			inf.errorMsg = ex.getMessage();
 			info.add(inf);
 		}
 

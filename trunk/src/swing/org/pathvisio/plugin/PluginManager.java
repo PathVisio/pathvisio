@@ -19,6 +19,7 @@ package org.pathvisio.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.zip.ZipEntry;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.PvDesktop;
+import org.pathvisio.util.FileUtils;
 
 /**
  * This class loads and maintains a collection of plugins
@@ -54,6 +56,28 @@ public class PluginManager {
 	}
 	
 	/**
+	 * Info about a plugin (active or non-active).
+	 * Gives info about
+	 * <li>from which jar it was loaded, if any
+	 * <li>if there were any errors
+	 * <li>which parameter caused it to be loaded
+	 */
+	public static class PluginInfo
+	{
+		public Class<Plugin> plugin;
+		public File jar; // may be null if it wasn't a jar
+		public String errorMsg; // null if there was no error
+		public Throwable error; // null if there was no error
+		public String param; // parameter that caused this plugin to be loaded 
+	}
+	
+	List<PluginInfo> info = new ArrayList<PluginInfo>();
+	public List<PluginInfo> getPluginInfo()
+	{
+		return info;
+	}
+	
+	/**
 	 * Create a plugin manager that loads plugins from the given locations
 	 * @param pluginLocations A list of Strings pointing to jar files 
 	 * or directories that will be searched recursively for jar files.
@@ -64,97 +88,126 @@ public class PluginManager {
 		this.pluginLocations = pluginLocations;
 		
 		for(String s : pluginLocations) {
-			loadPlugins(s);
+			loadFromParameter(s);
 		}
 	}
 	
 	/**
-	 * Loads all plugins in the given directory
+	 * If argument is a dir, load all jar files in that dir recursively
+	 * If argument is a single jar file, load that jar file
+	 * If argument is a class name, load that class from current class path
 	 */
-	void loadPlugins(String pluginLocation) {
+	void loadFromParameter(String param) 
+	{
 		//See if the plugin is a file
-		File dir = new File(pluginLocation);
-		Logger.log.info ("Looking for plugins in file or directory " + dir.getAbsolutePath());
-		if(dir.exists()) {
-			if(dir.isDirectory()) {
-				Logger.log.info("Detected plugin argument as dir");
-				for(File f : dir.listFiles()) {
-					loadPlugins(f.getAbsolutePath());
+		File file = new File(param);
+		if(file.exists()) {
+			// see if it is a directory
+			if(file.isDirectory()) {
+				Logger.log.info ("Looking for plugins in directory " + file.getAbsolutePath());
+				for(File f : FileUtils.getFiles(file, "jar", true)) {
+					loadFromJar (f, param);
 				}
-			} else {
-				Logger.log.info("Detected plugin argument as jar");
-				loadPlugin(dir);
+				return;
+			} 
+			if(file.getName().endsWith(".jar")) 
+			{
+				Logger.log.info("Detected plugin argument as jar " + param);
+				loadFromJar(file, param);
+				return;
 			}
-		} else {
-			//Otherwise, try to load the class directly
-			Logger.log.info("File not found, assuming plugin argument is a class");
-			loadAsClass(pluginLocation);
-		}
+		}		
+		//Otherwise, try to load the class directly
+		Logger.log.info("No jar or dir found, assuming plugin argument is a class " + param);
+		loadAsClass(param);
 	}
 	
 	/**
-	 * Loads a plugin from the given jarfile
+	 * @param param original parameter that triggered this file to be included,
+	 * this helps in understanding where plugins come from
 	 */
-	void loadPlugin(File file) {
-		Logger.log.trace("Attempt to load plugin jar: " + file);
-		if(file.getName().endsWith(".jar")) {
-			try {
-				loadFromJar(file);
-			} catch (IOException e) {
-				Logger.log.error("\tUnable to load jar file '" + file + "'", e);
-			}
-		} else {
-			Logger.log.trace("\tNot a jar file!");
-		}
-	}
-	
-	void loadFromJar(File file) throws IOException {
-		JarFile jarFile = new JarFile(file);
-		Logger.log.trace("\tLoading from jar file " + jarFile);
-		Enumeration<?> e = jarFile.entries();
-		while (e.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry)e.nextElement();
-			Logger.log.trace("Checking " + entry);
-			String entryname = entry.getName();
-			if(entryname.endsWith(".class")) {
-				String cn = removeClassExt(entryname.replace('/', '.'));
-				URL u = new URL("jar", "", file.toURL() + "!/");
-				ClassLoader cl = new PluginClassLoader(u);
-				try {
-					Class<?> c = cl.loadClass(cn);
-					if(isPlugin(c)) {
-						Class<Plugin> pluginClass = (Class<Plugin>)c;
-						loadPlugin(pluginClass);
-					}
-				} catch(Throwable ex) {
-					Logger.log.error("\tUnable to load plugin", ex);
+	void loadFromJar(File file, String param) 
+	{
+		PluginInfo inf = new PluginInfo();
+		inf.jar = file;				
+		inf.param = param;
+		try
+		{
+			JarFile jarFile = new JarFile(file);
+			Logger.log.trace("\tLoading from jar file " + jarFile);
+			Enumeration<?> e = jarFile.entries();
+			while (e.hasMoreElements()) {
+				ZipEntry entry = (ZipEntry)e.nextElement();
+				Logger.log.trace("Checking " + entry);
+				String entryname = entry.getName();
+				if(entryname.endsWith(".class")) {
+					String cn = removeClassExt(entryname.replace('/', '.'));
+					URL u = new URL("jar", "", file.toURL() + "!/");
+					ClassLoader cl = new PluginClassLoader(u);
+					
+					loadByClassName (cn, inf, cl);
+					// start building a new pluginInfo, it is possible that there
+					// are multiple plugin classes in a single jar
+					inf = new PluginInfo();
+					inf.jar = file;
+					inf.param = param;
 				}
 			}
+		}
+		catch (IOException ex)
+		{
+			inf.errorMsg = ex.getMessage();
+			inf.error = ex;
 		}
 	}
 	
 	void loadAsClass(String className) {
-		try {
-			Class<?> c = Class.forName(className);
-			if(isPlugin(c)) {
-				Class<Plugin> pluginClass = (Class<Plugin>)c;
-				loadPlugin(pluginClass);
-			}
-		} catch(Throwable ex) {
-			Logger.log.error("\tUnable to load plugin", ex);
-		}
+		PluginInfo inf = new PluginInfo();
+		inf.param = className;
+		loadByClassName (className, inf, null);
 	}
 	
 	static String removeClassExt(String fn) {
 		return fn.substring(0, fn.length() - 6);
 	}
 	
-	void loadPlugin(Class<Plugin> c) throws InstantiationException, IllegalAccessException {
-			c.newInstance().init(standaloneEngine);
-			plugins.add(c);
-			Logger.log.trace("\tLoaded plugin: " + c);
+	/**
+	 * Try to instantiate the given class by name,
+	 * and capture any error in PluginInfo
+	 */
+	private void loadByClassName(String className, PluginInfo inf, ClassLoader cl)
+	{
+		try {
+			Class<?> c;
+			if (cl != null)
+			{
+				c = cl.loadClass(className);
+			}
+			else
+			{
+				c = Class.forName(className);
+			}
+			
+			if(isPlugin(c)) {
+				Class<Plugin> pluginClass = (Class<Plugin>)c;
+				inf.plugin = pluginClass;
+				pluginClass.newInstance().init(standaloneEngine);
+				plugins.add(pluginClass);
+				info.add(inf);
+				Logger.log.trace("\tLoaded plugin: " + c);
+			}
+		} catch(Throwable ex) {
+			Logger.log.error("\tUnable to load plugin", ex);
+			inf.error = ex;
+			inf.errorMsg = ex.getMessage();
+			info.add(inf);
+		}
+
 	}
 	
+	/**
+	 * Check if the given class implements the @link Plugin interface 
+	 */
 	boolean isPlugin(Class<?> c) {
 		Class<?>[] interfaces = c.getInterfaces();
 		for(Class<?> i : interfaces) {

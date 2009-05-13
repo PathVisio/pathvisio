@@ -23,10 +23,10 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.UIManager;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
-import org.pathvisio.plugin.Plugin;
 import org.pathvisio.plugin.PluginManager.PluginInfo;
 
 /**
@@ -46,12 +46,13 @@ public class PluginManagerDlg
 	{
 		final JFrame dlg = new JFrame();
 		
-		JTextArea label = new JTextArea();
-		label.setEditable(false);
-		label.setBackground(UIManager.getColor("Label.background"));
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode ("Plugin Manager");
+		JTree tree = new JTree(top);
+		DefaultMutableTreeNode active = new DefaultMutableTreeNode ("active");
+		top.add (active);
 		
 		dlg.setLayout (new BorderLayout());
-		dlg.add (new JScrollPane (label), BorderLayout.CENTER);
+		dlg.add (new JScrollPane (tree), BorderLayout.CENTER);
 		
 		JButton btnOk = new JButton();
 		btnOk.setText("OK");
@@ -65,30 +66,41 @@ public class PluginManagerDlg
 		
 		dlg.add (btnOk, BorderLayout.SOUTH);			
 		
-//		label.append ("Locations:\n");
-//		for (String location : pvDesktop.getPluginManager().getLocations())
-//		{
-//			label.append("\t" + location + "\n");
-//		}
-
-		label.append ("Plugin Classes:\n");
-		for (Class<Plugin> pluginClass : pvDesktop.getPluginManager().getPluginClasses())
-		{
-			label.append("\t" + pluginClass + "\n");
-		}
+		DefaultMutableTreeNode errors = new DefaultMutableTreeNode ("errors");
+		top.add (errors);
 		
-		label.append ("Plugin Info:\n");
-		{
-			for (PluginInfo inf : pvDesktop.getPluginManager().getPluginInfo())
+		// fill in the contents of the tree view
+		for (PluginInfo inf : pvDesktop.getPluginManager().getPluginInfo())
+		{				
+			if (inf.error == null)
 			{
-				label.append ("\tParam: " + inf.param + "\n");				
-				label.append ("\tClass: " + inf.plugin + "\n");				
-				if (inf.jar != null) label.append ("\tJar: " + inf.jar.getAbsolutePath() + "\n");
-				if (inf.error != null) label.append ("\tError: " + inf.error + "\n");
-				label.append ("\n");
+				DefaultMutableTreeNode plugin;
+				plugin = new DefaultMutableTreeNode(inf.plugin == null ? "null" : inf.plugin.getSimpleName());
+				plugin.add (new DefaultMutableTreeNode ("" + inf.plugin));
+				plugin.add (new DefaultMutableTreeNode ("Param: " + inf.param));				
+								
+				if (inf.jar != null) 
+					plugin.add (new DefaultMutableTreeNode ("Jar: " + inf.jar.getAbsolutePath()));
+				active.add(plugin); 
+			}
+			else 
+			{
+				DefaultMutableTreeNode error;
+				error = new DefaultMutableTreeNode("" + inf.error.getClass());
+				error.add (new DefaultMutableTreeNode ("" + inf.error));
+				if (inf.plugin != null) 
+						error.add (new DefaultMutableTreeNode ("Class: " + inf.plugin.getName()));
+				error.add (new DefaultMutableTreeNode ("Param: " + inf.param));				
+								
+				if (inf.jar != null) 
+					error.add (new DefaultMutableTreeNode ("Jar: " + inf.jar.getAbsolutePath()));
+				errors.add (error);
 			}
 		}
-
+		tree.expandPath(new TreePath(active.getPath()));
+		tree.expandPath(new TreePath(errors.getPath()));
+		tree.setRootVisible(false);
+		tree.setEditable(false);
 		dlg.setTitle("About Plugins");
 		dlg.pack();
 		dlg.setLocationRelativeTo(pvDesktop.getFrame());

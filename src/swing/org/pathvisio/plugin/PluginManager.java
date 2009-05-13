@@ -23,6 +23,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.jar.JarFile;
@@ -34,8 +35,6 @@ import org.pathvisio.util.FileUtils;
 
 /**
  * This class loads and maintains a collection of plugins
- * @author thomas
- *
  */
 public class PluginManager {
 	//static final String PLUGIN_PKG = "org.pathvisio.visualization.plugins";
@@ -119,7 +118,9 @@ public class PluginManager {
 		}		
 		//Otherwise, try to load the class directly
 		Logger.log.info("No jar or dir found, assuming plugin argument is a class " + param);
-		loadAsClass(param);
+		PluginInfo inf = new PluginInfo();
+		inf.param = param;
+		loadByClassName(param, inf, null);
 	}
 	
 	/**
@@ -158,12 +159,6 @@ public class PluginManager {
 		{
 			inf.error = ex;
 		}
-	}
-	
-	void loadAsClass(String className) {
-		PluginInfo inf = new PluginInfo();
-		inf.param = className;
-		loadByClassName (className, inf, null);
 	}
 	
 	static String removeClassExt(String fn) {

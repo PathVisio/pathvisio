@@ -96,6 +96,11 @@ public class StandaloneActions
 		}
 	}
 
+	/**
+	 * Help -> Plugin Manager
+	 * Show a list of active plugins and errors that 
+	 * occurred while initializing the plugin manager.
+	 */
 	public static class PluginManagerAction extends AbstractAction 
 	{
 		PvDesktop pvDesktop;
@@ -104,9 +109,8 @@ public class StandaloneActions
 		{
 			super();
 			this.pvDesktop = desktop;
-			putValue(NAME, "About plugins");
-			putValue(SHORT_DESCRIPTION, "About Plugins");
-			putValue(LONG_DESCRIPTION, "About Plugins");
+			putValue(NAME, "Plugin manager");
+			putValue(SHORT_DESCRIPTION, "Information about active plugins");
 		}
 
 		public void actionPerformed(ActionEvent e) 

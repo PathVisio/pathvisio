@@ -25,7 +25,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.Organism;
 import org.bridgedb.Xref;
 import org.bridgedb.XrefWithSymbol;
 import org.pathvisio.preferences.PreferenceManager;
@@ -619,56 +618,6 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	public void pathwayModified(PathwayEvent e) 
 	{
 		gmmlObjectModified (e);
-	}
-	
-	public void testDataSource()
-	{
-		DataSource ds = DataSource.ENSEMBL;
-		assertEquals (ds.getFullName(), "Ensembl");
-		assertEquals (ds.getSystemCode(), "En");
-		
-		DataSource.register("@@", "ZiZaZo", null, null, null, false, false, null);
-		
-		DataSource ds2 = DataSource.getBySystemCode ("@@");
-		DataSource ds3 = DataSource.getByFullName ("ZiZaZo");
-		assertEquals (ds2, ds3);
-		
-		// assert that you can refer to 
-		// undeclared systemcodes if necessary.
-		assertNotNull (DataSource.getBySystemCode ("##"));
-		
-		DataSource ds4 = DataSource.getBySystemCode ("En");
-		assertEquals (ds, ds4);
-		
-		DataSource ds5 = DataSource.getByFullName ("Entrez Gene");
-		assertEquals (ds5, DataSource.ENTREZ_GENE);
-	}
-
-	public void testDataSourceFilter ()
-	{
-		// ensembl is primary, affy isn't
-		Set<DataSource> f1 = DataSource.getFilteredSet(true, null, null);
-		assertTrue (f1.contains(DataSource.ENSEMBL));
-		assertTrue (f1.contains(DataSource.HMDB));
-		assertFalse (f1.contains(DataSource.AFFY));
-
-		// wormbase is specific for Ce.
-		Set<DataSource> f2 = DataSource.getFilteredSet(null, null, Organism.CaenorhabditisElegans);
-		assertTrue (f2.contains(DataSource.ENSEMBL));
-		assertTrue (f2.contains(DataSource.WORMBASE));
-		assertFalse (f2.contains(DataSource.ZFIN));
-
-		// metabolites
-		Set<DataSource> f3 = DataSource.getFilteredSet(null, true, null);
-		assertTrue (f3.contains(DataSource.HMDB));
-		assertFalse (f3.contains(DataSource.WORMBASE));
-		assertFalse (f3.contains(DataSource.ENSEMBL));
-
-		// non-metabolites
-		Set<DataSource> f4 = DataSource.getFilteredSet(null, false, null);
-		assertTrue (f4.contains(DataSource.ENSEMBL));
-		assertTrue (f4.contains(DataSource.WORMBASE));
-		assertFalse (f4.contains(DataSource.HMDB));
 	}
 	
 	/**

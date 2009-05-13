@@ -84,7 +84,7 @@ public class PluginManagerDlg
 				label.append ("\tParam: " + inf.param + "\n");				
 				label.append ("\tClass: " + inf.plugin + "\n");				
 				if (inf.jar != null) label.append ("\tJar: " + inf.jar.getAbsolutePath() + "\n");
-				if (inf.errorMsg != null) label.append ("\tError: " + inf.errorMsg + "\n");
+				if (inf.error != null) label.append ("\tError: " + inf.error + "\n");
 				label.append ("\n");
 			}
 		}

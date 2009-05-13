@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.bridgedb.DBConnector;
+import org.bridgedb.Organism;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
@@ -631,5 +632,15 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		assert (!disposed);
 		engine.removeApplicationEventListener(this);
 		disposed = true;
+	}
+	
+	/** 
+	 * Returns the organism set in the active pathway.
+	 * May return null if there is no current organism set 
+	 */
+	public Organism getCurrentOrganism()
+	{
+		String organism = getEngine().getActivePathway().getMappInfo().getOrganism();
+		return Organism.fromLatinName(organism); 
 	}
 }

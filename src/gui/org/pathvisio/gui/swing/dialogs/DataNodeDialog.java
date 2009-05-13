@@ -44,6 +44,7 @@ import javax.swing.event.ListDataListener;
 import org.bridgedb.DataException;
 import org.bridgedb.DataSource;
 import org.bridgedb.Gdb;
+import org.bridgedb.Organism;
 import org.bridgedb.Xref;
 import org.bridgedb.XrefWithSymbol;
 import org.jdesktop.swingworker.SwingWorker;
@@ -53,6 +54,7 @@ import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.PermissiveComboBox;
@@ -63,11 +65,8 @@ import org.pathvisio.util.swing.PermissiveComboBox;
  */
 public class DataNodeDialog extends PathwayElementDialog {
 
-	private final SwingEngine swingEngine;
-	
 	protected DataNodeDialog(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		super(swingEngine, e, readonly, frame, "DataNode properties", locationComp);
-		this.swingEngine = swingEngine;
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
 	}
@@ -259,6 +258,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 
 		dsm = new DataSourceModel();
 		dsm.setPrimaryFilter(true);
+		dsm.setSpeciesFilter(swingEngine.getCurrentOrganism());
 		dbCombo = new PermissiveComboBox(dsm);
 
 		GridBagConstraints c = new GridBagConstraints();

@@ -34,7 +34,7 @@
 	<property name="wikipathways.applet.dest" value="${wikipathways.dest}/wpi/applet"/>
 	<property name="diffview.applet.dir" value="applet"/>
 	<property name="diffview.applet.dest" value="${wikipathways.applet.dest}"/>
-	<property name="diffview.applet.class.path" value="lib/jdom.jar lib/derbyclient.jar lib/swing-worker-1.1.jar lib/resources.jar"/>
+	<property name="diffview.applet.class.path" value="lib/bridgedb.jar lib/jdom.jar lib/derbyclient.jar lib/swing-worker-1.1.jar lib/resources.jar"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="checkstyle.output.file" value="warnings.txt"/>
 	<property name="wikipathways.class.path" value="lib/bridgedb.jar lib/forms-1.2.0.jar lib/jdom.jar lib/resources.jar lib/derbyclient.jar lib/swing-worker-1.1.jar lib/apache/commons-codec-1.3.jar lib/apache/commons-httpclient-3.0.1.jar lib/apache/commons-logging-1.1.jar lib/apache/ws-commons-util-1.0.1.jar lib/apache/xmlrpc-client-3.0.jar lib/apache/xmlrpc-common-3.0.jar"/>

@@ -37,7 +37,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
 import org.pathvisio.gex.BackpageExpression;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.preferences.GlobalPreference;

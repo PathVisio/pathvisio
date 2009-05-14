@@ -75,6 +75,9 @@ public class VisualizationPlugin implements Plugin {
 		desktop.registerMenuAction ("Data", new VisualizationAction(
 				aDesktop)
 		);
+		
+		Legend legendPane = new Legend(desktop);
+		desktop.getSideBarTabbedPane().addTab ("Legend", legendPane);
 	}
 
 	/**

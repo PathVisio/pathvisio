@@ -23,9 +23,10 @@ import org.pathvisio.view.LinAlg.Point;
 
 
 /**
- * Implement this to provide a line shape for connectors
- * @author thomas
- *
+ * Implement this to provide a line shape for connectors.
+ * 
+ * Different implementations may draw a Line in different ways, for example with
+ * curved or straight lines.
  */
 public interface ConnectorShape {
 	
@@ -41,7 +42,7 @@ public interface ConnectorShape {
 	public void recalculateShape(ConnectorRestrictions restrictions);
 	
 	/**
-	 * Get the shape that represents the connector path
+	 * Get the Shape that represents the connector path
 	 */
 	public java.awt.Shape getShape();
 	
@@ -79,7 +80,7 @@ public interface ConnectorShape {
 	
 	/**
 	 * A single segment of the connector path.
-	 * @author thomas
+	 * This is simply a combination of a start and end Point2D.
 	 */
 	public class Segment {
 		private Point2D start, end;
@@ -105,6 +106,7 @@ public interface ConnectorShape {
 			this.start = start;
 		}
 		
+		/** the center of the bounding box around start, end */
 		public Point2D getMCenter() {
 			return new Point2D.Double(
 					start.getX() + (end.getX() - start.getX()) / 2,
@@ -123,7 +125,9 @@ public interface ConnectorShape {
 
 	/**
 	 * Translates a 1-dimensional line coordinate to a 2-dimensional
-	 * view coordinate.
+	 * view coordinate. 
+	 * The 1-dimensional line coordinate is position objects that are attached
+	 * to the line.
 	 */
 	public Point2D fromLineCoordinate(double l);
 	

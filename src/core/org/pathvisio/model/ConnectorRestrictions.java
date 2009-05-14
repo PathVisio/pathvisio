@@ -23,13 +23,16 @@ import org.pathvisio.model.ConnectorShape.WayPoint;
 
 /**
  * Methods to provide restrictions for the connector path
- * @author thomas
- *
  */
 public interface ConnectorRestrictions {
+	
+	/** line is connected to a PathwayElement on it's NORTH side. */
 	public final static int SIDE_NORTH = 0;
+	/** line is connected to a PathwayElement on it's EAST side. */
 	public final static int SIDE_EAST = 1;
+	/** line is connected to a PathwayElement on it's SOUTH side. */
 	public final static int SIDE_SOUTH = 2;
+	/** line is connected to a PathwayElement on it's WEST side. */
 	public final static int SIDE_WEST = 3;
 	
 	/**

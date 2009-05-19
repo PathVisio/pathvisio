@@ -98,8 +98,8 @@ public abstract class ColorSetObject {
 	 * changed. 
 	 */
 	protected void fireModifiedEvent() {
-		if(parent != null && parent.colorSetMgr != null) 
-			parent.colorSetMgr.fireColorSetEvent(
+		if(parent != null && parent.getColorSetManager() != null) 
+			parent.getColorSetManager().fireColorSetEvent(
 				new ColorSetEvent (this, ColorSetEvent.COLORSET_MODIFIED));
 	}
 	

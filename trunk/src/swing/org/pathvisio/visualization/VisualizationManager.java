@@ -51,6 +51,14 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
  */
 public class VisualizationManager implements GexManagerListener, VPathwayListener, ApplicationEventListener 
 {
+	/** Exceptions for the Visualization Manager,
+	 * such as failure while loading stored visualization xml */
+	public static class VisualizationException extends Exception
+	{
+		public VisualizationException (String msg) { super (msg); }
+		public VisualizationException (Throwable t) { super (t); }
+	}
+	
 	/**
 	   name of the top-level xml element
 	 */

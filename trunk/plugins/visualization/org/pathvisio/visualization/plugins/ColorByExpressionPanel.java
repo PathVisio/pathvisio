@@ -165,8 +165,10 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 					"4dlu, pref:grow, 4dlu, pref, 4dlu"
 			));
 			
+			List<Sample> selected = method.getSelectedSamples();
+			for (Sample s : selected) if (s == null) throw new NullPointerException();
 			sampleList = new SortSampleCheckList(
-					method.getSelectedSamples()
+					selected
 			);
 			sampleList.getList().addActionListener(this);
 			sampleList.getList().setActionCommand(ACTION_SAMPLE);

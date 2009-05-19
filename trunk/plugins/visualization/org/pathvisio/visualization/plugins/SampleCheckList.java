@@ -92,9 +92,11 @@ public class SampleCheckList extends JCheckBoxList {
 		setModel(model);
 	}
 	
-	private JCheckBox addSample(Sample s) {
+	private JCheckBox addSample(Sample s) 
+	{
+		if (s == null) throw new NullPointerException();
 		JCheckBox ch = new JCheckBox();
-		ch.setText(s.getName());
+		ch.setText("" + s.getName());
 		model.addElement(ch);
 		checkbox2sample.put(ch, s);
 		sample2checkbox.put(s, ch);

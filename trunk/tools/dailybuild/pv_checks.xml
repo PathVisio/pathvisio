@@ -3,7 +3,7 @@
     This configuration file was written by the eclipse-cs plugin configuration editor
 -->
 <!--
-    Checkstyle-Configuration: pathvisio_checks
+    Checkstyle-Configuration: pv_checks
     Description: none
 -->
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
@@ -45,6 +45,8 @@
         <module name="EqualsHashCode"/>
         <module name="IllegalInstantiation"/>
         <module name="StringLiteralEquality"/>
-        <module name="IllegalThrows"/>
+        <module name="IllegalThrows">
+            <property name="illegalClassNames" value="java.lang.Throwable, java.lang.Error, java.lang.RuntimeException, java.lang.Exception"/>
+        </module>
     </module>
 </module>

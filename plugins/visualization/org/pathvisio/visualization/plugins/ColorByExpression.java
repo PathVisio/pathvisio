@@ -29,9 +29,7 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageProducer;
 import java.awt.image.RGBImageFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -41,6 +39,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import org.bridgedb.DataException;
 import org.bridgedb.Xref;
 import org.jdom.Element;
 import org.pathvisio.Engine;
@@ -54,6 +53,7 @@ import org.pathvisio.util.Resources;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
+import org.pathvisio.visualization.VisualizationManager.VisualizationException;
 import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorSet;
 
@@ -165,7 +165,8 @@ public class ColorByExpression extends VisualizationMethod {
 	public List<Sample> getSelectedSamples() {
 		List<Sample> samples = new ArrayList<Sample>();
 		
-		for(ConfiguredSample cs : useSamples) {
+		for(ConfiguredSample cs : useSamples) 
+		{
 			samples.add(cs.getSample());
 		}
 		return samples;
@@ -327,7 +328,8 @@ public class ColorByExpression extends VisualizationMethod {
 		}
 	}
 	
-	void setUseSamples(List<ConfiguredSample> samples) {
+	void setUseSamples(List<ConfiguredSample> samples) 
+	{
 		useSamples = samples;
 	}
 	
@@ -408,7 +410,7 @@ public class ColorByExpression extends VisualizationMethod {
 		for(Object o : xml.getChildren(ConfiguredSample.XML_ELEMENT)) {
 			try {
 				useSamples.add(new ConfiguredSample((Element)o));
-			} catch(Exception e) {
+			} catch(VisualizationException e) {
 				Logger.log.error("Unable to load plugin settings", e);
 			}
 		}	
@@ -418,8 +420,6 @@ public class ColorByExpression extends VisualizationMethod {
 	 * This class stores the configuration for a sample that is selected for
 	 * visualization. In this implementation, a color-set to use for visualization is stored.
 	 * Extend this class to store additional configuration data.
-	 * @author Thomas
-	 *
 	 */
 	class ConfiguredSample {		
 		public static final int AMBIGIOUS_AVG = 0;
@@ -433,7 +433,7 @@ public class ColorByExpression extends VisualizationMethod {
 		Color replaceColor = DEFAULT_TRANSPARENT;
 		int tolerance; //range 0 - 255;
 
-		Sample sample;
+		private Sample sample;
 
 		int getAmbigiousType() { return ambigious; }
 		
@@ -442,7 +442,8 @@ public class ColorByExpression extends VisualizationMethod {
 			modified();
 		}
 		
-		public Sample getSample() {
+		public Sample getSample() 
+		{
 			return sample;
 		}
 		
@@ -493,10 +494,25 @@ public class ColorByExpression extends VisualizationMethod {
 			return xml;
 		}
 		
-		private final void loadXML(Element xml) throws Exception {
+		private final void loadXML(Element xml) throws VisualizationException 
+		{
 			int id = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ID));
+			
 			String csn = xml.getAttributeValue(XML_ATTR_COLORSET);
-			sample = gexManager.getCurrentGex().getSamples().get(id);
+			try
+			{
+				sample = gexManager.getCurrentGex().getSamples().get(id);
+			}
+			catch (DataException ex)
+			{
+				throw new VisualizationException(ex);
+			}
+			
+			if (sample == null) 
+			{
+				throw new VisualizationException("Couldn't find Sample with id " + id);
+			}
+			
 			setColorSet(getVisualization().getManager().getColorSetManager().getColorSet(csn));
 			loadAttributes(xml);
 		}
@@ -506,6 +522,7 @@ public class ColorByExpression extends VisualizationMethod {
 		 * @param s The sample to base the configured sample on
 		 */
 		public ConfiguredSample(Sample s) {
+			if (s == null) throw new NullPointerException();
 			sample = s;
 		}
 		
@@ -516,9 +533,9 @@ public class ColorByExpression extends VisualizationMethod {
 		/**
 		 * Create a configured sample from the information in the given XML element
 		 * @param xml The XML element containing information to create the configured sample from
-		 * @throws Exception
+		 * @throws VisualizationException
 		 */
-		public ConfiguredSample(Element xml) throws Exception {
+		public ConfiguredSample(Element xml) throws VisualizationException {
 			loadXML(xml);
 		}
 		
@@ -595,7 +612,8 @@ public class ColorByExpression extends VisualizationMethod {
 				try {
 					cacheImage = ImageIO.read(imageURL);
 				} catch(IOException e) {
-					Logger.log.error("Unable to load image", e);
+					Logger.log.error("Unable to load image from " + imageURL, e);
+					//TODO: better exception handling
 					return null;
 				}
 			}
@@ -673,15 +691,6 @@ public class ColorByExpression extends VisualizationMethod {
 					rgb2.getBlue() <= rgb1.getBlue() + tolerance;
 		}
 		
-		InputStream getInputStream(URL url) {
-			try {
-				URLConnection con = url.openConnection();
-				return con.getInputStream();
-			} catch(IOException e) {
-				Logger.log.error("Unable to open connection to image", e);
-			}
-			return null;
-		}
 	}
 
 	@Override

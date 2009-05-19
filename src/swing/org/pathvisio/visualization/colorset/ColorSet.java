@@ -60,10 +60,10 @@ public class ColorSet
 	/**
 	 * A user can give each colorset a name
 	 */
-	String name;
-	ColorSetManager colorSetMgr;
+	private String name;
+	private ColorSetManager colorSetMgr;
 	
-	public List<ColorSetObject> colorSetObjects = new ArrayList<ColorSetObject>();
+	private List<ColorSetObject> colorSetObjects = new ArrayList<ColorSetObject>();
 		
 	public ColorSetManager getColorSetManager() { return colorSetMgr; }
 	

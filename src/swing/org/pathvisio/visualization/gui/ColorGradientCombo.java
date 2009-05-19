@@ -91,6 +91,10 @@ public class ColorGradientCombo extends JComboBox
 		return id2gradient.get(getSelectedItem());
 	}
 	
+	/**
+	 * ListCellRenderer for rendering Color gradients in a JList
+	 * or JComboBox.
+	 */
 	class ColorGradientRenderer extends JLabel implements ListCellRenderer 
 	{
 		ColorGradient current;

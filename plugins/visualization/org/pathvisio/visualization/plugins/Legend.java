@@ -33,6 +33,7 @@ import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorGradient;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
@@ -104,6 +105,8 @@ public class Legend extends JPanel implements VisualizationListener {
 	private static final int TOTAL_SAMPLES_WIDTH = 100;
 	private static final int SAMPLES_HEIGHT = 20;
 	private static final int COLOR_BOX_SIZE = 20;
+	private static final int COLOR_GRADIENT_WIDTH = 80;
+	private static final int COLOR_GRADIENT_MARGIN = 50;
 	private static final int MARGIN_LEFT = 5;
 	private static final int MARGIN_TOP = 5;
 	private static final int INNER_MARGIN = 5;
@@ -125,8 +128,8 @@ public class Legend extends JPanel implements VisualizationListener {
 			
 			ColorByExpression.ConfiguredSample s = cbex.getConfiguredSamples().get(i);
 			String label = s.getSample().getName();
-			if (advanced) label += " (Color set: " + s.getColorSetName() + ")";
-			g.drawString (s.getSample().getName(), labelLeft, labelTop + base);
+			if (advanced) label += " (" + s.getColorSetName() + ")";
+			g.drawString (label, labelLeft, labelTop + base);
 			g.drawLine (labelLeft, baseline, labelLeft, labelTop);
 		}
 		
@@ -138,9 +141,10 @@ public class Legend extends JPanel implements VisualizationListener {
 		int xco = left;
 		int yco = top;
 		int base = g.getFontMetrics().getHeight() - g.getFontMetrics().getDescent();
+		g.setColor (Color.BLACK);
 		if (advanced)
 		{
-			g.drawString("ColorSet: " + cs.getName(), left, top + base);
+			g.drawString(cs.getName(), left, top + base);
 			yco += g.getFontMetrics().getHeight();
 		}
 		
@@ -156,24 +160,45 @@ public class Legend extends JPanel implements VisualizationListener {
 	{
 		int height = g.getFontMetrics().getHeight();
 		int base = height - g.getFontMetrics().getDescent();
-		int xco = left;
+		int xco = left + COLOR_GRADIENT_MARGIN;
 		int yco = top;
-		Rectangle bounds = new Rectangle (xco, yco, COLOR_BOX_SIZE, COLOR_BOX_SIZE);
 		if (cso instanceof ColorGradient)
 		{
+			Rectangle bounds = new Rectangle (xco, yco, COLOR_GRADIENT_WIDTH, COLOR_BOX_SIZE);
 			ColorGradient cg = (ColorGradient)cso;
 			cg.paintPreview(g, bounds);
-			g.drawString (cg.getName(), xco + COLOR_BOX_SIZE + INNER_MARGIN, yco + base);
+			g.setColor (Color.BLACK); // paintPreview will change pen Color
+			yco += COLOR_BOX_SIZE;
+
+			int num = cg.getColorValuePairs().size();
+			int w = COLOR_GRADIENT_WIDTH / (num - 1);
+			for (int i = 0; i < num; ++i)
+			{
+				ColorValuePair cvp = cg.getColorValuePairs().get (i);
+				int labelLeft = xco + i * w;
+				int labelTop = yco + INNER_MARGIN;
+				String label = "" + cvp.getValue();
+				int labelWidth = (int)g.getFontMetrics().getStringBounds(label, g).getWidth();
+				g.drawString (label, labelLeft - labelWidth / 2, labelTop + base);
+				g.drawLine (labelLeft, yco, labelLeft, labelTop); 
+			}
+			
+			return yco + height + INNER_MARGIN + INNER_MARGIN;
 		}
-		else if (cso instanceof ColorRule)
+		else
 		{
+			Rectangle bounds2 = new Rectangle (xco, yco, COLOR_BOX_SIZE, COLOR_BOX_SIZE);
+			Rectangle bounds = new Rectangle (xco + 1, yco + 1, COLOR_BOX_SIZE-2, COLOR_BOX_SIZE-2);
 			ColorRule cr = (ColorRule)cso;
 			g.drawString (cr.getExpression(), xco + COLOR_BOX_SIZE + INNER_MARGIN, yco + base);
-			g.setBackground(cr.getColor());
+			g.setColor(cr.getColor());
 			g.fill(bounds);
+			g.setColor (Color.WHITE);
+			g.draw (bounds);
+			g.setColor (Color.BLACK);
+			g.draw (bounds2);
+			return top + height + INNER_MARGIN;
 		}
-		g.draw (bounds);
-		return top + height;
 	}
 	
 	/**

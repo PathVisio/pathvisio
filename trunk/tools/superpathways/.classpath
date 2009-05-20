@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"/>
+	<classpathentry path="D:/xuemin_2009_spring/GSoC/gpml.jar" kind="lib"/>
+	<classpathentry path="D:/xuemin_2009_spring/GSoC/CoreLib.jar" kind="lib"/>
+	<classpathentry path="D:/xuemin_2009_spring/GSoC/NetworkMerge.jar" kind="lib"/>
+	<classpathentry path="C:/Program Files/Cytoscape_v2.6.2/cytoscape.jar" kind="lib"/>
+	<classpathentry path="bin" kind="output"/>
+</classpath>

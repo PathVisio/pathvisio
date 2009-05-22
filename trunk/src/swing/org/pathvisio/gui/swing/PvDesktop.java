@@ -39,6 +39,7 @@ import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook
 import org.pathvisio.model.Pathway;
 import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.swing.StandaloneCompat;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager;
@@ -63,7 +64,8 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	private final VisualizationManager visualizationManager;
 	private final GexManager gexManager;
 	private final SwingEngine swingEngine;
-
+	private final StandaloneCompat compat;
+	
 	/**
 	 * During construction, visualizationManager and gexManager will be initialized.
 	 * SwingEngine needs to have been initialized already.
@@ -79,6 +81,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				VisualizationMethodRegistry.getCurrent(),
 				swingEngine.getEngine(), gexManager);
 		visualizationManager.addListener(this);
+		compat = new StandaloneCompat(this);
 	}
 
 	/**
@@ -239,9 +242,11 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		}
 
 		swingEngine.getGdbManager().removeGdbEventListener(this);
+		swingEngine.getGdbManager().removeGdbEventListener(compat);
 		swingEngine.getEngine().removeApplicationEventListener(this);
 		visualizationManager.removeListener(this);
 		visualizationManager.dispose();
+		gexManager.removeListener(compat);
 		disposed = true;
 	}
 

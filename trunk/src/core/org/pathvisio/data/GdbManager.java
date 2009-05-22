@@ -83,7 +83,7 @@ public class GdbManager
 			}
 		}
 		
-		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED);
+		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, dbName);
 		fireGdbEvent (e);
 		Logger.log.trace("Current Gene Database: " + dbName);
 	
@@ -142,7 +142,7 @@ public class GdbManager
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_GDB_CURRENT, gdb.getDbName());
 			}
 		}
-		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED);
+		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, dbName);
 		fireGdbEvent (e);
 		Logger.log.trace("Current Gene Database: " + dbName);
 	}

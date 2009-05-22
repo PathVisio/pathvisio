@@ -105,9 +105,9 @@ public class Compat implements Engine.ApplicationEventListener
 					int result = JOptionPane.showConfirmDialog(
 							swingEngine.getFrame(), 
 							"This Pathway uses the old style references to Ensembl.\nDo you want" +
-							"me to bring the references up-to-date?\n" +
-							"The new references are required if you want to use the latest gene databases.", 
-							"Compatibility update", JOptionPane.YES_NO_OPTION);
+							"to update this pathway?\n\n" +
+							"This update is required if you want to use the latest gene databases.", 
+							"Update pathway?", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION)
 					{
 						convertEnsembl(pwy);

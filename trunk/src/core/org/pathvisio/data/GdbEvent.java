@@ -33,11 +33,28 @@ public class GdbEvent  extends EventObject
 
 	private int type;
 	
-	public GdbEvent(Object source, int type) 
+	/**
+	 * @param source the source of this event, should be a GdbManager
+	 * @param type Currently the only implemented type is GDB_CONNECTED
+	 * @param name the name of the database that was connected (if type == GDB_CONNECTED)
+	 */
+	public GdbEvent(Object source, int type, String name) 
 	{
 		super(source);
 		this.type = type;
+		this.dbName = name;
 	}
 
 	public int getType() { return type; }
+		
+	/**
+	 * The name of the database that was connected.
+	 * May be null depending on the event type.
+	 */
+	public String getName()
+	{
+		return dbName;
+	}
+	
+	private final String dbName;
 }

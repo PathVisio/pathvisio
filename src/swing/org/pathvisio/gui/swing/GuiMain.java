@@ -370,8 +370,8 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 				}
 			}
 		});
-		swingEngine.getGdbManager().initPreferred();
 		pvDesktop = new PvDesktop (swingEngine);
+		swingEngine.getGdbManager().initPreferred();
 		
 		MainPanelStandalone mps = new MainPanelStandalone(pvDesktop);
 		mps.createAndShowGUI();

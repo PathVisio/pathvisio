@@ -48,6 +48,7 @@ import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.swing.Compat;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
 
@@ -66,6 +67,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	
 	private Engine engine;
 	private GdbManager gdbManager = null;
+	private final Compat compat;
 	
 	public Engine getEngine() { return engine; }
 	
@@ -75,6 +77,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		gdbManager = new GdbManager();
 		actions = new CommonActions(this);
 		engine.addApplicationEventListener(this);
+		compat = new Compat(this);
+		engine.addApplicationEventListener(compat);
 	}
 	
 	public GdbManager getGdbManager()
@@ -631,6 +635,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		assert (!disposed);
 		engine.removeApplicationEventListener(this);
+		engine.removeApplicationEventListener(compat);
 		disposed = true;
 	}
 	

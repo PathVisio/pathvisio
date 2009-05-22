@@ -61,7 +61,7 @@ public class Util {
 			return "cel";
 		case CanisFamiliaris:
 			return "cfa";
-		case DanioRero:
+		case DanioRerio:
 			return "dre";
 		case DrosophilaMelanogaster:
 			return "dme";

@@ -693,6 +693,9 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		{
 			Pathway p = swingEngine.getEngine().getActivePathway();
 			p.addStatusFlagListener(this);
+			//Copy initial state of statusFlagListener 
+			//(could have been changed by earlier ApplicationEventListener)
+			setRemoteChanged (p.hasChanged());
 		}
 	}
 }

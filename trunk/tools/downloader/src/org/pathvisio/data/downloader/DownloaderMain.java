@@ -88,7 +88,8 @@ public class DownloaderMain {
 		
 		public PathDialog(String title, File path) {
 			super(null, title, null, true);
-			pathText.setText(path.toString());
+			setDialogComponent(createDialogPane());
+			pathText.setText("" + path);
 			pack();
 		}
 

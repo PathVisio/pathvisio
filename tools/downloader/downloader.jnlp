@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp codebase="http://ftp2.bigcat.unimaas.nl/~thomas.kelder/pathvisio/data">
+<jnlp codebase="http://www.pathvisio.org/data/downloader">
 	<information>
 		 <title>PathVisio file downloader</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>

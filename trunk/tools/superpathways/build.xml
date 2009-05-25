@@ -8,8 +8,9 @@
 	<property name="pathvisio.lib.dir" value="${pathvisio.dir}/lib" />
 	<property name="axis.lib.dir" value="${pathvisio.lib.dir}/axis-1_4/lib" />
 	<property name="pathvisio.class.dir" value="class.pathvisio" />
-	<property name="cytoscape.dir" value="C:/Program Files/Cytoscape_v2.6.2" />
+	<property name="cytoscape.dir" value="D:/Program Files/Cytoscape_v2.6.2" />
 	<property name="cytoscape.plugin.dir" value="${cytoscape.dir}/plugins" />
+	<property name="gpml.dir" value="${pathvisio.dir}/tools/cytoscape-gpml" />
 	
 	<path id="class.path">
 		<path location="${build.dir}"/>
@@ -21,6 +22,8 @@
 		<pathelement location="${pathvisio.dir}/pathvisio.jar" />
 		<pathelement location="${cytoscape.dir}/cytoscape.jar" />
 		<pathelement location="${pathvisio.dir}/wikipathways-client.jar" />
+		<pathelement location="${gpml.dir}/gpml.jar" />
+		
 	</path>
 
 	<target name="prepare" description="Prepare">
@@ -52,6 +55,7 @@
 	<target name="jar" depends="compile" description="Generate jar file">
 		<unjar dest="${class.dir}">
 			<fileset dir="${pathvisio.dir}" includes="wikipathways-client.jar" />
+			
 			<fileset dir="${pathvisio.lib.dir}" includes="resources.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="bridgedb.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="jdom.jar" />
@@ -59,6 +63,8 @@
 			<fileset dir="${pathvisio.lib.dir}" includes="BrowserLauncher.jar" />
 			<fileset dir="${pathvisio.dir}" includes="pathvisio.jar" />
 			<fileset dir="${axis.lib.dir}" includes="*.jar"/>
+			<fileset dir="${gpml.dir}" includes="gpml.jar"/>
+			
 		</unjar>
 
 		<copy file="plugin.props" todir="${build.dir}/org/pathvisio/cytoscape" />
@@ -74,7 +80,7 @@
 				<include name="**/*.wsdd"/>
 			</fileset>
 			<manifest>
-				<attribute name="Cytoscape-Plugin" value="org.pathvisio.cytoscape.SuperpathwaysPlugin" />
+				<attribute name="Cytoscape-Plugin" value="org.pathvisio.cytoscape.superpathways.SuperpathwaysPlugin" />
 			</manifest>
 		</jar>
 

@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.Sample;
@@ -51,7 +51,7 @@ public class SampleCheckList extends JCheckBoxList {
 			{
 				samples.addAll(gex.getSamples().values());
 			}
-			catch (DataException ex)
+			catch (IDMapperException ex)
 			{
 				//TODO: notify user with popup
 				Logger.log.error ("Could not fetch samples from database", ex);

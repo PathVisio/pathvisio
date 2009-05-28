@@ -24,8 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.bridgedb.DataException;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
@@ -69,7 +69,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			this.gdbManager = gdbManager;
 		}
 
-		public static String getHtml(PathwayElement e, Gdb gdb) {
+		public static String getHtml(PathwayElement e, IDMapperRdb gdb) {
 			String text = "";
 			String type = e.getDataNodeType(); 
 			
@@ -91,7 +91,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 				String bpInfo = gdb.getBpInfo(e.getXref());
 				text += (bpInfo != null ? bpInfo :  "<I>No " + type + " information found</I>"); 
 			}
-			catch (DataException ex)
+			catch (IDMapperException ex)
 			{
 				text += "Exception occurred, see log for details</br>";
 				Logger.log.error ("Error fetching backpage info", ex);
@@ -114,7 +114,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			this.gdbManager = gdbManager;
 		}
 
-		public static String getHtml(PathwayElement e, Gdb gdb) {
+		public static String getHtml(PathwayElement e, IDMapperRdb gdb) {
 			try
 			{
 				List<Xref> crfs = gdb.getCrossRefs(e.getXref());
@@ -140,7 +140,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 				}
 				return crt.toString();
 			}
-			catch (DataException ex)
+			catch (IDMapperException ex)
 			{
 				return "Exception occured while getting cross-references</br>\n" 
 					+ ex.getMessage() + "\n";

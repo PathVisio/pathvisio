@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.bridgedb.DataException;
-import org.bridgedb.Gdb;
-import org.bridgedb.GdbProvider;
-import org.bridgedb.Organism;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.GdbProvider;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -103,13 +103,13 @@ public class XRefBot extends Bot {
 				if(pwe.getObjectType() == ObjectType.DATANODE) {
 					boolean exists = false;
 					Xref xref = pwe.getXref();
-					for(Gdb gdb : gdbs.getGdbs(org)) {
+					for(IDMapperRdb gdb : gdbs.getGdbs(org)) {
 						try {
 							if(gdb.xrefExists(xref)) {
 								exists = true;
 								break;
 							}
-						} catch (DataException e) {
+						} catch (IDMapperException e) {
 							Logger.log.error("Error checking xref exists", e);
 						}
 					}

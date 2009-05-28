@@ -1,5 +1,6 @@
 package org.pathvisio.cytoscape.superpathways;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -20,12 +21,14 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 import org.pathvisio.util.swing.RowWithProperties;
 
@@ -63,13 +66,15 @@ public class SuperpathwaysGui extends JFrame implements ActionListener{
 	JTextField searchText;
 	JTable resultTable;
 	ListWithPropertiesTableModel<ResultProperty, ResultRow> tableModel;
-	
+	JScrollPane pane;
 	
 	public SuperpathwaysGui(SuperpathwaysClient c) {
 	
 		client = c;
 		
 		window =new JFrame ("Superpathways Plugin");
+//		JPanel window = new JPanel();
+//		this.window.setContentPane(window);
 		window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 		organismCombo= new JComboBox();
 		resetOrganisms();  		
@@ -83,6 +88,8 @@ public class SuperpathwaysGui extends JFrame implements ActionListener{
 		searchBtn.addActionListener(this);
 	
 		resultTable = new JTable();
+		System.out.println ("Hi!" + resultTable);
+		new Throwable().printStackTrace();
 		
 		//Added by jiaming
 		tableModel =new ListWithPropertiesTableModel<ResultProperty, ResultRow>();	
@@ -112,7 +119,9 @@ public class SuperpathwaysGui extends JFrame implements ActionListener{
 		window.add(searchText, cc.xy(4, 2));
 		window.add(organismCombo, cc.xy(6, 2));
 		window.add(searchBtn, cc.xy(8, 2));
-		window.add(new JScrollPane(resultTable), cc.xyw(2, 4, 7)); 
+		
+		pane = new JScrollPane (resultTable);
+		window.add(resultTable, cc.xyw(2, 4, 7));
 	
 	 }
 	
@@ -180,17 +189,42 @@ public class SuperpathwaysGui extends JFrame implements ActionListener{
 		}
 	}
 	
-	public void setResults(WSSearchResult[] results) {
-		tableModel =new ListWithPropertiesTableModel<ResultProperty, ResultRow>();	
-		if(results != null) {
-			tableModel.setColumns(new ResultProperty[] {ResultProperty.NAME,ResultProperty.ORGANISM,});
-			
-			resultTable.setModel(tableModel);
-			for(WSSearchResult r : results) {
-				tableModel.addRow(new ResultRow(r));
+	public void setResults(final WSSearchResult[] results) {
+		
+		SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+			tableModel =new ListWithPropertiesTableModel<ResultProperty, ResultRow>();	
+			if(results != null) {
+				tableModel.setColumns(new ResultProperty[] {ResultProperty.NAME,ResultProperty.ORGANISM,});
+				
+				resultTable.setModel(tableModel);
+				for(WSSearchResult r : results) {
+					tableModel.addRow(new ResultRow(r));
+				}
 			}
-		}
-		resultTable.setModel(tableModel);
+				resultTable.setModel(tableModel);
+				window.invalidate();
+				window.repaint();
+				window.pack();
+				resultTable.invalidate();
+				resultTable.doLayout();
+				resultTable.repaint();		
+				resultTable.invalidate();
+				resultTable.doLayout();
+				resultTable.repaint();
+				System.out.println (resultTable);
+				System.out.println (tableModel.getRowCount());
+				System.out.println (tableModel.getValueAt(3, 1));
+				System.out.println (resultTable.getModel());
+				System.out.println (tableModel);
+				System.out.println (resultTable.getRowHeight());
+				System.out.println (resultTable.getRowHeight(3));
+				System.out.println (resultTable.getHeight());
+				System.out.println (pane.getHeight());
+			}
+		});
 	}
 	
     

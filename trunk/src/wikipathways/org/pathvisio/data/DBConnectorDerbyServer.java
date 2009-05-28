@@ -26,7 +26,7 @@ import java.util.Properties;
 import javax.naming.OperationNotSupportedException;
 
 import org.bridgedb.DBConnector;
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 
@@ -62,7 +62,7 @@ public class DBConnectorDerbyServer extends DBConnector {
 		if (!inited) throw new IllegalArgumentException("Not yet initialized!");
 	}
 	
-	public Connection createConnection(String dbName) throws DataException 
+	public Connection createConnection(String dbName) throws IDMapperException 
 	{
 		Properties sysprop = System.getProperties();
 		sysprop.setProperty("derby.storage.tempDirectory", System.getProperty("java.io.tmpdir"));
@@ -74,11 +74,11 @@ public class DBConnectorDerbyServer extends DBConnector {
 		}
 		catch (ClassNotFoundException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 		catch (IOException f)
 		{
-			throw new DataException (f);
+			throw new IDMapperException (f);
 		}
 		StopWatch timer = new StopWatch();
 		timer.start();
@@ -92,21 +92,21 @@ public class DBConnectorDerbyServer extends DBConnector {
 		}
 		catch (SQLException f)
 		{
-			throw new DataException (f);
+			throw new IDMapperException (f);
 		}
 		Logger.log.trace("Connected");
 		return con;
 	}
 
-	public Connection createConnection(String dbName, int props) throws DataException 
+	public Connection createConnection(String dbName, int props) throws IDMapperException 
 	{
 		return createConnection(dbName);
 	}
 
-	public String finalizeNewDatabase(String dbName) throws DataException 
+	public String finalizeNewDatabase(String dbName) throws IDMapperException 
 	{
 		//Creating database not supported
-		throw new DataException (new OperationNotSupportedException("Can't create new database on server"));
+		throw new IDMapperException (new OperationNotSupportedException("Can't create new database on server"));
 	}
 
 }

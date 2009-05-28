@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.rpc.ServiceException;
 
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 //import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
@@ -52,7 +52,6 @@ import cytoscape.util.ModulePropertiesImpl;
 import cytoscape.view.CyNetworkView;
 import cytoscape.visual.VisualStyle;
 
-import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.cytoscape.*;
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.FindPathwaysByTextParameters;
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.GetPathwayParameters;

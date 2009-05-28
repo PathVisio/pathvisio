@@ -26,7 +26,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
@@ -136,7 +136,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 					{	
 						gex.cacheData(p.getDataNodeXrefs(), pk, swingEngine.getGdbManager().getCurrentGdb());
 					}
-					catch (DataException e)
+					catch (IDMapperException e)
 					{
 						Logger.log.error ("Exception while caching expression data ", e);
 					}
@@ -235,7 +235,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			{
 				gexManager.getCurrentGex().close();
 			}
-			catch (DataException ex)
+			catch (IDMapperException ex)
 			{
 				Logger.log.error ("Couldn't cleanly close pgex database", ex);
 			}

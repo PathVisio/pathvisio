@@ -36,7 +36,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.FindPathwaysByTextParameters;
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.GetPathwayParameters;
 import org.pathvisio.debug.Logger;

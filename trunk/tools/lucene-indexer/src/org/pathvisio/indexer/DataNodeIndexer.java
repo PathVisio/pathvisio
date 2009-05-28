@@ -32,11 +32,11 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
-import org.bridgedb.Gdb;
-import org.bridgedb.Organism;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -104,7 +104,7 @@ public class DataNodeIndexer extends IndexerBase {
 		//Add cross references if connected
 		Organism organism = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
 		if(gdbs != null) {
-			for(Gdb gdb : gdbs.getGdbs(organism)) {
+			for(IDMapperRdb gdb : gdbs.getGdbs(organism)) {
 				if(gdb != null && gdb.isConnected()) {
 					try {
 						List<Xref> crossRefs = gdb.getCrossRefs(xref);
@@ -114,7 +114,7 @@ public class DataNodeIndexer extends IndexerBase {
 								addedXrefs.add(c);
 							}
 						}
-					} catch(DataException e) {
+					} catch(IDMapperException e) {
 						Logger.log.error("Unable to fetch cross references", e);
 					}
 				}

@@ -32,7 +32,8 @@ import java.util.Set;
 import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.Organism;
+import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ConverterException;
@@ -527,7 +528,7 @@ public class KeggFormat {
 				DataNodeType.METABOLITE,
 				label,
 				name.replace("cpd:", ""),
-				DataSource.KEGG_COMPOUND
+				BioDataSource.KEGG_COMPOUND
 		);
 
 		gpmlPathway.add(pwElm);
@@ -587,7 +588,7 @@ public class KeggFormat {
 						DataNodeType.GENEPRODUCT,
 						geneName == null ? "" : geneName,
 						gene == null ? "" : gene,
-						DataSource.ENTREZ_GENE
+						BioDataSource.ENTREZ_GENE
 				);
 
 				//Add comments regarding the source on KEGG

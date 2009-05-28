@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.pathvisio.data.GdbManager;
@@ -132,7 +132,7 @@ public class DataNodeListExporter implements PathwayExporter {
 							line += "\t" + resultDs.getFullName();
 						}
 					}
-					catch (DataException ex)
+					catch (IDMapperException ex)
 					{
 						throw new ConverterException (ex);
 					}

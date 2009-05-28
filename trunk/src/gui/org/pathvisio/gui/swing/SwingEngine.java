@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.bridgedb.DBConnector;
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;

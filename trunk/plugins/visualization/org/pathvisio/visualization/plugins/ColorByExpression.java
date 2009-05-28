@@ -39,7 +39,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.jdom.Element;
 import org.pathvisio.Engine;
@@ -503,7 +503,7 @@ public class ColorByExpression extends VisualizationMethod {
 			{
 				sample = gexManager.getCurrentGex().getSamples().get(id);
 			}
-			catch (DataException ex)
+			catch (IDMapperException ex)
 			{
 				throw new VisualizationException(ex);
 			}

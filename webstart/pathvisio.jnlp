@@ -18,6 +18,7 @@
 		 <jar href="lib/derby.jar"/>
 		 <jar href="lib/jdom.jar"/>
 		 <jar href="lib/bridgedb.jar"/>
+		 <jar href="lib/bridgedb-bio.jar"/>
 		 <jar href="lib/swing-worker-1.1.jar"/>
 		 <jar href="lib/BrowserLauncher.jar"/>
 		 <jar href="lib/batik/batik-awt-util.jar"/>

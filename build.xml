@@ -307,13 +307,7 @@ public class Revision
 	    <mkdir dir="${diffview.applet.dir}/lib"/>
 		<copy file="diffview.jar" toDir="${diffview.applet.dir}"/>
 		<copy toDir="${diffview.applet.dir}/lib">
-			<fileset dir="lib">
-				<include name="jdom.jar"/>
-				<include name="swing-worker-1.1.jar"/>
-				<include name="derbyclient.jar"/>
-				<include name="resources.jar"/>
-				<include name="bridgedb.jar"/>
-			</fileset>
+			<path refid="diffview.libs"/>
 		</copy>
 		<signjar alias="PV" lazy = "true" 
 			storepass="PathVisio" keystore="lib/visioKeyStore">
@@ -381,14 +375,7 @@ public class Revision
 		<copy file="wikipathways.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy file="preloader.jar" toDir="${wikipathways.applet.dir}"/>
 		<copy toDir="${wikipathways.applet.dir}/lib">
-			<fileset dir="lib">
-				<include name="apache/*.jar"/>
-				<include name="jdom.jar"/>
-				<include name="swing-worker-1.1.jar"/>
-				<include name="derbyclient.jar"/>
-				<include name="forms-1.2.0.jar"/>
-				<include name="bridgedb.jar"/>
-			</fileset>	
+			<path refid="wikipathways.libs"/>
 		</copy>
 		<copy toDir="${wikipathways.bin.dir}/lib">
 			<fileset dir="lib">

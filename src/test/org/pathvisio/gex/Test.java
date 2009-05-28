@@ -25,12 +25,13 @@ import java.util.List;
 import org.bridgedb.DBConnector;
 import org.bridgedb.DataDerby;
 import org.bridgedb.DataDerbyDirectory;
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.SimpleGdb;
 import org.bridgedb.SimpleGdbFactory;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.preferences.PreferenceManager;
 
 import junit.framework.TestCase;
@@ -70,7 +71,7 @@ public class Test extends TestCase
 		assertEquals ("AAAA", ImportInformation.colIndexToExcel (base3));
 	}
 
-	public void testImportSimple() throws IOException, DataException
+	public void testImportSimple() throws IOException, IDMapperException
 	{
 		PreferenceManager.init();
 		ImportInformation info = new ImportInformation();
@@ -87,8 +88,8 @@ public class Test extends TestCase
 		
 		// Now test caching data		
 		SimpleGex gex = gexManager.getCurrentGex();
-		Xref ref1 = new Xref("7124", DataSource.ENTREZ_GENE);
-		Xref ref2 = new Xref("1909_at", DataSource.AFFY); 
+		Xref ref1 = new Xref("7124", BioDataSource.ENTREZ_GENE);
+		Xref ref2 = new Xref("1909_at", BioDataSource.AFFY); 
 		List<Xref> refs = Arrays.asList(new Xref[] { ref1, ref2 }); 
 		gex.cacheData(refs, null, gdb);
 		
@@ -115,7 +116,7 @@ public class Test extends TestCase
 	}
 
 		
-	public void testImportSimplyWrong() throws IOException, DataException
+	public void testImportSimplyWrong() throws IOException, IDMapperException
 	{
 		ImportInformation info2 = new ImportInformation();
 		File f = new File ("example-data/sample_data_1.txt");
@@ -125,14 +126,14 @@ public class Test extends TestCase
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info2.setGexName(dbFileName);
 		
-		Gdb gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
+		IDMapperRdb gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info2, null, gdb, gexManager);
 		
 		// 91 errors expected if no genes can be looked up.
 		assertEquals (91, info2.getErrorList().size());	
 	}
 
-	public void testImportAffy() throws IOException, DataException
+	public void testImportAffy() throws IOException, IDMapperException
 	{
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_affymetrix.txt");
@@ -140,7 +141,7 @@ public class Test extends TestCase
 		info.setTxtFile(f);
 		info.guessSettings();
 		
-		assertEquals (info.getDataSource(), DataSource.AFFY);
+		assertEquals (info.getDataSource(), BioDataSource.AFFY);
 		assertTrue (info.isSyscodeFixed());
 		assertTrue (info.digitIsDot());
 		assertEquals (info.getIdColumn(), 0);
@@ -148,7 +149,7 @@ public class Test extends TestCase
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setGexName(dbFileName);
 		info.setSyscodeFixed(true);
-		info.setDataSource(DataSource.AFFY);
+		info.setDataSource(BioDataSource.AFFY);
 		SimpleGdb gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 		
@@ -160,7 +161,7 @@ public class Test extends TestCase
 	 * Column headers have lenghts of over 50.
 	 * Make sure this doesn't lead to problems when setting sample names
 	 */
-	public void testImportLongHeaders() throws IOException, DataException
+	public void testImportLongHeaders() throws IOException, IDMapperException
 	{
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_long_headers.txt");
@@ -168,7 +169,7 @@ public class Test extends TestCase
 		info.setTxtFile(f);
 		info.guessSettings();
 		
-		assertEquals (info.getDataSource(), DataSource.ENTREZ_GENE);
+		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
 		assertTrue (info.isSyscodeFixed());
 		assertTrue (info.digitIsDot());
 		assertEquals (0, info.getIdColumn());
@@ -183,7 +184,7 @@ public class Test extends TestCase
 		assertEquals (0, info.getErrorList().size());		
 	}
 
-	public void testImportNoHeader() throws IOException, DataException
+	public void testImportNoHeader() throws IOException, IDMapperException
 	{
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_no_header.txt");
@@ -192,7 +193,7 @@ public class Test extends TestCase
 		info.setFirstDataRow(0);
 		info.guessSettings();
 		
-		assertEquals (info.getDataSource(), DataSource.ENTREZ_GENE);
+		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
 		assertFalse (info.isSyscodeFixed());
 		assertTrue (info.digitIsDot());
 		assertEquals (0, info.getIdColumn());
@@ -213,7 +214,7 @@ public class Test extends TestCase
 	 * Test dataset contains two columns with textual data
 	 * make sure this doesn't give problems during import
 	 */
-	public void testImportWithText() throws IOException, DataException
+	public void testImportWithText() throws IOException, IDMapperException
 	{
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_with_text.txt");
@@ -221,7 +222,7 @@ public class Test extends TestCase
 		info.setTxtFile(f);
 		info.guessSettings();
 		
-		assertEquals (info.getDataSource(), DataSource.ENTREZ_GENE);
+		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
 		assertFalse (info.isSyscodeFixed());
 		assertEquals (info.getSyscodeColumn(), 1);
 		assertTrue (info.digitIsDot());
@@ -237,7 +238,7 @@ public class Test extends TestCase
 		assertEquals (info.getErrorList().size(), 0);		
 	}
 
-	public void gexHelper(DBConnector con, String filename) throws DataException, SQLException
+	public void gexHelper(DBConnector con, String filename) throws IDMapperException, SQLException
 	{
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + filename;
 
@@ -246,7 +247,7 @@ public class Test extends TestCase
 				
 		sgex.prepare();
 		sgex.addSample(55, "mysample", 99);
-		sgex.addExpr(new Xref ("abc_at", DataSource.AFFY), "55", "3.141", 77);
+		sgex.addExpr(new Xref ("abc_at", BioDataSource.AFFY), "55", "3.141", 77);
 		
 		// TODO: this is messy. call finalize on writeable db, not close...
 		sgex.finalize();
@@ -265,13 +266,13 @@ public class Test extends TestCase
 
 	}
 	
-	public void testGexDerby() throws DataException, SQLException
+	public void testGexDerby() throws IDMapperException, SQLException
 	{
 		gexHelper (new DataDerby(), "tempgex1a");
 	}
 
 	//TODO: re-enable
-	public void disabled_testGexDirectory() throws DataException, SQLException
+	public void disabled_testGexDirectory() throws IDMapperException, SQLException
 	{
 		gexHelper (new DataDerbyDirectory(), "tempgex1b");
 	}

@@ -50,7 +50,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.model.DataNodeType;

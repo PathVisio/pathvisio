@@ -32,9 +32,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bridgedb.DBConnector;
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
@@ -153,7 +153,7 @@ public class SimpleGex
 		if (++commitCount % 1000 == 0) con.commit();
 	}
 	
-	public Sample getSample(int id) throws DataException
+	public Sample getSample(int id) throws IDMapperException
 	{
 		return getSamples().get(id);
 	}
@@ -164,7 +164,7 @@ public class SimpleGex
 	 * 
 	 * This data is cached, so you can safely call this repeatedly.
 	 */
-	public Map<Integer, Sample> getSamples() throws DataException
+	public Map<Integer, Sample> getSamples() throws IDMapperException
 	{
 		if(samples == null) 
 		{
@@ -179,7 +179,7 @@ public class SimpleGex
 					samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));					
 				}
 			} catch (SQLException e) {
-				throw new DataException ("SQL exception while setting samples", e);
+				throw new IDMapperException ("SQL exception while setting samples", e);
 			}
 		}
 		return samples;
@@ -249,7 +249,7 @@ public class SimpleGex
 	/**
 	 * get all datasouces used in this gex.
 	 */
-	public Set<DataSource> getUsedDatasources() throws DataException
+	public Set<DataSource> getUsedDatasources() throws IDMapperException
 	{
 		try
 		{
@@ -264,11 +264,11 @@ public class SimpleGex
 		}
 		catch (SQLException ex)
 		{
-			throw new DataException (ex);
+			throw new IDMapperException (ex);
 		}
 	}
 	
-	private Collection<ReporterData> getDataForXref(Xref srcRef, Gdb gdb, Set<DataSource> destFilter) throws DataException
+	private Collection<ReporterData> getDataForXref(Xref srcRef, IDMapperRdb gdb, Set<DataSource> destFilter) throws IDMapperException
 	{
 		try
 		{
@@ -327,7 +327,7 @@ public class SimpleGex
 		}
 		catch (SQLException ex)
 		{
-			throw new DataException (ex);
+			throw new IDMapperException (ex);
 		}
 	}
 	
@@ -336,7 +336,7 @@ public class SimpleGex
 	 * @param srcRefs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, Gdb gdb) throws DataException
+	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, IDMapperRdb gdb) throws IDMapperException
 	{	
 		// seed samples cache
 		getSamples();
@@ -382,7 +382,7 @@ public class SimpleGex
 	 * Will use the passed connector type (of which a new instance is created)
 	 * @param 	create true if the old database has to be removed, false for just connecting
 	 */
-	public SimpleGex(String dbName, boolean create, DBConnector connector) throws DataException
+	public SimpleGex(String dbName, boolean create, DBConnector connector) throws IDMapperException
 	{
 		this.dbName = dbName;
 		try
@@ -391,11 +391,11 @@ public class SimpleGex
 		}
 		catch (InstantiationException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		} 
 		catch (IllegalAccessException e) 
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 		
 		dbConnector.setDbType(DBConnector.TYPE_GEX);
@@ -414,7 +414,7 @@ public class SimpleGex
 //		}
 //		catch (SQLException e)
 //		{
-//			throw new DataException (e);
+//			throw new IDMapperException (e);
 //		}
 	}
 	
@@ -435,7 +435,7 @@ public class SimpleGex
 	 * Close the connection to the Expression database, with option to execute the 'SHUTDOWN COMPACT'
 	 * statement before calling {@link Connection#close()}
 	 */
-	public void close() throws DataException
+	public void close() throws IDMapperException
 	{
 		if(con != null)
 		{
@@ -446,7 +446,7 @@ public class SimpleGex
 			}
 			catch (SQLException ex)
 			{
-				throw new DataException (ex);
+				throw new IDMapperException (ex);
 			}
 			con = null;
 		}
@@ -459,7 +459,7 @@ public class SimpleGex
 	 * @throws Exception 
 	 * @throws Exception
 	 */
-	public final void createNewGex(String dbName) throws DataException 
+	public final void createNewGex(String dbName) throws IDMapperException 
 	{
 		con = dbConnector.createConnection(dbName, DBConnector.PROP_RECREATE);
 		this.dbName = dbName;
@@ -470,7 +470,7 @@ public class SimpleGex
 	 * Excecutes several SQL statements to create the tables and indexes for storing 
 	 * the expression data
 	 */
-	protected void createGexTables() throws DataException 
+	protected void createGexTables() throws IDMapperException 
 	{	
 		try
 		{
@@ -510,7 +510,7 @@ public class SimpleGex
 		}
 		catch (SQLException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 	}
 	
@@ -519,7 +519,7 @@ public class SimpleGex
 	 * @param con The connection to the expression database
 	 * @throws SQLException
 	 */
-	public void createGexIndices() throws DataException 
+	public void createGexIndices() throws IDMapperException 
 	{
 		try
 		{
@@ -544,7 +544,7 @@ public class SimpleGex
 		catch (SQLException e)
 		{
 			// wrap up the sql exception
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 	}
 
@@ -554,7 +554,7 @@ public class SimpleGex
 	 * This method closes the current database connection in order
 	 * for the {@link DBConnector} to clean up.
 	 */
-	public void finalize() throws DataException
+	public void finalize() throws IDMapperException
 	{
 		try
 		{
@@ -562,7 +562,7 @@ public class SimpleGex
 		}
 		catch (SQLException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 		dbConnector.compact(con);
 		createGexIndices();
@@ -578,7 +578,7 @@ public class SimpleGex
 	/**
 	   commit inserted data
 	 */
-	public void commit() throws DataException
+	public void commit() throws IDMapperException
 	{
 		try
 		{
@@ -586,7 +586,7 @@ public class SimpleGex
 		}
 		catch (SQLException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 	}
 
@@ -606,7 +606,7 @@ public class SimpleGex
 		return pstRow;
 	}
 	
-	public ReporterData getRow(int rowId) throws DataException
+	public ReporterData getRow(int rowId) throws IDMapperException
 	{
 		Map<Integer, Sample> samples = getSamples();
 		try
@@ -637,11 +637,11 @@ public class SimpleGex
 		}
 		catch (SQLException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 	}
 	
-	public int getMaxRow() throws DataException
+	public int getMaxRow() throws IDMapperException
 	{
 		try
 		{
@@ -652,7 +652,7 @@ public class SimpleGex
 		}
 		catch (SQLException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}		
 	}
 }

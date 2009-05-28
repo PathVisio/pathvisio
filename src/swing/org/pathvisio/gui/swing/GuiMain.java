@@ -36,7 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
@@ -177,7 +177,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 				pvDesktop.loadGexCache();
 				Logger.log.info ("Loaded pgex " + pgexFile);
 			}
-			catch (DataException e)
+			catch (IDMapperException e)
 			{
 				Logger.log.error ("Couldn't open pgex " + pgexFile, e);
 			}
@@ -318,7 +318,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			{
 				swingEngine.getGdbManager().getCurrentGdb().close();
 			}
-			catch (DataException ex)
+			catch (IDMapperException ex)
 			{
 				Logger.log.error ("Couldn't cleanly close pgdb database", ex);
 			}

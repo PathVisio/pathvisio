@@ -39,8 +39,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.bridgedb.DataException;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
@@ -409,7 +409,7 @@ public class StatisticsPlugin implements Plugin
 			private StatisticsTableModel temp;
 			private boolean useMappFinder;
 			
-			ZScoreWorker(Criterion crit, File pwDir, SimpleGex gex, Gdb gdb, ProgressKeeper pk)
+			ZScoreWorker(Criterion crit, File pwDir, SimpleGex gex, IDMapperRdb gdb, ProgressKeeper pk)
 			{
 				this.pk = pk;
 				calculator = new ZScoreCalculator (crit, pwDir, gex, gdb, pk);
@@ -420,7 +420,7 @@ public class StatisticsPlugin implements Plugin
 			}
 
 			@Override
-			protected StatisticsResult doInBackground() throws DataException
+			protected StatisticsResult doInBackground() throws IDMapperException
 			{
 				StatisticsResult result;
 				

@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
@@ -51,7 +51,7 @@ public class GexTxtImporter
 	 * @param p	{@link ProgressKeeper} that reports the progress of the process and enables
 	 * the user to cancel. May be null for headless mode operation.
 	 */
-	public static void importFromTxt(ImportInformation info, ProgressKeeper p, Gdb currentGdb, GexManager gexManager)
+	public static void importFromTxt(ImportInformation info, ProgressKeeper p, IDMapperRdb currentGdb, GexManager gexManager)
 	{
 		SimpleGex result = null;
 		int importWork = 0;
@@ -295,7 +295,7 @@ public class GexTxtImporter
 			{
 				result.close();
 			}
-			catch (DataException f) 
+			catch (IDMapperException f) 
 			{ Logger.log.error ("Exception while aborting database", f); }
 			error.close();
 		}

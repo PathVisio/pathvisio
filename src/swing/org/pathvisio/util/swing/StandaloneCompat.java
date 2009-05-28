@@ -18,8 +18,9 @@ package org.pathvisio.util.swing;
 
 import javax.swing.JOptionPane;
 
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
+import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.gex.GexManager.GexManagerEvent;
@@ -65,14 +66,14 @@ public class StandaloneCompat implements GdbEventListener, GexManagerListener
 		{
 			try
 			{
-				if (desktop.getGexManager().getCurrentGex().getUsedDatasources().contains(DataSource.ENSEMBL))
+				if (desktop.getGexManager().getCurrentGex().getUsedDatasources().contains(BioDataSource.ENSEMBL))
 				{
 					JOptionPane.showMessageDialog(desktop.getFrame(), 
 							"The selected data set contains old references to Ensembl\n" +
 							"It is recommended that you redo the dataset import process");					
 				}
 			}
-			catch (DataException ex)
+			catch (IDMapperException ex)
 			{
 				//ignore - no compatibility check today
 			}

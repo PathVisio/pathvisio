@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bridgedb.DBConnector;
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.DoubleGdb;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.SimpleGdb;
 import org.bridgedb.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
@@ -42,7 +42,7 @@ public class GdbManager
 {
 	private DoubleGdb currentGdb = new DoubleGdb();
 	
-	public Gdb getCurrentGdb ()
+	public IDMapperRdb getCurrentGdb ()
 	{
 		return currentGdb;
 	}
@@ -67,7 +67,7 @@ public class GdbManager
 	 * 
 	 * use null to disconnect the current db
 	 */
-	public void setMetaboliteDb(String dbName) throws DataException
+	public void setMetaboliteDb(String dbName) throws IDMapperException
 	{
 		if (dbName == null)
 		{
@@ -127,7 +127,7 @@ public class GdbManager
 	 * 
 	 * use null to disconnect the current db.
 	 */
-	public void setGeneDb(String dbName) throws DataException
+	public void setGeneDb(String dbName) throws IDMapperException
 	{
 		if (dbName == null)
 		{
@@ -152,7 +152,7 @@ public class GdbManager
 	 * Connect to a database using the 
 	 * DBConnector set in the global preferences.
 	 */
-	private SimpleGdb connect(String gdbName) throws DataException
+	private SimpleGdb connect(String gdbName) throws IDMapperException
 	{
 		if (dbConnector == null) throw new NullPointerException();
 		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbName, dbConnector, DBConnector.PROP_NONE);
@@ -195,7 +195,7 @@ public class GdbManager
 			{
 				setGeneDb(gdbName);
 			} 
-			catch(DataException e) 
+			catch(IDMapperException e) 
 			{
 				Logger.log.error("Setting previous Gdb failed.", e);
 			}

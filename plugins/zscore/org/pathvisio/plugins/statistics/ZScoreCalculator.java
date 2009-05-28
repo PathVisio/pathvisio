@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bridgedb.DataException;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.ReporterData;
@@ -48,7 +48,7 @@ public class ZScoreCalculator
 	private Map<PathwayInfo, StatisticsPathwayResult> statsMap = 
 		new HashMap<PathwayInfo, StatisticsPathwayResult>();
 	
-	public ZScoreCalculator(Criterion crit, File pwDir, SimpleGex gex, Gdb gdb, ProgressKeeper pk)
+	public ZScoreCalculator(Criterion crit, File pwDir, SimpleGex gex, IDMapperRdb gdb, ProgressKeeper pk)
 	{
 		if (pk != null)
 		{
@@ -79,7 +79,7 @@ public class ZScoreCalculator
 		 * calculate result.bigN and result.bigR
 		 */
 		public abstract void calculateTotals () 
-			throws DataException;
+			throws IDMapperException;
 		
 		/**
 		 * Do a permutation test to calculate permP and adjP
@@ -218,7 +218,7 @@ public class ZScoreCalculator
 		 * This goes through every row of the dataset and counts the number
 		 * of total rows (bigN) and the number of rows meeting our criterion (bigR)
 		 */
-		public void calculateTotals() throws DataException
+		public void calculateTotals() throws IDMapperException
 		{
 			int maxRow = result.gex.getMaxRow();
 			for (int i = 0; i < maxRow; ++i)
@@ -363,7 +363,7 @@ public class ZScoreCalculator
 		}		
 	}
 	
-	private StatisticsResult calculate(Method m) throws DataException
+	private StatisticsResult calculate(Method m) throws IDMapperException
 	{
 		// read all pathways
 		if (pk != null) 
@@ -440,12 +440,12 @@ public class ZScoreCalculator
 	 * of the N and R parameters for the zscore, not just the part
 	 * of the dataset that maps to Pathways.
 	 */
-	public StatisticsResult calculateAlternative() throws DataException
+	public StatisticsResult calculateAlternative() throws IDMapperException
 	{
 		return calculate (new AlternativeMethod());
 	}
 
-	public StatisticsResult calculateMappFinder() throws DataException
+	public StatisticsResult calculateMappFinder() throws IDMapperException
 	{
 		return calculate (new MappFinderMethod());
 	}		

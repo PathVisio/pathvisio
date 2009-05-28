@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
 
-import org.bridgedb.DataException;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.bridgedb.XrefWithSymbol;
 import org.jdesktop.swingworker.SwingWorker;
@@ -75,13 +75,13 @@ public class SearchMethods
 	{
 		private List<Xref> refs;
 
-		public ByXrefMatcher(Gdb gdb, Xref ref) throws SearchException
+		public ByXrefMatcher(IDMapperRdb gdb, Xref ref) throws SearchException
 		{
 			try
 			{
 				refs = gdb.getCrossRefs(ref);
 			}
-			catch (DataException ex)
+			catch (IDMapperException ex)
 			{
 				throw new SearchException (MSG_GDB_ERROR);
 			}

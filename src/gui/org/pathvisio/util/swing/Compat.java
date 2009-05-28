@@ -22,7 +22,8 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.Organism;
+import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.SwingEngine;
@@ -44,13 +45,13 @@ public class Compat implements Engine.ApplicationEventListener
 	{
 		this.swingEngine = swingEngine;
 		
-		ensSpecies.put (Organism.HomoSapiens, DataSource.ENSEMBL_HUMAN);
-		ensSpecies.put (Organism.CaenorhabditisElegans, DataSource.ENSEMBL_CELEGANS);
-		ensSpecies.put (Organism.DanioRerio, DataSource.ENSEMBL_ZEBRAFISH);
-		ensSpecies.put (Organism.DrosophilaMelanogaster, DataSource.ENSEMBL_ZEBRAFISH);
-		ensSpecies.put (Organism.MusMusculus, DataSource.ENSEMBL_MOUSE);
-		ensSpecies.put (Organism.RattusNorvegicus, DataSource.ENSEMBL_RAT);
-		ensSpecies.put (Organism.SaccharomycesCerevisiae, DataSource.ENSEMBL_SCEREVISIAE);
+		ensSpecies.put (Organism.HomoSapiens, BioDataSource.ENSEMBL_HUMAN);
+		ensSpecies.put (Organism.CaenorhabditisElegans, BioDataSource.ENSEMBL_CELEGANS);
+		ensSpecies.put (Organism.DanioRerio, BioDataSource.ENSEMBL_ZEBRAFISH);
+		ensSpecies.put (Organism.DrosophilaMelanogaster, BioDataSource.ENSEMBL_ZEBRAFISH);
+		ensSpecies.put (Organism.MusMusculus, BioDataSource.ENSEMBL_MOUSE);
+		ensSpecies.put (Organism.RattusNorvegicus, BioDataSource.ENSEMBL_RAT);
+		ensSpecies.put (Organism.SaccharomycesCerevisiae, BioDataSource.ENSEMBL_SCEREVISIAE);
 	}
 	
 	private boolean usesOldEnsembl(Pathway pwy)
@@ -62,7 +63,7 @@ public class Compat implements Engine.ApplicationEventListener
 		for (PathwayElement elt : pwy.getDataObjects())
 		{
 			if (elt.getObjectType() == ObjectType.DATANODE &&
-					elt.getDataSource() == DataSource.ENSEMBL)
+					elt.getDataSource() == BioDataSource.ENSEMBL)
 			{
 				return true;
 			}
@@ -85,7 +86,7 @@ public class Compat implements Engine.ApplicationEventListener
 		for (PathwayElement elt : pwy.getDataObjects())
 		{
 			if (elt.getObjectType() == ObjectType.DATANODE &&
-					elt.getDataSource() == DataSource.ENSEMBL)
+					elt.getDataSource() == BioDataSource.ENSEMBL)
 			{
 				elt.setDataSource (ensSpecies.get (org));
 			}

@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bridgedb.DBConnector;
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.pathvisio.data.DBConnDerby;
 
 /**
@@ -42,7 +42,7 @@ public class DirectDerby
 
 	private boolean quit = false;
 	
-	DirectDerby (String database) throws DataException
+	DirectDerby (String database) throws IDMapperException
 	{
 		if (database.endsWith(".pgex"))
 		{
@@ -206,7 +206,7 @@ public class DirectDerby
 				"  DirectDerby [database.pgdb|database.pgex]\n");
 	}
 	
-	public static void main (String [] args) throws DataException
+	public static void main (String [] args) throws IDMapperException
 	{
 		if (args.length != 1)
 		{

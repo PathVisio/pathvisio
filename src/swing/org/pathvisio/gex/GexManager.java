@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bridgedb.DBConnector;
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -83,7 +83,7 @@ public class GexManager
 	 * @param dbName name of the database (usually file or directory name)
 	 * @param create true if you want to create / overwrite a database
 	 */
-	public void setCurrentGex (String dbName, boolean create) throws DataException
+	public void setCurrentGex (String dbName, boolean create) throws IDMapperException
 	{
 		DBConnector connector;
 		try
@@ -92,15 +92,15 @@ public class GexManager
 		}
 		catch (IllegalAccessException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 		catch (InstantiationException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 		catch (ClassNotFoundException e)
 		{
-			throw new DataException (e);
+			throw new IDMapperException (e);
 		}
 		SimpleGex gex = new SimpleGex (dbName, create, connector);
 		setCurrentGex (gex);
@@ -141,7 +141,7 @@ public class GexManager
 		{
 			currentGex.close();
 		}
-		catch (DataException e)
+		catch (IDMapperException e)
 		{			
 			Logger.log.error ("Problem while closing previous gex", e);
 		}

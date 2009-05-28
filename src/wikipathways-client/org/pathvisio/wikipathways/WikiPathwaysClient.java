@@ -30,8 +30,8 @@ import java.util.TimeZone;
 
 import javax.xml.rpc.ServiceException;
 
-import org.bridgedb.Organism;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Pathway;

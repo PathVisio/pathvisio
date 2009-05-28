@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.bridgedb.XrefWithSymbol;
+import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
 
@@ -231,13 +232,13 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	public void testXRefEquals()
 	{
 		Object[] testList = new Object[] {
-				new Xref("1007_at", DataSource.AFFY),
-				new Xref("3456", DataSource.AFFY),
-				new Xref("1007_at", DataSource.ENTREZ_GENE),
-				new Xref ("3456", DataSource.ENTREZ_GENE),
-				new Xref ("3456", DataSource.ENTREZ_GENE),
-				new XrefWithSymbol("3456", DataSource.ENTREZ_GENE, "INSR"),
-				new XrefWithSymbol("3456", DataSource.ENTREZ_GENE, "Insulin Receptor"),
+				new Xref("1007_at", BioDataSource.AFFY),
+				new Xref("3456", BioDataSource.AFFY),
+				new Xref("1007_at", BioDataSource.ENTREZ_GENE),
+				new Xref ("3456", BioDataSource.ENTREZ_GENE),
+				new Xref ("3456", BioDataSource.ENTREZ_GENE),
+				new XrefWithSymbol("3456", BioDataSource.ENTREZ_GENE, "INSR"),
+				new XrefWithSymbol("3456", BioDataSource.ENTREZ_GENE, "Insulin Receptor"),
 		};
 		                           
 		for (int i = 0; i < testList.length; ++i)

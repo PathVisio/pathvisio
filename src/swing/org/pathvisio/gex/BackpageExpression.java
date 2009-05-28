@@ -18,8 +18,8 @@ package org.pathvisio.gex;
 
 import java.util.List;
 
-import org.bridgedb.DataException;
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
@@ -47,7 +47,7 @@ public class BackpageExpression implements BackpageHook
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	private static String getDataString(Xref idc, Gdb gdb, SimpleGex gex) throws DataException
+	private static String getDataString(Xref idc, IDMapperRdb gdb, SimpleGex gex) throws IDMapperException
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
@@ -81,7 +81,7 @@ public class BackpageExpression implements BackpageHook
 		return getHtml(e, gdbManager.getCurrentGdb(), gexManager.getCurrentGex());
 	}
 	
-	public static String getHtml(PathwayElement e, Gdb gdb, SimpleGex gex) {
+	public static String getHtml(PathwayElement e, IDMapperRdb gdb, SimpleGex gex) {
 		String text = "";
 		try
 		{
@@ -91,7 +91,7 @@ public class BackpageExpression implements BackpageHook
 				text += getDataString(e.getXref(), gdb, gex);
 			}				
 		}
-		catch (DataException ex)
+		catch (IDMapperException ex)
 		{
 			text += "Exception occured while getting cross-references</br>" 
 				+ ex.getMessage();

@@ -31,10 +31,8 @@
 	<property name="wikipathways.applet.dir" value="${wikipathways.www.dir}/wpi/applet"/>
 	<property name="wikipathways.bin.dest" value="${wikipathways.dest}/wpi/bin"/>
 	<property name="wikipathways.webstart.dest" value="${wikipathways.bin.dest}"/>
-	<property name="wikipathways.applet.dest" value="${wikipathways.dest}/wpi/applet"/>
+	<property name="applet.dest" value="${wikipathways.dest}/wpi/applet"/>
 	<property name="diffview.applet.dir" value="applet"/>
-	<property name="diffview.applet.dest" value="${wikipathways.applet.dest}"/>
-	<property name="diffview.applet.class.path" value="lib/bridgedb.jar lib/jdom.jar lib/derbyclient.jar lib/swing-worker-1.1.jar lib/resources.jar"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="checkstyle.output.file" value="warnings.txt"/>
 
@@ -44,10 +42,11 @@
 		<include name="batik/*.jar"/>
 		<include name="jdom.jar"/>
 		<include name="bridgedb.jar"/>
+		<include name="bridgedb-bio.jar"/>
 	    <include name="resources.jar"/> <!-- TODO: this is not necessary, only GPML.xsd !-->
 	  </fileset>
 	</path>
-	
+
 	<!-- libraries used by pathvisio.jar -->
 	<path id="standalone.libs">
 	  <path refid="core.libs"/>
@@ -59,16 +58,24 @@
 	  </fileset>
 	</path>
 	
-	<!-- libraries used by wikipathways.jar and diffapplet.jar !-->
-	<path id="wikipathways.libs">
+	<!-- libraries used by diffapplet.jar !-->
+	<path id="diffview.libs">
 	  <fileset dir="lib">
-		<include name="apache/*.jar"/>
 		<include name="jdom.jar"/>
 		<include name="bridgedb.jar"/>
-		<include name="forms-1.2.0.jar"/>
+		<include name="bridgedb-bio.jar"/>
 		<include name="swing-worker-1.1.jar"/>
 	    <include name="resources.jar"/>
 	    <include name="derbyclient.jar"/>	
+	  </fileset>	
+	</path>
+
+	<!-- libraries used by wikipathways.jar !-->
+	<path id="wikipathways.libs">
+	  <path refid="diffview.libs"/>
+	  <fileset dir="lib">
+		<include name="apache/*.jar"/>
+		<include name="forms-1.2.0.jar"/>
 	  </fileset>	
 	</path>
 	
@@ -284,12 +291,16 @@ public class Revision
 	</target>
 
 	<target name="diffapplet" depends="compile-wikipathways" description="Generate DiffViewer applet jar file">
+		<manifestclasspath property="manifest.cp.diffview" jarfile="diffview.jar">
+			<classpath refid="diffview.libs" />
+		</manifestclasspath>
+		
 		<jar jarfile="diffview.jar">
 			<fileset dir="${build.core.dir}" includes="**/*.class"/>
 			<fileset dir="${build.gui.dir}" includes="**/*.class"/>
 			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
             <manifest>
-            	 <attribute name="Class-Path" value="${diffview.applet.class.path}"/>
+            	 <attribute name="Class-Path" value="${manifest.cp.diffview}"/>
             </manifest>
 		</jar>
 
@@ -309,7 +320,7 @@ public class Revision
 			<fileset dir="${diffview.applet.dir}" includes="**/*.jar"/>
 		</signjar>
 		<!-- copy to .../www/diffview -->
-		<copy toDir="${diffview.applet.dest}">
+		<copy toDir="${applet.dest}">
 			<fileset dir="${diffview.applet.dir}" includes="**/*.*" />
 		</copy>
 	</target>
@@ -390,7 +401,7 @@ public class Revision
 			<fileset dir="${wikipathways.bin.dir}" includes="**/*.jar"/>
 		</signjar>
 		<!-- copy to /var/www/wikipathways -->
-		<copy toDir="${wikipathways.applet.dest}">
+		<copy toDir="${applet.dest}">
 			<fileset dir="${wikipathways.applet.dir}" includes="**/*.*" />			
 		</copy>
 		<copy toDir="${wikipathways.bin.dest}">
@@ -413,12 +424,12 @@ public class Revision
 			</manifest>
 		</jar>
 		<!-- Copy preloader class -->
-		<copy toDir="${wikipathways.applet.dest}/org/pathvisio/wikipathways" 
+		<copy toDir="${applet.dest}/org/pathvisio/wikipathways" 
 			file="${build.wikipathways.dir}/org/pathvisio/wikipathways/Preloader.class"/>
 		<manifestclasspath property="wikipathways.class.path" jarfile="wikiapathways.jar">
 			<classpath refid="wikipathways.libs"/>
 		</manifestclasspath>
-		<echo file="${wikipathways.applet.dest}/cache_archive" message="wikipathways.jar ${wikipathways.class.path}" />
+		<echo file="${applet.dest}/cache_archive" message="wikipathways.jar ${wikipathways.class.path}" />
 		<!-- Copy GPML.xsd -->
 		<copy toDir="${wikipathways.bin.dest}" file="GPML.xsd"/>
 	</target>

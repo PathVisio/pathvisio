@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.bridgedb.Gdb;
+import org.bridgedb.IDMapperRdb;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.visualization.colorset.Criterion;
 
@@ -40,7 +40,7 @@ public class StatisticsResult
 	Criterion crit;
 	File pwDir;
 	SimpleGex gex;
-	Gdb gdb;
+	IDMapperRdb gdb;
 	
 	public void save (File f) throws IOException
 	{

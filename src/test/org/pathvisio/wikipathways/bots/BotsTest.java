@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;

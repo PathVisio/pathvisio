@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bridgedb.DataSource;
+import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
@@ -110,7 +111,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	
 	protected void setInitialMappings() {
 		setMapping("canonicalName", PropertyType.TEXTLABEL);
-		setDefaultValue(PropertyType.DATASOURCE, DataSource.UNIPROT);
+		setDefaultValue(PropertyType.DATASOURCE, BioDataSource.UNIPROT);
 	}
 	
 	public boolean isProtected(PropertyType prop) {

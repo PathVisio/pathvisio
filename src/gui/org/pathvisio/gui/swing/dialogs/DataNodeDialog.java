@@ -41,12 +41,12 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
-import org.bridgedb.Gdb;
-import org.bridgedb.Organism;
+import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.bridgedb.XrefWithSymbol;
+import org.bridgedb.bio.Organism;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.DataSourceModel;
@@ -115,10 +115,10 @@ public class DataNodeDialog extends PathwayElementDialog {
 		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
 			private static final int QUERY_LIMIT = 200;
 			
-			protected List<XrefWithSymbol> doInBackground() throws DataException
+			protected List<XrefWithSymbol> doInBackground() throws IDMapperException
 			{
-				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
-				List<XrefWithSymbol> result = gdb.freeSearch(text, QUERY_LIMIT); 
+				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
+				List<XrefWithSymbol> result = gdb.freeSearchWithSymbol(text, QUERY_LIMIT); 
 				return result;
 			}
 			
@@ -223,13 +223,13 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public Object[] provideOptions(String text) {
 				if(text == null) return new Object[0];
 
-				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
+				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
 				List<String> symbols = new ArrayList<String>();
 				try
 				{
 					symbols = gdb.getSymbolSuggestions(text, 100);
 				}
-				catch (DataException ignore) {}
+				catch (IDMapperException ignore) {}
 				return symbols.toArray();
 			}
 		}, true);
@@ -238,13 +238,13 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public Object[] provideOptions(String text) {
 				if(text == null) return new Object[0];
 
-				Gdb gdb = swingEngine.getGdbManager().getCurrentGdb();
+				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
 				List<Xref> refs = new ArrayList<Xref>();
 				try
 				{
 					refs = gdb.getIdSuggestions(text, 100);
 				}
-				catch (DataException ignore) {}
+				catch (IDMapperException ignore) {}
 				//Only take identifiers
 				String[] ids = new String[refs.size()];
 				for(int i = 0; i < refs.size(); i++) {

@@ -30,7 +30,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.PathwayElement;

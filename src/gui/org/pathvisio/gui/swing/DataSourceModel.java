@@ -26,7 +26,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 
 /**
  * Stick this into a ComboBox to let the user

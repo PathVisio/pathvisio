@@ -28,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.bridgedb.DataDerby;
-import org.bridgedb.DataException;
+import org.bridgedb.IDMapperException;
 import org.bridgedb.SimpleGdb;
 import org.bridgedb.SimpleGdbFactory;
 import org.bridgedb.Xref;
@@ -64,7 +64,7 @@ public class IsDataInPathways
 	
 	static File outFile = new File ("/home/martijn/Desktop/isdatainpahtways.txt");
 	
-	public static void main(String[] args) throws DataException, ParseException, FileNotFoundException
+	public static void main(String[] args) throws IDMapperException, ParseException, FileNotFoundException
 	{
 		PreferenceManager.init();
 		GexManager gexManager = new GexManager();

@@ -1,63 +1,61 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2009 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); 
+// you may not use this file except in compliance with the License. 
+// You may obtain a copy of the License at 
+// 
+// http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software 
+// distributed under the License is distributed on an "AS IS" BASIS, 
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+// See the License for the specific language governing permissions and 
+// limitations under the License.
+//
+
 package org.pathvisio.cytoscape.superpathways;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-import giny.view.EdgeView;
-import giny.view.NodeView;
+import static cytoscape.data.webservice.CyWebServiceEvent.WSEventType.IMPORT_NETWORK;
+import static cytoscape.data.webservice.CyWebServiceEvent.WSEventType.SEARCH_DATABASE;
 
-import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
-import javax.swing.AbstractAction;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.rpc.ServiceException;
 
-import org.bridgedb.bio.Organism;
-//import org.pathvisio.cytoscape.GpmlPlugin;
+import org.bridgedb.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
-import org.pathvisio.wikipathways.webservice.WSIndexField;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
-import cytoscape.CyEdge;
 import cytoscape.CyNetwork;
-import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.CytoscapeInit;
-import cytoscape.data.CyAttributes;
-import cytoscape.data.Semantics;
 import cytoscape.data.webservice.CyWebServiceEvent;
 import cytoscape.data.webservice.CyWebServiceEventListener;
 import cytoscape.data.webservice.CyWebServiceException;
 import cytoscape.data.webservice.NetworkImportWebServiceClient;
 import cytoscape.data.webservice.WebServiceClientImplWithGUI;
 import cytoscape.data.webservice.WebServiceClientManager;
-import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
 import cytoscape.data.webservice.WebServiceClientManager.ClientType;
 import cytoscape.task.Task;
 import cytoscape.task.TaskMonitor;
 import cytoscape.task.ui.JTaskConfig;
 import cytoscape.task.util.TaskManager;
 import cytoscape.util.ModulePropertiesImpl;
-import cytoscape.view.CyNetworkView;
 import cytoscape.visual.VisualStyle;
 
-import org.pathvisio.cytoscape.*;
-import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.FindPathwaysByTextParameters;
-import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.GetPathwayParameters;
 
 public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathwaysClient, SuperpathwaysGui> implements NetworkImportWebServiceClient {
-	private static final String DISPLAY_NAME = "WikiPathways Web Service Client by Xuemin";
+	private static final String DISPLAY_NAME = "WikiPathways Web Service Client";
 	private static final String CLIENT_ID = "wikipathways";
 	protected static final String WEBSERVICE_URL = "wikipathways.webservice.uri";
 	public static final String ATTR_PATHWAY_URL = "wikipathways.url";
@@ -65,15 +63,15 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 	private WikiPathwaysClient stub;
 	private String prevURL = null;
 	
-	//private SuperpathwaysPlugin spPlugin;
-	private GpmlPlugin gpmlPlugin;
+	private SuperpathwaysPlugin spPlugin;
+	//private GpmlPlugin gpmlPlugin;
 	
-	public SuperpathwaysClient(GpmlPlugin gpmlPlugin) {
+	public SuperpathwaysClient(SuperpathwaysPlugin spPlugin) {
 		super(CLIENT_ID, DISPLAY_NAME, new ClientType[] { ClientType.NETWORK }, null, null, null);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
 		setProperties();
 		getStub();
-		this.gpmlPlugin = gpmlPlugin;
+		this.spPlugin = spPlugin;
 		setGUI(new SuperpathwaysGui(this));
 		SuperpathwaysGui a=getGUI();
 	}
@@ -136,13 +134,7 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 		
 		JTaskConfig config = new JTaskConfig();
 		config.displayCancelButton(false);
-		config.setModal(true);
-		
-		
-		//Modiflied by jiaming
-		//config.displayCancelButton(true);
-		//config.setModal(false);
-		
+		config.setModal(true);	
 		TaskManager.executeTask(task, config);
 	}
 	
@@ -177,7 +169,7 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 			try {
 				WSPathway r = getStub().getPathway(query.id, query.revision);
 				Pathway pathway = WikiPathwaysClient.toPathway(r);
-				CyNetwork network = gpmlPlugin.load(pathway, true);
+				CyNetwork network = spPlugin.load(pathway, true);
 				if(network != null) {
 					Cytoscape.getNetworkAttributes().setAttribute(
 							network.getIdentifier(), ATTR_PATHWAY_URL, r.getUrl()
@@ -216,6 +208,7 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 			try {
 				WSSearchResult[] result = getStub().findPathwaysByText(query.query, query.species);
 				gui.setResults(result);
+				System.out.println("Superpathways-run!");
 				if(result == null || result.length == 0) {
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
@@ -268,7 +261,7 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 		return null; //TODO
 	}
 	
-	/*public static class FindPathwaysByTextParameters {
+	public static class FindPathwaysByTextParameters {
 		public String query;
 		public Organism species = null;
 	}
@@ -276,7 +269,7 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 	public static class GetPathwayParameters {
 		public String id;
 		public int revision;
-	}*/
+	}
 	
 	
 	

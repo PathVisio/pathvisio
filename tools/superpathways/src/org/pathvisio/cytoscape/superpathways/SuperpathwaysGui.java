@@ -27,6 +27,8 @@ import javax.swing.JList;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.GroupLayout;
+import javax.swing.LayoutStyle;
 
 import org.bridgedb.Organism;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.FindPathwaysByTextParameters;

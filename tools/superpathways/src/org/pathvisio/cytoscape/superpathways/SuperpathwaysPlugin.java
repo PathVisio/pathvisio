@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 
 import org.pathvisio.cytoscape.GpmlConverter;
 import org.pathvisio.cytoscape.GpmlHandler;
@@ -41,40 +42,39 @@ public class SuperpathwaysPlugin extends CytoscapePlugin {
 	private static final int WINDOW_WIDTH = 400;
 	private static final int WINDOW_HEIGHT = 500;
 
-	GpmlHandler gpmlHandler;
-	//JFrame mWindow; 
-	private static SuperpathwaysPlugin instance;
-    SuperpathwaysGui spGui;
+	GpmlHandler mGpmlHandler;
+	JFrame mWindow; 
+	private static SuperpathwaysPlugin mInstance;
+    SuperpathwaysGui mSpGui;
 	
-	/**
-	 * Can be used by other plugins to get an instance of the
-	 * SuperpathwaysPlugin.
-	 * 
-	 * @return The instance of SuperpathwaysPlugin, or null if the plugin wasn't
-	 *         initialized yet by the PluginManager.
-	 */
+	
 	public static SuperpathwaysPlugin getInstance() {
-		return instance;
+		return mInstance;
 	}
 
-	/**
-	 * Initializes the SuperpathwaysPlugin. Should only be called by Cytoscape's
-	 * plugin manager!
-	 * 
-	 * Only one instance of this class is allowed, but this constructor can't be
-	 * made private because it's need by the Cytoscape plugin mechanism.
-	 */
 	public SuperpathwaysPlugin() {
-		if (instance != null) {
+		if (mInstance != null) {
 			throw new RuntimeException(
 					"SuperpathwaysPlugin is already instantiated! Use static"
 							+ " method getInstance instead!");
 		}
 
-		instance = this;
+		mInstance = this;
 		Logger.log.setLogLevel(true, false, true, true, true, true);
+		mGpmlHandler = new GpmlHandler();
+		
+		
 
-		gpmlHandler = new GpmlHandler();
+		SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
+		SuperpathwaysClient spClient = new SuperpathwaysClient(spPlugin);
+		WebServiceClientManager.registerClient(spClient);
+		mSpGui = spClient.getGUI();
+		//mSpGui.setLocationRelativeTo(Cytoscape.getDesktop());
+		
+		mWindow = new JFrame("Superpathways Plugin");
+		//mWindow.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		mWindow.add(mSpGui);
+		mWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
 		SuperpathwaysAction action = new SuperpathwaysAction();
 		action.setPreferredMenu("Plugins");
@@ -83,26 +83,16 @@ public class SuperpathwaysPlugin extends CytoscapePlugin {
 		CyMenus menu = desktop.getCyMenus();
 		menu.addAction(action);
 
-		SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
-		SuperpathwaysClient spClient = new SuperpathwaysClient(spPlugin);
-
-		WebServiceClientManager.registerClient(spClient);
-		spGui = spClient.getGUI();
-		spGui.setLocationRelativeTo(Cytoscape.getDesktop());
-		//mWindow = new JFrame("Superpathways Plugin");
-		//mWindow.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-		//mWindow.add(spGui);
-		//mWindow.setLocationRelativeTo(Cytoscape.getDesktop());
 
 	}
 
 	/*
-	 * public GpmlHandler getGpmlHandler() { return gpmlHandler; }
+	 * public GpmlHandler getGpmlHandler() { return mGpmlHandler; }
 	 */
 
 	public CyNetwork load(Pathway p, boolean newNetwork) {
 		try {
-			GpmlConverter converter = new GpmlConverter(gpmlHandler, p);
+			GpmlConverter converter = new GpmlConverter(mGpmlHandler, p);
 
 			// Get the nodes/edges indexes
 			int[] nodes = converter.getNodeIndicesArray();
@@ -161,18 +151,16 @@ public class SuperpathwaysPlugin extends CytoscapePlugin {
 	 * This class gets attached to the menu item.
 	 */
 	public class SuperpathwaysAction extends CytoscapeAction {
-		/**
-		 * The constructor sets the text that should appear on the menu item.
-		 */
+		
 		public SuperpathwaysAction() {
 			super("Superpathways");
 		}
-		/**
-		 * This method is called when the user selects the menu item.
-		 */
-		@Override
+		
 		public void actionPerformed(ActionEvent arg0) {
-			spGui.setVisible(true);
+			mWindow.add(mSpGui);
+			mWindow.setLocationRelativeTo(Cytoscape.getDesktop());
+			mWindow.setVisible(true);
+			mWindow.pack();
 			
 			
 		}

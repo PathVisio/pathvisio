@@ -55,8 +55,12 @@ import cytoscape.visual.VisualStyle;
 
 
 public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathwaysClient, SuperpathwaysGui> implements NetworkImportWebServiceClient {
-	private static final String DISPLAY_NAME = "WikiPathways Web Service Client";
-	private static final String CLIENT_ID = "wikipathways";
+	private static final String DISPLAY_NAME = "Superpathways Web Service Client";
+    private static final String CLIENT_ID = "superpathways";
+	
+	//private static final String DISPLAY_NAME = "WikiPathways Web Service Client";
+	//private static final String CLIENT_ID = "wikipathways";
+	
 	protected static final String WEBSERVICE_URL = "wikipathways.webservice.uri";
 	public static final String ATTR_PATHWAY_URL = "wikipathways.url";
 	

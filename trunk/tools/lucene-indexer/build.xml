@@ -76,6 +76,8 @@
 		<copy file="${pathvisio.dir}/pathvisio.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/wikipathways.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/wikipathways-client.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/lib/bridgedb.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/lib/bridgedb-bio.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${lib.dir}/${lucene.jar}" toDir="${dist.dir}/lib"/>
 		<copy file="gdb.config" toDir="${dist.dir}"/>
 		<copy file="indexer.config" toDir="${dist.dir}"/>

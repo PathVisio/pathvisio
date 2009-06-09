@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Reader;
 
+import org.bridgedb.bio.BioDataSource;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -57,6 +58,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	public static final Namespace BIOPAX = Namespace.getNamespace("bp", "http://www.biopax.org/release/biopax-level2.owl#");
 	public static final Namespace OWL = Namespace.getNamespace("owl", "http://www.w3.org/2002/07/owl#");
 							
+	static {
+		BioDataSource.init();
+	}
 	
 	public void doImport(File file, Pathway pathway) throws ConverterException
 	{

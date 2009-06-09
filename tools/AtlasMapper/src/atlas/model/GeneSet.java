@@ -96,4 +96,8 @@ public class GeneSet implements Serializable {
 	public Gene getGene(String id) {
 		return genes.get(id);
 	}
+	
+	public void insert(GeneSet geneSet) {
+		genes.putAll(geneSet.genes);
+	}
 }

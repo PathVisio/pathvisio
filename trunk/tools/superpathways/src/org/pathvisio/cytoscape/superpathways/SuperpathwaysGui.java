@@ -17,26 +17,36 @@
 
 package org.pathvisio.cytoscape.superpathways;
 
+import java.awt.Cursor;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.GroupLayout;
-import javax.swing.LayoutStyle;
+import javax.swing.table.DefaultTableModel;
 
 import org.bridgedb.Organism;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.FindPathwaysByTextParameters;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.GetPathwayParameters;
-import org.pathvisio.cytoscape.wikipathways.ResultProperty;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 import org.pathvisio.util.swing.RowWithProperties;
+import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
 import cytoscape.data.webservice.CyWebServiceEvent;
@@ -45,23 +55,38 @@ import cytoscape.data.webservice.WebServiceClientManager;
 import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
 
 //public class SuperpathwaysGui extends JFrame implements ActionListener{ 
-public class SuperpathwaysGui extends JFrame {
-
-	final SuperpathwaysClient client;
+public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 	private static String ACTION_SEARCH = "Search";
 
 	private static String ORGANISM_ALL = "All organisms";
 
-	ResultRow selected;
+	final SuperpathwaysClient mClient;
 
-	String clickedPathwayName = "not defined";
+	ResultRow mSelected;
+	
+	ResultRow mSelectedInHelpPanel;
 
-	String selectedPathwayName = "undefined";
+	String mClickedPathwayName = "not defined";
+
+	String mSelectedPathwayName = "undefined";
+	
+	String mSelectedPwInHelpPanel= "undefined";
+
+	private List<String> mAvailablePathwaysNameIDList = new ArrayList<String>();
+
+	private List<ResultRow> mAvailablePathwaysList = new ArrayList<ResultRow>();
+
+	private List<String> mCandidatePwList = new ArrayList<String>();
+
+	private Map<String, WSSearchResult[]> mNodeIdToPwsSharingNode = new HashMap<String, WSSearchResult[]>();
 
 	public SuperpathwaysGui(SuperpathwaysClient c) {
-		frame = this;
-		client = c;
+		// frame = this;
+		// this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+		mClient = c;
+
 		initComponents();
 
 	}
@@ -82,6 +107,7 @@ public class SuperpathwaysGui extends JFrame {
 		searchText = new javax.swing.JTextField();
 		organismCombo = new javax.swing.JComboBox();
 		searchBtn = new javax.swing.JButton();
+		helpButton = new javax.swing.JButton();
 		hintLabel1 = new javax.swing.JLabel();
 		resultScrolllPane1 = new javax.swing.JScrollPane();
 		resultTable = new javax.swing.JTable();
@@ -100,6 +126,10 @@ public class SuperpathwaysGui extends JFrame {
 		openBtn = new javax.swing.JButton();
 		rightButton = new javax.swing.JButton();
 		leftButton = new javax.swing.JButton();
+
+		CancelBtn = new javax.swing.JButton();
+		MergeBtn = new javax.swing.JButton();
+
 		layoutPane = new javax.swing.JPanel();
 		stepLabel2 = new javax.swing.JLabel();
 		jRadioButton1 = new javax.swing.JRadioButton();
@@ -109,9 +139,35 @@ public class SuperpathwaysGui extends JFrame {
 		jRadioButton5 = new javax.swing.JRadioButton();
 		jRadioButton6 = new javax.swing.JRadioButton();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-		setTitle("Superpathways");
-		setBackground(new java.awt.Color(255, 255, 255));
+		helpPanel = new javax.swing.JPanel();
+		anchorPathwayLabel = new javax.swing.JLabel();
+		sharingNodeNoLabel = new javax.swing.JLabel();
+		anchorPathwayComboBox = new javax.swing.JComboBox();
+		lowerBoundSharingNodeNoComboBox = new javax.swing.JComboBox();
+		candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
+		candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
+
+		candidatePathwaysSharingNodesList = new javax.swing.JList();
+		candidatePathwaysSharingNodesListModel = new DefaultListModel();
+
+		//candidatePathwaysSharingNodesTable = new javax.swing.JTable();
+		//candidatePathwaysSharingNodesTableModel = new javax.swing.table.DefaultTableModel();
+		
+		//candidatePathwaysSharingNodesTableModel.addColumn("Pathway Name (ID)");
+		//candidatePathwaysSharingNodesTableModel.addColumn("Sharing Node Number");
+
+		explainHelpLabel1 = new javax.swing.JLabel();
+		addHelpButton = new javax.swing.JButton();
+		lowerBoundLabel = new javax.swing.JLabel();
+		upperBoundLabel = new javax.swing.JLabel();
+		upperBoundSharingNodeNoComboBox = new javax.swing.JComboBox();
+		explainHelpLabel2 = new javax.swing.JLabel();
+		backToSearchButton = new javax.swing.JButton();
+		searchHelpButton = new javax.swing.JButton();
+
+		// setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+		// setTitle("Superpathways");
+		// setBackground(new java.awt.Color(255, 255, 255));
 
 		superpathwayPanel.setToolTipText("");
 		superpathwayPanel.setName("search_select_tab"); // NOI18N
@@ -122,7 +178,7 @@ public class SuperpathwaysGui extends JFrame {
 		stepLabel1.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
 		stepLabel1.setForeground(new java.awt.Color(102, 0, 0));
 		stepLabel1
-				.setText("Step 1: Search and select multiple pathways from WikiPahtways");
+				.setText("Step 1: Search and select multiple pathways from WikiPathways");
 
 		searchText.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -149,12 +205,15 @@ public class SuperpathwaysGui extends JFrame {
 			public void mouseClicked(java.awt.event.MouseEvent e) {
 				if (e.getClickCount() == 1) {
 					int row = resultTable.getSelectedRow();
-					// ResultRow selected = tableModel.getRow(row);
-					selected = tableModel.getRow(row);
-					clickedPathwayName = selected
-							.getProperty(ResultProperty.NAME);
-					System.out.println(clickedPathwayName);
-					// openNetwork(selected);
+					mSelected = tableModel.getRow(row);
+					mClickedPathwayName = mSelected
+							.getProperty(ResultProperty.NAME)
+							+ "("
+							+ mSelected.getProperty(ResultProperty.ID)
+							+ ")";
+
+					System.out.println(mClickedPathwayName);
+					// openNetwork(mSelected);
 				}
 			}
 		});
@@ -162,6 +221,8 @@ public class SuperpathwaysGui extends JFrame {
 		resultScrolllPane1.setViewportView(resultTable);
 
 		addBtn.setText("Add");
+		addBtn
+				.setToolTipText("add the selected pathway to the \"Available Pathways\" list");
 		addBtn.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				addBtnActionPerformed(evt);
@@ -189,16 +250,23 @@ public class SuperpathwaysGui extends JFrame {
 		selectedPathwaysList.setVisibleRowCount(8);
 		selectedPathwaysScrollPane.setViewportView(selectedPathwaysList);
 
-		rightButton.setIcon(new javax.swing.ImageIcon(
-				"D:\\JAVA-CODE\\Superpathway\\images\\right16.gif")); // NOI18N
+		// rightButton.setIcon(new
+		// javax.swing.ImageIcon("D:\\JAVA-CODE\\Superpathway\\images\\right16.gif"));
+		// // NOI18N
+		rightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/images/right16.gif")));
+
 		rightButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				rightButtonActionPerformed(evt);
 			}
 		});
 
-		leftButton.setIcon(new javax.swing.ImageIcon(
-				"D:\\JAVA-CODE\\Superpathway\\images\\left16.gif")); // NOI18N
+		// leftButton.setIcon(new
+		// javax.swing.ImageIcon("D:\\JAVA-CODE\\Superpathway\\images\\left16.gif"));
+		// // NOI18N
+		leftButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(
+				"/images/left16.gif")));
 		leftButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				leftButtonActionPerformed(evt);
@@ -315,9 +383,31 @@ public class SuperpathwaysGui extends JFrame {
 						selectedPathwaysLabel });
 
 		openBtn.setText("Open");
+		openBtn.setToolTipText("load the selected pathway to Cytoscape");
 		openBtn.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				openBtnActionPerformed(evt);
+			}
+		});
+
+		CancelBtn.setText("Cancel");
+		CancelBtn.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				CancelBtnActionPerformed(evt);
+			}
+		});
+
+		MergeBtn.setText("Merge");
+		MergeBtn.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				MergeBtnActionPerformed(evt);
+			}
+		});
+
+		helpButton.setText("Help");
+		helpButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				helpButtonActionPerformed(evt);
 			}
 		});
 
@@ -336,11 +426,6 @@ public class SuperpathwaysGui extends JFrame {
 												searchPaneLayout
 														.createParallelGroup(
 																javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(
-																selectPanel,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
 														.addComponent(
 																resultScrolllPane1,
 																javax.swing.GroupLayout.DEFAULT_SIZE,
@@ -384,8 +469,35 @@ public class SuperpathwaysGui extends JFrame {
 																hintLabel1,
 																javax.swing.GroupLayout.DEFAULT_SIZE,
 																javax.swing.GroupLayout.DEFAULT_SIZE,
-																Short.MAX_VALUE))
+																Short.MAX_VALUE)
+														.addGroup(
+																searchPaneLayout
+																		.createParallelGroup(
+																				javax.swing.GroupLayout.Alignment.LEADING)
+																		.addComponent(
+																				selectPanel,
+																				javax.swing.GroupLayout.PREFERRED_SIZE,
+																				javax.swing.GroupLayout.DEFAULT_SIZE,
+																				javax.swing.GroupLayout.PREFERRED_SIZE)
+																		.addGroup(
+																				javax.swing.GroupLayout.Alignment.TRAILING,
+																				searchPaneLayout
+																						.createSequentialGroup()
+																						.addComponent(
+																								helpButton)
+																						.addPreferredGap(
+																								javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																						.addComponent(
+																								CancelBtn)
+																						.addPreferredGap(
+																								javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																						.addComponent(
+																								MergeBtn))))
 										.addContainerGap()));
+
+		searchPaneLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
+				new java.awt.Component[] { CancelBtn, MergeBtn, helpButton });
+
 		searchPaneLayout
 				.setVerticalGroup(searchPaneLayout
 						.createParallelGroup(
@@ -428,23 +540,46 @@ public class SuperpathwaysGui extends JFrame {
 												javax.swing.GroupLayout.PREFERRED_SIZE,
 												179,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addGap(18, 18, 18)
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 										.addGroup(
 												searchPaneLayout
 														.createParallelGroup(
 																javax.swing.GroupLayout.Alignment.BASELINE)
 														.addComponent(addBtn)
 														.addComponent(openBtn))
-										.addGap(33, 33, 33)
+										.addGap(54, 54, 54)
 										.addComponent(
 												selectPanel,
 												javax.swing.GroupLayout.PREFERRED_SIZE,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addGap(53, 53, 53)));
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(
+												searchPaneLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.BASELINE)
+														.addComponent(
+																MergeBtn,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																23,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																CancelBtn,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																23,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																helpButton))
+										.addContainerGap()));
 
 		searchPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
 				new java.awt.Component[] { organismCombo, searchText });
+
+		searchPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
+				new java.awt.Component[] { CancelBtn, MergeBtn, helpButton });
+
 		superpathwayPanel
 				.addTab("Search/Select", null, searchPane,
 						"search and select pathways that you want to merge from Wiki Pahtways");
@@ -536,9 +671,305 @@ public class SuperpathwaysGui extends JFrame {
 		superpathwayPanel.addTab("Custom Layout", null, layoutPane,
 				"create a custom layout grouping nodes from the same pathway");
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-				getContentPane());
-		getContentPane().setLayout(layout);
+		superpathwayPanel.addTab("Custom Layout", null, layoutPane,
+				"create a custom layout grouping nodes from the same pathway");
+
+		anchorPathwayLabel.setForeground(new java.awt.Color(0, 0, 255));
+		anchorPathwayLabel.setText("Pathway");
+
+		sharingNodeNoLabel.setForeground(new java.awt.Color(0, 0, 255));
+		sharingNodeNoLabel.setText("Sharing Node Number");
+
+		// anchorPathwayComboBox.setModel(new
+		// javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2",
+		// "Item 3", "Item 4" }));
+		// anchorPathwayComboBox.setModel(new
+		// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
+
+		lowerBoundSharingNodeNoComboBox
+				.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
+						"1", "2", "3", "4", "5", "6", "7", "8", "9", "10" }));
+
+		// candidatePathwaysSharingNodesTable.setModel();
+
+		explainHelpLabel1.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
+		explainHelpLabel1.setForeground(new java.awt.Color(102, 0, 0));
+		explainHelpLabel1
+				.setText("Choose a pathway and set the range of sharing nodes number, a list of ");
+
+		addHelpButton.setText("Add");
+		addHelpButton
+				.setToolTipText("add the selected pathways to the 'Available Pathways' list");
+		addHelpButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				addHelpButtonActionPerformed(evt);
+			}
+		});
+
+		lowerBoundLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+		lowerBoundLabel.setText("from");
+
+		upperBoundLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+		upperBoundLabel.setText("to");
+
+		upperBoundSharingNodeNoComboBox
+				.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
+						"2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+						"12", "13", "14", "15", "16", "17", "18", "19", "20" }));
+
+		explainHelpLabel2.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
+		explainHelpLabel2.setForeground(new java.awt.Color(102, 0, 0));
+		explainHelpLabel2
+				.setText("candidate pathways with sharing nodes would be returned.");
+
+		backToSearchButton.setText("Back to Search");
+		backToSearchButton
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent evt) {
+						backtoSearchButtonActionPerformed(evt);
+					}
+				});
+
+		searchHelpButton.setText("Search");
+		searchHelpButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				searchHelpButtonActionPerformed(evt);
+			}
+		});
+
+		candidatePathwaysSharingNodesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		candidatePathwaysSharingNodesScrollPane.setViewportView(candidatePathwaysSharingNodesList);
+		//candidatePathwaysSharingNodesTable
+	    //			.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		/*candidatePathwaysSharingNodesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+			public void mouseClicked(java.awt.event.MouseEvent e) {
+				if (e.getClickCount() == 1) {
+					int row = candidatePathwaysSharingNodesTable.getSelectedRow();
+					mSelectedInHelpPanel = tableModel.getRow(row);
+					mSelectedPwInHelpPanel = mSelectedInHelpPanel
+							.getProperty(ResultProperty.NAME)
+							+ "("
+							+ mSelectedInHelpPanel.getProperty(ResultProperty.ID)
+							+ ")";
+
+					System.out.println(mSelectedPwInHelpPanel);
+					// openNetwork(mSelected);
+				}
+			}
+		});*/
+		
+		// candidatePathwaysSharingNodesTable.setLayoutOrientation(JList.VERTICAL);
+		// candidatePathwaysSharingNodesTable.setVisibleRowCount(8);
+		//candidatePathwaysSharingNodesScrollPane
+			//	.setViewportView(candidatePathwaysSharingNodesTable);
+
+		javax.swing.GroupLayout helpPanelLayout = new javax.swing.GroupLayout(
+				helpPanel);
+		helpPanel.setLayout(helpPanelLayout);
+		helpPanelLayout
+				.setHorizontalGroup(helpPanelLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								helpPanelLayout
+										.createSequentialGroup()
+										.addGroup(
+												helpPanelLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.LEADING)
+														.addGroup(
+																helpPanelLayout
+																		.createSequentialGroup()
+																		.addContainerGap()
+																		.addComponent(
+																				explainHelpLabel1,
+																				javax.swing.GroupLayout.DEFAULT_SIZE,
+																				406,
+																				Short.MAX_VALUE))
+														.addGroup(
+																helpPanelLayout
+																		.createSequentialGroup()
+																		.addContainerGap()
+																		.addComponent(
+																				explainHelpLabel2))
+														.addGroup(
+																helpPanelLayout
+																		.createParallelGroup(
+																				javax.swing.GroupLayout.Alignment.TRAILING,
+																				false)
+																		.addGroup(
+																				javax.swing.GroupLayout.Alignment.LEADING,
+																				helpPanelLayout
+																						.createSequentialGroup()
+																						.addGap(
+																								37,
+																								37,
+																								37)
+																						.addGroup(
+																								helpPanelLayout
+																										.createParallelGroup(
+																												javax.swing.GroupLayout.Alignment.LEADING,
+																												false)
+																										.addGroup(
+																												helpPanelLayout
+																														.createSequentialGroup()
+																														.addComponent(
+																																sharingNodeNoLabel,
+																																javax.swing.GroupLayout.PREFERRED_SIZE,
+																																114,
+																																javax.swing.GroupLayout.PREFERRED_SIZE)
+																														.addPreferredGap(
+																																javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																														.addComponent(
+																																lowerBoundLabel)
+																														.addPreferredGap(
+																																javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																														.addComponent(
+																																lowerBoundSharingNodeNoComboBox,
+																																javax.swing.GroupLayout.PREFERRED_SIZE,
+																																javax.swing.GroupLayout.DEFAULT_SIZE,
+																																javax.swing.GroupLayout.PREFERRED_SIZE)
+																														.addPreferredGap(
+																																javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																														.addComponent(
+																																upperBoundLabel)
+																														.addGap(
+																																4,
+																																4,
+																																4)
+																														.addComponent(
+																																upperBoundSharingNodeNoComboBox,
+																																javax.swing.GroupLayout.PREFERRED_SIZE,
+																																javax.swing.GroupLayout.DEFAULT_SIZE,
+																																javax.swing.GroupLayout.PREFERRED_SIZE))
+																										.addGroup(
+																												helpPanelLayout
+																														.createSequentialGroup()
+																														.addComponent(
+																																anchorPathwayLabel,
+																																javax.swing.GroupLayout.PREFERRED_SIZE,
+																																50,
+																																javax.swing.GroupLayout.PREFERRED_SIZE)
+																														.addPreferredGap(
+																																javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+																														.addComponent(
+																																anchorPathwayComboBox,
+																																0,
+																																javax.swing.GroupLayout.DEFAULT_SIZE,
+																																Short.MAX_VALUE)))
+																						.addPreferredGap(
+																								javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+																								javax.swing.GroupLayout.DEFAULT_SIZE,
+																								Short.MAX_VALUE)
+																						.addComponent(
+																								searchHelpButton))
+																		.addGroup(
+																				javax.swing.GroupLayout.Alignment.LEADING,
+																				helpPanelLayout
+																						.createSequentialGroup()
+																						.addContainerGap()
+																						.addComponent(
+																								candidatePathwaysSharingNodesScrollPane,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								389,
+																								javax.swing.GroupLayout.PREFERRED_SIZE))
+																		.addGroup(
+																				helpPanelLayout
+																						.createSequentialGroup()
+																						.addContainerGap()
+																						.addComponent(
+																								backToSearchButton)
+																						.addPreferredGap(
+																								javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+																						.addComponent(
+																								addHelpButton,
+																								javax.swing.GroupLayout.PREFERRED_SIZE,
+																								59,
+																								javax.swing.GroupLayout.PREFERRED_SIZE))))
+										.addContainerGap()));
+
+		helpPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
+				new java.awt.Component[] { addHelpButton, backToSearchButton });
+
+		helpPanelLayout
+				.setVerticalGroup(helpPanelLayout
+						.createParallelGroup(
+								javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(
+								helpPanelLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.addComponent(
+												explainHelpLabel1,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												28,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(
+												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(explainHelpLabel2)
+										.addGap(31, 31, 31)
+										.addGroup(
+												helpPanelLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.TRAILING)
+														.addComponent(
+																anchorPathwayLabel,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																17,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																anchorPathwayComboBox,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addGap(30, 30, 30)
+										.addGroup(
+												helpPanelLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.BASELINE)
+														.addComponent(
+																sharingNodeNoLabel)
+														.addComponent(
+																lowerBoundLabel)
+														.addComponent(
+																lowerBoundSharingNodeNoComboBox,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																upperBoundLabel)
+														.addComponent(
+																upperBoundSharingNodeNoComboBox,
+																javax.swing.GroupLayout.PREFERRED_SIZE,
+																javax.swing.GroupLayout.DEFAULT_SIZE,
+																javax.swing.GroupLayout.PREFERRED_SIZE)
+														.addComponent(
+																searchHelpButton))
+										.addGap(45, 45, 45)
+										.addComponent(
+												candidatePathwaysSharingNodesScrollPane,
+												javax.swing.GroupLayout.PREFERRED_SIZE,
+												313,
+												javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addGap(29, 29, 29)
+										.addGroup(
+												helpPanelLayout
+														.createParallelGroup(
+																javax.swing.GroupLayout.Alignment.BASELINE)
+														.addComponent(
+																addHelpButton)
+														.addComponent(
+																backToSearchButton))
+										.addContainerGap(64, Short.MAX_VALUE)));
+
+		helpPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
+				new java.awt.Component[] { addHelpButton, backToSearchButton });
+		superpathwayPanel.addTab("Search Help", helpPanel);
+
+		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+		setLayout(layout);
+		// getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(
 				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
 				layout.createSequentialGroup().addGap(22, 22, 22).addComponent(
@@ -557,7 +988,7 @@ public class SuperpathwaysGui extends JFrame {
 		superpathwayPanel.getAccessibleContext().setAccessibleName(
 				"search/select");
 
-		pack();
+		// pack();
 	}// </editor-fold>
 
 	private void searchTextActionPerformed(java.awt.event.ActionEvent evt) {
@@ -569,31 +1000,36 @@ public class SuperpathwaysGui extends JFrame {
 	}
 
 	private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {
-    	System.out.println(clickedPathwayName);
-    	if(!availablePathwaysListModel.contains(clickedPathwayName)){
-    		availablePathwaysListModel.addElement(clickedPathwayName);
-    		availablePathwaysList.setModel(availablePathwaysListModel);
-    		if (availablePathwaysListModel.getSize()>0){
-    			rightButton.setEnabled(true);
-    		}
-    	}
-    	
-    }
+		System.out.println(mClickedPathwayName);
+		if (!availablePathwaysListModel.contains(mClickedPathwayName)) {
+			availablePathwaysListModel.addElement(mClickedPathwayName);
+			availablePathwaysList.setModel(availablePathwaysListModel);
+			if (availablePathwaysListModel.getSize() > 0) {
+				rightButton.setEnabled(true);
+			}
+			mAvailablePathwaysNameIDList.add(mClickedPathwayName);
+			mAvailablePathwaysList.add(mSelected);
+			anchorPathwayComboBox.setModel(new DefaultComboBoxModel(
+					mAvailablePathwaysNameIDList.toArray()));
+		}
+
+	}
 
 	private void openBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		System.out.println("After clicking open button!");
-		System.out.println(selected.getProperty(ResultProperty.NAME));
-		openNetwork(selected);
+		System.out.println(mSelected.getProperty(ResultProperty.NAME));
+		openNetwork(mSelected);
 	}
 
 	private void rightButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
 		// display the selected item of the available pathways list to the
 		// selected pathways list
-		selectedPathwayName = (String) availablePathwaysList.getSelectedValue();
+		mSelectedPathwayName = (String) availablePathwaysList
+				.getSelectedValue();
 		System.out.println("After clicking the right button!");
-		System.out.println(selectedPathwayName);
-		selectedPathwaysListModel.addElement((Object) selectedPathwayName);
+		System.out.println(mSelectedPathwayName);
+		selectedPathwaysListModel.addElement((Object) mSelectedPathwayName);
 		selectedPathwaysList.setModel(selectedPathwaysListModel);
 		if (selectedPathwaysListModel.getSize() > 0) {
 			leftButton.setEnabled(true);
@@ -623,10 +1059,10 @@ public class SuperpathwaysGui extends JFrame {
 	private void leftButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		// display the selected item of the selected pathways list to the
 		// available pathways list
-		selectedPathwayName = (String) selectedPathwaysList.getSelectedValue();
+		mSelectedPathwayName = (String) selectedPathwaysList.getSelectedValue();
 		System.out.println("After clicking the left button!");
-		System.out.println(selectedPathwayName);
-		availablePathwaysListModel.addElement((Object) selectedPathwayName);
+		System.out.println(mSelectedPathwayName);
+		availablePathwaysListModel.addElement((Object) mSelectedPathwayName);
 		availablePathwaysList.setModel(availablePathwaysListModel);
 		if (availablePathwaysListModel.getSize() > 0) {
 			rightButton.setEnabled(true);
@@ -652,13 +1088,97 @@ public class SuperpathwaysGui extends JFrame {
 		}
 	}
 
+	private void CancelBtnActionPerformed(java.awt.event.ActionEvent evt) {
+		SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
+		spPlugin.mWindow.setVisible(false);
+		spPlugin.mWindow.dispose();
+	}
+
+	private void MergeBtnActionPerformed(java.awt.event.ActionEvent evt) {
+		//SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
+		//spPlugin.mWindow.setVisible(false);
+		//spPlugin.mWindow.dispose();
+	}
+
+	private void addHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		
+				
+		mSelectedPathwayName = (String) candidatePathwaysSharingNodesList.getSelectedValue();
+		int index1 = mSelectedPathwayName.indexOf(",");
+		String pwNameId = mSelectedPathwayName.substring(0, index1);
+
+		System.out
+				.println("After clicking the Add button in the 'Search Help' panel!");
+		System.out.println(pwNameId);
+
+		availablePathwaysListModel.addElement((Object) pwNameId);
+		availablePathwaysList.setModel(availablePathwaysListModel);
+		/*
+		 * if (availablePathwaysListModel.getSize() > 0) {
+		 * rightButton.setEnabled(true); }
+		 */
+
+		// removed the selected item in the selected pathways list
+		//int index = candidatePathwaysSharingNodesTable.getSelectedRow();
+        //candidatePathwaysSharingNodesTableModel.removeRow(index);
+        //candidatePathwaysSharingNodesTable.setModel(candidatePathwaysSharingNodesTableModel);
+		int index = candidatePathwaysSharingNodesList.getSelectedIndex();
+		candidatePathwaysSharingNodesListModel.remove(index);
+		candidatePathwaysSharingNodesList.setModel(candidatePathwaysSharingNodesListModel);
+		superpathwayPanel.setSelectedIndex(0);
+		
+	}
+
+	private void searchHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {
+
+		candidatePathwaysSharingNodesTableModel = new DefaultTableModel();
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+		String anchorPwNameAndId = anchorPathwayComboBox.getSelectedItem()
+				.toString();
+		int lowerBound = Integer.parseInt(lowerBoundSharingNodeNoComboBox
+				.getSelectedItem().toString());
+		int upperBound = Integer.parseInt(upperBoundSharingNodeNoComboBox
+				.getSelectedItem().toString());
+		mCandidatePwList = findCandidatePwBySharingNodes(anchorPwNameAndId,
+				lowerBound, upperBound);
+
+		// mCandidatePwList is a list of string with elements in format "Pathway
+		// Name (pw id), sharing node number: a int"
+		Iterator<String> it = mCandidatePwList.iterator();
+		while (it.hasNext()) {
+			String temp = it.next();
+			candidatePathwaysSharingNodesListModel.addElement(temp);
+			/*int index = temp.indexOf(",");
+			String temp1 = temp.substring(0, index);
+			String temp2 = temp.substring(index + 1);
+			Object[] row=new Object[2];
+			row[0]=(Object)temp1;
+			row[1]=(Object)temp2;
+			candidatePathwaysSharingNodesTableModel.addRow(row);*/
+		}
+		//candidatePathwaysSharingNodesTable.setModel(candidatePathwaysSharingNodesTableModel);
+		candidatePathwaysSharingNodesList.setModel(candidatePathwaysSharingNodesListModel);
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+	}
+
+	private void backtoSearchButtonActionPerformed(
+			java.awt.event.ActionEvent evt) {
+		// System.out.println("Clicking the back to search button!");
+		superpathwayPanel.setSelectedIndex(0);
+	}
+
+	private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		superpathwayPanel.setSelectedIndex(2);
+	}
+
 	// the code above is generated in Netbean IDE
 
 	protected void resetOrganisms() {
 		List<String> organisms = new ArrayList<String>();
 		organisms.add(ORGANISM_ALL);
 		try {
-			organisms.addAll(Arrays.asList(client.listOrganisms()));
+			organisms.addAll(Arrays.asList(mClient.listOrganisms()));
 		} catch (Exception e) {
 			Logger.log.error("Unable to get organisms for WikiPathways client",
 					e);
@@ -681,7 +1201,7 @@ public class SuperpathwaysGui extends JFrame {
 					.getCyWebServiceEventSupport()
 					.fireCyWebServiceEvent(
 							new CyWebServiceEvent<FindPathwaysByTextParameters>(
-									client.getClientID(),
+									mClient.getClientID(),
 									WSEventType.SEARCH_DATABASE, request));
 
 		} catch (CyWebServiceException ex) {
@@ -703,15 +1223,15 @@ public class SuperpathwaysGui extends JFrame {
 		// }
 	}
 
-	private void openNetwork(ResultRow selected) {
+	private void openNetwork(ResultRow mSelected) {
 		try {
 			GetPathwayParameters request = new GetPathwayParameters();
-			WSSearchResult result = selected.getResult();
+			WSSearchResult result = mSelected.getResult();
 			request.id = result.getId();
 			request.revision = Integer.parseInt(result.getRevision());
 			WebServiceClientManager.getCyWebServiceEventSupport()
 					.fireCyWebServiceEvent(
-							new CyWebServiceEvent(client.getClientID(),
+							new CyWebServiceEvent(mClient.getClientID(),
 									WSEventType.IMPORT_NETWORK, request));
 		} catch (CyWebServiceException ex) {
 			JOptionPane.showMessageDialog(SuperpathwaysGui.this, "Error: "
@@ -725,7 +1245,7 @@ public class SuperpathwaysGui extends JFrame {
 		tableModel = new ListWithPropertiesTableModel<ResultProperty, ResultRow>();
 		if (results != null) {
 			tableModel.setColumns(new ResultProperty[] { ResultProperty.NAME,
-					ResultProperty.ORGANISM, });
+					ResultProperty.ID, ResultProperty.ORGANISM, });
 
 			resultTable.setModel(tableModel);
 			for (WSSearchResult r : results) {
@@ -737,19 +1257,173 @@ public class SuperpathwaysGui extends JFrame {
 
 	}
 
-	private javax.swing.JFrame frame;
+	public List<String> findCandidatePwBySharingNodes(String pwNameAndId,
+			int lowerBound, int upperBound) {
 
-	private javax.swing.JButton addBtn;
+		List<String> candidatePw = new ArrayList<String>();
+		if (lowerBound > upperBound) {
+			JOptionPane.showMessageDialog(helpPanel,
+					"Please reset the range of sharing nodes number!");
+		} else {
 
-	private javax.swing.JButton openBtn;
+			Map<String, Integer> sharingNodeNumberofPws = new HashMap<String, Integer>();
+			List<String> geneIDList = new ArrayList<String>();
+			int geneNodeNumber = 0;
+			// find the anchorResultRow for loading the pathway to Cytoscape
+			// int indexAnchorPw =
+			// mAvailablePathwaysNameIDList.indexOf(pwNameAndId);
+			// ResultRow anchorResultRow =
+			// mAvailablePathwaysList.get(indexAnchorPw);
+			// openNetwork(anchorResultRow);
 
-	private javax.swing.JList availablePathwaysList;
+			JOptionPane
+					.showMessageDialog(helpPanel,
+							"Please wait with patience, the searching process takes time!");
+			int index1 = pwNameAndId.indexOf("(");
+			int index2 = pwNameAndId.indexOf(")");
+			String pwsID = pwNameAndId.substring(index1 + 1, index2);
 
-	private javax.swing.JLabel availablePathwaysLabel;
+			// Create a client to the WikiPathways web service
+			WikiPathwaysClient client = mClient.getStub();
+
+			// Download a pathway from WikiPathways
+			WSPathway wsPathway = new WSPathway();
+			try {
+				wsPathway = client.getPathway(pwsID);
+			} catch (RemoteException e) {
+				Logger.log.error(
+						"Unable to get the pathway due to the RemoteException",
+						e);
+			} catch (ConverterException e) {
+				Logger.log
+						.error(
+								"Unable to get the pathway due to the ConverterException",
+								e);
+			}
+			// Create a pathway object
+			Pathway pathway = new Pathway();
+			try {
+				pathway = WikiPathwaysClient.toPathway(wsPathway);
+			} catch (ConverterException e) {
+				Logger.log.error(
+						"Unable to get the pathway due to the RemoteException",
+						e);
+			}
+			// Get all genes, proteins and metabolites for a pathway
+			for (PathwayElement pwElm : pathway.getDataObjects()) {
+				// Only take elements with type DATANODE (genes, proteins,
+				// metabolites)
+				if (pwElm.getObjectType() == ObjectType.DATANODE) {
+					/*
+					 * System.out.println(pwElm.getXref().toString()); try {
+					 * WSSearchResult[] PwsSharingNode = client
+					 * .findPathwaysByXref(pwElm.getXref());
+					 * System.out.println("" + PwsSharingNode.length);
+					 * 
+					 * mNodeIdToPwsSharingNode.put(pwElm.getXref().toString(),
+					 * PwsSharingNode); } catch (RemoteException e) { Logger.log
+					 * .error( "Unable to find the candidate pathways due to the
+					 * RemoteException", e); }
+					 */
+
+					System.out.println(pwElm.getGeneID());
+					geneIDList.add(pwElm.getGeneID());
+					geneNodeNumber = geneNodeNumber + 1;
+					try {
+						WSSearchResult[] PwsSharingNode = client
+								.findPathwaysByXref(pwElm.getGeneID());
+						System.out.println("" + PwsSharingNode.length);
+
+						mNodeIdToPwsSharingNode.put(pwElm.getGeneID(),
+								PwsSharingNode);
+					} catch (RemoteException e) {
+						Logger.log
+								.error(
+										"Unable to find the candidate pathways due to the RemoteException",
+										e);
+					}
+				}
+
+			}
+
+			for (int i = 0; i < geneNodeNumber; i++) {
+				WSSearchResult[] pwsArray = mNodeIdToPwsSharingNode
+						.get(geneIDList.get(i));
+
+				for (int j = 0; j < pwsArray.length; j++) {
+					WSSearchResult pw = pwsArray[j];
+					ResultRow pwResultRow = new ResultRow(pw);
+					String onePwNameAndId = pwResultRow
+							.getProperty(ResultProperty.NAME)
+							+ "("
+							+ pwResultRow.getProperty(ResultProperty.ID)
+							+ ")";
+
+					if (sharingNodeNumberofPws.containsKey(onePwNameAndId)) {
+						Integer oldValue = sharingNodeNumberofPws
+								.get(onePwNameAndId);
+						Integer newValue = new Integer(oldValue + 1);
+						sharingNodeNumberofPws.put(onePwNameAndId, newValue);
+					} else {
+						sharingNodeNumberofPws.put(onePwNameAndId, 1);
+					}
+				}
+			}
+
+			// the following code is for displaying the result in the table of
+			// "Search Help" panel
+			Set<String> sharingNodePwsSet = sharingNodeNumberofPws.keySet();
+			Iterator<String> it = sharingNodePwsSet.iterator();
+			while (it.hasNext()) {
+				String temp = it.next();
+				Integer value = sharingNodeNumberofPws.get(temp);
+				if (value >= lowerBound && value <= upperBound) {
+					candidatePw.add(temp + ", sharing node number: "
+							+ String.valueOf(value));
+				}
+			}
+
+		}
+		return candidatePw;
+	}
 
 	private javax.swing.DefaultListModel availablePathwaysListModel;
 
+	private javax.swing.DefaultListModel selectedPathwaysListModel;
+
+	 private javax.swing.DefaultListModel candidatePathwaysSharingNodesListModel;
+
+	private javax.swing.table.DefaultTableModel candidatePathwaysSharingNodesTableModel;
+
+	private javax.swing.JButton CancelBtn;
+
+	private javax.swing.JButton MergeBtn;
+
+	private javax.swing.JButton addBtn;
+
+	private javax.swing.JButton addHelpButton;
+
+	private javax.swing.JComboBox anchorPathwayComboBox;
+
+	private javax.swing.JLabel anchorPathwayLabel;
+
+	private javax.swing.JLabel availablePathwaysLabel;
+
+	private javax.swing.JList availablePathwaysList;
+
 	private javax.swing.JScrollPane availablePathwaysScrollPane;
+
+	private javax.swing.JButton backToSearchButton;
+
+	private javax.swing.JScrollPane candidatePathwaysSharingNodesScrollPane;
+
+	// private javax.swing.JList candidatePathwaysSharingNodesList;
+
+	private javax.swing.JLabel explainHelpLabel1;
+
+	private javax.swing.JLabel explainHelpLabel2;
+
+	private javax.swing.JPanel helpPanel;
 
 	private javax.swing.JLabel hintLabel1;
 
@@ -769,6 +1443,12 @@ public class SuperpathwaysGui extends JFrame {
 
 	private javax.swing.JButton leftButton;
 
+	private javax.swing.JLabel lowerBoundLabel;
+
+	private javax.swing.JComboBox lowerBoundSharingNodeNoComboBox;
+
+	private javax.swing.JButton openBtn;
+
 	private javax.swing.JComboBox organismCombo;
 
 	private javax.swing.JScrollPane resultScrolllPane1;
@@ -785,19 +1465,31 @@ public class SuperpathwaysGui extends JFrame {
 
 	private javax.swing.JPanel selectPanel;
 
-	private javax.swing.JList selectedPathwaysList;
-
-	private javax.swing.DefaultListModel selectedPathwaysListModel;
-
 	private javax.swing.JLabel selectedPathwaysLabel;
 
+	private javax.swing.JList selectedPathwaysList;
+
 	private javax.swing.JScrollPane selectedPathwaysScrollPane;
+
+	private javax.swing.JLabel sharingNodeNoLabel;
 
 	private javax.swing.JLabel stepLabel1;
 
 	private javax.swing.JLabel stepLabel2;
 
 	private javax.swing.JTabbedPane superpathwayPanel;
+
+	private javax.swing.JLabel upperBoundLabel;
+
+	private javax.swing.JComboBox upperBoundSharingNodeNoComboBox;
+
+	private javax.swing.JButton searchHelpButton;
+
+	private javax.swing.JButton helpButton;
+
+	//private javax.swing.JTable candidatePathwaysSharingNodesTable;
+	
+	private javax.swing.JList candidatePathwaysSharingNodesList;
 
 	// End of variables declaration
 	ListWithPropertiesTableModel<ResultProperty, ResultRow> tableModel;
@@ -823,6 +1515,9 @@ public class SuperpathwaysGui extends JFrame {
 				return Double.toString(result.getScore());
 			case URL:
 				return result.getUrl();
+				// helen add
+			case ID:
+				return result.getId();
 			}
 			return null;
 		}

@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.rpc.ServiceException;
 
-import org.pathvisio.data.DataException;
+import org.bridgedb.IDMapperException;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 
 /**
@@ -53,7 +53,7 @@ public class ImageServiceImpl extends HttpServlet {
 		return cacheMgr;
 	}
 	
-	private ImageCache getImageCache() throws ServiceException, DataException, IOException {
+	private ImageCache getImageCache() throws ServiceException, IOException, IDMapperException {
 		return getCacheManager().getImageCache();
 	}
 	

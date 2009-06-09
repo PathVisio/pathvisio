@@ -20,6 +20,7 @@
 			<include name="lib/resources.jar"/>
 			<include name="wikipathways.jar"/>
 			<include name="lib/jdom.jar"/>
+			<include name="lib/bridgedb-bio.jar"/>
 			<include name="lib/bridgedb.jar"/>
 			<include name="lib/derby.jar"/>
 			<include name="lib/apache/*.jar"/>

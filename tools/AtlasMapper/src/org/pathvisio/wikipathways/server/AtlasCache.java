@@ -30,15 +30,15 @@ import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.Gdb;
-import org.pathvisio.data.GdbProvider;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperRdb;
+import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.GdbProvider;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.DataSource;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.Xref;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 import atlas.model.GeneSet;
@@ -65,7 +65,7 @@ public class AtlasCache {
 		this.retention_time = retention_time;
 	}
 	
-	public GeneSet getGeneSet(String id) throws FileNotFoundException, DataException, ServiceException, IOException, ConverterException, ClassNotFoundException {
+	public GeneSet getGeneSet(String id) throws FileNotFoundException, ServiceException, IOException, ConverterException, ClassNotFoundException, IDMapperException {
 		WPPathway p = pathwayCache.getPathway(id);
 		
 		File cache = getCacheFile(p.getId(), p.getRevision());
@@ -86,7 +86,7 @@ public class AtlasCache {
 		return genes;
 	}
 	
-	private GeneSet updateCache(WPPathway p) throws DataException, ServiceException, FileNotFoundException, IOException {
+	private GeneSet updateCache(WPPathway p) throws ServiceException, FileNotFoundException, IOException, IDMapperException {
 		Pathway pathway = p.getPathway();
 		Organism org = Organism.fromLatinName(
 				pathway.getMappInfo().getOrganism()
@@ -95,13 +95,13 @@ public class AtlasCache {
 			org = Organism.HomoSapiens;
 			Logger.log.warn("No organism found in pahtway " + p.getId() + ", assuming human");
 		}
-		List<Gdb> gdbList = gdbs.getGdbs(org);
+		List<IDMapperRdb> gdbList = gdbs.getGdbs(org);
 		
 		//Get all ensembl genes on the pathway
 		Set<String> ensIds = new HashSet<String>();
 		for(Xref x : pathway.getDataNodeXrefs()) {
-			for(Gdb gdb : gdbList) {
-				for(Xref c : gdb.getCrossRefs(x, DataSource.ENSEMBL)) {
+			for(IDMapperRdb gdb : gdbList) {
+				for(Xref c : gdb.getCrossRefs(x, BioDataSource.ENSEMBL)) {
 					ensIds.add(c.getId());
 				}
 			}

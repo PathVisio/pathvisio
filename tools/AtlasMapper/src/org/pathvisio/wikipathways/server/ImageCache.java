@@ -25,12 +25,12 @@ import java.util.List;
 
 import javax.xml.rpc.ServiceException;
 
-import org.pathvisio.data.DataException;
-import org.pathvisio.data.GdbProvider;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.bio.GdbProvider;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ImageExporter;
-import org.pathvisio.model.Organism;
 
 import atlas.model.Factor;
 import atlas.model.GeneSet;
@@ -60,7 +60,7 @@ public class ImageCache {
 		this.retention_time = retention_time;
 	}
 	
-	public String getImageUrl(String pathwayId, List<Factor> factors) throws DataException, ConverterException, FileNotFoundException, ServiceException, IOException, ClassNotFoundException {
+	public String getImageUrl(String pathwayId, List<Factor> factors) throws ConverterException, FileNotFoundException, ServiceException, IOException, ClassNotFoundException, IDMapperException {
 		WPPathway pathway = pathwayCache.getPathway(pathwayId);
 		GeneSet atlasGenes = atlasCache.getGeneSet(pathwayId);
 		

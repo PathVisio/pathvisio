@@ -26,14 +26,14 @@ import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
-import org.pathvisio.data.Gdb;
+import org.bridgedb.IDMapperRdb;
+import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Organism;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapperBase;
@@ -180,7 +180,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			msize[1] = vPathway.mFromV(vsize.getHeight());
 			
 			Organism org = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
-			List<Gdb> gdbs = getCacheManager().getGdbProvider().getGdbs(org);
+			List<IDMapperRdb> gdbs = getCacheManager().getGdbProvider().getGdbs(org);
 
 			List<GeneInfo> genes = new ArrayList<GeneInfo>();
 
@@ -193,8 +193,8 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 					bounds[3] = (pwe.getMTop() + pwe.getMHeight()) / msize[1];
 					
 					Set<Xref> xrefs = new HashSet<Xref>();
-					for(Gdb gdb : gdbs) {
-						xrefs.addAll(gdb.getCrossRefs(pwe.getXref(), DataSource.ENSEMBL));
+					for(IDMapperRdb gdb : gdbs) {
+						xrefs.addAll(gdb.getCrossRefs(pwe.getXref(), BioDataSource.ENSEMBL));
 					}
 					
 					for(Xref x : xrefs) {

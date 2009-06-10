@@ -107,17 +107,17 @@ public class Line extends Annotation {
 			g.setStroke(new BasicStroke());
 			switch (head.getFillType())
 			{
-			case ArrowShape.OPEN:
+			case OPEN:
 				g.setPaint (Color.WHITE);
 				g.fill (head.getShape());				
 				g.setColor (c);
 				g.draw (head.getShape());
 				break;
-			case ArrowShape.CLOSED:
+			case CLOSED:
 				g.setPaint (c);
 				g.fill (head.getShape());				
 				break;
-			case ArrowShape.WIRE:
+			case WIRE:
 				g.setColor (c);
 				g.draw (head.getShape());
 				break;

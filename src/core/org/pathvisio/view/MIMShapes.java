@@ -35,13 +35,13 @@ public class MIMShapes
 		ShapeRegistry.registerShape ("mim-phosphorylated", getPluggableShape (MIM_PHOSPHORYLATED));
 		ShapeRegistry.registerShape ("mim-degradation", getPluggableShape (MIM_DEGRADATION));
 		ShapeRegistry.registerShape ("mim-interaction", getPluggableShape (MIM_INTERACTION));
-		ShapeRegistry.registerArrow ("mim-necessary-stimulation", getMIMNecessary(), ArrowShape.OPEN);
-		ShapeRegistry.registerArrow ("mim-binding", getMIMBinding(), ArrowShape.CLOSED);
-		ShapeRegistry.registerArrow ("mim-conversion", getMIMConversion(), ArrowShape.CLOSED);		
-		ShapeRegistry.registerArrow ("mim-stimulation", getMIMStimulation(), ArrowShape.OPEN);
-		ShapeRegistry.registerArrow ("mim-catalysis", getMIMCatalysis(), ArrowShape.OPEN);		
-		ShapeRegistry.registerArrow ("mim-cleavage", getMIMCleavage(), ArrowShape.WIRE);
-		ShapeRegistry.registerArrow ("mim-inhibition", getMIMInhibition(), getMIMInhibitionFill(), ArrowShape.OPEN);
+		ShapeRegistry.registerArrow ("mim-necessary-stimulation", getMIMNecessary(), ArrowShape.FillType.OPEN);
+		ShapeRegistry.registerArrow ("mim-binding", getMIMBinding(), ArrowShape.FillType.CLOSED);
+		ShapeRegistry.registerArrow ("mim-conversion", getMIMConversion(), ArrowShape.FillType.CLOSED);		
+		ShapeRegistry.registerArrow ("mim-stimulation", getMIMStimulation(), ArrowShape.FillType.OPEN);
+		ShapeRegistry.registerArrow ("mim-catalysis", getMIMCatalysis(), ArrowShape.FillType.OPEN);		
+		ShapeRegistry.registerArrow ("mim-cleavage", getMIMCleavage(), ArrowShape.FillType.WIRE);
+		ShapeRegistry.registerArrow ("mim-inhibition", getMIMInhibition(), getMIMInhibitionFill(), ArrowShape.FillType.OPEN);
 		
 		ShapeType.create ("mim-phosphorylated", null);
 		ShapeType.create ("mim-degradation", null);

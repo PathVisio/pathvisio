@@ -402,17 +402,17 @@ public class Line extends Graphics implements Adjustable
 			g.setStroke(new BasicStroke());
 			switch (head.getFillType())
 			{
-			case ArrowShape.OPEN:
+			case OPEN:
 				g.setPaint (Color.WHITE);
 				g.fill (head.getFillShape());				
 				g.setColor (c);
 				g.draw (head.getShape());
 				break;
-			case ArrowShape.CLOSED:
+			case CLOSED:
 				g.setPaint (c);
 				g.fill (head.getFillShape());				
 				break;
-			case ArrowShape.WIRE:
+			case WIRE:
 				g.setColor (c);
 				g.draw (head.getShape());
 				break;

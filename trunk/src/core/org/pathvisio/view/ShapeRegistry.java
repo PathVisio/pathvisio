@@ -54,7 +54,7 @@ public class ShapeRegistry
 		temp.lineTo (30,30);
 		temp.moveTo (-30,30);
 		temp.lineTo (30,-30);		
-		defaultArrow = new ArrowShape (temp, ArrowShape.OPEN);
+		defaultArrow = new ArrowShape (temp, ArrowShape.FillType.OPEN);
 
 		temp = new GeneralPath();
 		temp.moveTo (0,0);
@@ -87,7 +87,7 @@ public class ShapeRegistry
 	 * @param fillShape The shape used to draw the fill (in case fillType is open or closed
 	 * @param fillType The fill type, see {@link ArrowShape}
 	 */
-	static public void registerArrow (String key, Shape sh, Shape fillShape, int fillType) {
+	static public void registerArrow (String key, Shape sh, Shape fillShape, ArrowShape.FillType fillType) {
 		arrowMap.put(key, new ArrowShape (sh, fillShape, fillType));
 	}
 	
@@ -97,7 +97,7 @@ public class ShapeRegistry
 	 * @param sh The shape used to draw the stroke and fill (in case fillType is open or closed)
 	 * @param fillType The fill type, see {@link ArrowShape}
 	 */
-	static public void registerArrow (String key, Shape sh, int fillType)
+	static public void registerArrow (String key, Shape sh, ArrowShape.FillType fillType)
 	{
 		arrowMap.put (key, new ArrowShape (sh, fillType));
 	}

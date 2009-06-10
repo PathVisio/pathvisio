@@ -19,13 +19,17 @@ package org.pathvisio.view;
 import java.awt.Shape;
 
 /**
-   ArrowShapes are shapes with an "open" attribute.  If open is true,
-   it should be filled with the background color and stroked with the
-   line shape.  For filling, the shape returned by getFillShape() will be used,
-   for stroking, the shape returned by getShape() will be used. If fillShape is
-   not specified in the constructor, shape will be used.
-   If open is false, it should be filled and stroked with
-   the line color.
+   ArrowShapes determine how the ending of a line can be drawn. These
+   are arrows in a broad sense - they could be T-bars for example.
+   <p>
+   ArrowShapes have a fill type. FillType can be OPEN, CLOSED or WIRE.
+   The fillType determines whether the body of the arrow head is filled 
+   with the foreground color or with the canvas color.
+   <p>
+   For the outline, the shape returned by getShape() will be used.
+   getFillShape() optionally defines a different shape for the body. If there
+   is no separate fillShape defined, the same shape is used for the outline
+   and for the body.  
 
 	   <pre>
           open             closed             wire
@@ -36,27 +40,65 @@ import java.awt.Shape;
 	   </pre>
 */
 public class ArrowShape
-{
-	public static final int OPEN = 0;
-	public static final int CLOSED = 1;
-	public static final int WIRE = 2;
+{	
+	/**
+	 * Enumerates possible ways to combine the outline and body.
+	 */
+	public enum FillType
+	{
+		/** 
+		 * Open fill-type, where the outline is colored with the foreground color and the 
+		 * body is colored with the canvas color.
+		 */
+		OPEN,
+
+		/** 
+		 * Closed fill-type, where both the outline and the body are 
+		 * colored with the line color.
+		 */
+		CLOSED,
+
+		/** 
+		 * Wire fill-type, there is only an outline.
+		 */
+		WIRE
+	}
 	
-	public ArrowShape (Shape shape, Shape fillShape, int fillType) {
+	/**
+	 * Normally, this constructor is not called directly. 
+	 * Use {@link ShapeRegistry.registerShape} instead to define a new ArrowShape.
+	 */
+	public ArrowShape (Shape shape, Shape fillShape, FillType fillType) {
 		this.shape = shape;
 		this.fillType = fillType;
 		this.fillShape = fillShape != null ? fillShape : shape;
 	}
 	
-	public ArrowShape (Shape shape, int fillType)
+	/**
+	 * Normally, this constructor is not called directly. 
+	 * Use {@link ShapeRegistry.registerShape} instead to define a new ArrowShape.
+	 */
+	public ArrowShape (Shape shape, FillType fillType)
 	{
 		this(shape, shape, fillType);
 	}
 	
-	public int getFillType () { return fillType; }
+	/**
+	 * @return one of {@link FillType.OPEN}, {@link FillType.CLOSED} or {@link FillType.WIRE}
+	 */
+	public FillType getFillType () { return fillType; }
+	
+	/**
+	 * @return the outline for this arrow type.
+	 */
 	public Shape getShape() { return shape; }
+	
+	/**
+	 * @return the body of this arrow type. If this is null, {@link getShape} is used instead
+	 */
 	public Shape getFillShape() { return fillShape; }
 	
-	Shape shape;
-	int fillType;
-	Shape fillShape;
+	private Shape shape;
+	private FillType fillType;
+	private Shape fillShape;
 }

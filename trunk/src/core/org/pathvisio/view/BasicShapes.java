@@ -56,13 +56,13 @@ class BasicShapes
 		ShapeRegistry.registerShape (
 			"Rectangle", new Rectangle (0, 0, 10, 10));
 
-		ShapeRegistry.registerArrow ("Arrow", getArrowHead(), ArrowShape.CLOSED);
-		ShapeRegistry.registerArrow ("TBar", getTBar(), getTBarFill(), ArrowShape.OPEN);
-		ShapeRegistry.registerArrow ("LigandRound", getLRound(), ArrowShape.CLOSED);
-		ShapeRegistry.registerArrow ("ReceptorRound", getRRound(), ArrowShape.WIRE);
-		ShapeRegistry.registerArrow ("Receptor", getReceptor(), ArrowShape.WIRE);
-		ShapeRegistry.registerArrow ("ReceptorSquare", getReceptorSquare(), ArrowShape.WIRE);
-		ShapeRegistry.registerArrow ("LigandSquare", getLigand(), ArrowShape.CLOSED);	
+		ShapeRegistry.registerArrow ("Arrow", getArrowHead(), ArrowShape.FillType.CLOSED);
+		ShapeRegistry.registerArrow ("TBar", getTBar(), getTBarFill(), ArrowShape.FillType.OPEN);
+		ShapeRegistry.registerArrow ("LigandRound", getLRound(), ArrowShape.FillType.CLOSED);
+		ShapeRegistry.registerArrow ("ReceptorRound", getRRound(), ArrowShape.FillType.WIRE);
+		ShapeRegistry.registerArrow ("Receptor", getReceptor(), ArrowShape.FillType.WIRE);
+		ShapeRegistry.registerArrow ("ReceptorSquare", getReceptorSquare(), ArrowShape.FillType.WIRE);
+		ShapeRegistry.registerArrow ("LigandSquare", getLigand(), ArrowShape.FillType.CLOSED);	
 		
 		ShapeRegistry.registerAnchor (AnchorType.NONE.getName(), getAnchorDefault());
 		ShapeRegistry.registerAnchor (AnchorType.CIRCLE.getName(), getAnchorCircle());

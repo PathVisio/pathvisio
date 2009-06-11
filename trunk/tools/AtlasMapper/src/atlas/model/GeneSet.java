@@ -43,7 +43,8 @@ public class GeneSet implements Serializable {
 		AnyType2AnyTypeMapEntry[][] results = port.batchQuery(
 				geneIds, new String[0], organism, ""
 		);
-
+		if(results == null) results = new AnyType2AnyTypeMapEntry[0][0];
+		
 		Map<String, Gene> geneMap = new HashMap<String, Gene>();
 		
 		Map map = new HashMap();

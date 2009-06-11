@@ -47,6 +47,7 @@
 		</fail>
 		<copy file="${gwt.dir}/gwt-dev-linux.jar" todir="lib/" />
 		<exec executable="./${proj.name}-compile" failonerror="true" />
+		<delete file="lib/gwt-dev-linux.jar" />
 	</target>
 
 	<target name="generate-client">

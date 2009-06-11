@@ -38,7 +38,6 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ColorExporter;
-import org.pathvisio.wikipathways.client.AtlasMapper;
 
 import atlas.model.Factor;
 import atlas.model.FactorData;
@@ -95,7 +94,7 @@ public class AtlasVisualizer {
 	private Map<Xref, Color[]> createColorMap() {
 		Map<Xref, Color[]> xrefColors = new HashMap<Xref, Color[]>();
 		
-		DataSource ens = AtlasMapper.getEnsemblDataSource(organism);
+		DataSource ens = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
 		
 		Collection<Gene> genes = atlasGenes.getGenes();
 		for(Gene gene : genes) {
@@ -140,7 +139,7 @@ public class AtlasVisualizer {
 	}
 	
 	private Map<PathwayElement, Set<Xref>> createEnsemblMap() throws IDMapperException {
-		DataSource ens = AtlasMapper.getEnsemblDataSource(organism);
+		DataSource ens = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
 		Map<PathwayElement, Set<Xref>> ensMap = new HashMap<PathwayElement, Set<Xref>>();
 		for(PathwayElement pwElm : pathway.getDataObjects()) {
 			if(pwElm.getObjectType() == ObjectType.DATANODE) {

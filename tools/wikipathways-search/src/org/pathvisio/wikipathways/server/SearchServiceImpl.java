@@ -26,11 +26,12 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 import javax.xml.rpc.ServiceException;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.DataSource;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Xref;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.client.IdSearchPanel;
 import org.pathvisio.wikipathways.client.Query;
@@ -51,6 +52,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	WikiPathwaysClient client;
 	
 	public SearchServiceImpl() throws ServiceException {
+		BioDataSource.init();
 	}
 	
 	protected static URL getClientUrl(ServletContext servlet) {

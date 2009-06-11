@@ -89,6 +89,7 @@ public class AtlasVisualizer {
 		
 		ColorExporter colorExporter = new ColorExporter(pathway, colors);
 		colorExporter.export(exporter, file);
+		colorExporter.dispose();
 	}
 	
 	private Map<Xref, Color[]> createColorMap() {

@@ -56,6 +56,9 @@ public class ColorExporter implements VPathwayListener {
 		this.colors = colors;
 		vPathway = new VPathway(new VPathwayWrapperBase());
 		vPathway.fromModel(pathway);
+	}
+	
+	public void dispose() {
 		vPathway.dispose();
 	}
 	
@@ -194,6 +197,7 @@ public class ColorExporter implements VPathwayListener {
 			}
 			ColorExporter colorExp = new ColorExporter(pathway, colors);
 			colorExp.export(exporter, outputFile);
+			colorExp.dispose();
 			
 		} catch(Exception e) {
 			e.printStackTrace();

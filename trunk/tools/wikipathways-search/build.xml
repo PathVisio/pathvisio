@@ -39,7 +39,15 @@
 	</path>
 
 	<target name="gwt-compile" depends="compile">
+		<fail message="You must specify the path to the gwt development libraryes (download from google): 
+			-Dgwt.dir=...">
+			<condition>
+				<not> <isset property="gwt.dir"/> </not>
+			</condition>
+		</fail>
+		<copy file="${gwt.dir}/gwt-dev-linux.jar" todir="lib/" />
 		<exec executable="./${proj.name}-compile" failonerror="true" />
+		<delete file="lib/gwt-dev-linux.jar" />
 	</target>
 
 	<target name="compile">

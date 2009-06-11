@@ -26,10 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;
@@ -37,6 +38,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ColorExporter;
+import org.pathvisio.wikipathways.client.AtlasMapper;
 
 import atlas.model.Factor;
 import atlas.model.FactorData;
@@ -52,12 +54,14 @@ public class AtlasVisualizer {
 	GeneSet atlasGenes;
 	List<Factor> factors;
 	List<IDMapperRdb> gdbs;
+	Organism organism;
 	
 	public AtlasVisualizer(Pathway pathway, GeneSet atlasGenes, List<Factor> factors, List<IDMapperRdb> gdbs) {
 		this.pathway = pathway;
 		this.atlasGenes = atlasGenes;
 		this.factors = factors;
 		this.gdbs = gdbs;
+		this.organism = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
 		PreferenceManager.init();
 	}
 	
@@ -91,9 +95,11 @@ public class AtlasVisualizer {
 	private Map<Xref, Color[]> createColorMap() {
 		Map<Xref, Color[]> xrefColors = new HashMap<Xref, Color[]>();
 		
+		DataSource ens = AtlasMapper.getEnsemblDataSource(organism);
+		
 		Collection<Gene> genes = atlasGenes.getGenes();
 		for(Gene gene : genes) {
-			Xref xref = new Xref(gene.getId(), BioDataSource.ENSEMBL);
+			Xref xref = new Xref(gene.getId(), ens);
 			Color[] colors = new Color[factors.size()];
 			//Initial color is white
 			for(int i = 0; i < colors.length; i++) colors[i] = Color.white;
@@ -134,6 +140,7 @@ public class AtlasVisualizer {
 	}
 	
 	private Map<PathwayElement, Set<Xref>> createEnsemblMap() throws IDMapperException {
+		DataSource ens = AtlasMapper.getEnsemblDataSource(organism);
 		Map<PathwayElement, Set<Xref>> ensMap = new HashMap<PathwayElement, Set<Xref>>();
 		for(PathwayElement pwElm : pathway.getDataObjects()) {
 			if(pwElm.getObjectType() == ObjectType.DATANODE) {
@@ -141,7 +148,7 @@ public class AtlasVisualizer {
 				Set<Xref> ensRefs = new HashSet<Xref>();
 				
 				for(int i = 0; i < gdbs.size(); i++) {
-					ensRefs.addAll(gdbs.get(i).getCrossRefs(xref, BioDataSource.ENSEMBL));
+					ensRefs.addAll(gdbs.get(i).getCrossRefs(xref, ens));
 				}
 				
 				ensMap.put(pwElm, ensRefs);

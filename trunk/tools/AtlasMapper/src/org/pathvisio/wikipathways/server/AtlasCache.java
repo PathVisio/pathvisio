@@ -33,12 +33,12 @@ import javax.xml.rpc.ServiceException;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.GdbProvider;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.wikipathways.client.AtlasMapper;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 import atlas.model.GeneSet;
@@ -101,7 +101,7 @@ public class AtlasCache {
 		Set<String> ensIds = new HashSet<String>();
 		for(Xref x : pathway.getDataNodeXrefs()) {
 			for(IDMapperRdb gdb : gdbList) {
-				for(Xref c : gdb.getCrossRefs(x, BioDataSource.ENSEMBL)) {
+				for(Xref c : gdb.getCrossRefs(x, AtlasMapper.getEnsemblDataSource(org))) {
 					ensIds.add(c.getId());
 				}
 			}

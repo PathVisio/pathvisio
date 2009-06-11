@@ -38,7 +38,6 @@ import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapperBase;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
-import org.pathvisio.wikipathways.client.AtlasMapper;
 import org.pathvisio.wikipathways.client.AtlasMapperService;
 import org.pathvisio.wikipathways.client.ExpressionValue;
 import org.pathvisio.wikipathways.client.FactorInfo;
@@ -181,7 +180,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			msize[1] = vPathway.mFromV(vsize.getHeight());
 			
 			Organism org = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
-			DataSource orgEns = AtlasMapper.getEnsemblDataSource(org);
+			DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(org);
 			
 			List<IDMapperRdb> gdbs = getCacheManager().getGdbProvider().getGdbs(org);
 
@@ -250,5 +249,9 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			Logger.log.error("Unable to get gene information", e);
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static DataSource getEnsemblDataSource(Organism org) {
+		return DataSource.getBySystemCode("En" + org.code());
 	}
 }

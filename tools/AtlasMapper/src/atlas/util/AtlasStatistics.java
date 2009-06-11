@@ -25,7 +25,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
-import org.pathvisio.wikipathways.client.AtlasMapper;
+import org.pathvisio.wikipathways.server.AtlasMapperServiceImpl;
 import org.pathvisio.wikipathways.server.PathwayCache;
 import org.pathvisio.wikipathways.server.WPPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
@@ -59,7 +59,7 @@ public class AtlasStatistics {
 
 	void printStatistics(Collection<WSPathwayInfo> pathways, Organism organism) throws ServiceException, IDMapperException, ConverterException, IOException, ClassNotFoundException {
 		//A set of all unique Ensembl genes in the pathways
-		DataSource orgEns = AtlasMapper.getEnsemblDataSource(organism);
+		DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
 		File idsCache = new File(cachePath, organism + ".ids");
 		Set<String> ensIds = new HashSet<String>();
 		if(idsCache.exists()) {

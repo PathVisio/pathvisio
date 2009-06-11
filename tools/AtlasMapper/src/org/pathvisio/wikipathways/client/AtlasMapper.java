@@ -16,9 +16,6 @@
 //
 package org.pathvisio.wikipathways.client;
 
-import org.bridgedb.DataSource;
-import org.bridgedb.bio.Organism;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
@@ -162,10 +159,6 @@ public class AtlasMapper implements EntryPoint, HistoryListener {
 			service = GWT.create(AtlasMapperService.class);
 		}
 		return service;
-	}
-	
-	public static DataSource getEnsemblDataSource(Organism org) {
-		return DataSource.getBySystemCode("En" + org.code());
 	}
 	
 	static final String STYLE_PROGRESS = "progress";

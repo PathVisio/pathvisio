@@ -3,6 +3,7 @@
 	<property name="plugin.name" value="superpathways" />
 	<property name="src.dir" value="src" />
 	<property name="images.dir" value="images"/>
+	<property name="lib.dir" value="lib"/>
 	<property name="build.dir" value="build" />
 	<property name="class.dir" value="class" />
 	<property name="build.classes" location="${build.dir}/classes"/>
@@ -29,6 +30,7 @@
 		<pathelement location="${pathvisio.dir}/wikipathways-client.jar" />
 		<pathelement location="${gpml.dir}/gpml.jar" />
 		<pathelement location="${advancedNetworkMerge.dir}/NetworkMerge.jar" />
+		<pathelement location="${lib.dir}/swing-layout-1.0.1.jar" />
 		
 	</path>
 
@@ -71,6 +73,7 @@
 			<fileset dir="${axis.lib.dir}" includes="*.jar"/>
 			<fileset dir="${gpml.dir}" includes="gpml.jar"/>
 			<fileset dir="${advancedNetworkMerge.dir}" includes="NetworkMerge.jar"/>
+			<fileset dir="${lib.dir}" includes="swing-layout-1.0.1.jar"/>
 			
 		</unjar>
 
@@ -78,6 +81,8 @@
 		<copy todir="${build.images}">
 		      <fileset dir="${images.dir}"/>
 		</copy>
+
+			
 		<jar jarfile="${plugin.name}.jar">
 			<fileset dir="${build.dir}" includes="**/*.class" />
 			<fileset dir="${build.dir}" includes="**/*.props" />

@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.xml.rpc.ServiceException;
 
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
@@ -267,7 +267,7 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 	
 	public static class FindPathwaysByTextParameters {
 		public String query;
-		public Organism species = null;
+		public org.bridgedb.bio.Organism species = null;
 	}
 	
 	public static class GetPathwayParameters {

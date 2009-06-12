@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 
-import org.bridgedb.Organism;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.FindPathwaysByTextParameters;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.GetPathwayParameters;
 import org.pathvisio.debug.Logger;
@@ -689,7 +689,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		
 		superpathwayPanel.addTab("Search Help", helpPanel);
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+		/*javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
 		setLayout(layout);
 		// getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(
@@ -708,7 +708,24 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 						.addContainerGap(20, Short.MAX_VALUE)));
 
 		superpathwayPanel.getAccessibleContext().setAccessibleName(
-				"search/select");
+				"search/select");*/
+		
+		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
+        setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .add(22, 22, 22)
+                .add(superpathwayPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 433, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(21, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(superpathwayPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 699, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
 		// pack();
 	}// </editor-fold>

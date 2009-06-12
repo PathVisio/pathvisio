@@ -54,6 +54,8 @@ import cytoscape.data.webservice.CyWebServiceException;
 import cytoscape.data.webservice.WebServiceClientManager;
 import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
 
+import org.jdesktop.layout.GroupLayout;
+
 //public class SuperpathwaysGui extends JFrame implements ActionListener{ 
 public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
@@ -145,7 +147,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		anchorPathwayComboBox = new javax.swing.JComboBox();
 		lowerBoundSharingNodeNoComboBox = new javax.swing.JComboBox();
 		candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
-		candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
+		//candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
 
 		candidatePathwaysSharingNodesList = new javax.swing.JList();
 		candidatePathwaysSharingNodesListModel = new DefaultListModel();
@@ -281,107 +283,57 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		selectedPathwaysLabel.setForeground(new java.awt.Color(102, 0, 0));
 		selectedPathwaysLabel.setText("Selected Pathways");
 
-		javax.swing.GroupLayout selectPanelLayout = new javax.swing.GroupLayout(
-				selectPanel);
-		selectPanel.setLayout(selectPanelLayout);
-		selectPanelLayout
-				.setHorizontalGroup(selectPanelLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								selectPanelLayout
-										.createSequentialGroup()
-										.addComponent(
-												availablePathwaysScrollPane,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												139,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(
-												selectPanelLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.LEADING,
-																false)
-														.addComponent(
-																leftButton,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																52,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(
-																rightButton, 0,
-																0,
-																Short.MAX_VALUE))
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(
-												selectedPathwaysScrollPane,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												158,
-												javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addGroup(
-								selectPanelLayout.createSequentialGroup()
-										.addContainerGap().addComponent(
-												availablePathwaysLabel).addGap(
-												112, 112, 112).addComponent(
-												selectedPathwaysLabel)));
+		
+		 org.jdesktop.layout.GroupLayout selectPanelLayout = new org.jdesktop.layout.GroupLayout(selectPanel);
+	        selectPanel.setLayout(selectPanelLayout);
+	        selectPanelLayout.setHorizontalGroup(
+	            selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+	            .add(selectPanelLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+	                    .add(selectPanelLayout.createSequentialGroup()
+	                        .add(availablePathwaysScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+	                        .add(18, 18, 18)
+	                        .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+	                            .add(rightButton, 0, 0, Short.MAX_VALUE)
+	                            .add(leftButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 45, Short.MAX_VALUE))
+	                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED))
+	                    .add(selectPanelLayout.createSequentialGroup()
+	                        .add(availablePathwaysLabel)
+	                        .add(109, 109, 109)))
+	                .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+	                    .add(selectedPathwaysScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 141, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                    .add(selectedPathwaysLabel))
+	                .addContainerGap())
+	        );
 
-		selectPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
-				new java.awt.Component[] { availablePathwaysScrollPane,
-						selectedPathwaysScrollPane });
+	        selectPanelLayout.linkSize(new java.awt.Component[] {availablePathwaysScrollPane, selectedPathwaysScrollPane}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-		selectPanelLayout
-				.setVerticalGroup(selectPanelLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								selectPanelLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addGroup(
-												selectPanelLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.LEADING)
-														.addGroup(
-																selectPanelLayout
-																		.createSequentialGroup()
-																		.addGap(
-																				65,
-																				65,
-																				65)
-																		.addComponent(
-																				rightButton)
-																		.addPreferredGap(
-																				javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																		.addComponent(
-																				leftButton))
-														.addGroup(
-																selectPanelLayout
-																		.createSequentialGroup()
-																		.addGroup(
-																				selectPanelLayout
-																						.createParallelGroup(
-																								javax.swing.GroupLayout.Alignment.BASELINE)
-																						.addComponent(
-																								availablePathwaysLabel)
-																						.addComponent(
-																								selectedPathwaysLabel))
-																		.addPreferredGap(
-																				javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																		.addGroup(
-																				selectPanelLayout
-																						.createParallelGroup(
-																								javax.swing.GroupLayout.Alignment.LEADING,
-																								false)
-																						.addComponent(
-																								selectedPathwaysScrollPane)
-																						.addComponent(
-																								availablePathwaysScrollPane))))));
+	        selectPanelLayout.setVerticalGroup(
+	            selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+	            .add(selectPanelLayout.createSequentialGroup()
+	                .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+	                    .add(org.jdesktop.layout.GroupLayout.TRAILING, selectPanelLayout.createSequentialGroup()
+	                        .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+	                            .add(availablePathwaysLabel)
+	                            .add(selectedPathwaysLabel))
+	                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+	                        .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+	                            .add(selectPanelLayout.createSequentialGroup()
+	                                .add(availablePathwaysScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                                .add(24, 24, 24))
+	                            .add(selectedPathwaysScrollPane)))
+	                    .add(org.jdesktop.layout.GroupLayout.TRAILING, selectPanelLayout.createSequentialGroup()
+	                        .add(rightButton)
+	                        .add(18, 18, 18)
+	                        .add(leftButton)
+	                        .add(49, 49, 49)))
+	                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
 
-		selectPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
-				new java.awt.Component[] { availablePathwaysLabel,
-						selectedPathwaysLabel });
-
+	        selectPanelLayout.linkSize(new java.awt.Component[] {availablePathwaysScrollPane, selectedPathwaysScrollPane}, org.jdesktop.layout.GroupLayout.VERTICAL);
+		
+        
 		openBtn.setText("Open");
 		openBtn.setToolTipText("load the selected pathway to Cytoscape");
 		openBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -411,175 +363,90 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 			}
 		});
 
-		javax.swing.GroupLayout searchPaneLayout = new javax.swing.GroupLayout(
-				searchPane);
-		searchPane.setLayout(searchPaneLayout);
-		searchPaneLayout
-				.setHorizontalGroup(searchPaneLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								searchPaneLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addGroup(
-												searchPaneLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.LEADING)
-														.addComponent(
-																resultScrolllPane1,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																412,
-																Short.MAX_VALUE)
-														.addComponent(
-																stepLabel1,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																412,
-																Short.MAX_VALUE)
-														.addGroup(
-																searchPaneLayout
-																		.createSequentialGroup()
-																		.addComponent(
-																				searchText,
-																				javax.swing.GroupLayout.PREFERRED_SIZE,
-																				189,
-																				javax.swing.GroupLayout.PREFERRED_SIZE)
-																		.addPreferredGap(
-																				javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																		.addComponent(
-																				organismCombo,
-																				0,
-																				146,
-																				Short.MAX_VALUE)
-																		.addPreferredGap(
-																				javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																		.addComponent(
-																				searchBtn))
-														.addGroup(
-																javax.swing.GroupLayout.Alignment.TRAILING,
-																searchPaneLayout
-																		.createSequentialGroup()
-																		.addComponent(
-																				openBtn)
-																		.addPreferredGap(
-																				javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																		.addComponent(
-																				addBtn))
-														.addComponent(
-																hintLabel1,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																Short.MAX_VALUE)
-														.addGroup(
-																searchPaneLayout
-																		.createParallelGroup(
-																				javax.swing.GroupLayout.Alignment.LEADING)
-																		.addComponent(
-																				selectPanel,
-																				javax.swing.GroupLayout.PREFERRED_SIZE,
-																				javax.swing.GroupLayout.DEFAULT_SIZE,
-																				javax.swing.GroupLayout.PREFERRED_SIZE)
-																		.addGroup(
-																				javax.swing.GroupLayout.Alignment.TRAILING,
-																				searchPaneLayout
-																						.createSequentialGroup()
-																						.addComponent(
-																								helpButton)
-																						.addPreferredGap(
-																								javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																						.addComponent(
-																								CancelBtn)
-																						.addPreferredGap(
-																								javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																						.addComponent(
-																								MergeBtn))))
-										.addContainerGap()));
+		
+		
+		 org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(searchPane);
+	        searchPane.setLayout(searchPaneLayout);
+	        searchPaneLayout.setHorizontalGroup(
+	            searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+	            .add(searchPaneLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .add(stepLabel1)
+	                .addContainerGap(67, Short.MAX_VALUE))
+	            .add(searchPaneLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .add(searchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 167, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+	                .add(organismCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 148, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+	                .add(searchBtn)
+	                .addContainerGap(22, Short.MAX_VALUE))
+	            .add(searchPaneLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .add(resultScrolllPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 399, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                .addContainerGap(19, Short.MAX_VALUE))
+	            .add(org.jdesktop.layout.GroupLayout.TRAILING, searchPaneLayout.createSequentialGroup()
+	                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+	                    .add(searchPaneLayout.createSequentialGroup()
+	                        .addContainerGap()
+	                        .add(helpButton)
+	                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+	                        .add(CancelBtn)
+	                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+	                        .add(MergeBtn))
+	                    .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+	                        .add(searchPaneLayout.createSequentialGroup()
+	                            .addContainerGap()
+	                            .add(openBtn)
+	                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+	                            .add(addBtn))
+	                        .add(searchPaneLayout.createSequentialGroup()
+	                            .add(19, 19, 19)
+	                            .add(selectPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+	                .add(39, 39, 39))
+	            .add(searchPaneLayout.createSequentialGroup()
+	                .addContainerGap()
+	                .add(hintLabel1)
+	                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+	        );
 
-		searchPaneLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
-				new java.awt.Component[] { CancelBtn, MergeBtn, helpButton });
+	        searchPaneLayout.linkSize(new java.awt.Component[] {addBtn, openBtn}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-		searchPaneLayout
-				.setVerticalGroup(searchPaneLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								searchPaneLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addComponent(
-												stepLabel1,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												22,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(
-												hintLabel1,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												26,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addGap(19, 19, 19)
-										.addGroup(
-												searchPaneLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.BASELINE)
-														.addComponent(
-																searchText,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																23,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(
-																organismCombo,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																22,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(searchBtn))
-										.addGap(30, 30, 30)
-										.addComponent(
-												resultScrolllPane1,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												179,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(
-												searchPaneLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.BASELINE)
-														.addComponent(addBtn)
-														.addComponent(openBtn))
-										.addGap(54, 54, 54)
-										.addComponent(
-												selectPanel,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												javax.swing.GroupLayout.DEFAULT_SIZE,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addGroup(
-												searchPaneLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.BASELINE)
-														.addComponent(
-																MergeBtn,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																23,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(
-																CancelBtn,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																23,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(
-																helpButton))
-										.addContainerGap()));
+	        searchPaneLayout.linkSize(new java.awt.Component[] {CancelBtn, MergeBtn, helpButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-		searchPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
-				new java.awt.Component[] { organismCombo, searchText });
+	        searchPaneLayout.setVerticalGroup(
+	            searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+	            .add(searchPaneLayout.createSequentialGroup()
+	                .add(28, 28, 28)
+	                .add(stepLabel1)
+	                .add(18, 18, 18)
+	                .add(hintLabel1)
+	                .add(32, 32, 32)
+	                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+	                    .add(searchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                    .add(organismCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                    .add(searchBtn))
+	                .add(18, 18, 18)
+	                .add(resultScrolllPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 176, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                .add(18, 18, 18)
+	                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+	                    .add(openBtn)
+	                    .add(addBtn))
+	                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+	                .add(selectPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 194, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+	                .add(39, 39, 39)
+	                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+	                    .add(CancelBtn)
+	                    .add(MergeBtn)
+	                    .add(helpButton))
+	                .addContainerGap(43, Short.MAX_VALUE))
+	        );
 
-		searchPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
-				new java.awt.Component[] { CancelBtn, MergeBtn, helpButton });
+	        searchPaneLayout.linkSize(new java.awt.Component[] {addBtn, openBtn}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
+	        searchPaneLayout.linkSize(new java.awt.Component[] {searchBtn, searchText}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+	        searchPaneLayout.linkSize(new java.awt.Component[] {CancelBtn, MergeBtn, helpButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 		superpathwayPanel
 				.addTab("Search/Select", null, searchPane,
 						"search and select pathways that you want to merge from Wiki Pahtways");
@@ -601,72 +468,51 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 		jRadioButton6.setText("name of pathway 6");
 
-		javax.swing.GroupLayout layoutPaneLayout = new javax.swing.GroupLayout(
-				layoutPane);
-		layoutPane.setLayout(layoutPaneLayout);
-		layoutPaneLayout
-				.setHorizontalGroup(layoutPaneLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								layoutPaneLayout
-										.createSequentialGroup()
-										.addGroup(
-												layoutPaneLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.LEADING)
-														.addGroup(
-																layoutPaneLayout
-																		.createSequentialGroup()
-																		.addContainerGap()
-																		.addComponent(
-																				stepLabel2))
-														.addGroup(
-																layoutPaneLayout
-																		.createSequentialGroup()
-																		.addGap(
-																				65,
-																				65,
-																				65)
-																		.addGroup(
-																				layoutPaneLayout
-																						.createParallelGroup(
-																								javax.swing.GroupLayout.Alignment.LEADING)
-																						.addComponent(
-																								jRadioButton1)
-																						.addComponent(
-																								jRadioButton2)
-																						.addComponent(
-																								jRadioButton3)
-																						.addComponent(
-																								jRadioButton4)
-																						.addComponent(
-																								jRadioButton5)
-																						.addComponent(
-																								jRadioButton6))))
-										.addContainerGap(85, Short.MAX_VALUE)));
+		
+		org.jdesktop.layout.GroupLayout layoutPaneLayout = new org.jdesktop.layout.GroupLayout(layoutPane);
+        layoutPane.setLayout(layoutPaneLayout);
+        layoutPaneLayout.setHorizontalGroup(
+            layoutPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layoutPaneLayout.createSequentialGroup()
+                .add(layoutPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layoutPaneLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .add(stepLabel2))
+                    .add(layoutPaneLayout.createSequentialGroup()
+                        .add(67, 67, 67)
+                        .add(layoutPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(jRadioButton2)
+                            .add(jRadioButton1)
+                            .add(jRadioButton3)
+                            .add(jRadioButton4)
+                            .add(jRadioButton5)
+                            .add(jRadioButton6))))
+                .addContainerGap(87, Short.MAX_VALUE))
+        );
 
-		layoutPaneLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
-				new java.awt.Component[] { jRadioButton1, jRadioButton2,
-						jRadioButton3, jRadioButton4, jRadioButton5,
-						jRadioButton6 });
+        layoutPaneLayout.linkSize(new java.awt.Component[] {jRadioButton1, jRadioButton2, jRadioButton3, jRadioButton4, jRadioButton5, jRadioButton6}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-		layoutPaneLayout.setVerticalGroup(layoutPaneLayout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				layoutPaneLayout.createSequentialGroup().addGap(22, 22, 22)
-						.addComponent(stepLabel2).addGap(39, 39, 39)
-						.addComponent(jRadioButton1).addGap(18, 18, 18)
-						.addComponent(jRadioButton2).addGap(18, 18, 18)
-						.addComponent(jRadioButton3).addGap(18, 18, 18)
-						.addComponent(jRadioButton4).addGap(18, 18, 18)
-						.addComponent(jRadioButton5).addGap(27, 27, 27)
-						.addComponent(jRadioButton6).addContainerGap(325,
-								Short.MAX_VALUE)));
+        layoutPaneLayout.setVerticalGroup(
+            layoutPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(layoutPaneLayout.createSequentialGroup()
+                .add(31, 31, 31)
+                .add(stepLabel2)
+                .add(35, 35, 35)
+                .add(jRadioButton1)
+                .add(18, 18, 18)
+                .add(jRadioButton2)
+                .add(18, 18, 18)
+                .add(jRadioButton3)
+                .add(18, 18, 18)
+                .add(jRadioButton4)
+                .add(18, 18, 18)
+                .add(jRadioButton5)
+                .add(18, 18, 18)
+                .add(jRadioButton6)
+                .addContainerGap(362, Short.MAX_VALUE))
+        );
 
-		layoutPaneLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
-				new java.awt.Component[] { jRadioButton1, jRadioButton2,
-						jRadioButton3, jRadioButton4, jRadioButton5,
-						jRadioButton6 });
+        layoutPaneLayout.linkSize(new java.awt.Component[] {jRadioButton1, jRadioButton2, jRadioButton3, jRadioButton4, jRadioButton5, jRadioButton6}, org.jdesktop.layout.GroupLayout.VERTICAL);
 
 		superpathwayPanel.addTab("Custom Layout", null, layoutPane,
 				"create a custom layout grouping nodes from the same pathway");
@@ -764,207 +610,83 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		//candidatePathwaysSharingNodesScrollPane
 			//	.setViewportView(candidatePathwaysSharingNodesTable);
 
-		javax.swing.GroupLayout helpPanelLayout = new javax.swing.GroupLayout(
-				helpPanel);
-		helpPanel.setLayout(helpPanelLayout);
-		helpPanelLayout
-				.setHorizontalGroup(helpPanelLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								helpPanelLayout
-										.createSequentialGroup()
-										.addGroup(
-												helpPanelLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.LEADING)
-														.addGroup(
-																helpPanelLayout
-																		.createSequentialGroup()
-																		.addContainerGap()
-																		.addComponent(
-																				explainHelpLabel1,
-																				javax.swing.GroupLayout.DEFAULT_SIZE,
-																				406,
-																				Short.MAX_VALUE))
-														.addGroup(
-																helpPanelLayout
-																		.createSequentialGroup()
-																		.addContainerGap()
-																		.addComponent(
-																				explainHelpLabel2))
-														.addGroup(
-																helpPanelLayout
-																		.createParallelGroup(
-																				javax.swing.GroupLayout.Alignment.TRAILING,
-																				false)
-																		.addGroup(
-																				javax.swing.GroupLayout.Alignment.LEADING,
-																				helpPanelLayout
-																						.createSequentialGroup()
-																						.addGap(
-																								37,
-																								37,
-																								37)
-																						.addGroup(
-																								helpPanelLayout
-																										.createParallelGroup(
-																												javax.swing.GroupLayout.Alignment.LEADING,
-																												false)
-																										.addGroup(
-																												helpPanelLayout
-																														.createSequentialGroup()
-																														.addComponent(
-																																sharingNodeNoLabel,
-																																javax.swing.GroupLayout.PREFERRED_SIZE,
-																																114,
-																																javax.swing.GroupLayout.PREFERRED_SIZE)
-																														.addPreferredGap(
-																																javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																														.addComponent(
-																																lowerBoundLabel)
-																														.addPreferredGap(
-																																javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																														.addComponent(
-																																lowerBoundSharingNodeNoComboBox,
-																																javax.swing.GroupLayout.PREFERRED_SIZE,
-																																javax.swing.GroupLayout.DEFAULT_SIZE,
-																																javax.swing.GroupLayout.PREFERRED_SIZE)
-																														.addPreferredGap(
-																																javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																														.addComponent(
-																																upperBoundLabel)
-																														.addGap(
-																																4,
-																																4,
-																																4)
-																														.addComponent(
-																																upperBoundSharingNodeNoComboBox,
-																																javax.swing.GroupLayout.PREFERRED_SIZE,
-																																javax.swing.GroupLayout.DEFAULT_SIZE,
-																																javax.swing.GroupLayout.PREFERRED_SIZE))
-																										.addGroup(
-																												helpPanelLayout
-																														.createSequentialGroup()
-																														.addComponent(
-																																anchorPathwayLabel,
-																																javax.swing.GroupLayout.PREFERRED_SIZE,
-																																50,
-																																javax.swing.GroupLayout.PREFERRED_SIZE)
-																														.addPreferredGap(
-																																javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																														.addComponent(
-																																anchorPathwayComboBox,
-																																0,
-																																javax.swing.GroupLayout.DEFAULT_SIZE,
-																																Short.MAX_VALUE)))
-																						.addPreferredGap(
-																								javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-																								javax.swing.GroupLayout.DEFAULT_SIZE,
-																								Short.MAX_VALUE)
-																						.addComponent(
-																								searchHelpButton))
-																		.addGroup(
-																				javax.swing.GroupLayout.Alignment.LEADING,
-																				helpPanelLayout
-																						.createSequentialGroup()
-																						.addContainerGap()
-																						.addComponent(
-																								candidatePathwaysSharingNodesScrollPane,
-																								javax.swing.GroupLayout.PREFERRED_SIZE,
-																								389,
-																								javax.swing.GroupLayout.PREFERRED_SIZE))
-																		.addGroup(
-																				helpPanelLayout
-																						.createSequentialGroup()
-																						.addContainerGap()
-																						.addComponent(
-																								backToSearchButton)
-																						.addPreferredGap(
-																								javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																						.addComponent(
-																								addHelpButton,
-																								javax.swing.GroupLayout.PREFERRED_SIZE,
-																								59,
-																								javax.swing.GroupLayout.PREFERRED_SIZE))))
-										.addContainerGap()));
+		
+		org.jdesktop.layout.GroupLayout helpPaneLayout = new org.jdesktop.layout.GroupLayout(helpPanel);
+		helpPanel.setLayout(helpPaneLayout);
+        helpPaneLayout.setHorizontalGroup(
+            helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(helpPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(explainHelpLabel1)
+                .addContainerGap(24, Short.MAX_VALUE))
+            .add(helpPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(explainHelpLabel2)
+                .addContainerGap(90, Short.MAX_VALUE))
+            .add(helpPaneLayout.createSequentialGroup()
+                .add(38, 38, 38)
+                .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(candidatePathwaysSharingNodesScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 364, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                        .add(helpPaneLayout.createSequentialGroup()
+                            .add(backToSearchButton)
+                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                            .add(addHelpButton))
+                        .add(helpPaneLayout.createSequentialGroup()
+                            .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
+                                .add(org.jdesktop.layout.GroupLayout.LEADING, helpPaneLayout.createSequentialGroup()
+                                    .add(anchorPathwayLabel)
+                                    .add(68, 68, 68)
+                                    .add(anchorPathwayComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .add(org.jdesktop.layout.GroupLayout.LEADING, helpPaneLayout.createSequentialGroup()
+                                    .add(sharingNodeNoLabel)
+                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                    .add(lowerBoundLabel)
+                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                    .add(lowerBoundSharingNodeNoComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                    .add(upperBoundLabel)
+                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                    .add(upperBoundSharingNodeNoComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                            .add(searchHelpButton))))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
 
-		helpPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL,
-				new java.awt.Component[] { addHelpButton, backToSearchButton });
+        helpPaneLayout.linkSize(new java.awt.Component[] {addHelpButton, backToSearchButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-		helpPanelLayout
-				.setVerticalGroup(helpPanelLayout
-						.createParallelGroup(
-								javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(
-								helpPanelLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.addComponent(
-												explainHelpLabel1,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												28,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addPreferredGap(
-												javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(explainHelpLabel2)
-										.addGap(31, 31, 31)
-										.addGroup(
-												helpPanelLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.TRAILING)
-														.addComponent(
-																anchorPathwayLabel,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																17,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(
-																anchorPathwayComboBox,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addGap(30, 30, 30)
-										.addGroup(
-												helpPanelLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.BASELINE)
-														.addComponent(
-																sharingNodeNoLabel)
-														.addComponent(
-																lowerBoundLabel)
-														.addComponent(
-																lowerBoundSharingNodeNoComboBox,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(
-																upperBoundLabel)
-														.addComponent(
-																upperBoundSharingNodeNoComboBox,
-																javax.swing.GroupLayout.PREFERRED_SIZE,
-																javax.swing.GroupLayout.DEFAULT_SIZE,
-																javax.swing.GroupLayout.PREFERRED_SIZE)
-														.addComponent(
-																searchHelpButton))
-										.addGap(45, 45, 45)
-										.addComponent(
-												candidatePathwaysSharingNodesScrollPane,
-												javax.swing.GroupLayout.PREFERRED_SIZE,
-												313,
-												javax.swing.GroupLayout.PREFERRED_SIZE)
-										.addGap(29, 29, 29)
-										.addGroup(
-												helpPanelLayout
-														.createParallelGroup(
-																javax.swing.GroupLayout.Alignment.BASELINE)
-														.addComponent(
-																addHelpButton)
-														.addComponent(
-																backToSearchButton))
-										.addContainerGap(64, Short.MAX_VALUE)));
+        helpPaneLayout.setVerticalGroup(
+            helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(helpPaneLayout.createSequentialGroup()
+                .add(33, 33, 33)
+                .add(explainHelpLabel1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                .add(explainHelpLabel2)
+                .add(44, 44, 44)
+                .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(anchorPathwayLabel)
+                    .add(anchorPathwayComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(23, 23, 23)
+                .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(sharingNodeNoLabel)
+                    .add(lowerBoundLabel)
+                    .add(lowerBoundSharingNodeNoComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(upperBoundLabel)
+                    .add(upperBoundSharingNodeNoComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(searchHelpButton))
+                .add(53, 53, 53)
+                .add(candidatePathwaysSharingNodesScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 251, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 81, Short.MAX_VALUE)
+                .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(backToSearchButton)
+                    .add(addHelpButton))
+                .add(79, 79, 79))
+        );
 
-		helpPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL,
-				new java.awt.Component[] { addHelpButton, backToSearchButton });
+        helpPaneLayout.linkSize(new java.awt.Component[] {addHelpButton, backToSearchButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        helpPaneLayout.linkSize(new java.awt.Component[] {lowerBoundLabel, lowerBoundSharingNodeNoComboBox, searchHelpButton, upperBoundLabel, upperBoundSharingNodeNoComboBox}, org.jdesktop.layout.GroupLayout.VERTICAL);
+		
 		superpathwayPanel.addTab("Search Help", helpPanel);
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

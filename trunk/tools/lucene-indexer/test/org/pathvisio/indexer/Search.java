@@ -30,7 +30,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.bridgedb.GdbProvider;
+import org.bridgedb.bio.GdbProvider;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;

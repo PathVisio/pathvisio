@@ -18,21 +18,17 @@ package org.pathvisio.indexer;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.GraphLink.GraphRefContainer;
-import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.util.Relation;
 
 /**
  * Indexes relationships. The following rules will apply:
@@ -148,83 +144,6 @@ public class RelationshipIndexer extends IndexerBase {
 			}
 		}
 		return false;
-	}
-	
-	static class Relation {
-		private Set<PathwayElement> lefts = new HashSet<PathwayElement>();
-		private Set<PathwayElement> rights = new HashSet<PathwayElement>();
-		private Set<PathwayElement> mediators = new HashSet<PathwayElement>();
-		
-		public Relation(PathwayElement relationLine) {
-			if(relationLine.getObjectType() != ObjectType.LINE) {
-				throw new IllegalArgumentException("Object type should be line!");
-			}
-			Pathway pathway = relationLine.getParent();
-			if(pathway == null) {
-				throw new IllegalArgumentException("Object has no parent pathway");
-			}
-			//Add obvious left and right
-			addLeft(pathway.getElementById(
-					relationLine.getMStart().getGraphRef()
-			));
-			addRight(pathway.getElementById(
-					relationLine.getMEnd().getGraphRef()
-			));
-			//Find all connecting lines (via anchors)
-			for(MAnchor ma : relationLine.getMAnchors()) {
-				for(GraphRefContainer grc : ma.getReferences()) {
-					if(grc instanceof MPoint) {
-						MPoint mp = (MPoint)grc;
-						PathwayElement line = mp.getParent();
-						if(line.getMStart() == mp) {
-							//Start linked to anchor, make it a 'right'
-							if(line.getMEnd().isLinked()) {
-								addRight(pathway.getElementById(line.getMEnd().getGraphRef()));
-							}
-						} else {
-							//End linked to anchor
-							if(line.getEndLineType() == LineType.LINE) {
-								//Add as 'left'
-								addLeft(pathway.getElementById(line.getMStart().getGraphRef()));
-							} else {
-								//Add as 'mediator'
-								addMediator(pathway.getElementById(line.getMStart().getGraphRef()));
-							}
-						}
-					} else {
-						Logger.log.warn("unsupported GraphRefContainer: " + grc);
-					}
-				}
-			}
-		}
-		
-		void addLeft(PathwayElement pwe) {
-			addElement(pwe, lefts);
-		}
-		
-		void addRight(PathwayElement pwe) {
-			addElement(pwe, rights);
-		}
-		
-		void addMediator(PathwayElement pwe) {
-			addElement(pwe, mediators);
-		}
-		
-		void addElement(PathwayElement pwe, Set<PathwayElement> set) {
-			if(pwe != null) {
-				//If it's a group, add all subelements
-				if(pwe.getObjectType() == ObjectType.GROUP) {
-					for(PathwayElement ge : pwe.getParent().getGroupElements(pwe.getGroupId())) {
-						addElement(ge, set);
-					}
-				}
-				set.add(pwe);
-			}
-		}
-		
-		Set<PathwayElement> getLefts() { return lefts; }
-		Set<PathwayElement> getRights() { return rights; }
-		Set<PathwayElement> getMediators() { return mediators; }
 	}
 	
 	/**

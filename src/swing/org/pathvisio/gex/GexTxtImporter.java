@@ -209,7 +209,7 @@ public class GexTxtImporter
 						
 						try
 						{
-							double dNumber = nf.parse(value).doubleValue(); 
+							double dNumber = nf.parse(value.toUpperCase()).doubleValue(); 
 							value = "" + dNumber; 
 							if(maximumNotSet || dNumber>maximum)
 							{

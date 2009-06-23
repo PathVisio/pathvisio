@@ -33,7 +33,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import org.bridgedb.bio.Organism;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.FindPathwaysByTextParameters;
@@ -53,8 +53,10 @@ import cytoscape.data.webservice.CyWebServiceEvent;
 import cytoscape.data.webservice.CyWebServiceException;
 import cytoscape.data.webservice.WebServiceClientManager;
 import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
-
-import org.jdesktop.layout.GroupLayout;
+import cytoscape.task.Task;
+import cytoscape.task.TaskMonitor;
+import cytoscape.task.ui.JTaskConfig;
+import cytoscape.task.util.TaskManager;
 
 //public class SuperpathwaysGui extends JFrame implements ActionListener{ 
 public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
@@ -65,23 +67,29 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 	final SuperpathwaysClient mClient;
 
-	ResultRow mSelected;
-	
+	ResultRow[] mSelected = new ResultRow[20];
+
 	ResultRow mSelectedInHelpPanel;
 
-	String mClickedPathwayName = "not defined";
+	List<String> mClickedPathwayNameID = new ArrayList<String>();
 
-	String mSelectedPathwayName = "undefined";
-	
-	String mSelectedPwInHelpPanel= "undefined";
+	String[] mSelectedPathwayName = new String[20];
+
+	String mSelectedPwInHelpPanel = "not defined";
 
 	private List<String> mAvailablePathwaysNameIDList = new ArrayList<String>();
 
 	private List<ResultRow> mAvailablePathwaysList = new ArrayList<ResultRow>();
 
-	private List<String> mCandidatePwList = new ArrayList<String>();
+	// private List<String> mCandidatePwList = new ArrayList<String>();
 
 	private Map<String, WSSearchResult[]> mNodeIdToPwsSharingNode = new HashMap<String, WSSearchResult[]>();
+
+	private List<String> mCandidatePw;
+
+	int mNoGeneNode;
+
+	Pathway mAnchorPw;
 
 	public SuperpathwaysGui(SuperpathwaysClient c) {
 		// frame = this;
@@ -102,6 +110,8 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">
 	private void initComponents() {
+
+		jScrollPane2 = new javax.swing.JScrollPane();
 
 		superpathwayPanel = new javax.swing.JTabbedPane();
 		searchPane = new javax.swing.JPanel();
@@ -129,8 +139,8 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		rightButton = new javax.swing.JButton();
 		leftButton = new javax.swing.JButton();
 
-		CancelBtn = new javax.swing.JButton();
-		MergeBtn = new javax.swing.JButton();
+		ClearBtn = new javax.swing.JButton();
+		CommonNodeViewBtn = new javax.swing.JButton();
 
 		layoutPane = new javax.swing.JPanel();
 		stepLabel2 = new javax.swing.JLabel();
@@ -147,16 +157,14 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		anchorPathwayComboBox = new javax.swing.JComboBox();
 		lowerBoundSharingNodeNoComboBox = new javax.swing.JComboBox();
 		candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
-		//candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
 
-		candidatePathwaysSharingNodesList = new javax.swing.JList();
-		candidatePathwaysSharingNodesListModel = new DefaultListModel();
+		// candidatePathwaysSharingNodesList = new javax.swing.JList();
+		// candidatePathwaysSharingNodesListModel = new DefaultListModel();
 
-		//candidatePathwaysSharingNodesTable = new javax.swing.JTable();
-		//candidatePathwaysSharingNodesTableModel = new javax.swing.table.DefaultTableModel();
-		
-		//candidatePathwaysSharingNodesTableModel.addColumn("Pathway Name (ID)");
-		//candidatePathwaysSharingNodesTableModel.addColumn("Sharing Node Number");
+		candidatePathwaysSharingNodesTable = new javax.swing.JTable();
+		candidatePathwaysSharingNodesTableModel = new javax.swing.table.DefaultTableModel();
+
+		candidatePathwaysSharingNodesTable.setAutoCreateRowSorter(true);
 
 		explainHelpLabel1 = new javax.swing.JLabel();
 		addHelpButton = new javax.swing.JButton();
@@ -166,6 +174,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		explainHelpLabel2 = new javax.swing.JLabel();
 		backToSearchButton = new javax.swing.JButton();
 		searchHelpButton = new javax.swing.JButton();
+		lastLabel = new javax.swing.JLabel();
 
 		// setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 		// setTitle("Superpathways");
@@ -173,6 +182,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 		superpathwayPanel.setToolTipText("");
 		superpathwayPanel.setName("search_select_tab"); // NOI18N
+		superpathwayPanel.setPreferredSize(new java.awt.Dimension(440, 680));
 
 		searchPane.setToolTipText("");
 
@@ -201,24 +211,8 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		hintLabel1
 				.setText("You can search by: pathway name, gene/protein name, or any page content");
 
-		resultTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-		resultTable.addMouseListener(new java.awt.event.MouseAdapter() {
-			public void mouseClicked(java.awt.event.MouseEvent e) {
-				if (e.getClickCount() == 1) {
-					int row = resultTable.getSelectedRow();
-					mSelected = tableModel.getRow(row);
-					mClickedPathwayName = mSelected
-							.getProperty(ResultProperty.NAME)
-							+ "("
-							+ mSelected.getProperty(ResultProperty.ID)
-							+ ")";
-
-					System.out.println(mClickedPathwayName);
-					// openNetwork(mSelected);
-				}
-			}
-		});
+		resultTable
+				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
 		resultScrolllPane1.setViewportView(resultTable);
 
@@ -240,21 +234,18 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 						255))); // NOI18N
 
 		availablePathwaysList
-				.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		availablePathwaysList.setLayoutOrientation(JList.VERTICAL);
 		availablePathwaysList.setVisibleRowCount(8);
 
 		availablePathwaysScrollPane.setViewportView(availablePathwaysList);
 
 		selectedPathwaysList
-				.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		selectedPathwaysList.setLayoutOrientation(JList.VERTICAL);
 		selectedPathwaysList.setVisibleRowCount(8);
 		selectedPathwaysScrollPane.setViewportView(selectedPathwaysList);
 
-		// rightButton.setIcon(new
-		// javax.swing.ImageIcon("D:\\JAVA-CODE\\Superpathway\\images\\right16.gif"));
-		// // NOI18N
 		rightButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(
 				"/images/right16.gif")));
 
@@ -264,9 +255,6 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 			}
 		});
 
-		// leftButton.setIcon(new
-		// javax.swing.ImageIcon("D:\\JAVA-CODE\\Superpathway\\images\\left16.gif"));
-		// // NOI18N
 		leftButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(
 				"/images/left16.gif")));
 		leftButton.addActionListener(new java.awt.event.ActionListener() {
@@ -283,57 +271,129 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		selectedPathwaysLabel.setForeground(new java.awt.Color(102, 0, 0));
 		selectedPathwaysLabel.setText("Selected Pathways");
 
-		
-		 org.jdesktop.layout.GroupLayout selectPanelLayout = new org.jdesktop.layout.GroupLayout(selectPanel);
-	        selectPanel.setLayout(selectPanelLayout);
-	        selectPanelLayout.setHorizontalGroup(
-	            selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-	            .add(selectPanelLayout.createSequentialGroup()
-	                .addContainerGap()
-	                .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-	                    .add(selectPanelLayout.createSequentialGroup()
-	                        .add(availablePathwaysScrollPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-	                        .add(18, 18, 18)
-	                        .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-	                            .add(rightButton, 0, 0, Short.MAX_VALUE)
-	                            .add(leftButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 45, Short.MAX_VALUE))
-	                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED))
-	                    .add(selectPanelLayout.createSequentialGroup()
-	                        .add(availablePathwaysLabel)
-	                        .add(109, 109, 109)))
-	                .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-	                    .add(selectedPathwaysScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 141, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                    .add(selectedPathwaysLabel))
-	                .addContainerGap())
-	        );
-
-	        selectPanelLayout.linkSize(new java.awt.Component[] {availablePathwaysScrollPane, selectedPathwaysScrollPane}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-	        selectPanelLayout.setVerticalGroup(
-	            selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-	            .add(selectPanelLayout.createSequentialGroup()
-	                .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-	                    .add(org.jdesktop.layout.GroupLayout.TRAILING, selectPanelLayout.createSequentialGroup()
-	                        .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-	                            .add(availablePathwaysLabel)
-	                            .add(selectedPathwaysLabel))
-	                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-	                        .add(selectPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-	                            .add(selectPanelLayout.createSequentialGroup()
-	                                .add(availablePathwaysScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                                .add(24, 24, 24))
-	                            .add(selectedPathwaysScrollPane)))
-	                    .add(org.jdesktop.layout.GroupLayout.TRAILING, selectPanelLayout.createSequentialGroup()
-	                        .add(rightButton)
-	                        .add(18, 18, 18)
-	                        .add(leftButton)
-	                        .add(49, 49, 49)))
-	                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-	        );
-
-	        selectPanelLayout.linkSize(new java.awt.Component[] {availablePathwaysScrollPane, selectedPathwaysScrollPane}, org.jdesktop.layout.GroupLayout.VERTICAL);
-		
-        
+		org.jdesktop.layout.GroupLayout selectPanelLayout = new org.jdesktop.layout.GroupLayout(
+				selectPanel);
+		selectPanel.setLayout(selectPanelLayout);
+		selectPanelLayout
+				.setHorizontalGroup(selectPanelLayout
+						.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.LEADING)
+						.add(
+								selectPanelLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.add(
+												selectPanelLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.LEADING)
+														.add(
+																org.jdesktop.layout.GroupLayout.TRAILING,
+																selectPanelLayout
+																		.createSequentialGroup()
+																		.add(
+																				availablePathwaysScrollPane,
+																				org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																				149,
+																				Short.MAX_VALUE)
+																		.add(
+																				18,
+																				18,
+																				18)
+																		.add(
+																				selectPanelLayout
+																						.createParallelGroup(
+																								org.jdesktop.layout.GroupLayout.TRAILING,
+																								false)
+																						.add(
+																								rightButton,
+																								0,
+																								0,
+																								Short.MAX_VALUE)
+																						.add(
+																								leftButton,
+																								org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																								45,
+																								Short.MAX_VALUE))
+																		.addPreferredGap(
+																				org.jdesktop.layout.LayoutStyle.UNRELATED))
+														.add(
+																selectPanelLayout
+																		.createSequentialGroup()
+																		.add(
+																				availablePathwaysLabel)
+																		.add(
+																				109,
+																				109,
+																				109)))
+										.add(
+												selectPanelLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.TRAILING)
+														.add(
+																org.jdesktop.layout.GroupLayout.LEADING,
+																selectedPathwaysLabel)
+														.add(
+																selectPanelLayout
+																		.createSequentialGroup()
+																		.addPreferredGap(
+																				org.jdesktop.layout.LayoutStyle.RELATED)
+																		.add(
+																				selectedPathwaysScrollPane,
+																				org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																				149,
+																				Short.MAX_VALUE)))
+										.addContainerGap()));
+		selectPanelLayout
+				.setVerticalGroup(selectPanelLayout
+						.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.LEADING)
+						.add(
+								selectPanelLayout
+										.createSequentialGroup()
+										.add(
+												selectPanelLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.LEADING)
+														.add(
+																org.jdesktop.layout.GroupLayout.TRAILING,
+																selectPanelLayout
+																		.createSequentialGroup()
+																		.add(
+																				selectPanelLayout
+																						.createParallelGroup(
+																								org.jdesktop.layout.GroupLayout.BASELINE)
+																						.add(
+																								availablePathwaysLabel)
+																						.add(
+																								selectedPathwaysLabel))
+																		.addPreferredGap(
+																				org.jdesktop.layout.LayoutStyle.RELATED)
+																		.add(
+																				selectPanelLayout
+																						.createParallelGroup(
+																								org.jdesktop.layout.GroupLayout.LEADING)
+																						.add(
+																								selectedPathwaysScrollPane)
+																						.add(
+																								availablePathwaysScrollPane)))
+														.add(
+																org.jdesktop.layout.GroupLayout.TRAILING,
+																selectPanelLayout
+																		.createSequentialGroup()
+																		.addContainerGap()
+																		.add(
+																				rightButton)
+																		.add(
+																				18,
+																				18,
+																				18)
+																		.add(
+																				leftButton)
+																		.add(
+																				49,
+																				49,
+																				49)))
+										.add(13, 13, 13)));
 		openBtn.setText("Open");
 		openBtn.setToolTipText("load the selected pathway to Cytoscape");
 		openBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -342,111 +402,178 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 			}
 		});
 
-		CancelBtn.setText("Cancel");
-		CancelBtn.addActionListener(new java.awt.event.ActionListener() {
+		ClearBtn.setText("Clear");
+		ClearBtn
+				.setToolTipText("clear the previous result, find a new set of pathways to merge");
+		ClearBtn.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				CancelBtnActionPerformed(evt);
+				ClearBtnActionPerformed(evt);
 			}
 		});
 
-		MergeBtn.setText("Merge");
-		MergeBtn.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				MergeBtnActionPerformed(evt);
-			}
-		});
+		CommonNodeViewBtn.setText("Common Node View");
+		CommonNodeViewBtn
+				.setToolTipText("generate a network view showing the number of shared nodes between every two selected pathways");
+		CommonNodeViewBtn
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent evt) {
+						CommonNodeViewBtnActionPerformed(evt);
+					}
+				});
 
 		helpButton.setText("Help");
+		helpButton
+				.setToolTipText("switch to Search Help tab, where you're provided with help for finding candidate pathways with shared nodes");
 		helpButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				helpButtonActionPerformed(evt);
 			}
 		});
 
-		
-		
-		 org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(searchPane);
-	        searchPane.setLayout(searchPaneLayout);
-	        searchPaneLayout.setHorizontalGroup(
-	            searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-	            .add(searchPaneLayout.createSequentialGroup()
-	                .addContainerGap()
-	                .add(stepLabel1)
-	                .addContainerGap(67, Short.MAX_VALUE))
-	            .add(searchPaneLayout.createSequentialGroup()
-	                .addContainerGap()
-	                .add(searchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 167, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-	                .add(organismCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 148, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-	                .add(searchBtn)
-	                .addContainerGap(22, Short.MAX_VALUE))
-	            .add(searchPaneLayout.createSequentialGroup()
-	                .addContainerGap()
-	                .add(resultScrolllPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 399, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                .addContainerGap(19, Short.MAX_VALUE))
-	            .add(org.jdesktop.layout.GroupLayout.TRAILING, searchPaneLayout.createSequentialGroup()
-	                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-	                    .add(searchPaneLayout.createSequentialGroup()
-	                        .addContainerGap()
-	                        .add(helpButton)
-	                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-	                        .add(CancelBtn)
-	                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-	                        .add(MergeBtn))
-	                    .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-	                        .add(searchPaneLayout.createSequentialGroup()
-	                            .addContainerGap()
-	                            .add(openBtn)
-	                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-	                            .add(addBtn))
-	                        .add(searchPaneLayout.createSequentialGroup()
-	                            .add(19, 19, 19)
-	                            .add(selectPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-	                .add(39, 39, 39))
-	            .add(searchPaneLayout.createSequentialGroup()
-	                .addContainerGap()
-	                .add(hintLabel1)
-	                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-	        );
+		org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(
+				searchPane);
+		searchPane.setLayout(searchPaneLayout);
+		searchPaneLayout
+				.setHorizontalGroup(searchPaneLayout
+						.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.LEADING)
+						.add(
+								searchPaneLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.add(
+												searchPaneLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.LEADING)
+														.add(
+																searchPaneLayout
+																		.createSequentialGroup()
+																		.add(
+																				stepLabel1)
+																		.addContainerGap(
+																				79,
+																				Short.MAX_VALUE))
+														.add(
+																searchPaneLayout
+																		.createSequentialGroup()
+																		.add(
+																				hintLabel1,
+																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																				412,
+																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+																		.addContainerGap(
+																				18,
+																				Short.MAX_VALUE))
+														.add(
+																org.jdesktop.layout.GroupLayout.TRAILING,
+																searchPaneLayout
+																		.createSequentialGroup()
+																		.add(
+																				searchPaneLayout
+																						.createParallelGroup(
+																								org.jdesktop.layout.GroupLayout.TRAILING)
+																						.add(
+																								searchPaneLayout
+																										.createSequentialGroup()
+																										.add(
+																												helpButton)
+																										.addPreferredGap(
+																												org.jdesktop.layout.LayoutStyle.RELATED)
+																										.add(
+																												ClearBtn)
+																										.addPreferredGap(
+																												org.jdesktop.layout.LayoutStyle.RELATED)
+																										.add(
+																												CommonNodeViewBtn))
+																						.add(
+																								searchPaneLayout
+																										.createSequentialGroup()
+																										.add(
+																												openBtn)
+																										.addPreferredGap(
+																												org.jdesktop.layout.LayoutStyle.UNRELATED)
+																										.add(
+																												addBtn,
+																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																												67,
+																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+																						.add(
+																								org.jdesktop.layout.GroupLayout.LEADING,
+																								selectPanel,
+																								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																								Short.MAX_VALUE)
+																						.add(
+																								org.jdesktop.layout.GroupLayout.LEADING,
+																								resultScrolllPane1,
+																								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																								407,
+																								Short.MAX_VALUE)
+																						.add(
+																								org.jdesktop.layout.GroupLayout.LEADING,
+																								searchPaneLayout
+																										.createSequentialGroup()
+																										.add(
+																												searchText,
+																												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																												171,
+																												Short.MAX_VALUE)
+																										.addPreferredGap(
+																												org.jdesktop.layout.LayoutStyle.UNRELATED)
+																										.add(
+																												organismCombo,
+																												0,
+																												151,
+																												Short.MAX_VALUE)
+																										.addPreferredGap(
+																												org.jdesktop.layout.LayoutStyle.UNRELATED)
+																										.add(
+																												searchBtn)))
+																		.add(
+																				23,
+																				23,
+																				23)))));
 
-	        searchPaneLayout.linkSize(new java.awt.Component[] {addBtn, openBtn}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+		searchPaneLayout.linkSize(new java.awt.Component[] { ClearBtn,
+				helpButton }, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-	        searchPaneLayout.linkSize(new java.awt.Component[] {CancelBtn, MergeBtn, helpButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+		searchPaneLayout.setVerticalGroup(searchPaneLayout.createParallelGroup(
+				org.jdesktop.layout.GroupLayout.LEADING).add(
+				searchPaneLayout.createSequentialGroup().add(28, 28, 28).add(
+						stepLabel1).add(18, 18, 18).add(hintLabel1).add(32, 32,
+						32).add(
+						searchPaneLayout.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.BASELINE).add(
+								searchText,
+								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+								23, Short.MAX_VALUE).add(organismCombo).add(
+								searchBtn)).add(18, 18, 18).add(
+						resultScrolllPane1,
+						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 176,
+						Short.MAX_VALUE).add(18, 18, 18).add(
+						searchPaneLayout.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.BASELINE).add(
+								openBtn).add(addBtn)).addPreferredGap(
+						org.jdesktop.layout.LayoutStyle.RELATED).add(
+						selectPanel,
+						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+						Short.MAX_VALUE).add(39, 39, 39).add(
+						searchPaneLayout.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.BASELINE).add(
+								CommonNodeViewBtn).add(helpButton)
+								.add(ClearBtn)).add(43, 43, 43)));
 
-	        searchPaneLayout.setVerticalGroup(
-	            searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-	            .add(searchPaneLayout.createSequentialGroup()
-	                .add(28, 28, 28)
-	                .add(stepLabel1)
-	                .add(18, 18, 18)
-	                .add(hintLabel1)
-	                .add(32, 32, 32)
-	                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-	                    .add(searchText, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                    .add(organismCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                    .add(searchBtn))
-	                .add(18, 18, 18)
-	                .add(resultScrolllPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 176, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                .add(18, 18, 18)
-	                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-	                    .add(openBtn)
-	                    .add(addBtn))
-	                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-	                .add(selectPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 194, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-	                .add(39, 39, 39)
-	                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-	                    .add(CancelBtn)
-	                    .add(MergeBtn)
-	                    .add(helpButton))
-	                .addContainerGap(43, Short.MAX_VALUE))
-	        );
+		searchPaneLayout.linkSize(new java.awt.Component[] { addBtn, openBtn },
+				org.jdesktop.layout.GroupLayout.VERTICAL);
 
-	        searchPaneLayout.linkSize(new java.awt.Component[] {addBtn, openBtn}, org.jdesktop.layout.GroupLayout.VERTICAL);
+		searchPaneLayout.linkSize(new java.awt.Component[] { searchBtn,
+				searchText }, org.jdesktop.layout.GroupLayout.VERTICAL);
 
-	        searchPaneLayout.linkSize(new java.awt.Component[] {searchBtn, searchText}, org.jdesktop.layout.GroupLayout.VERTICAL);
+		searchPaneLayout.linkSize(new java.awt.Component[] { ClearBtn,
+				CommonNodeViewBtn, helpButton },
+				org.jdesktop.layout.GroupLayout.VERTICAL);
 
-	        searchPaneLayout.linkSize(new java.awt.Component[] {CancelBtn, MergeBtn, helpButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
 		superpathwayPanel
 				.addTab("Search/Select", null, searchPane,
 						"search and select pathways that you want to merge from Wiki Pahtways");
@@ -468,54 +595,70 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 		jRadioButton6.setText("name of pathway 6");
 
-		
-		org.jdesktop.layout.GroupLayout layoutPaneLayout = new org.jdesktop.layout.GroupLayout(layoutPane);
-        layoutPane.setLayout(layoutPaneLayout);
-        layoutPaneLayout.setHorizontalGroup(
-            layoutPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layoutPaneLayout.createSequentialGroup()
-                .add(layoutPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layoutPaneLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(stepLabel2))
-                    .add(layoutPaneLayout.createSequentialGroup()
-                        .add(67, 67, 67)
-                        .add(layoutPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jRadioButton2)
-                            .add(jRadioButton1)
-                            .add(jRadioButton3)
-                            .add(jRadioButton4)
-                            .add(jRadioButton5)
-                            .add(jRadioButton6))))
-                .addContainerGap(87, Short.MAX_VALUE))
-        );
+		org.jdesktop.layout.GroupLayout layoutPaneLayout = new org.jdesktop.layout.GroupLayout(
+				layoutPane);
+		layoutPane.setLayout(layoutPaneLayout);
+		layoutPaneLayout
+				.setHorizontalGroup(layoutPaneLayout
+						.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.LEADING)
+						.add(
+								layoutPaneLayout
+										.createSequentialGroup()
+										.add(
+												layoutPaneLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.LEADING)
+														.add(
+																layoutPaneLayout
+																		.createSequentialGroup()
+																		.addContainerGap()
+																		.add(
+																				stepLabel2))
+														.add(
+																layoutPaneLayout
+																		.createSequentialGroup()
+																		.add(
+																				67,
+																				67,
+																				67)
+																		.add(
+																				layoutPaneLayout
+																						.createParallelGroup(
+																								org.jdesktop.layout.GroupLayout.LEADING)
+																						.add(
+																								jRadioButton2)
+																						.add(
+																								jRadioButton1)
+																						.add(
+																								jRadioButton3)
+																						.add(
+																								jRadioButton4)
+																						.add(
+																								jRadioButton5)
+																						.add(
+																								jRadioButton6))))
+										.addContainerGap(87, Short.MAX_VALUE)));
 
-        layoutPaneLayout.linkSize(new java.awt.Component[] {jRadioButton1, jRadioButton2, jRadioButton3, jRadioButton4, jRadioButton5, jRadioButton6}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+		layoutPaneLayout.linkSize(new java.awt.Component[] { jRadioButton1,
+				jRadioButton2, jRadioButton3, jRadioButton4, jRadioButton5,
+				jRadioButton6 }, org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-        layoutPaneLayout.setVerticalGroup(
-            layoutPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layoutPaneLayout.createSequentialGroup()
-                .add(31, 31, 31)
-                .add(stepLabel2)
-                .add(35, 35, 35)
-                .add(jRadioButton1)
-                .add(18, 18, 18)
-                .add(jRadioButton2)
-                .add(18, 18, 18)
-                .add(jRadioButton3)
-                .add(18, 18, 18)
-                .add(jRadioButton4)
-                .add(18, 18, 18)
-                .add(jRadioButton5)
-                .add(18, 18, 18)
-                .add(jRadioButton6)
-                .addContainerGap(362, Short.MAX_VALUE))
-        );
+		layoutPaneLayout.setVerticalGroup(layoutPaneLayout.createParallelGroup(
+				org.jdesktop.layout.GroupLayout.LEADING).add(
+				layoutPaneLayout.createSequentialGroup().add(31, 31, 31).add(
+						stepLabel2).add(35, 35, 35).add(jRadioButton1).add(18,
+						18, 18).add(jRadioButton2).add(18, 18, 18).add(
+						jRadioButton3).add(18, 18, 18).add(jRadioButton4).add(
+						18, 18, 18).add(jRadioButton5).add(18, 18, 18).add(
+						jRadioButton6).addContainerGap(362, Short.MAX_VALUE)));
 
-        layoutPaneLayout.linkSize(new java.awt.Component[] {jRadioButton1, jRadioButton2, jRadioButton3, jRadioButton4, jRadioButton5, jRadioButton6}, org.jdesktop.layout.GroupLayout.VERTICAL);
+		layoutPaneLayout.linkSize(new java.awt.Component[] { jRadioButton1,
+				jRadioButton2, jRadioButton3, jRadioButton4, jRadioButton5,
+				jRadioButton6 }, org.jdesktop.layout.GroupLayout.VERTICAL);
 
-		superpathwayPanel.addTab("Custom Layout", null, layoutPane,
-				"create a custom layout grouping nodes from the same pathway");
+		// superpathwayPanel.addTab("Custom Layout", null, layoutPane,
+		// "create a custom layout grouping nodes from the same pathway");
 
 		superpathwayPanel.addTab("Custom Layout", null, layoutPane,
 				"create a custom layout grouping nodes from the same pathway");
@@ -524,13 +667,22 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		anchorPathwayLabel.setText("Pathway");
 
 		sharingNodeNoLabel.setForeground(new java.awt.Color(0, 0, 255));
-		sharingNodeNoLabel.setText("Sharing Node Number");
+		sharingNodeNoLabel.setText("Sharing");
 
 		// anchorPathwayComboBox.setModel(new
-		// javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2",
-		// "Item 3", "Item 4" }));
-		// anchorPathwayComboBox.setModel(new
 		// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
+
+		anchorPathwayComboBoxModel = new DefaultComboBoxModel();
+		anchorPathwayComboBoxModel.addElement((Object) new String(
+				"choose one pathway"));
+		anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
+
+		anchorPathwayComboBox
+				.addActionListener(new java.awt.event.ActionListener() {
+					public void actionPerformed(java.awt.event.ActionEvent evt) {
+						anchorPathwayComboBoxActionPerformed(evt);
+					}
+				});
 
 		lowerBoundSharingNodeNoComboBox
 				.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
@@ -552,21 +704,25 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 			}
 		});
 
-		lowerBoundLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-		lowerBoundLabel.setText("from");
+		lowerBoundLabel.setForeground(new java.awt.Color(0, 0, 255));
+		lowerBoundLabel.setText("Minimum");
 
-		upperBoundLabel.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-		upperBoundLabel.setText("to");
+		upperBoundLabel.setForeground(new java.awt.Color(0, 0, 255));
+		upperBoundLabel.setText("Maximum");
 
 		upperBoundSharingNodeNoComboBox
 				.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
-						"2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
-						"12", "13", "14", "15", "16", "17", "18", "19", "20" }));
+						"1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+						"11", "12", "13", "14", "15", "16", "17", "18", "19",
+						"20" }));
 
 		explainHelpLabel2.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
 		explainHelpLabel2.setForeground(new java.awt.Color(102, 0, 0));
 		explainHelpLabel2
 				.setText("candidate pathways with sharing nodes would be returned.");
+
+		lastLabel.setForeground(new java.awt.Color(0, 0, 255));
+		lastLabel.setText("Nodes");
 
 		backToSearchButton.setText("Back to Search");
 		backToSearchButton
@@ -583,149 +739,265 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 			}
 		});
 
-		candidatePathwaysSharingNodesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		candidatePathwaysSharingNodesScrollPane.setViewportView(candidatePathwaysSharingNodesList);
-		//candidatePathwaysSharingNodesTable
-	    //			.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		/*candidatePathwaysSharingNodesTable.addMouseListener(new java.awt.event.MouseAdapter() {
-			public void mouseClicked(java.awt.event.MouseEvent e) {
-				if (e.getClickCount() == 1) {
-					int row = candidatePathwaysSharingNodesTable.getSelectedRow();
-					mSelectedInHelpPanel = tableModel.getRow(row);
-					mSelectedPwInHelpPanel = mSelectedInHelpPanel
-							.getProperty(ResultProperty.NAME)
-							+ "("
-							+ mSelectedInHelpPanel.getProperty(ResultProperty.ID)
-							+ ")";
+		/*
+		 * candidatePathwaysSharingNodesList
+		 * .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		 * candidatePathwaysSharingNodesScrollPane
+		 * .setViewportView(candidatePathwaysSharingNodesList);
+		 */
 
-					System.out.println(mSelectedPwInHelpPanel);
-					// openNetwork(mSelected);
-				}
+		candidatePathwaysSharingNodesTableModel.addColumn("Pathway Name");
+		candidatePathwaysSharingNodesTableModel.addColumn("ID");
+		candidatePathwaysSharingNodesTableModel.addColumn("No. Shared Nodes");
+
+		candidatePathwaysSharingNodesTable
+				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		candidatePathwaysSharingNodesScrollPane
+				.setViewportView(candidatePathwaysSharingNodesTable);
+		candidatePathwaysSharingNodesTable
+				.setModel(candidatePathwaysSharingNodesTableModel);
+
+		TableColumn column = null;
+		for (int i = 0; i < 3; i++) {
+			column = candidatePathwaysSharingNodesTable.getColumnModel()
+					.getColumn(i);
+			if (i == 0) {
+				column.setPreferredWidth(150); // third column is bigger
+			} else if (i == 1) {
+				column.setPreferredWidth(40);
+			} else {
+				column.setPreferredWidth(60);
 			}
-		});*/
-		
-		// candidatePathwaysSharingNodesTable.setLayoutOrientation(JList.VERTICAL);
-		// candidatePathwaysSharingNodesTable.setVisibleRowCount(8);
-		//candidatePathwaysSharingNodesScrollPane
-			//	.setViewportView(candidatePathwaysSharingNodesTable);
 
-		
-		org.jdesktop.layout.GroupLayout helpPaneLayout = new org.jdesktop.layout.GroupLayout(helpPanel);
-		helpPanel.setLayout(helpPaneLayout);
-        helpPaneLayout.setHorizontalGroup(
-            helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(helpPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(explainHelpLabel1)
-                .addContainerGap(24, Short.MAX_VALUE))
-            .add(helpPaneLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(explainHelpLabel2)
-                .addContainerGap(90, Short.MAX_VALUE))
-            .add(helpPaneLayout.createSequentialGroup()
-                .add(38, 38, 38)
-                .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(candidatePathwaysSharingNodesScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 364, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                        .add(helpPaneLayout.createSequentialGroup()
-                            .add(backToSearchButton)
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                            .add(addHelpButton))
-                        .add(helpPaneLayout.createSequentialGroup()
-                            .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
-                                .add(org.jdesktop.layout.GroupLayout.LEADING, helpPaneLayout.createSequentialGroup()
-                                    .add(anchorPathwayLabel)
-                                    .add(68, 68, 68)
-                                    .add(anchorPathwayComboBox, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .add(org.jdesktop.layout.GroupLayout.LEADING, helpPaneLayout.createSequentialGroup()
-                                    .add(sharingNodeNoLabel)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                    .add(lowerBoundLabel)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                    .add(lowerBoundSharingNodeNoComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                    .add(upperBoundLabel)
-                                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                                    .add(upperBoundSharingNodeNoComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                            .add(searchHelpButton))))
-                .addContainerGap(20, Short.MAX_VALUE))
-        );
+		}
 
-        helpPaneLayout.linkSize(new java.awt.Component[] {addHelpButton, backToSearchButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+		/*
+		 * candidatePathwaysSharingNodesTable.addMouseListener(new
+		 * java.awt.event.MouseAdapter() { public void
+		 * mouseClicked(java.awt.event.MouseEvent e) { if (e.getClickCount() ==
+		 * 1) { int row = candidatePathwaysSharingNodesTable.getSelectedRow();
+		 * mSelectedInHelpPanel = tableModel.getRow(row); mSelectedPwInHelpPanel =
+		 * mSelectedInHelpPanel .getProperty(ResultProperty.NAME) + "(" +
+		 * mSelectedInHelpPanel.getProperty(ResultProperty.ID) + ")";
+		 * 
+		 * System.out.println(mSelectedPwInHelpPanel); //
+		 * openNetwork(mSelected); } } });
+		 */
 
-        helpPaneLayout.setVerticalGroup(
-            helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(helpPaneLayout.createSequentialGroup()
-                .add(33, 33, 33)
-                .add(explainHelpLabel1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                .add(explainHelpLabel2)
-                .add(44, 44, 44)
-                .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(anchorPathwayLabel)
-                    .add(anchorPathwayComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(23, 23, 23)
-                .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(sharingNodeNoLabel)
-                    .add(lowerBoundLabel)
-                    .add(lowerBoundSharingNodeNoComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(upperBoundLabel)
-                    .add(upperBoundSharingNodeNoComboBox, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(searchHelpButton))
-                .add(53, 53, 53)
-                .add(candidatePathwaysSharingNodesScrollPane, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 251, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 81, Short.MAX_VALUE)
-                .add(helpPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(backToSearchButton)
-                    .add(addHelpButton))
-                .add(79, 79, 79))
-        );
+		org.jdesktop.layout.GroupLayout helpPanelLayout = new org.jdesktop.layout.GroupLayout(
+				helpPanel);
+		helpPanel.setLayout(helpPanelLayout);
+		helpPanelLayout
+				.setHorizontalGroup(helpPanelLayout
+						.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.LEADING)
+						.add(
+								helpPanelLayout
+										.createSequentialGroup()
+										.add(
+												helpPanelLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.LEADING)
+														.add(
+																helpPanelLayout
+																		.createSequentialGroup()
+																		.addContainerGap()
+																		.add(
+																				explainHelpLabel1))
+														.add(
+																helpPanelLayout
+																		.createSequentialGroup()
+																		.addContainerGap()
+																		.add(
+																				explainHelpLabel2))
+														.add(
+																helpPanelLayout
+																		.createSequentialGroup()
+																		.add(
+																				19,
+																				19,
+																				19)
+																		.add(
+																				helpPanelLayout
+																						.createParallelGroup(
+																								org.jdesktop.layout.GroupLayout.LEADING)
+																						.add(
+																								anchorPathwayLabel)
+																						.add(
+																								sharingNodeNoLabel))
+																		.add(
+																				6,
+																				6,
+																				6)
+																		.add(
+																				helpPanelLayout
+																						.createParallelGroup(
+																								org.jdesktop.layout.GroupLayout.LEADING,
+																								false)
+																						.add(
+																								helpPanelLayout
+																										.createSequentialGroup()
+																										.add(
+																												lowerBoundLabel)
+																										.add(
+																												18,
+																												18,
+																												18)
+																										.add(
+																												lowerBoundSharingNodeNoComboBox,
+																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+																										.add(
+																												18,
+																												18,
+																												18)
+																										.add(
+																												upperBoundLabel)
+																										.add(
+																												18,
+																												18,
+																												18)
+																										.add(
+																												upperBoundSharingNodeNoComboBox,
+																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+																						.add(
+																								helpPanelLayout
+																										.createSequentialGroup()
+																										.add(
+																												23,
+																												23,
+																												23)
+																										.add(
+																												anchorPathwayComboBox,
+																												0,
+																												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																												Short.MAX_VALUE)))
+																		.add(
+																				18,
+																				18,
+																				18)
+																		.add(
+																				lastLabel)
+																		.add(
+																				18,
+																				18,
+																				18)
+																		.add(
+																				searchHelpButton)))
+										.addContainerGap(24, Short.MAX_VALUE))
+						.add(
+								org.jdesktop.layout.GroupLayout.TRAILING,
+								helpPanelLayout
+										.createSequentialGroup()
+										.addContainerGap(190, Short.MAX_VALUE)
+										.add(backToSearchButton)
+										.addPreferredGap(
+												org.jdesktop.layout.LayoutStyle.RELATED)
+										.add(addHelpButton).add(26, 26, 26))
+						.add(
+								helpPanelLayout
+										.createSequentialGroup()
+										.addContainerGap()
+										.add(
+												candidatePathwaysSharingNodesScrollPane,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												402, Short.MAX_VALUE).add(16,
+												16, 16)));
 
-        helpPaneLayout.linkSize(new java.awt.Component[] {addHelpButton, backToSearchButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
+		helpPanelLayout.linkSize(new java.awt.Component[] { addHelpButton,
+				backToSearchButton },
+				org.jdesktop.layout.GroupLayout.HORIZONTAL);
 
-        helpPaneLayout.linkSize(new java.awt.Component[] {lowerBoundLabel, lowerBoundSharingNodeNoComboBox, searchHelpButton, upperBoundLabel, upperBoundSharingNodeNoComboBox}, org.jdesktop.layout.GroupLayout.VERTICAL);
-		
-		superpathwayPanel.addTab("Search Help", helpPanel);
+		helpPanelLayout
+				.setVerticalGroup(helpPanelLayout
+						.createParallelGroup(
+								org.jdesktop.layout.GroupLayout.LEADING)
+						.add(
+								helpPanelLayout
+										.createSequentialGroup()
+										.add(33, 33, 33)
+										.add(explainHelpLabel1)
+										.addPreferredGap(
+												org.jdesktop.layout.LayoutStyle.UNRELATED)
+										.add(explainHelpLabel2)
+										.add(44, 44, 44)
+										.add(
+												helpPanelLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.BASELINE)
+														.add(anchorPathwayLabel)
+														.add(
+																anchorPathwayComboBox,
+																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+										.add(23, 23, 23)
+										.add(
+												helpPanelLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.BASELINE)
+														.add(lowerBoundLabel)
+														.add(
+																lowerBoundSharingNodeNoComboBox,
+																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.add(upperBoundLabel)
+														.add(
+																upperBoundSharingNodeNoComboBox,
+																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
+																org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+														.add(lastLabel)
+														.add(searchHelpButton)
+														.add(sharingNodeNoLabel))
+										.add(53, 53, 53)
+										.add(
+												candidatePathwaysSharingNodesScrollPane,
+												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
+												251, Short.MAX_VALUE)
+										.add(29, 29, 29)
+										.add(
+												helpPanelLayout
+														.createParallelGroup(
+																org.jdesktop.layout.GroupLayout.BASELINE)
+														.add(backToSearchButton)
+														.add(addHelpButton))
+										.addContainerGap(131, Short.MAX_VALUE)));
 
-		/*javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+		helpPanelLayout.linkSize(new java.awt.Component[] { addHelpButton,
+				backToSearchButton }, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+		helpPanelLayout.linkSize(new java.awt.Component[] { lastLabel,
+				lowerBoundLabel, lowerBoundSharingNodeNoComboBox,
+				searchHelpButton, sharingNodeNoLabel, upperBoundLabel,
+				upperBoundSharingNodeNoComboBox },
+				org.jdesktop.layout.GroupLayout.VERTICAL);
+
+		superpathwayPanel
+				.addTab("Search Help", null, helpPanel,
+						"help is provided for finding candidate pathways with shared nodes");
+
+		jScrollPane2.setViewportView(superpathwayPanel);
+
+		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(
+				this);
 		setLayout(layout);
-		// getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				layout.createSequentialGroup().addGap(22, 22, 22).addComponent(
-						superpathwayPanel,
-						javax.swing.GroupLayout.PREFERRED_SIZE, 431,
-						javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(22, Short.MAX_VALUE)));
+				org.jdesktop.layout.GroupLayout.LEADING).add(
+				layout.createSequentialGroup().add(18, 18, 18).add(
+						jScrollPane2,
+						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 447,
+						Short.MAX_VALUE).add(20, 20, 20)));
 		layout.setVerticalGroup(layout.createParallelGroup(
-				javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-				layout.createSequentialGroup().addGap(29, 29, 29).addComponent(
-						superpathwayPanel,
-						javax.swing.GroupLayout.PREFERRED_SIZE, 666,
-						javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addContainerGap(20, Short.MAX_VALUE)));
-
-		superpathwayPanel.getAccessibleContext().setAccessibleName(
-				"search/select");*/
-		
-		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
-        setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(22, 22, 22)
-                .add(superpathwayPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 433, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(21, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(superpathwayPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 699, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+				org.jdesktop.layout.GroupLayout.LEADING).add(
+				layout.createSequentialGroup().add(20, 20, 20).add(
+						jScrollPane2,
+						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 701,
+						Short.MAX_VALUE).addContainerGap()));
 
 		// pack();
 	}// </editor-fold>
@@ -739,165 +1011,275 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 	}
 
 	private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {
-		System.out.println(mClickedPathwayName);
-		if (!availablePathwaysListModel.contains(mClickedPathwayName)) {
-			availablePathwaysListModel.addElement(mClickedPathwayName);
-			availablePathwaysList.setModel(availablePathwaysListModel);
-			if (availablePathwaysListModel.getSize() > 0) {
-				rightButton.setEnabled(true);
+		System.out.println(mClickedPathwayNameID.size() + "");
+
+		int[] rows = resultTable.getSelectedRows();
+		for (int k = 0; k < rows.length; k++) {
+			ResultRow t = tableModel.getRow(rows[k]);
+			String temp = t.getProperty(ResultProperty.NAME) + "("
+					+ t.getProperty(ResultProperty.ID) + ")";
+
+			mClickedPathwayNameID.add(temp);
+
+		}
+		for (int i = 0; i < mClickedPathwayNameID.size(); i++) {
+			System.out.println(mClickedPathwayNameID.get(i));
+			if (!availablePathwaysListModel.contains(mClickedPathwayNameID
+					.get(i))) {
+				availablePathwaysListModel.addElement(mClickedPathwayNameID
+						.get(i));
+				availablePathwaysList.setModel(availablePathwaysListModel);
+				if (availablePathwaysListModel.getSize() > 0) {
+					rightButton.setEnabled(true);
+				}
+				mAvailablePathwaysNameIDList.add(mClickedPathwayNameID.get(i));
+				mAvailablePathwaysList.add(mSelected[i]);
+
+				anchorPathwayComboBoxModel.addElement(mClickedPathwayNameID
+						.get(i));
+				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
 			}
-			mAvailablePathwaysNameIDList.add(mClickedPathwayName);
-			mAvailablePathwaysList.add(mSelected);
-			anchorPathwayComboBox.setModel(new DefaultComboBoxModel(
-					mAvailablePathwaysNameIDList.toArray()));
 		}
 
 	}
 
 	private void openBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		System.out.println("After clicking open button!");
-		System.out.println(mSelected.getProperty(ResultProperty.NAME));
-		openNetwork(mSelected);
+
+		int[] rows = resultTable.getSelectedRows();
+		for (int k = 0; k < rows.length; k++) {
+			ResultRow t = tableModel.getRow(rows[k]);
+			openNetwork(t);
+		}
 	}
 
 	private void rightButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
 		// display the selected item of the available pathways list to the
 		// selected pathways list
-		mSelectedPathwayName = (String) availablePathwaysList
-				.getSelectedValue();
-		System.out.println("After clicking the right button!");
-		System.out.println(mSelectedPathwayName);
-		selectedPathwaysListModel.addElement((Object) mSelectedPathwayName);
-		selectedPathwaysList.setModel(selectedPathwaysListModel);
-		if (selectedPathwaysListModel.getSize() > 0) {
-			leftButton.setEnabled(true);
+		Object[] temp = availablePathwaysList.getSelectedValues();
+		for (int i = 0; i < temp.length; i++) {
+			mSelectedPathwayName[i] = (String) temp[i];
+			System.out.println("After clicking the right button!");
+			System.out.println(mSelectedPathwayName[i]);
+
+			if (!selectedPathwaysListModel
+					.contains((Object) mSelectedPathwayName[i])) {
+				selectedPathwaysListModel
+						.addElement((Object) mSelectedPathwayName[i]);
+				selectedPathwaysList.setModel(selectedPathwaysListModel);
+				if (selectedPathwaysListModel.getSize() > 0) {
+					leftButton.setEnabled(true);
+				}
+
+				anchorPathwayComboBoxModel
+						.removeElement((Object) mSelectedPathwayName[i]);
+				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
+			}
+
+			// removed the selected item in the availabe pathways list
+			availablePathwaysListModel.removeElement(mSelectedPathwayName[i]);
+
+			// mAvailablePathwaysNameIDList.remove(mSelectedPathwayName[i]);
+			// anchorPathwayComboBox.setModel(new
+			// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
 		}
 
-		// removed the selected item in the availabe pathways list
-		int index = availablePathwaysList.getSelectedIndex();
-		availablePathwaysListModel.remove(index);
-
 		int size = availablePathwaysListModel.getSize();
-
 		if (size == 0) { // No pathway is left, disable rightButton.
 			rightButton.setEnabled(false);
 
-		} else { // Select an index.
-			if (index == size) {
-				// removed item in last position
-				index--;
-			}
-
-			availablePathwaysList.setSelectedIndex(index);
-			availablePathwaysList.ensureIndexIsVisible(index);
-		}
+		} /*
+			 * else { // Select an index. if (index == size) { // removed item
+			 * in last position index--; }
+			 * 
+			 * availablePathwaysList.setSelectedIndex(index);
+			 * availablePathwaysList.ensureIndexIsVisible(index); }
+			 */
 
 	}
 
 	private void leftButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		// display the selected item of the selected pathways list to the
 		// available pathways list
-		mSelectedPathwayName = (String) selectedPathwaysList.getSelectedValue();
-		System.out.println("After clicking the left button!");
-		System.out.println(mSelectedPathwayName);
-		availablePathwaysListModel.addElement((Object) mSelectedPathwayName);
-		availablePathwaysList.setModel(availablePathwaysListModel);
-		if (availablePathwaysListModel.getSize() > 0) {
-			rightButton.setEnabled(true);
+		Object[] temp = selectedPathwaysList.getSelectedValues();
+		for (int i = 0; i < temp.length; i++) {
+			mSelectedPathwayName[i] = (String) temp[i];
+			System.out.println("After clicking the left button!");
+			System.out.println(mSelectedPathwayName[i]);
+			if (!availablePathwaysListModel
+					.contains((Object) mSelectedPathwayName[i])) {
+				availablePathwaysListModel
+						.addElement((Object) mSelectedPathwayName[i]);
+				availablePathwaysList.setModel(availablePathwaysListModel);
+				if (availablePathwaysListModel.getSize() > 0) {
+					rightButton.setEnabled(true);
+				}
+
+				anchorPathwayComboBoxModel
+						.addElement((Object) mSelectedPathwayName[i]);
+				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
+
+			}
+
+			// removed the selected item in the selected pathways list
+
+			selectedPathwaysListModel.removeElement(mSelectedPathwayName[i]);
+
+			// mAvailablePathwaysNameIDList.add(mSelectedPathwayName[i]);
+			// anchorPathwayComboBox.setModel(new
+			// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
 		}
-
-		// removed the selected item in the selected pathways list
-		int index = selectedPathwaysList.getSelectedIndex();
-		selectedPathwaysListModel.remove(index);
-
 		int size = selectedPathwaysListModel.getSize();
 
 		if (size == 0) { // No pathway is left, disable rightButton.
 			leftButton.setEnabled(false);
 
-		} else { // Select an index.
-			if (index == size) {
-				// removed item in last position
-				index--;
-			}
-
-			selectedPathwaysList.setSelectedIndex(index);
-			selectedPathwaysList.ensureIndexIsVisible(index);
 		}
 	}
 
-	private void CancelBtnActionPerformed(java.awt.event.ActionEvent evt) {
-		SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
-		spPlugin.mWindow.setVisible(false);
-		spPlugin.mWindow.dispose();
+	private void ClearBtnActionPerformed(java.awt.event.ActionEvent evt) {
+		// SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
+		// spPlugin.mWindow.setVisible(false);
+		// spPlugin.mWindow.dispose();
+		searchText.setText("");
+		availablePathwaysListModel.clear();
+		availablePathwaysList.setModel(availablePathwaysListModel);
+		selectedPathwaysListModel.clear();
+		selectedPathwaysList.setModel(selectedPathwaysListModel);
+		anchorPathwayComboBox.setModel(new DefaultComboBoxModel());
+
 	}
 
-	private void MergeBtnActionPerformed(java.awt.event.ActionEvent evt) {
-		//SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
-		//spPlugin.mWindow.setVisible(false);
-		//spPlugin.mWindow.dispose();
+	private void CommonNodeViewBtnActionPerformed(java.awt.event.ActionEvent evt) {
+		Object[] selectedPwNameId = selectedPathwaysListModel.toArray();
+		List<String> pathwaysNameId = new ArrayList<String>();
+		for (int i = 0; i < selectedPwNameId.length; i++) {
+			pathwaysNameId.add((String) selectedPwNameId[i]);
+		}
+		
+
+		commonNodeViewTask task = new commonNodeViewTask(pathwaysNameId, mClient);
+		JTaskConfig config = new JTaskConfig();
+		config.displayCancelButton(true);
+		config.setModal(true);
+		TaskManager.executeTask(task, config);
 	}
 
 	private void addHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		
-				
-		mSelectedPathwayName = (String) candidatePathwaysSharingNodesList.getSelectedValue();
-		int index1 = mSelectedPathwayName.indexOf(",");
-		String pwNameId = mSelectedPathwayName.substring(0, index1);
+		int[] selectedRowIndices = candidatePathwaysSharingNodesTable
+				.getSelectedRows();
 
-		System.out
-				.println("After clicking the Add button in the 'Search Help' panel!");
-		System.out.println(pwNameId);
+		for (int i = 0; i < selectedRowIndices.length; i++) {
+			int viewRow = selectedRowIndices[i];
+			System.out.println("Selected Row in View: " + viewRow);
+			int modelRow = candidatePathwaysSharingNodesTable
+					.convertRowIndexToModel(viewRow);
+			System.out.println("Selected Row in Model: " + modelRow);
 
-		availablePathwaysListModel.addElement((Object) pwNameId);
-		availablePathwaysList.setModel(availablePathwaysListModel);
-		/*
-		 * if (availablePathwaysListModel.getSize() > 0) {
-		 * rightButton.setEnabled(true); }
-		 */
+			String pwNameId = (String) candidatePathwaysSharingNodesTableModel
+					.getValueAt(modelRow, 0)
+					+ "("
+					+ (String) candidatePathwaysSharingNodesTableModel
+							.getValueAt(modelRow, 1) + ")";
+			System.out
+					.println("After clicking the Add button in the 'Search Help' panel!");
+			System.out.println(pwNameId);
 
-		// removed the selected item in the selected pathways list
-		//int index = candidatePathwaysSharingNodesTable.getSelectedRow();
-        //candidatePathwaysSharingNodesTableModel.removeRow(index);
-        //candidatePathwaysSharingNodesTable.setModel(candidatePathwaysSharingNodesTableModel);
-		int index = candidatePathwaysSharingNodesList.getSelectedIndex();
-		candidatePathwaysSharingNodesListModel.remove(index);
-		candidatePathwaysSharingNodesList.setModel(candidatePathwaysSharingNodesListModel);
+			if (!availablePathwaysListModel.contains(pwNameId)) {
+				availablePathwaysListModel.addElement((Object) pwNameId);
+				availablePathwaysList.setModel(availablePathwaysListModel);
+
+				if (availablePathwaysListModel.getSize() > 0) {
+					rightButton.setEnabled(true);
+				}
+
+				// removed the selected item in the selected pathways
+				// list--later decided not to remove the selected rows
+
+				// mAvailablePathwaysNameIDList.add(pwNameId);
+				// anchorPathwayComboBox.setModel(new
+				// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
+
+				anchorPathwayComboBoxModel.addElement((Object) pwNameId);
+				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
+			}
+		}
 		superpathwayPanel.setSelectedIndex(0);
-		
+
 	}
 
 	private void searchHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
-		candidatePathwaysSharingNodesTableModel = new DefaultTableModel();
+		candidatePathwaysSharingNodesTableModel = candidatePathwaysSharingNodesTableModel = new javax.swing.table.DefaultTableModel();
+		candidatePathwaysSharingNodesTableModel.addColumn("Pathway Name");
+		candidatePathwaysSharingNodesTableModel.addColumn("ID");
+		candidatePathwaysSharingNodesTableModel.addColumn("No. Shared Nodes");
+
+		candidatePathwaysSharingNodesTable
+				.setModel(candidatePathwaysSharingNodesTableModel);
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-		String anchorPwNameAndId = anchorPathwayComboBox.getSelectedItem()
-				.toString();
+		// String anchorPwNameAndId =
+		// anchorPathwayComboBox.getSelectedItem().toString();
 		int lowerBound = Integer.parseInt(lowerBoundSharingNodeNoComboBox
 				.getSelectedItem().toString());
 		int upperBound = Integer.parseInt(upperBoundSharingNodeNoComboBox
 				.getSelectedItem().toString());
-		mCandidatePwList = findCandidatePwBySharingNodes(anchorPwNameAndId,
+
+		// mCandidatePwList = findCandidatePwBySharingNodes(lowerBound,
+		// upperBound);
+
+		searchSharingNodePwsTask task = new searchSharingNodePwsTask(
 				lowerBound, upperBound);
 
-		// mCandidatePwList is a list of string with elements in format "Pathway
+		JTaskConfig config = new JTaskConfig();
+		config.displayCancelButton(true);
+		// config.displayCloseButton(true);
+		// config.displayStatus(true);
+		config.setModal(true);
+		TaskManager.executeTask(task, config);
+
+		// mCandidatePw is a list of string with elements in format "Pathway
 		// Name (pw id), sharing node number: a int"
-		Iterator<String> it = mCandidatePwList.iterator();
+
+		// System.out.println("We reach here 3!");
+		// System.out.println(mCandidatePw.size()+"");
+		Iterator<String> it = mCandidatePw.iterator();
 		while (it.hasNext()) {
 			String temp = it.next();
-			candidatePathwaysSharingNodesListModel.addElement(temp);
-			/*int index = temp.indexOf(",");
-			String temp1 = temp.substring(0, index);
-			String temp2 = temp.substring(index + 1);
-			Object[] row=new Object[2];
-			row[0]=(Object)temp1;
-			row[1]=(Object)temp2;
-			candidatePathwaysSharingNodesTableModel.addRow(row);*/
+			// candidatePathwaysSharingNodesListModel.addElement(temp);
+
+			System.out.println(temp);
+			// parse the string into three parts: pathway name, id, and No.
+			// Sharing Nodes
+			int index1 = temp.indexOf(",");
+			String temp1 = temp.substring(0, index1);
+
+			int index2 = temp1.indexOf("(");
+			int index3 = temp1.indexOf(")");
+			String pwName = temp1.substring(0, index2);
+			System.out.println(pwName);
+			String pwId = temp1.substring(index2 + 1, index3);
+			System.out.println(pwId);
+
+			// String temp2 = temp.substring(index1+1);
+			int index4 = temp.indexOf(":");
+			String NoSharingNode = temp.substring(index4 + 2);
+			System.out.println(NoSharingNode);
+
+			Object[] row = new Object[3];
+			row[0] = (Object) pwName;
+			row[1] = (Object) pwId;
+			row[2] = (Object) NoSharingNode;
+
+			candidatePathwaysSharingNodesTableModel.addRow(row);
+
 		}
-		//candidatePathwaysSharingNodesTable.setModel(candidatePathwaysSharingNodesTableModel);
-		candidatePathwaysSharingNodesList.setModel(candidatePathwaysSharingNodesListModel);
+		candidatePathwaysSharingNodesTable
+				.setModel(candidatePathwaysSharingNodesTableModel);
+
+		// candidatePathwaysSharingNodesList.setModel(candidatePathwaysSharingNodesListModel);
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
 
@@ -909,6 +1291,67 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 	private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		superpathwayPanel.setSelectedIndex(2);
+	}
+
+	private void anchorPathwayComboBoxActionPerformed(
+			java.awt.event.ActionEvent evt) {
+		String anchorPwNameId = anchorPathwayComboBox.getSelectedItem()
+				.toString();
+
+		if (anchorPwNameId.equalsIgnoreCase("choose one pathway")) {
+
+		} else {
+			int index1 = anchorPwNameId.indexOf("(");
+			int index2 = anchorPwNameId.indexOf(")");
+			String anchorPwID = anchorPwNameId.substring(index1 + 1, index2);
+
+			// Create a client to the WikiPathways web service
+			WikiPathwaysClient client = mClient.getStub();
+
+			// Download these two pathways from WikiPathways by passing their id
+			WSPathway anchorPathway = new WSPathway();
+
+			try {
+				anchorPathway = client.getPathway(anchorPwID);
+
+			} catch (RemoteException e) {
+				Logger.log.error(
+						"Unable to get the pathway due to the RemoteException",
+						e);
+			} catch (ConverterException e) {
+				Logger.log
+						.error(
+								"Unable to get the pathway due to the ConverterException",
+								e);
+			}
+			// Create two corresponding pathway objects
+			mAnchorPw = new Pathway();
+
+			try {
+				mAnchorPw = WikiPathwaysClient.toPathway(anchorPathway);
+			} catch (ConverterException e) {
+				Logger.log.error(
+						"Unable to get the pathway due to the RemoteException",
+						e);
+			}
+
+			mNoGeneNode = 0;
+			for (PathwayElement pwElm : mAnchorPw.getDataObjects()) {
+				if (pwElm.getObjectType() == ObjectType.DATANODE) {
+					mNoGeneNode = mNoGeneNode + 1;
+
+				}
+			}
+
+			String[] temp = new String[mNoGeneNode];
+			for (int i = 1; i <= mNoGeneNode; i++) {
+				temp[i - 1] = String.valueOf(i);
+			}
+
+			upperBoundSharingNodeNoComboBox
+					.setModel(new javax.swing.DefaultComboBoxModel(temp));
+
+		}
 	}
 
 	// the code above is generated in Netbean IDE
@@ -996,147 +1439,20 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 	}
 
-	public List<String> findCandidatePwBySharingNodes(String pwNameAndId,
-			int lowerBound, int upperBound) {
-
-		List<String> candidatePw = new ArrayList<String>();
-		if (lowerBound > upperBound) {
-			JOptionPane.showMessageDialog(helpPanel,
-					"Please reset the range of sharing nodes number!");
-		} else {
-
-			Map<String, Integer> sharingNodeNumberofPws = new HashMap<String, Integer>();
-			List<String> geneIDList = new ArrayList<String>();
-			int geneNodeNumber = 0;
-			// find the anchorResultRow for loading the pathway to Cytoscape
-			// int indexAnchorPw =
-			// mAvailablePathwaysNameIDList.indexOf(pwNameAndId);
-			// ResultRow anchorResultRow =
-			// mAvailablePathwaysList.get(indexAnchorPw);
-			// openNetwork(anchorResultRow);
-
-			JOptionPane
-					.showMessageDialog(helpPanel,
-							"Please wait with patience, the searching process takes time!");
-			int index1 = pwNameAndId.indexOf("(");
-			int index2 = pwNameAndId.indexOf(")");
-			String pwsID = pwNameAndId.substring(index1 + 1, index2);
-
-			// Create a client to the WikiPathways web service
-			WikiPathwaysClient client = mClient.getStub();
-
-			// Download a pathway from WikiPathways
-			WSPathway wsPathway = new WSPathway();
-			try {
-				wsPathway = client.getPathway(pwsID);
-			} catch (RemoteException e) {
-				Logger.log.error(
-						"Unable to get the pathway due to the RemoteException",
-						e);
-			} catch (ConverterException e) {
-				Logger.log
-						.error(
-								"Unable to get the pathway due to the ConverterException",
-								e);
-			}
-			// Create a pathway object
-			Pathway pathway = new Pathway();
-			try {
-				pathway = WikiPathwaysClient.toPathway(wsPathway);
-			} catch (ConverterException e) {
-				Logger.log.error(
-						"Unable to get the pathway due to the RemoteException",
-						e);
-			}
-			// Get all genes, proteins and metabolites for a pathway
-			for (PathwayElement pwElm : pathway.getDataObjects()) {
-				// Only take elements with type DATANODE (genes, proteins,
-				// metabolites)
-				if (pwElm.getObjectType() == ObjectType.DATANODE) {
-					/*
-					 * System.out.println(pwElm.getXref().toString()); try {
-					 * WSSearchResult[] PwsSharingNode = client
-					 * .findPathwaysByXref(pwElm.getXref());
-					 * System.out.println("" + PwsSharingNode.length);
-					 * 
-					 * mNodeIdToPwsSharingNode.put(pwElm.getXref().toString(),
-					 * PwsSharingNode); } catch (RemoteException e) { Logger.log
-					 * .error( "Unable to find the candidate pathways due to the
-					 * RemoteException", e); }
-					 */
-
-					System.out.println(pwElm.getGeneID());
-					geneIDList.add(pwElm.getGeneID());
-					geneNodeNumber = geneNodeNumber + 1;
-					try {
-						WSSearchResult[] PwsSharingNode = client
-								.findPathwaysByXref(pwElm.getGeneID());
-						System.out.println("" + PwsSharingNode.length);
-
-						mNodeIdToPwsSharingNode.put(pwElm.getGeneID(),
-								PwsSharingNode);
-					} catch (RemoteException e) {
-						Logger.log
-								.error(
-										"Unable to find the candidate pathways due to the RemoteException",
-										e);
-					}
-				}
-
-			}
-
-			for (int i = 0; i < geneNodeNumber; i++) {
-				WSSearchResult[] pwsArray = mNodeIdToPwsSharingNode
-						.get(geneIDList.get(i));
-
-				for (int j = 0; j < pwsArray.length; j++) {
-					WSSearchResult pw = pwsArray[j];
-					ResultRow pwResultRow = new ResultRow(pw);
-					String onePwNameAndId = pwResultRow
-							.getProperty(ResultProperty.NAME)
-							+ "("
-							+ pwResultRow.getProperty(ResultProperty.ID)
-							+ ")";
-
-					if (sharingNodeNumberofPws.containsKey(onePwNameAndId)) {
-						Integer oldValue = sharingNodeNumberofPws
-								.get(onePwNameAndId);
-						Integer newValue = new Integer(oldValue + 1);
-						sharingNodeNumberofPws.put(onePwNameAndId, newValue);
-					} else {
-						sharingNodeNumberofPws.put(onePwNameAndId, 1);
-					}
-				}
-			}
-
-			// the following code is for displaying the result in the table of
-			// "Search Help" panel
-			Set<String> sharingNodePwsSet = sharingNodeNumberofPws.keySet();
-			Iterator<String> it = sharingNodePwsSet.iterator();
-			while (it.hasNext()) {
-				String temp = it.next();
-				Integer value = sharingNodeNumberofPws.get(temp);
-				if (value >= lowerBound && value <= upperBound) {
-					candidatePw.add(temp + ", sharing node number: "
-							+ String.valueOf(value));
-				}
-			}
-
-		}
-		return candidatePw;
-	}
-
 	private javax.swing.DefaultListModel availablePathwaysListModel;
 
 	private javax.swing.DefaultListModel selectedPathwaysListModel;
 
-	 private javax.swing.DefaultListModel candidatePathwaysSharingNodesListModel;
+	private javax.swing.DefaultComboBoxModel anchorPathwayComboBoxModel;
+
+	// private javax.swing.DefaultListModel
+	// candidatePathwaysSharingNodesListModel;
 
 	private javax.swing.table.DefaultTableModel candidatePathwaysSharingNodesTableModel;
 
-	private javax.swing.JButton CancelBtn;
+	private javax.swing.JButton ClearBtn;
 
-	private javax.swing.JButton MergeBtn;
+	private javax.swing.JButton CommonNodeViewBtn;
 
 	private javax.swing.JButton addBtn;
 
@@ -1226,9 +1542,13 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 	private javax.swing.JButton helpButton;
 
-	//private javax.swing.JTable candidatePathwaysSharingNodesTable;
-	
-	private javax.swing.JList candidatePathwaysSharingNodesList;
+	private javax.swing.JLabel lastLabel;
+
+	private javax.swing.JTable candidatePathwaysSharingNodesTable;
+
+	private javax.swing.JScrollPane jScrollPane2;
+
+	// private javax.swing.JList candidatePathwaysSharingNodesList;
 
 	// End of variables declaration
 	ListWithPropertiesTableModel<ResultProperty, ResultRow> tableModel;
@@ -1262,4 +1582,189 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		}
 	}
 
+	public class searchSharingNodePwsTask implements Task {
+
+		TaskMonitor monitor;
+
+		int lowerBound;
+
+		int upperBound;
+
+		public searchSharingNodePwsTask(int lb, int ub) {
+			lowerBound = lb;
+			upperBound = ub;
+		}
+
+		/**
+		 * Run the Task.
+		 */
+		public void run() {
+
+			try {
+				mCandidatePw = new ArrayList<String>();
+				if (lowerBound > upperBound) {
+					JOptionPane.showMessageDialog(helpPanel,
+							"Please reset the range of sharing nodes number!");
+				} else {
+
+					Map<String, Integer> sharingNodeNumberofPws = new HashMap<String, Integer>();
+					List<String> geneIDList = new ArrayList<String>();
+					int percentComplete = 0;
+					int t = 0;
+
+					// Create a client to the WikiPathways web service
+					WikiPathwaysClient client = mClient.getStub();
+
+					// the following code is get a map "mNodeIdToPwsSharingNode"
+					// with key of GeneID and value of a list of pathways which
+					// contain the GeneID
+					for (PathwayElement pwElm : mAnchorPw.getDataObjects()) {
+						// Only take elements with type DATANODE (genes, proteins, metabolites)
+						if (pwElm.getObjectType() == ObjectType.DATANODE) {
+
+							percentComplete = (int) (((double) t / mNoGeneNode) * 98);
+
+							// System.out.println(pwElm.getGeneID());
+							// geneIDList.add(pwElm.getGeneID());
+
+							//System.out.println(pwElm.getXref().toString());
+							geneIDList.add(pwElm.getXref().toString());
+
+							try {
+								// WSSearchResult[] PwsSharingNode =
+								// client.findPathwaysByXref(pwElm.getGeneID());
+								// System.out.println("" +
+								// PwsSharingNode.length);
+								// mNodeIdToPwsSharingNode.put(pwElm.getGeneID(),PwsSharingNode);
+
+								WSSearchResult[] PwsSharingNode = client.findPathwaysByXref(pwElm.getXref());
+								//System.out.println("" + PwsSharingNode.length);
+								mNodeIdToPwsSharingNode.put(pwElm.getXref().toString(), PwsSharingNode);
+
+								if (monitor != null) {
+									monitor
+											.setPercentCompleted(percentComplete);
+								}
+
+							} catch (RemoteException e) {
+								Logger.log
+										.error(
+												"Unable to find the candidate pathways due to the RemoteException",
+												e);
+							}
+						}
+						t++;
+
+					}
+					
+					// the following code is for converting the above map to
+					// another map "sharingNodeNumberofPws" with key of
+					// the name and id of a pathway, and value of the number of
+					// shared node of this pathway and the anchor pathway
+					for (int i = 0; i < mNoGeneNode; i++) {
+						WSSearchResult[] pwsArray = mNodeIdToPwsSharingNode.get(geneIDList.get(i));
+
+						for (int j = 0; j < pwsArray.length; j++) {
+							WSSearchResult pw = pwsArray[j];
+							ResultRow pwResultRow = new ResultRow(pw);
+							String onePwNameAndId = pwResultRow
+									.getProperty(ResultProperty.NAME)+ "(" + pwResultRow.getProperty(ResultProperty.ID) + ")";
+
+							if (sharingNodeNumberofPws.containsKey(onePwNameAndId)) {
+								Integer oldValue = sharingNodeNumberofPws.get(onePwNameAndId);
+								Integer newValue = new Integer(oldValue + 1);
+								sharingNodeNumberofPws.put(onePwNameAndId,newValue);
+							} else {
+								sharingNodeNumberofPws.put(onePwNameAndId, 1);
+							}
+						}
+					}
+
+					// the following code is for displaying the result in the
+					// table of
+					// "Search Help" panel
+					Set<String> sharingNodePwsSet = sharingNodeNumberofPws
+							.keySet();
+					Iterator<String> it = sharingNodePwsSet.iterator();
+					while (it.hasNext()) {
+						String temp = it.next();
+						Integer value = sharingNodeNumberofPws.get(temp);
+						if (value >= lowerBound && value <= upperBound) {
+							mCandidatePw.add(temp + ", sharing node number: "+ String.valueOf(value));
+						}
+					}
+
+				}
+
+				if (monitor != null) {
+					monitor.setPercentCompleted(100);
+				}
+				//System.out.println("We reach here 2!");
+			} catch (Exception e) {
+				Logger.log.error("Error while searching candidate pathways", e);
+				JOptionPane.showMessageDialog(mClient.getGUI(), "Error: "
+						+ e.getMessage() + ". See log for details", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+
+		}
+
+		public void halt() {
+		}
+
+		public void setTaskMonitor(TaskMonitor m)
+				throws IllegalThreadStateException {
+			monitor = m;
+		}
+
+		public String getTitle() {
+			return new String(
+					"Searching candidate pathways with shared nodes...");
+		}
+	}
+
+	public class commonNodeViewTask implements Task {
+
+		TaskMonitor monitor;
+		List<String> selectedPwNameId;
+		SuperpathwaysClient client;
+
+		public commonNodeViewTask(List<String> a, SuperpathwaysClient b) {
+			selectedPwNameId=a;
+			client=b;
+		}
+
+		/**
+		 * Run the Task.
+		 */
+		public void run() {
+
+			try {
+				
+				CommonNodeView cnViewObject = new CommonNodeView(selectedPwNameId,
+						client);
+				CommonNodeView.drawCommonNodeView();
+				
+			} catch (Exception e) {
+				Logger.log.error("Error while searching candidate pathways", e);
+				JOptionPane.showMessageDialog(mClient.getGUI(), "Error: "
+						+ e.getMessage() + ". See log for details", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	
+
+	public void halt() {
+	}
+
+	public void setTaskMonitor(TaskMonitor m)
+			throws IllegalThreadStateException {
+		monitor = m;
+	}
+
+	public String getTitle() {
+		return new String("Generating common node view...");
+	}
+
+}
 }

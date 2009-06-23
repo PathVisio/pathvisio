@@ -26,7 +26,6 @@ import javax.swing.WindowConstants;
 import org.pathvisio.cytoscape.GpmlConverter;
 import org.pathvisio.cytoscape.GpmlHandler;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.GpmlFormatImpl1;
 import org.pathvisio.model.Pathway;
 
 import cytoscape.CyNetwork;
@@ -39,8 +38,8 @@ import cytoscape.view.CyNetworkView;
 import cytoscape.view.CytoscapeDesktop;
 
 public class SuperpathwaysPlugin extends CytoscapePlugin {
-	private static final int WINDOW_WIDTH = 400;
-	private static final int WINDOW_HEIGHT = 500;
+	//private static final int WINDOW_WIDTH = 400;
+	//private static final int WINDOW_HEIGHT = 500;
 
 	GpmlHandler mGpmlHandler;
 	JFrame mWindow; 

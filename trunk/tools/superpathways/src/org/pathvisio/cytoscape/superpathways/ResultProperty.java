@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+
 package org.pathvisio.cytoscape.superpathways;
 
 import org.pathvisio.util.swing.PropertyColumn;

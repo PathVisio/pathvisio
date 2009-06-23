@@ -53,7 +53,6 @@ import cytoscape.task.util.TaskManager;
 import cytoscape.util.ModulePropertiesImpl;
 import cytoscape.visual.VisualStyle;
 
-
 public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathwaysClient, SuperpathwaysGui> implements NetworkImportWebServiceClient {
 	private static final String DISPLAY_NAME = "Superpathways Web Service Client";
     private static final String CLIENT_ID = "superpathways";
@@ -267,7 +266,7 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 	
 	public static class FindPathwaysByTextParameters {
 		public String query;
-		public org.bridgedb.bio.Organism species = null;
+		public Organism species = null;
 	}
 	
 	public static class GetPathwayParameters {

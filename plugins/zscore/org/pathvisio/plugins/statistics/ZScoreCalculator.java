@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.SimpleGex;

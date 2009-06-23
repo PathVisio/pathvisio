@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;

@@ -43,10 +43,10 @@ import javax.swing.event.ListDataListener;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.bridgedb.XrefWithSymbol;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.DataSourceModel;

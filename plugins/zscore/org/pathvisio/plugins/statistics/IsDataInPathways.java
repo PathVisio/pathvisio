@@ -27,12 +27,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.bridgedb.DataDerby;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.SimpleGdb;
-import org.bridgedb.SimpleGdbFactory;
 import org.bridgedb.Xref;
 import org.bridgedb.XrefWithSymbol;
+import org.bridgedb.rdb.DataDerby;
+import org.bridgedb.rdb.SimpleGdb;
+import org.bridgedb.rdb.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;

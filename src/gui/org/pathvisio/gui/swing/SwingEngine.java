@@ -29,8 +29,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
-import org.bridgedb.DBConnector;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;

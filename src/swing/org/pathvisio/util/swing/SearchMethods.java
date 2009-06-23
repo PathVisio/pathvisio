@@ -27,9 +27,9 @@ import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.bridgedb.XrefWithSymbol;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;

@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.GdbProvider;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;

@@ -19,12 +19,12 @@ package org.pathvisio.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bridgedb.DBConnector;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.DoubleGdb;
-import org.bridgedb.IDMapperRdb;
-import org.bridgedb.SimpleGdb;
-import org.bridgedb.SimpleGdbFactory;
+import org.bridgedb.rdb.DBConnector;
+import org.bridgedb.rdb.DoubleGdb;
+import org.bridgedb.rdb.IDMapperRdb;
+import org.bridgedb.rdb.SimpleGdb;
+import org.bridgedb.rdb.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;

@@ -47,8 +47,8 @@ public enum PropertyType
 	HEIGHT ("Height", "Height", PropertyClass.DOUBLE),
 
 	// modification
-	RELX ("CenterX", "Center X", PropertyClass.DOUBLE),
-	RELY ("CenterY", "Center Y", PropertyClass.DOUBLE),
+	RELX ("relX", "Relative X", PropertyClass.DOUBLE),
+	RELY ("relY", "Relative Y", PropertyClass.DOUBLE),
 	GRAPHREF ("GraphRef", "GraphRef", PropertyClass.STRING),
 
 	// shape, modification

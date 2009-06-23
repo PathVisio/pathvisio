@@ -17,7 +17,9 @@
 package org.pathvisio.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Refers to the biological type of a DataNode, e.g. RNA, PROTEIN etc.
@@ -31,6 +33,16 @@ public enum DataNodeType {
 	COMPLEX("Complex"),
 	GENEPRODUCT("GeneProduct"),
 	METABOLITE("Metabolite");
+	
+	private static final Map<String, DataNodeType> nameMap = new HashMap<String, DataNodeType>();
+
+	static
+	{
+		for (DataNodeType dnt : DataNodeType.values())
+		{
+			nameMap.put (dnt.getGpmlName(), dnt);
+		}
+	}
 	
 	private DataNodeType (String gpmlName) {
 		this.gpmlName = gpmlName;
@@ -49,5 +61,10 @@ public enum DataNodeType {
 		}
 		String [] resultArray = new String [result.size()];
 		return result.toArray(resultArray);
+	}
+	
+	public static DataNodeType byName(String name)
+	{
+		return nameMap.get (name);
 	}
 }

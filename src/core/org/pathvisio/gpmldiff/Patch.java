@@ -30,7 +30,6 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;

@@ -34,13 +34,13 @@ public enum DataNodeType {
 	GENEPRODUCT("GeneProduct"),
 	METABOLITE("Metabolite");
 	
-	private static final Map<String, DataNodeType> nameMap = new HashMap<String, DataNodeType>();
+	private static final Map<String, DataNodeType> NAME_MAP = new HashMap<String, DataNodeType>();
 
 	static
 	{
 		for (DataNodeType dnt : DataNodeType.values())
 		{
-			nameMap.put (dnt.getGpmlName(), dnt);
+			NAME_MAP.put (dnt.getGpmlName(), dnt);
 		}
 	}
 	
@@ -65,6 +65,6 @@ public enum DataNodeType {
 	
 	public static DataNodeType byName(String name)
 	{
-		return nameMap.get (name);
+		return NAME_MAP.get (name);
 	}
 }

@@ -29,8 +29,8 @@ public class GpmlDiff
 {
 	static File oldFile = null;
 	static File newFile = null;
-	static String outputType = "svg";
-	static final String[] OUTPUT_TYPES = {"svg", "dgpml", "basic", "table"};
+	static String outputType = "dgpml";
+	static final String[] OUTPUT_TYPES = {"dgpml", "basic", "table"};
 	static String simFunType = "better";
 	static final String[] SIMFUN_TYPES = {"basic", "better"};
 	
@@ -116,9 +116,8 @@ public class GpmlDiff
 			"Finds the difference between two Pathways in gpml format\n" +
 			"\n" +
 			"Usage:\n" +
-			"  gpmldiff [-o svg|dgpml] old.gpml new.gpml\n" +
-			"  -o: output format. Choose svg for the visual output or dgpml for the\n" +
-            "      gpmldiff patch format\n"
+			"  gpmldiff [-o dgpml|basic|table] old.gpml new.gpml\n" +
+			"  -o: output format. Default is dgpml\n"
 			);
 		System.exit(1);
 	}

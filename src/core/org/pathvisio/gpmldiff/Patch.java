@@ -23,12 +23,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bridgedb.DataSource;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
@@ -72,9 +74,18 @@ class Patch
 				case SHAPETYPE:
 					// setProperty expects to get ShapeType for this Shape.
 					result.setStaticProperty(pt, ShapeType.fromName(ch.newValue));
-					break;							
+					break;
+				case DATASOURCE:
+					result.setStaticProperty(pt, DataSource.getByFullName(ch.newValue));
+					break;
+				case DB_ID:
+					result.setStaticProperty(pt, ch.newValue);
+					break;
+				case GENETYPE:
+					result.setStaticProperty(pt, ch.newValue);
+					break;
 				default:
-					Logger.log.error (ch.attr + " not supported");
+					Logger.log.error (ch.attr + " of type " + pt.type() + " not supported");
 					assert (false);
 				}
 			}
@@ -200,6 +211,15 @@ class Patch
 			}
 						
 			current = current.getParent();
+		}
+		
+		try
+		{
+			newPwy.write(oldPwy.getSourceFile());
+		}
+		catch (ConverterException ex)
+		{
+			ex.printStackTrace();
 		}
 	}
 

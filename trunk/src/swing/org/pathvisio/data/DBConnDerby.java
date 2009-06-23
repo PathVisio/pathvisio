@@ -20,7 +20,7 @@ import java.awt.Component;
 
 import javax.swing.JFileChooser;
 
-import org.bridgedb.DataDerby;
+import org.bridgedb.rdb.DataDerby;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swing.SimpleFileFilter;

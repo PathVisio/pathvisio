@@ -30,8 +30,8 @@ import java.util.Locale;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.gex.ImportInformation.ColumnType;

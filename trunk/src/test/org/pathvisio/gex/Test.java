@@ -22,16 +22,16 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bridgedb.DBConnector;
-import org.bridgedb.DataDerby;
-import org.bridgedb.DataDerbyDirectory;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
-import org.bridgedb.IDMapperRdb;
-import org.bridgedb.SimpleGdb;
-import org.bridgedb.SimpleGdbFactory;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.rdb.DBConnector;
+import org.bridgedb.rdb.DataDerby;
+import org.bridgedb.rdb.DataDerbyDirectory;
+import org.bridgedb.rdb.IDMapperRdb;
+import org.bridgedb.rdb.SimpleGdb;
+import org.bridgedb.rdb.SimpleGdbFactory;
 import org.pathvisio.preferences.PreferenceManager;
 
 import junit.framework.TestCase;

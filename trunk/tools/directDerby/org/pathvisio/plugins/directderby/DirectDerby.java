@@ -26,8 +26,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bridgedb.DBConnector;
 import org.bridgedb.IDMapperException;
+import org.bridgedb.rdb.DBConnector;
 import org.pathvisio.data.DBConnDerby;
 
 /**

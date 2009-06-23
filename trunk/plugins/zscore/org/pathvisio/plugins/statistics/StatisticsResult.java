@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.bridgedb.IDMapperRdb;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.visualization.colorset.Criterion;
 

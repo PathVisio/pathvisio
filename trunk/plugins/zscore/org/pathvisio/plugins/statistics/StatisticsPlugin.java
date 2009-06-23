@@ -40,7 +40,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.IDMapperRdb;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;

@@ -39,10 +39,10 @@ import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.util.Resources;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
+import org.pathvisio.view.VPathway;
+import org.pathvisio.view.VPathwayElement;
 
 /**
  * This class fetches and distributes the backpage text to all registered
@@ -60,6 +60,10 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		public String getHtml (PathwayElement e);
 	}
 	
+	/**
+	 * A @{link BackpageHook} that adds a description and a few other attributes
+	 * to the backpage panel. 
+	 */
 	public static class BackpageAttributes implements BackpageHook
 	{
 		private final GdbManager gdbManager;
@@ -105,6 +109,10 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		}
 	}
 	
+	/**
+	 * A @{link BackpageHook} that adds a list of crossref links to
+	 * the backpage panel. 
+	 */
 	public static class BackpageXrefs implements BackpageHook
 	{
 		private final GdbManager gdbManager;

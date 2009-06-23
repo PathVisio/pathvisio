@@ -16,6 +16,13 @@
 //
 package org.pathvisio.model;
 
+/**
+ * Exception that occurs during import, export, save or load of a Patway.
+ * @see PathwayExporter#doExport
+ * @see PathwayImporter#doImport
+ * @see Pathway#readFromXml
+ * @see Pathway#writeToXml
+ */
 public class ConverterException extends Exception {
 
 

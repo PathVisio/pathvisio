@@ -584,6 +584,7 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 
+	/** Pops up the @{link AboutDlg} */
 	public static class AboutAction extends AbstractAction 
 	{
 

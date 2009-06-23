@@ -66,29 +66,13 @@ public class PatchMain
 		return error == null;
 	}
 	
-	/** helper method to patch a pathway
-	 * newPwy is the result of oldPwy + patch
-	 * @throws ConverterException 
-	 * @throws JDOMException 
-	 */
-	public static void applyPatch (File oldFile, File patchFile, File newFile) throws IOException, JDOMException, ConverterException
-	{
-		PwyDoc pwy = PwyDoc.read (oldFile);
-		assert (pwy != null);
-
-		Patch patch = new Patch();
-		patch.readFromReader (new FileReader(patchFile));
-		patch.applyTo (pwy, fuzz);
-		pwy.write(newFile);
-	}
-	
 	public static void main(String argv[])
 	{
 		Logger.log.setStream (System.err);
 		if (parseCliOptions(argv))
 		{
-			PwyDoc oldPwy = PwyDoc.read (oldFile);
-			assert (oldPwy != null);
+			PwyDoc pwy = PwyDoc.read (oldFile);
+			assert (pwy != null);
 
 			Patch patch = new Patch();
 			try
@@ -98,7 +82,8 @@ public class PatchMain
 				{
 					patch.reverse();
 				}
-				patch.applyTo (oldPwy, fuzz);
+				patch.applyTo (pwy, fuzz);
+				pwy.write(pwy.getSourceFile());
 			}
 			catch (Exception e)
 			{

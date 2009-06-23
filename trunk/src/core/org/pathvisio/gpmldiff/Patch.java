@@ -162,24 +162,22 @@ class Patch
 	{
 	}
 
-	public void applyTo (PwyDoc oldPwy, int fuzz)
+	public void applyTo (PwyDoc aPwy, int fuzz)
 	{
 		SearchNode current = null;
 		SimilarityFunction simFun = new BasicSim();
 		CostFunction costFun = new BasicCost();
 
-		PwyDoc newPwy = oldPwy;
-		
 		// scan modifications / deletions for correspondence
 		for (ModDel mod : modifications.values())
 		{
-			current = findCorrespondence (current, oldPwy, mod.oldElt, simFun, costFun);				
+			current = findCorrespondence (current, aPwy, mod.oldElt, simFun, costFun);				
 		}
 
 		// insertions are easy, just add them
 		for (PathwayElement ins : insertions)
 		{
-			newPwy.add (ins);
+			aPwy.add (ins);
 		}
 
 	    // now modifications and deletions:
@@ -193,7 +191,7 @@ class Patch
 			if (mod.isDeletion)
 			{
 				// mod goes to /dev/null
-				newPwy.remove (mod.oldElt);
+				aPwy.remove (current.newElt);
 			}
 			else				
 			{
@@ -201,26 +199,19 @@ class Patch
 				
 				// Note that current.oldElt is the copy of the element in the Modification object,
 				// and current.newElt is the matching element in the pathway.
-				newPwy.remove (current.newElt);
+				aPwy.remove (current.newElt);
 				
 				// create new elt with applied modifications
 				PathwayElement newElt = mod.makeNewElt();
 				
 				// and add it to the pwy.
-				newPwy.add (newElt);
+				aPwy.add (newElt);
 			}
 						
 			current = current.getParent();
 		}
 		
-		try
-		{
-			newPwy.write(oldPwy.getSourceFile());
-		}
-		catch (ConverterException ex)
-		{
-			ex.printStackTrace();
-		}
+		aPwy.apply();
 	}
 
 	/**

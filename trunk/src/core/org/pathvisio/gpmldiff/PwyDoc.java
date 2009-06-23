@@ -40,6 +40,7 @@ class PwyDoc
 {
 	Pathway pwy = null;
 	File src = null;
+	private boolean modified = false;
 	
 	/**
 	   return the wrapped Pathway.
@@ -59,11 +60,13 @@ class PwyDoc
 	public void add (PathwayElement value)
 	{
 		elts.add (value);
+		modified = true;
 	}
 
 	public void remove (PathwayElement value)
 	{
 		if (!elts.remove (value)) { Logger.log.error ("value not in list, couldn't remove"); };
+		modified = true;
 	}
 	
 	/**
@@ -96,13 +99,22 @@ class PwyDoc
 		}
 		
 		result.src = f;
+		result.modified = false;
 		return result;
 	}
 	
-	public void write (File f) throws ConverterException
+	/** applies the cache of modified elements back to the wrapped pathway object itself */
+	public void apply ()
 	{
 		pwy.getDataObjects().clear();
 		pwy.getDataObjects().addAll(elts);
+		modified = false;
+	}
+	
+	/** write the PwyDoc back to file. This assumes you called apply before */
+	public void write (File f) throws ConverterException
+	{
+		if (modified) throw new IllegalStateException("Must call apply() before write()");
 		pwy.fixReferences();
 		pwy.writeToXml(f, true);
 	}
@@ -121,6 +133,7 @@ class PwyDoc
 		{
 			add (e);
 		}
+		modified = false;
 	}
 
 	/**

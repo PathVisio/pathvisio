@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 /**
    Unit tests for package GpmlDiff
 */
@@ -355,7 +356,11 @@ public class Test extends TestCase
 			e.printStackTrace();
 			fail ("Unexpected exception");
 		}
+		assertEquals (ShapeType.RECTANGLE, originalDoc.getPathway().getElementById("bd1").getShapeType());
+		assertEquals (2430.0, originalDoc.getPathway().getElementById("aaa").getMEndX(), 0.01);
 		patch.applyTo (originalDoc, 0);
+		assertEquals (2970.0, originalDoc.getPathway().getElementById("aaa").getMEndX(), 0.01);
+		assertEquals (ShapeType.OVAL, originalDoc.getPathway().getElementById("bd1").getShapeType());
 	}
 	
 	public void testPatchInsertion()
@@ -380,7 +385,9 @@ public class Test extends TestCase
 			e.printStackTrace();
 			fail ("Unexpected exception");
 		}
+		assertNull (originalDoc.getPathway().getElementById("cd6"));
 		patch.applyTo (originalDoc, 0);
+		assertNotNull (originalDoc.getPathway().getElementById("cd6"));
 	}
 	
 	public void testPatchDeletion()
@@ -405,7 +412,9 @@ public class Test extends TestCase
 			e.printStackTrace();
 			fail ("Unexpected exception");
 		}
+		assertNotNull (originalDoc.getPathway().getElementById("bd1"));
 		patch.applyTo (originalDoc, 0);
+		assertNull (originalDoc.getPathway().getElementById("bd1"));
 	}
 				
 				

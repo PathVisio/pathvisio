@@ -61,7 +61,7 @@ sub set_values()
 			textlabel => "Gene",
 			backpagehead => "",
 			database => "",
-			id => "",
+			id => "", 
 		},
 		Label => {
 			centerx => 0,
@@ -73,6 +73,9 @@ sub set_values()
 			fontweight => "Bold", 
 			fontsize => "150",
 		},
+		Comment => {
+			source => "",
+		}
 		
 	);
 
@@ -96,7 +99,7 @@ sub get_xml_node
 	if ($self->{element} eq "DataNode")
 	{
 		my $datanode = XML::LibXML::Element->new("DataNode");
-		$datanode->setNamespace ($NS);
+		#$datanode->setNamespace ($NS);
 		$datanode->setAttribute ("TextLabel", $self->{textlabel});
 		$datanode->setAttribute ("Type", $self->{type});
 		$datanode->setAttribute ("BackpageHead", $self->{backpagehead});
@@ -119,6 +122,7 @@ sub get_xml_node
 		my $elt = XML::LibXML::Element->new("Label");
 		$elt ->setNamespace ($NS);
 		$elt->setAttribute ("TextLabel", $self->{textlabel});
+		$elt->setAttribute ("GraphId", $self->{graphid});
 		
 		my $graphics = $elt->addNewChild ($NS, "Graphics");
 		$graphics->setAttribute ("Color", $self->{color});

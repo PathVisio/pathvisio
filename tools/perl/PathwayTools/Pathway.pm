@@ -37,7 +37,7 @@ use XML::LibXML;
 use Data::Dumper;
 
 #TODO: redundant with PathwayElement::$NS
-my $NS = "http://genmapp.org/GPML/2007";
+my $NS = "http://genmapp.org/GPML/2008a";
 my $fnGPML = "../../GPML.xsd";
 
 =item new PathwayTools::Pathway()
@@ -132,7 +132,7 @@ sub to_string()
 	rem_whitespace ($e);
 	sort_element ($e);
 	
-	return $self->{document}->toString(2);
+	return $self->{document}->toString(1);
 }
 
 =item $pathway->from_file ($filename)
@@ -167,8 +167,9 @@ sub to_file($)
 	rem_whitespace ($e);
 	sort_element ($e);
 	
-	$self->{document}->toFile ($fnGpml, 2);
+	$self->{document}->toFile ($fnGpml, 1);
 	$self->{filename} = $fnGpml;
+	
 }
 
 =item $pathway->validate()
@@ -178,6 +179,8 @@ of this pathway conforms to the XML Schema for GPML.
 
 This function will 'die' and print an error message
 if the XML Schema fails to validate.
+
+NOTE, 5/6/09: This method needs to be debugged.
 
 =cut
 
@@ -332,7 +335,7 @@ sub sort_element
 	);
 	
 	#sort array of nodes on their nodeName.
-	@nodes = sort { $order{$a->nodeName} <=> $order {$b->nodeName} } @nodes;
+	@nodes = sort { $order{$a->nodeName} <=> $order{$b->nodeName} } @nodes;
 	
 	# and put them back again
 	for (@nodes)

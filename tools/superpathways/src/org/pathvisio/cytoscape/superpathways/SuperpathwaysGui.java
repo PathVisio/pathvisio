@@ -141,6 +141,8 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 		ClearBtn = new javax.swing.JButton();
 		CommonNodeViewBtn = new javax.swing.JButton();
+		MergeBtn = new javax.swing.JButton();
+		
 
 		layoutPane = new javax.swing.JPanel();
 		stepLabel2 = new javax.swing.JLabel();
@@ -429,8 +431,15 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 				helpButtonActionPerformed(evt);
 			}
 		});
+		
+		MergeBtn.setText("Merge");
+        MergeBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MergeBtnActionPerformed(evt);
+            }
+        });
 
-		org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(
+		/*org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(
 				searchPane);
 		searchPane.setLayout(searchPaneLayout);
 		searchPaneLayout
@@ -576,7 +585,84 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 		superpathwayPanel
 				.addTab("Search/Select", null, searchPane,
-						"search and select pathways that you want to merge from Wiki Pahtways");
+						"search and select pathways that you want to merge from Wiki Pahtways");*/
+        org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(searchPane);
+        searchPane.setLayout(searchPaneLayout);
+        searchPaneLayout.setHorizontalGroup(
+            searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(searchPaneLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(searchPaneLayout.createSequentialGroup()
+                        .add(stepLabel1)
+                        .addContainerGap(79, Short.MAX_VALUE))
+                    .add(searchPaneLayout.createSequentialGroup()
+                        .add(hintLabel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 412, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(18, Short.MAX_VALUE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, searchPaneLayout.createSequentialGroup()
+                        .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                            .add(searchPaneLayout.createSequentialGroup()
+                                .add(helpButton)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(ClearBtn)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(CommonNodeViewBtn)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                                .add(MergeBtn)
+                                .add(6, 6, 6))
+                            .add(searchPaneLayout.createSequentialGroup()
+                                .add(openBtn)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(addBtn, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 67, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, selectPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, resultScrolllPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 407, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, searchPaneLayout.createSequentialGroup()
+                                .add(searchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(organismCombo, 0, 151, Short.MAX_VALUE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                                .add(searchBtn)))
+                        .add(23, 23, 23))))
+        );
+
+        searchPaneLayout.linkSize(new java.awt.Component[] {ClearBtn, helpButton}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+
+        searchPaneLayout.setVerticalGroup(
+            searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+            .add(searchPaneLayout.createSequentialGroup()
+                .add(28, 28, 28)
+                .add(stepLabel1)
+                .add(18, 18, 18)
+                .add(hintLabel1)
+                .add(32, 32, 32)
+                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(searchText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .add(organismCombo)
+                    .add(searchBtn))
+                .add(18, 18, 18)
+                .add(resultScrolllPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE)
+                .add(18, 18, 18)
+                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(openBtn)
+                    .add(addBtn))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(selectPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(39, 39, 39)
+                .add(searchPaneLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(MergeBtn)
+                    .add(CommonNodeViewBtn)
+                    .add(ClearBtn)
+                    .add(helpButton))
+                .add(43, 43, 43))
+        );
+
+        searchPaneLayout.linkSize(new java.awt.Component[] {addBtn, openBtn}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        searchPaneLayout.linkSize(new java.awt.Component[] {searchBtn, searchText}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        searchPaneLayout.linkSize(new java.awt.Component[] {ClearBtn, CommonNodeViewBtn, helpButton}, org.jdesktop.layout.GroupLayout.VERTICAL);
+
+        superpathwayPanel.addTab("Search/Select", searchPane);
 
 		stepLabel2.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
 		stepLabel2.setForeground(new java.awt.Color(102, 0, 0));
@@ -1011,8 +1097,9 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 	}
 
 	private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {
-		System.out.println(mClickedPathwayNameID.size() + "");
-
+		//System.out.println(mClickedPathwayNameID.size() + "");
+		mClickedPathwayNameID.clear();
+		//System.out.println("The number of elements in the mClickedPathwayNameID is "+ mClickedPathwayNameID.size()+"");
 		int[] rows = resultTable.getSelectedRows();
 		for (int k = 0; k < rows.length; k++) {
 			ResultRow t = tableModel.getRow(rows[k]);
@@ -1035,8 +1122,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 				mAvailablePathwaysNameIDList.add(mClickedPathwayNameID.get(i));
 				mAvailablePathwaysList.add(mSelected[i]);
 
-				anchorPathwayComboBoxModel.addElement(mClickedPathwayNameID
-						.get(i));
+				anchorPathwayComboBoxModel.addElement(mClickedPathwayNameID.get(i));
 				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
 			}
 		}
@@ -1172,10 +1258,10 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 		for (int i = 0; i < selectedRowIndices.length; i++) {
 			int viewRow = selectedRowIndices[i];
-			System.out.println("Selected Row in View: " + viewRow);
+			//System.out.println("Selected Row in View: " + viewRow);
 			int modelRow = candidatePathwaysSharingNodesTable
 					.convertRowIndexToModel(viewRow);
-			System.out.println("Selected Row in Model: " + modelRow);
+			//System.out.println("Selected Row in Model: " + modelRow);
 
 			String pwNameId = (String) candidatePathwaysSharingNodesTableModel
 					.getValueAt(modelRow, 0)
@@ -1250,7 +1336,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 			String temp = it.next();
 			// candidatePathwaysSharingNodesListModel.addElement(temp);
 
-			System.out.println(temp);
+			//System.out.println(temp);
 			// parse the string into three parts: pathway name, id, and No.
 			// Sharing Nodes
 			int index1 = temp.indexOf(",");
@@ -1259,14 +1345,14 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 			int index2 = temp1.indexOf("(");
 			int index3 = temp1.indexOf(")");
 			String pwName = temp1.substring(0, index2);
-			System.out.println(pwName);
+			//System.out.println(pwName);
 			String pwId = temp1.substring(index2 + 1, index3);
-			System.out.println(pwId);
+			//System.out.println(pwId);
 
 			// String temp2 = temp.substring(index1+1);
 			int index4 = temp.indexOf(":");
 			String NoSharingNode = temp.substring(index4 + 2);
-			System.out.println(NoSharingNode);
+			//System.out.println(NoSharingNode);
 
 			Object[] row = new Object[3];
 			row[0] = (Object) pwName;
@@ -1353,6 +1439,11 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 		}
 	}
+	
+	private void MergeBtnActionPerformed(java.awt.event.ActionEvent evt) {
+		  SimpleCaseMergeTest test=new SimpleCaseMergeTest();
+    }
+
 
 	// the code above is generated in Netbean IDE
 
@@ -1547,7 +1638,8 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 	private javax.swing.JTable candidatePathwaysSharingNodesTable;
 
 	private javax.swing.JScrollPane jScrollPane2;
-
+	
+	private javax.swing.JButton MergeBtn;
 	// private javax.swing.JList candidatePathwaysSharingNodesList;
 
 	// End of variables declaration

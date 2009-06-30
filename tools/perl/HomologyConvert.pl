@@ -7,7 +7,6 @@ use PathwayTools::Pathway;
 use PathwayTools::PathwayElement;
 use PathwayTools;
 use SOAP::Lite;
-use Switch;
 
 #
 # Script to convert gpml files between species. Pathway files are collected from WP. 
@@ -258,7 +257,6 @@ my %updates = ();
 my %relation = ();
 my %nonconverts = ();
 my %converts = ();
-my %featured = ();
 
 #Compare pw names in refs and targets
 foreach my $refid (keys %refs)
@@ -267,7 +265,7 @@ foreach my $refid (keys %refs)
 				{
 				if ($refs{$refid} eq $targets{$targetid})
 					{
-					print "checking history for $targets{$targetid}\n";
+					print "Checking history for $targets{$targetid}\n";
 					my $convert = checkHistory($targetid);
 					if ($convert eq "true")
 						{
@@ -275,13 +273,7 @@ foreach my $refid (keys %refs)
 						$relation{$refid} = $targetid;	
 						my $pwId = SOAP::Data->name(pwId => $targetid);
 						my $pwinfo = $wp_soap->getPathwayInfo($pwId)->result;
-						foreach my $k (keys %$pwinfo)
-							{
-							if ($k =~ /^revision$/)
-								{
-								$updates{$targetid} = $pwinfo->{$k};
-								}
-							}
+						$updates{$targetid} = $pwinfo->{revision};
 						}
 					elsif ($convert eq "false")
 						{
@@ -308,11 +300,6 @@ foreach my $ref (keys %refs)
 		if((($tag->{displayName}) eq "Proposed deletion") || (($tag->{displayName}) eq "Tutorial pathway") || (($tag->{displayName}) eq "Inappropriate content") || (($tag->{displayName}) eq "Under construction"))
 			{
 			$convert = "false";
-			}
-		elsif ($tag->{displayName} eq "Featured pathway")
-			{
-			print "pathway $refs{$ref} is featured, WPID is $ref\n";
-			$featured{$ref} = $refs{$ref};
 			}
 		}
 		
@@ -351,17 +338,8 @@ foreach my $pw (keys %converts)
 
 	foreach my $reference (@pathwayResults)
 		{
-       	foreach my $key (keys %$reference)
-        	{
-            if ($key =~ /^gpml$/)
-                { 
-                $gpml = $reference->{$key};
-        		}
-        	elsif ($key =~ /^revision$/)
-        		{
-        		$revision = $reference->{$key};	
-        		}
-			}
+		$gpml = $reference->{gpml};
+		$revision = $reference->{revision};
 		}
 
 	#Process gpml: Change IDs and labels using homology information, rename file and add homology label
@@ -375,11 +353,10 @@ foreach my $pw (keys %converts)
 	my $nodecount = 0;
 	my $convertcount = 0;
 	my $convscore = 0;
-	my $modified = $date.", converted from $REFORGANISM";
 		
 	$root->setAttribute("Organism", $TARGETORGANISM);
 	$root->setAttribute("Name", $newname);
-	$root->setAttribute("Last-Modified", $modified);
+	$root->setAttribute("Last-Modified", $date);
 	
 	if ($root->getChildrenByTagName("DataNode"))
 	{
@@ -432,6 +409,16 @@ foreach my $pw (keys %converts)
 		print LOGFILE1 "\t$nodecount\t$convertcount\t$convscore\n";
 		print "$refs{$pw} has conversion score of $convscore\n";
 				
+		# create a comment
+		my $NS = "http://genmapp.org/GPML/2008a";
+		my $comment = $root->addNewChild ($NS, "Comment");
+		# source attribute can be anything you want, for example "HomologyConvert"
+		$comment->setAttribute ("Source", "HomologyConvert");
+		# use appendText to set the text value of the comment.
+		$comment->appendText ("This pathway was inferred from $REFORGANISM with a conversion score of $convscore\%");
+		#print "ROOT $root\n";
+		#$pathway->sort_element($root);
+
 		#Upload file to WikiPathways and save to local files
 		my $description = SOAP::Data->name(description => "Converted from $REFORGANISM");
 		my $newgpml = $pathway->to_string();
@@ -494,9 +481,7 @@ my $update = "true";
 
 foreach my $key (keys %$pwhistory) 
 						{
-						if ($key =~ /^history$/)
-							{
-							foreach my $history ($pwhistory->{$key})
+							foreach my $history ($pwhistory->{history})
 								{
 								if (ref($history) eq "ARRAY")
 									{
@@ -528,7 +513,7 @@ foreach my $key (keys %$pwhistory)
 										}
 									} 
 								}
-							}
+						
 						}
 return $update;
 }

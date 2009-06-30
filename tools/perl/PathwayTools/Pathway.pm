@@ -132,7 +132,7 @@ sub to_string()
 	rem_whitespace ($e);
 	sort_element ($e);
 	
-	return $self->{document}->toString(1);
+	return $self->{document}->toString(1); #KH# changed the format parameter from 2 to 1
 }
 
 =item $pathway->from_file ($filename)
@@ -167,7 +167,7 @@ sub to_file($)
 	rem_whitespace ($e);
 	sort_element ($e);
 	
-	$self->{document}->toFile ($fnGpml, 1);
+	$self->{document}->toFile ($fnGpml, 1); #KH# changed the format parameter from 2 to 1
 	$self->{filename} = $fnGpml;
 	
 }

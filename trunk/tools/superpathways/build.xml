@@ -25,6 +25,7 @@
 		<pathelement location="${pathvisio.lib.dir}/bridgedb.jar" />
 		<pathelement location="${pathvisio.lib.dir}/bridgedb-bio.jar" />
 		<pathelement location="${pathvisio.lib.dir}/resources.jar" />
+		<pathelement location="${pathvisio.lib.dir}/derby.jar" />
 		<pathelement location="${pathvisio.lib.dir}/BrowserLauncher.jar" />
 		<pathelement location="${pathvisio.dir}/pathvisio.jar" />
 		<pathelement location="${cytoscape.dir}/cytoscape.jar" />
@@ -66,6 +67,7 @@
 			<fileset dir="${pathvisio.dir}" includes="wikipathways-client.jar" />
 			
 			<fileset dir="${pathvisio.lib.dir}" includes="resources.jar" />
+			<fileset dir="${pathvisio.lib.dir}" includes="derby.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="bridgedb.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="bridgedb-bio.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="jdom.jar" />

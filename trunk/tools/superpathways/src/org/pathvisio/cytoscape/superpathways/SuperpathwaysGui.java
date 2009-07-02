@@ -17,6 +17,8 @@
 
 package org.pathvisio.cytoscape.superpathways;
 
+import giny.view.GraphView;
+
 import java.awt.Cursor;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -49,6 +51,8 @@ import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
+import cytoscape.CyNetwork;
+import cytoscape.Cytoscape;
 import cytoscape.data.webservice.CyWebServiceEvent;
 import cytoscape.data.webservice.CyWebServiceException;
 import cytoscape.data.webservice.WebServiceClientManager;
@@ -57,9 +61,10 @@ import cytoscape.task.Task;
 import cytoscape.task.TaskMonitor;
 import cytoscape.task.ui.JTaskConfig;
 import cytoscape.task.util.TaskManager;
+import cytoscape.view.CyNetworkView;
 
 //public class SuperpathwaysGui extends JFrame implements ActionListener{ 
-public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
+public class SuperpathwaysGui extends JPanel { 
 
 	private static String ACTION_SEARCH = "Search";
 
@@ -67,7 +72,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 	final SuperpathwaysClient mClient;
 
-	ResultRow[] mSelected = new ResultRow[20];
+	//List<ResultRow> mSelectedPwResultRow = new ArrayList<ResultRow>();
 
 	ResultRow mSelectedInHelpPanel;
 
@@ -77,9 +82,9 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 	String mSelectedPwInHelpPanel = "not defined";
 
-	private List<String> mAvailablePathwaysNameIDList = new ArrayList<String>();
+	//private List<String> mAvailablePathwaysNameIDList = new ArrayList<String>();
 
-	private List<ResultRow> mAvailablePathwaysList = new ArrayList<ResultRow>();
+	//private List<ResultRow> mAvailablePathwaysList = new ArrayList<ResultRow>();
 
 	// private List<String> mCandidatePwList = new ArrayList<String>();
 
@@ -159,6 +164,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		anchorPathwayComboBox = new javax.swing.JComboBox();
 		lowerBoundSharingNodeNoComboBox = new javax.swing.JComboBox();
 		candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
+		
 
 		// candidatePathwaysSharingNodesList = new javax.swing.JList();
 		// candidatePathwaysSharingNodesListModel = new DefaultListModel();
@@ -166,7 +172,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		candidatePathwaysSharingNodesTable = new javax.swing.JTable();
 		candidatePathwaysSharingNodesTableModel = new javax.swing.table.DefaultTableModel();
 
-		candidatePathwaysSharingNodesTable.setAutoCreateRowSorter(true);
+		//candidatePathwaysSharingNodesTable.setAutoCreateRowSorter(true);
 
 		explainHelpLabel1 = new javax.swing.JLabel();
 		addHelpButton = new javax.swing.JButton();
@@ -584,7 +590,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 				org.jdesktop.layout.GroupLayout.VERTICAL);
 
 		superpathwayPanel
-				.addTab("Search/Select", null, searchPane,
+				.addTab("/Select", null, searchPane,
 						"search and select pathways that you want to merge from Wiki Pahtways");*/
         org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(searchPane);
         searchPane.setLayout(searchPaneLayout);
@@ -1107,7 +1113,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 					+ t.getProperty(ResultProperty.ID) + ")";
 
 			mClickedPathwayNameID.add(temp);
-
+			//mSelectedPwResultRow.add(t);
 		}
 		for (int i = 0; i < mClickedPathwayNameID.size(); i++) {
 			System.out.println(mClickedPathwayNameID.get(i));
@@ -1119,9 +1125,11 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 				if (availablePathwaysListModel.getSize() > 0) {
 					rightButton.setEnabled(true);
 				}
-				mAvailablePathwaysNameIDList.add(mClickedPathwayNameID.get(i));
-				mAvailablePathwaysList.add(mSelected[i]);
-
+				//mAvailablePathwaysNameIDList.add(mClickedPathwayNameID.get(i));
+				//mAvailablePathwaysList.add(mSelected[i]);
+				
+				
+				
 				anchorPathwayComboBoxModel.addElement(mClickedPathwayNameID.get(i));
 				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
 			}
@@ -1256,11 +1264,16 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 		int[] selectedRowIndices = candidatePathwaysSharingNodesTable
 				.getSelectedRows();
 
+		
+		
 		for (int i = 0; i < selectedRowIndices.length; i++) {
 			int viewRow = selectedRowIndices[i];
 			//System.out.println("Selected Row in View: " + viewRow);
-			int modelRow = candidatePathwaysSharingNodesTable
-					.convertRowIndexToModel(viewRow);
+			
+			//int modelRow = candidatePathwaysSharingNodesTable.convertRowIndexToModel(viewRow);
+			
+			int modelRow=sorter.modelIndex(viewRow);
+			
 			//System.out.println("Selected Row in Model: " + modelRow);
 
 			String pwNameId = (String) candidatePathwaysSharingNodesTableModel
@@ -1297,7 +1310,7 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 
 	private void searchHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
-		candidatePathwaysSharingNodesTableModel = candidatePathwaysSharingNodesTableModel = new javax.swing.table.DefaultTableModel();
+		candidatePathwaysSharingNodesTableModel = new javax.swing.table.DefaultTableModel();
 		candidatePathwaysSharingNodesTableModel.addColumn("Pathway Name");
 		candidatePathwaysSharingNodesTableModel.addColumn("ID");
 		candidatePathwaysSharingNodesTableModel.addColumn("No. Shared Nodes");
@@ -1362,9 +1375,11 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 			candidatePathwaysSharingNodesTableModel.addRow(row);
 
 		}
-		candidatePathwaysSharingNodesTable
-				.setModel(candidatePathwaysSharingNodesTableModel);
-
+		
+		sorter = new TableSorter(candidatePathwaysSharingNodesTableModel);
+		candidatePathwaysSharingNodesTable.setModel(sorter);
+		sorter.setTableHeader(candidatePathwaysSharingNodesTable.getTableHeader());
+		
 		// candidatePathwaysSharingNodesList.setModel(candidatePathwaysSharingNodesListModel);
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 	}
@@ -1441,7 +1456,57 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 	}
 	
 	private void MergeBtnActionPerformed(java.awt.event.ActionEvent evt) {
-		  SimpleCaseMergeTest test=new SimpleCaseMergeTest();
+		 //SimpleCaseMergeTest test=new SimpleCaseMergeTest();
+		
+//		 Create a client to the WikiPathways web service
+		WikiPathwaysClient client = mClient.getStub();
+		
+//		 Download these two pathways from WikiPathways by passing their id
+		WSPathway wsPathway = new WSPathway();
+
+//		 Create two corresponding pathway objects
+		Pathway pathway = new Pathway();
+		
+		SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
+		
+		List<CyNetwork> listOfNetworks=new ArrayList<CyNetwork>();
+		
+		for (int i=0; i<selectedPathwaysListModel.getSize(); i++){
+			String selectedPwNameID=(String)selectedPathwaysListModel.get(i);
+			int index1 = selectedPwNameID.indexOf("(");
+			int index2 = selectedPwNameID.indexOf(")");
+			String pwID = selectedPwNameID.substring(index1 + 1, index2);
+
+			
+			
+			
+			try {
+				wsPathway = client.getPathway(pwID);
+				pathway = WikiPathwaysClient.toPathway(wsPathway);
+			} catch (RemoteException e) {
+				Logger.log.error(
+						"Unable to get the pathway due to the RemoteException", e);
+			} catch (ConverterException e) {
+				Logger.log.error(
+						"Unable to get the pathway due to the ConverterException",
+						e);
+			}
+			
+			
+			CyNetwork net=spPlugin.load(pathway, false); 
+			
+			listOfNetworks.add(net);
+			
+			CyNetworkView view = Cytoscape.createNetworkView(listOfNetworks.get(i), selectedPwNameID);
+			GraphView gview = (GraphView )view;
+			spPlugin.mGpmlHandler.showAnnotations(gview, false);
+			
+			System.out.println("There are " + net.getNodeCount() + " nodes in the pathway " + pwID);
+			System.out.println("There are " + net.getEdgeCount() + " edges in the pathway " + pwID);
+			
+			System.out.println("There are " + view.getNodeViewCount() + " nodes in the pathway " + pwID);
+			System.out.println("There are " + view.getEdgeViewCount() + " edges in the pathway " + pwID);
+		}
     }
 
 
@@ -1540,6 +1605,8 @@ public class SuperpathwaysGui extends JPanel { // JTabbedPane{// JFrame { //
 	// candidatePathwaysSharingNodesListModel;
 
 	private javax.swing.table.DefaultTableModel candidatePathwaysSharingNodesTableModel;
+	
+	private TableSorter sorter;
 
 	private javax.swing.JButton ClearBtn;
 

@@ -72,6 +72,7 @@
 				<include name="**/*.xsd"/>
 				<include name="META-INF/services/*.*"/>
 				<include name="**/*.wsdd"/>
+				<include name="**/*.txt"/>
 			</fileset>
 			<manifest>
 				<attribute name="Cytoscape-Plugin" value="org.pathvisio.cytoscape.GpmlPlugin" />

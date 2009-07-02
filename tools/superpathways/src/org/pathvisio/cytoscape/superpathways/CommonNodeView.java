@@ -22,13 +22,12 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bridgedb.DataDerby;
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.SimpleGdb;
-import org.bridgedb.SimpleGdbFactory;
-import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.DataDerby;
+import org.bridgedb.rdb.SimpleGdb;
+import org.bridgedb.rdb.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;

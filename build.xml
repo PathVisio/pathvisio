@@ -565,6 +565,26 @@ public class Revision
 		</checkstyle>	
 	</target>
 
+	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="lib-build/jarbundler-2.1.0.jar" />
+
+	<target name="jarbundler" depends="jar">
+		<mkdir dir="release" />
+		<!-- On operating systems other than Mac OS you have to set the stubfile property with -Dstubfile=/path/to/JavaApplicationStub.
+		You can find JavaApplicationStub on any Mac OS X installation and copy it from there. !-->
+		<jarbundler dir="release" name="PathVisio" mainclass="org.pathvisio.gui.swing.GuiMain"
+				stubfile="${stubfile}"
+				icon="lib-build/bigcateye.icns">
+		  <documenttype name="PathVisio Pathway"
+						extensions="gpml" 
+						role="Editor"/>
+			<jarfileset dir=".">
+				<include name="lib/*.jar" />
+				<include name="lib/**/*.jar" />
+				<include name="pathvisio.jar" />
+			</jarfileset>
+		</jarbundler>
+	</target>
+	
 	<target name="wpclient-axis" depends="jar">
 		<fail message="You must specify a url to the WikiPathways web service WSDL: 
 			ant -Dwsdl.url=http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl [ant target]">

@@ -160,6 +160,7 @@ public class MainPanelStandalone extends MainPanel
 				final File file = prefs.getFile(mostRecentArray[i]);
 				JMenuItem menuItem = new JMenuItem(file.getName(), KeyEvent.VK_0 + i);
 				menuItem.setAccelerator(KeyStroke.getKeyStroke(menuItem.getMnemonic(), InputEvent.CTRL_DOWN_MASK));
+				menuItem.setToolTipText(file.getAbsolutePath());
 				menuItem.addActionListener(new ActionListener() 
 				{
 					public void actionPerformed(ActionEvent e) 

@@ -122,7 +122,11 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			}
 			else if ("-o".equals(args[i])) 
 			{
-				String pws = args[i + 1];
+				// ignore, -o option is deprecated
+			}
+			else
+			{
+				String pws = args[i];
 				File f = new File(pws);
 				//Assume the argument is a file
 				if(f.exists()) 
@@ -135,16 +139,12 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 						pathwayUrl = new URL(pws);
 					} catch(MalformedURLException e) 
 					{
-						System.out.println ("Pathway '" + args[i + 1] + "' not a valid file or URL"); 
+						System.out.println ("Pathway '" + args[i] + "' not a valid file or URL"); 
 						printHelp();
 						System.exit(-1);
 					}							
 				}
 				i++;
-			}
-			else
-			{
-				Logger.log.warn("Unable to parse argument: " + args[i]);
 			}
 		}
 	}
@@ -336,8 +336,8 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	
 	static void printHelp() {
 		System.out.println(
-				"Command line parameters:\n" +
-				"-o: A GPML file to open\n" +
+				"pathvisio [options] [pathway file]\n" +
+				"Valid options are:\n" +
 				"-p: A plugin file/directory to load\n" +
 				"-d: A pgex data file to load\n"
 		);

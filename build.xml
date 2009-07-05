@@ -23,6 +23,7 @@
 	
     <property name="apidoc.dir" value="apidoc"/>
 	<property name="webstart.dir" value="webstart"/>
+	<property name="release.dir" value="release"/>
 	
 	<property name="wikipathways.dir" value="wikipathways"/>
 	<property name="wikipathways.www.dir" value="build/wikipathways-www"/>
@@ -141,6 +142,7 @@
 		<mkdir dir="${wikipathways.bin.dir}"/>
 		<mkdir dir="${wikipathways.webstart.dir}"/>
 		<mkdir dir="${wikipathways.applet.dir}/lib"/>
+		<mkdir dir="${release.dir}" />
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
 package org.pathvisio;
 
@@ -172,7 +174,7 @@ public class Revision
 		<delete file="diffview.jar"/>
 		<delete file="pathvisio_core.jar"/>
 		<delete file="pathvisio.jar"/>
-		<delete file="pathvisio*.tar.gz"/>
+		<delete dir="${release.dir}" />
 		<delete dir="${dist.wpclient.dir}" />
 		<delete dir="${axis.wpclient.dir}" />
 	</target>
@@ -467,7 +469,7 @@ public class Revision
 	
 	<target name="tarsrc" depends="svnversion" description="create source tarball">
 		<property name="srcbase" value="pathvisio_src-${pathvisio.version}-r${subversion_revision}"/>
-		<zip destfile="${srcbase}.zip">
+		<zip destfile="${release.dir}/${srcbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
 				<include name="src/**/*.java"/>
 				<include name="plugins/**/*"/>
@@ -486,14 +488,14 @@ public class Revision
 				<include name="pathvisio.bat"/>
 			</zipfileset>
 		</zip>
-		<tar destfile="${srcbase}.tar.gz" compression="gzip">
-			<zipfileset src="${srcbase}.zip"/>
+		<tar destfile="${release.dir}/${srcbase}.tar.gz" compression="gzip">
+			<zipfileset src="${release.dir}/${srcbase}.zip"/>
 		</tar>
 	</target>
 
 	<target name="tarbin" depends="jar,visplugins-jar" description="create binary tarball">
 		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
-		<zip destfile="${binbase}.zip">
+		<zip destfile="${release.dir}/${binbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
 				<include name="lib/batik/*.jar"/>
 				<include name="lib/BrowserLauncher.jar"/>
@@ -514,12 +516,12 @@ public class Revision
 				<include name="visplugins.jar"/>
 			</zipfileset>
 		</zip>
-		<tar destfile="${binbase}.tar.gz" compression="gzip">
-			<zipfileset src="${binbase}.zip"/>
+		<tar destfile="${release.dir}/${binbase}.tar.gz" compression="gzip">
+			<zipfileset src="${release.dir}/${binbase}.zip"/>
 		</tar>
 	</target>
 
-	<target name="tar" depends="tarsrc, tarbin" description="create dist tarballs"/>
+	<target name="tar" depends="tarsrc,tarbin" description="create dist tarballs"/>
 
 	<target name="test" depends="compile-core">
 		<javac srcdir="src/test" debug="true" 
@@ -568,10 +570,9 @@ public class Revision
 	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="lib-build/jarbundler-2.1.0.jar" />
 
 	<target name="jarbundler" depends="jar">
-		<mkdir dir="release" />
 		<!-- On operating systems other than Mac OS you have to set the stubfile property with -Dstubfile=/path/to/JavaApplicationStub.
 		You can find JavaApplicationStub on any Mac OS X installation and copy it from there. !-->
-		<jarbundler dir="release" name="PathVisio" mainclass="org.pathvisio.gui.swing.GuiMain"
+		<jarbundler dir="${release.dir}" name="PathVisio" mainclass="org.pathvisio.gui.swing.GuiMain"
 				stubfile="${stubfile}"
 				icon="lib-build/bigcateye.icns">
 		  <documenttype name="PathVisio Pathway"
@@ -583,6 +584,12 @@ public class Revision
 				<include name="pathvisio.jar" />
 			</jarfileset>
 		</jarbundler>
+		<zip destfile="${release.dir}/PathVisio.App.zip">
+			<zipfileset dir="${release.dir}">
+				<include name="PathVisio.app/**" />
+			</zipfileset>
+		</zip>
+		<delete dir="${release.dir}/PathVisio.app"/>
 	</target>
 	
 	<target name="wpclient-axis" depends="jar">
@@ -626,7 +633,7 @@ public class Revision
 	<target name="tarbin-wpclient" depends="jar-wpclient" description="Create a binary tarball for the WikiPathways client">
 		<property name="binbase" value="wikipathways_client_bin-${pathvisio.version}-r${subversion_revision}" />
 		
-		<zip destfile="${binbase}.zip">
+		<zip destfile="${release.dir}/${binbase}.zip">
 			<zipfileset dir="." prefix="wikipathways_client-${pathvisio.version}">
 				<include name="wikipathways-client.jar" />
 				<include name="lib/jdom.jar" />
@@ -641,8 +648,11 @@ public class Revision
 				<include name="lib/bridgedb-bio.jar"/>
 			</zipfileset>
 		</zip>
-		<tar destfile="${binbase}.tar.gz" compression="gzip">
-		  <zipfileset src="${binbase}.zip"/>
+		<tar destfile="${release.dir}/${binbase}.tar.gz" compression="gzip">
+		  <zipfileset src="${release.dir}/${binbase}.zip"/>
 		</tar>
 	</target>
+	
+	<target name="dist" depends="tarbin-wpclient,tar,jarbundler"/>
+
 </project>

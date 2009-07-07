@@ -24,24 +24,33 @@ use SOAP::Lite;
 
 #Define parameters for conversion. Change these to correct history cutoff date (original upload) and available species.
 my %species = ("hsa"=>"Homo sapiens", "human"=>"Homo sapiens", "rat"=>"Rattus norvegicus", "rno"=>"Rattus norvegicus", 
-"mmu"=>"Mus musculus", "mouse"=>"Mus musculus", "sce"=>"Saccharomyces cerevisiae",
-"yeast"=>"Saccharomyces cerevisiae", "cel"=>"Caenorhabditis elegans", "worm"=>"Caenorhabditis elegans", "dme"=>"Drosophila melanogaster",
-"fruitfly"=>"Drosophila melanogaster", "osa"=>"Oryza sativa", "rice"=>"Oryza sativa", "aga"=>"Anopheles gambiae", 
-"mosquito"=>"Anopheles gambiae", "chimp"=>"Pan troglodytes", "ptr"=>"Pan troglodytes","eca"=>"Equus caballus", 
-"horse"=>"Equus caballus", "ata"=>"Arabidopsis thaliana", "arabidopsis"=>"Arabidopsis thaliana", "bsu"=>"Bacillus subtilis", 
+"mmu"=>"Mus musculus", "mouse"=>"Mus musculus", "sce"=>"Saccharomyces cerevisiae", "yeast"=>"Saccharomyces cerevisiae",
+"cel"=>"Caenorhabditis elegans", "worm"=>"Caenorhabditis elegans", "celegans"=>"Caenorhabditis elegans",
+"dme"=>"Drosophila melanogaster", "fruitfly"=>"Drosophila melanogaster", "osa"=>"Oryza sativa",
+"rice"=>"Oryza sativa", "aga"=>"Anopheles gambiae", "mosquito"=>"Anopheles gambiae", "chimp"=>"Pan troglodytes",
+"ptr"=>"Pan troglodytes","eca"=>"Equus caballus", "horse"=>"Equus caballus", "ata"=>"Arabidopsis thaliana",
+"arabidopsis"=>"Arabidopsis thaliana", "bsu"=>"Bacillus subtilis", "bsubtilis"=>"Bacillus subtilis", 
 "bta"=>"Bos taurus", "cow"=>"Bos taurus", "cfa"=>"Canis familiaris", "dog"=>"Canis familiaris", "dre"=>"Danio Rerio",
 "zebrafish"=>"Danio rerio", "eco"=>"Escherichia coli", "ecoli"=>"Escherichia coli", "gga"=>"Gallus gallus", 
 "chicken"=>"Gallus gallus", "xtr"=>"Xenopus tropicalis", "xenopus"=>"Xenopus tropicalis");
 
-my %taxids = ("hsa"=>"9606", "human"=>"9606", "rat"=>"10116", "rno"=>"10116", "mmu"=>"10090", "mouse"=>"10090", "sce"=>"4932",
-"yeast"=>"4932", "sc"=>"4932", "cel"=>"6239", "worm"=>"6239", "dme"=>"7227", "fruitfly"=>"7227", "osa"=>"4530", 
-"rice"=>"4530", "aga"=>"7165", "mosquito"=>"7165", "chimp"=>"9598", "ptr"=>"9598","eca"=>"9796", "horse"=>"9796",
-"ata"=>"3702", "arabidopsis"=>"3702", "bsu"=>"1423", "bta"=>"9913", "cow"=>"9913", "cfa"=>"9615", "dog"=>"9615", 
-"zebrafish"=>"7955", "dre"=>"7955", "eco"=>"562", "ecoli"=>"562", "gga"=>"9031", "chicken"=>"9031", "xtr"=>"8364", 
-"xenopus"=>"8364");
+my %taxids = ("hsa"=>"9606", "rno"=>"10116", "mmu"=>"10090", "sce"=>"4932", "cel"=>"6239",
+"dme"=>"7227", "osa"=>"4530", "aga"=>"7165", "ptr"=>"9598","eca"=>"9796", "ata"=>"3702",  
+"bsu"=>"1423", "bta"=>"9913", "cfa"=>"9615", "dre"=>"7955", "eco"=>"562", "gga"=>"9031", "xtr"=>"8364");
+
+my %codes = ("Homo sapiens"=>"hsa", "Rattus norvegicus"=>"rno", "Mus musculus"=>"mmu",
+"Saccharomyces cerevisiae"=>"sce","Caenorhabditis elegans"=>"cel", "Drosophila melanogaster"=>"dme", 
+"Oryza sativa"=>"osa", "Anopheles gambiae"=>"osa", "Pan troglodytes"=>"ptr", "Equus caballus"=>"eca",
+"Arabidopsis thaliana"=>"ata", "Bacillus subtilis"=>"bsu", "Bos taurus"=>"bta", "Canis familiaris"=>"cfa", 
+"Danio rerio"=>"dre", "Escherichia coli"=>"eco", "Gallus gallus"=>"aga", "Xenopus tropicalis"=>"xtr");
+
+my %ensemblname = ("hsa"=>"Human", "rno"=>"Rat", "mmu"=>"Mouse", "sce"=>"Yeast", "cel"=>"C. elegans",
+"dme"=>"Fruitfly", "osa"=>"Rice", "aga"=>"Mosquito", "ptr"=>"Chimp","eca"=>"Horse", "ata"=>"Arabidopsis",  
+"bsu"=>"B. subtilis", "bta"=>"Cow", "cfa"=>"Dog", "dre"=>"Zebrafish", "eco"=>"E. coli", "gga"=>"Chicken",
+"xtr"=>"Xenopus");
 
 my $day = (localtime(time))[3];
-my $month = (localtime(time))[4];
+my $month = 1+(localtime(time))[4];
 my $year = 1900+(localtime(time))[5];
 my $date = "$month/$day/$year";
 my $cutoff = "20070522222100";
@@ -51,7 +60,7 @@ my $maintbot = "MaintBot";
 my $refcode = "";
 while (!$species{$refcode})
 	{
-	print "\nEnter the three-letter species code (Unigene) or common name for reference species to convert FROM: ";
+	print "\nEnter the three-letter (Unigene) species code or common name for reference species to convert FROM: ";
 	$refcode = <STDIN>;
 	chomp ($refcode);
 	$refcode =~ tr/A-Z/a-z/;
@@ -59,12 +68,13 @@ while (!$species{$refcode})
 	$refcode =~s/\.//;
 	}
 my $REFORGANISM = $species{$refcode};
+$refcode = $codes{$REFORGANISM};
 my $REFTAXID = $taxids{$refcode};
 
 my $targetcode = "";
 while (!$species{$targetcode})
 	{
-	print "\nEnter the three-letter species code (Unigene) or common name for target species to convert TO: ";
+	print "\nEnter the three-letter (Unigene) species code or common name for target species to convert TO: ";
 	$targetcode = <STDIN>;
 	chomp ($targetcode);
 	$targetcode =~ tr/A-Z/a-z/;
@@ -72,7 +82,9 @@ while (!$species{$targetcode})
 	$targetcode =~s/\.//;
 	}
 my $TARGETORGANISM = $species{$targetcode};
+$targetcode = $codes{$TARGETORGANISM};
 my $TARGETTAXID = $taxids{$targetcode};
+
 
 #Ask user for WP login password
 print "\nEnter WikiPathways password for user $maintbot: ";
@@ -104,14 +116,22 @@ print LOGFILE2 "Pathway\n";
 #Define data structures to store homology information
 my %idlookup = ();
 my %symbollookup = ();
+my %refsymbol = ();
 my $ref = ();
+my $refsymbol = ();
 my $target = ();
 my $targetsymbol =();
 
+#Figure out which inout files to use
+#my $code = $codes{$TARGETORGANISM};
+my $ensemblinput = "mart_".$refcode."-".$targetcode.".txt";
+my $targetsymbolinput = "mart_".$targetcode.".txt";
+my $refsymbolinput = "mart_".$refcode.".txt";
+
 #Read Ensembl homology file which contains 2 columns, ref gene ID and target gene ID
-unless ( open(ENSEMBL, "mart_Hs-Rn.txt") )
+unless ( open(ENSEMBL, $ensemblinput) )
         {
-            print "could not open file mart_Hs-Rn.txt\n";
+            print "could not open file $ensemblinput\n";
             exit;
     	}
 
@@ -152,12 +172,26 @@ while (my $line = <HOMOLOGENE>)
       
       if ($taxid eq $REFTAXID)
          {
-         $refcluster{$cluster} = $id;
+          if (exists $refcluster{$cluster}) 
+  	  			{
+  	  			$refcluster{$cluster} = ""; #AP# overwrite with zero to skip duplicate ref IDs later on 
+				}
+  	  		else
+  	  			{
+  	  			$refcluster{$cluster} = $id;
+  	  			}
          }
       elsif ($taxid eq $TARGETTAXID)
       	{
-      	$targetcluster{$cluster} = $id;
-      	$symbollookup{$id} = $targetsymbol;
+      	if (exists $targetcluster{$cluster}) 
+  	  			{
+  	  			$targetcluster{$cluster} = ""; #AP# overwrite with zero to skip duplicate ref IDs later on 
+				}
+  	  		else
+  	  			{
+  	  			$targetcluster{$cluster} = $id;
+      			$symbollookup{$id} = $targetsymbol;
+  	  			}
       	}
       }
       
@@ -172,14 +206,32 @@ foreach my $key (keys %{refcluster})
 			}
 		}
       
-#Read symbols from Ensembl
-unless ( open(ENSEMBLSYMBOL, "mart_Rn-symbol.txt") )
+#Read symbols from Ensembl for ref and target
+
+unless ( open(REFSYMBOL, $refsymbolinput) )
         {
-            print "could not open file mart_Rn-symbol.txt\n";
+            print "could not open file $refsymbolinput\n";
             exit;
     	}
     	
-while (my $line = <ENSEMBLSYMBOL>)
+while (my $line = <REFSYMBOL>)
+      {
+      chomp $line;
+      ($ref, $refsymbol)= split("\t", $line);
+ 	  unless ($refsymbol eq "")
+ 	  		{
+ 	  		#Note: this hash is reveresed compared to others, the key is the symbol
+  	  		$refsymbol{$refsymbol} = $ref;
+ 	  		}
+      }
+      
+unless ( open(TARGETSYMBOL, $targetsymbolinput) )
+        {
+            print "could not open file $targetsymbolinput\n";
+            exit;
+    	}
+    	
+while (my $line = <TARGETSYMBOL>)
       {
       chomp $line;
       ($target, $targetsymbol)= split("\t", $line);
@@ -192,9 +244,9 @@ while (my $line = <ENSEMBLSYMBOL>)
 ######################
 
 #Read in pathway content flatfile to get all pathways for both species.
-unless ( open(FLATFILE, "wikipathways_data_4.tab") )
+unless ( open(FLATFILE, "wikipathways_data_5.tab") )
         {
-            print "could not open file wikipathways_data_4.tab\n";
+            print "could not open file wikipathways_data_5.tab\n";
             exit;
     	}
 
@@ -370,10 +422,10 @@ foreach my $pw (keys %converts)
 	
 			if ($type eq "GeneProduct" || $type eq "Unknown")
 				{
-				$nodecount ++;	
-				if ($system eq "Ensembl" || $system eq "Entrez Gene")
+				$nodecount ++;
+				$type = "GeneProduct";
+				if ($system =~ /Ensembl/ || $system eq "Entrez Gene")
 					{
-					$type = "GeneProduct";
 					if ($idlookup{$id}) #AP# if value is true (i.e., non-zero)
   	  					{
   	  					$convertcount ++;
@@ -382,9 +434,32 @@ foreach my $pw (keys %converts)
 						$xref->setAttribute ("ID", $targetID);
 						$datanode->setAttribute ("BackpageHead", $targetlabel);
 						$datanode->setAttribute ("Type", $type);
+						if ($system =~ /Ensembl/)
+							{
+							$system = "Ensembl ".$ensemblname{$targetcode};
+							$xref->setAttribute ("Database", $system);
+							}
 						unless ($targetlabel eq "")
 							{
 							$datanode->setAttribute("TextLabel", $targetlabel);
+							}
+						}
+					#If gene is annotated with ref symbol, lookup ref id and then assign targetid
+					elsif ($id=~ /^\D$/)
+						{
+						if (exists $refsymbol{$id})
+							{
+							$convertcount ++;
+							my $numericid = $refsymbol{$id};
+							my $targetID = $idlookup{$numericid};
+							my $targetlabel = $symbollookup{$targetID};
+							$xref->setAttribute ("ID", $targetID);
+							$datanode->setAttribute ("BackpageHead", $targetlabel);
+							$datanode->setAttribute ("Type", $type);
+							unless ($targetlabel eq "")
+								{
+								$datanode->setAttribute("TextLabel", $targetlabel);
+								}
 							}
 						}
   	  				else
@@ -398,6 +473,15 @@ foreach my $pw (keys %converts)
 						print LOGFILE1 "$textlabel|$id ";	
   	  					}
 					}
+				else
+					{
+					my $targetID = "";
+					$system = "";
+					$xref->setAttribute ("ID", $targetID);
+  	  				$datanode->setAttribute ("Type", $type);
+  	  				$datanode->setAttribute ("BackpageHead", "");
+					print LOGFILE1 "$textlabel|$id ";
+					}
 				}
 			}
 		}
@@ -407,7 +491,7 @@ foreach my $pw (keys %converts)
 			$convscore = int(100*($convertcount/$nodecount));
 			}	
 		print LOGFILE1 "\t$nodecount\t$convertcount\t$convscore\n";
-		print "$refs{$pw} has conversion score of $convscore\n";
+		#print "$refs{$pw} has conversion score of $convscore\n";
 				
 		# create a comment
 		my $NS = "http://genmapp.org/GPML/2008a";
@@ -418,6 +502,8 @@ foreach my $pw (keys %converts)
 		$comment->appendText ("This pathway was inferred from $REFORGANISM with a conversion score of $convscore\%");
 		#print "ROOT $root\n";
 		#$pathway->sort_element($root);
+		
+		#$pathway->validate();
 
 		#Upload file to WikiPathways and save to local files
 		my $description = SOAP::Data->name(description => "Converted from $REFORGANISM");
@@ -425,6 +511,8 @@ foreach my $pw (keys %converts)
 		my $gpmlcode = SOAP::Data->name(gpml => $newgpml);
 		my $uploadId = SOAP::Data->name(pwId => $relation{$pw});
 		my $baserevision = SOAP::Data->name(revision => $updates{$relation{$pw}});
+		
+		
 		
 		if ($convscore >= 50)
 			{
@@ -443,6 +531,7 @@ foreach my $pw (keys %converts)
 				my $create = $wp_soap->createPathway($gpmlcode, $auth);
 				}
 		}
+	
 	}
 
 #Write non-converted pathways to log file
@@ -463,6 +552,7 @@ my $name = shift;
 #Remove any references to human and parenthesis from pathway name. 
 $name =~ s/homo sapiens//i; 
 $name =~ s/human//i; 
+$name =~ s/\(\)//;
 $name =~ s/hs//i;
 $name =~s/\s+$//;
 $name =~ s/^\s+//;

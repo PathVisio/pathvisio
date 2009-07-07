@@ -14,9 +14,10 @@
 	<property name="axis.lib.dir" value="${pathvisio.lib.dir}/axis-1_4/lib" />
 	<property name="pathvisio.class.dir" value="class.pathvisio" />
 	<property name="cytoscape.dir" value="D:/Program Files/Cytoscape_v2.6.2" />
+	<property name="cytoscape.lib.dir" value="D:/Program Files/Cytoscape_v2.6.2/lib" />
 	<property name="cytoscape.plugin.dir" value="${cytoscape.dir}/plugins" />
 	<property name="gpml.dir" value="${pathvisio.dir}/tools/cytoscape-gpml" />
-	<property name="advancedNetworkMerge.dir" value="${pathvisio.dir}/plugins" />
+	
 	
 	<path id="class.path">
 		<path location="${build.dir}"/>
@@ -27,12 +28,22 @@
 		<pathelement location="${pathvisio.lib.dir}/resources.jar" />
 		<pathelement location="${pathvisio.lib.dir}/derby.jar" />
 		<pathelement location="${pathvisio.lib.dir}/BrowserLauncher.jar" />
+		
 		<pathelement location="${pathvisio.dir}/pathvisio.jar" />
-		<pathelement location="${cytoscape.dir}/cytoscape.jar" />
 		<pathelement location="${pathvisio.dir}/wikipathways-client.jar" />
+		
+		
+		<pathelement location="${cytoscape.dir}/cytoscape.jar" />
+		<pathelement location="${cytoscape.lib.dir}/cytoscape-render-stateful.jar" />
+		<pathelement location="${cytoscape.lib.dir}/ding.jar" />
+		<pathelement location="${cytoscape.lib.dir}/giny.jar" />
+		<pathelement location="${cytoscape.lib.dir}/cytoscape-task.jar" />
+		
 		<pathelement location="${gpml.dir}/gpml.jar" />
-		<pathelement location="${advancedNetworkMerge.dir}/NetworkMerge.jar" />
+	
 		<pathelement location="${lib.dir}/swing-layout-1.0.1.jar" />
+		<pathelement location="${lib.dir}/jfreechart-1.0.5.jar" />
+		<pathelement location="${lib.dir}/jcommon-1.0.9.jar" />
 		
 	</path>
 
@@ -76,8 +87,16 @@
 			<fileset dir="${pathvisio.dir}" includes="pathvisio.jar" />
 			<fileset dir="${axis.lib.dir}" includes="*.jar"/>
 			<fileset dir="${gpml.dir}" includes="gpml.jar"/>
-			<fileset dir="${advancedNetworkMerge.dir}" includes="NetworkMerge.jar"/>
+			
 			<fileset dir="${lib.dir}" includes="swing-layout-1.0.1.jar"/>
+			<fileset dir="${lib.dir}" includes="jfreechart-1.0.5.jar"/>
+		    <fileset dir="${lib.dir}" includes="jcommon-1.0.9.jar"/>
+			
+			<fileset dir="${cytoscape.dir}" includes="cytoscape.jar" />
+		    <fileset dir="${cytoscape.lib.dir}" includes="cytoscape-render-stateful.jar" />
+			<fileset dir="${cytoscape.lib.dir}" includes="ding.jar" />
+			<fileset dir="${cytoscape.lib.dir}" includes="giny.jar" />
+			<fileset dir="${cytoscape.lib.dir}" includes="cytoscape-task.jar" />
 			
 		</unjar>
 

@@ -79,6 +79,9 @@ public class SuperpathwaysClient extends WebServiceClientImplWithGUI<WikiPathway
 		SuperpathwaysGui a=getGUI();
 	}
 
+	public SuperpathwaysPlugin getPlugin(){
+		return spPlugin;
+	}
 	
 	
 	private void setProperties() {

@@ -95,8 +95,11 @@ public class SuperpathwaysPlugin extends CytoscapePlugin {
 
 			// Get the nodes/edges indexes
 			int[] nodes = converter.getNodeIndicesArray();
+			//System.out.println("There are " + nodes.length + " nodes in the pathway!");
 			int[] edges = converter.getEdgeIndicesArray();
-
+			//System.out.println("There are " + edges.length + " edges in the pathway!");
+			
+			
 			// Get the current network, or create a new one, if none is
 			// available
 			CyNetwork network = Cytoscape.getCurrentNetwork();

@@ -20,10 +20,16 @@ package org.pathvisio.cytoscape.superpathways;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
+import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
 import org.bridgedb.rdb.DataDerby;
 import org.bridgedb.rdb.SimpleGdb;
@@ -50,8 +56,12 @@ public class CommonNodeView {
 
 	static SuperpathwaysClient mClient;
 
-	//static String dbLocation = "C:/Documents and Settings/xuemin/PathVisio-Data/gene databases/";
-	static String dbLocation = GlobalPreference.getDataDir().toString()+ "\\gene databases\\";
+	// static String dbLocation = "C:/Documents and
+	// Settings/xuemin/PathVisio-Data/gene databases/";
+	static String dbLocation = GlobalPreference.getDataDir().toString()
+			+ "\\gene databases\\";
+	
+	static Map<Xref, Xref> nodePairByTranslation;
 
 	/**
 	 * Create an exporter that uses the given GdbManager to lookup cross
@@ -61,6 +71,7 @@ public class CommonNodeView {
 	public CommonNodeView(List<String> pathwaysNameId, SuperpathwaysClient c) {
 		selectedPwsNameId = pathwaysNameId;
 		mClient = c;
+		nodePairByTranslation=new HashMap<Xref, Xref>();
 
 	}
 
@@ -108,15 +119,19 @@ public class CommonNodeView {
 					"Unable to get the pathway due to the RemoteException", e);
 		}
 
-		List<String> XrefListPw1 = new ArrayList<String>();
-		List<String> XrefListPw2 = new ArrayList<String>();
+		List<Xref> XrefListPw1 = new ArrayList<Xref>();
+		List<Xref> XrefListPw2 = new ArrayList<Xref>();
 		List<String> XrefListCommonNode = new ArrayList<String>();
 
 		// create the list of Xref for the pathway1: XrefListPw1
-		System.out.println("Xref info of one pathway: ");
+		System.out.println("Xref info of one pathway: " + pw1NameId);
 		for (PathwayElement pw1Elm : pathway1.getDataObjects()) {
 			// Only take elements with type DATANODE (genes, proteins,
 			// metabolites)
+
+			// for figuring out the problem of gpml
+			// System.out.println(pw1Elm.getObjectType());
+
 			if (pw1Elm.getObjectType() == ObjectType.DATANODE) {
 
 				String id = pw1Elm.getGeneID();
@@ -130,7 +145,8 @@ public class CommonNodeView {
 
 				// System.out.println("before translation: ");
 				System.out.println(pw1Elm.getXref().toString());
-				XrefListPw1.add(pw1Elm.getXref().toString());
+
+				XrefListPw1.add(pw1Elm.getXref());
 			}
 
 		}
@@ -144,105 +160,119 @@ public class CommonNodeView {
 		String orgCode = organism.code();
 		// System.out.println("The organism code for pathway2 is " + orgCode);
 
-				
 		File dir = new File(dbLocation);
-		//try {
-		
-		    SimpleGdb gdb = null;
-			String[] pgdbFileName = dir.list();
+		// try {
 
+		SimpleGdb gdb = null;
+		String[] pgdbFileName = dir.list();
 
-			if (pgdbFileName == null) {
-				System.out
-						.println("Specified directory does not exist or is not a directory.");
-				System.out
-						.println("Please input the correct directory path where you store the databases in the dialog!");
+		if (pgdbFileName == null) {
 
-			} else {
-				for (int i = 0; i < pgdbFileName.length; i++) {
-					
-						String fileName = pgdbFileName[i];
-						int index = fileName.indexOf("_");
-						String speciesOrMetabolite = fileName.substring(0,
-								index);
-						 System.out.println(speciesOrMetabolite);
-						if (speciesOrMetabolite.equals((Object) orgCode)) {
-							System.out.println(dbLocation +fileName);
-							File fGdb = new File(dbLocation + fileName);
-							System.out.println(speciesOrMetabolite);
-							try {
-								gdb = SimpleGdbFactory.createInstance(
-										"" + fGdb, new DataDerby(), 0);
-							} catch (IDMapperException e) {
-								Logger.log.error(
-										"Problem while connecting to the Gdb",
-										e);
+			JOptionPane
+					.showMessageDialog(
+							mClient.getGUI(),
+							"There's no database in the default folder, please choose the directory where you've loaded the databases!");
 
-							}
-							break;
-						}
+			JFileChooser chooser = new JFileChooser();
+			chooser.setCurrentDirectory(new java.io.File("."));
+			chooser.setDialogTitle("Choose the direcotry where you've loaded databases...");
+			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			// disable the "All files" option.
+			chooser.setAcceptAllFileFilterUsed(false);
 
-				
+			if (chooser.showOpenDialog(mClient.getPlugin().mWindow) == JFileChooser.APPROVE_OPTION) {
+				System.out.println("getCurrentDirectory(): "
+						+ chooser.getCurrentDirectory());
+				System.out.println("getSelectedFile() : "
+						+ chooser.getSelectedFile());
+				dir = chooser.getSelectedFile();
+				dbLocation=chooser.getSelectedFile().toString() +"\\";
+				pgdbFileName = dir.list();
+			}
+
+		}
+		for (int i = 0; i < pgdbFileName.length; i++) {
+
+			String fileName = pgdbFileName[i];
+			int index = fileName.indexOf("_");
+			String speciesOrMetabolite = fileName.substring(0, index);
+			//System.out.println(speciesOrMetabolite);
+			if (speciesOrMetabolite.equals((Object) orgCode)) {
+				System.out.println(dbLocation + fileName);
+				File fGdb = new File(dbLocation + fileName);
+				// System.out.println(speciesOrMetabolite);
+				try {
+					gdb = SimpleGdbFactory.createInstance("" + fGdb,
+							new DataDerby(), 0);
+				} catch (IDMapperException e) {
+					Logger.log.error("Problem while connecting to the Gdb", e);
 
 				}
+				break;
 			}
 
-			if (gdb == null) {
-				System.out
-						.println("Cannot find the corresponding database for the organism of pathway2!");
-			}
+		}
 
-			// create the list of Xref for the pathway2: XrefListPw2
-			System.out.println("Xref info of the other pathway: ");
-			for (PathwayElement pw2Elm : pathway2.getDataObjects()) {
-				if (pw2Elm.getObjectType() == ObjectType.DATANODE) {
-
-					boolean isMapped = false;
-
-					String id = pw2Elm.getGeneID();
-					DataSource ds = pw2Elm.getDataSource();
-					if (!checkString(id) || ds == null) {
-						continue; // Skip empty id/codes
-					}
-
-					// geneIDListPw2.add(pw2Elm.getGeneID());
-					// System.out.println("before translation: ");
-
-					System.out.println(pw2Elm.getXref().toString());
-					XrefListPw2.add(pw2Elm.getXref().toString());
-
-					for (int k = 0; k < XrefListPw1.size(); k++) {
-						try {
-							List xrefs2 = gdb.getCrossRefs(pw2Elm.getXref());
-							if (xrefs2.contains(XrefListPw1.get(k))) {
-								isMapped = true;
-							}
-						} catch (IDMapperException e) {
-							Logger.log
-									.error(
-											"Problem while getting the all the Xrefs for the pathwayElement of pw2!",
-											e);
-							System.out
-									.println("Problem while getting the all the Xrefs for the pathwayElement of pw2!");
-							break;
-						}
-					}
-
-					if ((XrefListPw1.contains(pw2Elm.getXref().toString()) || isMapped)
-							&& !XrefListCommonNode.contains(pw2Elm.getXref()
-									.toString())) {
-						// maybe need to change later!!
-						commonNode = commonNode + 1;
-						XrefListCommonNode.add(pw2Elm.getXref().toString());
-
-					}
-				}
-			}
-
-		/*} catch (NullPointerException e) {
-			Logger.log.error(
-					"Problem while null Pointer of pdgbFileName empty", e);
+		/*if (gdb == null) {
+			System.out
+					.println("Cannot find the corresponding database for the organism of pathway2!");
 		}*/
+
+		// create the list of Xref for the pathway2: XrefListPw2
+		System.out.println("Xref info of the other pathway: " + pw1NameId);
+		for (PathwayElement pw2Elm : pathway2.getDataObjects()) {
+			if (pw2Elm.getObjectType() == ObjectType.DATANODE) {
+
+				boolean isMapped = false;
+
+				String id = pw2Elm.getGeneID();
+				DataSource ds = pw2Elm.getDataSource();
+				if (!checkString(id) || ds == null) {
+					continue; // Skip empty id/codes
+				}
+
+				// geneIDListPw2.add(pw2Elm.getGeneID());
+				// System.out.println("before translation: ");
+
+				System.out.println(pw2Elm.getXref().toString());
+				XrefListPw2.add(pw2Elm.getXref());
+				
+				
+				for (int k = 0; k < XrefListPw1.size(); k++) {
+					try {
+						List xrefs2 = gdb.getCrossRefs(pw2Elm.getXref());
+						if (xrefs2.contains(XrefListPw1.get(k))) {
+							isMapped = true;
+							
+							//this map is for later use--when merging pathways
+							nodePairByTranslation.put(pw2Elm.getXref(), XrefListPw1.get(k));							
+						}
+					} catch (IDMapperException e) {
+						Logger.log
+								.error(
+										"Problem while getting the all the Xrefs for the pathwayElement of pw2!",
+										e);
+						System.out
+								.println("Problem while getting the all the Xrefs for the pathwayElement of pw2!");
+						break;
+					}
+				}
+
+				if ((XrefListPw1.contains(pw2Elm.getXref().toString()) || isMapped)
+						&& !XrefListCommonNode.contains(pw2Elm.getXref()
+								.toString())) {
+					// maybe need to change later!!
+					commonNode = commonNode + 1;
+					XrefListCommonNode.add(pw2Elm.getXref().toString());
+
+				}
+			}
+		}
+
+		/*
+		 * } catch (NullPointerException e) { Logger.log.error( "Problem while
+		 * null Pointer of pdgbFileName empty", e); }
+		 */
 
 		// the following code is for printing out the common nodes returned by
 		// the code
@@ -261,9 +291,8 @@ public class CommonNodeView {
 	public static List<commonNodePathwayPair> findCommonNodeForPathwaysGroup() {
 		List<commonNodePathwayPair> commonNodeInfoPwGroup = new ArrayList<commonNodePathwayPair>();
 
-		
-		System.out.println("For Databases: "+ dbLocation);
-		
+		System.out.println("For Databases: " + dbLocation);
+
 		Object[] arrayOfSelectedPwsNameId = selectedPwsNameId.toArray();
 		int len = arrayOfSelectedPwsNameId.length;
 
@@ -288,8 +317,7 @@ public class CommonNodeView {
 
 		List<commonNodePathwayPair> cnInfoPwGroup = findCommonNodeForPathwaysGroup();
 
-		CyNetwork cyNetwork = Cytoscape
-				.createNetwork("Common Node View", false);
+		CyNetwork cyNetwork = Cytoscape.createNetwork("Common Node View", false);
 
 		/*
 		 * String[] groupPwsNameID=(String [])selectedPwsNameId.toArray();
@@ -341,7 +369,7 @@ public class CommonNodeView {
 		// edgeAtts.setAttribute("yellow","node.shape","Diamond");
 
 		// display the common node view
-		Cytoscape.createNetworkView(cyNetwork);
+		Cytoscape.createNetworkView(cyNetwork, "Common Node View");
 
 	}
 

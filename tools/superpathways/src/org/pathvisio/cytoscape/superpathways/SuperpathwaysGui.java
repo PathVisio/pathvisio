@@ -17,8 +17,6 @@
 
 package org.pathvisio.cytoscape.superpathways;
 
-import giny.view.GraphView;
-
 import java.awt.Cursor;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -37,6 +35,7 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumn;
 
+import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.FindPathwaysByTextParameters;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.GetPathwayParameters;
@@ -95,6 +94,12 @@ public class SuperpathwaysGui extends JPanel {
 	int mNoGeneNode;
 
 	Pathway mAnchorPw;
+	
+	CommonNodeView cnViewObject;
+	
+	PathwaysMerge pMerge;
+	
+	List<String> selectedPwsNameId;
 
 	public SuperpathwaysGui(SuperpathwaysClient c) {
 		// frame = this;
@@ -103,6 +108,8 @@ public class SuperpathwaysGui extends JPanel {
 		mClient = c;
 
 		initComponents();
+		
+		cnViewObject=null;
 
 	}
 
@@ -445,153 +452,6 @@ public class SuperpathwaysGui extends JPanel {
             }
         });
 
-		/*org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(
-				searchPane);
-		searchPane.setLayout(searchPaneLayout);
-		searchPaneLayout
-				.setHorizontalGroup(searchPaneLayout
-						.createParallelGroup(
-								org.jdesktop.layout.GroupLayout.LEADING)
-						.add(
-								searchPaneLayout
-										.createSequentialGroup()
-										.addContainerGap()
-										.add(
-												searchPaneLayout
-														.createParallelGroup(
-																org.jdesktop.layout.GroupLayout.LEADING)
-														.add(
-																searchPaneLayout
-																		.createSequentialGroup()
-																		.add(
-																				stepLabel1)
-																		.addContainerGap(
-																				79,
-																				Short.MAX_VALUE))
-														.add(
-																searchPaneLayout
-																		.createSequentialGroup()
-																		.add(
-																				hintLabel1,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																				412,
-																				org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-																		.addContainerGap(
-																				18,
-																				Short.MAX_VALUE))
-														.add(
-																org.jdesktop.layout.GroupLayout.TRAILING,
-																searchPaneLayout
-																		.createSequentialGroup()
-																		.add(
-																				searchPaneLayout
-																						.createParallelGroup(
-																								org.jdesktop.layout.GroupLayout.TRAILING)
-																						.add(
-																								searchPaneLayout
-																										.createSequentialGroup()
-																										.add(
-																												helpButton)
-																										.addPreferredGap(
-																												org.jdesktop.layout.LayoutStyle.RELATED)
-																										.add(
-																												ClearBtn)
-																										.addPreferredGap(
-																												org.jdesktop.layout.LayoutStyle.RELATED)
-																										.add(
-																												CommonNodeViewBtn))
-																						.add(
-																								searchPaneLayout
-																										.createSequentialGroup()
-																										.add(
-																												openBtn)
-																										.addPreferredGap(
-																												org.jdesktop.layout.LayoutStyle.UNRELATED)
-																										.add(
-																												addBtn,
-																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
-																												67,
-																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-																						.add(
-																								org.jdesktop.layout.GroupLayout.LEADING,
-																								selectPanel,
-																								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																								Short.MAX_VALUE)
-																						.add(
-																								org.jdesktop.layout.GroupLayout.LEADING,
-																								resultScrolllPane1,
-																								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																								407,
-																								Short.MAX_VALUE)
-																						.add(
-																								org.jdesktop.layout.GroupLayout.LEADING,
-																								searchPaneLayout
-																										.createSequentialGroup()
-																										.add(
-																												searchText,
-																												org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-																												171,
-																												Short.MAX_VALUE)
-																										.addPreferredGap(
-																												org.jdesktop.layout.LayoutStyle.UNRELATED)
-																										.add(
-																												organismCombo,
-																												0,
-																												151,
-																												Short.MAX_VALUE)
-																										.addPreferredGap(
-																												org.jdesktop.layout.LayoutStyle.UNRELATED)
-																										.add(
-																												searchBtn)))
-																		.add(
-																				23,
-																				23,
-																				23)))));
-
-		searchPaneLayout.linkSize(new java.awt.Component[] { ClearBtn,
-				helpButton }, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-		searchPaneLayout.setVerticalGroup(searchPaneLayout.createParallelGroup(
-				org.jdesktop.layout.GroupLayout.LEADING).add(
-				searchPaneLayout.createSequentialGroup().add(28, 28, 28).add(
-						stepLabel1).add(18, 18, 18).add(hintLabel1).add(32, 32,
-						32).add(
-						searchPaneLayout.createParallelGroup(
-								org.jdesktop.layout.GroupLayout.BASELINE).add(
-								searchText,
-								org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-								23, Short.MAX_VALUE).add(organismCombo).add(
-								searchBtn)).add(18, 18, 18).add(
-						resultScrolllPane1,
-						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 176,
-						Short.MAX_VALUE).add(18, 18, 18).add(
-						searchPaneLayout.createParallelGroup(
-								org.jdesktop.layout.GroupLayout.BASELINE).add(
-								openBtn).add(addBtn)).addPreferredGap(
-						org.jdesktop.layout.LayoutStyle.RELATED).add(
-						selectPanel,
-						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
-						Short.MAX_VALUE).add(39, 39, 39).add(
-						searchPaneLayout.createParallelGroup(
-								org.jdesktop.layout.GroupLayout.BASELINE).add(
-								CommonNodeViewBtn).add(helpButton)
-								.add(ClearBtn)).add(43, 43, 43)));
-
-		searchPaneLayout.linkSize(new java.awt.Component[] { addBtn, openBtn },
-				org.jdesktop.layout.GroupLayout.VERTICAL);
-
-		searchPaneLayout.linkSize(new java.awt.Component[] { searchBtn,
-				searchText }, org.jdesktop.layout.GroupLayout.VERTICAL);
-
-		searchPaneLayout.linkSize(new java.awt.Component[] { ClearBtn,
-				CommonNodeViewBtn, helpButton },
-				org.jdesktop.layout.GroupLayout.VERTICAL);
-
-		superpathwayPanel
-				.addTab("/Select", null, searchPane,
-						"search and select pathways that you want to merge from Wiki Pahtways");*/
         org.jdesktop.layout.GroupLayout searchPaneLayout = new org.jdesktop.layout.GroupLayout(searchPane);
         searchPane.setLayout(searchPaneLayout);
         searchPaneLayout.setHorizontalGroup(
@@ -1247,13 +1107,13 @@ public class SuperpathwaysGui extends JPanel {
 
 	private void CommonNodeViewBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		Object[] selectedPwNameId = selectedPathwaysListModel.toArray();
-		List<String> pathwaysNameId = new ArrayList<String>();
+		selectedPwsNameId = new ArrayList<String>();
 		for (int i = 0; i < selectedPwNameId.length; i++) {
-			pathwaysNameId.add((String) selectedPwNameId[i]);
+			selectedPwsNameId.add((String) selectedPwNameId[i]);
 		}
 		
 
-		commonNodeViewTask task = new commonNodeViewTask(pathwaysNameId, mClient);
+		commonNodeViewTask task = new commonNodeViewTask(mClient);
 		JTaskConfig config = new JTaskConfig();
 		config.displayCancelButton(true);
 		config.setModal(true);
@@ -1458,55 +1318,30 @@ public class SuperpathwaysGui extends JPanel {
 	private void MergeBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		 //SimpleCaseMergeTest test=new SimpleCaseMergeTest();
 		
-//		 Create a client to the WikiPathways web service
-		WikiPathwaysClient client = mClient.getStub();
-		
-//		 Download these two pathways from WikiPathways by passing their id
-		WSPathway wsPathway = new WSPathway();
-
-//		 Create two corresponding pathway objects
-		Pathway pathway = new Pathway();
-		
-		SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
-		
-		List<CyNetwork> listOfNetworks=new ArrayList<CyNetwork>();
-		
-		for (int i=0; i<selectedPathwaysListModel.getSize(); i++){
-			String selectedPwNameID=(String)selectedPathwaysListModel.get(i);
-			int index1 = selectedPwNameID.indexOf("(");
-			int index2 = selectedPwNameID.indexOf(")");
-			String pwID = selectedPwNameID.substring(index1 + 1, index2);
-
-			
-			
-			
-			try {
-				wsPathway = client.getPathway(pwID);
-				pathway = WikiPathwaysClient.toPathway(wsPathway);
-			} catch (RemoteException e) {
-				Logger.log.error(
-						"Unable to get the pathway due to the RemoteException", e);
-			} catch (ConverterException e) {
-				Logger.log.error(
-						"Unable to get the pathway due to the ConverterException",
-						e);
-			}
-			
-			
-			CyNetwork net=spPlugin.load(pathway, false); 
-			
-			listOfNetworks.add(net);
-			
-			CyNetworkView view = Cytoscape.createNetworkView(listOfNetworks.get(i), selectedPwNameID);
-			GraphView gview = (GraphView )view;
-			spPlugin.mGpmlHandler.showAnnotations(gview, false);
-			
-			System.out.println("There are " + net.getNodeCount() + " nodes in the pathway " + pwID);
-			System.out.println("There are " + net.getEdgeCount() + " edges in the pathway " + pwID);
-			
-			System.out.println("There are " + view.getNodeViewCount() + " nodes in the pathway " + pwID);
-			System.out.println("There are " + view.getEdgeViewCount() + " edges in the pathway " + pwID);
+		Object[] selectedPwNameId = selectedPathwaysListModel.toArray();
+		selectedPwsNameId = new ArrayList<String>();
+		for (int i = 0; i < selectedPwNameId.length; i++) {
+			selectedPwsNameId.add((String) selectedPwNameId[i]);
 		}
+		
+		WikiPathwaysClient client = mClient.getStub();
+		SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
+		MergeTask task = new MergeTask(spPlugin, client);
+	
+		 // Configure JTask Dialog Pop-Up Box
+        final JTaskConfig jTaskConfig = new JTaskConfig();
+        
+        jTaskConfig.displayCloseButton(true);
+        jTaskConfig.displayCancelButton(true);
+        jTaskConfig.displayStatus(true);
+        jTaskConfig.setAutoDispose(false);
+        jTaskConfig.displayTimeElapsed(true);    
+        jTaskConfig.setModal(true);
+        
+        // Execute Task in New Thread; pop open JTask Dialog Box.
+        TaskManager.executeTask(task, jTaskConfig);
+        if (task.isCancelled()) return;
+		
     }
 
 
@@ -1885,11 +1720,11 @@ public class SuperpathwaysGui extends JPanel {
 	public class commonNodeViewTask implements Task {
 
 		TaskMonitor monitor;
-		List<String> selectedPwNameId;
+		//List<String> selectedPwNameId;
 		SuperpathwaysClient client;
 
-		public commonNodeViewTask(List<String> a, SuperpathwaysClient b) {
-			selectedPwNameId=a;
+		public commonNodeViewTask(SuperpathwaysClient b) {
+			//selectedPwNameId=a;
 			client=b;
 		}
 
@@ -1897,12 +1732,23 @@ public class SuperpathwaysGui extends JPanel {
 		 * Run the Task.
 		 */
 		public void run() {
+			
 
 			try {
 				
-				CommonNodeView cnViewObject = new CommonNodeView(selectedPwNameId,
-						client);
+				cnViewObject = new CommonNodeView(selectedPwsNameId, client);
 				CommonNodeView.drawCommonNodeView();
+				
+				//the following code is for printing out the matched node pair by translation
+				System.out.println("printing out the matched node pair by translation");
+				Set<Xref> s=CommonNodeView.nodePairByTranslation.keySet();
+				Iterator<Xref> it=s.iterator();
+				while(it.hasNext()){
+					Xref x1=it.next();
+					Xref x2=CommonNodeView.nodePairByTranslation.get(x1);
+					
+					System.out.println(x1.toString() + "======" + x2.toString());
+				}
 				
 			} catch (Exception e) {
 				Logger.log.error("Error while searching candidate pathways", e);
@@ -1926,4 +1772,102 @@ public class SuperpathwaysGui extends JPanel {
 	}
 
 }
+	
+	
+	class MergeTask implements Task {
+	    
+
+		TaskMonitor monitor;
+		boolean cancelled;
+		//PathwaysMerge pMerge;
+		SuperpathwaysPlugin spPlugin;
+		WikiPathwaysClient client;
+	    /**
+	     * Constructor.<br>
+	     *
+	     */
+		public MergeTask(SuperpathwaysPlugin sp,WikiPathwaysClient c){
+	    	cancelled=false;
+	    	spPlugin=sp;
+	    	client=c;
+	    }     
+	    
+	    public boolean isCancelled() {
+	        return cancelled;
+	    }
+	    public void run() {
+
+	    	if (cnViewObject==null){
+	    		//CommonNodeView(List<String> pathwaysNameId, SuperpathwaysClient c)
+	    		cnViewObject = new CommonNodeView(selectedPwsNameId, mClient);
+	    		CommonNodeView.findCommonNodeForPathwaysGroup();
+	    	}
+	    	WSPathway wsPathway = new WSPathway();
+			Pathway pathway = new Pathway();
+			List<CyNetwork> listOfNetworks=new ArrayList<CyNetwork>();
+			
+			for (int i=0; i<selectedPathwaysListModel.getSize(); i++){
+				
+				System.out.println(i+"");
+				String selectedPwNameID=(String)selectedPathwaysListModel.get(i);
+				System.out.println(selectedPwNameID);
+				int index1 = selectedPwNameID.indexOf("(");
+				int index2 = selectedPwNameID.indexOf(")");
+				String pwID = selectedPwNameID.substring(index1 + 1, index2);
+				System.out.println(pwID);
+				try {
+					wsPathway = client.getPathway(pwID);
+					pathway = WikiPathwaysClient.toPathway(wsPathway);
+				} catch (RemoteException e) {
+					Logger.log.error(
+							"Unable to get the pathway due to the RemoteException", e);
+				} catch (ConverterException e) {
+					Logger.log.error(
+							"Unable to get the pathway due to the ConverterException",
+							e);
+				}
+				
+				
+				CyNetwork net=spPlugin.load(pathway, true); 
+				listOfNetworks.add(net);
+			}
+			
+			pMerge=new PathwaysMerge(listOfNetworks, CommonNodeView.nodePairByTranslation);
+			
+	        try {  
+	        	pMerge.setTaskMonitor(monitor);
+	            CyNetwork mergedNetwork = pMerge.mergeNetwork("Merged Network", CommonNodeView.nodePairByTranslation); 
+	            CyNetworkView view = Cytoscape.createNetworkView(mergedNetwork);
+
+	        } catch(Exception e) {
+	        	monitor.setException(e, "Network Merge Failed!");
+	            e.printStackTrace();
+	        }
+	        
+	    }
+
+	    /**
+	     * Halts the Task: Not Currently Implemented.
+	     */
+	    //@Override
+	    public void halt() {
+	            cancelled = true;
+	            pMerge.interrupt();            
+	    }
+
+	    /**
+	     * Sets the Task Monitor.
+	     *
+	     * @param taskMonitor
+	     *            TaskMonitor Object.
+	     */
+	    //@Override
+	    public void setTaskMonitor(TaskMonitor taskMonitor) throws IllegalThreadStateException {
+	            this.monitor = taskMonitor;
+	    }
+
+	    public String getTitle() {
+	            return "Merging pathways";
+	    }
+	}
 }

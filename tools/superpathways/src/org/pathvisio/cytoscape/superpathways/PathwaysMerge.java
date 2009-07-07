@@ -28,23 +28,117 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
+
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 import cytoscape.data.Semantics;
 import cytoscape.task.TaskMonitor;
 
-public class PathwaysMerge {
-	protected TaskMonitor taskMonitor;
+public class PathwaysMerge{
+	 protected TaskMonitor taskMonitor;
 
-	protected boolean interrupted; // to enable cancel of the network merge
-									// operation
+	 protected boolean interrupted; // to enable cancel of the network merge
 
-	public PathwaysMerge() {
+	List<CyNetwork> networks;
+	
+	Map<Xref, Xref> nodePairByTranslation;
 
-		// status = "Merging networks... 0%";
-		taskMonitor = null;
-		interrupted = false;
+	// operation
+
+	static Map<String, DataSource> mapSysCodeToBioDS;
+	
+	String[] colorPool = { "153,255,51", "255, 51, 255", "51,255,255",
+			"255,255,255", "255,255,53", "102, 102, 255", "255,102,51",
+			"0,102,0", "0, 204, 204" };
+
+	public PathwaysMerge( List<CyNetwork> nets, Map<Xref, Xref> m) {
+//		status = "Merging networks... 0%";
+        taskMonitor = null;
+        interrupted = false;
+		networks = nets;
+		nodePairByTranslation=m;
+		
+		mapSysCodeToBioDS=new HashMap<String, DataSource>();
+		mapSysCodeToBioDS.put("Entrez Gene", BioDataSource.ENTREZ_GENE);
+		mapSysCodeToBioDS.put("Ensembl Rat", BioDataSource.ENSEMBL_RAT);
+		mapSysCodeToBioDS.put("TAIR", BioDataSource.TAIR);
+		mapSysCodeToBioDS.put("Agilent", BioDataSource.AGILENT);
+		mapSysCodeToBioDS.put("BioGrid", BioDataSource.BIOGRID);
+		mapSysCodeToBioDS.put("Cint", BioDataSource.CINT);
+		mapSysCodeToBioDS.put("CCDS", BioDataSource.CCDS);
+		mapSysCodeToBioDS.put("CAS", BioDataSource.CAS);
+		mapSysCodeToBioDS.put("ChEBI", BioDataSource.CHEBI );
+		mapSysCodeToBioDS.put("HMDB", BioDataSource.HMDB );
+		mapSysCodeToBioDS.put("Kegg Compound", BioDataSource.KEGG_COMPOUND);
+		mapSysCodeToBioDS.put("PubChem", BioDataSource.PUBCHEM);
+		mapSysCodeToBioDS.put("Chemspider", BioDataSource.CHEMSPIDER );
+		mapSysCodeToBioDS.put("SGD", BioDataSource.SGD);
+		mapSysCodeToBioDS.put("EC Number", BioDataSource.ENZYME_CODE);
+		mapSysCodeToBioDS.put("Ecoli", BioDataSource.ECOLI );
+		mapSysCodeToBioDS.put("EMBL", BioDataSource.EMBL);
+		mapSysCodeToBioDS.put("Ensembl", BioDataSource.ENSEMBL);
+		mapSysCodeToBioDS.put("Ensembl Mosquito", BioDataSource.ENSEMBL_MOSQUITO);
+		mapSysCodeToBioDS.put("Gramene Arabidopsis", BioDataSource.GRAMENE_ARABIDOPSIS);
+		mapSysCodeToBioDS.put("Ensembl B. subtilis", BioDataSource.ENSEMBL_BSUBTILIS);
+		mapSysCodeToBioDS.put("Ensembl Cow", BioDataSource.ENSEMBL_COW);
+		mapSysCodeToBioDS.put("Ensembl C. elegans", BioDataSource.ENSEMBL_CELEGANS);
+		mapSysCodeToBioDS.put("Ensembl Dog", BioDataSource.ENSEMBL_DOG);
+		mapSysCodeToBioDS.put("Ensembl Fruitfly", BioDataSource.ENSEMBL_FRUITFLY);
+		mapSysCodeToBioDS.put("Ensembl Zebrafish", BioDataSource.ENSEMBL_ZEBRAFISH);
+		mapSysCodeToBioDS.put("Ensembl E. coli", BioDataSource.ENSEMBL_ECOLI);
+		mapSysCodeToBioDS.put("Ensembl Chicken", BioDataSource.ENSEMBL_CHICKEN);
+		mapSysCodeToBioDS.put("Ensembl Human", BioDataSource.ENSEMBL_HUMAN);
+		mapSysCodeToBioDS.put("Ensembl Mouse", BioDataSource.ENSEMBL_MOUSE);
+		mapSysCodeToBioDS.put("Gramene Rice", BioDataSource.GRAMENE_RICE);
+		mapSysCodeToBioDS.put("Ensembl Chimp", BioDataSource.ENSEMBL_CHIMP);
+		mapSysCodeToBioDS.put("Ensembl Horse", BioDataSource.ENSEMBL_HORSE);
+		mapSysCodeToBioDS.put("Ensembl Yeast", BioDataSource.ENSEMBL_SCEREVISIAE);
+		mapSysCodeToBioDS.put("Ensembl Xenopu", BioDataSource.ENSEMBL_XENOPUS);
+		mapSysCodeToBioDS.put("FlyBase", BioDataSource.FLYBASE);
+		mapSysCodeToBioDS.put("GenBank", BioDataSource.GENBANK );
+		mapSysCodeToBioDS.put("CodeLink", BioDataSource.CODELINK );
+		mapSysCodeToBioDS.put("Gramene Genes DB", BioDataSource.GRAMENE_GENES_DB);
+		mapSysCodeToBioDS.put("Gramene Literature", BioDataSource.GRAMENE_LITERATURE);
+		mapSysCodeToBioDS.put("Gramene Pathway", BioDataSource.GRAMENE_PATHWAY);
+		mapSysCodeToBioDS.put("GenPept", BioDataSource.GEN_PEPT);
+		mapSysCodeToBioDS.put("HUGO", BioDataSource.HUGO);
+		mapSysCodeToBioDS.put("HsGene", BioDataSource.HSGENE );
+		mapSysCodeToBioDS.put("InterPro", BioDataSource.INTERPRO);
+		mapSysCodeToBioDS.put("Illumina", BioDataSource.ILLUMINA);
+		mapSysCodeToBioDS.put("IPI", BioDataSource.IPI);
+		mapSysCodeToBioDS.put("IRGSP Gene", BioDataSource.IRGSP_GENE);
+		mapSysCodeToBioDS.put("MGI", BioDataSource.MGI);
+		mapSysCodeToBioDS.put("miRBase", BioDataSource.MIRBASE);
+		mapSysCodeToBioDS.put("MaizeGDB", BioDataSource.MAIZE_GDB);
+		mapSysCodeToBioDS.put("NASC Gene", BioDataSource.NASC_GENE);
+		mapSysCodeToBioDS.put("NuGO wiki", BioDataSource.NUGOWIKI);
+		mapSysCodeToBioDS.put("Other", BioDataSource.OTHER );
+		mapSysCodeToBioDS.put("Oryzabase", BioDataSource.ORYZA_BASE);
+		mapSysCodeToBioDS.put("OMIM", BioDataSource.OMIM );
+		mapSysCodeToBioDS.put("Rice Ensembl Gene", BioDataSource.RICE_ENSEMBL_GENE);
+		mapSysCodeToBioDS.put("PDB", BioDataSource.PDB);
+		mapSysCodeToBioDS.put("Pfam", BioDataSource.PFAM );
+		mapSysCodeToBioDS.put("PlantGDB", BioDataSource.PLANTGDB );
+		mapSysCodeToBioDS.put("RefSeq", BioDataSource.REFSEQ );
+		mapSysCodeToBioDS.put("RGD", BioDataSource.RGD );
+		mapSysCodeToBioDS.put("Rfam", BioDataSource.RFAM );
+		mapSysCodeToBioDS.put("Uniprot/TrEMBL", BioDataSource.UNIPROT);
+		mapSysCodeToBioDS.put("dbSNP", BioDataSource.SNP );
+		mapSysCodeToBioDS.put("GeneOntology", BioDataSource.GENE_ONTOLOGY );
+		mapSysCodeToBioDS.put("UniGene", BioDataSource.UNIGENE );
+		mapSysCodeToBioDS.put("UCSC Genome Browser", BioDataSource.UCSC);
+		mapSysCodeToBioDS.put("WormBase", BioDataSource.WORMBASE );
+		mapSysCodeToBioDS.put("Wikipedia", BioDataSource.WIKIPEDIA );
+		mapSysCodeToBioDS.put("Wheat gene catalog", BioDataSource.WHEAT_GENE_CATALOG);
+		mapSysCodeToBioDS.put("Wheat gene names", BioDataSource.WHEAT_GENE_NAMES);
+		mapSysCodeToBioDS.put("Wheat gene refs", BioDataSource.WHEAT_GENE_REFERENCES);
+		mapSysCodeToBioDS.put("Affy", BioDataSource.AFFY );
+		mapSysCodeToBioDS.put("ZFIN", BioDataSource.ZFIN);
+
 	}
 
 	public void interrupt() {
@@ -55,7 +149,14 @@ public class PathwaysMerge {
 		this.taskMonitor = taskMonitor;
 	}
 
-	public CyNetwork mergeNetwork(final List<CyNetwork> networks, final String title) {
+	private void updateTaskMonitor(String status, int percentage) {
+		if (this.taskMonitor != null) {
+			taskMonitor.setStatus(status);
+			taskMonitor.setPercentCompleted(percentage);
+		}
+	}
+	
+	public CyNetwork mergeNetwork(final String title, Map<Xref, Xref> nodePairByTranslation) {
 		if (networks == null || title == null) {
 			throw new java.lang.NullPointerException();
 		}
@@ -69,7 +170,7 @@ public class PathwaysMerge {
 		}
 		// get node matching list
 		List<Map<CyNetwork, Set<GraphObject>>> matchedNodeList = getMatchedList(
-				networks, true);
+				networks, true, nodePairByTranslation);
 
 		final Map<Node, Node> mapNN = new HashMap<Node, Node>();
 		// save information on mapping from original nodes to merged nodes
@@ -81,13 +182,19 @@ public class PathwaysMerge {
 		for (int i = 0; i < nNode; i++) {
 
 			if (interrupted) return null;
-            updateTaskMonitor("Merging nodes...\n"+i+"/"+nNode,(i+1)*100/nNode);
-            
-            
+			/*updateTaskMonitor("Merging nodes...\n" + i + "/" + nNode, (i + 1)
+					* 100 / nNode);*/
+
 			final Map<CyNetwork, Set<GraphObject>> mapNetNode = matchedNodeList
 					.get(i);
 			final Node node = mergeNode(mapNetNode);
-			nodes.add(node);
+			if (node != null) {
+				// System.out.println("gpml-type for node "+
+				// node.getIdentifier()+ " is "
+				// + Cytoscape.getNodeAttributes().getAttribute(
+				// node.getIdentifier(), "gpml-type"));
+				nodes.add(node);
+			}
 
 			final Iterator<Set<GraphObject>> itNodes = mapNetNode.values()
 					.iterator();
@@ -100,24 +207,26 @@ public class PathwaysMerge {
 				}
 			}
 		}
-		
-		 updateTaskMonitor("Merging nodes completed",100);
+
+//		updateTaskMonitor("Merging nodes completed", 100);
 
 		// match edges
-		List<Map<CyNetwork, Set<GraphObject>>> matchedEdgeList = getMatchedList(
-				networks, false);
+		List<Map<CyNetwork, Set<GraphObject>>> matchedEdgeList = getMatchedList(networks, false, nodePairByTranslation);
 		// merge edges
 		final int nEdge = matchedEdgeList.size();
 		final List<Edge> edges = new Vector<Edge>(nEdge);
 		for (int i = 0; i < nEdge; i++) {
 
-			if (interrupted) return null;
-            updateTaskMonitor("Merging edges...\n"+i+"/"+nEdge,(i+1)*100/nEdge);
-			
+			if (interrupted)
+				return null;
+			/*updateTaskMonitor("Merging edges...\n" + i + "/" + nEdge, (i + 1)
+					* 100 / nEdge);*/
+
 			final Map<CyNetwork, Set<GraphObject>> mapNetEdge = matchedEdgeList
 					.get(i);
 			// get the source and target nodes in merged network
-			final Iterator<Set<GraphObject>> itEdges = mapNetEdge.values().iterator();
+			final Iterator<Set<GraphObject>> itEdges = mapNetEdge.values()
+					.iterator();
 
 			final Set<GraphObject> edgeSet = itEdges.next();
 			if (edgeSet == null || edgeSet.isEmpty()) {
@@ -144,13 +253,14 @@ public class PathwaysMerge {
 					interaction, directed);
 			edges.add(edge);
 		}
-		
-		updateTaskMonitor("Merging edges completed",100);
+
+		//updateTaskMonitor("Merging edges completed", 100);
 
 		// create new network
 		final CyNetwork network = Cytoscape.createNetwork(nodes, edges, title);
-		
-		updateTaskMonitor("Successfully merged the selected "+networks.size()+" networks into network "+title+" with "+nNode+" nodes and "+nEdge+" edges",100);
+
+		updateTaskMonitor("Successfully merged the selected " + networks.size()
+				+ " networks into network " + title, 100);
 
 		return network;
 	}
@@ -164,7 +274,7 @@ public class PathwaysMerge {
 	 * @return list of map from network to node/edge
 	 */
 	protected List<Map<CyNetwork, Set<GraphObject>>> getMatchedList(
-			final List<CyNetwork> networks, final boolean isNode) {
+			final List<CyNetwork> networks, final boolean isNode, Map<Xref, Xref> nodePairByTranslation) {
 		if (networks == null) {
 			throw new java.lang.NullPointerException();
 		}
@@ -177,14 +287,12 @@ public class PathwaysMerge {
 
 		final int nNet = networks.size();
 
-        // Get the total number nodes/edge to calculate the status
-        int totalGO=0, processedGO=0;
-        for (int i=0; i<nNet; i++) {
-            final CyNetwork net = networks.get(i);
-            totalGO += isNode?net.getNodeCount():net.getEdgeCount();
-        }
-		
-	
+		// Get the total number nodes/edge to calculate the status
+		int totalGO = 0, processedGO = 0;
+		for (int i = 0; i < nNet; i++) {
+			final CyNetwork net = networks.get(i);
+			totalGO += isNode ? net.getNodeCount() : net.getEdgeCount();
+		}
 
 		for (int i = 0; i < nNet; i++) {
 
@@ -197,11 +305,12 @@ public class PathwaysMerge {
 			}
 
 			while (it.hasNext()) {
-				 if (interrupted) return null;
-	                updateTaskMonitor("Matching "+(isNode?"nodes":"edges")+"...\n"+processedGO+"/"+totalGO,processedGO*100/totalGO);
-	                processedGO++;
-	                
-	                
+				if (interrupted)
+					return null;
+				/*updateTaskMonitor("Matching " + (isNode ? "nodes" : "edges")
+						+ "...\n" + processedGO + "/" + totalGO, processedGO
+						* 100 / totalGO);
+				processedGO++;*/
 
 				final GraphObject go1 = it.next();
 
@@ -218,10 +327,8 @@ public class PathwaysMerge {
 							.iterator();
 					while (itNet.hasNext()) {
 						final CyNetwork net2 = itNet.next();
-						// if (net1==net2) continue; // assume the same
-						// network don't have nodes match to each other
-						if (net1 == net2)
-							continue;
+						// if (net1==net2) continue; //in fact the same
+						// network may have nodes match to each other
 
 						final Set<GraphObject> gos2 = matchedGO.get(net2);
 						if (gos2 != null) {
@@ -229,10 +336,10 @@ public class PathwaysMerge {
 							// there is only one node in the map
 							if (isNode) { // NODE
 								matched = matchNode(net1, (Node) go1, net2,
-										(Node) go2);
+										(Node) go2,nodePairByTranslation);
 							} else {// EDGE
 								matched = matchEdge(net1, (Edge) go1, net2,
-										(Edge) go2);
+										(Edge) go2, nodePairByTranslation);
 							}
 							if (matched) {
 								Set<GraphObject> gos1 = matchedGO.get(net1);
@@ -261,12 +368,13 @@ public class PathwaysMerge {
 			}
 
 		}
-		updateTaskMonitor("Matching "+(isNode?"nodes":"edges")+" completed",100);
+		/*updateTaskMonitor("Matching " + (isNode ? "nodes" : "edges")
+				+ " completed", 100);*/
 		return matchedList;
 	}
 
 	public boolean matchEdge(final CyNetwork net1, Edge e1,
-			final CyNetwork net2, Edge e2) {
+			final CyNetwork net2, Edge e2, Map<Xref, Xref> nodePairByTranslation) {
 		if (net1 == null || e1 == null || e2 == null) {
 			throw new java.lang.NullPointerException();
 		}
@@ -289,38 +397,71 @@ public class PathwaysMerge {
 		if (e1.isDirected()) { // directed
 			if (!e2.isDirected())
 				return false;
-			return matchNode(net1, e1.getSource(), net2, e2.getSource())
-					&& matchNode(net1, e1.getTarget(), net2, e2.getTarget());
+			return matchNode(net1, e1.getSource(), net2, e2.getSource(), nodePairByTranslation)
+					&& matchNode(net1, e1.getTarget(), net2, e2.getTarget(),nodePairByTranslation);
 		} else { // non directed
 			if (e2.isDirected())
 				return false;
-			if (matchNode(net1, e1.getSource(), net2, e2.getSource())
-					&& matchNode(net1, e1.getTarget(), net2, e2.getTarget()))
+			if (matchNode(net1, e1.getSource(), net2, e2.getSource(),nodePairByTranslation)
+					&& matchNode(net1, e1.getTarget(), net2, e2.getTarget(), nodePairByTranslation))
 				return true;
-			if (matchNode(net1, e1.getSource(), net2, e2.getTarget())
-					&& matchNode(net1, e1.getTarget(), net2, e2.getSource()))
+			if (matchNode(net1, e1.getSource(), net2, e2.getTarget(), nodePairByTranslation)
+					&& matchNode(net1, e1.getTarget(), net2, e2.getSource(), nodePairByTranslation))
 				return true;
 			return false;
 		}
 	}
 
-	public boolean matchNode(CyNetwork net1, Node n1, CyNetwork net2, Node n2) {
+	public boolean matchNode(CyNetwork net1, Node n1, CyNetwork net2, Node n2, Map<Xref, Xref> nodePairByTranslation) {
 		// boolean result=false;
 		if (net1 == null || n1 == null || n2 == null || net2 == null) {
 			throw new java.lang.NullPointerException();
 		}
 		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
-		Object Xref1 = nodeAtts.getAttribute(n1.getIdentifier(), "Xref");
-		Object Xref2 = nodeAtts.getAttribute(n2.getIdentifier(), "Xref");
+		Object geneID1 = nodeAtts.getAttribute(n1.getIdentifier(), "GeneID");
+		Object geneID2 = nodeAtts.getAttribute(n2.getIdentifier(), "GeneID");
 
-		if (Xref1.equals(Xref2)) {
-			return true;
-		} else {
+		Object systemCode1 = nodeAtts.getAttribute(n1.getIdentifier(),"SystemCode");
+		Object systemCode2 = nodeAtts.getAttribute(n2.getIdentifier(),"SystemCode");
+
+		if (geneID1 == null || geneID2 == null || systemCode1 == null
+				|| systemCode2 == null || geneID1.equals("")
+				|| systemCode1.equals("")) {
 			return false;
-			//DataSource dataSourceNode1=(Xref)Xref1.getDataSource();
-		}
+		} else {
+			/*if (geneID1.equals(geneID2) && systemCode1.equals(systemCode2)) {
+				return true;
+			} else {
+				// Xref ref1 = new Xref((String)geneID1,BioDataSource.ENSEMBL_HUMAN );
+				return false;
 
-		// need to add the idmapping result later
+			}*/
+			
+			//use Map<Xref, Xref> nodePairByTranslation to help determine whether two nodes match
+			Xref x1=new Xref((String)geneID1, mapSysCodeToBioDS.get((String)systemCode1));
+			Xref x2=new Xref((String)geneID2, mapSysCodeToBioDS.get((String)systemCode2));
+			System.out.println("Xref1 in merge: "+x1.toString());
+			System.out.println("Xref2 in merge: "+x2.toString());
+			
+			if(nodePairByTranslation.containsKey(x1)){
+				if(nodePairByTranslation.get(x1).equals(x2)){
+					System.out.println("Matched!");
+					return true;
+				}
+			}else if(nodePairByTranslation.containsKey(x2)){
+				if(nodePairByTranslation.get(x2).equals(x1)){
+					System.out.println("Matched!");
+					return true;
+				}
+			}else{
+				return false;
+			}
+				
+			
+			
+			return false;
+			
+		}
 
 	}
 
@@ -330,58 +471,106 @@ public class PathwaysMerge {
 			return null;
 		}
 
-		// Assign ID and canonicalName in resulting network
-		// remove in Cytoscape3
 		final Iterator<Set<GraphObject>> itNodes = mapNetNode.values()
 				.iterator();
-		Set<GraphObject> nodes = new HashSet<GraphObject>(); // 'nodes'
-		// will
-		// contains
-		// all the
-		// matched
-		// nodes
+
+		Set<GraphObject> nodes = new HashSet<GraphObject>();
+		// 'nodes' will contains all the matched nodes
 		while (itNodes.hasNext()) {
 			nodes.addAll(itNodes.next());
 		}
 
 		final Iterator<GraphObject> itNode = nodes.iterator();
 		String id = new String(itNode.next().getIdentifier());
-		
+
 		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
-		String XrefOfOneNode=(String)nodeAtts.getAttribute(id, "Xref");
+		// retain the original node's ID
+		// String nodeID = (String) nodeAtts.getAttribute(id, "ID");
+		// System.out.println(nodeID);
 
-		if (nodes.size() > 1) { // if more than 1 nodes to be merged, assign the
-			// id as the combination of all identifiers
-			while (itNode.hasNext()) {
-				final Node node = (Node) itNode.next();
-				id += "_" + node.getIdentifier();
+		String gpmlType = nodeAtts.getAttribute(id, "gpml-type").toString();
+
+		if ((!gpmlType.equals("1")) && (!gpmlType.equals("7"))) {
+			return null;
+		} else {
+
+			// String XrefOfOneNode=(String)nodeAtts.getAttribute(id, "Xref");
+
+			if (nodes.size() > 1) { // if more than 1 nodes to be merged, assign
+				// the id as the combination of all identifiers
+				while (itNode.hasNext()) {
+					final Node node = (Node) itNode.next();
+					id += "_" + node.getIdentifier();
+				}
+
+				// if node with this id exist, get new one
+				String appendix = "";
+				int app = 0;
+				while (Cytoscape.getCyNode(id + appendix) != null) {
+					appendix = "" + ++app;
+				}
+				id += appendix;
 			}
 
-			// if node with this id exist, get new one
-			String appendix = "";
-			int app = 0;
-			while (Cytoscape.getCyNode(id + appendix) != null) {
-				appendix = "" + ++app;
+			// Get the node with id or create a new node
+			// for attribute confilict handling, introduce a conflict node here?
+			final Node node = Cytoscape.getCyNode(id, true);
+
+			Set<CyNetwork> setOfNets = mapNetNode.keySet();
+			Iterator<CyNetwork> itNets = setOfNets.iterator();
+			String color = null;
+
+			if (nodes.size() == 1) {
+				// choose one color for the node according to the network's
+				// position in the list of nets
+
+				Set<GraphObject> temp = new HashSet<GraphObject>();
+				temp.add(node);
+				while (itNets.hasNext()) {
+					CyNetwork n = itNets.next();
+					Set<GraphObject> o = mapNetNode.get(n);
+					if (temp.equals(o)) {
+						if (networks.contains(n)) {
+							int index = networks.indexOf(n);
+							// System.out.println(index + "");
+							color = colorPool[index];
+							break;
+						}
+					}
+				}
+
+				nodeAtts.setAttribute(id, "node.fillColor", color);
+
+			} else {
+				if (setOfNets.size() == 1) {
+					CyNetwork n = itNets.next();
+					if (networks.contains(n)) {
+						int index = networks.indexOf(n);
+						// System.out.println(index + "");
+						color = colorPool[index];
+						nodeAtts.setAttribute(id, "node.fillColor", color);
+					}
+
+				} else {
+					System.out.println("for one pie----------------------");
+					Set<String> colorPie = new HashSet<String>();
+					while (itNets.hasNext()) {
+						CyNetwork n = itNets.next();
+
+						if (networks.contains(n)) {
+							int index = networks.indexOf(n);
+							System.out.println(colorPool[index]);
+							colorPie.add(colorPool[index]);
+
+						}
+					}
+
+					nodeAtts.setAttribute(id, "node.fillColor", "255,255,255");
+				}
 			}
-			id += appendix;
+
+			return node;
 		}
-
-		// Get the node with id or create a new node
-		// for attribute confilict handling, introduce a conflict node here?
-		final Node node = Cytoscape.getCyNode(id, true);
-
-		// set other attributes as indicated in attributeMapping
-		// setAttribute(id,mapNetNode,nodeAttributeMapping);
-		
-		nodeAtts.setAttribute(id,"Xref",XrefOfOneNode);
-		if (nodes.size() > 1) {
-			nodeAtts.setAttribute(id, "MergeIndicator", "Yes");
-		}
-
-		// CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
-		// String xref=nodeAtts.getAttribute(id, "Xref");
-
-		return node;
 	}
 
 	public Edge mergeEdge(final Map<CyNetwork, Set<GraphObject>> mapNetEdge,
@@ -408,12 +597,6 @@ public class PathwaysMerge {
 
 		return edge;
 	}
-	
-	private void updateTaskMonitor(String status, int percentage) {
-        if (this.taskMonitor!=null) {
-            taskMonitor.setStatus(status);
-            taskMonitor.setPercentCompleted(percentage);
-        }
-    }
-}
 
+	
+}

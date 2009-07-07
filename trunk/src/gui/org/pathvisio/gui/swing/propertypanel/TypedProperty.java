@@ -68,7 +68,7 @@ import org.pathvisio.view.VPathway;
  * TypedProperty ties together functionality to view / edit a property
  * on one or more PathwayElements at the same time
  */
-public class TypedProperty {	
+public class TypedProperty implements Comparable<TypedProperty> {	
 	Collection<PathwayElement> elements;
 	Object value;
 	Object type;
@@ -690,6 +690,27 @@ public class TypedProperty {
 					+ newColor.getGreen() + ", "
 					+ newColor.getBlue());
 			return this;
+		}
+	}
+
+	public int compareTo(TypedProperty arg0) 
+	{
+		if (arg0 == null) throw new NullPointerException();
+		
+		if (type.getClass() != arg0.type.getClass())
+		{
+			return type instanceof PropertyType ? 1 : -1;
+		}
+		else
+		{
+			if (type instanceof PropertyType)
+			{
+				return ((PropertyType)type).getOrder() - ((PropertyType)arg0.type).getOrder();
+			}
+			else
+			{
+				return type.toString().compareTo(arg0.type.toString());
+			}
 		}
 	}
 }

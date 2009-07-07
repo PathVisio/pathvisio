@@ -15,13 +15,6 @@
 // limitations under the License.
 //
 
-/*
- * PropertyType.java
- *
- * Created on 6 december 2006, 9:50
- *
- */
-
 package org.pathvisio.model;
 
 import java.util.HashMap;
@@ -33,123 +26,136 @@ import java.util.Map;
 public enum PropertyType 
 {
 	// all
-	COMMENTS ("Comments", "Comments", PropertyClass.COMMENTS),
+	COMMENTS ("Comments", "Comments", PropertyClass.COMMENTS, 101),
 
 	// line, shape, datanode, label
-	COLOR ("Color", "Color", PropertyClass.COLOR),
-			
+	COLOR ("Color", "Color", PropertyClass.COLOR, 202),			
 	// shape, datanode, label
-	CENTERX ("CenterX", "Center X", PropertyClass.DOUBLE),
-	CENTERY ("CenterY", "Center Y", PropertyClass.DOUBLE),
+	CENTERX ("CenterX", "Center X", PropertyClass.DOUBLE, 103),
+	CENTERY ("CenterY", "Center Y", PropertyClass.DOUBLE, 104),
 	
 	// shape, datanode, label, modification
-	WIDTH ("Width", "Width", PropertyClass.DOUBLE),
-	HEIGHT ("Height", "Height", PropertyClass.DOUBLE),
+	WIDTH ("Width", "Width", PropertyClass.DOUBLE, 105),
+	HEIGHT ("Height", "Height", PropertyClass.DOUBLE, 106),
 
 	// modification
-	RELX ("relX", "Relative X", PropertyClass.DOUBLE),
-	RELY ("relY", "Relative Y", PropertyClass.DOUBLE),
-	GRAPHREF ("GraphRef", "GraphRef", PropertyClass.STRING),
+	RELX ("relX", "Relative X", PropertyClass.DOUBLE, 107),
+	RELY ("relY", "Relative Y", PropertyClass.DOUBLE, 108),
+	GRAPHREF ("GraphRef", "GraphRef", PropertyClass.STRING, 109),
 
 	// shape, modification
-	TRANSPARENT ("Transparent", "Transparent", PropertyClass.BOOLEAN),
-	FILLCOLOR ("FillColor", "Fill Color", PropertyClass.COLOR),
-	SHAPETYPE ("ShapeType", "Shape Type", PropertyClass.SHAPETYPE),
+	TRANSPARENT ("Transparent", "Transparent", PropertyClass.BOOLEAN, 210),
+	FILLCOLOR ("FillColor", "Fill Color", PropertyClass.COLOR, 211),
+	SHAPETYPE ("ShapeType", "Shape Type", PropertyClass.SHAPETYPE, 112),
 	
 	// shape
-	ROTATION ("Rotation", "Rotation", PropertyClass.ANGLE),
+	ROTATION ("Rotation", "Rotation", PropertyClass.ANGLE, 113),
 			
 	// line
-	STARTX ("StartX", "Start X", PropertyClass.DOUBLE), 
-	STARTY ("StartY", "Start Y", PropertyClass.DOUBLE), 
-	ENDX ("EndX", "End X", PropertyClass.DOUBLE), 
-	ENDY ("EndY", "End Y", PropertyClass.DOUBLE),
+	STARTX ("StartX", "Start X", PropertyClass.DOUBLE, 114), 
+	STARTY ("StartY", "Start Y", PropertyClass.DOUBLE, 115), 
+	ENDX ("EndX", "End X", PropertyClass.DOUBLE, 116), 
+	ENDY ("EndY", "End Y", PropertyClass.DOUBLE, 117),
 			
-	ENDLINETYPE ("EndLineType", "End Line Type", PropertyClass.LINETYPE), 
-	STARTLINETYPE ("StartLineType", "Start Line Type", PropertyClass.LINETYPE), 
+	STARTLINETYPE ("StartLineType", "Start Line Type", PropertyClass.LINETYPE, 118), 
+	ENDLINETYPE ("EndLineType", "End Line Type", PropertyClass.LINETYPE, 119), 
 
 	// line, shape and modification
-	LINESTYLE ("LineStyle", "Line Style", PropertyClass.LINESTYLE),
+	LINESTYLE ("LineStyle", "Line Style", PropertyClass.LINESTYLE, 120),
 			
 	// brace
-	ORIENTATION ("Orientation", "Orientation", PropertyClass.ORIENTATION),
+	ORIENTATION ("Orientation", "Orientation", PropertyClass.ORIENTATION, 121),
 			
 	// datanode
-	GENEID ("GeneID", "Database Identifier", PropertyClass.DB_ID),  
-	DATASOURCE ("SystemCode", "Database Name", PropertyClass.DATASOURCE), 
-	GENMAPP_XREF ("Xref", "Xref", PropertyClass.STRING), // deprecated, maintained for backward compatibility with GenMAPP. 
-	BACKPAGEHEAD ("BackpageHead", "Backpage head", PropertyClass.STRING), 
-	TYPE ("Type", "Type", PropertyClass.GENETYPE),
+	GENEID ("GeneID", "Database Identifier", PropertyClass.DB_ID, 122),  
+	DATASOURCE ("SystemCode", "Database Name", PropertyClass.DATASOURCE, 123), 
+	GENMAPP_XREF ("Xref", "Xref", PropertyClass.STRING, 124), // deprecated, maintained for backward compatibility with GenMAPP. 
+	BACKPAGEHEAD ("BackpageHead", "Backpage head", PropertyClass.STRING, 125), 
+	TYPE ("Type", "Type", PropertyClass.GENETYPE, 126),
 		
-	MODIFICATIONTYPE ("ModificationType", "ModificationType", PropertyClass.STRING),
+	MODIFICATIONTYPE ("ModificationType", "ModificationType", PropertyClass.STRING, 127),
 	
 	// label, modification, datanode
-	TEXTLABEL ("TextLabel", "Text Label", PropertyClass.STRING),
+	TEXTLABEL ("TextLabel", "Text Label", PropertyClass.STRING, 128),
 	
 	// label
-	FONTNAME ("FontName", "Font Name", PropertyClass.FONT),
-	FONTWEIGHT ("FontWeight", "Bold", PropertyClass.BOOLEAN), 
-	FONTSTYLE ("FontStyle", "Italic", PropertyClass.BOOLEAN), 
-	FONTSIZE ("FontSize", "Font Size", PropertyClass.DOUBLE),
-	OUTLINE ("Outline", "Outline", PropertyClass.OUTLINETYPE),
+	FONTNAME ("FontName", "Font Name", PropertyClass.FONT, 129),
+	FONTWEIGHT ("FontWeight", "Bold", PropertyClass.BOOLEAN, 130), 
+	FONTSTYLE ("FontStyle", "Italic", PropertyClass.BOOLEAN, 131), 
+	FONTSIZE ("FontSize", "Font Size", PropertyClass.DOUBLE, 132),
+	OUTLINE ("Outline", "Outline", PropertyClass.OUTLINETYPE, 133),
 
 	// mappinfo
-	MAPINFONAME ("MapInfoName", "Title", PropertyClass.STRING),
-	ORGANISM ("Organism", "Organism", PropertyClass.ORGANISM), 
-	MAPINFO_DATASOURCE ("Data-Source", "Data-Source", PropertyClass.STRING),
-	VERSION ("Version", "Version", PropertyClass.STRING), 
-	AUTHOR ("Author", "Author", PropertyClass.STRING), 
-	MAINTAINED_BY ("Maintained-By", "Maintainer", PropertyClass.STRING),
-	EMAIL ("Email", "Email", PropertyClass.STRING), 
-	LAST_MODIFIED ("Last-Modified", "Last Modified", PropertyClass.STRING), 
-	AVAILABILITY ("Availability", "Availability", PropertyClass.STRING),
-	BOARDWIDTH ("BoardWidth", "Board Width", PropertyClass.DOUBLE), 
-	BOARDHEIGHT ("BoardHeight", "Board Height", PropertyClass.DOUBLE), 
-	WINDOWWIDTH ("WindowWidth", "Window Width", PropertyClass.DOUBLE, true), 
-	WINDOWHEIGHT ("WindowHeight", "Window Height", PropertyClass.DOUBLE, true),
+	MAPINFONAME ("MapInfoName", "Title", PropertyClass.STRING, 134),
+	ORGANISM ("Organism", "Organism", PropertyClass.ORGANISM, 135), 
+	MAPINFO_DATASOURCE ("Data-Source", "Data-Source", PropertyClass.STRING, 136),
+	VERSION ("Version", "Version", PropertyClass.STRING, 137), 
+	AUTHOR ("Author", "Author", PropertyClass.STRING, 138), 
+	MAINTAINED_BY ("Maintained-By", "Maintainer", PropertyClass.STRING, 139),
+	EMAIL ("Email", "Email", PropertyClass.STRING, 140), 
+	LAST_MODIFIED ("Last-Modified", "Last Modified", PropertyClass.STRING, 141), 
+	AVAILABILITY ("Availability", "Availability", PropertyClass.STRING, 142),
+	BOARDWIDTH ("BoardWidth", "Board Width", PropertyClass.DOUBLE, 143), 
+	BOARDHEIGHT ("BoardHeight", "Board Height", PropertyClass.DOUBLE, 144), 
+	WINDOWWIDTH ("WindowWidth", "Window Width", PropertyClass.DOUBLE, 145, true), 
+	WINDOWHEIGHT ("WindowHeight", "Window Height", PropertyClass.DOUBLE, 146, true),
 
 	// other
-	GRAPHID ("GraphId", "GraphId", PropertyClass.STRING), 
-	STARTGRAPHREF ("StartGraphRef", "StartGraphRef", PropertyClass.STRING), 
-	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", PropertyClass.STRING),
-	GROUPID ("GroupId", "GroupId", PropertyClass.STRING),
-	GROUPREF ("GroupRef", "GroupRef", PropertyClass.STRING),
-	GROUPSTYLE ("GroupStyle", "Group style", PropertyClass.GROUPSTYLETYPE),
-	BIOPAXREF( "BiopaxRef", "BiopaxRef", PropertyClass.BIOPAXREF),
-	ZORDER ( "Z order", "ZOrder", PropertyClass.INTEGER);
+	GRAPHID ("GraphId", "GraphId", PropertyClass.STRING, 147), 
+	STARTGRAPHREF ("StartGraphRef", "StartGraphRef", PropertyClass.STRING, 148), 
+	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", PropertyClass.STRING, 149),
+	GROUPID ("GroupId", "GroupId", PropertyClass.STRING, 150),
+	GROUPREF ("GroupRef", "GroupRef", PropertyClass.STRING, 151),
+	GROUPSTYLE ("GroupStyle", "Group style", PropertyClass.GROUPSTYLETYPE, 152),
+	BIOPAXREF( "BiopaxRef", "BiopaxRef", PropertyClass.BIOPAXREF, 153),
+	ZORDER ( "Z order", "ZOrder", PropertyClass.INTEGER, 154);
 
 	private String tag, desc;
 	private PropertyClass type;
 	private boolean hidden;
-	
-	PropertyType (String aTag, String aDesc, PropertyClass aType, boolean isHidden)
+	private int order;
+
+	private PropertyType (String aTag, String aDesc, PropertyClass aType, int anOrder, boolean isHidden)
 	{
 		tag = aTag;
 		type = aType;
 		desc = aDesc;
 		hidden = isHidden;
+		order = anOrder;
 	}
 
-	PropertyType (String aTag, String aDesc, PropertyClass aType)
+	private PropertyType (String aTag, String aDesc, PropertyClass aType, int anOrder)
 	{
-		this(aTag, aDesc, aType, false);
+		this(aTag, aDesc, aType, anOrder, false);
 	}
 
+	/**
+	 * @return Name of GPML attribute related to this property.
+	 */
 	public String tag()
 	{
 		return tag;
 	}
 	
+	/**
+	 * @return Description used e.g. in property table
+	 */
 	public String desc()
 	{
 		return desc;
 	}
 	
+	/**
+	 * @return Data type of this property
+	 */
 	public PropertyClass type()
 	{
 		return type;
 	}	
 
+	/**
+	 * @return true if this is attribute should not be shown in property table
+	 */
 	public boolean isHidden()
 	{
 		return hidden;
@@ -157,6 +163,14 @@ public enum PropertyType
 
 	public void setHidden(boolean hide) {
 		hidden = hide;
+	}
+	
+	/**
+	 * @return Logical sort order for display in Property table. Related properties sort together
+	 */
+	public int getOrder()
+	{
+		return order;
 	}
 	
 	public static PropertyType getByTag(String value)

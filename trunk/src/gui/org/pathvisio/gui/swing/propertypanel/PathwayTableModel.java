@@ -20,14 +20,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -58,11 +57,10 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 									PathwayElementListener, 
 									ApplicationEventListener {
 
-	TableCellEditor defaultEditor = new DefaultCellEditor(new JTextField());
-	JTable table;
-	Collection<PathwayElement> input;
-	Map<Object, TypedProperty> propertyValues;
-	List<TypedProperty> shownProperties;
+	private JTable table;
+	final private Collection<PathwayElement> input;
+	final private Map<Object, TypedProperty> propertyValues;
+	final private List<TypedProperty> shownProperties;
 	
 	private SwingEngine swingEngine;
 	
@@ -126,9 +124,8 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		fireTableDataChanged();
 	}
 		
-	protected void updatePropertyCounts(PathwayElement e, boolean remove) {
-		// TODO: distinguish between advanced and not-advanced usage
-		
+	protected void updatePropertyCounts(PathwayElement e, boolean remove) 
+	{
 		for(Object o : VisibleProperties.getVisiblePropertyKeys(e)) 
 		{
 			if (o instanceof PropertyType) 
@@ -159,11 +156,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 				//System.err.println("\tremoveing " + tp + " from shown");
 				shownProperties.remove(tp);
 			}
-			Collections.sort(shownProperties, new Comparator<TypedProperty>() {
-				public int compare(TypedProperty o1, TypedProperty o2) {
-					return o1.getDesc().compareTo(o2.getDesc());
-				}
-			});
+			Collections.sort(shownProperties);
 		}
 	}
 	

@@ -16,6 +16,8 @@
 //
 package org.pathvisio.cytoscape;
 
+import ding.view.DGraphView;
+
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -23,8 +25,10 @@ import java.awt.Shape;
 
 import org.pathvisio.model.PathwayElement;
 
-import ding.view.DGraphView;
-
+/**
+ * Cytoscape rendering of a GPML Label. 
+ * This is pure graphical annotation, not part of the graph. 
+ */
 public class Label extends Annotation {
 
 	public Label(PathwayElement pwElm, DGraphView view) {

@@ -16,6 +16,10 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.CyEdge;
+import cytoscape.Cytoscape;
+import cytoscape.data.CyAttributes;
+
 import giny.view.EdgeView;
 import giny.view.GraphView;
 
@@ -23,10 +27,6 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.LinAlg;
 import org.pathvisio.view.LinAlg.Point;
-
-import cytoscape.CyEdge;
-import cytoscape.Cytoscape;
-import cytoscape.data.CyAttributes;
 
 /**
  * Class that holds a Cytoscape edge that has a GPML representation, which is stored

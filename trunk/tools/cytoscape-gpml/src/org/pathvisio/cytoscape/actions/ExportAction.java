@@ -16,6 +16,8 @@
 //
 package org.pathvisio.cytoscape.actions;
 
+import cytoscape.Cytoscape;
+import cytoscape.util.CytoscapeAction;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -27,9 +29,9 @@ import javax.swing.filechooser.FileFilter;
 import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.model.ConverterException;
 
-import cytoscape.Cytoscape;
-import cytoscape.util.CytoscapeAction;
-
+/**
+ * Export current network as GPML
+ */
 public class ExportAction extends CytoscapeAction {
 	GpmlPlugin plugin;
 	

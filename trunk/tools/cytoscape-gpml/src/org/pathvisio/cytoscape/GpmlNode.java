@@ -16,22 +16,23 @@
 //
 package org.pathvisio.cytoscape;
 
-import giny.view.GraphView;
-import giny.view.NodeView;
-
-import java.util.HashMap;
-
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
-
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 import cytoscape.groups.CyGroupManager;
 import ding.view.DGraphView;
 import ding.view.DingCanvas;
+
+import giny.view.GraphView;
+import giny.view.NodeView;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
+import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.PathwayElement;
 
 /**
  * Class that holds a Cytoscape edge that has a GPML representation, which is stored
@@ -40,7 +41,7 @@ import ding.view.DingCanvas;
  *
  */
 public class GpmlNode extends GpmlNetworkElement<CyNode> {
-	HashMap<GraphView, Annotation> annotations = new HashMap<GraphView, Annotation>();
+	Map<GraphView, Annotation> annotations = new HashMap<GraphView, Annotation>();
 	
 	/**
 	 * Constructor for this class. Creates a new GpmlNode, based on the given

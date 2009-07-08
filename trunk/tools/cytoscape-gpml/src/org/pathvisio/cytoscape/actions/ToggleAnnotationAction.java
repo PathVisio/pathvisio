@@ -16,6 +16,9 @@
 //
 package org.pathvisio.cytoscape.actions;
 
+import cytoscape.Cytoscape;
+import cytoscape.util.CytoscapeAction;
+
 import giny.view.GraphView;
 
 import java.awt.event.ActionEvent;
@@ -26,9 +29,9 @@ import javax.swing.event.MenuEvent;
 import org.pathvisio.cytoscape.GpmlHandler;
 import org.pathvisio.debug.Logger;
 
-import cytoscape.Cytoscape;
-import cytoscape.util.CytoscapeAction;
-
+/**
+ * Toggle visibility of graphical annotations (Shape, Label, unconnected Line).
+ */
 public class ToggleAnnotationAction extends CytoscapeAction {
 	GpmlHandler gpmlHandler;
 	

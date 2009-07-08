@@ -16,6 +16,28 @@
 //
 package org.pathvisio.cytoscape.wikipathways;
 
+import cytoscape.CyEdge;
+import cytoscape.CyNetwork;
+import cytoscape.CyNode;
+import cytoscape.Cytoscape;
+import cytoscape.CytoscapeInit;
+import cytoscape.data.CyAttributes;
+import cytoscape.data.Semantics;
+import cytoscape.data.webservice.CyWebServiceEvent;
+import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
+import cytoscape.data.webservice.CyWebServiceEventListener;
+import cytoscape.data.webservice.CyWebServiceException;
+import cytoscape.data.webservice.NetworkImportWebServiceClient;
+import cytoscape.data.webservice.WebServiceClientImplWithGUI;
+import cytoscape.data.webservice.WebServiceClientManager;
+import cytoscape.data.webservice.WebServiceClientManager.ClientType;
+import cytoscape.task.Task;
+import cytoscape.task.TaskMonitor;
+import cytoscape.task.ui.JTaskConfig;
+import cytoscape.task.util.TaskManager;
+import cytoscape.util.ModulePropertiesImpl;
+import cytoscape.view.CyNetworkView;
+import cytoscape.visual.VisualStyle;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 import giny.view.EdgeView;
@@ -46,29 +68,10 @@ import org.pathvisio.wikipathways.webservice.WSIndexField;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
-import cytoscape.CyEdge;
-import cytoscape.CyNetwork;
-import cytoscape.CyNode;
-import cytoscape.Cytoscape;
-import cytoscape.CytoscapeInit;
-import cytoscape.data.CyAttributes;
-import cytoscape.data.Semantics;
-import cytoscape.data.webservice.CyWebServiceEvent;
-import cytoscape.data.webservice.CyWebServiceEventListener;
-import cytoscape.data.webservice.CyWebServiceException;
-import cytoscape.data.webservice.NetworkImportWebServiceClient;
-import cytoscape.data.webservice.WebServiceClientImplWithGUI;
-import cytoscape.data.webservice.WebServiceClientManager;
-import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
-import cytoscape.data.webservice.WebServiceClientManager.ClientType;
-import cytoscape.task.Task;
-import cytoscape.task.TaskMonitor;
-import cytoscape.task.ui.JTaskConfig;
-import cytoscape.task.util.TaskManager;
-import cytoscape.util.ModulePropertiesImpl;
-import cytoscape.view.CyNetworkView;
-import cytoscape.visual.VisualStyle;
-
+/**
+ * WebserviceClient implementation, for accessing the
+ * WikiPathways webservice in a standard way from within Cytoscape.
+ */
 public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwaysClient, CyWikiPathwaysClientGui> implements NetworkImportWebServiceClient {
 	private static final String DISPLAY_NAME = "WikiPathways Web Service Client";
 	private static final String CLIENT_ID = "wikipathways";

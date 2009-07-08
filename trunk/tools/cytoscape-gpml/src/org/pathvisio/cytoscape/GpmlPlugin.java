@@ -16,6 +16,31 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.CyEdge;
+import cytoscape.CyNetwork;
+import cytoscape.CyNode;
+import cytoscape.Cytoscape;
+import cytoscape.data.CyAttributes;
+import cytoscape.data.ImportHandler;
+import cytoscape.data.attr.MultiHashMap;
+import cytoscape.data.attr.MultiHashMapDefinition;
+import cytoscape.data.readers.GraphReader;
+import cytoscape.data.webservice.WebServiceClientManager;
+import cytoscape.groups.CyGroup;
+import cytoscape.groups.CyGroupManager;
+import cytoscape.plugin.CytoscapePlugin;
+import cytoscape.util.CyFileFilter;
+import cytoscape.view.CyMenus;
+import cytoscape.view.CyNetworkView;
+import cytoscape.view.CytoscapeDesktop;
+import cytoscape.visual.ArrowShape;
+import cytoscape.visual.EdgeAppearance;
+import cytoscape.visual.VisualPropertyType;
+import cytoscape.visual.VisualStyle;
+
+import ding.view.DGraphView;
+import ding.view.InnerCanvas;
+
 import giny.model.Node;
 import giny.view.EdgeView;
 import giny.view.GraphView;
@@ -56,11 +81,11 @@ import org.pathvisio.cytoscape.visualmapping.GpmlVisualStyle;
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.view.MIMShapes;
@@ -68,30 +93,10 @@ import org.pathvisio.view.swing.PathwayTransferable;
 
 import phoebe.PhoebeCanvasDropEvent;
 import phoebe.PhoebeCanvasDropListener;
-import cytoscape.CyEdge;
-import cytoscape.CyNetwork;
-import cytoscape.CyNode;
-import cytoscape.Cytoscape;
-import cytoscape.data.CyAttributes;
-import cytoscape.data.ImportHandler;
-import cytoscape.data.attr.MultiHashMap;
-import cytoscape.data.attr.MultiHashMapDefinition;
-import cytoscape.data.readers.GraphReader;
-import cytoscape.data.webservice.WebServiceClientManager;
-import cytoscape.groups.CyGroup;
-import cytoscape.groups.CyGroupManager;
-import cytoscape.plugin.CytoscapePlugin;
-import cytoscape.util.CyFileFilter;
-import cytoscape.view.CyMenus;
-import cytoscape.view.CyNetworkView;
-import cytoscape.view.CytoscapeDesktop;
-import cytoscape.visual.ArrowShape;
-import cytoscape.visual.EdgeAppearance;
-import cytoscape.visual.VisualPropertyType;
-import cytoscape.visual.VisualStyle;
-import ding.view.DGraphView;
-import ding.view.InnerCanvas;
 
+/**
+ * Main Plugin class.
+ */
 public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListener, PropertyChangeListener {
 	GpmlHandler gpmlHandler;
 
@@ -150,6 +155,9 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		return gpmlHandler;
 	}
 
+	/**
+	 * File Filter for selecting *.gpml files
+	 */
 	class GpmlFilter extends CyFileFilter {
 		public GpmlFilter() {
 			super("gpml", "GPML file", ImportHandler.GRAPH_NATURE);
@@ -285,8 +293,8 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 				pmid = m.group(1);
 			}
 									
-			HashMap valueMap = (HashMap)litMap.get(key);
-			HashMap litInfo = (HashMap)valueMap.get(1);
+			Map valueMap = (HashMap)litMap.get(key);
+			Map litInfo = (HashMap)valueMap.get(1);
 			String journal = litInfo.get(0).toString();
 			String year = litInfo.get(4).toString();
 			
@@ -460,7 +468,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		}
 		
 		//Ensure unique ids
-		HashMap<String, List<MPoint>> graphRefs = new HashMap<String, List<MPoint>>();
+		Map<String, List<MPoint>> graphRefs = new HashMap<String, List<MPoint>>();
 		for(PathwayElement pe : gpmlElements) {
 			for(MPoint p : pe.getMPoints()) {
 				if(p.getGraphRef() != null) {
@@ -497,7 +505,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		});
 	}
 
-	private void fixGraphIds(GraphIdContainer idc, Map<String, Integer> graphIds, HashMap<String, List<MPoint>> graphRefs) {
+	private void fixGraphIds(GraphIdContainer idc, Map<String, Integer> graphIds, Map<String, List<MPoint>> graphRefs) {
 		Pathway dummyPathway = new Pathway(); //TODO: make getUniqueId static
 
 		String gid = idc.getGraphId();

@@ -16,6 +16,9 @@
 //
 package org.pathvisio.cytoscape.wikipathways;
 
+import cytoscape.task.ui.JTaskConfig;
+import cytoscape.task.util.TaskManager;
+
 import giny.view.NodeView;
 
 import java.awt.event.ActionEvent;
@@ -23,9 +26,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.SearchInteractionsTask;
-
-import cytoscape.task.ui.JTaskConfig;
-import cytoscape.task.util.TaskManager;
 
 public class NodeInteractionsAction extends AbstractAction {
 	InteractionQuery query;

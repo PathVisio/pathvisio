@@ -16,6 +16,8 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.CyNode;
+
 import giny.view.GraphView;
 import giny.view.NodeView;
 
@@ -23,13 +25,11 @@ import java.awt.geom.Point2D;
 import java.util.List;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
-
-import cytoscape.CyNode;
 
 /**
  * Class that holds a Cytoscape edge that has a GPML representation, which is stored

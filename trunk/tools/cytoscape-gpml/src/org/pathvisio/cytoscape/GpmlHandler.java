@@ -16,6 +16,14 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.CyEdge;
+import cytoscape.CyNode;
+import cytoscape.Cytoscape;
+import cytoscape.data.CyAttributes;
+import cytoscape.visual.CalculatorCatalog;
+import cytoscape.visual.VisualMappingManager;
+import cytoscape.visual.VisualStyle;
+
 import giny.model.Edge;
 import giny.model.Node;
 import giny.view.EdgeView;
@@ -30,14 +38,6 @@ import org.pathvisio.cytoscape.visualmapping.GpmlVisualStyle;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-
-import cytoscape.CyEdge;
-import cytoscape.CyNode;
-import cytoscape.Cytoscape;
-import cytoscape.data.CyAttributes;
-import cytoscape.visual.CalculatorCatalog;
-import cytoscape.visual.VisualMappingManager;
-import cytoscape.visual.VisualStyle;
 
 /**
  * Class that handles the GPML representation of nodes and edges, stored

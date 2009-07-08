@@ -16,12 +16,15 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.data.CyAttributes;
+
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 
-import cytoscape.data.CyAttributes;
-
-
+/**
+ * Interface for classes that keep track of mapping from 
+ * Cytoscape attributes to GPML properties.
+ */
 public interface AttributeMapper {
 	/**
 	 * Set a default value that will be used when no mapping is available

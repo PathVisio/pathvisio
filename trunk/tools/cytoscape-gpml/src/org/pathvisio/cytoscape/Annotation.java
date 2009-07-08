@@ -16,6 +16,10 @@
 //
 package org.pathvisio.cytoscape;
 
+import ding.view.DGraphView;
+import ding.view.InnerCanvas;
+import ding.view.ViewportChangeListener;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -27,10 +31,10 @@ import javax.swing.JComponent;
 
 import org.pathvisio.model.PathwayElement;
 
-import ding.view.DGraphView;
-import ding.view.InnerCanvas;
-import ding.view.ViewportChangeListener;
-
+/**
+ * Base class for Shape, Label, unconnected Lines, i.e. everything that
+ * can't be represented by nodes and edges
+ */
 public abstract class Annotation extends JComponent implements ViewportChangeListener {
 		PathwayElement pwElm;
 		

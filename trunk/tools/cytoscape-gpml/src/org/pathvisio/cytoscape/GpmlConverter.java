@@ -16,6 +16,14 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.CyEdge;
+import cytoscape.CyNode;
+import cytoscape.Cytoscape;
+import cytoscape.CytoscapeInit;
+import cytoscape.groups.CyGroup;
+import cytoscape.groups.CyGroupManager;
+import cytoscape.view.CyNetworkView;
+
 import giny.view.GraphView;
 
 import java.io.StringReader;
@@ -28,27 +36,23 @@ import java.util.Properties;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 
-import cytoscape.CyEdge;
-import cytoscape.CyNode;
-import cytoscape.Cytoscape;
-import cytoscape.CytoscapeInit;
-import cytoscape.groups.CyGroup;
-import cytoscape.groups.CyGroupManager;
-import cytoscape.view.CyNetworkView;
-
+/**
+ * Converts GPML or fragments of GPML to a network.
+ * Invoked both by direct loading from file, or by clipboard actions.
+ */
 public class GpmlConverter {
-	public static String PROP_LABEL_AS_NODE = "gpml.label.as.node";
+	public static final String PROP_LABEL_AS_NODE = "gpml.label.as.node";
 	
 	List<CyEdge> edges = new ArrayList<CyEdge>();
 	
-	HashMap<GraphIdContainer, CyNode> nodeMap = new HashMap<GraphIdContainer, CyNode>();
-	HashMap<PathwayElement, String[]> edgeMap = new HashMap<PathwayElement, String[]>();
+	Map<GraphIdContainer, CyNode> nodeMap = new HashMap<GraphIdContainer, CyNode>();
+	Map<PathwayElement, String[]> edgeMap = new HashMap<PathwayElement, String[]>();
 
 	GpmlHandler gpmlHandler;
 	Pathway pathway;
@@ -246,9 +250,9 @@ public class GpmlConverter {
 								GpmlHandler.ANCHOR_EDGE_TYPE
 						);
 						edges.add(es);
-						PathwayElement pe_start = pe.copy();
-						pe_start.setEndLineType(null);
-						gpmlHandler.addEdge(es, pe_start);
+						PathwayElement peStart = pe.copy();
+						peStart.setEndLineType(null);
+						gpmlHandler.addEdge(es, peStart);
 						CyEdge ee = Cytoscape.getCyEdge(
 								gpmlHandler.getNode(pe.getGraphId()).getParentIdentifier(),
 								pe.getGraphId() + "end",
@@ -256,9 +260,9 @@ public class GpmlConverter {
 								GpmlHandler.ANCHOR_EDGE_TYPE
 						);
 						edges.add(ee);
-						PathwayElement pe_end = pe.copy();
-						pe_start.setStartLineType(null);
-						gpmlHandler.addEdge(ee, pe_end);
+						PathwayElement peEnd = pe.copy();
+						peStart.setStartLineType(null);
+						gpmlHandler.addEdge(ee, peEnd);
 					}
 				}
 			}
@@ -319,15 +323,15 @@ public class GpmlConverter {
 
 				//Create the cytoscape parts of the group
 				for(int i = 0; i < groupElements.length; i++) {
-					PathwayElement pe_i = groupElements[i];
-					GpmlNetworkElement ne_i = gpmlHandler.getNetworkElement(getNodeId(pe_i));
+					PathwayElement peI = groupElements[i];
+					GpmlNetworkElement neI = gpmlHandler.getNetworkElement(getNodeId(peI));
 					//Only add links to nodes, not to annotations
-					if(ne_i instanceof GpmlNode) {
-						cyGroup.addNode(((GpmlNode)ne_i).getParent());
+					if(neI instanceof GpmlNode) {
+						cyGroup.addNode(((GpmlNode)neI).getParent());
 						edges.add(Cytoscape.getCyEdge(
 								cyGroup.getGroupNode().getIdentifier(), 
 								"inGroup: " + cyGroup.getGroupName(),
-								ne_i.getParentIdentifier(), interaction)
+								neI.getParentIdentifier(), interaction)
 						);
 						
 //						//Add links between all elements of the group

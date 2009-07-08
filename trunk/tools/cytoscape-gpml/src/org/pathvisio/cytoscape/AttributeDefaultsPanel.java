@@ -28,7 +28,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.gui.VisibleProperties;
 import org.pathvisio.gui.swing.propertypanel.TypedProperty;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;

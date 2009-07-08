@@ -16,20 +16,22 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.data.CyAttributes;
+
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.bridgedb.DataSource;
 import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 
-import cytoscape.data.CyAttributes;
-
+/**
+ * Default for mapping cytoscape attributes to GPML properties.
+ */
 public class DefaultAttributeMapper implements AttributeMapper {
 	public static final String CY_COMMENT_SOURCE = "cytoscape-attribute: ";
 	private Map<PropertyType, Object> defaultValues;

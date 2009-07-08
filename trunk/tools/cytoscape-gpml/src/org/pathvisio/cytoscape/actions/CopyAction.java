@@ -16,6 +16,7 @@
 //
 package org.pathvisio.cytoscape.actions;
 
+import cytoscape.util.CytoscapeAction;
 
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -24,8 +25,10 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.cytoscape.GpmlPlugin;
 
-import cytoscape.util.CytoscapeAction;
-
+/**
+ * Copy selected nodes in GPML format, so that it can be
+ * pasted in PathVisio or Cytoscape.
+ */
 public class CopyAction extends CytoscapeAction {
 	GpmlPlugin plugin;
 	

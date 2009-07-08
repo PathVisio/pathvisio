@@ -16,6 +16,7 @@
 //
 package org.pathvisio.cytoscape.actions;
 
+import cytoscape.util.CytoscapeAction;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -28,8 +29,9 @@ import javax.swing.KeyStroke;
 import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.view.swing.PathwayTransferable;
 
-import cytoscape.util.CytoscapeAction;
-
+/**
+ * Paste a GPML fragment and convert it into a network.
+ */
 public class PasteAction extends CytoscapeAction implements FlavorListener {
 	GpmlPlugin importer;
 	

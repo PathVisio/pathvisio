@@ -16,8 +16,9 @@
 //
 package org.pathvisio.cytoscape.wikipathways;
 
-import giny.view.NodeView;
 import cytoscape.Cytoscape;
+
+import giny.view.NodeView;
 
 public class InteractionQuery {
 	private NodeView nodeView;

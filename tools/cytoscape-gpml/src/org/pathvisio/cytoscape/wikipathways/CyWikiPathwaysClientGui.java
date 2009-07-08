@@ -16,11 +16,18 @@
 //
 package org.pathvisio.cytoscape.wikipathways;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import cytoscape.data.webservice.CyWebServiceEvent;
+import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
+import cytoscape.data.webservice.CyWebServiceException;
+import cytoscape.data.webservice.WebServiceClientManager;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,14 +51,10 @@ import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 import org.pathvisio.util.swing.RowWithProperties;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import cytoscape.data.webservice.CyWebServiceEvent;
-import cytoscape.data.webservice.CyWebServiceException;
-import cytoscape.data.webservice.WebServiceClientManager;
-import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
-
+/**
+ * GUI for accessing the WikiPathways webservice,
+ * lets the user query for a list of Pathways 
+ */
 public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 	final CyWikiPathwaysClient client;
 	
@@ -184,6 +187,9 @@ public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 		resultTable.setModel(tableModel);
 	}
 	
+	/**
+	 * Represents a hit, a single row in the query results table.
+	 */
 	class ResultRow implements RowWithProperties<ResultProperty> {
 		WSSearchResult result;
 		
@@ -206,6 +212,6 @@ public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 		}
 	}
 	
-	private static String ACTION_SEARCH = "Search";
-	private static String ORGANISM_ALL = "All organisms";
+	private static final String ACTION_SEARCH = "Search";
+	private static final String ORGANISM_ALL = "All organisms";
 }

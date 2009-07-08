@@ -16,6 +16,8 @@
 //
 package org.pathvisio.cytoscape;
 
+import ding.view.DGraphView;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -31,8 +33,10 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.ArrowShape;
 import org.pathvisio.view.ShapeRegistry;
 
-import ding.view.DGraphView;
-
+/**
+ * Cytoscape rendering of a GPML Line. 
+ * This will only be used for Lines that are not part of the Graph 
+ */
 public class Line extends Annotation {
 	private static final int HEADSPACE = 30;
 	

@@ -16,6 +16,9 @@
 //
 package org.pathvisio.cytoscape.actions;
 
+import cytoscape.Cytoscape;
+import cytoscape.util.CytoscapeAction;
+import cytoscape.view.CytoscapeDesktop;
 
 import java.awt.event.ActionEvent;
 
@@ -26,10 +29,11 @@ import org.pathvisio.cytoscape.AttributeMapperPanel;
 import org.pathvisio.cytoscape.GpmlPlugin;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 
-import cytoscape.Cytoscape;
-import cytoscape.util.CytoscapeAction;
-import cytoscape.view.CytoscapeDesktop;
-
+/**
+ * Action to show AttributeMapperPanel, where
+ * mappings between Cytoscape attributes and GPML Properties can be
+ * configured.
+ */
 public class AttributeMapperAction extends CytoscapeAction {
 	GpmlPlugin plugin;
 	

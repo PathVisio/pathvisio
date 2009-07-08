@@ -18,6 +18,9 @@ package org.pathvisio.cytoscape.wikipathways;
 
 import org.pathvisio.util.swing.PropertyColumn;
 
+/**
+ * Columns for use in the WikiPathways query result table.
+ */
 public enum ResultProperty implements PropertyColumn {
 		NAME("Name"),
 		ORGANISM("Organism"),

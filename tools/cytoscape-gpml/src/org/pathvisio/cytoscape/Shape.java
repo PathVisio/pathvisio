@@ -16,6 +16,8 @@
 //
 package org.pathvisio.cytoscape;
 
+import ding.view.DGraphView;
+import ding.view.ViewportChangeListener;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -29,9 +31,10 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.view.ShapeRegistry;
 
-import ding.view.DGraphView;
-import ding.view.ViewportChangeListener;
-
+/**
+ * Cytoscape rendering of a GPML Shape. 
+ * This is pure graphical annotation, not part of the graph. 
+ */
 public class Shape extends Annotation implements ViewportChangeListener {	
 	
 	public Shape(PathwayElement pwElm, DGraphView view) {

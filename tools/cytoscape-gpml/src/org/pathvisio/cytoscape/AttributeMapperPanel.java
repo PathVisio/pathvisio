@@ -16,12 +16,15 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.data.CyAttributes;
+
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
@@ -31,8 +34,6 @@ import javax.swing.table.AbstractTableModel;
 
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 import org.pathvisio.model.PropertyType;
-
-import cytoscape.data.CyAttributes;
 
 /**
  * Panel to configure attribute to GPML property mappings
@@ -44,7 +45,7 @@ public class AttributeMapperPanel extends JPanel {
 	String[] columnNames = new String[] { "Attribute", "Property" };
 	AttributeMapper mapper;
 	
-	HashMap<String, PropertyType> desc2prop = new HashMap<String, PropertyType>();
+	Map<String, PropertyType> desc2prop = new HashMap<String, PropertyType>();
 	
 	JTable table;
 	AttributeMapperTableModel tableModel;
@@ -75,6 +76,11 @@ public class AttributeMapperPanel extends JPanel {
 		add(new JScrollPane(table), BorderLayout.CENTER);
 	}
 	
+	/**
+	 * 2-Column table model.
+	 * Left column contains Cytoscape attributes, and is not editable
+	 * Right column contains corresponding GPML properties
+	 */
 	class AttributeMapperTableModel extends AbstractTableModel {
 		public int getColumnCount() {
 			return 2;

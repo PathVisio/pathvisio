@@ -16,6 +16,12 @@
 //
 package org.pathvisio.cytoscape;
 
+import cytoscape.data.readers.AbstractGraphReader;
+import cytoscape.layout.CyLayoutAlgorithm;
+import cytoscape.layout.LayoutAdapter;
+import cytoscape.task.TaskMonitor;
+import cytoscape.view.CyNetworkView;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,12 +30,13 @@ import java.net.URLConnection;
 
 import org.pathvisio.model.Pathway;
 
-import cytoscape.data.readers.AbstractGraphReader;
-import cytoscape.layout.CyLayoutAlgorithm;
-import cytoscape.layout.LayoutAdapter;
-import cytoscape.task.TaskMonitor;
-import cytoscape.view.CyNetworkView;
-
+/**
+ * An AbstractGraphReader that uses Pathway.readFromXml to read GPML
+ * and then uses @{link GpmlConverter} to turn it into a real
+ * network with nodes and edges.
+ * <p>
+ * Can handle files and URLs.
+ */
 public class GpmlReader extends AbstractGraphReader {
 	GpmlConverter converter;
 	GpmlHandler gpmlHandler;

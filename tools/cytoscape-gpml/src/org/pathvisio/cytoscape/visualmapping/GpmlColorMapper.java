@@ -16,11 +16,10 @@
 //
 package org.pathvisio.cytoscape.visualmapping;
 
+import cytoscape.visual.mappings.PassThroughMapping;
 
 import java.awt.Color;
 import java.util.Map;
-
-import cytoscape.visual.mappings.PassThroughMapping;
 
 public class GpmlColorMapper extends PassThroughMapping {
 	public GpmlColorMapper(Color defaultColor) {

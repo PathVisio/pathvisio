@@ -16,18 +16,6 @@
 //
 package org.pathvisio.cytoscape.visualmapping;
 
-import java.awt.Color;
-import java.util.HashMap;
-
-import org.pathvisio.cytoscape.AttributeMapper;
-import org.pathvisio.cytoscape.GpmlAnchorNode;
-import org.pathvisio.cytoscape.GpmlHandler;
-import org.pathvisio.cytoscape.GpmlNetworkElement;
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.LineType;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PropertyType;
-
 import cytoscape.visual.ArrowShape;
 import cytoscape.visual.EdgeAppearanceCalculator;
 import cytoscape.visual.NodeAppearance;
@@ -40,6 +28,23 @@ import cytoscape.visual.mappings.DiscreteMapping;
 import cytoscape.visual.mappings.ObjectMapping;
 import cytoscape.visual.mappings.PassThroughMapping;
 
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.pathvisio.cytoscape.AttributeMapper;
+import org.pathvisio.cytoscape.GpmlAnchorNode;
+import org.pathvisio.cytoscape.GpmlHandler;
+import org.pathvisio.cytoscape.GpmlNetworkElement;
+import org.pathvisio.model.LineStyle;
+import org.pathvisio.model.LineType;
+import org.pathvisio.model.ObjectType;
+import org.pathvisio.model.PropertyType;
+
+/**
+ * Defines a @link VisualStyle that renders a GPML network
+ * as it would in Pathway programs.
+ */
 public class GpmlVisualStyle extends VisualStyle {
 	public static final String NAME = "GPML";
 	
@@ -168,10 +173,10 @@ public class GpmlVisualStyle extends VisualStyle {
 		);
 	}
 	
-	private static HashMap<String, ArrowShape> attribute2arrow;
-	private static HashMap<ArrowShape, String> arrow2attribute;
+	private static Map<String, ArrowShape> attribute2arrow;
+	private static Map<ArrowShape, String> arrow2attribute;
 	
-	public static HashMap<String, ArrowShape> getAttributeToArrow() {
+	public static Map<String, ArrowShape> getAttributeToArrow() {
 		if(attribute2arrow == null) {
 			attribute2arrow = new HashMap<String, ArrowShape>();
 			attribute2arrow.put(LineType.LINE.getName(), ArrowShape.NONE);
@@ -194,10 +199,10 @@ public class GpmlVisualStyle extends VisualStyle {
 		return attribute2arrow;
 	}
 	
-	public static HashMap<ArrowShape, String> getArrowToAttribute() {
+	public static Map<ArrowShape, String> getArrowToAttribute() {
 		if(arrow2attribute == null) {
 			arrow2attribute = new HashMap<ArrowShape, String>();
-			HashMap<String, ArrowShape> attribute2arrow = getAttributeToArrow();
+			Map<String, ArrowShape> attribute2arrow = getAttributeToArrow();
 			for(String attribute : attribute2arrow.keySet()) {
 				arrow2attribute.put(attribute2arrow.get(attribute), attribute);
 			}
@@ -206,7 +211,7 @@ public class GpmlVisualStyle extends VisualStyle {
 	}
 	
 	void setArrowMappings(DiscreteMapping mapping) {
-		HashMap<String, ArrowShape> attribute2arrow = getAttributeToArrow();
+		Map<String, ArrowShape> attribute2arrow = getAttributeToArrow();
 		for(String attribute : attribute2arrow.keySet()) {
 			mapping.putMapValue(attribute, attribute2arrow.get(attribute));
 		}

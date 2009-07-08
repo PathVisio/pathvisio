@@ -144,7 +144,7 @@ public class CommonNodeView {
 				// geneIDListPw1.add(pw1Elm.getGeneID());
 
 				// System.out.println("before translation: ");
-				System.out.println(pw1Elm.getXref().toString());
+				//System.out.println(pw1Elm.getXref().toString());
 
 				XrefListPw1.add(pw1Elm.getXref());
 			}
@@ -234,7 +234,7 @@ public class CommonNodeView {
 				// geneIDListPw2.add(pw2Elm.getGeneID());
 				// System.out.println("before translation: ");
 
-				System.out.println(pw2Elm.getXref().toString());
+				//System.out.println(pw2Elm.getXref().toString());
 				XrefListPw2.add(pw2Elm.getXref());
 				
 				

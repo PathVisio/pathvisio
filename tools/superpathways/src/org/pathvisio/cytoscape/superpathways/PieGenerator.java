@@ -13,29 +13,29 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
-public class PieGenerator extends ApplicationFrame {
+public class PieGenerator{ // extends ApplicationFrame {
 
-	Color[] colors = { Color.blue, Color.yellow, Color.green, Color.orange, Color.red, Color.cyan };
+	Color[] colors;
 	
-	public PieGenerator(final String title) {
-		super(title);
-
+	public PieGenerator(Color[] c){                //(final String title) {
+		colors=c;
+	}
+	
+	public void generatePie(int number){
 		// Defining the dataset
 		DefaultPieDataset dataset = new DefaultPieDataset();
-		dataset.setValue("one", 60);
-		dataset.setValue("two", 20);
-		dataset.setValue("three", 10);
-		dataset.setValue("four", 5);
-		dataset.setValue("five", 5);
+		for (int i=0; i<number; i++){
+        	String temp=String.valueOf(i);
+        	dataset.setValue(temp, 10);
+        }
 
 		// Defining the chart
-		JFreeChart chart = ChartFactory.createPieChart("", dataset, false,
-				false, false);
+		JFreeChart chart = ChartFactory.createPieChart("", dataset, false,false, false);
 
 		// Defining the chartPanel
-		final ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new java.awt.Dimension(350, 350));
-		setContentPane(chartPanel);
+		//final ChartPanel chartPanel = new ChartPanel(chart);
+		//chartPanel.setPreferredSize(new java.awt.Dimension(350, 350));
+		//setContentPane(chartPanel);
 
 		// Defining the plot
 		PiePlot plot = (PiePlot) chart.getPlot();

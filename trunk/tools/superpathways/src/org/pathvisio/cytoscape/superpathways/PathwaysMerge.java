@@ -20,6 +20,8 @@ import giny.model.Edge;
 import giny.model.GraphObject;
 import giny.model.Node;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,21 +48,31 @@ public class PathwaysMerge{
 	List<CyNetwork> networks;
 	
 	Map<Xref, Xref> nodePairByTranslation;
-
-	// operation
+	
+	CustomNodeGenerator customNode;
+	
+	Color[] colors;
+	
+	String[] colorPool = { "0, 0, 255", "255, 255, 0", "0, 255, 0", "255 ,0 ,0",  
+			"255, 255, 255", "102, 102, 255", "255, 102, 51", "0, 102, 0", "0, 204, 204" };
 
 	static Map<String, DataSource> mapSysCodeToBioDS;
 	
-	String[] colorPool = { "153,255,51", "255, 51, 255", "51,255,255",
-			"255,255,255", "255,255,53", "102, 102, 255", "255,102,51",
-			"0,102,0", "0, 204, 204" };
-
 	public PathwaysMerge( List<CyNetwork> nets, Map<Xref, Xref> m) {
 //		status = "Merging networks... 0%";
         taskMonitor = null;
         interrupted = false;
 		networks = nets;
 		nodePairByTranslation=m;
+		
+		colors=new Color[colorPool.length];
+		
+		for(int i=0; i<colorPool.length; i++){
+			String temp=colorPool[i];
+			System.out.println(temp);
+			colors[i]=stringToColor(temp);
+		}
+		
 		
 		mapSysCodeToBioDS=new HashMap<String, DataSource>();
 		mapSysCodeToBioDS.put("Entrez Gene", BioDataSource.ENTREZ_GENE);
@@ -196,8 +208,7 @@ public class PathwaysMerge{
 				nodes.add(node);
 			}
 
-			final Iterator<Set<GraphObject>> itNodes = mapNetNode.values()
-					.iterator();
+			final Iterator<Set<GraphObject>> itNodes = mapNetNode.values().iterator();
 			while (itNodes.hasNext()) {
 				final Set<GraphObject> nodes_ori = itNodes.next();
 				final Iterator<GraphObject> itNode = nodes_ori.iterator();
@@ -258,9 +269,52 @@ public class PathwaysMerge{
 
 		// create new network
 		final CyNetwork network = Cytoscape.createNetwork(nodes, edges, title);
+		
+		//here the code is for replace the shared nodes with custom node(multi-color pie)
+		Iterator<Node> itN=nodes.iterator();
+		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
+		while(itN.hasNext()){
+			
+		    Node temp=itN.next();
+		    String colorTemp=(String)nodeAtts.getAttribute(temp.getIdentifier(), "node.fillColor");
+		   
+		    List<Color> colorsOnePie=new ArrayList<Color>();
+		    if(colorTemp!=null){
+		    	if(colorTemp.indexOf(";")!=-1){
+		    		//get individual string representation of Color, and then transfer it to Color type
+		    		int t=0;
+		    		int index=0;
+		    		while(index!=-1){
+		    			index=colorTemp.indexOf(";", 0);
+		    			String s=colorTemp.substring(t, index);
+		    			System.out.println("individual color's string representation: "+s);
+		    			if(s.equals(";")) continue;
+		    			t=index+1;
+		    			colorsOnePie.add(stringToColor(s));
+		    		}
+		    		
+		    		//System.out.println(colorTemp);
+		    		Object[] cOnePie=colorsOnePie.toArray();
+		    		Color[] c=new Color[colorsOnePie.size()];
+		    		for(int k=0; k<colorsOnePie.size();k++){
+		    			c[k]=(Color)cOnePie[k];
+		    		}
+		    		
+		    		
+		    		PieGenerator pie=new PieGenerator(c);
+		    		pie.generatePie(colorsOnePie.size());
+		    		customNode=new CustomNodeGenerator("D:\\JAVA-CODE\\Superpathway\\chart.png", temp);
+		    		customNode.createCustomNode(network);
+		    	}
+		    }
+		
+		}
 
 		updateTaskMonitor("Successfully merged the selected " + networks.size()
 				+ " networks into network " + title, 100);
+
+		cytoscape.view.CyNetworkView networkView = Cytoscape.getNetworkView(title);
+		networkView.redrawGraph(true,true);
 
 		return network;
 	}
@@ -440,17 +494,17 @@ public class PathwaysMerge{
 			//use Map<Xref, Xref> nodePairByTranslation to help determine whether two nodes match
 			Xref x1=new Xref((String)geneID1, mapSysCodeToBioDS.get((String)systemCode1));
 			Xref x2=new Xref((String)geneID2, mapSysCodeToBioDS.get((String)systemCode2));
-			System.out.println("Xref1 in merge: "+x1.toString());
-			System.out.println("Xref2 in merge: "+x2.toString());
+			//System.out.println("Xref1 in merge: "+x1.toString());
+			//System.out.println("Xref2 in merge: "+x2.toString());
 			
 			if(nodePairByTranslation.containsKey(x1)){
 				if(nodePairByTranslation.get(x1).equals(x2)){
-					System.out.println("Matched!");
+					//System.out.println("Matched!");
 					return true;
 				}
 			}else if(nodePairByTranslation.containsKey(x2)){
 				if(nodePairByTranslation.get(x2).equals(x1)){
-					System.out.println("Matched!");
+					//System.out.println("Matched!");
 					return true;
 				}
 			}else{
@@ -538,9 +592,7 @@ public class PathwaysMerge{
 						}
 					}
 				}
-
 				nodeAtts.setAttribute(id, "node.fillColor", color);
-
 			} else {
 				if (setOfNets.size() == 1) {
 					CyNetwork n = itNets.next();
@@ -553,19 +605,22 @@ public class PathwaysMerge{
 
 				} else {
 					System.out.println("for one pie----------------------");
-					Set<String> colorPie = new HashSet<String>();
+					//Set<String> colorPie = new HashSet<String>();
+					String combinedColor="";
 					while (itNets.hasNext()) {
 						CyNetwork n = itNets.next();
 
 						if (networks.contains(n)) {
 							int index = networks.indexOf(n);
-							System.out.println(colorPool[index]);
-							colorPie.add(colorPool[index]);
+							//System.out.println(colorPool[index]);
+							//colorPie.add(colorPool[index]);
+							combinedColor=combinedColor+ colorPool[index]+ ";";
 
 						}
 					}
-
-					nodeAtts.setAttribute(id, "node.fillColor", "255,255,255");
+					
+					System.out.println(combinedColor);
+					nodeAtts.setAttribute(id, "node.fillColor", combinedColor);
 				}
 			}
 
@@ -596,6 +651,22 @@ public class PathwaysMerge{
 		// setAttribute(id, mapNetEdge, edgeAttributeMapping);
 
 		return edge;
+	}
+	
+	public static Color stringToColor(String temp){
+		int index1=temp.indexOf(",");
+		int index2=temp.lastIndexOf(",");
+		
+		String t1=temp.substring(0, index1);
+		String t2=temp.substring(index1+1, index2);
+		String t3=temp.substring(index2+1);
+		System.out.println(t1 +":" +t2+":"+t3);
+		
+		int r=Integer.valueOf(t1.trim());
+		int g=Integer.valueOf(t2.trim());
+		int b=Integer.valueOf(t3.trim());
+		
+		return new Color(r, g, b);
 	}
 
 	

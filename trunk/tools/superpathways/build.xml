@@ -14,7 +14,7 @@
 	<property name="axis.lib.dir" value="${pathvisio.lib.dir}/axis-1_4/lib" />
 	<property name="pathvisio.class.dir" value="class.pathvisio" />
 	<property name="cytoscape.dir" value="D:/Program Files/Cytoscape_v2.6.2" />
-	<property name="cytoscape.lib.dir" value="D:/Program Files/Cytoscape_v2.6.2/lib" />
+	<property name="cytoscape.lib.dir" value="${cytoscape.dir}/lib" />
 	<property name="cytoscape.plugin.dir" value="${cytoscape.dir}/plugins" />
 	<property name="gpml.dir" value="${pathvisio.dir}/tools/cytoscape-gpml" />
 	

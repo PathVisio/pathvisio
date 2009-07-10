@@ -59,7 +59,7 @@ public class CommonNodeView {
 	// static String dbLocation = "C:/Documents and
 	// Settings/xuemin/PathVisio-Data/gene databases/";
 	static String dbLocation = GlobalPreference.getDataDir().toString()
-			+ "\\gene databases\\";
+			+ "/gene databases/";
 	
 	static Map<Xref, Xref> nodePairByTranslation;
 
@@ -164,7 +164,7 @@ public class CommonNodeView {
 		// try {
 
 		SimpleGdb gdb = null;
-		String[] pgdbFileName = dir.list();
+		File[] pgdbFileName = dir.listFiles();
 
 		if (pgdbFileName == null) {
 
@@ -186,23 +186,25 @@ public class CommonNodeView {
 				System.out.println("getSelectedFile() : "
 						+ chooser.getSelectedFile());
 				dir = chooser.getSelectedFile();
-				dbLocation=chooser.getSelectedFile().toString() +"\\";
-				pgdbFileName = dir.list();
+				dbLocation=chooser.getSelectedFile().toString() +"/";
+				pgdbFileName = dir.listFiles();
 			}
 
 		}
 		for (int i = 0; i < pgdbFileName.length; i++) {
 
-			String fileName = pgdbFileName[i];
+			File file = pgdbFileName[i];
+			if(file.isDirectory()) continue; //Skip directories
+			String fileName = file.getName();
 			int index = fileName.indexOf("_");
+			if(index < 0) continue; //Skip this file, not the pgdb naming scheme
 			String speciesOrMetabolite = fileName.substring(0, index);
 			//System.out.println(speciesOrMetabolite);
 			if (speciesOrMetabolite.equals((Object) orgCode)) {
 				System.out.println(dbLocation + fileName);
-				File fGdb = new File(dbLocation + fileName);
 				// System.out.println(speciesOrMetabolite);
 				try {
-					gdb = SimpleGdbFactory.createInstance("" + fGdb,
+					gdb = SimpleGdbFactory.createInstance("" + file,
 							new DataDerby(), 0);
 				} catch (IDMapperException e) {
 					Logger.log.error("Problem while connecting to the Gdb", e);

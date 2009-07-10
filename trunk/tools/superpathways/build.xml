@@ -92,11 +92,13 @@
 			<fileset dir="${lib.dir}" includes="jfreechart-1.0.5.jar"/>
 		    <fileset dir="${lib.dir}" includes="jcommon-1.0.9.jar"/>
 			
+			<!--
 			<fileset dir="${cytoscape.dir}" includes="cytoscape.jar" />
 		    <fileset dir="${cytoscape.lib.dir}" includes="cytoscape-render-stateful.jar" />
 			<fileset dir="${cytoscape.lib.dir}" includes="ding.jar" />
 			<fileset dir="${cytoscape.lib.dir}" includes="giny.jar" />
 			<fileset dir="${cytoscape.lib.dir}" includes="cytoscape-task.jar" />
+			-->
 			
 		</unjar>
 

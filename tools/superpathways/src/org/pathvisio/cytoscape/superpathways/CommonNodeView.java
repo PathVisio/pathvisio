@@ -17,12 +17,14 @@
 
 package org.pathvisio.cytoscape.superpathways;
 
+import java.awt.Color;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -52,43 +54,46 @@ import cytoscape.data.Semantics;
 
 public class CommonNodeView {
 
-	static List<String> selectedPwsNameId;
+	// List<String> selectedPwsNameId;
+	List<String> mSelectedPwsID;;
 
-	static SuperpathwaysClient mClient;
+	SuperpathwaysClient mClient;
 
-	// static String dbLocation = "C:/Documents and
-	// Settings/xuemin/PathVisio-Data/gene databases/";
+	Map<Xref, Xref> nodePairByTranslation;
+
+	List<String> colorPool;
+
 	static String dbLocation = GlobalPreference.getDataDir().toString()
 			+ "/gene databases/";
-	
-	static Map<Xref, Xref> nodePairByTranslation;
 
-	/**
-	 * Create an exporter that uses the given GdbManager to lookup cross
-	 * references for each datanode
-	 */
-
-	public CommonNodeView(List<String> pathwaysNameId, SuperpathwaysClient c) {
-		selectedPwsNameId = pathwaysNameId;
+	public CommonNodeView(List<String> pwId, SuperpathwaysClient c) {
+		mSelectedPwsID = pwId;
 		mClient = c;
-		nodePairByTranslation=new HashMap<Xref, Xref>();
+		nodePairByTranslation = new HashMap<Xref, Xref>();
 
 	}
 
-	public static commonNodePathwayPair findCommonNode(String pw1NameId,
-			String pw2NameId) {
+	public List<String> getColorPool() {
+		return colorPool;
+	}
+
+	public Map<Xref, Xref> getNodePairByTranslation() {
+		return nodePairByTranslation;
+	}
+
+	public commonNodePathwayPair findCommonNode(String pw1ID, String pw2ID) {
 		commonNodePathwayPair cnPwPair = new commonNodePathwayPair();
 
 		int commonNode = 0;
-		// get the id of the first pathway
-		int index1 = pw1NameId.indexOf("(");
-		int index2 = pw1NameId.indexOf(")");
-		String pw1ID = pw1NameId.substring(index1 + 1, index2);
 
-		// get the id of the second pathway
-		index1 = pw2NameId.indexOf("(");
-		index2 = pw2NameId.indexOf(")");
-		String pw2ID = pw2NameId.substring(index1 + 1, index2);
+		/*
+		 * // get the id of the first pathway int index1 =
+		 * pw1NameId.indexOf("("); int index2 = pw1NameId.indexOf(")"); String
+		 * pw1ID = pw1NameId.substring(index1 + 1, index2); // get the id of the
+		 * second pathway index1 = pw2NameId.indexOf("("); index2 =
+		 * pw2NameId.indexOf(")"); String pw2ID = pw2NameId.substring(index1 +
+		 * 1, index2);
+		 */
 
 		// Create a client to the WikiPathways web service
 		WikiPathwaysClient client = mClient.getStub();
@@ -124,13 +129,10 @@ public class CommonNodeView {
 		List<String> XrefListCommonNode = new ArrayList<String>();
 
 		// create the list of Xref for the pathway1: XrefListPw1
-		System.out.println("Xref info of one pathway: " + pw1NameId);
+		System.out.println("Xref info of one pathway: " + pw1ID);
 		for (PathwayElement pw1Elm : pathway1.getDataObjects()) {
 			// Only take elements with type DATANODE (genes, proteins,
 			// metabolites)
-
-			// for figuring out the problem of gpml
-			// System.out.println(pw1Elm.getObjectType());
 
 			if (pw1Elm.getObjectType() == ObjectType.DATANODE) {
 
@@ -139,12 +141,8 @@ public class CommonNodeView {
 				if (!checkString(id) || ds == null) {
 					continue; // Skip empty id/codes
 				}
-
-				// System.out.println(pwElm.getGeneID());
-				// geneIDListPw1.add(pw1Elm.getGeneID());
-
 				// System.out.println("before translation: ");
-				//System.out.println(pw1Elm.getXref().toString());
+				// System.out.println(pw1Elm.getXref().toString());
 
 				XrefListPw1.add(pw1Elm.getXref());
 			}
@@ -164,6 +162,7 @@ public class CommonNodeView {
 		// try {
 
 		SimpleGdb gdb = null;
+		// String[] pgdbFileName = dir.list();
 		File[] pgdbFileName = dir.listFiles();
 
 		if (pgdbFileName == null) {
@@ -175,7 +174,8 @@ public class CommonNodeView {
 
 			JFileChooser chooser = new JFileChooser();
 			chooser.setCurrentDirectory(new java.io.File("."));
-			chooser.setDialogTitle("Choose the direcotry where you've loaded databases...");
+			chooser
+					.setDialogTitle("Choose the direcotry where you've loaded databases...");
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			// disable the "All files" option.
 			chooser.setAcceptAllFileFilterUsed(false);
@@ -186,22 +186,27 @@ public class CommonNodeView {
 				System.out.println("getSelectedFile() : "
 						+ chooser.getSelectedFile());
 				dir = chooser.getSelectedFile();
-				dbLocation=chooser.getSelectedFile().toString() +"/";
+				dbLocation = chooser.getSelectedFile().toString() + "/";
 				pgdbFileName = dir.listFiles();
 			}
 
 		}
 		for (int i = 0; i < pgdbFileName.length; i++) {
 
+			// String fileName = pgdbFileName[i];
 			File file = pgdbFileName[i];
-			if(file.isDirectory()) continue; //Skip directories
+			if (file.isDirectory())
+				continue; // skip directories
 			String fileName = file.getName();
 			int index = fileName.indexOf("_");
-			if(index < 0) continue; //Skip this file, not the pgdb naming scheme
+			if (index < 0)
+				continue; // Skip this file, not the pgdb naming
+			// scheme
 			String speciesOrMetabolite = fileName.substring(0, index);
-			//System.out.println(speciesOrMetabolite);
+			// System.out.println(speciesOrMetabolite);
 			if (speciesOrMetabolite.equals((Object) orgCode)) {
 				System.out.println(dbLocation + fileName);
+				// File fGdb = new File(dbLocation + fileName);
 				// System.out.println(speciesOrMetabolite);
 				try {
 					gdb = SimpleGdbFactory.createInstance("" + file,
@@ -215,13 +220,8 @@ public class CommonNodeView {
 
 		}
 
-		/*if (gdb == null) {
-			System.out
-					.println("Cannot find the corresponding database for the organism of pathway2!");
-		}*/
-
 		// create the list of Xref for the pathway2: XrefListPw2
-		System.out.println("Xref info of the other pathway: " + pw1NameId);
+		System.out.println("Xref info of the other pathway: " + pw2ID);
 		for (PathwayElement pw2Elm : pathway2.getDataObjects()) {
 			if (pw2Elm.getObjectType() == ObjectType.DATANODE) {
 
@@ -229,25 +229,24 @@ public class CommonNodeView {
 
 				String id = pw2Elm.getGeneID();
 				DataSource ds = pw2Elm.getDataSource();
-				if (!checkString(id) || ds == null) {
-					continue; // Skip empty id/codes
-				}
+				if (!checkString(id) || ds == null)
+					continue; // Skip empty
+				// id/codes
 
-				// geneIDListPw2.add(pw2Elm.getGeneID());
-				// System.out.println("before translation: ");
-
-				//System.out.println(pw2Elm.getXref().toString());
+				// System.out.println(pw2Elm.getXref().toString());
 				XrefListPw2.add(pw2Elm.getXref());
-				
-				
+
 				for (int k = 0; k < XrefListPw1.size(); k++) {
 					try {
 						List xrefs2 = gdb.getCrossRefs(pw2Elm.getXref());
 						if (xrefs2.contains(XrefListPw1.get(k))) {
 							isMapped = true;
-							
-							//this map is for later use--when merging pathways
-							nodePairByTranslation.put(pw2Elm.getXref(), XrefListPw1.get(k));							
+
+							System.out.println(pw2Elm.getXref().toString()
+									+ "======" + XrefListPw1.get(k).toString());
+							// this map is for later use--when merging pathways
+							nodePairByTranslation.put(pw2Elm.getXref(),
+									XrefListPw1.get(k));
 						}
 					} catch (IDMapperException e) {
 						Logger.log
@@ -271,11 +270,6 @@ public class CommonNodeView {
 			}
 		}
 
-		/*
-		 * } catch (NullPointerException e) { Logger.log.error( "Problem while
-		 * null Pointer of pdgbFileName empty", e); }
-		 */
-
 		// the following code is for printing out the common nodes returned by
 		// the code
 		System.out.println("The common node: ");
@@ -283,43 +277,49 @@ public class CommonNodeView {
 			System.out.println(XrefListCommonNode.get(k));
 		}
 
-		cnPwPair.pathway1NameID = pw1NameId;
-		cnPwPair.pathway2NameID = pw2NameId;
+		cnPwPair.pathway1NameID = pw1ID;
+		cnPwPair.pathway2NameID = pw2ID;
 		cnPwPair.commonNodeNumber = commonNode;
 		cnPwPair.geneIDListOfCommonNode = XrefListCommonNode;
 		return cnPwPair;
 	}
 
-	public static List<commonNodePathwayPair> findCommonNodeForPathwaysGroup() {
+	public List<commonNodePathwayPair> findCommonNodeForPathwaysGroup() {
 		List<commonNodePathwayPair> commonNodeInfoPwGroup = new ArrayList<commonNodePathwayPair>();
 
 		System.out.println("For Databases: " + dbLocation);
 
-		Object[] arrayOfSelectedPwsNameId = selectedPwsNameId.toArray();
-		int len = arrayOfSelectedPwsNameId.length;
+		Object[] arrayOfSelectedPwsId = mSelectedPwsID.toArray();
+		int len = arrayOfSelectedPwsId.length;
 
 		for (int i = 0; i < len; i++) {
 			for (int j = i + 1; j < len; j++) {
 				commonNodeInfoPwGroup.add(findCommonNode(
-						(String) arrayOfSelectedPwsNameId[i],
-						(String) arrayOfSelectedPwsNameId[j]));
+						(String) arrayOfSelectedPwsId[i],
+						(String) arrayOfSelectedPwsId[j]));
 			}
 		}
 
 		return commonNodeInfoPwGroup;
 	}
 
-	public static void drawCommonNodeView() {
+	public List<String> drawCommonNodeView() {
 
-		String[] colorPool = { "153,255,51", "255, 51, 255", "51,255,255",
-				"255,255,255", "255,255,153", "102, 102, 255", "255,102,51",
-				"255,255,0", "0,102,0", "0, 204, 204" };
+		/*
+		 * String[] colorPool = { "0,255,0", "80,50,80", "51,255,255",
+		 * "255,255,0", "0, 0, 255", "255, 0, 255", "255,0, 0", "0,102,0", "0,
+		 * 204, 204" };
+		 */
+
+		colorPool = new ArrayList<String>();
+
 		String[] shapePool = { "Diamond", "Hexagon", "Parallelogram",
 				"Round Rectange", "Rectangle", "Ellipse", "Triangle", "Octagon" };
 
 		List<commonNodePathwayPair> cnInfoPwGroup = findCommonNodeForPathwaysGroup();
 
-		CyNetwork cyNetwork = Cytoscape.createNetwork("Common Node View", false);
+		CyNetwork cyNetwork = Cytoscape
+				.createNetwork("Common Node View", false);
 
 		/*
 		 * String[] groupPwsNameID=(String [])selectedPwsNameId.toArray();
@@ -328,10 +328,9 @@ public class CommonNodeView {
 		 * cyNetwork.addNode(groupPwsIcons[i]); }
 		 */
 
-		CyNode[] groupPwsIcons = new CyNode[selectedPwsNameId.size()];
-		for (int i = 0; i < selectedPwsNameId.size(); i++) {
-			groupPwsIcons[i] = Cytoscape.getCyNode(selectedPwsNameId.get(i),
-					true);
+		CyNode[] groupPwsIcons = new CyNode[mSelectedPwsID.size()];
+		for (int i = 0; i < mSelectedPwsID.size(); i++) {
+			groupPwsIcons[i] = Cytoscape.getCyNode(mSelectedPwsID.get(i), true);
 			cyNetwork.addNode(groupPwsIcons[i]);
 		}
 
@@ -354,11 +353,37 @@ public class CommonNodeView {
 		// Where nodeID was the String id of the node in question, shapeNames is
 		// a string representing the desired shape: "Triangle", etc.
 		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
-		for (int i = 0; i < selectedPwsNameId.size(); i++) {
+		
+		int numberOfSelectedPws = mSelectedPwsID.size();
+		double division1 = 360 / numberOfSelectedPws;
+		double division2 = 50 / numberOfSelectedPws;
+		
+		for (int i = 0; i < mSelectedPwsID.size(); i++) {
+
+			// String temp=getRandomColorInString();
+			
+			//use hsv and convert it to rgb
+			double h2=i*division1;
+			double s2=i*division2;
+			double v2=i*division2;
+			
+			int h=Double.valueOf(h2).intValue();
+			int s=Double.valueOf(s2).intValue();
+			int v=Double.valueOf(v2).intValue();
+			System.out.println("value of h "+ h);
+			RGB tempRGB=hsvToRgb(h, 100, 100);
+			String temp=String.valueOf(Double.valueOf(tempRGB.r).intValue())+", "+String.valueOf(Double.valueOf(tempRGB.g).intValue())+", "+String.valueOf(Double.valueOf(tempRGB.b).intValue());
+			System.out.println("after conversion hsv to rgb"+ temp);
+			
 			nodeAtts.setAttribute(groupPwsIcons[i].getIdentifier(),
-					"node.fillColor", colorPool[i]);
+					"node.fillColor", temp);
+			
+			
+			colorPool.add(temp);
 			nodeAtts.setAttribute(groupPwsIcons[i].getIdentifier(),
-					"node.shape", shapePool[i]); // "Triangle");
+					"node.shape", shapePool[i % shapePool.length]);
+			// re-use shapes from the shapePool when the number of
+			// selected Pws is larger than 8
 		}
 
 		Cytoscape.getCurrentNetworkView().redrawGraph(false, true);
@@ -372,18 +397,97 @@ public class CommonNodeView {
 
 		// display the common node view
 		Cytoscape.createNetworkView(cyNetwork, "Common Node View");
-
+		return colorPool;
 	}
 
 	private static boolean checkString(String string) {
 		return string != null && string.length() > 0;
 	}
 
-	public static boolean checkCommonNodeByIdMapping(List<String> XrefListPws,
-			String onePathwayXref) {
-		boolean result = false;
+	/*
+	 * public static Color getRandomColor() { Random numGen = new Random();
+	 * return new Color(numGen.nextInt(256), numGen.nextInt(256),
+	 * numGen.nextInt(256)); }
+	 */
+
+	public static String getRandomColorInString() {
+		Random numGen = new Random();
+		return new String(numGen.nextInt(256) + ", " + numGen.nextInt(256)
+				+ ", " + numGen.nextInt(256));
+	}
+
+	public static RGB hsvToRgb(int h, int s, int v) {
+		RGB result = new RGB();
+		int i;
+		double f, p, q, t;
+
+		// Make sure our arguments stay in-range
+		h = Math.max(0, Math.min(360, h));
+		s = Math.max(0, Math.min(100, s));
+		v = Math.max(0, Math.min(100, v));
+
+		// We accept saturation and value arguments from 0 to 100 because that's
+		// how Photoshop represents those values. Internally, however, the
+		// saturation and value are calculated from a range of 0 to 1. We make
+		// That conversion here.
+		double s2 = (double)s / 100;
+		double v2 = (double)v / 100;
+
+		if (s2 == 0) {
+			// Achromatic (grey)
+			result.r = Math.round(v2 * 255);
+			result.g = Math.round(v2 * 255);
+			result.b = Math.round(v2 * 255);
+			return result;
+		}
+
+		double h2 = (double)h / 60; // sector 0 to 5
+		double i2 = Math.floor(h2);
+		i = Double.valueOf(i2).intValue();
+		f = h2 - i; // factorial part of h
+		p = v2 * (1 - s2);
+		q = v2 * (1 - s2 * f);
+		t = v2 * (1 - s2 * (1 - f));
+
+		switch (i) {
+
+		case 0:
+			result.r = v2;
+			result.g = t;
+			result.b = p;
+			break;
+		case 1:
+			result.r = q;
+			result.g = v2;
+			result.b = p;
+			break;
+		case 2:
+			result.r = p;
+			result.g = v2;
+			result.b = t;
+			break;
+		case 3:
+			result.r = p;
+			result.g = q;
+			result.b = v2;
+			break;
+		case 4:
+			result.r = t;
+			result.g = p;
+			result.b = v2;
+			break;
+		default: // case 5:
+			result.r = v2;
+			result.g = p;
+			result.b = q;
+		}
+
+		result.r = Math.round(result.r * 255);
+		result.g = Math.round(result.g * 255);
+		result.b = Math.round(result.b * 255);
 
 		return result;
+
 	}
 
 	public static class commonNodePathwayPair {
@@ -394,5 +498,13 @@ public class CommonNodeView {
 		public int commonNodeNumber;
 
 		public List<String> geneIDListOfCommonNode = null;
+	}
+
+	public static class RGB {
+		public double r;
+
+		public double g;
+
+		public double b;
 	}
 }

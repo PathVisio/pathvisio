@@ -65,27 +65,24 @@ import cytoscape.view.CyNetworkView;
 //public class SuperpathwaysGui extends JFrame implements ActionListener{ 
 public class SuperpathwaysGui extends JPanel { 
 
-	private static String ACTION_SEARCH = "Search";
+	//private static String ACTION_SEARCH = "Search";
 
 	private static String ORGANISM_ALL = "All organisms";
 
 	final SuperpathwaysClient mClient;
-
-	//List<ResultRow> mSelectedPwResultRow = new ArrayList<ResultRow>();
 
 	ResultRow mSelectedInHelpPanel;
 
 	List<String> mClickedPathwayNameID = new ArrayList<String>();
 
 	String[] mSelectedPathwayName = new String[20];
+	
+	//this mSelectedPathwaysID is used for pass the reference of Pws to the method in CommonNodeView class
+	//use the identifier directly, not the name/identifier combination.
+	List<String> mSelectedPathwaysID=new ArrayList<String>();
+	//String[] mSelectedPathwaysID = new String[20];
 
 	String mSelectedPwInHelpPanel = "not defined";
-
-	//private List<String> mAvailablePathwaysNameIDList = new ArrayList<String>();
-
-	//private List<ResultRow> mAvailablePathwaysList = new ArrayList<ResultRow>();
-
-	// private List<String> mCandidatePwList = new ArrayList<String>();
 
 	private Map<String, WSSearchResult[]> mNodeIdToPwsSharingNode = new HashMap<String, WSSearchResult[]>();
 
@@ -99,14 +96,12 @@ public class SuperpathwaysGui extends JPanel {
 	
 	PathwaysMerge pMerge;
 	
-	List<String> selectedPwsNameId;
+	//List<String> selectedPwsNameId;
 
 	public SuperpathwaysGui(SuperpathwaysClient c) {
-		// frame = this;
-		// this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-
 		mClient = c;
-
+		
+		
 		initComponents();
 		
 		cnViewObject=null;
@@ -723,19 +718,6 @@ public class SuperpathwaysGui extends JPanel {
 
 		}
 
-		/*
-		 * candidatePathwaysSharingNodesTable.addMouseListener(new
-		 * java.awt.event.MouseAdapter() { public void
-		 * mouseClicked(java.awt.event.MouseEvent e) { if (e.getClickCount() ==
-		 * 1) { int row = candidatePathwaysSharingNodesTable.getSelectedRow();
-		 * mSelectedInHelpPanel = tableModel.getRow(row); mSelectedPwInHelpPanel =
-		 * mSelectedInHelpPanel .getProperty(ResultProperty.NAME) + "(" +
-		 * mSelectedInHelpPanel.getProperty(ResultProperty.ID) + ")";
-		 * 
-		 * System.out.println(mSelectedPwInHelpPanel); //
-		 * openNetwork(mSelected); } } });
-		 */
-
 		org.jdesktop.layout.GroupLayout helpPanelLayout = new org.jdesktop.layout.GroupLayout(
 				helpPanel);
 		helpPanel.setLayout(helpPanelLayout);
@@ -973,7 +955,8 @@ public class SuperpathwaysGui extends JPanel {
 					+ t.getProperty(ResultProperty.ID) + ")";
 
 			mClickedPathwayNameID.add(temp);
-			//mSelectedPwResultRow.add(t);
+			
+			
 		}
 		for (int i = 0; i < mClickedPathwayNameID.size(); i++) {
 			System.out.println(mClickedPathwayNameID.get(i));
@@ -985,10 +968,6 @@ public class SuperpathwaysGui extends JPanel {
 				if (availablePathwaysListModel.getSize() > 0) {
 					rightButton.setEnabled(true);
 				}
-				//mAvailablePathwaysNameIDList.add(mClickedPathwayNameID.get(i));
-				//mAvailablePathwaysList.add(mSelected[i]);
-				
-				
 				
 				anchorPathwayComboBoxModel.addElement(mClickedPathwayNameID.get(i));
 				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
@@ -1022,6 +1001,13 @@ public class SuperpathwaysGui extends JPanel {
 				selectedPathwaysListModel
 						.addElement((Object) mSelectedPathwayName[i]);
 				selectedPathwaysList.setModel(selectedPathwaysListModel);
+				
+                //add the pathways IDs to the list mSelectedPathwaysID
+				int index1 = mSelectedPathwayName[i].lastIndexOf("(");
+				int index2 = mSelectedPathwayName[i].lastIndexOf(")");
+				String pwID = mSelectedPathwayName[i].substring(index1 + 1, index2);
+                mSelectedPathwaysID.add(pwID);
+                
 				if (selectedPathwaysListModel.getSize() > 0) {
 					leftButton.setEnabled(true);
 				}
@@ -1033,23 +1019,13 @@ public class SuperpathwaysGui extends JPanel {
 
 			// removed the selected item in the availabe pathways list
 			availablePathwaysListModel.removeElement(mSelectedPathwayName[i]);
-
-			// mAvailablePathwaysNameIDList.remove(mSelectedPathwayName[i]);
-			// anchorPathwayComboBox.setModel(new
-			// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
 		}
 
 		int size = availablePathwaysListModel.getSize();
 		if (size == 0) { // No pathway is left, disable rightButton.
 			rightButton.setEnabled(false);
 
-		} /*
-			 * else { // Select an index. if (index == size) { // removed item
-			 * in last position index--; }
-			 * 
-			 * availablePathwaysList.setSelectedIndex(index);
-			 * availablePathwaysList.ensureIndexIsVisible(index); }
-			 */
+		} 
 
 	}
 
@@ -1066,6 +1042,8 @@ public class SuperpathwaysGui extends JPanel {
 				availablePathwaysListModel
 						.addElement((Object) mSelectedPathwayName[i]);
 				availablePathwaysList.setModel(availablePathwaysListModel);
+				
+                
 				if (availablePathwaysListModel.getSize() > 0) {
 					rightButton.setEnabled(true);
 				}
@@ -1079,10 +1057,12 @@ public class SuperpathwaysGui extends JPanel {
 			// removed the selected item in the selected pathways list
 
 			selectedPathwaysListModel.removeElement(mSelectedPathwayName[i]);
+			
+			int index1 = mSelectedPathwayName[i].lastIndexOf("(");
+			int index2 = mSelectedPathwayName[i].lastIndexOf(")");
+			String pwID = mSelectedPathwayName[i].substring(index1 + 1, index2);
+            mSelectedPathwaysID.remove(pwID);
 
-			// mAvailablePathwaysNameIDList.add(mSelectedPathwayName[i]);
-			// anchorPathwayComboBox.setModel(new
-			// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
 		}
 		int size = selectedPathwaysListModel.getSize();
 
@@ -1102,17 +1082,23 @@ public class SuperpathwaysGui extends JPanel {
 		selectedPathwaysListModel.clear();
 		selectedPathwaysList.setModel(selectedPathwaysListModel);
 		anchorPathwayComboBox.setModel(new DefaultComboBoxModel());
+		mSelectedPathwaysID.clear();
 
 	}
 
 	private void CommonNodeViewBtnActionPerformed(java.awt.event.ActionEvent evt) {
-		Object[] selectedPwNameId = selectedPathwaysListModel.toArray();
+		
+		System.out.println("Display the selected pws' id:");
+		for(int k=0; k<mSelectedPathwaysID.size();k++){
+			System.out.println(mSelectedPathwaysID.get(k));
+		}
+		
+		/*Object[] selectedPwNameId = selectedPathwaysListModel.toArray();
 		selectedPwsNameId = new ArrayList<String>();
 		for (int i = 0; i < selectedPwNameId.length; i++) {
 			selectedPwsNameId.add((String) selectedPwNameId[i]);
-		}
-		
-
+		}*/
+	
 		commonNodeViewTask task = new commonNodeViewTask(mClient);
 		JTaskConfig config = new JTaskConfig();
 		config.displayCancelButton(true);
@@ -1155,10 +1141,6 @@ public class SuperpathwaysGui extends JPanel {
 
 				// removed the selected item in the selected pathways
 				// list--later decided not to remove the selected rows
-
-				// mAvailablePathwaysNameIDList.add(pwNameId);
-				// anchorPathwayComboBox.setModel(new
-				// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
 
 				anchorPathwayComboBoxModel.addElement((Object) pwNameId);
 				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
@@ -1318,11 +1300,11 @@ public class SuperpathwaysGui extends JPanel {
 	private void MergeBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		 //SimpleCaseMergeTest test=new SimpleCaseMergeTest();
 		
-		Object[] selectedPwNameId = selectedPathwaysListModel.toArray();
+		/*Object[] selectedPwNameId = selectedPathwaysListModel.toArray();
 		selectedPwsNameId = new ArrayList<String>();
 		for (int i = 0; i < selectedPwNameId.length; i++) {
 			selectedPwsNameId.add((String) selectedPwNameId[i]);
-		}
+		}*/
 		
 		WikiPathwaysClient client = mClient.getStub();
 		SuperpathwaysPlugin spPlugin = SuperpathwaysPlugin.getInstance();
@@ -1618,8 +1600,6 @@ public class SuperpathwaysGui extends JPanel {
 
 							percentComplete = (int) (((double) t / mNoGeneNode) * 98);
 
-							// System.out.println(pwElm.getGeneID());
-							// geneIDList.add(pwElm.getGeneID());
 
 							//System.out.println(pwElm.getXref().toString());
 							geneIDList.add(pwElm.getXref().toString());
@@ -1728,25 +1708,18 @@ public class SuperpathwaysGui extends JPanel {
 			client=b;
 		}
 
-		/**
-		 * Run the Task.
-		 */
 		public void run() {
-			
-
 			try {
-				
-				cnViewObject = new CommonNodeView(selectedPwsNameId, client);
-				CommonNodeView.drawCommonNodeView();
+				cnViewObject = new CommonNodeView(mSelectedPathwaysID, client);
+				cnViewObject.drawCommonNodeView();
 				
 				//the following code is for printing out the matched node pair by translation
 				System.out.println("printing out the matched node pair by translation");
-				Set<Xref> s=CommonNodeView.nodePairByTranslation.keySet();
+				Set<Xref> s=cnViewObject.getNodePairByTranslation().keySet();
 				Iterator<Xref> it=s.iterator();
 				while(it.hasNext()){
 					Xref x1=it.next();
-					Xref x2=CommonNodeView.nodePairByTranslation.get(x1);
-					
+					Xref x2=cnViewObject.getNodePairByTranslation().get(x1);				
 					System.out.println(x1.toString() + "======" + x2.toString());
 				}
 				
@@ -1758,7 +1731,6 @@ public class SuperpathwaysGui extends JPanel {
 			}
 		}
 	
-
 	public void halt() {
 	}
 
@@ -1772,7 +1744,6 @@ public class SuperpathwaysGui extends JPanel {
 	}
 
 }
-	
 	
 	class MergeTask implements Task {
 	    
@@ -1797,11 +1768,15 @@ public class SuperpathwaysGui extends JPanel {
 	    }
 	    public void run() {
 
-	    	if (cnViewObject==null){
-	    		//CommonNodeView(List<String> pathwaysNameId, SuperpathwaysClient c)
-	    		cnViewObject = new CommonNodeView(selectedPwsNameId, mClient);
-	    		CommonNodeView.findCommonNodeForPathwaysGroup();
-	    	}
+	    	//if (cnViewObject==null){
+	    		//here we need to re-run the CommonNodeView to get the correct NodePairByTranslation, and colorPool
+	    		cnViewObject = new CommonNodeView(mSelectedPathwaysID, mClient);
+	    		//here we call the method drawCommonNodeView(), because we want to make the correspondance of the color between the common node view and the merged network
+	    		cnViewObject.drawCommonNodeView();
+	    	//}
+	    	
+	    	    	
+	    	
 	    	WSPathway wsPathway = new WSPathway();
 			Pathway pathway = new Pathway();
 			List<CyNetwork> listOfNetworks=new ArrayList<CyNetwork>();
@@ -1831,12 +1806,16 @@ public class SuperpathwaysGui extends JPanel {
 				CyNetwork net=spPlugin.load(pathway, true); 
 				listOfNetworks.add(net);
 			}
-			
-			pMerge=new PathwaysMerge(listOfNetworks, CommonNodeView.nodePairByTranslation);
+			String[] temp=new String[cnViewObject.getColorPool().size()];
+			Object[] colors=cnViewObject.getColorPool().toArray();
+			for(int s=0; s<temp.length; s++ ){
+				temp[s]=(String)colors[s];
+			}
+			pMerge=new PathwaysMerge(listOfNetworks, cnViewObject.getNodePairByTranslation(), temp);
 			
 	        try {  
 	        	pMerge.setTaskMonitor(monitor);
-	            CyNetwork mergedNetwork = pMerge.mergeNetwork("Merged Network", CommonNodeView.nodePairByTranslation); 
+	            CyNetwork mergedNetwork = pMerge.mergeNetwork("Merged Network", cnViewObject.getNodePairByTranslation()); 
 	            CyNetworkView view = Cytoscape.createNetworkView(mergedNetwork);
 
 	        } catch(Exception e) {
@@ -1845,23 +1824,11 @@ public class SuperpathwaysGui extends JPanel {
 	        }
 	        
 	    }
-
-	    /**
-	     * Halts the Task: Not Currently Implemented.
-	     */
-	    //@Override
 	    public void halt() {
 	            cancelled = true;
 	            pMerge.interrupt();            
 	    }
 
-	    /**
-	     * Sets the Task Monitor.
-	     *
-	     * @param taskMonitor
-	     *            TaskMonitor Object.
-	     */
-	    //@Override
 	    public void setTaskMonitor(TaskMonitor taskMonitor) throws IllegalThreadStateException {
 	            this.monitor = taskMonitor;
 	    }

@@ -33,6 +33,7 @@ import java.util.Vector;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
+import org.pathvisio.preferences.GlobalPreference;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
@@ -51,27 +52,31 @@ public class PathwaysMerge{
 	
 	CustomNodeGenerator customNode;
 	
-	Color[] colors;
+	String[] colorPool;
 	
-	String[] colorPool = { "0, 0, 255", "255, 255, 0", "0, 255, 0", "255 ,0 ,0",  
-			"255, 255, 255", "102, 102, 255", "255, 102, 51", "0, 102, 0", "0, 204, 204" };
-
+	static String imageLocation = GlobalPreference.getApplicationDir() .toString()+ "/" ;
+	
+	/*String[] colorPool = { "0,255,0", "80,50,80", "51,255,255",
+			"255,255,0", "0, 0, 255", "255, 0, 255", "255,0, 0",
+			 "0,102,0", "0, 204, 204" };*/
+	
 	static Map<String, DataSource> mapSysCodeToBioDS;
 	
-	public PathwaysMerge( List<CyNetwork> nets, Map<Xref, Xref> m) {
+	public PathwaysMerge( List<CyNetwork> nets, Map<Xref, Xref> m, String[] c) {
 //		status = "Merging networks... 0%";
         taskMonitor = null;
         interrupted = false;
 		networks = nets;
 		nodePairByTranslation=m;
+		colorPool=c;
 		
-		colors=new Color[colorPool.length];
+		/*colors=new Color[colorPool.length];
 		
 		for(int i=0; i<colorPool.length; i++){
 			String temp=colorPool[i];
 			System.out.println(temp);
 			colors[i]=stringToColor(temp);
-		}
+		}*/
 		
 		
 		mapSysCodeToBioDS=new HashMap<String, DataSource>();
@@ -268,7 +273,7 @@ public class PathwaysMerge{
 		//updateTaskMonitor("Merging edges completed", 100);
 
 		// create new network
-		final CyNetwork network = Cytoscape.createNetwork(nodes, edges, title);
+		final CyNetwork network = Cytoscape.createNetwork(nodes, edges, title, null, false);
 		
 		//here the code is for replace the shared nodes with custom node(multi-color pie)
 		Iterator<Node> itN=nodes.iterator();
@@ -283,14 +288,15 @@ public class PathwaysMerge{
 		    	if(colorTemp.indexOf(";")!=-1){
 		    		//get individual string representation of Color, and then transfer it to Color type
 		    		int t=0;
-		    		int index=0;
+		    		int index=colorTemp.indexOf(";", t);
 		    		while(index!=-1){
-		    			index=colorTemp.indexOf(";", 0);
+		    			
 		    			String s=colorTemp.substring(t, index);
-		    			System.out.println("individual color's string representation: "+s);
+		    			//System.out.println("individual color's string representation: "+s);
 		    			if(s.equals(";")) continue;
 		    			t=index+1;
 		    			colorsOnePie.add(stringToColor(s));
+		    			index=colorTemp.indexOf(";", t);
 		    		}
 		    		
 		    		//System.out.println(colorTemp);
@@ -303,7 +309,7 @@ public class PathwaysMerge{
 		    		
 		    		PieGenerator pie=new PieGenerator(c);
 		    		pie.generatePie(colorsOnePie.size());
-		    		customNode=new CustomNodeGenerator("D:\\JAVA-CODE\\Superpathway\\chart.png", temp);
+		    		customNode=new CustomNodeGenerator(imageLocation+"chart.png", temp);
 		    		customNode.createCustomNode(network);
 		    	}
 		    }
@@ -483,37 +489,34 @@ public class PathwaysMerge{
 				|| systemCode1.equals("")) {
 			return false;
 		} else {
-			/*if (geneID1.equals(geneID2) && systemCode1.equals(systemCode2)) {
+			if (geneID1.equals(geneID2) && systemCode1.equals(systemCode2)) {
 				return true;
 			} else {
-				// Xref ref1 = new Xref((String)geneID1,BioDataSource.ENSEMBL_HUMAN );
-				return false;
 
-			}*/
-			
-			//use Map<Xref, Xref> nodePairByTranslation to help determine whether two nodes match
-			Xref x1=new Xref((String)geneID1, mapSysCodeToBioDS.get((String)systemCode1));
-			Xref x2=new Xref((String)geneID2, mapSysCodeToBioDS.get((String)systemCode2));
-			//System.out.println("Xref1 in merge: "+x1.toString());
-			//System.out.println("Xref2 in merge: "+x2.toString());
-			
-			if(nodePairByTranslation.containsKey(x1)){
-				if(nodePairByTranslation.get(x1).equals(x2)){
-					//System.out.println("Matched!");
-					return true;
+				// use Map<Xref, Xref> nodePairByTranslation to help determine
+				// whether two nodes match
+				Xref x1 = new Xref((String) geneID1, mapSysCodeToBioDS
+						.get((String) systemCode1));
+				Xref x2 = new Xref((String) geneID2, mapSysCodeToBioDS
+						.get((String) systemCode2));
+				// System.out.println("Xref1 in merge: "+x1.toString());
+				// System.out.println("Xref2 in merge: "+x2.toString());
+
+				if (nodePairByTranslation.containsKey(x1)) {
+					if (nodePairByTranslation.get(x1).equals(x2)) {
+						// System.out.println("Matched!");
+						return true;
+					}
+				} else if (nodePairByTranslation.containsKey(x2)) {
+					if (nodePairByTranslation.get(x2).equals(x1)) {
+						// System.out.println("Matched!");
+						return true;
+					}
+				} else {
+					return false;
 				}
-			}else if(nodePairByTranslation.containsKey(x2)){
-				if(nodePairByTranslation.get(x2).equals(x1)){
-					//System.out.println("Matched!");
-					return true;
-				}
-			}else{
 				return false;
 			}
-				
-			
-			
-			return false;
 			
 		}
 
@@ -525,8 +528,7 @@ public class PathwaysMerge{
 			return null;
 		}
 
-		final Iterator<Set<GraphObject>> itNodes = mapNetNode.values()
-				.iterator();
+		final Iterator<Set<GraphObject>> itNodes = mapNetNode.values().iterator();
 
 		Set<GraphObject> nodes = new HashSet<GraphObject>();
 		// 'nodes' will contains all the matched nodes
@@ -538,25 +540,26 @@ public class PathwaysMerge{
 		String id = new String(itNode.next().getIdentifier());
 
 		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
-		// retain the original node's ID
-		// String nodeID = (String) nodeAtts.getAttribute(id, "ID");
-		// System.out.println(nodeID);
-
 		String gpmlType = nodeAtts.getAttribute(id, "gpml-type").toString();
 
 		if ((!gpmlType.equals("1")) && (!gpmlType.equals("7"))) {
 			return null;
 		} else {
 
-			// String XrefOfOneNode=(String)nodeAtts.getAttribute(id, "Xref");
-
 			if (nodes.size() > 1) { // if more than 1 nodes to be merged, assign
 				// the id as the combination of all identifiers
+				
+				//System.out.println("there are several nodes matched: ");
+				//System.out.print(id);
+				
 				while (itNode.hasNext()) {
 					final Node node = (Node) itNode.next();
+					//System.out.print("+"+node.getIdentifier());
 					id += "_" + node.getIdentifier();
 				}
 
+				//System.out.println();
+				
 				// if node with this id exist, get new one
 				String appendix = "";
 				int app = 0;
@@ -587,11 +590,15 @@ public class PathwaysMerge{
 						if (networks.contains(n)) {
 							int index = networks.indexOf(n);
 							// System.out.println(index + "");
+							
 							color = colorPool[index];
+							
+							nodeAtts.setAttribute(id, "Source Pathway", networks.get(index).getTitle());
 							break;
 						}
 					}
 				}
+				
 				nodeAtts.setAttribute(id, "node.fillColor", color);
 			} else {
 				if (setOfNets.size() == 1) {
@@ -601,17 +608,20 @@ public class PathwaysMerge{
 						// System.out.println(index + "");
 						color = colorPool[index];
 						nodeAtts.setAttribute(id, "node.fillColor", color);
+						nodeAtts.setAttribute(id, "Source Pathway", networks.get(index).getTitle());
 					}
 
 				} else {
-					System.out.println("for one pie----------------------");
+					//System.out.println("for one pie----------------------");
 					//Set<String> colorPie = new HashSet<String>();
 					String combinedColor="";
+					String sourcePws="";
 					while (itNets.hasNext()) {
 						CyNetwork n = itNets.next();
 
 						if (networks.contains(n)) {
 							int index = networks.indexOf(n);
+							sourcePws=sourcePws+networks.get(index).getTitle()+", ";
 							//System.out.println(colorPool[index]);
 							//colorPie.add(colorPool[index]);
 							combinedColor=combinedColor+ colorPool[index]+ ";";
@@ -619,7 +629,9 @@ public class PathwaysMerge{
 						}
 					}
 					
-					System.out.println(combinedColor);
+					//System.out.println(combinedColor);
+					nodeAtts.setAttribute(id, "Source Pathway", sourcePws);
+					nodeAtts.setAttribute(id, "node.shape", "Rectangle");
 					nodeAtts.setAttribute(id, "node.fillColor", combinedColor);
 				}
 			}
@@ -660,7 +672,7 @@ public class PathwaysMerge{
 		String t1=temp.substring(0, index1);
 		String t2=temp.substring(index1+1, index2);
 		String t3=temp.substring(index2+1);
-		System.out.println(t1 +":" +t2+":"+t3);
+		//System.out.println(t1 +":" +t2+":"+t3);
 		
 		int r=Integer.valueOf(t1.trim());
 		int g=Integer.valueOf(t2.trim());

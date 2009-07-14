@@ -1,19 +1,3 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2009 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
-// limitations under the License.
-//
 package org.pathvisio.cytoscape.superpathways;
 
 import java.awt.Color;
@@ -28,10 +12,12 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
+import org.pathvisio.preferences.GlobalPreference;
 
 public class PieGenerator{ // extends ApplicationFrame {
 
 	Color[] colors;
+	static String imageLocation = GlobalPreference.getApplicationDir() .toString()+ "/" ;
 	
 	public PieGenerator(Color[] c){                //(final String title) {
 		colors=c;
@@ -62,10 +48,11 @@ public class PieGenerator{ // extends ApplicationFrame {
 		
 		PieRenderer renderer = new PieRenderer(colors);
 		renderer.setColor(plot, dataset);
-
+        
+		
 		try {
 			// This will create a PNG image
-			ChartUtilities.saveChartAsPNG(new File("chart.png"), chart, 280,
+			ChartUtilities.saveChartAsPNG(new File(imageLocation+"chart.png"), chart, 280,
 					280);
 		} catch (Exception e) {
 			System.out.println("Exception while creating the chart");

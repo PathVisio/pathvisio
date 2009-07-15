@@ -125,7 +125,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		public static String getHtml(PathwayElement e, IDMapperRdb gdb) {
 			try
 			{
-				List<Xref> crfs = gdb.getCrossRefs(e.getXref());
+				List<Xref> crfs = gdb.mapID(e.getXref());
 				crfs.add(e.getXref());
 				if(crfs.size() == 0) return "";
 				StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");

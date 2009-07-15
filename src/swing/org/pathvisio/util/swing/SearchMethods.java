@@ -79,7 +79,7 @@ public class SearchMethods
 		{
 			try
 			{
-				refs = gdb.getCrossRefs(ref);
+				refs = gdb.mapID(ref);
 			}
 			catch (IDMapperException ex)
 			{

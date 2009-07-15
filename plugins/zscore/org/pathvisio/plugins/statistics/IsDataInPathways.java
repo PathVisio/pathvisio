@@ -95,7 +95,7 @@ public class IsDataInPathways
 			ReporterData data = gex.getRow(i);
 			Xref src = data.getXref();
 			counts.put (src, new ArrayList<String>());
-			for (Xref dest : gdb.getCrossRefs(data.getXref()))
+			for (Xref dest : gdb.mapID(data.getXref()))
 			{
 				dataRefs.put (dest, src);
 			}

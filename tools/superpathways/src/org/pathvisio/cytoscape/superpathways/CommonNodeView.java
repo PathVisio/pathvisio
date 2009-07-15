@@ -238,7 +238,7 @@ public class CommonNodeView {
 
 				for (int k = 0; k < XrefListPw1.size(); k++) {
 					try {
-						List xrefs2 = gdb.getCrossRefs(pw2Elm.getXref());
+						List xrefs2 = gdb.mapID(pw2Elm.getXref());
 						if (xrefs2.contains(XrefListPw1.get(k))) {
 							isMapped = true;
 

@@ -121,7 +121,7 @@ public class IsDataInPathways
 		{
 			ReporterData data = gex.getRow(i);
 			Xref ref = data.getXref();
-			String bpText = gdb.getBpInfo(ref);
+			String bpText = gdb.getAttributes(ref, "Backpage").iterator().next();
 			String desc = "";
 			if (bpText != null)
 			{

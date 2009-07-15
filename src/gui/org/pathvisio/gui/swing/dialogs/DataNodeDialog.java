@@ -26,7 +26,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
@@ -218,8 +222,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 		JLabel dbLabel = new JLabel("Database");
 
 		symText = new CompleterQueryTextField(new OptionProvider() {
-			public Object[] provideOptions(String text) {
-				if(text == null) return new Object[0];
+			public List<String> provideOptions(String text) {
+				if(text == null) return Collections.emptyList();
 
 				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
 				List<String> symbols = new ArrayList<String>();
@@ -228,26 +232,25 @@ public class DataNodeDialog extends PathwayElementDialog {
 					symbols = gdb.getSymbolSuggestions(text, 100);
 				}
 				catch (IDMapperException ignore) {}
-				return symbols.toArray();
+				return symbols;
 			}
 		}, true);
 
 		idText = new CompleterQueryTextField(new OptionProvider() {
-			public Object[] provideOptions(String text) {
-				if(text == null) return new Object[0];
+			public List<String> provideOptions(String text) {
+				if(text == null) return Collections.emptyList();
 
 				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
-				List<Xref> refs = new ArrayList<Xref>();
+				Set<Xref> refs = new HashSet<Xref>();
 				try
 				{
-					refs = gdb.getIdSuggestions(text, 100);
+					refs = gdb.freeSearch(text, 100);
 				}
 				catch (IDMapperException ignore) {}
+				
 				//Only take identifiers
-				String[] ids = new String[refs.size()];
-				for(int i = 0; i < refs.size(); i++) {
-					ids[i] = refs.get(i).getId();
-				}
+				List<String> ids = new ArrayList<String>();
+				for (Xref ref : refs) ids.add(ref.getId());
 				return ids;
 			}
 		}, true);

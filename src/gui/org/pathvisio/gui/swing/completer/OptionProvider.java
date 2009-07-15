@@ -16,12 +16,12 @@
 //
 package org.pathvisio.gui.swing.completer;
 
+import java.util.List;
+
 /**
  * Classes that implement this interface can provide options
  * for the {@link CompleterQueryTextField}.
- * @author thomas
- *
  */
 public interface OptionProvider {
-	Object[] provideOptions(String text);
+	List<String> provideOptions(String text);
 }

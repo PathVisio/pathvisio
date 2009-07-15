@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Various utility functions
@@ -121,6 +122,23 @@ public class Utils {
 		else
 		{
 			out.println (indent + o.toString());
+		}
+	}
+	
+	/**
+	 * Useful if you want to use one item from a set, and you don't care which one.
+	 * @param set a set that you want one element out of
+	 * @return null if the set is empty or null, or an element from the set otherwise.
+	 */
+	static public <T> T oneOf (Set<T> set)
+	{
+		if (set == null || set.size() == 0)
+		{
+			return null;
+		}
+		else
+		{
+			return set.iterator().next();
 		}
 	}
 }

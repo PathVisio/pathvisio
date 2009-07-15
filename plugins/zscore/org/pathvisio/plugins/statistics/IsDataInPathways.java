@@ -40,6 +40,7 @@ import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
+import org.pathvisio.util.Utils;
 import org.pathvisio.util.PathwayParser.ParseException;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -121,7 +122,7 @@ public class IsDataInPathways
 		{
 			ReporterData data = gex.getRow(i);
 			Xref ref = data.getXref();
-			String bpText = gdb.getAttributes(ref, "Backpage").iterator().next();
+			String bpText = Utils.oneOf (gdb.getAttributes(ref, "Backpage"));
 			String desc = "";
 			if (bpText != null)
 			{

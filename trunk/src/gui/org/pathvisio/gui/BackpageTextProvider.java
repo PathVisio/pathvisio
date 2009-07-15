@@ -92,7 +92,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 
 			try
 			{
-				String bpInfo = gdb.getBpInfo(e.getXref());
+				String bpInfo = gdb.getAttributes(e.getXref(), "Backpage").iterator().next();
 				text += (bpInfo != null ? bpInfo :  "<I>No " + type + " information found</I>"); 
 			}
 			catch (IDMapperException ex)

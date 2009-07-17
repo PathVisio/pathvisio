@@ -29,10 +29,10 @@ import java.util.regex.Pattern;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.XrefWithSymbol;
 import org.bridgedb.rdb.DataDerby;
 import org.bridgedb.rdb.SimpleGdb;
 import org.bridgedb.rdb.SimpleGdbFactory;
+import org.pathvisio.data.XrefWithSymbol;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;

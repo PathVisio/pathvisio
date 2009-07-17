@@ -26,8 +26,8 @@ import junit.framework.TestCase;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.bridgedb.XrefWithSymbol;
 import org.bridgedb.bio.BioDataSource;
+import org.pathvisio.data.XrefWithSymbol;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
 

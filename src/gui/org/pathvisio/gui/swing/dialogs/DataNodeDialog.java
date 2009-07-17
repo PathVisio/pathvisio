@@ -229,7 +229,10 @@ public class DataNodeDialog extends PathwayElementDialog {
 				List<String> symbols = new ArrayList<String>();
 				try
 				{
-					symbols = gdb.getSymbolSuggestions(text, 100);
+					for (Xref ref : gdb.freeAttributeSearch(text, "Symbol", 10))
+					{
+						symbols.addAll (gdb.getAttributes(ref, "Symbol"));
+					}
 				}
 				catch (IDMapperException ignore) {}
 				return symbols;

@@ -28,8 +28,10 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -48,9 +50,9 @@ import javax.swing.event.ListDataListener;
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.XrefWithSymbol;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
+import org.pathvisio.data.XrefWithSymbol;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.DataSourceModel;
 import org.pathvisio.gui.swing.ProgressDialog;
@@ -120,7 +122,22 @@ public class DataNodeDialog extends PathwayElementDialog {
 			protected List<XrefWithSymbol> doInBackground() throws IDMapperException
 			{
 				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
-				List<XrefWithSymbol> result = gdb.freeSearchWithSymbol(text, QUERY_LIMIT); 
+
+			    //The result set
+				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>(); 
+			    
+		    	Set<Xref> tempset = new HashSet<Xref>();
+		    	tempset.addAll( gdb.freeSearch( text, QUERY_LIMIT ) );
+		    	tempset.addAll( gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT ) );
+		    	for (Xref x : tempset)
+		    	{
+		    		for (String s : gdb.getAttributes (x, "Symbol"))
+		    		{
+		    			result.add (new XrefWithSymbol (x, s));
+			    		break; // only put the first symbol found
+		    		}
+		    	}
+			    
 				return result;
 			}
 			

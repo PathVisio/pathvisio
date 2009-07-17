@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.XrefWithSymbol;
+import org.pathvisio.data.XrefWithSymbol;
 import org.pathvisio.debug.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;

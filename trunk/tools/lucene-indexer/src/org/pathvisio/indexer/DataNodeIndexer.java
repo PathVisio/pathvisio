@@ -106,7 +106,7 @@ public class DataNodeIndexer extends IndexerBase {
 			for(IDMapperRdb gdb : gdbs.getGdbs(organism)) {
 				if(gdb != null && gdb.isConnected()) {
 					try {
-						Set<Xref> crossRefs = gdb.mapID(xref);
+						Set<Xref> crossRefs = gdb.mapID(xref, null);
 						for(Xref c : crossRefs) {
 							if(!addedXrefs.contains(c)) {
 								addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);

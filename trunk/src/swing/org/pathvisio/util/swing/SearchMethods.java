@@ -80,7 +80,7 @@ public class SearchMethods
 		{
 			try
 			{
-				refs = gdb.mapID(ref);
+				refs = gdb.mapID(ref, null);
 			}
 			catch (IDMapperException ex)
 			{

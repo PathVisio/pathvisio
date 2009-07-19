@@ -20,6 +20,7 @@ import java.awt.Font;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -140,5 +141,15 @@ public class Utils {
 		{
 			return set.iterator().next();
 		}
+	}
+	
+	/**
+	 * Create a new Set of the given value(s)
+	 */
+	static public <T> Set<T> setOf (T val)
+	{
+		Set<T> result = new HashSet<T>();
+		result.add (val);
+		return result;
 	}
 }

@@ -22,12 +22,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.pathvisio.data.GdbManager;
+import org.pathvisio.util.Utils;
 
 /**
  * Exporter that writes a pathway as a list
@@ -123,7 +125,8 @@ public class DataNodeListExporter implements PathwayExporter {
 				} else { //Lookup the cross-references for the wanted database code
 					try
 					{
-						Set<Xref> refs = gdbManager.getCurrentGdb().mapID(elm.getXref(), resultDs);
+						Set<Xref> refs = gdbManager.getCurrentGdb().mapID(elm.getXref(), 
+								Utils.setOf (resultDs));
 						for(Xref ref : refs) {
 							line += ref.getId() + multiRefSep;
 						}

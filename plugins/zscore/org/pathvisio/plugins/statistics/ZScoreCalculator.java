@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.rdb.IDMapperRdb;
@@ -48,7 +49,7 @@ public class ZScoreCalculator
 	private Map<PathwayInfo, StatisticsPathwayResult> statsMap = 
 		new HashMap<PathwayInfo, StatisticsPathwayResult>();
 	
-	public ZScoreCalculator(Criterion crit, File pwDir, SimpleGex gex, IDMapperRdb gdb, ProgressKeeper pk)
+	public ZScoreCalculator(Criterion crit, File pwDir, SimpleGex gex, IDMapper gdb, ProgressKeeper pk)
 	{
 		if (pk != null)
 		{

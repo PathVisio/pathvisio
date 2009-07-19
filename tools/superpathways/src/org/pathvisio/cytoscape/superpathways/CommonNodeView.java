@@ -17,7 +17,6 @@
 
 package org.pathvisio.cytoscape.superpathways;
 
-import java.awt.Color;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -25,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -238,7 +238,7 @@ public class CommonNodeView {
 
 				for (int k = 0; k < XrefListPw1.size(); k++) {
 					try {
-						List xrefs2 = gdb.mapID(pw2Elm.getXref());
+						Set<Xref> xrefs2 = gdb.mapID(pw2Elm.getXref());
 						if (xrefs2.contains(XrefListPw1.get(k))) {
 							isMapped = true;
 

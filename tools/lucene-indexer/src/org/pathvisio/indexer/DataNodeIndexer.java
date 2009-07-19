@@ -33,7 +33,6 @@ import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
 import org.bridgedb.rdb.IDMapperRdb;
@@ -107,7 +106,7 @@ public class DataNodeIndexer extends IndexerBase {
 			for(IDMapperRdb gdb : gdbs.getGdbs(organism)) {
 				if(gdb != null && gdb.isConnected()) {
 					try {
-						List<Xref> crossRefs = gdb.mapID(xref);
+						Set<Xref> crossRefs = gdb.mapID(xref);
 						for(Xref c : crossRefs) {
 							if(!addedXrefs.contains(c)) {
 								addCrossRef(c, doc, FIELD_XID, FIELD_XID_CODE);

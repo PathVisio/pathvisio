@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
@@ -51,7 +52,7 @@ public class GexTxtImporter
 	 * @param p	{@link ProgressKeeper} that reports the progress of the process and enables
 	 * the user to cancel. May be null for headless mode operation.
 	 */
-	public static void importFromTxt(ImportInformation info, ProgressKeeper p, IDMapperRdb currentGdb, GexManager gexManager)
+	public static void importFromTxt(ImportInformation info, ProgressKeeper p, IDMapper currentGdb, GexManager gexManager)
 	{
 		SimpleGex result = null;
 		int importWork = 0;

@@ -48,7 +48,9 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.bridgedb.DataSource;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperStack;
 import org.bridgedb.Xref;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
@@ -121,7 +123,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			
 			protected List<XrefWithSymbol> doInBackground() throws IDMapperException
 			{
-				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
+				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
 
 			    //The result set
 				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>(); 
@@ -137,7 +139,6 @@ public class DataNodeDialog extends PathwayElementDialog {
 			    		break; // only put the first symbol found
 		    		}
 		    	}
-			    
 				return result;
 			}
 			
@@ -242,7 +243,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public List<String> provideOptions(String text) {
 				if(text == null) return Collections.emptyList();
 
-				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
+				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
 				List<String> symbols = new ArrayList<String>();
 				try
 				{
@@ -260,7 +261,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public List<String> provideOptions(String text) {
 				if(text == null) return Collections.emptyList();
 
-				IDMapperRdb gdb = swingEngine.getGdbManager().getCurrentGdb();
+				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
 				Set<Xref> refs = new HashSet<Xref>();
 				try
 				{

@@ -20,15 +20,16 @@ import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
 
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.Engine;
 import org.pathvisio.data.XrefWithSymbol;
@@ -73,9 +74,9 @@ public class SearchMethods
 	 */
 	public static class ByXrefMatcher implements PathwayMatcher
 	{
-		private List<Xref> refs;
+		private Set<Xref> refs;
 
-		public ByXrefMatcher(IDMapperRdb gdb, Xref ref) throws SearchException
+		public ByXrefMatcher(IDMapper gdb, Xref ref) throws SearchException
 		{
 			try
 			{

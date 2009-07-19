@@ -24,6 +24,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.bridgedb.AttributeMapper;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.rdb.IDMapperRdb;
@@ -73,7 +75,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			this.gdbManager = gdbManager;
 		}
 
-		public static String getHtml(PathwayElement e, IDMapperRdb gdb) {
+		public static String getHtml(PathwayElement e, IDMapper gdb, AttributeMapper attributeMapper) {
 			String text = "";
 			String type = e.getDataNodeType(); 
 			
@@ -92,7 +94,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 
 			try
 			{
-				String bpInfo = Utils.oneOf (gdb.getAttributes(e.getXref(), "Backpage"));
+				String bpInfo = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Backpage"));
 				text += (bpInfo != null ? bpInfo :  "<I>No " + type + " information found</I>"); 
 			}
 			catch (IDMapperException ex)
@@ -105,7 +107,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		
 		public String getHtml(PathwayElement e) 
 		{
-			return getHtml(e, gdbManager.getCurrentGdb());
+			return getHtml(e, gdbManager.getCurrentGdb(), gdbManager.getCurrentGdb());
 		}
 	}
 	
@@ -122,10 +124,10 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			this.gdbManager = gdbManager;
 		}
 
-		public static String getHtml(PathwayElement e, IDMapperRdb gdb) {
+		public static String getHtml(PathwayElement e, IDMapper gdb) {
 			try
 			{
-				List<Xref> crfs = gdb.mapID(e.getXref());
+				Set<Xref> crfs = gdb.mapID(e.getXref());
 				crfs.add(e.getXref());
 				if(crfs.size() == 0) return "";
 				StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");

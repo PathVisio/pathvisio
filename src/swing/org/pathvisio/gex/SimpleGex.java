@@ -279,7 +279,7 @@ public class SimpleGex
 			Set<Xref> destRefs = new HashSet<Xref>();
 			if (gdb.isConnected())
 			{
-				for (Xref destRef : gdb.mapID(srcRef))
+				for (Xref destRef : gdb.mapID(srcRef, null))
 				{
 					// add only the ones that are in the dest filter.
 					if (destFilter.contains(destRef.getDataSource()))

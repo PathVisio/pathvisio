@@ -19,10 +19,12 @@ package org.pathvisio.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractListModel;
+
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperStack;
 import org.bridgedb.rdb.DBConnector;
-import org.bridgedb.rdb.DoubleGdb;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.bridgedb.rdb.SimpleGdb;
 import org.bridgedb.rdb.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
@@ -38,11 +40,13 @@ import org.pathvisio.preferences.PreferenceManager;
  * 
  * This class is not needed in headless mode. 
  */
-public class GdbManager 
+public class GdbManager extends AbstractListModel 
 {
-	private DoubleGdb currentGdb = new DoubleGdb();
+	private IDMapperStack currentGdb = new IDMapperStack();
+	private IDMapper metabolites;
+	private IDMapper genes;
 	
-	public IDMapperRdb getCurrentGdb ()
+	public IDMapper getCurrentGdb ()
 	{
 		return currentGdb;
 	}
@@ -71,15 +75,16 @@ public class GdbManager
 	{
 		if (dbName == null)
 		{
-			currentGdb.setMetaboliteDb(null);
+			currentGdb.removeElement(metabolites);
+			metabolites = null;
 		}
 		else
 		{
-			SimpleGdb gdb = connect (dbName);
-			currentGdb.setMetaboliteDb(gdb);
-			if (gdb != null)
+			String connectString = "idmapper-pgdb:" + dbName;
+			metabolites = currentGdb.addIDMapper(connectString);
+			if (metabolites != null)
 			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_METABDB_CURRENT, gdb.getDbName());
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_METABDB_CURRENT, metabolites.getDbName());
 			}
 		}
 		
@@ -131,15 +136,16 @@ public class GdbManager
 	{
 		if (dbName == null)
 		{
-			currentGdb.setGeneDb(null);
+			if (genes != null) currentGdb.removeElement(genes);
+			genes = null;
 		}
 		else
 		{
-			SimpleGdb gdb = connect (dbName);
-			currentGdb.setGeneDb(gdb);
-			if (gdb != null)
+			String connectString = "idmapper-pgdb:" + dbName;
+			genes = currentGdb.addIDMapper(connectString);
+			if (genes != null)
 			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_GDB_CURRENT, gdb.getDbName());
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_GDB_CURRENT, genes.getDbName());
 			}
 		}
 		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, dbName);
@@ -245,5 +251,15 @@ public class GdbManager
 			}
 		}
 		return dbConnector;
+	}
+
+	public Object getElementAt(int arg0) 
+	{
+		return currentGdb.getElementAt(arg0);
+	}
+
+	public int getSize() 
+	{
+		return currentGdb.getSize();
 	}
 }

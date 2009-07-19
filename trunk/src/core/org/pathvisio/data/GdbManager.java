@@ -46,7 +46,21 @@ public class GdbManager extends AbstractListModel
 	private IDMapper metabolites;
 	private IDMapper genes;
 	
-	public IDMapper getCurrentGdb ()
+	public GdbManager()
+	{
+		try
+		{
+			Class.forName ("org.bridgedb.file.IDMapperText");
+			Class.forName ("org.bridgedb.rdb.IDMapperRdb");
+		}
+		catch (ClassNotFoundException ex)
+		{
+			Logger.log.error("Could not initilize GDB Manager", ex);
+			//TODO: propagate exception???
+		}
+	}
+	
+	public IDMapperStack getCurrentGdb ()
 	{
 		return currentGdb;
 	}
@@ -75,7 +89,7 @@ public class GdbManager extends AbstractListModel
 	{
 		if (dbName == null)
 		{
-			currentGdb.removeElement(metabolites);
+			currentGdb.removeIDMapper(metabolites);
 			metabolites = null;
 		}
 		else
@@ -84,7 +98,7 @@ public class GdbManager extends AbstractListModel
 			metabolites = currentGdb.addIDMapper(connectString);
 			if (metabolites != null)
 			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_METABDB_CURRENT, metabolites.getDbName());
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_METABDB_CURRENT, ("" + metabolites));
 			}
 		}
 		
@@ -136,7 +150,7 @@ public class GdbManager extends AbstractListModel
 	{
 		if (dbName == null)
 		{
-			if (genes != null) currentGdb.removeElement(genes);
+			if (genes != null) currentGdb.removeIDMapper(genes);
 			genes = null;
 		}
 		else
@@ -145,7 +159,7 @@ public class GdbManager extends AbstractListModel
 			genes = currentGdb.addIDMapper(connectString);
 			if (genes != null)
 			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_GDB_CURRENT, genes.getDbName());
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_GDB_CURRENT, "" + genes);
 			}
 		}
 		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, dbName);
@@ -255,7 +269,7 @@ public class GdbManager extends AbstractListModel
 
 	public Object getElementAt(int arg0) 
 	{
-		return currentGdb.getElementAt(arg0);
+		return currentGdb.getIDMapperAt(arg0);
 	}
 
 	public int getSize() 

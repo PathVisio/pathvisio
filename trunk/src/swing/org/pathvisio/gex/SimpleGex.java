@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bridgedb.DataSource;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.rdb.DBConnector;
@@ -268,7 +269,7 @@ public class SimpleGex
 		}
 	}
 	
-	private Collection<ReporterData> getDataForXref(Xref srcRef, IDMapperRdb gdb, Set<DataSource> destFilter) throws IDMapperException
+	private Collection<ReporterData> getDataForXref(Xref srcRef, IDMapper gdb, Set<DataSource> destFilter) throws IDMapperException
 	{
 		try
 		{
@@ -336,7 +337,7 @@ public class SimpleGex
 	 * @param srcRefs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, IDMapperRdb gdb) throws IDMapperException
+	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, IDMapper gdb) throws IDMapperException
 	{	
 		// seed samples cache
 		getSamples();

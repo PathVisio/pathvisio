@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
@@ -409,7 +410,7 @@ public class StatisticsPlugin implements Plugin
 			private StatisticsTableModel temp;
 			private boolean useMappFinder;
 			
-			ZScoreWorker(Criterion crit, File pwDir, SimpleGex gex, IDMapperRdb gdb, ProgressKeeper pk)
+			ZScoreWorker(Criterion crit, File pwDir, SimpleGex gex, IDMapper gdb, ProgressKeeper pk)
 			{
 				this.pk = pk;
 				calculator = new ZScoreCalculator (crit, pwDir, gex, gdb, pk);

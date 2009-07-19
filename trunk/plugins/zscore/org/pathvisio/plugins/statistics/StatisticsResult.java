@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.bridgedb.IDMapper;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.visualization.colorset.Criterion;
@@ -40,7 +41,7 @@ public class StatisticsResult
 	Criterion crit;
 	File pwDir;
 	SimpleGex gex;
-	IDMapperRdb gdb;
+	IDMapper gdb;
 	
 	public void save (File f) throws IOException
 	{
@@ -49,7 +50,7 @@ public class StatisticsResult
 		out.println ("Statistics results for " + new Date());
 		out.println ("Dataset: " + gex.getDbName());
 		out.println ("Pathway directory: " + pwDir);
-		out.println ("Gene database: " + gdb.getDbName());
+		out.println ("Gene database: " + gdb);
 		out.println ("Criterion: " + crit.getExpression());
 		out.println ("Rows in data (N): " + bigN);
 		out.println ("Rows meeting criterion (R): " + bigR);

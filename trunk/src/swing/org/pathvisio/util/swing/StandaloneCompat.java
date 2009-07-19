@@ -19,7 +19,6 @@ package org.pathvisio.util.swing;
 import javax.swing.JOptionPane;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.DataSource;
 import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager.GdbEventListener;

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
-use warnings;
-use strict;
+#use warnings;
+#use strict;
 
 use PathwayTools::Pathway;
 use PathwayTools::PathwayElement;
@@ -56,35 +56,43 @@ my $date = "$month/$day/$year";
 my $cutoff = "20070522222100";
 my $maintbot = "MaintBot";
 
-#Ask user for target and ref species
-my $refcode = "";
-while (!$species{$refcode})
-	{
-	print "\nEnter the three-letter (Unigene) species code or common name for reference species to convert FROM: ";
-	$refcode = <STDIN>;
-	chomp ($refcode);
-	$refcode =~ tr/A-Z/a-z/;
-	$refcode =~s/\s//;
-	$refcode =~s/\.//;
-	}
-my $REFORGANISM = $species{$refcode};
+#FOR TESTING ONLY
+my $REFORGANISM = "Homo sapiens";
 $refcode = $codes{$REFORGANISM};
 my $REFTAXID = $taxids{$refcode};
 
-my $targetcode = "";
-while (!$species{$targetcode})
-	{
-	print "\nEnter the three-letter (Unigene) species code or common name for target species to convert TO: ";
-	$targetcode = <STDIN>;
-	chomp ($targetcode);
-	$targetcode =~ tr/A-Z/a-z/;
-	$targetcode =~s/\s//;
-	$targetcode =~s/\.//;
-	}
-my $TARGETORGANISM = $species{$targetcode};
+my $TARGETORGANISM = "Canis familiaris";
 $targetcode = $codes{$TARGETORGANISM};
 my $TARGETTAXID = $taxids{$targetcode};
 
+##Ask user for target and ref species
+#my $refcode = "";
+#while (!$species{$refcode})
+#	{
+#	print "\nEnter the three-letter (Unigene) species code or common name for reference species to convert FROM: ";
+#	$refcode = <STDIN>;
+#	chomp ($refcode);
+#	$refcode =~ tr/A-Z/a-z/;
+#	$refcode =~s/\s//;
+#	$refcode =~s/\.//;
+#	}
+#my $REFORGANISM = $species{$refcode};
+#$refcode = $codes{$REFORGANISM};
+#my $REFTAXID = $taxids{$refcode};
+#
+#my $targetcode = "";
+#while (!$species{$targetcode})
+#	{
+#	print "\nEnter the three-letter (Unigene) species code or common name for target species to convert TO: ";
+#	$targetcode = <STDIN>;
+#	chomp ($targetcode);
+#	$targetcode =~ tr/A-Z/a-z/;
+#	$targetcode =~s/\s//;
+#	$targetcode =~s/\.//;
+#	}
+#my $TARGETORGANISM = $species{$targetcode};
+#$targetcode = $codes{$TARGETORGANISM};
+#my $TARGETTAXID = $taxids{$targetcode};
 
 #Ask user for WP login password
 print "\nEnter WikiPathways password for user $maintbot: ";
@@ -109,6 +117,22 @@ unless ( open(LOGFILE2, ">$outfilename2") )
          exit;
  	}
 print LOGFILE2 "Pathway\n";
+
+my $outfilename3 = "PathwayList.txt";	
+unless ( open(LOGFILE3, ">$outfilename3") )
+       {
+         print "could not open file $outfilename3\n";
+         exit;
+ 	}
+print LOGFILE3 "Pathway\n";
+
+my $outfilename4 = "Emptynodes.txt";	
+unless ( open(LOGFILE4, ">$outfilename4") )
+       {
+         print "could not open file $outfilename4\n";
+         exit;
+ 	}
+print LOGFILE4 "Pathway\n";
 
 ######################
 
@@ -244,9 +268,9 @@ while (my $line = <TARGETSYMBOL>)
 ######################
 
 #Read in pathway content flatfile to get all pathways for both species.
-unless ( open(FLATFILE, "wikipathways_data_5.tab") )
+unless ( open(FLATFILE, "wikipathways_data_.tab") )
         {
-            print "could not open file wikipathways_data_5.tab\n";
+            print "could not open file wikipathways_data_.tab\n";
             exit;
     	}
 
@@ -280,6 +304,9 @@ while (my $line = <FLATFILE>)
 			$targets{$pwid} = $targetname;
 		}
       } 
+
+sort keys %refs;
+sort keys %targets;      
 
 ######################
 
@@ -374,9 +401,12 @@ foreach my $ref (keys %refs)
 mkdir("Updated");
 mkdir("New");
 
+#my $NS = "http://genmapp.org/GPML/2008a";
+
 foreach my $pw (keys %converts)
 	{
 	print "Requesting pathway $refs{$pw}\n";
+	#print "Corresponding existing target pathway is $relation{$pw}\n";
 	print LOGFILE1 "$refs{$pw}\t";	
 
 	#Collect reference pathway from WP
@@ -387,6 +417,8 @@ foreach my $pw (keys %converts)
 	my $pathway = new PathwayTools::Pathway();
 	my $gpml = ();
 	my $revision = ();
+	
+	$string =~ m/whatever(sought_text)whatever2/;
 
 	foreach my $reference (@pathwayResults)
 		{
@@ -394,12 +426,22 @@ foreach my $pw (keys %converts)
 		$revision = $reference->{revision};
 		}
 
+	$gpml =~ m/Pathway xmlns="(.*?)"/;
+	my $NS = $1;
+	#chomp $NS;
+	
+	if ($NS eq "http://genmapp.org/GPML/2007")
+		{
+	
 	#Process gpml: Change IDs and labels using homology information, rename file and add homology label
 	$pathway->from_string($gpml);
 	my $root = $pathway->{document}->getDocumentElement();
 	my $pwname = $root->getAttribute("Name");
 	my $newname = correctNames($pwname);
-
+	
+#	my $namespace = $root->getAttribute("xmlns");
+	print "namespace is $NS\n";
+	
 	my $updatefilename = "Updated/$newname.gpml";
 	my $createfilename = "New/$newname.gpml";
 	my $nodecount = 0;
@@ -410,6 +452,7 @@ foreach my $pw (keys %converts)
 	$root->setAttribute("Name", $newname);
 	$root->setAttribute("Last-Modified", $date);
 	
+
 	if ($root->getChildrenByTagName("DataNode"))
 	{
 	for my $datanode ($root->getChildrenByTagName("DataNode"))
@@ -420,7 +463,7 @@ foreach my $pw (keys %converts)
 			my $type = $datanode->getAttribute ("Type");
 			my $system = $xref->getAttribute ("Database");
 	
-			if ($type eq "GeneProduct" || $type eq "Unknown")
+			if ($type eq "GeneProduct" || $type eq "Unknown" || $type eq "Protein" || $type eq "Complex")
 				{
 				$nodecount ++;
 				$type = "GeneProduct";
@@ -485,54 +528,104 @@ foreach my $pw (keys %converts)
 				}
 			}
 		}
+	
+		#Clean up labels to remove special characters
+		if ($root->getChildrenByTagName("Label"))
+		{
+		for my $datanode ($root->getChildrenByTagName("Label"))
+			{
+				my $textlabel = $datanode->getAttribute ("TextLabel");
+				#clean up label
+				my $newlabel = remCharacter($textlabel);
+				$datanode->setAttribute("TextLabel", $newlabel);
+			}
+		}
 		
+		#Clean up empty Comments to avoid truncated tags
+		if ($root->getChildrenByTagName("Comment"))
+		{
+		for my $datanode ($root->getChildrenByTagName("Comment"))
+			{
+				#my $source = $datanode->getAttribute ("Source");
+				my $comment = $datanode->textContent;
+				#delete empty Comment
+				if ($comment eq "")
+				{
+				$root->removeChild ($datanode);
+				}
+			}
+		}
+		
+		#Clean up empty bp attributes
+		if ($root->getChildrenByTagName("Biopax"))
+		{
+		for my $datanode ($root->getChildrenByTagName("Biopax"))
+			{
+				if ($datanode->getChildrenByTagName("bp:PublicationXRef"))
+					{
+					for my $xref ($datanode->getChildrenByTagName("bp:PublicationXRef"))
+						{
+						my @childnodes = $xref->childNodes;
+						foreach my $child (@childnodes)
+							{
+							my $content = $child->textContent;
+							if ($content eq "")
+								{
+								$xref->removeChild ($child);
+								print LOGFILE4 "$pw : empty child deleted\t";
+								}
+							}
+						}
+					}
+			}
+		}
+	
+		# Calculate conversion score
 		if ($nodecount != 0)
 			{
 			$convscore = int(100*($convertcount/$nodecount));
 			}	
-		print LOGFILE1 "\t$nodecount\t$convertcount\t$convscore\n";
-		#print "$refs{$pw} has conversion score of $convscore\n";
-				
-		# create a comment
-		my $NS = "http://genmapp.org/GPML/2008a";
+		print LOGFILE1 "\t$convscore\n";
+		
+		# Create a comment
 		my $comment = $root->addNewChild ($NS, "Comment");
 		# source attribute can be anything you want, for example "HomologyConvert"
 		$comment->setAttribute ("Source", "HomologyConvert");
 		# use appendText to set the text value of the comment.
 		$comment->appendText ("This pathway was inferred from $REFORGANISM with a conversion score of $convscore\%");
-		#print "ROOT $root\n";
-		#$pathway->sort_element($root);
 		
-		#$pathway->validate();
-
 		#Upload file to WikiPathways and save to local files
 		my $description = SOAP::Data->name(description => "Converted from $REFORGANISM");
 		my $newgpml = $pathway->to_string();
 		my $gpmlcode = SOAP::Data->name(gpml => $newgpml);
-		my $uploadId = SOAP::Data->name(pwId => $relation{$pw});
-		my $baserevision = SOAP::Data->name(revision => $updates{$relation{$pw}});
 		
-		
-		
-		if ($convscore >= 50)
+		my $baserevision = SOAP::Data->name(revision => $updates{($relation{$pw})});
+				
+		if ($convscore >= 0)
 			{
 			if ($relation{$pw})
 				{
 				#Print converted pathway to local file and upload to WP
-				print "$refs{$pw} written to file\n";
+				print LOGFILE3 "$refs{$pw}\n";
+				print "given pathway id $pw , upload ID is $relation{$pw}\n";
+				print "$refs{$pw} updated at WP and written to file\n";
+				my $uploadId = SOAP::Data->name(pwId => $relation{$pw});
 				$pathway->to_file($updatefilename);
 				$wp_soap->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth);
 				}
 			else 
 				{
 				#Print new pathway to local file and upload to WP
+				print LOGFILE3 "$refs{$pw}\n";
 				$pathway->to_file($createfilename);
-				print "$refs{$pw} written to file\n";
-				my $create = $wp_soap->createPathway($gpmlcode, $auth);
+				print "$refs{$pw} created at WP and written to file\n";
+				$wp_soap->createPathway($gpmlcode, $auth);
 				}
 		}
 	
 	}
+	}
+print LOGFILE3 "\n";
 
 #Write non-converted pathways to log file
 foreach my $c (keys %nonconverts)
@@ -543,6 +636,8 @@ foreach my $c (keys %nonconverts)
 print "\n\nDone.\n";	
 close LOGFILE1;
 close LOGFILE2;
+close LOGFILE3;
+close LOGFILE4;
 close FLATFILE;
 
 #subroutine that removes whitespaces, parenthesis, slashes and references to human
@@ -558,6 +653,23 @@ $name =~s/\s+$//;
 $name =~ s/^\s+//;
 $name =~ s/\// /;
 return $name;
+}
+
+#subroutine that removes special characters
+sub remCharacter ($)
+{
+my $label = shift;
+#Remove any references to human and parenthesis from pathway name. 
+
+#$label =~ s/\&amp;\#xA;//; 
+$label =~ s/amp;//; 
+$label =~ s/&//; 
+#$label =~ s/%&\#xA;/ /; 
+#$label =~ s/&gt;&\#xA/ /; 
+#$label =~ s/&quot;&\#xA/ /; 
+#$label =~ s/&amp;\#xA/ /; 
+
+return $label;
 }
 
 #subroutine that checks if any user other than MaintBot has made changes

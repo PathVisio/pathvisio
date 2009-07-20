@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+
 package org.pathvisio.cytoscape.superpathways;
 
 import giny.model.Node;
@@ -28,7 +29,7 @@ import ding.view.DNodeView;
 
 public class CustomNodeGenerator {
 
-	String pieLocation;
+    String pieLocation;
 	Node node;
 
 	

@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
+
 package org.pathvisio.cytoscape.superpathways;
 
 import java.awt.Color;
@@ -49,7 +50,8 @@ public class PieGenerator{ // extends ApplicationFrame {
 
 		// Defining the chart
 		JFreeChart chart = ChartFactory.createPieChart("", dataset, false,false, false);
-
+		
+		
 		// Defining the chartPanel
 		//final ChartPanel chartPanel = new ChartPanel(chart);
 		//chartPanel.setPreferredSize(new java.awt.Dimension(350, 350));
@@ -59,6 +61,13 @@ public class PieGenerator{ // extends ApplicationFrame {
 		PiePlot plot = (PiePlot) chart.getPlot();
 		plot.setLabelGenerator(null);
 		plot.setInteriorGap(0.0);
+		
+		
+		//add the following two lines to make the background transparent 
+		chart.setBackgroundPaint(new Color(255,255,255,0));
+		plot.setBackgroundPaint( new Color(255,255,255,0) );
+        //plot.setBackgroundAlpha(0.0f);
+        
 
 		// Specify the colors here
 		
@@ -69,7 +78,9 @@ public class PieGenerator{ // extends ApplicationFrame {
 		try {
 			// This will create a PNG image
 			ChartUtilities.saveChartAsPNG(new File(imageLocation+"chart.png"), chart, 280,
-					280);
+					280, null,
+                    true,    // encodeAlpha
+                    0 );
 		} catch (Exception e) {
 			System.out.println("Exception while creating the chart");
 		}

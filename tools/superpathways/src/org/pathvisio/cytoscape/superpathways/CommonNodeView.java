@@ -51,11 +51,18 @@ import cytoscape.CyNode;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 import cytoscape.data.Semantics;
+import cytoscape.layout.CyLayoutAlgorithm;
+import cytoscape.layout.CyLayouts;
+import cytoscape.layout.LayoutProperties;
+import cytoscape.layout.Tunable;
+
 
 public class CommonNodeView {
 
 	// List<String> selectedPwsNameId;
-	List<String> mSelectedPwsID;;
+    List<String> mSelectedPwsID;
+	
+	List<String> mSelectedPwsNameID;
 
 	SuperpathwaysClient mClient;
 
@@ -66,9 +73,10 @@ public class CommonNodeView {
 	static String dbLocation = GlobalPreference.getDataDir().toString()
 			+ "/gene databases/";
 
-	public CommonNodeView(List<String> pwId, SuperpathwaysClient c) {
+	public CommonNodeView(List<String> pwId, List<String> pwNameID, SuperpathwaysClient c) {
 		mSelectedPwsID = pwId;
 		mClient = c;
+		mSelectedPwsNameID=pwNameID;
 		nodePairByTranslation = new HashMap<Xref, Xref>();
 
 	}
@@ -81,19 +89,10 @@ public class CommonNodeView {
 		return nodePairByTranslation;
 	}
 
-	public commonNodePathwayPair findCommonNode(String pw1ID, String pw2ID) {
+	public commonNodePathwayPair findCommonNode(String pw1ID, String pw1NameID, String pw2ID, String pw2NameID) {
 		commonNodePathwayPair cnPwPair = new commonNodePathwayPair();
 
 		int commonNode = 0;
-
-		/*
-		 * // get the id of the first pathway int index1 =
-		 * pw1NameId.indexOf("("); int index2 = pw1NameId.indexOf(")"); String
-		 * pw1ID = pw1NameId.substring(index1 + 1, index2); // get the id of the
-		 * second pathway index1 = pw2NameId.indexOf("("); index2 =
-		 * pw2NameId.indexOf(")"); String pw2ID = pw2NameId.substring(index1 +
-		 * 1, index2);
-		 */
 
 		// Create a client to the WikiPathways web service
 		WikiPathwaysClient client = mClient.getStub();
@@ -238,7 +237,7 @@ public class CommonNodeView {
 
 				for (int k = 0; k < XrefListPw1.size(); k++) {
 					try {
-						Set<Xref> xrefs2 = gdb.mapID(pw2Elm.getXref(), null);
+					    Set<Xref> xrefs2 = gdb.mapID(pw2Elm.getXref(), null);
 						if (xrefs2.contains(XrefListPw1.get(k))) {
 							isMapped = true;
 
@@ -277,8 +276,8 @@ public class CommonNodeView {
 			System.out.println(XrefListCommonNode.get(k));
 		}
 
-		cnPwPair.pathway1NameID = pw1ID;
-		cnPwPair.pathway2NameID = pw2ID;
+		cnPwPair.pathway1NameID = pw1NameID;
+		cnPwPair.pathway2NameID = pw2NameID;
 		cnPwPair.commonNodeNumber = commonNode;
 		cnPwPair.geneIDListOfCommonNode = XrefListCommonNode;
 		return cnPwPair;
@@ -290,13 +289,15 @@ public class CommonNodeView {
 		System.out.println("For Databases: " + dbLocation);
 
 		Object[] arrayOfSelectedPwsId = mSelectedPwsID.toArray();
+		Object[] arrayOfSelectedPwsNameId = mSelectedPwsNameID.toArray();
+		
 		int len = arrayOfSelectedPwsId.length;
 
 		for (int i = 0; i < len; i++) {
 			for (int j = i + 1; j < len; j++) {
 				commonNodeInfoPwGroup.add(findCommonNode(
-						(String) arrayOfSelectedPwsId[i],
-						(String) arrayOfSelectedPwsId[j]));
+						(String) arrayOfSelectedPwsId[i], (String) arrayOfSelectedPwsNameId[i],
+						(String) arrayOfSelectedPwsId[j], (String) arrayOfSelectedPwsNameId[j]));
 			}
 		}
 
@@ -305,11 +306,6 @@ public class CommonNodeView {
 
 	public List<String> drawCommonNodeView() {
 
-		/*
-		 * String[] colorPool = { "0,255,0", "80,50,80", "51,255,255",
-		 * "255,255,0", "0, 0, 255", "255, 0, 255", "255,0, 0", "0,102,0", "0,
-		 * 204, 204" };
-		 */
 
 		colorPool = new ArrayList<String>();
 
@@ -328,12 +324,19 @@ public class CommonNodeView {
 		 * cyNetwork.addNode(groupPwsIcons[i]); }
 		 */
 
+		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
+		CyAttributes edgeAtts = Cytoscape.getEdgeAttributes();
+		
+		
 		CyNode[] groupPwsIcons = new CyNode[mSelectedPwsID.size()];
 		for (int i = 0; i < mSelectedPwsID.size(); i++) {
-			groupPwsIcons[i] = Cytoscape.getCyNode(mSelectedPwsID.get(i), true);
+			groupPwsIcons[i] = Cytoscape.getCyNode(mSelectedPwsNameID.get(i), true);
 			cyNetwork.addNode(groupPwsIcons[i]);
+			nodeAtts.setAttribute(mSelectedPwsNameID.get(i), "node.fontSize", "10");
+			
 		}
 
+		
 		CyEdge[] groupEdges = new CyEdge[cnInfoPwGroup.size()];
 		int[] commonNodeNumber = new int[cnInfoPwGroup.size()];
 		int numberOfEdges = 0;
@@ -342,17 +345,17 @@ public class CommonNodeView {
 			if (temp.commonNodeNumber != 0) {
 				CyNode n1 = Cytoscape.getCyNode(temp.pathway1NameID, false);
 				CyNode n2 = Cytoscape.getCyNode(temp.pathway2NameID, false);
-				groupEdges[numberOfEdges] = Cytoscape.getCyEdge(n1, n2,
-						Semantics.INTERACTION, "pp", true);
+				groupEdges[numberOfEdges] = Cytoscape.getCyEdge(n1, n2,	Semantics.INTERACTION, "pp", true);
 				commonNodeNumber[numberOfEdges] = temp.commonNodeNumber;
 				cyNetwork.addEdge(groupEdges[numberOfEdges]);
+				edgeAtts.setAttribute(groupEdges[numberOfEdges].getIdentifier(), "weight", commonNodeNumber[numberOfEdges]);
 				numberOfEdges++;
 			}
 		}
 
 		// Where nodeID was the String id of the node in question, shapeNames is
 		// a string representing the desired shape: "Triangle", etc.
-		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
+		
 		
 		int numberOfSelectedPws = mSelectedPwsID.size();
 		double division1 = 360 / numberOfSelectedPws;
@@ -385,10 +388,7 @@ public class CommonNodeView {
 			// re-use shapes from the shapePool when the number of
 			// selected Pws is larger than 8
 		}
-
-		Cytoscape.getCurrentNetworkView().redrawGraph(false, true);
-
-		CyAttributes edgeAtts = Cytoscape.getEdgeAttributes();
+		
 		for (int j = 0; j < numberOfEdges; j++) {
 			edgeAtts.setAttribute(groupEdges[j].getIdentifier(), "edge.label",
 					String.valueOf(commonNodeNumber[j]));
@@ -397,6 +397,20 @@ public class CommonNodeView {
 
 		// display the common node view
 		Cytoscape.createNetworkView(cyNetwork, "Common Node View");
+		
+		//Cytoscape.getCurrentNetworkView().redrawGraph(false, true);
+		
+		//the following code is for set the edge-weighted spring embedded layout (weight=the number of shared nodes)
+		
+		CyLayoutAlgorithm alg = CyLayouts.getLayout("force-directed"); 
+		//Collection<CyLayoutAlgorithm> allLayouts=CyLayouts.getAllLayouts();
+		LayoutProperties props = alg.getSettings(); 
+		Tunable weightAttribute = props.get("edge_attribute");
+	    weightAttribute.setValue("weight");
+	    alg.updateSettings(); 
+	    Cytoscape.getCurrentNetworkView().applyLayout(alg);
+
+
 		return colorPool;
 	}
 

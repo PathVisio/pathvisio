@@ -22,6 +22,7 @@ import giny.model.Node;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,47 +40,52 @@ import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 import cytoscape.data.Semantics;
+import cytoscape.layout.CyLayoutAlgorithm;
+import cytoscape.layout.CyLayouts;
+import cytoscape.layout.LayoutProperties;
+import cytoscape.layout.Tunable;
 import cytoscape.task.TaskMonitor;
 
-public class PathwaysMerge{
-	 protected TaskMonitor taskMonitor;
+public class PathwaysMerge {
+	protected TaskMonitor taskMonitor;
 
-	 protected boolean interrupted; // to enable cancel of the network merge
+	protected boolean interrupted; // to enable cancel of the network merge
 
 	List<CyNetwork> networks;
-	
+
 	Map<Xref, Xref> nodePairByTranslation;
-	
+
 	CustomNodeGenerator customNode;
-	
+
 	String[] colorPool;
-	
-	static String imageLocation = GlobalPreference.getApplicationDir() .toString()+ "/" ;
-	
-	/*String[] colorPool = { "0,255,0", "80,50,80", "51,255,255",
-			"255,255,0", "0, 0, 255", "255, 0, 255", "255,0, 0",
-			 "0,102,0", "0, 204, 204" };*/
-	
+
+	static String imageLocation = GlobalPreference.getApplicationDir()
+			.toString()
+			+ "/";
+
+	/*
+	 * String[] colorPool = { "0,255,0", "80,50,80", "51,255,255", "255,255,0",
+	 * "0, 0, 255", "255, 0, 255", "255,0, 0", "0,102,0", "0, 204, 204" };
+	 */
+
 	static Map<String, DataSource> mapSysCodeToBioDS;
-	
-	public PathwaysMerge( List<CyNetwork> nets, Map<Xref, Xref> m, String[] c) {
-//		status = "Merging networks... 0%";
-        taskMonitor = null;
-        interrupted = false;
+
+	public PathwaysMerge(List<CyNetwork> nets, Map<Xref, Xref> m, String[] c) {
+		// status = "Merging networks... 0%";
+		taskMonitor = null;
+		interrupted = false;
 		networks = nets;
-		nodePairByTranslation=m;
-		colorPool=c;
-		
-		/*colors=new Color[colorPool.length];
-		
-		for(int i=0; i<colorPool.length; i++){
-			String temp=colorPool[i];
-			System.out.println(temp);
-			colors[i]=stringToColor(temp);
-		}*/
-		
-		
-		mapSysCodeToBioDS=new HashMap<String, DataSource>();
+		nodePairByTranslation = m;
+		colorPool = c;
+
+		/*
+		 * colors=new Color[colorPool.length];
+		 * 
+		 * for(int i=0; i<colorPool.length; i++){ String temp=colorPool[i];
+		 * System.out.println(temp); colors[i]=stringToColor(temp); }
+		 */
+
+		mapSysCodeToBioDS = new HashMap<String, DataSource>();
 		mapSysCodeToBioDS.put("Entrez Gene", BioDataSource.ENTREZ_GENE);
 		mapSysCodeToBioDS.put("Ensembl Rat", BioDataSource.ENSEMBL_RAT);
 		mapSysCodeToBioDS.put("TAIR", BioDataSource.TAIR);
@@ -88,24 +94,30 @@ public class PathwaysMerge{
 		mapSysCodeToBioDS.put("Cint", BioDataSource.CINT);
 		mapSysCodeToBioDS.put("CCDS", BioDataSource.CCDS);
 		mapSysCodeToBioDS.put("CAS", BioDataSource.CAS);
-		mapSysCodeToBioDS.put("ChEBI", BioDataSource.CHEBI );
-		mapSysCodeToBioDS.put("HMDB", BioDataSource.HMDB );
+		mapSysCodeToBioDS.put("ChEBI", BioDataSource.CHEBI);
+		mapSysCodeToBioDS.put("HMDB", BioDataSource.HMDB);
 		mapSysCodeToBioDS.put("Kegg Compound", BioDataSource.KEGG_COMPOUND);
 		mapSysCodeToBioDS.put("PubChem", BioDataSource.PUBCHEM);
-		mapSysCodeToBioDS.put("Chemspider", BioDataSource.CHEMSPIDER );
+		mapSysCodeToBioDS.put("Chemspider", BioDataSource.CHEMSPIDER);
 		mapSysCodeToBioDS.put("SGD", BioDataSource.SGD);
 		mapSysCodeToBioDS.put("EC Number", BioDataSource.ENZYME_CODE);
-		mapSysCodeToBioDS.put("Ecoli", BioDataSource.ECOLI );
+		mapSysCodeToBioDS.put("Ecoli", BioDataSource.ECOLI);
 		mapSysCodeToBioDS.put("EMBL", BioDataSource.EMBL);
 		mapSysCodeToBioDS.put("Ensembl", BioDataSource.ENSEMBL);
-		mapSysCodeToBioDS.put("Ensembl Mosquito", BioDataSource.ENSEMBL_MOSQUITO);
-		mapSysCodeToBioDS.put("Gramene Arabidopsis", BioDataSource.GRAMENE_ARABIDOPSIS);
-		mapSysCodeToBioDS.put("Ensembl B. subtilis", BioDataSource.ENSEMBL_BSUBTILIS);
+		mapSysCodeToBioDS.put("Ensembl Mosquito",
+				BioDataSource.ENSEMBL_MOSQUITO);
+		mapSysCodeToBioDS.put("Gramene Arabidopsis",
+				BioDataSource.GRAMENE_ARABIDOPSIS);
+		mapSysCodeToBioDS.put("Ensembl B. subtilis",
+				BioDataSource.ENSEMBL_BSUBTILIS);
 		mapSysCodeToBioDS.put("Ensembl Cow", BioDataSource.ENSEMBL_COW);
-		mapSysCodeToBioDS.put("Ensembl C. elegans", BioDataSource.ENSEMBL_CELEGANS);
+		mapSysCodeToBioDS.put("Ensembl C. elegans",
+				BioDataSource.ENSEMBL_CELEGANS);
 		mapSysCodeToBioDS.put("Ensembl Dog", BioDataSource.ENSEMBL_DOG);
-		mapSysCodeToBioDS.put("Ensembl Fruitfly", BioDataSource.ENSEMBL_FRUITFLY);
-		mapSysCodeToBioDS.put("Ensembl Zebrafish", BioDataSource.ENSEMBL_ZEBRAFISH);
+		mapSysCodeToBioDS.put("Ensembl Fruitfly",
+				BioDataSource.ENSEMBL_FRUITFLY);
+		mapSysCodeToBioDS.put("Ensembl Zebrafish",
+				BioDataSource.ENSEMBL_ZEBRAFISH);
 		mapSysCodeToBioDS.put("Ensembl E. coli", BioDataSource.ENSEMBL_ECOLI);
 		mapSysCodeToBioDS.put("Ensembl Chicken", BioDataSource.ENSEMBL_CHICKEN);
 		mapSysCodeToBioDS.put("Ensembl Human", BioDataSource.ENSEMBL_HUMAN);
@@ -113,17 +125,20 @@ public class PathwaysMerge{
 		mapSysCodeToBioDS.put("Gramene Rice", BioDataSource.GRAMENE_RICE);
 		mapSysCodeToBioDS.put("Ensembl Chimp", BioDataSource.ENSEMBL_CHIMP);
 		mapSysCodeToBioDS.put("Ensembl Horse", BioDataSource.ENSEMBL_HORSE);
-		mapSysCodeToBioDS.put("Ensembl Yeast", BioDataSource.ENSEMBL_SCEREVISIAE);
+		mapSysCodeToBioDS.put("Ensembl Yeast",
+				BioDataSource.ENSEMBL_SCEREVISIAE);
 		mapSysCodeToBioDS.put("Ensembl Xenopu", BioDataSource.ENSEMBL_XENOPUS);
 		mapSysCodeToBioDS.put("FlyBase", BioDataSource.FLYBASE);
-		mapSysCodeToBioDS.put("GenBank", BioDataSource.GENBANK );
-		mapSysCodeToBioDS.put("CodeLink", BioDataSource.CODELINK );
-		mapSysCodeToBioDS.put("Gramene Genes DB", BioDataSource.GRAMENE_GENES_DB);
-		mapSysCodeToBioDS.put("Gramene Literature", BioDataSource.GRAMENE_LITERATURE);
+		mapSysCodeToBioDS.put("GenBank", BioDataSource.GENBANK);
+		mapSysCodeToBioDS.put("CodeLink", BioDataSource.CODELINK);
+		mapSysCodeToBioDS.put("Gramene Genes DB",
+				BioDataSource.GRAMENE_GENES_DB);
+		mapSysCodeToBioDS.put("Gramene Literature",
+				BioDataSource.GRAMENE_LITERATURE);
 		mapSysCodeToBioDS.put("Gramene Pathway", BioDataSource.GRAMENE_PATHWAY);
 		mapSysCodeToBioDS.put("GenPept", BioDataSource.GEN_PEPT);
 		mapSysCodeToBioDS.put("HUGO", BioDataSource.HUGO);
-		mapSysCodeToBioDS.put("HsGene", BioDataSource.HSGENE );
+		mapSysCodeToBioDS.put("HsGene", BioDataSource.HSGENE);
 		mapSysCodeToBioDS.put("InterPro", BioDataSource.INTERPRO);
 		mapSysCodeToBioDS.put("Illumina", BioDataSource.ILLUMINA);
 		mapSysCodeToBioDS.put("IPI", BioDataSource.IPI);
@@ -133,27 +148,31 @@ public class PathwaysMerge{
 		mapSysCodeToBioDS.put("MaizeGDB", BioDataSource.MAIZE_GDB);
 		mapSysCodeToBioDS.put("NASC Gene", BioDataSource.NASC_GENE);
 		mapSysCodeToBioDS.put("NuGO wiki", BioDataSource.NUGOWIKI);
-		mapSysCodeToBioDS.put("Other", BioDataSource.OTHER );
+		mapSysCodeToBioDS.put("Other", BioDataSource.OTHER);
 		mapSysCodeToBioDS.put("Oryzabase", BioDataSource.ORYZA_BASE);
-		mapSysCodeToBioDS.put("OMIM", BioDataSource.OMIM );
-		mapSysCodeToBioDS.put("Rice Ensembl Gene", BioDataSource.RICE_ENSEMBL_GENE);
+		mapSysCodeToBioDS.put("OMIM", BioDataSource.OMIM);
+		mapSysCodeToBioDS.put("Rice Ensembl Gene",
+				BioDataSource.RICE_ENSEMBL_GENE);
 		mapSysCodeToBioDS.put("PDB", BioDataSource.PDB);
-		mapSysCodeToBioDS.put("Pfam", BioDataSource.PFAM );
-		mapSysCodeToBioDS.put("PlantGDB", BioDataSource.PLANTGDB );
-		mapSysCodeToBioDS.put("RefSeq", BioDataSource.REFSEQ );
-		mapSysCodeToBioDS.put("RGD", BioDataSource.RGD );
-		mapSysCodeToBioDS.put("Rfam", BioDataSource.RFAM );
+		mapSysCodeToBioDS.put("Pfam", BioDataSource.PFAM);
+		mapSysCodeToBioDS.put("PlantGDB", BioDataSource.PLANTGDB);
+		mapSysCodeToBioDS.put("RefSeq", BioDataSource.REFSEQ);
+		mapSysCodeToBioDS.put("RGD", BioDataSource.RGD);
+		mapSysCodeToBioDS.put("Rfam", BioDataSource.RFAM);
 		mapSysCodeToBioDS.put("Uniprot/TrEMBL", BioDataSource.UNIPROT);
-		mapSysCodeToBioDS.put("dbSNP", BioDataSource.SNP );
-		mapSysCodeToBioDS.put("GeneOntology", BioDataSource.GENE_ONTOLOGY );
-		mapSysCodeToBioDS.put("UniGene", BioDataSource.UNIGENE );
+		mapSysCodeToBioDS.put("dbSNP", BioDataSource.SNP);
+		mapSysCodeToBioDS.put("GeneOntology", BioDataSource.GENE_ONTOLOGY);
+		mapSysCodeToBioDS.put("UniGene", BioDataSource.UNIGENE);
 		mapSysCodeToBioDS.put("UCSC Genome Browser", BioDataSource.UCSC);
-		mapSysCodeToBioDS.put("WormBase", BioDataSource.WORMBASE );
-		mapSysCodeToBioDS.put("Wikipedia", BioDataSource.WIKIPEDIA );
-		mapSysCodeToBioDS.put("Wheat gene catalog", BioDataSource.WHEAT_GENE_CATALOG);
-		mapSysCodeToBioDS.put("Wheat gene names", BioDataSource.WHEAT_GENE_NAMES);
-		mapSysCodeToBioDS.put("Wheat gene refs", BioDataSource.WHEAT_GENE_REFERENCES);
-		mapSysCodeToBioDS.put("Affy", BioDataSource.AFFY );
+		mapSysCodeToBioDS.put("WormBase", BioDataSource.WORMBASE);
+		mapSysCodeToBioDS.put("Wikipedia", BioDataSource.WIKIPEDIA);
+		mapSysCodeToBioDS.put("Wheat gene catalog",
+				BioDataSource.WHEAT_GENE_CATALOG);
+		mapSysCodeToBioDS.put("Wheat gene names",
+				BioDataSource.WHEAT_GENE_NAMES);
+		mapSysCodeToBioDS.put("Wheat gene refs",
+				BioDataSource.WHEAT_GENE_REFERENCES);
+		mapSysCodeToBioDS.put("Affy", BioDataSource.AFFY);
 		mapSysCodeToBioDS.put("ZFIN", BioDataSource.ZFIN);
 
 	}
@@ -172,8 +191,9 @@ public class PathwaysMerge{
 			taskMonitor.setPercentCompleted(percentage);
 		}
 	}
-	
-	public CyNetwork mergeNetwork(final String title, Map<Xref, Xref> nodePairByTranslation) {
+
+	public CyNetwork mergeNetwork(final String title,
+			Map<Xref, Xref> nodePairByTranslation) {
 		if (networks == null || title == null) {
 			throw new java.lang.NullPointerException();
 		}
@@ -198,9 +218,12 @@ public class PathwaysMerge{
 		List<Node> nodes = new Vector<Node>(nNode);
 		for (int i = 0; i < nNode; i++) {
 
-			if (interrupted) return null;
-			/*updateTaskMonitor("Merging nodes...\n" + i + "/" + nNode, (i + 1)
-					* 100 / nNode);*/
+			if (interrupted)
+				return null;
+			/*
+			 * updateTaskMonitor("Merging nodes...\n" + i + "/" + nNode, (i + 1)
+			 * 100 / nNode);
+			 */
 
 			final Map<CyNetwork, Set<GraphObject>> mapNetNode = matchedNodeList
 					.get(i);
@@ -213,7 +236,8 @@ public class PathwaysMerge{
 				nodes.add(node);
 			}
 
-			final Iterator<Set<GraphObject>> itNodes = mapNetNode.values().iterator();
+			final Iterator<Set<GraphObject>> itNodes = mapNetNode.values()
+					.iterator();
 			while (itNodes.hasNext()) {
 				final Set<GraphObject> nodes_ori = itNodes.next();
 				final Iterator<GraphObject> itNode = nodes_ori.iterator();
@@ -224,10 +248,11 @@ public class PathwaysMerge{
 			}
 		}
 
-//		updateTaskMonitor("Merging nodes completed", 100);
+		// updateTaskMonitor("Merging nodes completed", 100);
 
 		// match edges
-		List<Map<CyNetwork, Set<GraphObject>>> matchedEdgeList = getMatchedList(networks, false, nodePairByTranslation);
+		List<Map<CyNetwork, Set<GraphObject>>> matchedEdgeList = getMatchedList(
+				networks, false, nodePairByTranslation);
 		// merge edges
 		final int nEdge = matchedEdgeList.size();
 		final List<Edge> edges = new Vector<Edge>(nEdge);
@@ -235,8 +260,10 @@ public class PathwaysMerge{
 
 			if (interrupted)
 				return null;
-			/*updateTaskMonitor("Merging edges...\n" + i + "/" + nEdge, (i + 1)
-					* 100 / nEdge);*/
+			/*
+			 * updateTaskMonitor("Merging edges...\n" + i + "/" + nEdge, (i + 1)
+			 * 100 / nEdge);
+			 */
 
 			final Map<CyNetwork, Set<GraphObject>> mapNetEdge = matchedEdgeList
 					.get(i);
@@ -270,57 +297,75 @@ public class PathwaysMerge{
 			edges.add(edge);
 		}
 
-		//updateTaskMonitor("Merging edges completed", 100);
+		// updateTaskMonitor("Merging edges completed", 100);
 
 		// create new network
-		final CyNetwork network = Cytoscape.createNetwork(nodes, edges, title, null, false);
-		
-		//here the code is for replace the shared nodes with custom node(multi-color pie)
-		Iterator<Node> itN=nodes.iterator();
+		final CyNetwork network = Cytoscape.createNetwork(nodes, edges, title,
+				null, false);
+
+		// here the code is for replace the shared nodes with custom
+		// node(multi-color pie)
+		Iterator<Node> itN = nodes.iterator();
 		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
-		while(itN.hasNext()){
-			
-		    Node temp=itN.next();
-		    String colorTemp=(String)nodeAtts.getAttribute(temp.getIdentifier(), "node.fillColor");
-		   
-		    List<Color> colorsOnePie=new ArrayList<Color>();
-		    if(colorTemp!=null){
-		    	if(colorTemp.indexOf(";")!=-1){
-		    		//get individual string representation of Color, and then transfer it to Color type
-		    		int t=0;
-		    		int index=colorTemp.indexOf(";", t);
-		    		while(index!=-1){
-		    			
-		    			String s=colorTemp.substring(t, index);
-		    			//System.out.println("individual color's string representation: "+s);
-		    			if(s.equals(";")) continue;
-		    			t=index+1;
-		    			colorsOnePie.add(stringToColor(s));
-		    			index=colorTemp.indexOf(";", t);
-		    		}
-		    		
-		    		//System.out.println(colorTemp);
-		    		Object[] cOnePie=colorsOnePie.toArray();
-		    		Color[] c=new Color[colorsOnePie.size()];
-		    		for(int k=0; k<colorsOnePie.size();k++){
-		    			c[k]=(Color)cOnePie[k];
-		    		}
-		    		
-		    		
-		    		PieGenerator pie=new PieGenerator(c);
-		    		pie.generatePie(colorsOnePie.size());
-		    		customNode=new CustomNodeGenerator(imageLocation+"chart.png", temp);
-		    		customNode.createCustomNode(network);
-		    	}
-		    }
-		
+		while (itN.hasNext()) {
+
+			Node temp = itN.next();
+			String colorTemp = (String) nodeAtts.getAttribute(temp
+					.getIdentifier(), "node.fillColor");
+
+			List<Color> colorsOnePie = new ArrayList<Color>();
+			if (colorTemp != null) {
+				if (colorTemp.indexOf(";") != -1) {
+					// get individual string representation of Color, and then
+					// transfer it to Color type
+					int t = 0;
+					int index = colorTemp.indexOf(";", t);
+					while (index != -1) {
+
+						String s = colorTemp.substring(t, index);
+						// System.out.println("individual color's string
+						// representation: "+s);
+						if (s.equals(";"))
+							continue;
+						t = index + 1;
+						colorsOnePie.add(stringToColor(s));
+						index = colorTemp.indexOf(";", t);
+					}
+
+					// System.out.println(colorTemp);
+					Object[] cOnePie = colorsOnePie.toArray();
+					Color[] c = new Color[colorsOnePie.size()];
+					for (int k = 0; k < colorsOnePie.size(); k++) {
+						c[k] = (Color) cOnePie[k];
+					}
+
+					PieGenerator pie = new PieGenerator(c);
+					pie.generatePie(colorsOnePie.size());
+					customNode = new CustomNodeGenerator(imageLocation
+							+ "chart.png", temp);
+					customNode.createCustomNode(network);
+				}
+			}
+
 		}
 
 		updateTaskMonitor("Successfully merged the selected " + networks.size()
 				+ " networks into network " + title, 100);
-
-		cytoscape.view.CyNetworkView networkView = Cytoscape.getNetworkView(title);
-		networkView.redrawGraph(true,true);
+		cytoscape.view.CyNetworkView networkView = Cytoscape
+		.getNetworkView(title);
+		networkView.redrawGraph(true, false);
+		
+		//the following code is for display with appropriate Layout
+		/*Collection<CyLayoutAlgorithm> allLayouts=CyLayouts.getAllLayouts();
+		CyLayoutAlgorithm alg = CyLayouts.getLayout("force-directed"); 
+		LayoutProperties props = alg.getSettings(); 
+		Tunable weightAttribute = props.get("edge_attribute");
+	    weightAttribute.setValue("weight");
+	    alg.updateSettings(); 
+		networkView.applyLayout(alg);*/
+		
+		
+		
 
 		return network;
 	}
@@ -334,7 +379,8 @@ public class PathwaysMerge{
 	 * @return list of map from network to node/edge
 	 */
 	protected List<Map<CyNetwork, Set<GraphObject>>> getMatchedList(
-			final List<CyNetwork> networks, final boolean isNode, Map<Xref, Xref> nodePairByTranslation) {
+			final List<CyNetwork> networks, final boolean isNode,
+			Map<Xref, Xref> nodePairByTranslation) {
 		if (networks == null) {
 			throw new java.lang.NullPointerException();
 		}
@@ -367,10 +413,11 @@ public class PathwaysMerge{
 			while (it.hasNext()) {
 				if (interrupted)
 					return null;
-				/*updateTaskMonitor("Matching " + (isNode ? "nodes" : "edges")
-						+ "...\n" + processedGO + "/" + totalGO, processedGO
-						* 100 / totalGO);
-				processedGO++;*/
+				/*
+				 * updateTaskMonitor("Matching " + (isNode ? "nodes" : "edges") +
+				 * "...\n" + processedGO + "/" + totalGO, processedGO 100 /
+				 * totalGO); processedGO++;
+				 */
 
 				final GraphObject go1 = it.next();
 
@@ -396,7 +443,7 @@ public class PathwaysMerge{
 							// there is only one node in the map
 							if (isNode) { // NODE
 								matched = matchNode(net1, (Node) go1, net2,
-										(Node) go2,nodePairByTranslation);
+										(Node) go2, nodePairByTranslation);
 							} else {// EDGE
 								matched = matchEdge(net1, (Edge) go1, net2,
 										(Edge) go2, nodePairByTranslation);
@@ -428,8 +475,10 @@ public class PathwaysMerge{
 			}
 
 		}
-		/*updateTaskMonitor("Matching " + (isNode ? "nodes" : "edges")
-				+ " completed", 100);*/
+		/*
+		 * updateTaskMonitor("Matching " + (isNode ? "nodes" : "edges") + "
+		 * completed", 100);
+		 */
 		return matchedList;
 	}
 
@@ -457,22 +506,29 @@ public class PathwaysMerge{
 		if (e1.isDirected()) { // directed
 			if (!e2.isDirected())
 				return false;
-			return matchNode(net1, e1.getSource(), net2, e2.getSource(), nodePairByTranslation)
-					&& matchNode(net1, e1.getTarget(), net2, e2.getTarget(),nodePairByTranslation);
+			return matchNode(net1, e1.getSource(), net2, e2.getSource(),
+					nodePairByTranslation)
+					&& matchNode(net1, e1.getTarget(), net2, e2.getTarget(),
+							nodePairByTranslation);
 		} else { // non directed
 			if (e2.isDirected())
 				return false;
-			if (matchNode(net1, e1.getSource(), net2, e2.getSource(),nodePairByTranslation)
-					&& matchNode(net1, e1.getTarget(), net2, e2.getTarget(), nodePairByTranslation))
+			if (matchNode(net1, e1.getSource(), net2, e2.getSource(),
+					nodePairByTranslation)
+					&& matchNode(net1, e1.getTarget(), net2, e2.getTarget(),
+							nodePairByTranslation))
 				return true;
-			if (matchNode(net1, e1.getSource(), net2, e2.getTarget(), nodePairByTranslation)
-					&& matchNode(net1, e1.getTarget(), net2, e2.getSource(), nodePairByTranslation))
+			if (matchNode(net1, e1.getSource(), net2, e2.getTarget(),
+					nodePairByTranslation)
+					&& matchNode(net1, e1.getTarget(), net2, e2.getSource(),
+							nodePairByTranslation))
 				return true;
 			return false;
 		}
 	}
 
-	public boolean matchNode(CyNetwork net1, Node n1, CyNetwork net2, Node n2, Map<Xref, Xref> nodePairByTranslation) {
+	public boolean matchNode(CyNetwork net1, Node n1, CyNetwork net2, Node n2,
+			Map<Xref, Xref> nodePairByTranslation) {
 		// boolean result=false;
 		if (net1 == null || n1 == null || n2 == null || net2 == null) {
 			throw new java.lang.NullPointerException();
@@ -481,8 +537,10 @@ public class PathwaysMerge{
 		Object geneID1 = nodeAtts.getAttribute(n1.getIdentifier(), "GeneID");
 		Object geneID2 = nodeAtts.getAttribute(n2.getIdentifier(), "GeneID");
 
-		Object systemCode1 = nodeAtts.getAttribute(n1.getIdentifier(),"SystemCode");
-		Object systemCode2 = nodeAtts.getAttribute(n2.getIdentifier(),"SystemCode");
+		Object systemCode1 = nodeAtts.getAttribute(n1.getIdentifier(),
+				"SystemCode");
+		Object systemCode2 = nodeAtts.getAttribute(n2.getIdentifier(),
+				"SystemCode");
 
 		if (geneID1 == null || geneID2 == null || systemCode1 == null
 				|| systemCode2 == null || geneID1.equals("")
@@ -517,7 +575,7 @@ public class PathwaysMerge{
 				}
 				return false;
 			}
-			
+
 		}
 
 	}
@@ -528,7 +586,8 @@ public class PathwaysMerge{
 			return null;
 		}
 
-		final Iterator<Set<GraphObject>> itNodes = mapNetNode.values().iterator();
+		final Iterator<Set<GraphObject>> itNodes = mapNetNode.values()
+				.iterator();
 
 		Set<GraphObject> nodes = new HashSet<GraphObject>();
 		// 'nodes' will contains all the matched nodes
@@ -537,9 +596,18 @@ public class PathwaysMerge{
 		}
 
 		final Iterator<GraphObject> itNode = nodes.iterator();
-		String id = new String(itNode.next().getIdentifier());
-
 		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
+		//the id of first node in the Set named 'nodes'
+		String id = new String(itNode.next().getIdentifier());
+		String geneID=(String)nodeAtts.getAttribute(id, "GeneID");
+		String systemCode=(String)nodeAtts.getAttribute(id, "SystemCode");
+		
+		
+		// ids is for later use--set attribute for shared nodes
+		List<String> ids = new ArrayList<String>();
+		ids.add(id);
+
+		
 		String gpmlType = nodeAtts.getAttribute(id, "gpml-type").toString();
 
 		if ((!gpmlType.equals("1")) && (!gpmlType.equals("7"))) {
@@ -548,18 +616,19 @@ public class PathwaysMerge{
 
 			if (nodes.size() > 1) { // if more than 1 nodes to be merged, assign
 				// the id as the combination of all identifiers
-				
-				//System.out.println("there are several nodes matched: ");
-				//System.out.print(id);
-				
+
+				// System.out.println("there are several nodes matched: ");
+				// System.out.print(id);
+
 				while (itNode.hasNext()) {
 					final Node node = (Node) itNode.next();
-					//System.out.print("+"+node.getIdentifier());
+					// System.out.print("+"+node.getIdentifier());
 					id += "_" + node.getIdentifier();
+					ids.add(node.getIdentifier());
 				}
 
-				//System.out.println();
-				
+				// System.out.println();
+
 				// if node with this id exist, get new one
 				String appendix = "";
 				int app = 0;
@@ -590,49 +659,62 @@ public class PathwaysMerge{
 						if (networks.contains(n)) {
 							int index = networks.indexOf(n);
 							// System.out.println(index + "");
-							
+
 							color = colorPool[index];
-							
-							nodeAtts.setAttribute(id, "Source Pathway", networks.get(index).getTitle());
+
+							nodeAtts.setAttribute(id, "Source Pathway",
+									networks.get(index).getTitle());
 							break;
 						}
 					}
 				}
-				
+
 				nodeAtts.setAttribute(id, "node.fillColor", color);
 			} else {
-				if (setOfNets.size() == 1) {
+				if (setOfNets.size() == 1) { // duplicate node appear in the
+					// same pathway
 					CyNetwork n = itNets.next();
 					if (networks.contains(n)) {
 						int index = networks.indexOf(n);
 						// System.out.println(index + "");
 						color = colorPool[index];
 						nodeAtts.setAttribute(id, "node.fillColor", color);
-						nodeAtts.setAttribute(id, "Source Pathway", networks.get(index).getTitle());
+						nodeAtts.setAttribute(id, "Source Pathway", networks
+								.get(index).getTitle());
+
+						//set other attribute value if they have the same info
+						setAttributeForSharedNodes(nodeAtts, ids, id);
 					}
 
-				} else {
-					//System.out.println("for one pie----------------------");
-					//Set<String> colorPie = new HashSet<String>();
-					String combinedColor="";
-					String sourcePws="";
+				} else { // shared node among different pathways
+
+					// System.out.println("for one pie----------------------");
+					// Set<String> colorPie = new HashSet<String>();
+					String combinedColor = "";
+					String sourcePws = "";
 					while (itNets.hasNext()) {
 						CyNetwork n = itNets.next();
 
 						if (networks.contains(n)) {
 							int index = networks.indexOf(n);
-							sourcePws=sourcePws+networks.get(index).getTitle()+", ";
-							//System.out.println(colorPool[index]);
-							//colorPie.add(colorPool[index]);
-							combinedColor=combinedColor+ colorPool[index]+ ";";
-
+							sourcePws = sourcePws
+									+ networks.get(index).getTitle() + ", ";
+							// System.out.println(colorPool[index]);
+							// colorPie.add(colorPool[index]);
+							combinedColor = combinedColor + colorPool[index]
+									+ ";";
 						}
 					}
-					
-					//System.out.println(combinedColor);
+					// System.out.println(combinedColor);
 					nodeAtts.setAttribute(id, "Source Pathway", sourcePws);
-					nodeAtts.setAttribute(id, "node.shape", "Rectangle");
 					nodeAtts.setAttribute(id, "node.fillColor", combinedColor);
+					
+                    //set other attribute value if they have the same info
+					setAttributeForSharedNodes(nodeAtts, ids, id);
+					
+					//set the attribute GeneID and SystemCode
+					nodeAtts.setAttribute(id, "GeneID", geneID);
+					nodeAtts.setAttribute(id, "SystemCode",systemCode );
 				}
 			}
 
@@ -659,27 +741,78 @@ public class PathwaysMerge{
 		// created
 		final String id = edge.getIdentifier();
 
-		// set other attributes as indicated in attributeMapping
-		// setAttribute(id, mapNetEdge, edgeAttributeMapping);
-
 		return edge;
 	}
-	
-	public static Color stringToColor(String temp){
-		int index1=temp.indexOf(",");
-		int index2=temp.lastIndexOf(",");
-		
-		String t1=temp.substring(0, index1);
-		String t2=temp.substring(index1+1, index2);
-		String t3=temp.substring(index2+1);
-		//System.out.println(t1 +":" +t2+":"+t3);
-		
-		int r=Integer.valueOf(t1.trim());
-		int g=Integer.valueOf(t2.trim());
-		int b=Integer.valueOf(t3.trim());
-		
+
+	public void setAttributeForSharedNodes(CyAttributes nodeAtts,
+			List<String> ids, String mergedNodeID) {
+		// for the attributes that are the same for all the source nodes, these
+		// attributes should simply be copied
+
+		String[] attrNames = nodeAtts.getAttributeNames();
+		for (int i = 0; i < attrNames.length; i++) {
+			Iterator<String> it = ids.iterator();
+			String tempAttr = attrNames[i];
+			if (tempAttr.equals("LineStyle")) {
+				int tt = 1;
+			}
+			List<Object> attrs = new ArrayList<Object>();
+			int flag = 1;
+			// put all the attributes information of ids into attrs for the
+			// attribute with name tempAttr
+			while (it.hasNext()) {
+				String id = it.next();
+				attrs.add(nodeAtts.getAttribute(id, tempAttr));
+			}
+			
+				for (int j = 0; j < attrs.size() - 1; j++) {
+					if (attrs.get(j) != null && attrs.get(j + 1) != null) {
+						if (!attrs.get(j).equals(attrs.get(j + 1))) {
+							flag = 0;
+						}
+					}else{
+						flag = 0;
+					}
+				}
+			
+
+			if (flag == 1 ) {
+				Object attrForAllSharedNodes = nodeAtts.getAttribute(
+						ids.get(0), tempAttr);
+				if (attrForAllSharedNodes!=null) {
+					if (attrForAllSharedNodes instanceof String) {
+						nodeAtts.setAttribute(mergedNodeID, tempAttr,
+								(String) attrForAllSharedNodes);
+					} else if (attrForAllSharedNodes instanceof Integer) {
+						nodeAtts.setAttribute(mergedNodeID, tempAttr,
+								(Integer) attrForAllSharedNodes);
+					} else if (attrForAllSharedNodes instanceof Boolean) {
+						nodeAtts.setAttribute(mergedNodeID, tempAttr,
+								(Boolean) attrForAllSharedNodes);
+					} else {
+						nodeAtts.setAttribute(mergedNodeID, tempAttr,
+								(Double) attrForAllSharedNodes);
+					}
+				}
+
+			}
+		}
+	}
+
+	public static Color stringToColor(String temp) {
+		int index1 = temp.indexOf(",");
+		int index2 = temp.lastIndexOf(",");
+
+		String t1 = temp.substring(0, index1);
+		String t2 = temp.substring(index1 + 1, index2);
+		String t3 = temp.substring(index2 + 1);
+		// System.out.println(t1 +":" +t2+":"+t3);
+
+		int r = Integer.valueOf(t1.trim());
+		int g = Integer.valueOf(t2.trim());
+		int b = Integer.valueOf(t3.trim());
+
 		return new Color(r, g, b);
 	}
 
-	
 }

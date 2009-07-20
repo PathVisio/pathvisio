@@ -56,11 +56,13 @@ import cytoscape.data.webservice.CyWebServiceEvent;
 import cytoscape.data.webservice.CyWebServiceException;
 import cytoscape.data.webservice.WebServiceClientManager;
 import cytoscape.data.webservice.CyWebServiceEvent.WSEventType;
+import cytoscape.ding.CyGraphAllLOD;
 import cytoscape.task.Task;
 import cytoscape.task.TaskMonitor;
 import cytoscape.task.ui.JTaskConfig;
 import cytoscape.task.util.TaskManager;
 import cytoscape.view.CyNetworkView;
+import ding.view.DGraphView;
 
 //public class SuperpathwaysGui extends JFrame implements ActionListener{ 
 public class SuperpathwaysGui extends JPanel { 
@@ -75,7 +77,8 @@ public class SuperpathwaysGui extends JPanel {
 
 	List<String> mClickedPathwayNameID = new ArrayList<String>();
 
-	String[] mSelectedPathwayName = new String[20];
+	//String[] mSelectedPathwayName = new String[20];
+	List<String> mSelectedPathwayNameID = new ArrayList<String>();
 	
 	//this mSelectedPathwaysID is used for pass the reference of Pws to the method in CommonNodeView class
 	//use the identifier directly, not the name/identifier combination.
@@ -992,20 +995,21 @@ public class SuperpathwaysGui extends JPanel {
 		// selected pathways list
 		Object[] temp = availablePathwaysList.getSelectedValues();
 		for (int i = 0; i < temp.length; i++) {
-			mSelectedPathwayName[i] = (String) temp[i];
+			mSelectedPathwayNameID.add((String) temp[i]);
 			System.out.println("After clicking the right button!");
-			System.out.println(mSelectedPathwayName[i]);
+			System.out.println((String) temp[i]);
 
 			if (!selectedPathwaysListModel
-					.contains((Object) mSelectedPathwayName[i])) {
+					.contains((Object) temp[i])) {
 				selectedPathwaysListModel
-						.addElement((Object) mSelectedPathwayName[i]);
+						.addElement((Object)temp[i]);
 				selectedPathwaysList.setModel(selectedPathwaysListModel);
 				
                 //add the pathways IDs to the list mSelectedPathwaysID
-				int index1 = mSelectedPathwayName[i].lastIndexOf("(");
-				int index2 = mSelectedPathwayName[i].lastIndexOf(")");
-				String pwID = mSelectedPathwayName[i].substring(index1 + 1, index2);
+				String t=(String)temp[i];
+				int index1 =t.lastIndexOf("(");
+				int index2 = t.lastIndexOf(")");
+				String pwID = t.substring(index1 + 1, index2);
                 mSelectedPathwaysID.add(pwID);
                 
 				if (selectedPathwaysListModel.getSize() > 0) {
@@ -1013,12 +1017,12 @@ public class SuperpathwaysGui extends JPanel {
 				}
 
 				anchorPathwayComboBoxModel
-						.removeElement((Object) mSelectedPathwayName[i]);
+						.removeElement((Object)temp[i]);
 				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
 			}
 
 			// removed the selected item in the availabe pathways list
-			availablePathwaysListModel.removeElement(mSelectedPathwayName[i]);
+			availablePathwaysListModel.removeElement(temp[i]);
 		}
 
 		int size = availablePathwaysListModel.getSize();
@@ -1034,13 +1038,13 @@ public class SuperpathwaysGui extends JPanel {
 		// available pathways list
 		Object[] temp = selectedPathwaysList.getSelectedValues();
 		for (int i = 0; i < temp.length; i++) {
-			mSelectedPathwayName[i] = (String) temp[i];
+			mSelectedPathwayNameID.remove( (String) temp[i]);
 			System.out.println("After clicking the left button!");
-			System.out.println(mSelectedPathwayName[i]);
+			System.out.println((String) temp[i]);
 			if (!availablePathwaysListModel
-					.contains((Object) mSelectedPathwayName[i])) {
+					.contains((Object)temp[i])) {
 				availablePathwaysListModel
-						.addElement((Object) mSelectedPathwayName[i]);
+						.addElement((Object) temp[i]);
 				availablePathwaysList.setModel(availablePathwaysListModel);
 				
                 
@@ -1049,18 +1053,18 @@ public class SuperpathwaysGui extends JPanel {
 				}
 
 				anchorPathwayComboBoxModel
-						.addElement((Object) mSelectedPathwayName[i]);
+						.addElement((Object) temp[i]);
 				anchorPathwayComboBox.setModel(anchorPathwayComboBoxModel);
 
 			}
 
 			// removed the selected item in the selected pathways list
 
-			selectedPathwaysListModel.removeElement(mSelectedPathwayName[i]);
-			
-			int index1 = mSelectedPathwayName[i].lastIndexOf("(");
-			int index2 = mSelectedPathwayName[i].lastIndexOf(")");
-			String pwID = mSelectedPathwayName[i].substring(index1 + 1, index2);
+			selectedPathwaysListModel.removeElement(temp[i]);
+			String t=(String)temp[i];
+			int index1 = t.lastIndexOf("(");
+			int index2 = t.lastIndexOf(")");
+			String pwID = t.substring(index1 + 1, index2);
             mSelectedPathwaysID.remove(pwID);
 
 		}
@@ -1083,6 +1087,7 @@ public class SuperpathwaysGui extends JPanel {
 		selectedPathwaysList.setModel(selectedPathwaysListModel);
 		anchorPathwayComboBox.setModel(new DefaultComboBoxModel());
 		mSelectedPathwaysID.clear();
+		mSelectedPathwayNameID.clear();
 
 	}
 
@@ -1092,6 +1097,8 @@ public class SuperpathwaysGui extends JPanel {
 		for(int k=0; k<mSelectedPathwaysID.size();k++){
 			System.out.println(mSelectedPathwaysID.get(k));
 		}
+		
+		
 		
 		/*Object[] selectedPwNameId = selectedPathwaysListModel.toArray();
 		selectedPwsNameId = new ArrayList<String>();
@@ -1323,7 +1330,12 @@ public class SuperpathwaysGui extends JPanel {
         // Execute Task in New Thread; pop open JTask Dialog Box.
         TaskManager.executeTask(task, jTaskConfig);
         if (task.isCancelled()) return;
-		
+        
+        //the following code is for forcing detail rendering at any level of zoom 
+        CyNetworkView currView= Cytoscape.getCurrentNetworkView();
+        ding.view.DGraphView nv;
+        nv = (DGraphView) currView;
+        nv.setGraphLOD(new CyGraphAllLOD());
     }
 
 
@@ -1710,7 +1722,14 @@ public class SuperpathwaysGui extends JPanel {
 
 		public void run() {
 			try {
-				cnViewObject = new CommonNodeView(mSelectedPathwaysID, client);
+				/*List<String> selectedPwNameID=new ArrayList<String>();
+				for(int k=0; k<mSelectedPathwayName.length;k++){
+					if(mSelectedPathwayName[k]!=null){
+						selectedPwNameID.add(mSelectedPathwayName[k]);
+					}
+				}*/
+				
+				cnViewObject = new CommonNodeView(mSelectedPathwaysID, mSelectedPathwayNameID, client);
 				cnViewObject.drawCommonNodeView();
 				
 				//the following code is for printing out the matched node pair by translation
@@ -1770,7 +1789,14 @@ public class SuperpathwaysGui extends JPanel {
 
 	    	//if (cnViewObject==null){
 	    		//here we need to re-run the CommonNodeView to get the correct NodePairByTranslation, and colorPool
-	    		cnViewObject = new CommonNodeView(mSelectedPathwaysID, mClient);
+	    	/*List<String> selectedPwNameID=new ArrayList<String>();
+			for(int k=0; k<mSelectedPathwayName.length;k++){
+				if(mSelectedPathwayName[k]!=null){
+					selectedPwNameID.add(mSelectedPathwayName[k]);
+				}
+			}	*/
+	    	
+	    	cnViewObject = new CommonNodeView(mSelectedPathwaysID, mSelectedPathwayNameID, mClient);
 	    		//here we call the method drawCommonNodeView(), because we want to make the correspondance of the color between the common node view and the merged network
 	    		cnViewObject.drawCommonNodeView();
 	    	//}
@@ -1784,11 +1810,11 @@ public class SuperpathwaysGui extends JPanel {
 			for (int i=0; i<selectedPathwaysListModel.getSize(); i++){
 				
 				System.out.println(i+"");
-				String selectedPwNameID=(String)selectedPathwaysListModel.get(i);
-				System.out.println(selectedPwNameID);
-				int index1 = selectedPwNameID.indexOf("(");
-				int index2 = selectedPwNameID.indexOf(")");
-				String pwID = selectedPwNameID.substring(index1 + 1, index2);
+				String selectedOnePwNameID=(String)selectedPathwaysListModel.get(i);
+				System.out.println(selectedOnePwNameID);
+				int index1 = selectedOnePwNameID.indexOf("(");
+				int index2 = selectedOnePwNameID.indexOf(")");
+				String pwID = selectedOnePwNameID.substring(index1 + 1, index2);
 				System.out.println(pwID);
 				try {
 					wsPathway = client.getPathway(pwID);
@@ -1806,6 +1832,8 @@ public class SuperpathwaysGui extends JPanel {
 				CyNetwork net=spPlugin.load(pathway, true); 
 				listOfNetworks.add(net);
 			}
+			
+			//convert the array of type Color to an array of type String
 			String[] temp=new String[cnViewObject.getColorPool().size()];
 			Object[] colors=cnViewObject.getColorPool().toArray();
 			for(int s=0; s<temp.length; s++ ){
@@ -1815,7 +1843,8 @@ public class SuperpathwaysGui extends JPanel {
 			
 	        try {  
 	        	pMerge.setTaskMonitor(monitor);
-	            CyNetwork mergedNetwork = pMerge.mergeNetwork("Merged Network", cnViewObject.getNodePairByTranslation()); 
+	            
+	        	CyNetwork mergedNetwork = pMerge.mergeNetwork("Merged Network", cnViewObject.getNodePairByTranslation()); 
 	            CyNetworkView view = Cytoscape.createNetworkView(mergedNetwork);
 
 	        } catch(Exception e) {

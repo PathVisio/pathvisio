@@ -154,14 +154,14 @@ public class SuperpathwaysGui extends JPanel {
 		MergeBtn = new javax.swing.JButton();
 		
 
-		layoutPane = new javax.swing.JPanel();
+		/*layoutPane = new javax.swing.JPanel();
 		stepLabel2 = new javax.swing.JLabel();
 		jRadioButton1 = new javax.swing.JRadioButton();
 		jRadioButton2 = new javax.swing.JRadioButton();
 		jRadioButton3 = new javax.swing.JRadioButton();
 		jRadioButton4 = new javax.swing.JRadioButton();
 		jRadioButton5 = new javax.swing.JRadioButton();
-		jRadioButton6 = new javax.swing.JRadioButton();
+		jRadioButton6 = new javax.swing.JRadioButton();*/
 
 		helpPanel = new javax.swing.JPanel();
 		anchorPathwayLabel = new javax.swing.JLabel();
@@ -528,7 +528,7 @@ public class SuperpathwaysGui extends JPanel {
 
         superpathwayPanel.addTab("Search/Select", searchPane);
 
-		stepLabel2.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
+		/*stepLabel2.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
 		stepLabel2.setForeground(new java.awt.Color(102, 0, 0));
 		stepLabel2
 				.setText("Step 2: Select  a pathway for which you want to group nodes");
@@ -606,12 +606,12 @@ public class SuperpathwaysGui extends JPanel {
 		layoutPaneLayout.linkSize(new java.awt.Component[] { jRadioButton1,
 				jRadioButton2, jRadioButton3, jRadioButton4, jRadioButton5,
 				jRadioButton6 }, org.jdesktop.layout.GroupLayout.VERTICAL);
-
+*/
 		// superpathwayPanel.addTab("Custom Layout", null, layoutPane,
 		// "create a custom layout grouping nodes from the same pathway");
 
-		superpathwayPanel.addTab("Custom Layout", null, layoutPane,
-				"create a custom layout grouping nodes from the same pathway");
+		/*superpathwayPanel.addTab("Custom Layout", null, layoutPane,
+				"create a custom layout grouping nodes from the same pathway");*/
 
 		anchorPathwayLabel.setForeground(new java.awt.Color(0, 0, 255));
 		anchorPathwayLabel.setText("Pathway");

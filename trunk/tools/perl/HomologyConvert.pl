@@ -423,7 +423,6 @@ foreach my $pw (keys %converts)
 	$root->setAttribute("Name", $newname);
 	$root->setAttribute("Last-Modified", $date);
 	my $categorized = checkCategories($root);
-	print "categorized is $categorized\n";
 	
 	if ($categorized eq "true")
 	{

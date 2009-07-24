@@ -561,11 +561,7 @@ foreach my $pw (keys %converts)
 		$comment->appendText ("This pathway was converted from $REFORGANISM with a conversion score of $convscore\%");
 		
 		# validate
-#		my $e = $pathway->{document}->getDocumentElement();
-#		my $schema = new XML::LibXML::Schema ( location => $fnGPML );
-#		$schema->validate ($pathway->{document});
-		
-		#$pathway->validate();
+		$pathway->validate();
 		
 		#Upload file to WikiPathways and save to local files
 		my $description = SOAP::Data->name(description => "Converted from $REFORGANISM");

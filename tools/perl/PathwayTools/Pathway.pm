@@ -38,7 +38,7 @@ use Data::Dumper;
 
 #TODO: redundant with PathwayElement::$NS
 my $NS = "http://genmapp.org/GPML/2008a";
-my $fnGPML = "../../GPML.xsd";
+my $fnGPML = "../../GPML2007.xsd";
 
 =item new PathwayTools::Pathway()
 
@@ -114,7 +114,7 @@ sub from_string($)
 	my $gpml = shift;
 
 	my $parser = XML::LibXML->new();
-	$self->{document} = $parser->parse_string($gpml);	
+	$self->{document} = $parser->parse_string($gpml);
 }
 
 =item $pathway->to_string()
@@ -322,19 +322,22 @@ sub sort_element
 	my %order =
 	(
 		Comment => 0,
-		Graphics => 1,
-		DataNode => 2,
-		Line => 3,
-		Label => 4,
-		Link => 5,
-		Shape => 6,
-		Group => 7,
-		InfoBox => 8,
-		Legend => 9,
-		Biopax => 10,
+		BiopaxRef => 1,
+		Graphics => 2,
+		DataNode => 3,
+		State => 4,
+		Line => 5,
+		Label => 6,
+		Link => 7,
+		Shape => 8,
+		Group => 9,
+		InfoBox => 10,
+		Legend => 11,
+		Biopax => 12,
 	);
 	
 	#sort array of nodes on their nodeName.
+	
 	@nodes = sort { $order{$a->nodeName} <=> $order{$b->nodeName} } @nodes;
 	
 	# and put them back again
@@ -342,6 +345,7 @@ sub sort_element
 	{
 		$e->insertAfter ($_, $e->lastChild());
 	}	
+
 }
 
 =back

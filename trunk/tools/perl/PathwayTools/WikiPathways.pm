@@ -60,14 +60,15 @@ $result->[1]: the revision of the downloaded pathway.
 
 =cut
 
-sub get_pathway_with_revision ($$)
+sub get_pathway_with_revision ($)
 {
 	my $self = shift;
 	
-	my $species = shift;
+	#my $species = shift;
 	my $name = shift;
+	#my $revision = shift;
 	
-	my $result = $self->{server}->call("WikiPathways.getPathway", $name, $species);
+	my $result = $self->{server}->call("WikiPathways.getPathway", $name);
 	
 	my $revision = $result->{revision};
 	my $gpml = decode_base64($result->{gpml});
@@ -76,6 +77,31 @@ sub get_pathway_with_revision ($$)
 	$pathway->from_string ($gpml);
 	
 	return [$pathway, $revision];
+}
+
+=item $wikipathways->get_pathway_history ($name, $date)
+
+Get the history of a pathway from wikipathways.
+
+$name: the name of the pathway.
+$date: the date used to limit results
+
+returns an arrayref 
+
+=cut
+
+sub get_pathway_history ($$)
+{
+	my $self = shift;
+	my $date = shift;
+	my $name = shift;
+	
+	my $result = $self->{server}->call("WikiPathways.getPathwayHistory", $name, $date);
+	
+	my @history = new PathwayTools::;
+	#my @history = $result->{history};
+	
+	return @history;
 }
 
 =item $result = $wikipathways->get_pathway_to_file ($species, $name, $filename)
@@ -90,15 +116,15 @@ returns the revision of the downloaded pathway.
 
 =cut
 
-sub get_pathway_to_file ($$$)
+sub get_pathway_to_file ($$)
 {
 	my $self = shift;
 	
-	my $species = shift;
+	#my $species = shift;
 	my $name = shift;
 	my $filename = shift;
 	
-	my $result = $self->{server}->call("WikiPathways.getPathway", $name, $species);
+	my $result = $self->{server}->call("WikiPathways.getPathway", $name);
 	
 	my $revision = $result->{revision};
 	my $gpml = decode_base64($result->{gpml});
@@ -109,6 +135,9 @@ sub get_pathway_to_file ($$$)
 	close OUTFILE;
 	
 	return $revision;
+	
+	
+
 }
 
 =item $wikipathways->update_pathway ($pathway, $species, $name, $revision, $message)

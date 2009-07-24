@@ -13,7 +13,7 @@ PathwayTools::PathwayElement - An element in a pathway
 
 =cut
 
-my $NS = "http://genmapp.org/GPML/2007";
+my $NS = "http://genmapp.org/GPML/2008a";
 
 =item new PathwayTools::PathwayElement (element => ..., ...)
 
@@ -99,7 +99,7 @@ sub get_xml_node
 	if ($self->{element} eq "DataNode")
 	{
 		my $datanode = XML::LibXML::Element->new("DataNode");
-		#$datanode->setNamespace ($NS);
+		$datanode->setNamespace ($NS);
 		$datanode->setAttribute ("TextLabel", $self->{textlabel});
 		$datanode->setAttribute ("Type", $self->{type});
 		$datanode->setAttribute ("BackpageHead", $self->{backpagehead});

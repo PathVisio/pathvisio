@@ -13,7 +13,7 @@ PathwayTools::Pathway - a GPML Pathway
  $pathway->from_file ("Hs_Apoptosis.gpml");
  
  # add a datanode to the pathway
- $pathway->add_data_node (
+ $pathway->create_element (
  	centerx => 7000, 
  	centery => 8000, 
  	database => "Entrez gene", 
@@ -37,8 +37,14 @@ use XML::LibXML;
 use Data::Dumper;
 
 #TODO: redundant with PathwayElement::$NS
-my $NS = "http://genmapp.org/GPML/2008a";
-my $fnGPML = "../../GPML2007.xsd";
+#Each namespace has a different schema.
+my %schemas =
+(
+	"http://genmapp.org/GPML/2008a" => "../../GPML.xsd",
+	"http://genmapp.org/GPML/2007" => "../../GPML2007.xsd",
+);
+
+my $preferredNamespace = "http://genmapp.org/GPML/2008a";
 
 =item new PathwayTools::Pathway()
 
@@ -73,6 +79,7 @@ sub new
 	}
 	
 	my $pwy = new XML::LibXML::Element("Pathway");
+	my $NS = $preferredNamespace;
 	$pwy->setNamespace ($NS);
 	$doc->setDocumentElement ($pwy);
 		
@@ -97,9 +104,14 @@ sub new
 	my $legend = $pwy->addNewChild($NS, "Legend");
 	$legend->setAttribute ("CenterX", 0);
 	$legend->setAttribute ("CenterY", 0);
-	
 			
 	bless $self, $class;
+}
+
+sub get_namespace()
+{
+	my $self = shift;
+	return $self->{document}->getDocumentElement()->getNamespace()->getData();
 }
 
 =item $pathway->from_string ($string)
@@ -147,6 +159,15 @@ sub from_file($)
 	my $fnGpml = shift;
 	my $parser = XML::LibXML->new();
 	$self->{document} = $parser->parse_file($fnGpml);
+	my $root = $self->{document}->getDocumentElement();
+	if ($root->getName() ne "Pathway")
+	{
+		die "Not a valid GPML, top-level element is named " . $root->getName(). ", expected Pathway";
+	}
+	if (!exists $schemas{$root->getNamespace()->getData()})
+	{
+		die "Unknown Namespace " . $root->getNamespace() . " expected e.g. " . $preferredNamespace;
+	}
 	$self->{filename} = $fnGpml;
 	
 }
@@ -193,9 +214,10 @@ sub validate()
 	rem_whitespace ($e);
 	sort_element ($e);
 
-	my $schema = new XML::LibXML::Schema ( location => $fnGPML );
+	my $NS = $self->get_namespace();
+	my $schema = new XML::LibXML::Schema ( location => $schemas{$NS});
 	
-	$schema->validate ($self->{document})
+	$schema->validate ($self->{document});
 }
 
 

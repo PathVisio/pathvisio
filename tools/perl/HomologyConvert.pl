@@ -254,9 +254,9 @@ while (my $line = <TARGETSYMBOL>)
 ######################
 
 #Read in pathway content flatfile to get all pathways for both species.
-unless ( open(FLATFILE, "wikipathways_data_validate.tab") )
+unless ( open(FLATFILE, "wikipathways_.tab") )
         {
-            print "could not open file wikipathways_data_validate.tab\n";
+            print "could not open file wikipathways_data_.tab\n";
             exit;
     	}
 

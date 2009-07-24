@@ -575,7 +575,7 @@ foreach my $pw (keys %converts)
 		
 		my $baserevision = SOAP::Data->name(revision => $updates{($relation{$pw})});
 				
-		if ($convscore >= 0)
+		if ($convscore >= 50)
 			{
 			if ($relation{$pw})
 				{
@@ -584,7 +584,7 @@ foreach my $pw (keys %converts)
 				print "$refs{$pw} updated at WP and written to file\n";
 				my $uploadId = SOAP::Data->name(pwId => $relation{$pw});
 				$pathway->to_file($updatefilename);
-				#$wp_soap->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth);
+				$wp_soap->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth);
 				}
 			else 
 				{
@@ -592,7 +592,7 @@ foreach my $pw (keys %converts)
 				print LOGFILE3 "$refs{$pw}\t$convscore\n";
 				$pathway->to_file($createfilename);
 				print "$refs{$pw} created at WP and written to file\n";
-				#$wp_soap->createPathway($gpmlcode, $auth);
+				$wp_soap->createPathway($gpmlcode, $auth);
 				}
 		}
 	}

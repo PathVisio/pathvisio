@@ -136,23 +136,35 @@ public class PluginManager {
 		{
 			JarFile jarFile = new JarFile(file);
 			Logger.log.trace("\tLoading from jar file " + jarFile);
-			Enumeration<?> e = jarFile.entries();
-			while (e.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry)e.nextElement();
-				Logger.log.trace("Checking " + entry);
-				String entryname = entry.getName();
-				if(entryname.endsWith(".class")) {
-					String cn = removeClassExt(entryname.replace('/', '.'));
-					URL u = new URL("jar", "", file.toURL() + "!/");
-					ClassLoader cl = new URLClassLoader(new URL[] { u }, this.getClass().getClassLoader());
-					
-					loadByClassName (cn, inf, cl);
-					// start building a new pluginInfo, it is possible that there
-					// are multiple plugin classes in a single jar
-					inf = new PluginInfo();
-					inf.jar = file;
-					inf.param = param;
+			String pluginClass = jarFile.getManifest().getMainAttributes().getValue("PathVisio-Plugin-Class");
+			if (pluginClass == null)
+			{
+				Logger.log.trace("No PathVisio-Plugin-Class attribute found, scanning.");
+				Enumeration<?> e = jarFile.entries();
+				while (e.hasMoreElements()) {
+					ZipEntry entry = (ZipEntry)e.nextElement();
+					Logger.log.trace("Checking " + entry);
+					String entryname = entry.getName();
+					if(entryname.endsWith(".class")) {
+						String cn = removeClassExt(entryname.replace('/', '.'));
+						URL u = new URL("jar", "", file.toURL() + "!/");
+						ClassLoader cl = new URLClassLoader(new URL[] { u }, this.getClass().getClassLoader());
+						
+						loadByClassName (cn, inf, cl);
+						// start building a new pluginInfo, it is possible that there
+						// are multiple plugin classes in a single jar
+						inf = new PluginInfo();
+						inf.jar = file;
+						inf.param = param;
+					}
 				}
+			}
+			else
+			{
+				Logger.log.trace("PathVisio-Plugin-Class is " + pluginClass);
+				URL u = new URL("jar", "", file.toURL() + "!/");
+				ClassLoader cl = new URLClassLoader(new URL[] { u }, this.getClass().getClassLoader());
+				loadByClassName (pluginClass, inf, cl);
 			}
 		}
 		catch (IOException ex)

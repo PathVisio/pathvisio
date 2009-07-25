@@ -95,7 +95,7 @@ print "Converting from $REFORGANISM to $TARGETORGANISM\n";
 
 #Define log files
 #Tracks IDs that didn't convert and percentage conversion per pathway.
-my $outfilename1 = "HomologyConvert-DataNodeConversion.txt";	
+my $outfilename1 = "Log-HomologyConvert-DataNodeConversion.txt";	
 unless ( open(LOGFILE1, ">$outfilename1") )
        {
          print "could not open file $outfilename1\n";
@@ -104,7 +104,7 @@ unless ( open(LOGFILE1, ">$outfilename1") )
 print LOGFILE1 "Pathway\tNon-converted IDs\tPercent converted\n";
 
 #Tracks non-converted pathways
-my $outfilename2 = "HomologConvert-NonConverted.txt";	
+my $outfilename2 = "Log-HomologyConvert-NonConverted.txt";	
 unless ( open(LOGFILE2, ">$outfilename2") )
        {
          print "could not open file $outfilename2\n";
@@ -113,7 +113,7 @@ unless ( open(LOGFILE2, ">$outfilename2") )
 print LOGFILE2 "Pathway\n";
 
 #Tracks all uploaded pathways
-my $outfilename3 = "HomologConvert-Uploaded.txt";	
+my $outfilename3 = "Log-HomologyConvert-Uploaded.txt";	
 unless ( open(LOGFILE3, ">$outfilename3") )
        {
          print "could not open file $outfilename3\n";
@@ -254,10 +254,19 @@ while (my $line = <TARGETSYMBOL>)
 ######################
 
 #Read in pathway content flatfile to get all pathways for both species.
-unless ( open(FLATFILE, "wikipathways_.tab") )
+my $flatfile = "wikipathways_data_.tab";
+unless ( open(FLATFILE, $flatfile) )
         {
-            print "could not open file wikipathways_data_.tab\n";
-            exit;
+	    #then download it
+	    `wget http://www.wikipathways.org/wpi/pathway_content_flatfile.php?output=tab`;
+
+	    #and try again
+	    unless ( open(FLATFILE, $flatfile) )
+	        {
+
+        	    print "could not open file wikipathways_data_.tab\n";
+            	    exit;
+		}
     	}
 
 <FLATFILE>; #skip header line
@@ -345,38 +354,15 @@ foreach my $refid (keys %refs)
 				}
 		}
 
-#Go through reference pathways and collect tags
+#Go through reference pathways and convert
 foreach my $ref (keys %refs)
-	{
+   {
 	unless (exists $nonconverts{$ref})
 	{
-	print "Checking tags for $refs{$ref}\n";
-	my $convert = "true";
-	my $pwId = SOAP::Data->name(pwId => $ref);
-	my @tags = $wp_soap->getCurationTags($pwId)->paramsout;
-	unshift(@tags, $wp_soap->getCurationTags($pwId)->result);
-		
-	#loop through tags
-	foreach my $tag (@tags) 
-		{
-		if((($tag->{displayName}) eq "Proposed deletion") || (($tag->{displayName}) eq "Tutorial pathway") 
-		|| (($tag->{displayName}) eq "Inappropriate content") || (($tag->{displayName}) eq "Under construction"))
-			{
-			$convert = "false";
-			}
-		}
-		
-		
-		if ($convert eq "true")
-			{
-			$converts{$ref} = $refs{$ref};
-			}
-		elsif ($convert eq "false")
-			{
-			$nonconverts{$ref} = $refs{$ref};
-			}		
-		}
+		$converts{$ref} = $refs{$ref};
 	}
+   }
+
 
 ######################
 
@@ -422,10 +408,10 @@ foreach my $pw (keys %converts)
 	$root->setAttribute("Organism", $TARGETORGANISM);
 	$root->setAttribute("Name", $newname);
 	$root->setAttribute("Last-Modified", $date);
-	my $categorized = checkCategories($root);
+	#my $categorized = checkCategories($root);
 	
-	if ($categorized eq "true")
-	{
+	#if ($categorized eq "true")
+	#{
 	if ($root->getChildrenByTagName("DataNode"))
 	{
 	for my $datanode ($root->getChildrenByTagName("DataNode"))
@@ -561,7 +547,7 @@ foreach my $pw (keys %converts)
 		$comment->appendText ("This pathway was converted from $REFORGANISM with a conversion score of $convscore\%");
 		
 		# validate
-		$pathway->validate();
+		#$pathway->validate();
 		
 		#Upload file to WikiPathways and save to local files
 		my $description = SOAP::Data->name(description => "Converted from $REFORGANISM");
@@ -591,7 +577,7 @@ foreach my $pw (keys %converts)
 				}
 		}
 	}
-	}
+      #	}
 	
 print LOGFILE3 "\n";
 

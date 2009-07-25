@@ -7,6 +7,7 @@ use PathwayTools::Pathway;
 use PathwayTools::PathwayElement;
 use PathwayTools;
 use SOAP::Lite;
+use HashSpeciesList;
 
 #
 # Script to convert gpml files between species. Pathway files are collected from WP. 
@@ -22,76 +23,20 @@ use SOAP::Lite;
 
 #####################
 
-#Define parameters for conversion. Change these to correct history cutoff date (original upload) and available species.
-my %species = ("hsa"=>"Homo sapiens", "human"=>"Homo sapiens", "rat"=>"Rattus norvegicus", "rno"=>"Rattus norvegicus", 
-"mmu"=>"Mus musculus", "mouse"=>"Mus musculus", "sce"=>"Saccharomyces cerevisiae", "yeast"=>"Saccharomyces cerevisiae",
-"cel"=>"Caenorhabditis elegans", "worm"=>"Caenorhabditis elegans", "celegans"=>"Caenorhabditis elegans",
-"dme"=>"Drosophila melanogaster", "fruitfly"=>"Drosophila melanogaster", "osa"=>"Oryza sativa",
-"rice"=>"Oryza sativa", "aga"=>"Anopheles gambiae", "mosquito"=>"Anopheles gambiae", "chimp"=>"Pan troglodytes",
-"ptr"=>"Pan troglodytes","eca"=>"Equus caballus", "horse"=>"Equus caballus", "ata"=>"Arabidopsis thaliana",
-"arabidopsis"=>"Arabidopsis thaliana", "bsu"=>"Bacillus subtilis", "bsubtilis"=>"Bacillus subtilis", 
-"bta"=>"Bos taurus", "cow"=>"Bos taurus", "cfa"=>"Canis familiaris", "dog"=>"Canis familiaris", "dre"=>"Danio rerio",
-"zebrafish"=>"Danio rerio", "eco"=>"Escherichia coli", "ecoli"=>"Escherichia coli", "gga"=>"Gallus gallus", 
-"chicken"=>"Gallus gallus", "xtr"=>"Xenopus tropicalis", "xenopus"=>"Xenopus tropicalis");
-
-my %taxids = ("hsa"=>"9606", "rno"=>"10116", "mmu"=>"10090", "sce"=>"4932", "cel"=>"6239",
-"dme"=>"7227", "osa"=>"4530", "aga"=>"7165", "ptr"=>"9598","eca"=>"9796", "ata"=>"3702",  
-"bsu"=>"1423", "bta"=>"9913", "cfa"=>"9615", "dre"=>"7955", "eco"=>"562", "gga"=>"9031", "xtr"=>"8364");
-
-my %codes = ("Homo sapiens"=>"hsa", "Rattus norvegicus"=>"rno", "Mus musculus"=>"mmu",
-"Saccharomyces cerevisiae"=>"sce","Caenorhabditis elegans"=>"cel", "Drosophila melanogaster"=>"dme", 
-"Oryza sativa"=>"osa", "Anopheles gambiae"=>"osa", "Pan troglodytes"=>"ptr", "Equus caballus"=>"eca",
-"Arabidopsis thaliana"=>"ata", "Bacillus subtilis"=>"bsu", "Bos taurus"=>"bta", "Canis familiaris"=>"cfa", 
-"Danio rerio"=>"dre", "Escherichia coli"=>"eco", "Gallus gallus"=>"aga", "Xenopus tropicalis"=>"xtr");
-
-my %ensemblname = ("hsa"=>"Human", "rno"=>"Rat", "mmu"=>"Mouse", "sce"=>"Yeast", "cel"=>"C. elegans",
-"dme"=>"Fruitfly", "osa"=>"Rice", "aga"=>"Mosquito", "ptr"=>"Chimp","eca"=>"Horse", "ata"=>"Arabidopsis",  
-"bsu"=>"B. subtilis", "bta"=>"Cow", "cfa"=>"Dog", "dre"=>"Zebrafish", "eco"=>"E. coli", "gga"=>"Chicken",
-"xtr"=>"Xenopus");
-
-my $day = (localtime(time))[3];
-my $month = 1+(localtime(time))[4];
-my $year = 1900+(localtime(time))[5];
-my $date = "$month/$day/$year";
-my $cutoff = "20070522222100";
-my $maintbot = "MaintBot";
-my $fnGPML = "GPML.xsd";
-
-#Ask user for target and ref species
-my $refcode = "";
-while (!$species{$refcode})
-	{
-	print "\nEnter the three-letter (Unigene) species code or common name for reference species to convert FROM: ";
-	$refcode = <STDIN>;
-	chomp ($refcode);
-	$refcode =~ tr/A-Z/a-z/;
-	$refcode =~s/\s//;
-	$refcode =~s/\.//;
+#Define an array for checking input species codes
+my %speciesTable = getSpeciesTable();
+my @codeArray = ();
+for my $key (sort keys %speciesTable){
+	unless ($speciesTable{$key}[2] =~ /^\s*$/){
+		push(@codeArray, $speciesTable{$key}[2]);
 	}
-my $REFORGANISM = $species{$refcode};
-$refcode = $codes{$REFORGANISM};
-my $REFTAXID = $taxids{$refcode};
+}
 
-my $targetcode = "";
-while (!$species{$targetcode})
-	{
-	print "\nEnter the three-letter (Unigene) species code or common name for target species to convert TO: ";
-	$targetcode = <STDIN>;
-	chomp ($targetcode);
-	$targetcode =~ tr/A-Z/a-z/;
-	$targetcode =~s/\s//;
-	$targetcode =~s/\.//;
-	}
-my $TARGETORGANISM = $species{$targetcode};
-$targetcode = $codes{$TARGETORGANISM};
-my $TARGETTAXID = $taxids{$targetcode};
-
-#Ask user for WP login password
-print "\nEnter WikiPathways password for user $maintbot: ";
-my $password = <STDIN>;
-chomp ($password);
-
-print "Converting from $REFORGANISM to $TARGETORGANISM\n";
+#Define and hash for ensemblnames
+my %ensemblname = ();
+for $key (sort keys %speciesTable){
+	$ensemblname{$speciesTable{$key}[2]} = $key;
+}
 
 #Define log files
 #Tracks IDs that didn't convert and percentage conversion per pathway.
@@ -121,6 +66,78 @@ unless ( open(LOGFILE3, ">$outfilename3") )
  	}
 print LOGFILE3 "Pathway\tPercent converted\n";
 
+
+my $day = (localtime(time))[3];
+my $month = 1+(localtime(time))[4];
+my $year = 1900+(localtime(time))[5];
+my $date = "$month/$day/$year";
+my $cutoff = "20070522222100";
+my $maintbot = "MaintBot";
+my $fnGPML = "GPML.xsd";
+my $allMode = 0;
+
+#Ask user for target and ref species
+my $refcode = "";
+while (!(in_array(\@codeArray, $refcode)))
+	{
+	print "\nEnter the two-letter species code for reference species to convert FROM: ";
+	$refcode = <STDIN>;
+	chomp ($refcode);
+        $refcode = lc($refcode);
+	}
+
+my $REFORGANISM = 0;
+my $REFTAXID = 0;
+
+for $key (sort keys %speciesTable){
+	if ($speciesTable{$key}[2] =~ $refcode){
+		$REFORGANISM = $speciesTable{$key}[0];
+		$REFTAXID = $speciesTable{$key}[1];
+	}
+}
+
+my $tocode = "";
+while (!(in_array(\@codeArray, $tocode)))
+	{
+	print "\nEnter the two-letter species code (or \'all\') for target species to convert TO: ";
+	$tocode = <STDIN>;
+	chomp ($tocode);
+        $tocode = lc($tocode);
+	# support 'all' mode
+	if ($tocode =~ all)
+		{
+		$allMode = 1;
+		$tocode = $codeArray[0];	
+		} 
+	else 
+		{
+		@codeArray = $tocode;
+		}
+	}
+
+#Ask user for WP login password
+print "\nEnter WikiPathways password for user $maintbot: ";
+my $password = <STDIN>;
+chomp ($password);
+
+foreach my $targetcode (@codeArray) 
+{
+
+my $TARGETORGANISM = 0;
+my $TARGETTAXID = 0;
+
+for $key (sort keys %speciesTable){
+        if ($speciesTable{$key}[2] =~ $targetcode){
+                $TARGETORGANISM = $speciesTable{$key}[0];
+                $TARGETTAXID = $speciesTable{$key}[1];
+        }
+}
+
+
+
+print "Converting from $REFORGANISM to $TARGETORGANISM\n";
+
+
 ######################
 
 #Homology information:
@@ -142,7 +159,7 @@ my $refsymbolinput = "mart_".$refcode.".txt";
 unless ( open(ENSEMBL, $ensemblinput) )
         {
             print "could not open file $ensemblinput\n";
-            exit;
+            next;
     	}
 
 while (my $line = <ENSEMBL>)
@@ -221,7 +238,7 @@ foreach my $key (keys %{refcluster})
 unless ( open(REFSYMBOL, $refsymbolinput) )
         {
             print "could not open file $refsymbolinput\n";
-            exit;
+            next;
     	}
     	
 while (my $line = <REFSYMBOL>)
@@ -238,7 +255,7 @@ while (my $line = <REFSYMBOL>)
 unless ( open(TARGETSYMBOL, $targetsymbolinput) )
         {
             print "could not open file $targetsymbolinput\n";
-            exit;
+            next;
     	}
     	
 while (my $line = <TARGETSYMBOL>)
@@ -254,7 +271,7 @@ while (my $line = <TARGETSYMBOL>)
 ######################
 
 #Read in pathway content flatfile to get all pathways for both species.
-my $flatfile = "wikipathways_data_.tab";
+my $flatfile = "wikipathways_data_5.tab";
 unless ( open(FLATFILE, $flatfile) )
         {
 	    #then download it
@@ -337,7 +354,7 @@ foreach my $refid (keys %refs)
 				if ($refs{$refid} eq $targets{$targetid})
 					{
 					print "Checking history for $targets{$targetid}\n";
-					my $convert = checkHistory($targetid);
+					my $convert = checkHistory($targetid, $wp_soap);
 					if ($convert eq "true")
 						{
 						$converts{$refid} = $refs{$refid};
@@ -587,6 +604,8 @@ foreach my $c (keys %nonconverts)
 	print LOGFILE2 "$nonconverts{$c}\n";
 	}
 
+} # close foreach targetcode
+
 print "\n\nDone.\n";	
 close LOGFILE1;
 close LOGFILE2;
@@ -594,7 +613,7 @@ close LOGFILE3;
 close FLATFILE;
 
 #subroutine that removes whitespaces, parenthesis, slashes and references to human
-sub correctNames ($)
+sub correctNames 
 {
 my $name = shift;
 #Remove any references to reference species and parenthesis from pathway name. 
@@ -611,7 +630,7 @@ return $name;
 }
 
 #subroutine that removes special characters
-sub remCharacter ($)
+sub remCharacter 
 {
 my $text = shift;
 
@@ -622,9 +641,8 @@ return $text;
 }
 
 #subroutine that checks if any user other than MaintBot has made changes
-sub checkHistory($)
-{
-my $pw = shift;
+sub checkHistory{
+my ($pw, $wp_soap) = @_;
 my $pwId = SOAP::Data->name(pwId => $pw);
 my $timestamp = SOAP::Data->name(timestamp => $cutoff);
 my $pwhistory = $wp_soap->getPathwayHistory($pwId, $timestamp)->result;
@@ -670,7 +688,7 @@ return $update;
 }
 
 #subroutine that checks if a pathway is categorized
-sub checkCategories($)
+sub checkCategories
 {
 my $pw = shift;
 my $wpcategories = "false";
@@ -688,3 +706,10 @@ if ($pw->getChildrenByTagName("Comment"))
 	}
 return $wpcategories;
 }
+
+sub in_array
+ {
+     my ($arr,$search_for) = @_;
+     my %items = map {$_ => 1} @$arr; # create a hash out of the array values
+     return (exists($items{$search_for}))?1:0;
+ }

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 #use warnings;
-#use strict;
+use strict;
 
 use PathwayTools::Pathway;
 use PathwayTools::PathwayElement;
@@ -34,7 +34,7 @@ for my $key (sort keys %speciesTable){
 
 #Define and hash for ensemblnames
 my %ensemblname = ();
-for $key (sort keys %speciesTable){
+for my $key (sort keys %speciesTable){
 	$ensemblname{$speciesTable{$key}[2]} = $key;
 }
 
@@ -46,7 +46,7 @@ unless ( open(LOGFILE1, ">$outfilename1") )
          print "could not open file $outfilename1\n";
          exit;
  	}
-print LOGFILE1 "Pathway\tNon-converted IDs\tPercent converted\n";
+print LOGFILE1 "Species\tPathway\tNon-converted IDs\tPercent converted\n";
 
 #Tracks non-converted pathways
 my $outfilename2 = "Log-HomologyConvert-NonConverted.txt";	
@@ -55,7 +55,7 @@ unless ( open(LOGFILE2, ">$outfilename2") )
          print "could not open file $outfilename2\n";
          exit;
  	}
-print LOGFILE2 "Pathway\n";
+print LOGFILE2 "Species\tPathway\n";
 
 #Tracks all uploaded pathways
 my $outfilename3 = "Log-HomologyConvert-Uploaded.txt";	
@@ -64,7 +64,7 @@ unless ( open(LOGFILE3, ">$outfilename3") )
          print "could not open file $outfilename3\n";
          exit;
  	}
-print LOGFILE3 "Pathway\tPercent converted\n";
+print LOGFILE3 "Species\tPathway\tPercent converted\n";
 
 
 my $day = (localtime(time))[3];
@@ -89,7 +89,7 @@ while (!(in_array(\@codeArray, $refcode)))
 my $REFORGANISM = 0;
 my $REFTAXID = 0;
 
-for $key (sort keys %speciesTable){
+for my $key (sort keys %speciesTable){
 	if ($speciesTable{$key}[2] =~ $refcode){
 		$REFORGANISM = $speciesTable{$key}[0];
 		$REFTAXID = $speciesTable{$key}[1];
@@ -104,7 +104,7 @@ while (!(in_array(\@codeArray, $tocode)))
 	chomp ($tocode);
         $tocode = lc($tocode);
 	# support 'all' mode
-	if ($tocode =~ all)
+	if ($tocode =~ /all/)
 		{
 		$allMode = 1;
 		$tocode = $codeArray[0];	
@@ -126,7 +126,7 @@ foreach my $targetcode (@codeArray)
 my $TARGETORGANISM = 0;
 my $TARGETTAXID = 0;
 
-for $key (sort keys %speciesTable){
+for my $key (sort keys %speciesTable){
         if ($speciesTable{$key}[2] =~ $targetcode){
                 $TARGETORGANISM = $speciesTable{$key}[0];
                 $TARGETTAXID = $speciesTable{$key}[1];
@@ -271,7 +271,7 @@ while (my $line = <TARGETSYMBOL>)
 ######################
 
 #Read in pathway content flatfile to get all pathways for both species.
-my $flatfile = "wikipathways_data_5.tab";
+my $flatfile = "wikipathways_data_.tab";
 unless ( open(FLATFILE, $flatfile) )
         {
 	    #then download it
@@ -293,9 +293,10 @@ my %targets = ();
 while (my $line = <FLATFILE>)
       {
       chomp $line;
-      my $pathwayname = (split (/\t/, $line))[0];
-      my $organism = (split (/\t/, $line))[1];
-      my $url = (split (/\t/, $line))[3];
+      my @splitline = split (/\t/, $line);
+      my $pathwayname = $splitline[0];
+      my $organism = $splitline[1];
+      my $url = $splitline[3];
       my $pwid = (split("Pathway:",$url))[1];
       
       #switch to lower case, remove parenthesis 
@@ -321,7 +322,7 @@ while (my $line = <FLATFILE>)
 
 #Create service interface with fault handler and login
 #TODO: change from test server to main wp server
-my $wp_soap = SOAP::Lite
+my $wp_soap_TEST = SOAP::Lite
         ->proxy('http://137.120.14.24/wikipathways-test/wpi/webservice/webservice.php')
         ->uri('http://www.wikipathways.org/webservice')
         ->on_fault(sub {
@@ -335,8 +336,23 @@ my $wp_soap = SOAP::Lite
 
 my $name = SOAP::Data->name(name => "MaintBot"); 
 my $pass = SOAP::Data->name(pass => $password);
-my $wpauth = $wp_soap->login($name, $pass)->result;
-my $auth = SOAP::Data->name('auth' => \SOAP::Data->value(SOAP::Data->name('user' => 'MaintBot'), SOAP::Data->name('key', $wpauth)));			
+my $wpauth = $wp_soap_TEST->login($name, $pass)->result;
+my $auth_TEST = SOAP::Data->name('auth' => \SOAP::Data->value(SOAP::Data->name('user' => 'MaintBot'), SOAP::Data->name('key', $wpauth)));			
+
+my $wp_soap_LIVE = SOAP::Lite
+        ->proxy('http://www.wikipathways.org/wpi/webservice/webservice.php')
+        ->uri('http://www.wikipathways.org/webservice')
+        ->on_fault(sub {
+                        my $soap = shift;
+                        my $res = shift;
+                        if(ref($res) eq '') { die($res);}
+                        else {die($res->faultstring);}
+                return new SOAP::SOM;
+                                } );
+my $name2 = SOAP::Data->name(name => "MaintBot");
+my $pass2 = SOAP::Data->name(pass => $password);
+my $wpauth2 = $wp_soap_LIVE->login($name2, $pass2)->result;
+my $auth_LIVE = SOAP::Data->name('auth' => \SOAP::Data->value(SOAP::Data->name('user' => 'MaintBot'), SOAP::Data->name('key', $wpauth2)));
 
 ######################
 
@@ -354,13 +370,13 @@ foreach my $refid (keys %refs)
 				if ($refs{$refid} eq $targets{$targetid})
 					{
 					print "Checking history for $targets{$targetid}\n";
-					my $convert = checkHistory($targetid, $wp_soap);
+					my $convert = checkHistory($targetid, $wp_soap_TEST);
 					if ($convert eq "true")
 						{
 						$converts{$refid} = $refs{$refid};
 						$relation{$refid} = $targetid;	
 						my $pwId = SOAP::Data->name(pwId => $targetid);
-						my $pwinfo = $wp_soap->getPathwayInfo($pwId)->result;
+						my $pwinfo = $wp_soap_TEST->getPathwayInfo($pwId)->result;
 						$updates{$targetid} = $pwinfo->{revision};
 						}
 					elsif ($convert eq "false")
@@ -380,7 +396,6 @@ foreach my $ref (keys %refs)
 	}
    }
 
-
 ######################
 
 #Loop through pathways to update, get ref pathway and convert
@@ -390,14 +405,14 @@ mkdir("New");
 
 foreach my $pw (keys %converts)
 	{
-	print "Requesting pathway $refs{$pw}\n";
-	print LOGFILE1 "$refs{$pw}\t";	
+	print "Requesting pathway $converts{$pw}\n";
+	print LOGFILE1 "$TARGETORGANISM\t$converts{$pw}\t";	
 
 	#Collect reference pathway from WP
 	my $refId = SOAP::Data->name(pwId => $pw);
 	my $rev = SOAP::Data->name(revision => '0');
-	my @pathwayResults = $wp_soap->getPathway($refId, $rev)->paramsout;	
-	unshift(@pathwayResults, $wp_soap->getPathway($refId, $rev)->result);
+	my @pathwayResults = $wp_soap_LIVE->getPathway($refId, $rev)->paramsout;	
+	unshift(@pathwayResults, $wp_soap_LIVE->getPathway($refId, $rev)->result);
 	my $pathway = new PathwayTools::Pathway();
 	my $gpml = ();
 	my $revision = ();
@@ -578,19 +593,19 @@ foreach my $pw (keys %converts)
 			if ($relation{$pw})
 				{
 				#Print converted pathway to local file and upload to WP
-				print LOGFILE3 "$refs{$pw}\t$convscore\n";
-				print "$refs{$pw} updated at WP and written to file\n";
+				print LOGFILE3 "$TARGETORGANISM\t$converts{$pw}\t$convscore\n";
+				print "$converts{$pw} updated at WP and written to file\n";
 				my $uploadId = SOAP::Data->name(pwId => $relation{$pw});
 				$pathway->to_file($updatefilename);
-				$wp_soap->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth);
+				$wp_soap_TEST->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth_TEST);
 				}
 			else 
 				{
 				#Print new pathway to local file and upload to WP
-				print LOGFILE3 "$refs{$pw}\t$convscore\n";
+				print LOGFILE3 "$TARGETORGANISM\t$converts{$pw}\t$convscore\n";
 				$pathway->to_file($createfilename);
-				print "$refs{$pw} created at WP and written to file\n";
-				$wp_soap->createPathway($gpmlcode, $auth);
+				print "$converts{$pw} created at WP and written to file\n";
+				$wp_soap_TEST->createPathway($gpmlcode, $auth_TEST);
 				}
 		}
 	}
@@ -601,7 +616,7 @@ print LOGFILE3 "\n";
 #Write non-converted pathways to log file
 foreach my $c (keys %nonconverts)
 	{
-	print LOGFILE2 "$nonconverts{$c}\n";
+	print LOGFILE2 "$TARGETORGANISM\t$nonconverts{$c}\n";
 	}
 
 } # close foreach targetcode
@@ -642,10 +657,10 @@ return $text;
 
 #subroutine that checks if any user other than MaintBot has made changes
 sub checkHistory{
-my ($pw, $wp_soap) = @_;
+my ($pw, $wp_soap_TEST) = @_;
 my $pwId = SOAP::Data->name(pwId => $pw);
 my $timestamp = SOAP::Data->name(timestamp => $cutoff);
-my $pwhistory = $wp_soap->getPathwayHistory($pwId, $timestamp)->result;
+my $pwhistory = $wp_soap_TEST->getPathwayHistory($pwId, $timestamp)->result;
 my $update = "true";
 
 foreach my $key (keys %$pwhistory) 

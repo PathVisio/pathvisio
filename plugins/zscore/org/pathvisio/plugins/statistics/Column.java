@@ -21,7 +21,7 @@ import org.pathvisio.util.swing.PropertyColumn;
 /**
  * Enum for possible columns in the statistics result table
  */
-enum Column implements PropertyColumn
+public enum Column implements PropertyColumn
 {
 	N("measured (n)"),
 	R("positive (r)"),

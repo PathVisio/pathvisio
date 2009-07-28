@@ -91,7 +91,7 @@ public class IsDataInPathways
 		
 		SimpleGdb gdb = SimpleGdbFactory.createInstance("" + fGdb, new DataDerby(), 0);
 		
-		for (int i = 0; i < gex.getMaxRow(); ++i) 
+		for (int i = 0; i < gex.getNrRow(); ++i) 
 		{
 			ReporterData data = gex.getRow(i);
 			Xref src = data.getXref();
@@ -118,7 +118,7 @@ public class IsDataInPathways
 		}
 		
 		PrintStream out = new PrintStream(new FileOutputStream(outFile));
-		for (int i = 0; i < gex.getMaxRow(); ++i) 
+		for (int i = 0; i < gex.getNrRow(); ++i) 
 		{
 			ReporterData data = gex.getRow(i);
 			Xref ref = data.getXref();

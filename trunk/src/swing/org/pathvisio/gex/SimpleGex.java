@@ -642,14 +642,14 @@ public class SimpleGex
 		}
 	}
 	
-	public int getMaxRow() throws IDMapperException
+	public int getNrRow() throws IDMapperException
 	{
 		try
 		{
 			Statement st = con.createStatement();
 			ResultSet rs = st.executeQuery("SELECT MAX(groupId) FROM expression");
 			rs.next();
-			return rs.getInt(1);
+			return rs.getInt(1) + 1;
 		}
 		catch (SQLException e)
 		{

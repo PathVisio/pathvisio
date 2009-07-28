@@ -221,7 +221,7 @@ public class ZScoreCalculator
 		 */
 		public void calculateTotals() throws IDMapperException
 		{
-			int maxRow = result.gex.getMaxRow();
+			int maxRow = result.gex.getNrRow();
 			for (int i = 0; i < maxRow; ++i)
 			{
 				if (pk != null && pk.isCancelled()) return;

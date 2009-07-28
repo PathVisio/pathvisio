@@ -46,7 +46,7 @@ unless ( open(LOGFILE1, ">$outfilename1") )
          print "could not open file $outfilename1\n";
          exit;
  	}
-print LOGFILE1 "Species\tPathway\tNon-converted IDs\tPercent converted\n";
+print LOGFILE1 "Species\tPathway\tNon-converted IDs\tRedundant Conversions\tPercent converted\n";
 
 #Tracks non-converted pathways
 my $outfilename2 = "Log-HomologyConvert-NonConverted.txt";	
@@ -281,7 +281,7 @@ unless ( open(FLATFILE, $flatfile) )
 	    unless ( open(FLATFILE, $flatfile) )
 	        {
 
-        	    print "could not open file wikipathways_data_.tab\n";
+        	    print "could not open file $flatfile\n";
             	    exit;
 		}
     	}
@@ -436,6 +436,7 @@ foreach my $pw (keys %converts)
 	my $nodecount = 0;
 	my $convertcount = 0;
 	my $convscore = 0;
+	my %seenTargets = (); #for tracking multiple conversions to the same targetlabel in a given pathway
 		
 	$root->setAttribute("Organism", $TARGETORGANISM);
 	$root->setAttribute("Name", $newname);
@@ -468,6 +469,7 @@ foreach my $pw (keys %converts)
   	  					$convertcount ++;
   	  					my $targetID = $idlookup{$id};
 						my $targetlabel = $symbollookup{$targetID};
+						$seenTargets{$targetlabel}++;
 						$xref->setAttribute ("ID", $targetID);
 						$datanode->setAttribute ("BackpageHead", $targetlabel);
 						$datanode->setAttribute ("Type", $type);
@@ -490,6 +492,7 @@ foreach my $pw (keys %converts)
 							my $numericid = $refsymbol{$id};
 							my $targetID = $idlookup{$numericid};
 							my $targetlabel = $symbollookup{$targetID};
+							$seenTargets{$targetlabel}++;
 							$xref->setAttribute ("ID", $targetID);
 							$datanode->setAttribute ("BackpageHead", $targetlabel);
 							$datanode->setAttribute ("Type", $type);
@@ -521,8 +524,16 @@ foreach my $pw (keys %converts)
 					}
 				}
 			}
-		}
+		} # close foreach datanode
 		
+		#Log pathways with potentially redundant conversions to a given targetlabel
+		print LOGFILE1 "\t";
+		foreach my $key (sort keys %seenTargets){
+			if ($seenTargets{$key} > 1) {
+				print LOGFILE1 "$key($seenTargets{$key}x) ";
+			}
+		}
+
 		#Clean up empty Comments to avoid truncated tags
 		if ($root->getChildrenByTagName("Comment"))
 		{
@@ -542,41 +553,41 @@ foreach my $pw (keys %converts)
 		{
 		for my $datanode ($root->getChildrenByTagName("Biopax"))
 			{
-				if ($datanode->getChildrenByTagName("bp:PublicationXRef"))
+			if ($datanode->getChildrenByTagName("bp:PublicationXRef"))
+				{
+				for my $xref ($datanode->getChildrenByTagName("bp:PublicationXRef"))
 					{
-					for my $xref ($datanode->getChildrenByTagName("bp:PublicationXRef"))
+					my @childnodes = $xref->childNodes;
+					foreach my $child (@childnodes)
 						{
-						my @childnodes = $xref->childNodes;
-						foreach my $child (@childnodes)
+						my $content = $child->textContent;
+						if ($content eq "")
 							{
-							my $content = $child->textContent;
-							if ($content eq "")
-								{
-								$xref->removeChild ($child);
-								}
+							$xref->removeChild ($child);
 							}
 						}
 					}
+				}
 			}
 		}
-		else 
-			{
-			print LOGFILE1 "\n";
-			}
 	
 		# Calculate conversion score
 		if ($nodecount != 0)
-			{
+		{
 			$convscore = int(100*($convertcount/$nodecount));
-			}	
-		print LOGFILE1 "\t$convscore\n";
-		
+			print LOGFILE1 "\t$convscore\n";
+		}
+                else
+                {       
+                        print LOGFILE1 "\t\n";
+                }       
+
 		# Create a comment
 		my $comment = $root->addNewChild ($NS, "Comment");
 		# source attribute can be anything you want, for example "HomologyConvert"
 		$comment->setAttribute ("Source", "HomologyConvert");
 		# use appendText to set the text value of the comment.
-		$comment->appendText ("This pathway was converted from $REFORGANISM with a conversion score of $convscore\%");
+		$comment->appendText ("This pathway was inferred from $REFORGANISM pathway [http://www.wikipathways.org/index.php?title=Pathway:$pw&oldid=$revision $pw(r$revision)] with a $convscore\% conversion rate.");
 		
 		# validate
 		#$pathway->validate();
@@ -608,7 +619,7 @@ foreach my $pw (keys %converts)
 				$wp_soap_TEST->createPathway($gpmlcode, $auth_TEST);
 				}
 		}
-	}
+	} #close foreach pathway
       #	}
 	
 print LOGFILE3 "\n";

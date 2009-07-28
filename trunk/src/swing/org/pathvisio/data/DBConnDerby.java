@@ -41,7 +41,7 @@ public class DBConnDerby extends DataDerby implements DBConnectorSwing
 		if (getDbType() == TYPE_GDB)
 		{
 			jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_PGDB));
-			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GDB, "*." + DB_FILE_EXT_GDB, true));
+			jfc.addChoosableFileFilter(new SimpleFileFilter(DB_EXT_NAME_GDB, "*.bridge|*.pgdb", true));
 		}
 		else
 		{

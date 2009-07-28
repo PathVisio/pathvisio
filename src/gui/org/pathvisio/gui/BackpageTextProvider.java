@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.bridgedb.AttributeMapper;
@@ -94,7 +95,35 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 
 			try
 			{
-				String bpInfo = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Backpage"));
+				String bpInfo; 
+					
+				if (!type.equals ("Metabolite"))
+				{
+					String symbol = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Symbol"));
+					String description = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Description"));
+					String synonyms = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Synonyms"));
+					String chromosome = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Chromosome"));
+										
+					bpInfo = 
+						"<TABLE border = 1>" +
+						"<TR><TH>Gene ID:<TH>" + e.getXref().getId() + 
+						"<TR><TH>Gene Symbol:<TH>" + symbol + 
+						"<TR><TH>Synonyms:<TH>" + synonyms +
+						"<TR><TH>Description:<TH>" + description +
+						"<TR><TH>Chr:<TH>" + chromosome +
+						"</TABLE>";
+				}
+				else
+				{
+					String symbol = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Symbol"));
+					String bruto = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "BrutoFormula"));
+										
+					bpInfo = 
+						"<TABLE border = 1>" +
+						"<TR><TH>Metabolite:<TH>" + symbol + 
+						"<TR><TH>Bruto Formula:<TH>" +  bruto + 
+						"</TABLE>";
+				}
 				text += (bpInfo != null ? bpInfo :  "<I>No " + type + " information found</I>"); 
 			}
 			catch (IDMapperException ex)

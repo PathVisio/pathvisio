@@ -17,6 +17,7 @@
 
 package org.pathvisio.cytoscape.superpathways;
 
+import java.awt.Color;
 import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -304,9 +305,10 @@ public class CommonNodeView {
 		return commonNodeInfoPwGroup;
 	}
 
-	public List<String> drawCommonNodeView() {
+	public Map<String, Color> drawCommonNodeView() {
 
-
+		Map<String, Color> pwNameToColor=new HashMap<String, Color>();
+		
 		colorPool = new ArrayList<String>();
 
 		String[] shapePool = { "Diamond", "Hexagon", "Parallelogram",
@@ -316,13 +318,7 @@ public class CommonNodeView {
 
 		CyNetwork cyNetwork = Cytoscape
 				.createNetwork("Common Node View", false);
-
-		/*
-		 * String[] groupPwsNameID=(String [])selectedPwsNameId.toArray();
-		 * CyNode[] groupPwsIcons; for (int i=0; i<groupPwsNameID.length; i++){
-		 * groupPwsIcons[i] = Cytoscape.getCyNode(groupPwsNameID[i], true);
-		 * cyNetwork.addNode(groupPwsIcons[i]); }
-		 */
+		
 
 		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
 		CyAttributes edgeAtts = Cytoscape.getEdgeAttributes();
@@ -353,10 +349,6 @@ public class CommonNodeView {
 			}
 		}
 
-		// Where nodeID was the String id of the node in question, shapeNames is
-		// a string representing the desired shape: "Triangle", etc.
-		
-		
 		int numberOfSelectedPws = mSelectedPwsID.size();
 		double division1 = 360 / numberOfSelectedPws;
 		double division2 = 50 / numberOfSelectedPws;
@@ -381,6 +373,13 @@ public class CommonNodeView {
 			nodeAtts.setAttribute(groupPwsIcons[i].getIdentifier(),
 					"node.fillColor", temp);
 			
+			//this part is for storing the info <pwName, corresponding color> into the pwNameToColor
+			String pwNameID=mSelectedPwsNameID.get(i);
+			int index2 = pwNameID.lastIndexOf("(");
+			String pwName = pwNameID.substring(0, index2);
+			System.out.println(Double.valueOf(tempRGB.r).intValue()+";"+Double.valueOf(tempRGB.g).intValue()+";"+Double.valueOf(tempRGB.b).intValue());
+			Color result=new Color(Double.valueOf(tempRGB.r).intValue(), Double.valueOf(tempRGB.g).intValue(),Double.valueOf(tempRGB.b).intValue());
+			pwNameToColor.put(pwName,result);
 			
 			colorPool.add(temp);
 			nodeAtts.setAttribute(groupPwsIcons[i].getIdentifier(),
@@ -393,17 +392,15 @@ public class CommonNodeView {
 			edgeAtts.setAttribute(groupEdges[j].getIdentifier(), "edge.label",
 					String.valueOf(commonNodeNumber[j]));
 		}
-		// edgeAtts.setAttribute("yellow","node.shape","Diamond");
+		
 
 		// display the common node view
 		Cytoscape.createNetworkView(cyNetwork, "Common Node View");
 		
-		//Cytoscape.getCurrentNetworkView().redrawGraph(false, true);
+		
 		
 		//the following code is for set the edge-weighted spring embedded layout (weight=the number of shared nodes)
-		
 		CyLayoutAlgorithm alg = CyLayouts.getLayout("force-directed"); 
-		//Collection<CyLayoutAlgorithm> allLayouts=CyLayouts.getAllLayouts();
 		LayoutProperties props = alg.getSettings(); 
 		Tunable weightAttribute = props.get("edge_attribute");
 	    weightAttribute.setValue("weight");
@@ -411,7 +408,7 @@ public class CommonNodeView {
 	    Cytoscape.getCurrentNetworkView().applyLayout(alg);
 
 
-		return colorPool;
+		return pwNameToColor;
 	}
 
 	private static boolean checkString(String string) {

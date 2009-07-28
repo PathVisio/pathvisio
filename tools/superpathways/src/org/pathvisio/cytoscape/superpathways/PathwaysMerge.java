@@ -78,13 +78,6 @@ public class PathwaysMerge {
 		nodePairByTranslation = m;
 		colorPool = c;
 
-		/*
-		 * colors=new Color[colorPool.length];
-		 * 
-		 * for(int i=0; i<colorPool.length; i++){ String temp=colorPool[i];
-		 * System.out.println(temp); colors[i]=stringToColor(temp); }
-		 */
-
 		mapSysCodeToBioDS = new HashMap<String, DataSource>();
 		mapSysCodeToBioDS.put("Entrez Gene", BioDataSource.ENTREZ_GENE);
 		mapSysCodeToBioDS.put("Ensembl Rat", BioDataSource.ENSEMBL_RAT);
@@ -662,14 +655,14 @@ public class PathwaysMerge {
 
 							color = colorPool[index];
 
-							nodeAtts.setAttribute(id, "Source Pathway",
-									networks.get(index).getTitle());
+							nodeAtts.setAttribute(id, "Source Pathway",	networks.get(index).getTitle());
 							break;
 						}
 					}
 				}
 
-				nodeAtts.setAttribute(id, "node.fillColor", color);
+				//later decide to use Visual Style to color nodes
+				//nodeAtts.setAttribute(id, "node.fillColor", color);
 			} else {
 				if (setOfNets.size() == 1) { // duplicate node appear in the
 					// same pathway
@@ -678,7 +671,8 @@ public class PathwaysMerge {
 						int index = networks.indexOf(n);
 						// System.out.println(index + "");
 						color = colorPool[index];
-						nodeAtts.setAttribute(id, "node.fillColor", color);
+                         //later decide to use Visual Style to color nodes
+						//nodeAtts.setAttribute(id, "node.fillColor", color);
 						nodeAtts.setAttribute(id, "Source Pathway", networks
 								.get(index).getTitle());
 

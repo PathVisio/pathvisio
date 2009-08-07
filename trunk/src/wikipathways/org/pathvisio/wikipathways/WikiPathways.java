@@ -46,12 +46,12 @@ import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
 import org.bridgedb.rdb.DBConnector;
+import org.bridgedb.rdb.DBConnectorDerbyServer;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
 import org.pathvisio.Revision;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.data.DBConnectorDerbyServer;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions;
@@ -224,11 +224,9 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		//Connect to the gene database
 		if(isUseGdb()) {
 			DBConnectorDerbyServer.init(parameters.getValue(Parameter.GDB_SERVER), 1527);
-			DBConnector connector = new DBConnectorDerbyServer();
 			GdbManager gdbManager = swingEngine.getGdbManager();
-			gdbManager.setDBConnector(connector);
-			gdbManager.setGeneDb(getPwSpecies());
-			gdbManager.setMetaboliteDb("metabolites");
+			gdbManager.setGeneDb("idmapper-derbyclient:" + getPwSpecies());
+			gdbManager.setMetaboliteDb("idmapper-derbyclient:metabolites");
 		}
 	}
 

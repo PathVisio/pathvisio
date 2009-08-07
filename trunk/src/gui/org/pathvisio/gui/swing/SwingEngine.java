@@ -549,6 +549,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
 	 * current database type.
 	 * dbType is "Metabolite" or "Gene" and is only used in messages to the user.
+	 * TODO: move to src/swing (only used standalone)
 	 */
 	public void selectGdb (String dbType)
 	{
@@ -577,12 +578,12 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			
 			if (dbType.equals("Gene"))
 			{
-				getGdbManager().setGeneDb(dbName);
+				getGdbManager().setGeneDb("idmapper-pgdb:" + dbName);
 				PreferenceManager.getCurrent().set (GlobalPreference.DB_GDB_CURRENT, dbName);
 			}
 			else
 			{
-				getGdbManager().setMetaboliteDb(dbName);
+				getGdbManager().setMetaboliteDb("idmapper-pgdb:" + dbName);
 				PreferenceManager.getCurrent().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
 			}
 		} 

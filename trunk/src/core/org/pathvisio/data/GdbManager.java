@@ -186,6 +186,7 @@ public class GdbManager extends AbstractListModel
 	 * that property.
 	 * 
 	 * Idem for the metabolite database.
+	 * TODO: move to src/swing (only used standalone)
 	 */
 	public void initPreferred()
 	{
@@ -213,7 +214,7 @@ public class GdbManager extends AbstractListModel
 		{
 			try 
 			{
-				setGeneDb(gdbName);
+				setGeneDb("idmapper-pgdb:" + gdbName);
 			} 
 			catch(IDMapperException e) 
 			{
@@ -226,7 +227,7 @@ public class GdbManager extends AbstractListModel
 		{
 			try 
 			{
-				setMetaboliteDb(gdbName);
+				setMetaboliteDb("idmapper-pgdb:" + gdbName);
 			} 
 			catch(Exception e) 
 			{
@@ -238,6 +239,7 @@ public class GdbManager extends AbstractListModel
 	
 	private DBConnector dbConnector = null;
 	
+	@Deprecated
 	public void setDBConnector(DBConnector value)
 	{
 		dbConnector = value;

@@ -94,7 +94,7 @@ public class GdbManager extends AbstractListModel
 		}
 		else
 		{
-			String connectString = "idmapper-pgdb:" + dbName;
+			String connectString = dbName;
 			metabolites = currentGdb.addIDMapper(connectString);
 			if (metabolites != null)
 			{
@@ -155,7 +155,7 @@ public class GdbManager extends AbstractListModel
 		}
 		else
 		{
-			String connectString = "idmapper-pgdb:" + dbName;
+			String connectString = dbName;
 			genes = currentGdb.addIDMapper(connectString);
 			if (genes != null)
 			{

@@ -106,6 +106,8 @@ public class SuperpathwaysGui extends JPanel {
 
 	PathwaysMerge pMerge;
 	
+	static int superpathwaysVisualStyleCounter;
+	
 	
 	// List<String> selectedPwsNameId;
 
@@ -115,6 +117,8 @@ public class SuperpathwaysGui extends JPanel {
 		initComponents();
 
 		cnViewObject = null;
+		
+		superpathwaysVisualStyleCounter=1;
 
 	}
 
@@ -1847,7 +1851,8 @@ public class SuperpathwaysGui extends JPanel {
 				CyNetworkView view = Cytoscape.createNetworkView(mergedNetwork);
 
 				superpathwaysVisualStyle vs = new superpathwaysVisualStyle(
-						"Merged Network",  pwNameToColor);
+						"Merged Network",  pwNameToColor, superpathwaysVisualStyleCounter);
+				superpathwaysVisualStyleCounter++;
 
 			} catch (Exception e) {
 				monitor.setException(e, "Network Merge Failed!");

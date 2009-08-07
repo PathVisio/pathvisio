@@ -47,9 +47,11 @@ import cytoscape.visual.mappings.PassThroughMapping;
 public class superpathwaysVisualStyle {
 
 	public static final String vsName = "Superpathways Visual Style";
+	
+	int styleCount;
 
 	public superpathwaysVisualStyle(String title, 
-			Map<String, Color> pwNameToColor) {
+			Map<String, Color> pwNameToColor, int i) {
 		// get the network view
 		CyNetwork network = Cytoscape.getNetwork(title);
 		cytoscape.view.CyNetworkView networkView = Cytoscape
@@ -60,14 +62,16 @@ public class superpathwaysVisualStyle {
 		CalculatorCatalog catalog = manager.getCalculatorCatalog();
         
 		//the next code line is used for fix the bug (when doing several merges)
-		catalog.removeVisualStyle(vsName);
-		
+		//catalog.removeVisualStyle(vsName);
+		styleCount=i;
+		String styleName=vsName+"-"+String.valueOf(i);
 		// check to see if a visual style with this name already exists
-		VisualStyle vs = catalog.getVisualStyle(vsName);
+		VisualStyle vs = catalog.getVisualStyle(styleName);
+		
 		if (vs == null) {
 			// if not, create it and add it to the catalog
 			// vs = createVisualStyle(network, title, c);
-			vs = createVisualStyle(network, pwNameToColor);
+			vs = createVisualStyle(network, pwNameToColor, styleName);
 			catalog.addVisualStyle(vs);
 		}else{
 			System.out.println("Superpathway style is not null!");
@@ -80,7 +84,7 @@ public class superpathwaysVisualStyle {
 		networkView.redrawGraph(true, true);
 	}
 
-	VisualStyle createVisualStyle(CyNetwork network, Map<String, Color> pwNameToColor) {
+	VisualStyle createVisualStyle(CyNetwork network, Map<String, Color> pwNameToColor, String StyleName) {
 		
 		NodeAppearanceCalculator nodeAppCalc = new NodeAppearanceCalculator();
 		EdgeAppearanceCalculator edgeAppCalc = new EdgeAppearanceCalculator();
@@ -121,7 +125,7 @@ public class superpathwaysVisualStyle {
 		nodeAppCalc.setCalculator(nodeColorCalculator);
 
 		// Create the visual style
-		VisualStyle visualStyle = new VisualStyle(vsName, nodeAppCalc, edgeAppCalc,
+		VisualStyle visualStyle = new VisualStyle(StyleName, nodeAppCalc, edgeAppCalc,
 				globalAppCalc);
 
 		return visualStyle;

@@ -605,7 +605,7 @@ public class Revision
 		<javac srcdir="${axis.wpclient.dir}" debug="true" destdir="${build.wpclient.dir}">
 			<classpath refid="wpclient.class.path" />
 		</javac>
-		<javac srcdir="${${src.dir}/wikipathways-client}" debug="true" destdir="${build.wpclient.dir}">
+		<javac srcdir="${src.dir}/wikipathways-client" debug="true" destdir="${build.wpclient.dir}">
 			<classpath refid="wpclient.class.path" />
 		</javac>
 	</target>

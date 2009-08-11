@@ -245,7 +245,6 @@ public class Revision
 			<fileset dir="." includes="GPML.xsd"/>
 			<fileset dir="." includes="GPML2007.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
-			<fileset dir="." includes="biopax-level2.owl"/>
 		</jar>
 	</target>
 	
@@ -309,7 +308,6 @@ public class Revision
 			<fileset dir="." includes="GPML.xsd"/>
 			<fileset dir="." includes="GPML2007.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
-			<!--<fileset dir="." includes="biopax-level2.owl"/>-->
 		</jar>
 	</target>
 	

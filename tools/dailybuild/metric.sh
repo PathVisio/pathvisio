@@ -54,3 +54,6 @@ echo "$DATE\tnumber of checkstyle warnings\t$VALUE\twarnings" >> $LOG
 
 VALUE=`find src -iname "*.java" -exec grep TODO '{}' \; | wc -l`
 echo "$DATE\tnumber of TODO items\t$VALUE\ttasks" >> $LOG
+
+VALUE=`du build/wpi/applet/ -b --max-depth=0`
+echo "$DATE\tsize of applet dir\t$VALUE\tbytes" >> $LOG

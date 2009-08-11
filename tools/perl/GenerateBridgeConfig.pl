@@ -31,7 +31,7 @@ my %orgByCode;
 for my $key (keys %speciesTable) {
 	my $code = $speciesTable{$key}[3];
 	my $org = $speciesTable{$key}[0];
-	$orgByCode{$code} = $key;
+	$orgByCode{$code} = $org;
 }
 
 # List all bridgedb files

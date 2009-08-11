@@ -47,8 +47,14 @@ public enum GlobalPreference implements Preference
 	
 	DB_ENGINE_GDB("org.pathvisio.data.DBConnDerby"),
 	DB_ENGINE_GEX("org.pathvisio.data.DBConnDerby"),
+	
+	@Deprecated
 	DB_GDB_CURRENT("none"),
+	@Deprecated
 	DB_METABDB_CURRENT("none"),
+	
+	DB_CONNECTSTRING_GDB("idmapper-pgdb:none"),
+	DB_CONNECTSTRING_METADB("idmapper-pgdb:none"),
 	
 	ENABLE_DOUBLE_BUFFERING(Boolean.toString(true)),
 	SHOW_ADVANCED_PROPERTIES(Boolean.toString(false)),

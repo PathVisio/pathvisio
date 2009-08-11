@@ -98,7 +98,7 @@ public class GdbManager extends AbstractListModel
 			metabolites = currentGdb.addIDMapper(connectString);
 			if (metabolites != null)
 			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_METABDB_CURRENT, ("" + metabolites));
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_METADB, (connectString));
 			}
 		}
 		
@@ -159,7 +159,7 @@ public class GdbManager extends AbstractListModel
 			genes = currentGdb.addIDMapper(connectString);
 			if (genes != null)
 			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_GDB_CURRENT, "" + genes);
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_GDB, connectString);
 			}
 		}
 		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, dbName);
@@ -209,12 +209,12 @@ public class GdbManager extends AbstractListModel
 		
 		PreferenceManager prefs = PreferenceManager.getCurrent();
 		// first do the Gene database
-		String gdbName = prefs.get (GlobalPreference.DB_GDB_CURRENT);
-		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_GDB_CURRENT))
+		String gdbName = prefs.get (GlobalPreference.DB_CONNECTSTRING_GDB);
+		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_CONNECTSTRING_GDB))
 		{
 			try 
 			{
-				setGeneDb("idmapper-pgdb:" + gdbName);
+				setGeneDb(gdbName);
 			} 
 			catch(IDMapperException e) 
 			{
@@ -222,12 +222,12 @@ public class GdbManager extends AbstractListModel
 			}
 		}
 		// then do the Metabolite database
-		gdbName = prefs.get(GlobalPreference.DB_METABDB_CURRENT);
-		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_METABDB_CURRENT))
+		gdbName = prefs.get(GlobalPreference.DB_CONNECTSTRING_METADB);
+		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_CONNECTSTRING_METADB))
 		{
 			try 
 			{
-				setMetaboliteDb("idmapper-pgdb:" + gdbName);
+				setMetaboliteDb(gdbName);
 			} 
 			catch(Exception e) 
 			{

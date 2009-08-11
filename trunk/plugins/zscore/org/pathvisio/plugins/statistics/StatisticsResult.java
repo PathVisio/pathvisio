@@ -70,4 +70,28 @@ public class StatisticsResult
 		}
 		return results;
 	}
+	
+	public int getBigN() {
+		return bigN;
+	}
+	
+	public int getBigR() {
+		return bigR;
+	}
+	
+	public Criterion getCriterion() {
+		return crit;
+	}
+	
+	public IDMapper getIDMapper() {
+		return gdb;
+	}
+	
+	public SimpleGex getGex() {
+		return gex;
+	}
+	
+	public File getPathwayDir() {
+		return pwDir;
+	}
 }

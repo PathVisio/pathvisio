@@ -10,9 +10,7 @@
 
 	<!-- WikiPathways client -->
 	<property name="axis.wpclient.dir" value="src-axis-wpclient"/>
-	<property name="dist.wpclient.dir" value="dist/wpclient" />
 	<property name="build.wpclient.dir" value="build/wpclient" />
-	<property name="src.wpclient.dir" value="src/wikipathways-client" />
 	<property name="lib.axis.dir" value="lib/axis-1_4/lib" />
 	
 	<property name="build.core.dir" value="build/core"/>
@@ -25,15 +23,10 @@
 	<property name="webstart.dir" value="webstart"/>
 	<property name="release.dir" value="release"/>
 	
-	<property name="wikipathways.dir" value="wikipathways"/>
-	<property name="wikipathways.www.dir" value="build/wikipathways-www"/>
-	<property name="wikipathways.bin.dir" value="${wikipathways.www.dir}/wpi/bin"/>
-	<property name="wikipathways.webstart.dir" value="${wikipathways.bin.dir}"/>
-	<property name="wikipathways.applet.dir" value="${wikipathways.www.dir}/wpi/applet"/>
-	<property name="wikipathways.bin.dest" value="${wikipathways.dest}/wpi/bin"/>
-	<property name="wikipathways.webstart.dest" value="${wikipathways.bin.dest}"/>
-	<property name="applet.dest" value="${wikipathways.dest}/wpi/applet"/>
-	<property name="diffview.applet.dir" value="applet"/>
+	<property name="build.wpi.bin" value="build/wpi/bin"/>
+	<property name="build.wpi.applet" value="build/wpi/applet"/>
+	<property name="wikipathways.dest.bin" value="${wikipathways.dest}/wpi/bin"/> <!-- install dir for wikipathways utilities !-->
+	<property name="wikipathways.dest.applet" value="${wikipathways.dest}/wpi/applet"/> <!-- install dir for wikipathways applets !-->
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="checkstyle.output.file" value="warnings.txt"/>
 
@@ -138,10 +131,8 @@
 		<mkdir dir="${build.wpclient.dir}"/>
 		<mkdir dir="${build.visplugins.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
-		<mkdir dir="${wikipathways.www.dir}"/>
-		<mkdir dir="${wikipathways.bin.dir}"/>
-		<mkdir dir="${wikipathways.webstart.dir}"/>
-		<mkdir dir="${wikipathways.applet.dir}/lib"/>
+		<mkdir dir="${build.wpi.bin}"/>
+		<mkdir dir="${build.wpi.applet}/lib"/>
 		<mkdir dir="${release.dir}" />
 		<echo file="${src.dir}/core/org/pathvisio/Revision.java">
 package org.pathvisio;
@@ -163,7 +154,8 @@ public class Revision
 		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
-		<delete dir="${wikipathways.www.dir}"/>
+		<delete dir="${build.wpi.bin}"/>
+		<delete dir="${build.wpi.applet}"/>
 		<delete dir="${build.wpclient.dir}" />
 	</target>
 
@@ -174,8 +166,10 @@ public class Revision
 		<delete file="diffview.jar"/>
 		<delete file="pathvisio_core.jar"/>
 		<delete file="pathvisio.jar"/>
+		<delete file="preloader.jar"/>
+		<delete file="wikipathways.jar"/>
+		<delete file="wikipathways-client.jar"/>
 		<delete dir="${release.dir}" />
-		<delete dir="${dist.wpclient.dir}" />
 		<delete dir="${axis.wpclient.dir}" />
 	</target>
 	
@@ -245,7 +239,7 @@ public class Revision
 		
 	<target name="all" depends="jar,visplugins-jar,compile-wikipathways" description="Compile all versions of this project" />
 
-	<target name="resources-jar" depends="prepare" description="Generates jar with resources">
+	<target name="resources-jar" depends="prepare" description="Generates lib/resources.jar containing resource files">
 		<jar jarfile="lib/resources.jar">
 			<fileset dir="resources" includes="**"/>
 			<fileset dir="." includes="GPML.xsd"/>
@@ -255,7 +249,7 @@ public class Revision
 		</jar>
 	</target>
 	
-	<target name="jar" depends="compile-swing" description="Generates executable jar file">
+	<target name="jar" depends="compile-swing" description="Generates pathvisio.jar and pathvisio_core.jar">
 		<manifestclasspath property="manifest.cp" jarfile="pathvisio.jar">
 			<classpath refid="standalone.libs" />
 		</manifestclasspath>
@@ -292,36 +286,7 @@ public class Revision
 		</jar>
 	</target>
 
-	<target name="diffapplet" depends="compile-wikipathways" description="Generate DiffViewer applet jar file">
-		<manifestclasspath property="manifest.cp.diffview" jarfile="diffview.jar">
-			<classpath refid="diffview.libs" />
-		</manifestclasspath>
-		
-		<jar jarfile="diffview.jar">
-			<fileset dir="${build.core.dir}" includes="**/*.class"/>
-			<fileset dir="${build.gui.dir}" includes="**/*.class"/>
-			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
-            <manifest>
-            	 <attribute name="Class-Path" value="${manifest.cp.diffview}"/>
-            </manifest>
-		</jar>
-
-	    <mkdir dir="${diffview.applet.dir}/lib"/>
-		<copy file="diffview.jar" toDir="${diffview.applet.dir}"/>
-		<copy toDir="${diffview.applet.dir}/lib">
-			<path refid="diffview.libs"/>
-		</copy>
-		<signjar alias="PV" lazy = "true" 
-			storepass="PathVisio" keystore="lib/visioKeyStore">
-			<fileset dir="${diffview.applet.dir}" includes="**/*.jar"/>
-		</signjar>
-		<!-- copy to .../www/diffview -->
-		<copy toDir="${applet.dest}">
-			<fileset dir="${diffview.applet.dir}" includes="**/*.*" />
-		</copy>
-	</target>
-
-	<target name="jar-wikipathways" depends="compile-core, compile-gui, compile-wikipathways" description="Generate wikipathways jar file">
+	<target name="wikipathways-jar" depends="compile-core, compile-gui, compile-wikipathways" description="Generate wikipathways jar file">
 		<!-- Include packages					Exceptions
 			src/gui
 			src/core
@@ -339,12 +304,26 @@ public class Revision
 			<fileset dir="${build.wikipathways.dir}" includes="org/pathvisio/wikipathways/Preloader.class"/>
 		</jar>
 		<!-- different resources.jar, only with minimal data -->
-		<jar jarfile="${wikipathways.applet.dir}/lib/resources.jar" index="true">
+		<jar jarfile="${build.wpi.applet}/lib/resources.jar" index="true">
 			<fileset dir="resources" excludes="logo-*, *.bmp, *.ai"/>
 			<fileset dir="." includes="GPML.xsd"/>
 			<fileset dir="." includes="GPML2007.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
 			<!--<fileset dir="." includes="biopax-level2.owl"/>-->
+		</jar>
+	</target>
+	
+	<target name="diffview-jar" depends="compile-core, compile-gui, compile-wikipathways" description="Generate diffview.jar, the diffviewer applet">
+		<manifestclasspath property="manifest.cp.diffview" jarfile="diffview.jar">
+		<classpath refid="diffview.libs" />
+		</manifestclasspath>
+		<jar jarfile="${build.wpi.applet}/diffview.jar">
+			<fileset dir="${build.core.dir}" includes="**/*.class"/>
+			<fileset dir="${build.gui.dir}" includes="**/*.class"/>
+			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
+            <manifest>
+            	 <attribute name="Class-Path" value="${manifest.cp.diffview}"/>
+            </manifest>
 		</jar>
 	</target>
 
@@ -368,59 +347,71 @@ public class Revision
 		<copy file="${webstart.dir}/pathvisio_with_plugins.jnlp" toDir="${webstart.dir}/www"/>
 	</target>
 	
-	<target name="wikipathways-dest" depends="jar, jar-wikipathways" description="Build the applet for WikiPathways">
-		<fail message="You must specify a destination path for WikiPathways to run this task:    ant -Dwikipathways.dest=/path/to/wikipathways [ant target]">
-			<condition>
-				<not> <isset property="wikipathways.dest"/> </not>
-			</condition>
-		</fail>
-		<copy file="wikipathways.jar" toDir="${wikipathways.applet.dir}"/>
-		<copy file="preloader.jar" toDir="${wikipathways.applet.dir}"/>
-		<copy toDir="${wikipathways.applet.dir}/lib">
-			<path refid="wikipathways.libs"/>
-		</copy>
-		<copy toDir="${wikipathways.bin.dir}/lib">
-			<fileset dir="lib">
-				<include name="**/*.*"/>
+	<target name="prepare-wpi" depends="jar, wikipathways-jar, diffview-jar" description="Prepare all applets and utilities needed by WikiPathways">
+		<!-- Copy converter jar with modified main class -->
+		<copy tofile="${build.wpi.bin}/pathvisio_color_exporter.jar"
+			file="pathvisio_core.jar"/>
+		<jar file="${build.wpi.bin}/pathvisio_color_exporter.jar" update="true">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.util.ColorExporter"/>
+			</manifest>
+		</jar>
+
+		<!-- Copy necessary libraries -->
+	    <mkdir dir="${build.wpi.applet}/lib"/>
+		<copy toDir="${build.wpi.applet}">
+			<fileset dir=".">
+				<include name="wikipathways.jar"/>
+				<include name="preloader.jar"/>
 			</fileset>
 		</copy>
-		<signjar alias="PV" lazy = "true" 
-			storepass="PathVisio" keystore="lib/visioKeyStore">
-			<fileset dir="${wikipathways.applet.dir}" includes="**/*.jar"/>
-			<fileset dir="${wikipathways.bin.dir}" includes="**/*.jar"/>
-		</signjar>
-		<!-- copy to /var/www/wikipathways -->
-		<copy toDir="${applet.dest}">
-			<fileset dir="${wikipathways.applet.dir}" includes="**/*.*" />			
+		<copy toDir="${build.wpi.applet}/lib">
+			<path refid="wikipathways.libs"/>
+			<path refid="diffview.libs"/>
 		</copy>
-		<copy toDir="${wikipathways.bin.dest}">
-			<fileset dir="${wikipathways.bin.dir}" includes="**/*.*" />
-		</copy>
-		<!-- Copy converter jar -->
-		<copy toDir="${wikipathways.bin.dest}">
+		<mkdir dir="${build.wpi.bin}/lib"/>
+		<copy toDir="${build.wpi.bin}">
 			<fileset dir=".">
 				<include name="pathvisio_core.jar"/>
 				<include name="GPML.xsd"/>
 				<include name="GPML2007.xsd"/>
 			</fileset>
 		</copy>
-		<!-- Copy converter jar with modified main class -->
-		<copy tofile="${wikipathways.bin.dest}/pathvisio_color_exporter.jar"
-			file="pathvisio_core.jar"/>
-		<jar file="${wikipathways.bin.dest}/pathvisio_color_exporter.jar" update="true">
-			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.util.ColorExporter"/>
-			</manifest>
-		</jar>
+		<copy toDir="${build.wpi.bin}/lib">
+			<fileset dir="lib">
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
+		
 		<!-- Copy preloader class -->
-		<copy toDir="${applet.dest}/org/pathvisio/wikipathways" 
+		<copy toDir="${build.wpi.applet}/org/pathvisio/wikipathways" 
 			file="${build.wikipathways.dir}/org/pathvisio/wikipathways/Preloader.class"/>
 		<manifestclasspath property="wikipathways.class.path" jarfile="wikiapathways.jar">
 			<classpath refid="wikipathways.libs"/>
 		</manifestclasspath>
-		<echo file="${applet.dest}/cache_archive" message="wikipathways.jar ${wikipathways.class.path}" />
-		<!-- Copy GPML.xsd -->
-		<copy toDir="${wikipathways.bin.dest}" file="GPML.xsd"/>
+		<echo file="${build.wpi.applet}/cache_archive" message="wikipathways.jar ${wikipathways.class.path}" />
+		
+		<!-- Sign all jar files -->
+		<signjar alias="PV" lazy = "true" 
+			storepass="PathVisio" keystore="lib/visioKeyStore">
+			<fileset dir="${build.wpi.applet}" includes="**/*.jar"/>
+			<fileset dir="${build.wpi.bin}" includes="**/*.jar"/>
+		</signjar>
+	</target>
+	
+	<target name="install-wpi" depends="prepare-wpi" description="Install applets and utilities in the WikiPathways www directory">
+		<fail message="You must specify a destination path for WikiPathways to run this task:    ant -Dwikipathways.dest=/path/to/wikipathways [ant target]">
+			<condition>
+				<not> <isset property="wikipathways.dest"/> </not>
+			</condition>
+		</fail>
+		<!-- copy to /var/www/wikipathways -->
+		<copy toDir="${wikipathways.dest.applet}">
+			<fileset dir="${build.wpi.applet}" includes="**/*.*" />			
+		</copy>
+		<copy toDir="${wikipathways.dest.bin}">
+			<fileset dir="${build.wpi.bin}" includes="**/*.*" />
+		</copy>
 	</target>
 	
 	<target name="docs" depends="prepare" description="generate api-docs">
@@ -467,7 +458,7 @@ public class Revision
 		</javadoc>		
 	</target>
 	
-	<target name="tarsrc" depends="svnversion" description="create source tarball">
+	<target name="tarsrc" depends="svnversion" description="create source tarball and zip">
 		<property name="srcbase" value="pathvisio_src-${pathvisio.version}-r${subversion_revision}"/>
 		<zip destfile="${release.dir}/${srcbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
@@ -493,7 +484,7 @@ public class Revision
 		</tar>
 	</target>
 
-	<target name="tarbin" depends="jar,visplugins-jar" description="create binary tarball">
+	<target name="tarbin" depends="jar,visplugins-jar" description="create binary tarball and zip">
 		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
 		<zip destfile="${release.dir}/${binbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
@@ -521,7 +512,7 @@ public class Revision
 		</tar>
 	</target>
 
-	<target name="tar" depends="tarsrc,tarbin" description="create dist tarballs"/>
+	<target name="tar" depends="tarsrc,tarbin" description="create both source and binary tarballs and zips"/>
 
 	<target name="test" depends="compile-core">
 		<javac srcdir="src/test" debug="true" 
@@ -550,8 +541,6 @@ public class Revision
 		</junit>
 	</target>
 
-	<property name="ogretest.dir" value="temp_ogretest"/>
-
 	<taskdef resource="checkstyletask.properties"
 			 classpath="lib-build/checkstyle-all-5.0-beta01.jar"/>
 		
@@ -569,7 +558,7 @@ public class Revision
 
 	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="lib-build/jarbundler-2.1.0.jar" />
 
-	<target name="jarbundler" depends="jar">
+	<target name="jarbundler" depends="jar" description="Generate OS X Bundle">
 		<!-- On operating systems other than Mac OS you have to set the stubfile property with -Dstubfile=/path/to/JavaApplicationStub.
 		You can find JavaApplicationStub on any Mac OS X installation and copy it from there. !-->
 		<jarbundler dir="${release.dir}" name="PathVisio" mainclass="org.pathvisio.gui.swing.GuiMain"
@@ -608,11 +597,11 @@ public class Revision
 		</java>
 	</target>
 
-	<target name="compile-wpclient" depends="wpclient-axis,jar-wikipathways">
+	<target name="compile-wpclient" depends="wpclient-axis,wikipathways-jar">
 		<javac srcdir="${axis.wpclient.dir}" debug="true" destdir="${build.wpclient.dir}">
 			<classpath refid="wpclient.class.path" />
 		</javac>
-		<javac srcdir="${src.wpclient.dir}" debug="true" destdir="${build.wpclient.dir}">
+		<javac srcdir="${${src.dir}/wikipathways-client}" debug="true" destdir="${build.wpclient.dir}">
 			<classpath refid="wpclient.class.path" />
 		</javac>
 	</target>

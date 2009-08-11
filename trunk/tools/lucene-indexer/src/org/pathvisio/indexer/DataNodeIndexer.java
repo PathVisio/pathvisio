@@ -91,13 +91,17 @@ public class DataNodeIndexer extends IndexerBase {
 	}
 	
 	void indexDataNode(PathwayElement pe) throws CorruptIndexException, IOException {
+
 		Set<Xref> addedXrefs = new HashSet<Xref>();
 		
 		Document doc = new Document();
 		doc.add(new Field(FIELD_GRAPHID, pe.getGraphId(), Store.YES, Index.NO));
 		
 		Xref xref = pe.getXref();
-
+		
+		if(xref == null || xref.getDataSource() == null || xref.getId() == null) {
+			return;
+		}
 		addCrossRef(xref, doc, FIELD_ID, FIELD_ID_CODE);
 
 		//Add cross references if connected

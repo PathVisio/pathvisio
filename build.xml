@@ -117,6 +117,12 @@
 		</fileset>
 	</path>
 
+	<path id="project.all.class.path">
+		<fileset dir=".">
+			<include name="lib/**/*.jar"/>
+		</fileset>
+	</path>
+
 	<target name="svnversion">
 		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
 			<arg line="-n ."/>
@@ -418,7 +424,7 @@ public class Revision
 			doctitle="PathVisio"
 			header="Revision ${subversion_revision}"
 			footer="Generated ${TODAY}">
-			<classpath refid="project.swing.class.path"/>
+			<classpath refid="project.all.class.path"/>
 			<package name="org.pathvisio"/>
 			<package name="org.pathvisio.biopax"/>
 			<package name="org.pathvisio.biopax.reflect"/>

@@ -37,6 +37,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
+import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
@@ -237,6 +238,7 @@ public class WikiPathwaysIndexer extends Timer{
 		}
 		
 		try {
+			BioDataSource.init();
 			WikiPathwaysIndexer indexer = new WikiPathwaysIndexer(
 					new File(args[0]),
 					new File(args[1])

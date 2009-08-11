@@ -70,12 +70,27 @@ public class PreferenceManager
 		try
 		{
 			properties.load(new FileInputStream(propFile));
+			compatUpdate();
 		}
 		catch (IOException e)
 		{
 			Logger.log.error ("Could not read properties", e);
 		}
 		dirty = false;
+	}
+	
+	/**
+	 * Convert old / obsolete properties to new values.
+	 * Old properties are left in place for backwards compatibility.
+	 */
+	private void compatUpdate()
+	{
+		if (properties.containsKey(GlobalPreference.DB_GDB_CURRENT.name()) && 
+			!properties.containsKey(GlobalPreference.DB_CONNECTSTRING_GDB.name()))
+			set(GlobalPreference.DB_CONNECTSTRING_GDB, "idmapper-pgdb:" + get(GlobalPreference.DB_GDB_CURRENT));
+		if (properties.containsKey(GlobalPreference.DB_METABDB_CURRENT.name()) &&
+			!properties.containsKey(GlobalPreference.DB_CONNECTSTRING_METADB.name()))
+			set(GlobalPreference.DB_CONNECTSTRING_METADB, "idmapper-pgdb:" + get(GlobalPreference.DB_METABDB_CURRENT));
 	}
 	
 	/**

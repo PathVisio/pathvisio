@@ -572,19 +572,19 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				throw new IllegalArgumentException("Not a Swing database connector");
 			}
 	
-			String dbName = dbcon.openChooseDbDialog(null);
+			String dbName = "idmapper-pgdb:" + dbcon.openChooseDbDialog(null);
 			
 			if(dbName == null) return;
 			
 			if (dbType.equals("Gene"))
 			{
-				getGdbManager().setGeneDb("idmapper-pgdb:" + dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_GDB_CURRENT, dbName);
+				getGdbManager().setGeneDb(dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, dbName);
 			}
 			else
 			{
-				getGdbManager().setMetaboliteDb("idmapper-pgdb:" + dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_METABDB_CURRENT, dbName);					
+				getGdbManager().setMetaboliteDb(dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);					
 			}
 		} 
 		catch(Exception ex) 

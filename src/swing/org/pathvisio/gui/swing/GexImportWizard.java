@@ -235,7 +235,7 @@ public class GexImportWizard extends Wizard
 				
 			});
 			txtGdb.setText(
-					PreferenceManager.getCurrent().get(GlobalPreference.DB_GDB_CURRENT)
+					PreferenceManager.getCurrent().get(GlobalPreference.DB_CONNECTSTRING_GDB)
 			);
 			return builder.getPanel();
 		}
@@ -252,7 +252,7 @@ public class GexImportWizard extends Wizard
 			if(ACTION_GDB.equals(action)) {
 				standaloneEngine.getSwingEngine().selectGdb("Gene");
 				txtGdb.setText(
-						PreferenceManager.getCurrent().get(GlobalPreference.DB_GDB_CURRENT)
+						PreferenceManager.getCurrent().get(GlobalPreference.DB_CONNECTSTRING_GDB)
 				);
 			} else if(ACTION_INPUT.equals(action)) {
 				

@@ -2,7 +2,10 @@
 
 cd ../..
 ant clean dist-clean
-ant checkstyle tarbin jar jar-wikipathways
+ant checkstyle jar 
+ant wikipathways-jar 
+ant prepare-wpi
+ant tarbin
 
 LOG="$HOME/pv_mut2.log";
 DATE=`date`;
@@ -37,7 +40,7 @@ echo "$DATE\tLOC in src/swing/**/*.java\t$VALUE\tLOC" >> $LOG
 VALUE=`find src/swing -iname "*.java" | wc -l`
 echo "$DATE\tjava files in src/swing\t$VALUE\tfiles" >> $LOG
 
-VALUE=`stat -c"%s" pathvisio_bin*.tar.gz`
+VALUE=`stat -c"%s" release/pathvisio_bin*.tar.gz`
 echo "$DATE\tsize of pathvisio_bin_xxx.tar.gz\t$VALUE\tbytes" >> $LOG
 
 VALUE=`stat -c"%s" pathvisio.jar`

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cd ../..
-ant clean dist-clean
+ant clean
 ant checkstyle jar 
 ant wikipathways-jar 
 ant prepare-wpi

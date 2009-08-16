@@ -97,7 +97,7 @@ public class superpathwaysVisualStyle {
         edgeAppCalc.getDefaultAppearance().set(VisualPropertyType.EDGE_LINE_WIDTH, 1.5);
 
 		// Passthrough Mapping - set node label
-		PassThroughMapping pm = new PassThroughMapping(new String(), "ID");
+		PassThroughMapping pm = new PassThroughMapping(new String(), "canonicalName");
 		Calculator nlc = new BasicCalculator("Superpathways Node Label Calc",
 				pm, VisualPropertyType.NODE_LABEL);
 		nodeAppCalc.setCalculator(nlc);

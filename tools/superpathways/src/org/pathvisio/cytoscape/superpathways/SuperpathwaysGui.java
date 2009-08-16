@@ -140,7 +140,7 @@ public class SuperpathwaysGui extends JPanel {
 		searchText = new javax.swing.JTextField();
 		organismCombo = new javax.swing.JComboBox();
 		searchBtn = new javax.swing.JButton();
-		helpButton = new javax.swing.JButton();
+		//helpButton = new javax.swing.JButton();
 		hintLabel1 = new javax.swing.JLabel();
 		resultScrolllPane1 = new javax.swing.JScrollPane();
 		resultTable = new javax.swing.JTable();
@@ -156,7 +156,7 @@ public class SuperpathwaysGui extends JPanel {
 		selectedPathwaysList = new javax.swing.JList();
 		selectedPathwaysListModel = new DefaultListModel();
 
-		openBtn = new javax.swing.JButton();
+		findRelatedPwsBtn = new javax.swing.JButton();
 		rightButton = new javax.swing.JButton();
 		leftButton = new javax.swing.JButton();
 
@@ -203,7 +203,7 @@ public class SuperpathwaysGui extends JPanel {
 		stepLabel1.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
 		stepLabel1.setForeground(new java.awt.Color(102, 0, 0));
 		stepLabel1
-				.setText("Step 1: Search and select multiple pathways from WikiPathways");
+				.setText("Search and select multiple pathways from WikiPathways");
 
 		searchText.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -407,11 +407,11 @@ public class SuperpathwaysGui extends JPanel {
 																				49,
 																				49)))
 										.add(13, 13, 13)));
-		openBtn.setText("Open");
-		openBtn.setToolTipText("load the selected pathway to Cytoscape");
-		openBtn.addActionListener(new java.awt.event.ActionListener() {
+		findRelatedPwsBtn.setText("Find Related Pathways");
+		findRelatedPwsBtn.setToolTipText("find the related pathways which share nodes with the one you select");
+		findRelatedPwsBtn.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				openBtnActionPerformed(evt);
+				findRelatedPwsBtnActionPerformed(evt);
 			}
 		});
 
@@ -434,14 +434,14 @@ public class SuperpathwaysGui extends JPanel {
 					}
 				});
 
-		helpButton.setText("Help");
+		/*helpButton.setText("Help");
 		helpButton
 				.setToolTipText("switch to Search Help tab, where you're provided with help for finding candidate pathways with shared nodes");
 		helpButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				helpButtonActionPerformed(evt);
 			}
-		});
+		});*/
 
 		MergeBtn.setText("Merge");
 		MergeBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -495,10 +495,7 @@ public class SuperpathwaysGui extends JPanel {
 																						.add(
 																								searchPaneLayout
 																										.createSequentialGroup()
-																										.add(
-																												helpButton)
-																										.addPreferredGap(
-																												org.jdesktop.layout.LayoutStyle.RELATED)
+																										
 																										.add(
 																												ClearBtn)
 																										.addPreferredGap(
@@ -517,7 +514,7 @@ public class SuperpathwaysGui extends JPanel {
 																								searchPaneLayout
 																										.createSequentialGroup()
 																										.add(
-																												openBtn)
+																												findRelatedPwsBtn)
 																										.addPreferredGap(
 																												org.jdesktop.layout.LayoutStyle.UNRELATED)
 																										.add(
@@ -562,8 +559,8 @@ public class SuperpathwaysGui extends JPanel {
 																				23,
 																				23)))));
 
-		searchPaneLayout.linkSize(new java.awt.Component[] { ClearBtn,
-				helpButton }, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+		/*searchPaneLayout.linkSize(new java.awt.Component[] { ClearBtn,
+				helpButton }, org.jdesktop.layout.GroupLayout.HORIZONTAL);*/
 
 		searchPaneLayout.setVerticalGroup(searchPaneLayout.createParallelGroup(
 				org.jdesktop.layout.GroupLayout.LEADING).add(
@@ -581,7 +578,7 @@ public class SuperpathwaysGui extends JPanel {
 						Short.MAX_VALUE).add(18, 18, 18).add(
 						searchPaneLayout.createParallelGroup(
 								org.jdesktop.layout.GroupLayout.BASELINE).add(
-								openBtn).add(addBtn)).addPreferredGap(
+								findRelatedPwsBtn).add(addBtn)).addPreferredGap(
 						org.jdesktop.layout.LayoutStyle.RELATED).add(
 						selectPanel,
 						org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
@@ -590,16 +587,16 @@ public class SuperpathwaysGui extends JPanel {
 						searchPaneLayout.createParallelGroup(
 								org.jdesktop.layout.GroupLayout.BASELINE).add(
 								MergeBtn).add(CommonNodeViewBtn).add(ClearBtn)
-								.add(helpButton)).add(43, 43, 43)));
+								).add(43, 43, 43)));
 
-		searchPaneLayout.linkSize(new java.awt.Component[] { addBtn, openBtn },
+		searchPaneLayout.linkSize(new java.awt.Component[] { addBtn, findRelatedPwsBtn },
 				org.jdesktop.layout.GroupLayout.VERTICAL);
 
 		searchPaneLayout.linkSize(new java.awt.Component[] { searchBtn,
 				searchText }, org.jdesktop.layout.GroupLayout.VERTICAL);
 
 		searchPaneLayout.linkSize(new java.awt.Component[] { ClearBtn,
-				CommonNodeViewBtn, helpButton },
+				CommonNodeViewBtn },
 				org.jdesktop.layout.GroupLayout.VERTICAL);
 
 		superpathwayPanel.addTab("Search/Select", searchPane);
@@ -905,10 +902,11 @@ public class SuperpathwaysGui extends JPanel {
 				upperBoundSharingNodeNoComboBox },
 				org.jdesktop.layout.GroupLayout.VERTICAL);
 
-		superpathwayPanel
+		//remove the Search Help panel
+		/*superpathwayPanel
 				.addTab("Search Help", null, helpPanel,
 						"help is provided for finding candidate pathways with shared nodes");
-
+*/
 		jScrollPane2.setViewportView(superpathwayPanel);
 
 		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(
@@ -941,11 +939,14 @@ public class SuperpathwaysGui extends JPanel {
 	private void addBtnActionPerformed(java.awt.event.ActionEvent evt) {
 		// System.out.println(mClickedPathwayNameID.size() + "");
 		mClickedPathwayNameID.clear();
-		// System.out.println("The number of elements in the
-		// mClickedPathwayNameID is "+ mClickedPathwayNameID.size()+"");
+		
 		int[] rows = resultTable.getSelectedRows();
 		for (int k = 0; k < rows.length; k++) {
-			ResultRow t = tableModel.getRow(rows[k]);
+			int viewRow = rows[k];
+			int modelRow = sorter.modelIndex(viewRow);
+			
+			
+			ResultRow t = tableModel.getRow(modelRow);
 			String temp = t.getProperty(ResultProperty.NAME) + "("
 					+ t.getProperty(ResultProperty.ID) + ")";
 
@@ -971,14 +972,29 @@ public class SuperpathwaysGui extends JPanel {
 
 	}
 
-	private void openBtnActionPerformed(java.awt.event.ActionEvent evt) {
-		System.out.println("After clicking open button!");
-
+	private void findRelatedPwsBtnActionPerformed(java.awt.event.ActionEvent evt) {
+		System.out.println("After clicking 'Find Related Pathways' button!");
 		int[] rows = resultTable.getSelectedRows();
-		for (int k = 0; k < rows.length; k++) {
-			ResultRow t = tableModel.getRow(rows[k]);
-			openNetwork(t);
+		
+		if (rows.length>1 || rows.length==0) {
+			JOptionPane.showMessageDialog(this,
+					"Please select ONE pathway among the search result", "find related pathways...",
+					JOptionPane.INFORMATION_MESSAGE);
+		}else{
+			int viewRow = rows[0];
+			int modelRow = sorter.modelIndex(viewRow);
+			
+			ResultRow t = tableModel.getRow(modelRow);
+			String temp = t.getProperty(ResultProperty.NAME) + "("
+					+ t.getProperty(ResultProperty.ID) + ")";
+			
+			FindRelatedPwsDialog relatedPwsDialog=new FindRelatedPwsDialog(mClient,"Find related pathways...", temp);
+			relatedPwsDialog.setVisible(true);
+
 		}
+		
+		
+		
 	}
 
 	private void rightButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -1093,7 +1109,8 @@ public class SuperpathwaysGui extends JPanel {
 		commonNodeViewTask task = new commonNodeViewTask(mClient);
 		JTaskConfig config = new JTaskConfig();
 		config.displayCancelButton(true);
-		config.setModal(true);
+		//config.setModal(true);
+		config.setModal(false);
 		TaskManager.executeTask(task, config);
 	}
 
@@ -1223,9 +1240,10 @@ public class SuperpathwaysGui extends JPanel {
 		superpathwayPanel.setSelectedIndex(0);
 	}
 
-	private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {
+	//remove Help button on the Search/Select panel
+	/*private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		superpathwayPanel.setSelectedIndex(2);
-	}
+	}*/
 
 	private void anchorPathwayComboBoxActionPerformed(
 			java.awt.event.ActionEvent evt) {
@@ -1301,21 +1319,18 @@ public class SuperpathwaysGui extends JPanel {
 		jTaskConfig.displayCloseButton(true);
 		jTaskConfig.displayCancelButton(true);
 		jTaskConfig.displayStatus(true);
-		jTaskConfig.setAutoDispose(false);
 		jTaskConfig.displayTimeElapsed(true);
-		jTaskConfig.setModal(true);
+		
+		jTaskConfig.setAutoDispose(false);
+		//jTaskConfig.setModal(true);
+		jTaskConfig.setModal(false);
 
 		// Execute Task in New Thread; pop open JTask Dialog Box.
 		TaskManager.executeTask(task, jTaskConfig);
 		if (task.isCancelled())
 			return;
 
-		// the following code is for forcing detail rendering at any level of
-		// zoom
-		CyNetworkView currView = Cytoscape.getCurrentNetworkView();
-		ding.view.DGraphView nv;
-		nv = (DGraphView) currView;
-		nv.setGraphLOD(new CyGraphAllLOD());
+		
 	}
 
 	// the code above is generated in Netbean IDE
@@ -1398,13 +1413,20 @@ public class SuperpathwaysGui extends JPanel {
 				tableModel.addRow(new ResultRow(r));
 			}
 		}
-		resultTable.setModel(tableModel);
+		
+		sorter = new TableSorter(tableModel);
+		resultTable.setModel(sorter);
+		sorter.setTableHeader(resultTable.getTableHeader());
+		
+		//resultTable.setModel(tableModel);
 		System.out.println("Superpathways!");
 
 	}
 
-	private javax.swing.DefaultListModel availablePathwaysListModel;
+	//private javax.swing.DefaultListModel availablePathwaysListModel;
 
+	javax.swing.DefaultListModel availablePathwaysListModel;
+	
 	private javax.swing.DefaultListModel selectedPathwaysListModel;
 
 	private javax.swing.DefaultComboBoxModel anchorPathwayComboBoxModel;
@@ -1430,7 +1452,8 @@ public class SuperpathwaysGui extends JPanel {
 
 	private javax.swing.JLabel availablePathwaysLabel;
 
-	private javax.swing.JList availablePathwaysList;
+	//private javax.swing.JList availablePathwaysList;
+	javax.swing.JList availablePathwaysList;
 
 	private javax.swing.JScrollPane availablePathwaysScrollPane;
 
@@ -1448,27 +1471,13 @@ public class SuperpathwaysGui extends JPanel {
 
 	private javax.swing.JLabel hintLabel1;
 
-	private javax.swing.JRadioButton jRadioButton1;
-
-	private javax.swing.JRadioButton jRadioButton2;
-
-	private javax.swing.JRadioButton jRadioButton3;
-
-	private javax.swing.JRadioButton jRadioButton4;
-
-	private javax.swing.JRadioButton jRadioButton5;
-
-	private javax.swing.JRadioButton jRadioButton6;
-
-	private javax.swing.JPanel layoutPane;
-
 	private javax.swing.JButton leftButton;
 
 	private javax.swing.JLabel lowerBoundLabel;
 
 	private javax.swing.JComboBox lowerBoundSharingNodeNoComboBox;
 
-	private javax.swing.JButton openBtn;
+	private javax.swing.JButton findRelatedPwsBtn;
 
 	private javax.swing.JComboBox organismCombo;
 
@@ -1476,7 +1485,8 @@ public class SuperpathwaysGui extends JPanel {
 
 	private javax.swing.JTable resultTable;
 
-	private javax.swing.JButton rightButton;
+	//private javax.swing.JButton rightButton;
+	javax.swing.JButton rightButton;
 
 	private javax.swing.JButton searchBtn;
 
@@ -1506,7 +1516,7 @@ public class SuperpathwaysGui extends JPanel {
 
 	private javax.swing.JButton searchHelpButton;
 
-	private javax.swing.JButton helpButton;
+	//private javax.swing.JButton helpButton;
 
 	private javax.swing.JLabel lastLabel;
 
@@ -1799,7 +1809,7 @@ public class SuperpathwaysGui extends JPanel {
 
 			for (int i = 0; i < selectedPathwaysListModel.getSize(); i++) {
 
-				System.out.println(i + "");
+				System.out.println("in for loop: "+i + "");
 				String selectedOnePwNameID = (String) selectedPathwaysListModel
 						.get(i);
 				System.out.println(selectedOnePwNameID);
@@ -1829,7 +1839,7 @@ public class SuperpathwaysGui extends JPanel {
 				
                 //the following code is for coloring the nodes by default
 				applyGpmlVisualStyle(mClient.getPlugin().mGpmlHandler, pwNameToColor,
-						pwName, true); 
+						pwName, true, superpathwaysVisualStyleCounter); 
 				
 				listOfNetworks.add(net);
 			}
@@ -1840,6 +1850,7 @@ public class SuperpathwaysGui extends JPanel {
 			for (int s = 0; s < temp.length; s++) {
 				temp[s] = (String) colors[s];
 			}
+			System.out.println("Problem is here2!");
 			pMerge = new PathwaysMerge(listOfNetworks, cnViewObject
 					.getNodePairByTranslation(), temp);
 
@@ -1858,6 +1869,13 @@ public class SuperpathwaysGui extends JPanel {
 				monitor.setException(e, "Network Merge Failed!");
 				e.printStackTrace();
 			}
+			
+             //the following code is for forcing detail rendering at any level of
+			// zoom
+			CyNetworkView currView = Cytoscape.getCurrentNetworkView();
+			ding.view.DGraphView nv;
+			nv = (DGraphView) currView;
+			nv.setGraphLOD(new CyGraphAllLOD());
 
 		}
 
@@ -1877,21 +1895,24 @@ public class SuperpathwaysGui extends JPanel {
 	}
 
 	public void applyGpmlVisualStyle(GpmlHandler gpmlHandler, Map<String, Color> pwNameToColor,
-			String t, boolean coloringNodeInGpml) {
+			String t, boolean coloringNodeInGpml, int version) {
 
 		if (coloringNodeInGpml == true) {
 			VisualMappingManager vmm = Cytoscape.getVisualMappingManager();
 			CalculatorCatalog catalog = vmm.getCalculatorCatalog();
 			//the next code line is used for fix the bug (when doing several merges)
-			catalog.removeVisualStyle(gpmlExtendVisualStyle.NAME);
+			//catalog.removeVisualStyle(gpmlExtendVisualStyle.NAME);
+			
+			String styleName=gpmlExtendVisualStyle.NAME+"-"+String.valueOf(version);
+			System.out.println("GPML-extention style name: "+styleName);
 			
 			VisualStyle gpmlExtensionStyle = catalog
-					.getVisualStyle(gpmlExtendVisualStyle.NAME);
+					.getVisualStyle(styleName);
 			
 			if (gpmlExtensionStyle == null) { //Create the GPML visual style
 				Logger.log.trace("VisualStyle: creating GPML-extension style");
 				System.out.println(pwNameToColor.size()+"");
-				gpmlExtensionStyle = new gpmlExtendVisualStyle(gpmlHandler, pwNameToColor, t);
+				gpmlExtensionStyle = new gpmlExtendVisualStyle(gpmlHandler, pwNameToColor, t, version);
 				
                 //set the background color
 				GlobalAppearanceCalculator gCalc = gpmlExtensionStyle.getGlobalAppearanceCalculator();
@@ -1903,7 +1924,7 @@ public class SuperpathwaysGui extends JPanel {
 				System.out.println("gpml-extension style is not null!");
 				Logger.log.trace("VisualStyle: reusing GPML-extension style");
 			}
-
+			System.out.println("Problem is here1!");
 			cytoscape.view.CyNetworkView networkView = Cytoscape
 					.getNetworkView(t);
 			networkView.setVisualStyle(gpmlExtensionStyle.getName());

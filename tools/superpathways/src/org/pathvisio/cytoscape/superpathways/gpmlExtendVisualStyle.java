@@ -69,8 +69,8 @@ public class gpmlExtendVisualStyle extends VisualStyle {
 		title=t;
 	}
 	
-	public gpmlExtendVisualStyle(GpmlHandler gpmlHandler, Map<String, Color> map, String t) {
-		super(NAME);
+	public gpmlExtendVisualStyle(GpmlHandler gpmlHandler, Map<String, Color> map, String t, int version) {
+		super(NAME+"-"+String.valueOf(version));
 		pwNameToColor=map;
 		title=t;
 		

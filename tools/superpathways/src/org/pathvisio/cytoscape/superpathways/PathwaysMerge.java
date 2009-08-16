@@ -63,11 +63,6 @@ public class PathwaysMerge {
 			.toString()
 			+ "/";
 
-	/*
-	 * String[] colorPool = { "0,255,0", "80,50,80", "51,255,255", "255,255,0",
-	 * "0, 0, 255", "255, 0, 255", "255,0, 0", "0,102,0", "0, 204, 204" };
-	 */
-
 	static Map<String, DataSource> mapSysCodeToBioDS;
 
 	public PathwaysMerge(List<CyNetwork> nets, Map<Xref, Xref> m, String[] c) {
@@ -584,6 +579,7 @@ public class PathwaysMerge {
 
 		Set<GraphObject> nodes = new HashSet<GraphObject>();
 		// 'nodes' will contains all the matched nodes
+		
 		while (itNodes.hasNext()) {
 			nodes.addAll(itNodes.next());
 		}
@@ -599,7 +595,9 @@ public class PathwaysMerge {
 		// ids is for later use--set attribute for shared nodes
 		List<String> ids = new ArrayList<String>();
 		ids.add(id);
-
+		
+		List<String> canonicalNames=new ArrayList<String>();
+		canonicalNames.add((String)nodeAtts.getAttribute(id, "canonicalName"));
 		
 		String gpmlType = nodeAtts.getAttribute(id, "gpml-type").toString();
 
@@ -618,6 +616,10 @@ public class PathwaysMerge {
 					// System.out.print("+"+node.getIdentifier());
 					id += "_" + node.getIdentifier();
 					ids.add(node.getIdentifier());
+					String cName=(String)nodeAtts.getAttribute(node.getIdentifier(), "canonicalName");
+					if(!canonicalNames.contains(cName)){
+					canonicalNames.add(cName);
+					}
 				}
 
 				// System.out.println();
@@ -634,7 +636,19 @@ public class PathwaysMerge {
 			// Get the node with id or create a new node
 			// for attribute confilict handling, introduce a conflict node here?
 			final Node node = Cytoscape.getCyNode(id, true);
-
+			
+			
+			if (nodes.size() > 1){
+				String combinedCName="";
+				Iterator<String> it=canonicalNames.iterator();
+				while(it.hasNext()){
+					combinedCName=combinedCName+it.next()+"_";
+				}
+				
+				combinedCName=combinedCName.substring(0, combinedCName.length()-1);
+				nodeAtts.setAttribute(id, "canonicalName",combinedCName);
+			}
+			
 			Set<CyNetwork> setOfNets = mapNetNode.keySet();
 			Iterator<CyNetwork> itNets = setOfNets.iterator();
 			String color = null;

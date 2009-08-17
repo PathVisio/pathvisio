@@ -15,7 +15,6 @@
 // limitations under the License.
 //
 
-
 package org.pathvisio.cytoscape.superpathways;
 
 import java.awt.Cursor;
@@ -48,69 +47,67 @@ import cytoscape.task.TaskMonitor;
 import cytoscape.task.ui.JTaskConfig;
 import cytoscape.task.util.TaskManager;
 
-public class FindRelatedPwsDialog extends JDialog{
-	
+public class FindRelatedPwsDialog extends JDialog {
+
 	SuperpathwaysClient mClient;
-	
+
 	private List<String> mCandidatePw;
-	
+
 	String anchorPwNameID;
-	
+
 	int mNoGeneNode;
-	
+
 	private Map<String, WSSearchResult[]> mNodeIdToPwsSharingNode = new HashMap<String, WSSearchResult[]>();
 
 	List<String> selectedPws;
-	
-	public FindRelatedPwsDialog(SuperpathwaysClient client, String s, String anchorPw) {
+
+	public FindRelatedPwsDialog(SuperpathwaysClient client, String s,
+			String anchorPw) {
 		super(client.getPlugin().mWindow, s);
-		mClient=client;
-		setSize(250,300);
-		setModal(true);		
+		mClient = client;
+		setSize(250, 300);
+		setModal(true);
 		initComponents(anchorPw);
 		setModal(false);
 
 	}
-	
+
 	private void initComponents(String anchorPw) {
-		
-		anchorPwNameID=anchorPw;
-//		the following items are in helpPanel Dialog
+
+		anchorPwNameID = anchorPw;
+		// the following items are in helpPanel Dialog
 		helpPanel = new javax.swing.JPanel();
 		anchorPathwayLabel = new javax.swing.JLabel();
 		sharingNodeNoLabel = new javax.swing.JLabel();
-		//anchorPathwayComboBox = new javax.swing.JComboBox();
-		anchorPathwayNameIDLabel=new javax.swing.JLabel();
-		
+		// anchorPathwayComboBox = new javax.swing.JComboBox();
+		anchorPathwayNameIDLabel = new javax.swing.JLabel();
+
 		lowerBoundSharingNodeNoComboBox = new javax.swing.JComboBox();
 		candidatePathwaysSharingNodesScrollPane = new javax.swing.JScrollPane();
 		candidatePathwaysSharingNodesTable = new javax.swing.JTable();
-		
+
 		explainHelpLabel1 = new javax.swing.JLabel();
 		addHelpButton = new javax.swing.JButton();
 		lowerBoundLabel = new javax.swing.JLabel();
 		upperBoundLabel = new javax.swing.JLabel();
 		upperBoundSharingNodeNoComboBox = new javax.swing.JComboBox();
 		explainHelpLabel2 = new javax.swing.JLabel();
-		//backToSearchButton = new javax.swing.JButton();
+		// backToSearchButton = new javax.swing.JButton();
 		searchHelpButton = new javax.swing.JButton();
 		lastLabel = new javax.swing.JLabel();
-		
-//		the follwoing code is for Search Help tab
+
+		// the follwoing code is for Search Help tab
 		anchorPathwayLabel.setForeground(new java.awt.Color(0, 0, 255));
 		anchorPathwayLabel.setText("Selected Pathway: ");
 
-		
 		anchorPathwayNameIDLabel.setForeground(new java.awt.Color(0, 0, 255));
 		anchorPathwayNameIDLabel.setText(anchorPw);
-		
-		
+
 		sharingNodeNoLabel.setForeground(new java.awt.Color(0, 0, 255));
 		sharingNodeNoLabel.setText("Sharing");
 
 		// anchorPathwayComboBox.setModel(new
 		// DefaultComboBoxModel(mAvailablePathwaysNameIDList.toArray()));
-
 
 		lowerBoundSharingNodeNoComboBox
 				.setModel(new javax.swing.DefaultComboBoxModel(new String[] {
@@ -122,7 +119,7 @@ public class FindRelatedPwsDialog extends JDialog{
 		explainHelpLabel1.setForeground(new java.awt.Color(102, 0, 0));
 		explainHelpLabel1
 				.setText("Set the range of sharing nodes number for the selected pathway, a list of candidate");
-		
+
 		explainHelpLabel2.setFont(new java.awt.Font("Dialog", 1, 11)); // NOI18N
 		explainHelpLabel2.setForeground(new java.awt.Color(102, 0, 0));
 		explainHelpLabel2
@@ -131,8 +128,7 @@ public class FindRelatedPwsDialog extends JDialog{
 		addHelpButton.setText("Add");
 		addHelpButton
 				.setToolTipText("add the selected pathways to the 'Available Pathways' list");
-		
-		
+
 		addHelpButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				addHelpButtonActionPerformed(evt);
@@ -145,7 +141,7 @@ public class FindRelatedPwsDialog extends JDialog{
 		upperBoundLabel.setForeground(new java.awt.Color(0, 0, 255));
 		upperBoundLabel.setText("Maximum");
 
-        //set the numbers for according to the selected pathway
+		// set the numbers for according to the selected pathway
 		int index1 = anchorPw.lastIndexOf("(");
 		int index2 = anchorPw.lastIndexOf(")");
 		String anchorPwID = anchorPw.substring(index1 + 1, index2);
@@ -159,13 +155,11 @@ public class FindRelatedPwsDialog extends JDialog{
 
 		} catch (RemoteException e) {
 			Logger.log.error(
-					"Unable to get the pathway due to the RemoteException",
-					e);
+					"Unable to get the pathway due to the RemoteException", e);
 		} catch (ConverterException e) {
-			Logger.log
-					.error(
-							"Unable to get the pathway due to the ConverterException",
-							e);
+			Logger.log.error(
+					"Unable to get the pathway due to the ConverterException",
+					e);
 		}
 		// Create the corresponding pathway objects
 		Pathway mAnchorPw = new Pathway();
@@ -174,8 +168,7 @@ public class FindRelatedPwsDialog extends JDialog{
 			mAnchorPw = WikiPathwaysClient.toPathway(anchorPathway);
 		} catch (ConverterException e) {
 			Logger.log.error(
-					"Unable to get the pathway due to the RemoteException",
-					e);
+					"Unable to get the pathway due to the RemoteException", e);
 		}
 
 		mNoGeneNode = 0;
@@ -191,7 +184,6 @@ public class FindRelatedPwsDialog extends JDialog{
 		}
 		upperBoundSharingNodeNoComboBox
 				.setModel(new javax.swing.DefaultComboBoxModel(temp));
-		
 
 		lastLabel.setForeground(new java.awt.Color(0, 0, 255));
 		lastLabel.setText("Nodes");
@@ -203,7 +195,6 @@ public class FindRelatedPwsDialog extends JDialog{
 			}
 		});
 
-
 		candidatePathwaysSharingNodesTableModel.addColumn("Pathway Name");
 		candidatePathwaysSharingNodesTableModel.addColumn("ID");
 		candidatePathwaysSharingNodesTableModel.addColumn("No. Shared Nodes");
@@ -214,14 +205,13 @@ public class FindRelatedPwsDialog extends JDialog{
 				.setViewportView(candidatePathwaysSharingNodesTable);
 		candidatePathwaysSharingNodesTable
 				.setModel(candidatePathwaysSharingNodesTableModel);
-		
 
 		TableColumn column = null;
 		for (int i = 0; i < 3; i++) {
 			column = candidatePathwaysSharingNodesTable.getColumnModel()
 					.getColumn(i);
 			if (i == 0) {
-				column.setPreferredWidth(150); 
+				column.setPreferredWidth(150);
 			} else if (i == 1) {
 				column.setPreferredWidth(40);
 			} else {
@@ -339,7 +329,7 @@ public class FindRelatedPwsDialog extends JDialog{
 								helpPanelLayout
 										.createSequentialGroup()
 										.addContainerGap(190, Short.MAX_VALUE)
-										//.add(backToSearchButton)
+										// .add(backToSearchButton)
 										.addPreferredGap(
 												org.jdesktop.layout.LayoutStyle.RELATED)
 										.add(addHelpButton).add(26, 26, 26))
@@ -353,9 +343,10 @@ public class FindRelatedPwsDialog extends JDialog{
 												402, Short.MAX_VALUE).add(16,
 												16, 16)));
 
-		/*helpPanelLayout.linkSize(new java.awt.Component[] { addHelpButton,
-				backToSearchButton },
-				org.jdesktop.layout.GroupLayout.HORIZONTAL);*/
+		/*
+		 * helpPanelLayout.linkSize(new java.awt.Component[] { addHelpButton,
+		 * backToSearchButton }, org.jdesktop.layout.GroupLayout.HORIZONTAL);
+		 */
 
 		helpPanelLayout
 				.setVerticalGroup(helpPanelLayout
@@ -410,44 +401,47 @@ public class FindRelatedPwsDialog extends JDialog{
 												helpPanelLayout
 														.createParallelGroup(
 																org.jdesktop.layout.GroupLayout.BASELINE)
-														//.add(backToSearchButton)
+														// .add(backToSearchButton)
 														.add(addHelpButton))
 										.addContainerGap(131, Short.MAX_VALUE)));
 
-		/*helpPanelLayout.linkSize(new java.awt.Component[] { addHelpButton,
-				backToSearchButton }, org.jdesktop.layout.GroupLayout.VERTICAL);*/
+		/*
+		 * helpPanelLayout.linkSize(new java.awt.Component[] { addHelpButton,
+		 * backToSearchButton }, org.jdesktop.layout.GroupLayout.VERTICAL);
+		 */
 
 		helpPanelLayout.linkSize(new java.awt.Component[] { lastLabel,
 				lowerBoundLabel, lowerBoundSharingNodeNoComboBox,
 				searchHelpButton, sharingNodeNoLabel, upperBoundLabel,
 				upperBoundSharingNodeNoComboBox },
 				org.jdesktop.layout.GroupLayout.VERTICAL);
-		
-		
-		//setLayout(helpPanelLayout);
+
+		// setLayout(helpPanelLayout);
 		setContentPane(helpPanel);
 		pack();
 
 	}
-	
+
 	private void searchHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
-		//clean the table
-		int num=candidatePathwaysSharingNodesTableModel.getRowCount();
-		for(int t=0; t<num; t++){
+		// clean the table
+		int num = candidatePathwaysSharingNodesTableModel.getRowCount();
+		for (int t = 0; t < num; t++) {
 			candidatePathwaysSharingNodesTableModel.removeRow(t);
 		}
-
 
 		candidatePathwaysSharingNodesTable
 				.setModel(candidatePathwaysSharingNodesTableModel);
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-		//debugging
-		/*Class columnType = candidatePathwaysSharingNodesTableModel.getColumnClass(2); 
-		System.out.println("2. in searchHelpButtonActionPerformed, right after adding column names");
-		System.out.println(columnType+"");*/
-		
+		// debugging
+		/*
+		 * Class columnType =
+		 * candidatePathwaysSharingNodesTableModel.getColumnClass(2);
+		 * System.out.println("2. in searchHelpButtonActionPerformed, right
+		 * after adding column names"); System.out.println(columnType+"");
+		 */
+
 		// String anchorPwNameAndId =
 		// anchorPathwayComboBox.getSelectedItem().toString();
 		int lowerBound = Integer.parseInt(lowerBoundSharingNodeNoComboBox
@@ -467,55 +461,13 @@ public class FindRelatedPwsDialog extends JDialog{
 		// config.displayStatus(true);
 		config.setModal(true);
 		TaskManager.executeTask(task, config);
-
-		// mCandidatePw is a list of string with elements in format "Pathway
-		// Name (pw id), sharing node number: a int"
-		// System.out.println(mCandidatePw.size()+"");
-		Iterator<String> it = mCandidatePw.iterator();
-		
-		while (it.hasNext()) {
-			String temp = it.next();
-			// candidatePathwaysSharingNodesListModel.addElement(temp);
-
-			// System.out.println(temp);
-			// parse the string into three parts: pathway name, id, and No.
-			// Sharing Nodes
-			int index1 = temp.lastIndexOf(",");
-			String temp1 = temp.substring(0, index1);
-
-			int index2 = temp1.lastIndexOf("(");
-			int index3 = temp1.lastIndexOf(")");
-			String pwName = temp1.substring(0, index2);
-			// System.out.println(pwName);
-			String pwId = temp1.substring(index2 + 1, index3);
-			// System.out.println(pwId);
-
-			// String temp2 = temp.substring(index1+1);
-			int index4 = temp.lastIndexOf(":");
-			String NoSharingNode = temp.substring(index4 + 2);
-			Integer NoSharingNodeInteger=Integer.valueOf(NoSharingNode);
-
-			Object[] row = new Object[3];
-			row[0] =  pwName;
-			row[1] =  pwId;
-			row[2] =  NoSharingNodeInteger;
-			//row[2] = NoSharingNode;
-			candidatePathwaysSharingNodesTableModel.addRow(row);
-		}
-
-		sorter = new TableSorter(candidatePathwaysSharingNodesTableModel);
-		candidatePathwaysSharingNodesTable.setModel(sorter);
-		sorter.setTableHeader(candidatePathwaysSharingNodesTable
-				.getTableHeader());
-
-		// candidatePathwaysSharingNodesList.setModel(candidatePathwaysSharingNodesListModel);
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
 	}
-	
-	
+
 	private void addHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		
-		selectedPws=new ArrayList<String>();
+
+		selectedPws = new ArrayList<String>();
 		int[] selectedRowIndices = candidatePathwaysSharingNodesTable
 				.getSelectedRows();
 
@@ -533,33 +485,33 @@ public class FindRelatedPwsDialog extends JDialog{
 			System.out.println(pwNameId);
 
 			selectedPws.add(pwNameId);
-			SuperpathwaysGui spGUI=mClient.getGUI();
+			SuperpathwaysGui spGUI = mClient.getGUI();
 			if (!spGUI.availablePathwaysListModel.contains(pwNameId)) {
 				spGUI.availablePathwaysListModel.addElement((Object) pwNameId);
-				spGUI.availablePathwaysList.setModel(spGUI.availablePathwaysListModel);
+				spGUI.availablePathwaysList
+						.setModel(spGUI.availablePathwaysListModel);
 
 				if (spGUI.availablePathwaysListModel.getSize() > 0) {
 					spGUI.rightButton.setEnabled(true);
 				}
 			}
 		}
-		//superpathwayPanel.setSelectedIndex(0);
+		// superpathwayPanel.setSelectedIndex(0);
 		setVisible(false);
 
 	}
-	
-	
-	//private javax.swing.JComboBox anchorPathwayComboBox;
-	
+
+	// private javax.swing.JComboBox anchorPathwayComboBox;
+
 	private TableSorter sorter;
 
 	private javax.swing.JLabel anchorPathwayLabel;
-	
+
 	private javax.swing.JLabel anchorPathwayNameIDLabel;
 
-	//private javax.swing.DefaultComboBoxModel anchorPathwayComboBoxModel;
+	// private javax.swing.DefaultComboBoxModel anchorPathwayComboBoxModel;
 
-	//private javax.swing.JButton backToSearchButton;
+	// private javax.swing.JButton backToSearchButton;
 
 	private javax.swing.JScrollPane candidatePathwaysSharingNodesScrollPane;
 
@@ -568,9 +520,9 @@ public class FindRelatedPwsDialog extends JDialog{
 	private javax.swing.JLabel explainHelpLabel1;
 
 	private javax.swing.JLabel explainHelpLabel2;
-	
+
 	private javax.swing.JPanel helpPanel;
-	
+
 	private javax.swing.JLabel upperBoundLabel;
 
 	private javax.swing.JComboBox upperBoundSharingNodeNoComboBox;
@@ -580,22 +532,21 @@ public class FindRelatedPwsDialog extends JDialog{
 	private javax.swing.JLabel lastLabel;
 
 	private javax.swing.JTable candidatePathwaysSharingNodesTable;
-	
+
 	private javax.swing.JLabel sharingNodeNoLabel;
-	
+
 	private javax.swing.JButton addHelpButton;
-	
+
 	private javax.swing.JComboBox lowerBoundSharingNodeNoComboBox;
-	
-	private javax.swing.table.DefaultTableModel candidatePathwaysSharingNodesTableModel = new DefaultTableModel(){
-        Class [] classes = {String.class, String.class, Integer.class};
-        
-        public Class getColumnClass(int column) {
-            return classes[column];
-        }
-    };;
-	
-	
+
+	private javax.swing.table.DefaultTableModel candidatePathwaysSharingNodesTableModel = new DefaultTableModel() {
+		Class[] classes = { String.class, String.class, Integer.class };
+
+		public Class getColumnClass(int column) {
+			return classes[column];
+		}
+	};;
+
 	public class searchSharingNodePwsTask implements Task {
 
 		TaskMonitor monitor;
@@ -604,9 +555,12 @@ public class FindRelatedPwsDialog extends JDialog{
 
 		int upperBound;
 
+		boolean cancelled;
+
 		public searchSharingNodePwsTask(int lb, int ub) {
 			lowerBound = lb;
 			upperBound = ub;
+			cancelled = false;
 		}
 
 		/**
@@ -628,10 +582,11 @@ public class FindRelatedPwsDialog extends JDialog{
 
 					// Create a client to the WikiPathways web service
 					WikiPathwaysClient client = mClient.getStub();
-					
+
 					int index1 = anchorPwNameID.lastIndexOf("(");
 					int index2 = anchorPwNameID.lastIndexOf(")");
-					String anchorPwID = anchorPwNameID.substring(index1 + 1, index2);
+					String anchorPwID = anchorPwNameID.substring(index1 + 1,
+							index2);
 
 					WSPathway anchorPathway = new WSPathway();
 
@@ -639,9 +594,10 @@ public class FindRelatedPwsDialog extends JDialog{
 						anchorPathway = client.getPathway(anchorPwID);
 
 					} catch (RemoteException e) {
-						Logger.log.error(
-								"Unable to get the pathway due to the RemoteException",
-								e);
+						Logger.log
+								.error(
+										"Unable to get the pathway due to the RemoteException",
+										e);
 					} catch (ConverterException e) {
 						Logger.log
 								.error(
@@ -654,9 +610,10 @@ public class FindRelatedPwsDialog extends JDialog{
 					try {
 						mAnchorPw = WikiPathwaysClient.toPathway(anchorPathway);
 					} catch (ConverterException e) {
-						Logger.log.error(
-								"Unable to get the pathway due to the RemoteException",
-								e);
+						Logger.log
+								.error(
+										"Unable to get the pathway due to the RemoteException",
+										e);
 					}
 
 					// the following code is get a map "mNodeIdToPwsSharingNode"
@@ -667,28 +624,31 @@ public class FindRelatedPwsDialog extends JDialog{
 						// proteins, metabolites)
 						if (pwElm.getObjectType() == ObjectType.DATANODE) {
 
-							percentComplete = (int) (((double) t / mNoGeneNode) * 98);
+							if (!cancelled) {
+								percentComplete = (int) (((double) t / mNoGeneNode) * 98);
 
-							System.out.println(pwElm.getXref().toString());
-							geneIDList.add(pwElm.getXref().toString());
+								System.out.println(pwElm.getXref().toString());
+								geneIDList.add(pwElm.getXref().toString());
 
-							try {
-								WSSearchResult[] PwsSharingNode = client
-										.findPathwaysByXref(pwElm.getXref());
-								// System.out.println("" + PwsSharingNode.length);
-								mNodeIdToPwsSharingNode.put(pwElm.getXref()
-										.toString(), PwsSharingNode);
+								try {
+									WSSearchResult[] PwsSharingNode = client
+											.findPathwaysByXref(pwElm.getXref());
+									// System.out.println("" +
+									// PwsSharingNode.length);
+									mNodeIdToPwsSharingNode.put(pwElm.getXref()
+											.toString(), PwsSharingNode);
 
-								if (monitor != null) {
-									monitor
-											.setPercentCompleted(percentComplete);
+									if (monitor != null) {
+										monitor
+												.setPercentCompleted(percentComplete);
+									}
+
+								} catch (RemoteException e) {
+									Logger.log
+											.error(
+													"Unable to find the candidate pathways due to the RemoteException",
+													e);
 								}
-
-							} catch (RemoteException e) {
-								Logger.log
-										.error(
-												"Unable to find the candidate pathways due to the RemoteException",
-												e);
 							}
 						}
 						t++;
@@ -700,54 +660,110 @@ public class FindRelatedPwsDialog extends JDialog{
 					// the name and id of a pathway, and value of the number of
 					// shared node of this pathway and the anchor pathway
 					for (int i = 0; i < mNoGeneNode; i++) {
-						WSSearchResult[] pwsArray = mNodeIdToPwsSharingNode
-								.get(geneIDList.get(i));
+						if (!cancelled) {
+							WSSearchResult[] pwsArray = mNodeIdToPwsSharingNode
+									.get(geneIDList.get(i));
 
-						for (int j = 0; j < pwsArray.length; j++) {
-							WSSearchResult pw = pwsArray[j];
-							//pay attention to the following two code lines
-							SuperpathwaysGui spGui=mClient.getGUI();
-							ResultRow pwResultRow = spGui.new ResultRow(pw);
-							String onePwNameAndId = pwResultRow
-									.getProperty(ResultProperty.NAME)
-									+ "("
-									+ pwResultRow
-											.getProperty(ResultProperty.ID)
-									+ ")";
+							for (int j = 0; j < pwsArray.length; j++) {
+								WSSearchResult pw = pwsArray[j];
+								// pay attention to the following two code lines
+								SuperpathwaysGui spGui = mClient.getGUI();
+								ResultRow pwResultRow = spGui.new ResultRow(pw);
+								String onePwNameAndId = pwResultRow
+										.getProperty(ResultProperty.NAME)
+										+ "("
+										+ pwResultRow
+												.getProperty(ResultProperty.ID)
+										+ ")";
 
-							if (sharingNodeNumberofPws
-									.containsKey(onePwNameAndId)) {
-								Integer oldValue = sharingNodeNumberofPws
-										.get(onePwNameAndId);
-								Integer newValue = new Integer(oldValue + 1);
-								sharingNodeNumberofPws.put(onePwNameAndId,
-										newValue);
-							} else {
-								sharingNodeNumberofPws.put(onePwNameAndId, 1);
+								if (sharingNodeNumberofPws
+										.containsKey(onePwNameAndId)) {
+									Integer oldValue = sharingNodeNumberofPws
+											.get(onePwNameAndId);
+									Integer newValue = new Integer(oldValue + 1);
+									sharingNodeNumberofPws.put(onePwNameAndId,
+											newValue);
+								} else {
+									sharingNodeNumberofPws.put(onePwNameAndId,
+											1);
+								}
 							}
 						}
 					}
 
 					// the following code is for displaying the result in the
 					// table of "Search Help" panel
-					Set<String> sharingNodePwsSet = sharingNodeNumberofPws
-							.keySet();
-					Iterator<String> it = sharingNodePwsSet.iterator();
-					while (it.hasNext()) {
-						String temp = it.next();
-						Integer value = sharingNodeNumberofPws.get(temp);
-						if (value >= lowerBound && value <= upperBound) {
-							mCandidatePw.add(temp + ", sharing node number: "
-									+ String.valueOf(value));
+					if (!cancelled) {
+						Set<String> sharingNodePwsSet = sharingNodeNumberofPws
+								.keySet();
+						Iterator<String> it = sharingNodePwsSet.iterator();
+						while (it.hasNext()) {
+							String temp = it.next();
+							Integer value = sharingNodeNumberofPws.get(temp);
+							if (value >= lowerBound && value <= upperBound) {
+								mCandidatePw.add(temp
+										+ ", sharing node number: "
+										+ String.valueOf(value));
+							}
 						}
 					}
 
 				}
 
-				if (monitor != null) {
-					monitor.setPercentCompleted(100);
+				// mCandidatePw is a list of string with elements in format
+				// "Pathway
+				// Name (pw id), sharing node number: a int"
+				// System.out.println(mCandidatePw.size()+"");
+				if (!cancelled) {
+					Iterator<String> it = mCandidatePw.iterator();
+
+					while (it.hasNext()) {
+						String temp = it.next();
+						// candidatePathwaysSharingNodesListModel.addElement(temp);
+
+						// System.out.println(temp);
+						// parse the string into three parts: pathway name, id,
+						// and
+						// No.
+						// Sharing Nodes
+						int index1 = temp.lastIndexOf(",");
+						String temp1 = temp.substring(0, index1);
+
+						int index2 = temp1.lastIndexOf("(");
+						int index3 = temp1.lastIndexOf(")");
+						String pwName = temp1.substring(0, index2);
+						// System.out.println(pwName);
+						String pwId = temp1.substring(index2 + 1, index3);
+						// System.out.println(pwId);
+
+						// String temp2 = temp.substring(index1+1);
+						int index4 = temp.lastIndexOf(":");
+						String NoSharingNode = temp.substring(index4 + 2);
+						Integer NoSharingNodeInteger = Integer
+								.valueOf(NoSharingNode);
+
+						Object[] row = new Object[3];
+						row[0] = pwName;
+						row[1] = pwId;
+						row[2] = NoSharingNodeInteger;
+						// row[2] = NoSharingNode;
+						candidatePathwaysSharingNodesTableModel.addRow(row);
+					}
+
+					sorter = new TableSorter(
+							candidatePathwaysSharingNodesTableModel);
+					candidatePathwaysSharingNodesTable.setModel(sorter);
+					sorter.setTableHeader(candidatePathwaysSharingNodesTable
+							.getTableHeader());
+
+					// candidatePathwaysSharingNodesList.setModel(candidatePathwaysSharingNodesListModel);
+					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+					if (monitor != null) {
+						monitor.setPercentCompleted(100);
+					}
+					// System.out.println("We reach here 2!");
 				}
-				// System.out.println("We reach here 2!");
 			} catch (Exception e) {
 				Logger.log.error("Error while searching candidate pathways", e);
 				JOptionPane.showMessageDialog(mClient.getGUI(), "Error: "
@@ -758,6 +774,7 @@ public class FindRelatedPwsDialog extends JDialog{
 		}
 
 		public void halt() {
+			cancelled = true;
 		}
 
 		public void setTaskMonitor(TaskMonitor m)

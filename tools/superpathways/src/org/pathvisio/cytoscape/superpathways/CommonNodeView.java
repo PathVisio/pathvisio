@@ -70,6 +70,8 @@ public class CommonNodeView {
 	Map<Xref, Xref> nodePairByTranslation;
 
 	List<String> colorPool;
+	
+	protected boolean interrupted; // to enable cancel of the network merge
 
 	static String dbLocation = GlobalPreference.getDataDir().toString()
 			+ "/gene databases/";
@@ -79,7 +81,12 @@ public class CommonNodeView {
 		mClient = c;
 		mSelectedPwsNameID=pwNameID;
 		nodePairByTranslation = new HashMap<Xref, Xref>();
+		interrupted = false;
 
+	}
+	
+	public void interrupt() {
+		interrupted = true;
 	}
 
 	public List<String> getColorPool() {
@@ -192,6 +199,9 @@ public class CommonNodeView {
 
 		}
 		for (int i = 0; i < pgdbFileName.length; i++) {
+			
+			if (interrupted)
+				return null;
 
 			// String fileName = pgdbFileName[i];
 			File file = pgdbFileName[i];
@@ -225,6 +235,9 @@ public class CommonNodeView {
 		for (PathwayElement pw2Elm : pathway2.getDataObjects()) {
 			if (pw2Elm.getObjectType() == ObjectType.DATANODE) {
 
+				if (interrupted)
+					return null;
+				
 				boolean isMapped = false;
 
 				String id = pw2Elm.getGeneID();
@@ -296,6 +309,10 @@ public class CommonNodeView {
 
 		for (int i = 0; i < len; i++) {
 			for (int j = i + 1; j < len; j++) {
+				
+				if (interrupted)
+					return null;
+				
 				commonNodeInfoPwGroup.add(findCommonNode(
 						(String) arrayOfSelectedPwsId[i], (String) arrayOfSelectedPwsNameId[i],
 						(String) arrayOfSelectedPwsId[j], (String) arrayOfSelectedPwsNameId[j]));
@@ -307,6 +324,9 @@ public class CommonNodeView {
 
 	public Map<String, Color> drawCommonNodeView() {
 
+		if (interrupted)
+			return null;
+		
 		Map<String, Color> pwNameToColor=new HashMap<String, Color>();
 		
 		colorPool = new ArrayList<String>();
@@ -323,7 +343,8 @@ public class CommonNodeView {
 		CyAttributes nodeAtts = Cytoscape.getNodeAttributes();
 		CyAttributes edgeAtts = Cytoscape.getEdgeAttributes();
 		
-		
+		if (interrupted)
+			return null;
 		CyNode[] groupPwsIcons = new CyNode[mSelectedPwsID.size()];
 		for (int i = 0; i < mSelectedPwsID.size(); i++) {
 			groupPwsIcons[i] = Cytoscape.getCyNode(mSelectedPwsNameID.get(i), true);
@@ -332,7 +353,8 @@ public class CommonNodeView {
 			
 		}
 
-		
+		if (interrupted)
+			return null;
 		CyEdge[] groupEdges = new CyEdge[cnInfoPwGroup.size()];
 		int[] commonNodeNumber = new int[cnInfoPwGroup.size()];
 		int numberOfEdges = 0;

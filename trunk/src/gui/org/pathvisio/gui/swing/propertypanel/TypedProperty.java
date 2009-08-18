@@ -259,14 +259,14 @@ public class TypedProperty implements Comparable<TypedProperty> {
 
 					public int compare(DataSource arg0, DataSource arg1) 
 					{
-						return arg0.getFullName().toLowerCase().compareTo(arg1.getFullName().toLowerCase());
+						return ("" + arg0.getFullName()).toLowerCase().compareTo(("" + arg1.getFullName()).toLowerCase());
 					}});
 				
 				Object[] labels = new Object[dataSources.size()];
 				Object[] values = new Object[dataSources.size()];
 				int i = 0;
 				for(DataSource s : dataSources) {
-					labels[i] = s.getFullName();
+					labels[i] = s.getFullName() == null ? s.getSystemCode() : s.getFullName();
 					values[i] = s;
 					i++;
 				}

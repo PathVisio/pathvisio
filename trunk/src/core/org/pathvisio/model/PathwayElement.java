@@ -40,46 +40,46 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 /**
  * PathwayElement is responsible for maintaining the data for all the individual
  * objects that can appear on a pwy (Lines, GeneProducts, Shapes, etc.)
- * 
+ * <p>
  * All PathwayElements have an ObjectType. This ObjectType is specified at creation
  * time and can't be modified. To create a PathwayElement, 
  * use the createPathwayElement() function. This is a factory method
  * that returns a different implementation class depending on
  * the specified ObjectType. 
- *  
+ * <p>
  * PathwayElements have a number of properties which consist of a 
  * key, value pair.
- * 
+ * <p>
  * There are two types of properties: Static and Dynamic
  * Static properties are one of the properties 
- * 
+ * <p>
  * Dynamic properties can have any String as key. Their value is
  * always of type String. Dynamic properties are not essential for
  * the functioning of PathVisio and can be used to
  * store arbitrary data. In GPML, dynamic properties are
  * stored in an <Attribute key="" value=""/> tag.
  * Internally, dynamic properties are stored in a Map<String, String>
- * 
+ * <p>
  * Static properties must have a key from the PropertyType enum
  * Their value can be various types which can be 
  * obtained from PropertyType.type(). Static properties can
  * be queried with getStaticProperty (key) and 
  * setStaticProperty(key, value), but also specific accessors 
  * such as e.g. getTextLabel() and setTextLabel()
- * 
+ * <p>
  * Internally, dynamic properties are stored in various 
  * fields of the PathwayElement Object.
  * The static properties are a union of all possible fields 
  * (e.g it has both start and endpoints for lines, 
  * and label text for labels) 
- * 
+ * <p>
  * the setPropertyEx() and getPropertyEx() functions can be used
  * to access both dynamic and static properties 
  * from the same function. If key instanceof String then it's 
  * assumed the caller wants a dynamic
  * property, if key instanceof PropertyType then the static property 
  * is used.
- * 
+ * <p>
  * most static properties cannot be set to null. Notable exceptions are graphId,
  * startGraphRef and endGraphRef.
  */

@@ -152,4 +152,19 @@ public class Utils {
 		result.add (val);
 		return result;
 	}
+
+
+    /**
+     * Compares two Strings, returning <code>true</code> if they are equal.
+     *
+     * @see java.lang.String#equals(Object)
+     * @param str1  the first String, may be null
+     * @param str2  the second String, may be null
+     * @return <code>true</code> if the Strings are equal, case sensitive, or
+     *  both <code>null</code>
+     */
+    public static boolean stringEquals(String str1, String str2) {
+        return str1 == null ? str2 == null : str1.equals(str2);
+    }
+
 }

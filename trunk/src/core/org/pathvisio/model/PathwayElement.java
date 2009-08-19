@@ -36,6 +36,7 @@ import org.jdom.Document;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.util.Utils;
 
 /**
  * PathwayElement is responsible for maintaining the data for all the individual
@@ -165,7 +166,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		
 		public String toString() {
 			String src = "";
-			if(src != null && !"".equals(src)) {
+			if(source != null && !"".equals(source)) {
 				src = " (" + source + ")";
 			}
 			return comment + src;
@@ -195,11 +196,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		GenericPoint(GenericPoint p)
 		{
 			coordinates = new double[p.coordinates.length];
-			for(int i = 0; i < coordinates.length; i++) {
-				coordinates[i] = p.coordinates[i];
-			}
+			System.arraycopy(p.coordinates, 0, coordinates, 0, coordinates.length);
 			if (p.graphId != null)
-				graphId = new String(p.graphId);
+				graphId = p.graphId;
 		}
 
 		protected void moveBy(double[] delta)
@@ -252,7 +251,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			GenericPoint p = (GenericPoint) super.clone();
 			if (graphId != null)
-				p.graphId = new String(graphId);
+				p.graphId = graphId;
 			return p;
 		}
 
@@ -298,7 +297,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			super(p);
 			if (p.graphRef != null)
-				graphRef = new String(p.graphRef);
+				graphRef = p.graphRef;
 		}
 
 		public void moveBy(double dx, double dy)
@@ -412,7 +411,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		 */
 		public void setGraphRef(String v)
 		{
-			if (graphRef != v)
+            if (!Utils.stringEquals(graphRef, v))
 			{
 				if (parent != null)
 				{
@@ -435,7 +434,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			MPoint p = (MPoint) super.clone();
 			if (graphRef != null)
-				p.graphRef = new String(graphRef);
+				p.graphRef = graphRef;
 			return p;
 		}
 
@@ -609,7 +608,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 *            Type of object, one of the ObjectType.* fields
 	 */
 	public static PathwayElement createPathwayElement(ObjectType ot) {
-		PathwayElement e = null;
+		PathwayElement e;
 		switch (ot) {
 		case GROUP:
 			e = new MGroup();
@@ -1769,7 +1768,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		if (v == null)
 			throw new IllegalArgumentException();
-		if (comment != v)
+		if (!Utils.stringEquals(comment, v))
 		{
 			comment = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -1794,7 +1793,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public void setGenMappXref(String v)
 	{
-		if (genmappxref != v)
+		if (!Utils.stringEquals(genmappxref, v))
 		{
 			genmappxref = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -1813,7 +1812,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		if (v == null)
 			throw new IllegalArgumentException();
-		if (setGeneID != v)
+		if (!Utils.stringEquals(setGeneID, v))
 		{
 			setGeneID = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -1830,7 +1829,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setBackpageHead(String v)
 	{
-		if (backpageHead != v)
+		if (!Utils.stringEquals(backpageHead, v))
 		{
 			backpageHead = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -1853,7 +1852,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		if (v == null)
 			throw new IllegalArgumentException();
-		if (dataNodeType != v)
+		if (!Utils.stringEquals(dataNodeType, v))
 		{
 			dataNodeType = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2179,7 +2178,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		if (v == null)
 			throw new IllegalArgumentException();
-		if (fontName != v)
+		if (!Utils.stringEquals(fontName, v))
 		{
 			fontName = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2198,7 +2197,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		if (v == null)
 			throw new IllegalArgumentException();
-		if (textLabel != v)
+		if (!Utils.stringEquals(textLabel, v))
 		{
 			textLabel = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2241,7 +2240,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (v == null)
 			throw new IllegalArgumentException();
 			
-		if (mapInfoName != v)
+		if (!Utils.stringEquals(mapInfoName, v))
 		{
 			if (v.length() > MAP_TITLE_MAX_LEN)
 			{
@@ -2265,7 +2264,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setOrganism(String v)
 	{
-		if (organism != v)
+		if (!Utils.stringEquals(organism, v))
 		{
 			organism = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2282,7 +2281,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setMapInfoDataSource(String v)
 	{
-		if (mapInfoDataSource != v)
+		if (!Utils.stringEquals(mapInfoDataSource, v))
 		{
 			mapInfoDataSource = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2314,7 +2313,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setVersion(String v)
 	{
-		if (version != v)
+		if (!Utils.stringEquals(version, v))
 		{
 			version = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2331,7 +2330,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setAuthor(String v)
 	{
-		if (author != v)
+		if (!Utils.stringEquals(author, v))
 		{
 			author = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2348,7 +2347,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setMaintainer(String v)
 	{
-		if (maintainer != v)
+		if (!Utils.stringEquals(maintainer, v))
 		{
 			maintainer = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2365,7 +2364,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setEmail(String v)
 	{
-		if (email != v)
+		if (!Utils.stringEquals(email, v))
 		{
 			email = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2382,7 +2381,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setCopyright(String v)
 	{
-		if (copyright != v)
+		if (!Utils.stringEquals(copyright, v))
 		{
 			copyright = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2399,7 +2398,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setLastModified(String v)
 	{
-		if (lastModified != v)
+		if (!Utils.stringEquals(lastModified, v))
 		{
 			lastModified = v;
 			fireObjectModifiedEvent(new PathwayEvent(this,
@@ -2549,7 +2548,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * Set groupId. This id must be any string unique within the Pathway object
 	 * 
-	 * @see Pathway#getUniqueId()
+	 * @see Pathway#getUniqueId(java.util.Set)
 	 */
 	public void setGroupId(String w)
 	{
@@ -2583,7 +2582,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		String ref = this.getGroupRef();
 		if (ref != null)
 		{ //identify group object and notify model change to trigger view update
-			if (((MGroup) this.getParent().getGroupById(ref)) != null){
+			if ((this.getParent().getGroupById(ref)) != null){
 			((MGroup) this.getParent().getGroupById(ref)).isChanged();
 			}
 		}	
@@ -2671,7 +2670,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * Set graphId. This id must be any string unique within the Pathway object
 	 * 
-	 * @see Pathway#getUniqueId()
+	 * @see Pathway#getUniqueId(java.util.Set)
 	 */
 	public void setGraphId(String v)
 	{

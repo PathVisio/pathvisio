@@ -486,14 +486,14 @@ public class FindRelatedPwsDialog extends JDialog {
 
 			selectedPws.add(pwNameId);
 			SuperpathwaysGui spGUI = mClient.getGUI();
-			if (!spGUI.availablePathwaysListModel.contains(pwNameId)) {
-				spGUI.availablePathwaysListModel.addElement((Object) pwNameId);
-				spGUI.availablePathwaysList
-						.setModel(spGUI.availablePathwaysListModel);
+			if (!spGUI.selectedPathwaysListModel.contains(pwNameId)) {
+				spGUI.selectedPathwaysListModel.addElement((Object) pwNameId);
+				spGUI.selectedPathwaysList
+						.setModel(spGUI.selectedPathwaysListModel);
 
-				if (spGUI.availablePathwaysListModel.getSize() > 0) {
+				/*if (spGUI.availablePathwaysListModel.getSize() > 0) {
 					spGUI.rightButton.setEnabled(true);
-				}
+				}*/
 			}
 		}
 		// superpathwayPanel.setSelectedIndex(0);

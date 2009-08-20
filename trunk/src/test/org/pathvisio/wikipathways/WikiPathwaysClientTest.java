@@ -22,8 +22,8 @@ import java.util.Date;
 
 import junit.framework.TestCase;
 
-import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -125,7 +125,7 @@ public class WikiPathwaysClientTest extends TestCase {
 	public void testSearchXref() {
 		try {
 			WSSearchResult[] results = client.findPathwaysByXref(
-					new Xref("8743", DataSource.ENTREZ_GENE)
+					new Xref("8743", BioDataSource.ENTREZ_GENE)
 			);
 			assertNotNull(results);
 			assertTrue(results.length > 0);

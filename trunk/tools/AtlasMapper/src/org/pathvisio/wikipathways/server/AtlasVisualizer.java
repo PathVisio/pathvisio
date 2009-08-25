@@ -28,9 +28,9 @@ import java.util.Set;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;
@@ -38,6 +38,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ColorExporter;
+import org.pathvisio.util.Utils;
 
 import atlas.model.Factor;
 import atlas.model.FactorData;
@@ -140,7 +141,9 @@ public class AtlasVisualizer {
 	}
 	
 	private Map<PathwayElement, Set<Xref>> createEnsemblMap() throws IDMapperException {
-		DataSource ens = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
+		DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
+		Set<DataSource> orgEnsSet = Utils.setOf(orgEns);
+		
 		Map<PathwayElement, Set<Xref>> ensMap = new HashMap<PathwayElement, Set<Xref>>();
 		for(PathwayElement pwElm : pathway.getDataObjects()) {
 			if(pwElm.getObjectType() == ObjectType.DATANODE) {
@@ -148,7 +151,8 @@ public class AtlasVisualizer {
 				Set<Xref> ensRefs = new HashSet<Xref>();
 				
 				for(int i = 0; i < gdbs.size(); i++) {
-					ensRefs.addAll(gdbs.get(i).getCrossRefs(xref, ens));
+					if(xref.getId() == null || xref.getDataSource() == null) continue;
+					ensRefs.addAll(gdbs.get(i).mapID(xref, orgEnsSet));
 				}
 				
 				ensMap.put(pwElm, ensRefs);

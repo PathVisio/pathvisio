@@ -59,7 +59,7 @@ public class GeneTooltip extends VerticalPanel {
 		
 		for(GeneInfo gi : genes) {
 			String ensLink = "<a target='_blank' title='View gene in Ensembl' " +
-					"href='" + gi.getEnsemblLink() + "'>Ensembl</a>";
+					"href='" + gi.getGeneLink() + "'>" + gi.getGeneLinkName() + "</a>";
 			String whLink = "<a target='_blank' title='View expression profile in ArrayExpress Warehouse' " +
 					"href='" + gi.getWarehouseLink() + "'>Warehouse</a>";
 			HTML ens = new HTML(gi.getId() + " " + ensLink + " " + whLink);

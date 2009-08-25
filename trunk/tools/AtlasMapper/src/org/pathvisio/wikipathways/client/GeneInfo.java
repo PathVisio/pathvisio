@@ -24,7 +24,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class GeneInfo implements IsSerializable {
 	private String label;
 	private String id;
-	private String ensemblLink;
+	private String geneLink;
+	private String geneLinkName;
 	private String warehouseLink;
 	
 	private double[] bounds; //Relative bounds
@@ -37,16 +38,24 @@ public class GeneInfo implements IsSerializable {
 		this.id = id;
 	}
 	
-	public void setEnsemblLink(String ensemblLink) {
-		this.ensemblLink = ensemblLink;
+	public void setGeneLink(String geneLink) {
+		this.geneLink = geneLink;
 	}
 	
 	public void setWarehouseLink(String warehouseLink) {
 		this.warehouseLink = warehouseLink;
 	}
 	
-	public String getEnsemblLink() {
-		return ensemblLink;
+	public String getGeneLink() {
+		return geneLink;
+	}
+	
+	public String getGeneLinkName() {
+		return geneLinkName;
+	}
+	
+	public void setGeneLinkName(String geneLinkName) {
+		this.geneLinkName = geneLinkName;
 	}
 	
 	public String getWarehouseLink() {

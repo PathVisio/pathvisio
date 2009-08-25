@@ -17,13 +17,14 @@ import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.GdbProvider;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.util.Utils;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.server.AtlasMapperServiceImpl;
 import org.pathvisio.wikipathways.server.PathwayCache;
@@ -60,6 +61,7 @@ public class AtlasStatistics {
 	void printStatistics(Collection<WSPathwayInfo> pathways, Organism organism) throws ServiceException, IDMapperException, ConverterException, IOException, ClassNotFoundException {
 		//A set of all unique Ensembl genes in the pathways
 		DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
+		Set<DataSource> orgEnsSet = Utils.setOf(orgEns);
 		File idsCache = new File(cachePath, organism + ".ids");
 		Set<String> ensIds = new HashSet<String>();
 		if(idsCache.exists()) {
@@ -71,8 +73,9 @@ public class AtlasStatistics {
 					WPPathway wp = pwCache.getPathway(wpi.getId());
 					Pathway p = wp.getPathway();
 					for(Xref x : p.getDataNodeXrefs()) {
+						if(x.getId() == null || x.getDataSource() == null) continue;
 						for(IDMapperRdb gdb : gdbProv.getGdbs(Organism.fromLatinName(wpi.getSpecies()))) {
-							for(Xref ens : gdb.getCrossRefs(x, orgEns)) {
+							for(Xref ens : gdb.mapID(x, orgEnsSet)) {
 								ensIds.add(ens.getId());
 							}
 						}

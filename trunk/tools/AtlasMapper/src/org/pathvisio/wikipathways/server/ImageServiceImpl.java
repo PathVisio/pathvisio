@@ -65,12 +65,6 @@ public class ImageServiceImpl extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		try {
-			//Update the cache
-			if(req.getParameter(PAR_UPDATE_CACHE) != null) {
-				getCacheManager().getAtlasCache().updateAllCache();
-				return;
-			}
-			
 			String id = req.getParameter(ImageCache.GET_ID);
 			
 			byte[] data = getImageCache().getImageData(id);

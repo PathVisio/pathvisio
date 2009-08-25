@@ -40,21 +40,21 @@ public class CacheManager {
 	private GdbProvider gdbs;
 	private AtlasCache atlasCache;
 	private WikiPathwaysClient client;
-	private ServletContext servlet;
 	private ImageCache imageCache;
+	private File propsPath;
 	
 	private Properties props;
 	private long retention_time; //in milliseconds
 	
-	public CacheManager(ServletContext servlet, WikiPathwaysClient client) {
+	public CacheManager(File propsPath, WikiPathwaysClient client) {
 		this.client = client;
-		this.servlet = servlet;
+		this.propsPath = propsPath;
 		
 		props = new Properties();
 
 		//Read properties
 		try {
-			File propFile = new File(servlet.getRealPath(""), PROPS_FILE);
+			File propFile = new File(propsPath, PROPS_FILE);
 			props.load(new FileInputStream(
 					propFile)
 			);
@@ -68,16 +68,16 @@ public class CacheManager {
 		}
 	}
 	
+	public CacheManager(ServletContext servlet, WikiPathwaysClient client) {
+		this(new File(servlet.getRealPath("")), client);
+	}
+
 	private WikiPathwaysClient getClient() {
 		return client;
 	}
 
-	public ServletContext getServletContext() {
-		return servlet;
-	}
-	
 	public File getCacheDir() {
-		return new File(props.getProperty(PROP_CACHE_DIR, servlet.getRealPath("")));
+		return new File(props.getProperty(PROP_CACHE_DIR, propsPath.toString()));
 	}
 	
 	public long getRetentionTime() {
@@ -122,7 +122,7 @@ public class CacheManager {
 	public GdbProvider getGdbProvider() throws IOException, IDMapperException {
 		if(gdbs == null) {
 			gdbs = GdbProvider.fromConfigFile(
-					new File(getServletContext().getRealPath(""), "gdb.config")
+					new File(propsPath, "gdb.config")
 			);
 		}
 		return gdbs;	

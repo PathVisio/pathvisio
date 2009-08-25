@@ -30,14 +30,19 @@ import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.GdbProvider;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.Utils;
+import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 import atlas.model.GeneSet;
@@ -90,6 +95,8 @@ public class AtlasCache {
 		Organism org = Organism.fromLatinName(
 				pathway.getMappInfo().getOrganism()
 		);
+		Set<DataSource> ensDs = Utils.setOf(AtlasMapperServiceImpl.getEnsemblDataSource(org));
+		
 		if(org == null) {
 			org = Organism.HomoSapiens;
 			Logger.log.warn("No organism found in pahtway " + p.getId() + ", assuming human");
@@ -99,8 +106,9 @@ public class AtlasCache {
 		//Get all ensembl genes on the pathway
 		Set<String> ensIds = new HashSet<String>();
 		for(Xref x : pathway.getDataNodeXrefs()) {
+			if(x.getId() == null || x.getDataSource() == null) continue;
 			for(IDMapperRdb gdb : gdbList) {
-				for(Xref c : gdb.getCrossRefs(x, AtlasMapperServiceImpl.getEnsemblDataSource(org))) {
+				for(Xref c : gdb.mapID(x, ensDs)) {
 					ensIds.add(c.getId());
 				}
 			}
@@ -108,6 +116,10 @@ public class AtlasCache {
 		GeneSet atlasGenes = new GeneSet(
 				ensIds.toArray(new String[ensIds.size()]), org.latinName()
 		);
+		if(atlasGenes.getGenes().size() == 0) {
+			//Don't store cache for empty dataset
+			return atlasGenes;
+		}
 		Logger.log.trace("Writing atlas cache...");
 		File cache = getCacheFile(p.getId(), p.getRevision());
 		ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(cache));
@@ -123,16 +135,35 @@ public class AtlasCache {
 	public void updateAllCache() {
 		try {
 			WSPathwayInfo[] pathways = pathwayCache.getClient().listPathways();
+			int i = 0;
 			for(WSPathwayInfo p : pathways) {
 				Logger.log.trace(
 					"MEM: "	+ (Runtime.getRuntime().totalMemory() -
 					      Runtime.getRuntime().freeMemory()) / 1000000
 				);
-				Logger.log.trace("Updating " + p.getId() + 
+				Logger.log.info("Updating pathway " + i++ + "/" + pathways.length + "; " + p.getId() + 
 						" (" + p.getName() + ", " + p.getSpecies() + ")");
 				getGeneSet(p.getId());
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void main(String[] args) {
+		PreferenceManager.init();
+		BioDataSource.init();
+		Logger.log.setLogLevel(true, true, true, true, true, true);
+		if(args.length == 0) {
+			System.err.println("Please specify directory containing AtlasMapper properties file.");
+			System.exit(-1);
+		}
+		try {
+			WikiPathwaysClient wpclient = new WikiPathwaysClient();
+			File propFile = new File(args[0]);
+			CacheManager cacheMgr = new CacheManager(propFile, wpclient);
+			cacheMgr.getAtlasCache().updateAllCache();
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}

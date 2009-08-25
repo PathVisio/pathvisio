@@ -27,14 +27,16 @@ import java.util.Set;
 import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.IDMapperRdb;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.Utils;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayWrapperBase;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
@@ -79,6 +81,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 	
 	public AtlasMapperServiceImpl() {
 		PreferenceManager.init();
+		BioDataSource.init();
 	}
 
 	public String[] getOrganisms() {
@@ -181,6 +184,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			
 			Organism org = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
 			DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(org);
+			Set<DataSource> orgEnsSet = Utils.setOf(orgEns);
 			
 			List<IDMapperRdb> gdbs = getCacheManager().getGdbProvider().getGdbs(org);
 
@@ -196,7 +200,9 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 					
 					Set<Xref> xrefs = new HashSet<Xref>();
 					for(IDMapperRdb gdb : gdbs) {
-						xrefs.addAll(gdb.getCrossRefs(pwe.getXref(), orgEns));
+						Xref x = pwe.getXref();
+						if(x.getId() == null || x.getDataSource() == null) continue;
+						xrefs.addAll(gdb.mapID(x, orgEnsSet));
 					}
 					
 					for(Xref x : xrefs) {
@@ -228,9 +234,8 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 							bounds
 						);
 						
-						gi.setEnsemblLink("http://www.ensembl.org/" + 
-								org.latinName().replace(' ', '_') + "/Gene/Summary?g=" + x.getId());
-						
+						gi.setGeneLink(x.getUrl());
+						gi.setGeneLinkName(x.getDataSource().getFullName());
 						String exp = "";
 						for(String e : experiments) exp += e + ", ";
 						
@@ -252,6 +257,10 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 	}
 	
 	public static DataSource getEnsemblDataSource(Organism org) {
-		return DataSource.getBySystemCode("En" + org.code());
+		if(Organism.ArabidopsisThaliana.equals(org)) {
+			return BioDataSource.UNIPROT;
+		} else {
+			return DataSource.getBySystemCode("En" + org.code());
+		}
 	}
 }

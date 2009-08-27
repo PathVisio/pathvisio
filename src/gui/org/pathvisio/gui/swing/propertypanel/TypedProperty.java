@@ -75,7 +75,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	boolean different;
 
 	/**
-	 * @param type is either String for a dynamic property,
+	 * @param aType is either String for a dynamic property,
 	 * or PropertyType for a static property;
 	 * @param aVPathway is used to register undo actions when setting a value
 	 * to this property. May be null, in which case no undo actions are registered.
@@ -193,48 +193,52 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	public TableCellRenderer getCellRenderer() 
 	{
 		if(hasDifferentValues()) return differentRenderer;
-		if (type instanceof PropertyType) switch(((PropertyType)type).type()) {
-		case COLOR:
-			return colorRenderer;
-		case LINETYPE:
-			return lineTypeRenderer;
-		case LINESTYLE:
-			return lineStyleRenderer;
-		case DATASOURCE:
+		if (type instanceof PropertyType) 
 		{
-			//TODO Make use of DataSourceModel for datasources
-			Set<DataSource> dataSources = DataSource.getFilteredSet(true, null, null);
-			if(dataSources.size() != datasourceRenderer.getItemCount()) {
-				Object[] labels = new Object[dataSources.size()];
-				Object[] values = new Object[dataSources.size()];
-				int i = 0;
-				for(DataSource s : dataSources) {
-					labels[i] = s.getFullName();
-					values[i] = s;
-					i++;
+			switch(((PropertyType)type).type()) 
+			{
+				case COLOR:
+					return colorRenderer;
+				case LINETYPE:
+					return lineTypeRenderer;
+				case LINESTYLE:
+					return lineStyleRenderer;
+				case DATASOURCE:
+				{
+					//TODO Make use of DataSourceModel for datasources
+					Set<DataSource> dataSources = DataSource.getFilteredSet(true, null, null);
+					if(dataSources.size() != datasourceRenderer.getItemCount()) {
+						Object[] labels = new Object[dataSources.size()];
+						Object[] values = new Object[dataSources.size()];
+						int i = 0;
+						for(DataSource s : dataSources) {
+							labels[i] = s.getFullName();
+							values[i] = s;
+							i++;
+						}
+						datasourceRenderer.updateData(labels, values);
+					}
+					return datasourceRenderer;
 				}
-				datasourceRenderer.updateData(labels, values);
+				case BOOLEAN:
+					return checkboxRenderer;
+				case ORIENTATION:
+					return orientationRenderer;
+				case ORGANISM:
+					return organismRenderer;
+				case ANGLE:
+					return angleRenderer;
+				case DOUBLE:
+					return doubleRenderer;
+				case FONT:
+					return fontRenderer;
+				case SHAPETYPE:
+					return shapeTypeRenderer;
+				case OUTLINETYPE:
+					return outlineTypeRenderer;
+				case GENETYPE:
+					return datanodeTypeRenderer;
 			}
-			return datasourceRenderer;
-		}
-		case BOOLEAN:
-			return checkboxRenderer;
-		case ORIENTATION:
-			return orientationRenderer;
-		case ORGANISM:
-			return organismRenderer;
-		case ANGLE:
-			return angleRenderer;
-		case DOUBLE:
-			return doubleRenderer;
-		case FONT:
-			return fontRenderer;
-		case SHAPETYPE:
-			return shapeTypeRenderer;
-		case OUTLINETYPE:
-			return outlineTypeRenderer;
-		case GENETYPE:
-			return datanodeTypeRenderer;
 		}
 		return null;
 	}
@@ -245,67 +249,71 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	 * @param swingEngine: the comments editor requires a connection to swingEngine, so you need to pass it here.
 	 */
 	public TableCellEditor getCellEditor(SwingEngine swingEngine) {
-		if (type instanceof PropertyType) switch(((PropertyType)type).type()) {
-		case BOOLEAN:
-			return checkboxEditor;
-		case DATASOURCE:
+		if (type instanceof PropertyType) 
 		{
-			List<DataSource> dataSources = new ArrayList<DataSource>();
-			dataSources.addAll (DataSource.getFilteredSet(true, null, 
-					Organism.fromLatinName(vPathway.getPathwayModel().getMappInfo().getOrganism())));
-			if(dataSources.size() != datasourceEditor.getItemCount()) 
+			switch(((PropertyType)type).type()) 
 			{
-				Collections.sort (dataSources, new Comparator<DataSource>() {
-
-					public int compare(DataSource arg0, DataSource arg1) 
+				case BOOLEAN:
+					return checkboxEditor;
+				case DATASOURCE:
+				{
+					List<DataSource> dataSources = new ArrayList<DataSource>();
+					dataSources.addAll (DataSource.getFilteredSet(true, null, 
+							Organism.fromLatinName(vPathway.getPathwayModel().getMappInfo().getOrganism())));
+					if(dataSources.size() != datasourceEditor.getItemCount()) 
 					{
-						return ("" + arg0.getFullName()).toLowerCase().compareTo(("" + arg1.getFullName()).toLowerCase());
-					}});
-				
-				Object[] labels = new Object[dataSources.size()];
-				Object[] values = new Object[dataSources.size()];
-				int i = 0;
-				for(DataSource s : dataSources) {
-					labels[i] = s.getFullName() == null ? s.getSystemCode() : s.getFullName();
-					values[i] = s;
-					i++;
+						Collections.sort (dataSources, new Comparator<DataSource>() {
+		
+							public int compare(DataSource arg0, DataSource arg1) 
+							{
+								return ("" + arg0.getFullName()).toLowerCase().compareTo(("" + arg1.getFullName()).toLowerCase());
+							}});
+						
+						Object[] labels = new Object[dataSources.size()];
+						Object[] values = new Object[dataSources.size()];
+						int i = 0;
+						for(DataSource s : dataSources) {
+							labels[i] = s.getFullName() == null ? s.getSystemCode() : s.getFullName();
+							values[i] = s;
+							i++;
+						}
+						datasourceEditor.updateData(labels, values);
+					}
+					return datasourceEditor;
 				}
-				datasourceEditor.updateData(labels, values);
+				case COLOR:
+					return colorEditor;
+				case LINETYPE:
+					return lineTypeEditor;
+				case LINESTYLE:
+					return lineStyleEditor;
+				case ORIENTATION:
+					return orientationEditor;
+				case ORGANISM:
+					return organismEditor;
+				case ANGLE:
+					return angleEditor;
+				case DOUBLE:
+					return doubleEditor;
+				case INTEGER:
+					return integerEditor;
+				case FONT:
+					return fontEditor;
+				case SHAPETYPE:
+					return shapeTypeEditor;
+				case COMMENTS:
+					CommentsEditor commentsEditor = new CommentsEditor(swingEngine);
+					commentsEditor.setInput(this);
+					return commentsEditor;
+				case OUTLINETYPE:
+					return outlineTypeEditor;
+				case GENETYPE:
+					return datanodeTypeEditor;
+				case GROUPSTYLETYPE:
+					return groupStyleEditor;
+				default:
+					return null;
 			}
-			return datasourceEditor;
-		}
-		case COLOR:
-			return colorEditor;
-		case LINETYPE:
-			return lineTypeEditor;
-		case LINESTYLE:
-			return lineStyleEditor;
-		case ORIENTATION:
-			return orientationEditor;
-		case ORGANISM:
-			return organismEditor;
-		case ANGLE:
-			return angleEditor;
-		case DOUBLE:
-			return doubleEditor;
-		case INTEGER:
-			return integerEditor;
-		case FONT:
-			return fontEditor;
-		case SHAPETYPE:
-			return shapeTypeEditor;
-		case COMMENTS:
-			CommentsEditor commentsEditor = new CommentsEditor(swingEngine);
-			commentsEditor.setInput(this);
-			return commentsEditor;
-		case OUTLINETYPE:
-			return outlineTypeEditor;
-		case GENETYPE:
-			return datanodeTypeEditor;
-		case GROUPSTYLETYPE:
-			return groupStyleEditor;
-		default:
-			return null;
 		}
 		else return null;
 	}
@@ -313,11 +321,9 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	/**
 	 * Return the first of the set of PathwayElement's
 	 */
-	private PathwayElement getFirstElement() {
-		PathwayElement first;
-		//TODO: weird way of getting first element?
-		for(first = (PathwayElement)elements.iterator().next();;) break;
-		return first;
+	private PathwayElement getFirstElement() 
+	{
+		return elements.iterator().next();
 	}
 	
 	private static class DoubleEditor extends DefaultCellEditor {

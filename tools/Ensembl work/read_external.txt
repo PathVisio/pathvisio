@@ -1,6 +1,0 @@
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\external_db.txt.table' INTO TABLE external_db;
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\external_synonym.txt.table' INTO TABLE external_synonym;
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\go_xref.txt.table' INTO TABLE go_xref;
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\identity_xref.txt.table' INTO TABLE identity_xref;
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\object_xref.txt.table' INTO TABLE object_xref;
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\xref.txt.table' INTO TABLE xref;

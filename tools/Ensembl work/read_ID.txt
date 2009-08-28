@@ -1,4 +1,0 @@
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\gene_archive.txt.table' INTO TABLE gene_archive;
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\mapping_session.txt.table' INTO TABLE mapping_session;
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\peptide_archive.txt.table' INTO TABLE peptide_archive;
-LOAD DATA LOCAL INFILE 'F:\\Ensembl\\stable_id_event.txt.table' INTO TABLE stable_id_event;

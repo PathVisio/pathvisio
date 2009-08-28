@@ -107,7 +107,7 @@
 			
 		</unjar>
 
-		<copy file="plugin.props" todir="${build.dir}/org/pathvisio/cytoscape" />
+		<copy file="plugin.props" todir="${build.dir}/org/pathvisio/cytoscape/superpathways" />
 		<copy todir="${build.images}">
 		      <fileset dir="${images.dir}"/>
 		</copy>

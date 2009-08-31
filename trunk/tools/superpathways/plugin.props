@@ -16,7 +16,7 @@ pluginDescription=The Superpathways plugin for Cytoscape is to help merge multip
 pluginVersion=0.1
 
 # Compatible Cytoscape version. If there are more than one version, seperate by ",".
-cytoscapeVersion=2.6.2
+cytoscapeVersion=2.6
 
 # Category, use one of the categories listed on the http://cytoscape.org/plugins2.php site
 pluginCategory=Network and Attribute I/O
@@ -24,8 +24,11 @@ pluginCategory=Network and Attribute I/O
 # -- The following properties are OPTIONAL -- #
 
 # URL to a website that gives more information about your plugin, Ex. http://my-lab-site.org
-projectURL=
+projectURL=http://www.bigcat.unimaas.nl/tracprojects/pathvisio/wiki/SuperPathways
 
 # List of authors.  Note each author and institution pair are separated by a : (colon)
 # each additional author institution pair must be separated from other pairs bye a ; (semicolon)
 pluginAuthorsInstitutions=Xuemin Liu:Iowa State University
+
+# If this plugin is never meant to be downloaded except as part of a plugin (not common) add this property.  Default is "no"
+themeOnly=no

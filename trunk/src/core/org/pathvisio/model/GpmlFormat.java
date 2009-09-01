@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 
 import org.bridgedb.bio.BioDataSource;
 import org.jdom.Document;
@@ -31,6 +32,7 @@ import org.jdom.Namespace;
 import org.jdom.input.JDOMParseException;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.debug.Logger;
+import org.xml.sax.InputSource;
 
 
 /**
@@ -127,10 +129,20 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		{
 			throw new ConverterException (e);
 		}
-		readFromXml (pwy, inf, validate);
+		readFromXmlImpl (pwy, new InputSource(inf), validate);
 	}
-	
+
 	static public void readFromXml(Pathway pwy, InputStream in, boolean validate) throws ConverterException
+	{
+		readFromXmlImpl (pwy, new InputSource(in), validate);
+	}
+
+	static public void readFromXml(Pathway pwy, Reader in, boolean validate) throws ConverterException
+	{
+		readFromXmlImpl (pwy, new InputSource(in), validate);
+	}
+
+	private static void readFromXmlImpl(Pathway pwy, InputSource in, boolean validate) throws ConverterException
 	{
 		// Start XML processing
 		

@@ -17,11 +17,11 @@
 package org.pathvisio.model;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 
 import org.bridgedb.bio.BioDataSource;
 import org.jdom.Document;
@@ -118,10 +118,10 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	
 	static public void readFromXml(Pathway pwy, File file, boolean validate) throws ConverterException
 	{
-		FileReader inf;
+		InputStream inf;
 		try	
 		{
-			inf = new FileReader (file);
+			inf = new FileInputStream (file);
 		}
 		catch (FileNotFoundException e)
 		{
@@ -130,7 +130,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		readFromXml (pwy, inf, validate);
 	}
 	
-	static public void readFromXml(Pathway pwy, Reader in, boolean validate) throws ConverterException
+	static public void readFromXml(Pathway pwy, InputStream in, boolean validate) throws ConverterException
 	{
 		// Start XML processing
 		

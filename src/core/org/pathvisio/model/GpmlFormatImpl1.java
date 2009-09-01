@@ -19,6 +19,7 @@ package org.pathvisio.model;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1266,28 +1267,16 @@ public class GpmlFormatImpl1
 	 */
 	public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException 
 	{
-		Document doc = createJdom(pwy);
-		
-		//Validate the JDOM document
-		if (validate) validateDocument(doc);
-		//			Get the XML code
-		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
-		Format f = xmlcode.getFormat();
-		f.setEncoding("ISO-8859-1");
-		f.setTextMode(Format.TextMode.PRESERVE);
-		xmlcode.setFormat(f);
-		
-		//Open a filewriter
+		OutputStream out;
 		try
 		{
-			FileWriter writer = new FileWriter(file);
-			//Send XML code to the filewriter
-			xmlcode.output(doc, writer);
+			out = new FileOutputStream(file);
 		}
-		catch (IOException ie)
+		catch (IOException ex)
 		{
-			throw new ConverterException(ie);
+			throw new ConverterException (ex);
 		}
+		writeToXml (pwy, out, validate);		
 	}
 	
 	/**
@@ -1305,7 +1294,7 @@ public class GpmlFormatImpl1
 		//			Get the XML code
 		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
 		Format f = xmlcode.getFormat();
-		f.setEncoding("ISO-8859-1");
+		f.setEncoding("UTF-8");
 		f.setTextMode(Format.TextMode.PRESERVE);
 		xmlcode.setFormat(f);
 

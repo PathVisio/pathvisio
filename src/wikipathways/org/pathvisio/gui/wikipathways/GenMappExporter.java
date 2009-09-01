@@ -112,9 +112,8 @@ public class GenMappExporter {
 		}
 		//Load the pathway
 		URLConnection con = pwUrl.openConnection();
-		InputStreamReader reader = new InputStreamReader(con.getInputStream());
 		Pathway pathway = new Pathway();
-		pathway.readFromXml(reader, true);
+		pathway.readFromXml(con.getInputStream(), true);
 
 		if(progress != null) {
 			if(progress.isCanceled()) System.exit(0);

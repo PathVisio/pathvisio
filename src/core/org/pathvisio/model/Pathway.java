@@ -17,6 +17,7 @@
 package org.pathvisio.model;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -649,6 +650,13 @@ public class Pathway
 	}
 
 	public void readFromXml(Reader in, boolean validate) throws ConverterException
+	{
+		GpmlFormat.readFromXml (this, in, validate);
+		setSourceFile (null);
+		clearChangedFlag();
+	}
+
+	public void readFromXml(InputStream in, boolean validate) throws ConverterException
 	{
 		GpmlFormat.readFromXml (this, in, validate);
 		setSourceFile (null);

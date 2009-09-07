@@ -59,12 +59,19 @@ public class AboutDlg
 		
 		JLabel versionLabel = new JLabel (swingEngine.getEngine().getApplicationName());
 		JLabel revisionLabel = new JLabel (Revision.REVISION);
-		JTextArea label = new JTextArea();
-		label.setEditable(false);
-		label.setText("R.M.H. Besseling\nS.P.M.Crijns\nI. Kaashoek\nM.M. Palm\n" +
-			"E.D. Pelgrim\nT.A.J. Kelder\nM.P. van Iersel\nE. Neuteboom\nE.J. Creusen\nP. Moeskops\nA. Bilican\nBiGCaT");
+		JLabel label = new JLabel();
+		label.setText(
+				"<html><h3>Core developers</h3>\n" +
+				"<p>Thomas Kelder, Martijn van Iersel<br>\n" +
+				"Kristina Hanspers, Alex Pico<br>\n" +
+				"<h3>Contributors</h3>\n" +
+				"<p>R.M.H. Besseling, S.P.M.Crijns, I. Kaashoek<br>\n" +
+				"M.M. Palm, E.D. Pelgrim, E. Neuteboom,<br>\n" +
+				"E.J. Creusen, P. Moeskops, Adem Bilican<br>\n" +
+				"<h3>Visit our website</h3>" +
+				"<p>http://www.pathvisio.org" +
+				"</html>");
 		JLabel iconLbl = new JLabel(new ImageIcon (IMG_ABOUT_LOGO));
-		label.setBackground(UIManager.getColor("Label.background"));
 		
 		CellConstraints cc = new CellConstraints();
 		

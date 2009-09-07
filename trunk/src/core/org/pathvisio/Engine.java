@@ -94,7 +94,8 @@ public class Engine
 		}
 	}
 		
-	public void exportPathway(File file) throws ConverterException {
+	//TODO: No reason to keep this in engine, it doesn't act on active pathway
+	public void exportPathway(File file, Pathway pathway) throws ConverterException {
 		Logger.log.trace("Exporting pathway to " + file);
 		String fileName = file.toString();
 
@@ -112,7 +113,7 @@ public class Engine
 
 		if(exporter == null) throw new ConverterException( "No exporter for '" + ext +  "' files" );
 
-		exporter.doExport(file, getActivePathway());	
+		exporter.doExport(file, pathway);	
 	}
 	
 	public void importPathway(File file) throws ConverterException

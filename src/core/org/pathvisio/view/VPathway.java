@@ -863,46 +863,54 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 */
 	public void draw(Graphics2D g2d, Rectangle area, boolean erase)
 	{
-		//save original, non-clipped, to pass on to VPathwayEvent
-		Graphics2D g2dFull = (Graphics2D)g2d.create();
-		
-		if (area == null)
+		try
 		{
-			area = g2d.getClipBounds();
+			//save original, non-clipped, to pass on to VPathwayEvent
+			Graphics2D g2dFull = (Graphics2D)g2d.create();
+			
 			if (area == null)
 			{
-				Dimension size = parent.getViewportSize(); //Draw the visible area
-				area = new Rectangle(0, 0, size.width, size.height);
-			}
-		}
-
-		if (erase)
-		{
-			g2d.setColor(java.awt.Color.WHITE);
-			g2d.fillRect(area.x, area.y, area.width, area.height);
-		}
-
-		g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-
-		g2d.clip(area);
-		g2d.setColor(java.awt.Color.BLACK);
-		Collections.sort(drawingObjects);
-		cleanUp();
-		for (VPathwayElement o : drawingObjects)
-		{
-			if (o.vIntersects(area))
-			{
-				if (checkDrawAllowed(o))
+				area = g2d.getClipBounds();
+				if (area == null)
 				{
-					o.draw((Graphics2D) g2d.create());
-					fireVPathwayEvent(new VPathwayEvent(this, o,
-							(Graphics2D) g2dFull.create(),
-							VPathwayEvent.ELEMENT_DRAWN));
+					Dimension size = parent.getViewportSize(); //Draw the visible area
+					area = new Rectangle(0, 0, size.width, size.height);
 				}
 			}
+	
+			if (erase)
+			{
+				g2d.setColor(java.awt.Color.WHITE);
+				g2d.fillRect(area.x, area.y, area.width, area.height);
+			}
+	
+			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+	
+			g2d.clip(area);
+			g2d.setColor(java.awt.Color.BLACK);
+			Collections.sort(drawingObjects);
+			cleanUp();
+			for (VPathwayElement o : drawingObjects)
+			{
+				if (o.vIntersects(area))
+				{
+					if (checkDrawAllowed(o))
+					{
+						o.draw((Graphics2D) g2d.create());
+						fireVPathwayEvent(new VPathwayEvent(this, o,
+								(Graphics2D) g2dFull.create(),
+								VPathwayEvent.ELEMENT_DRAWN));
+					}
+				}
+			}
+		}
+		catch (ConcurrentModificationException ex)
+		{
+			// guard against messing up repaint event completely
+			Logger.log.error ("Concurrent modification", ex);
 		}
 	}
 

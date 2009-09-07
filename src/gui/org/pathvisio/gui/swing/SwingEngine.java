@@ -280,11 +280,14 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 					"", pk, false, true);
 
+			// create a clone so we can safely act on it in a worker thread.
+			final Pathway clone = engine.getActivePathway().clone();
+			
 			SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
 				protected Boolean doInBackground() throws Exception {
 					try {
 						pk.setTaskName("Exporting pathway");
-						engine.exportPathway(f);
+						engine.exportPathway(f, clone);
 						return true;
 					} catch(ConverterException e) {
 						handleConverterException(e.getMessage(), null, e);

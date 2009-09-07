@@ -33,6 +33,7 @@ import org.pathvisio.model.EUGeneExporter;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.RasterImageExporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -120,7 +121,8 @@ public class Converter {
 		{
 			try {
 				engine.importPathway(inputFile);
-				engine.exportPathway(outputFile);
+				Pathway pathway = engine.getActivePathway();
+				engine.exportPathway(outputFile, pathway);
 			} catch(ConverterException e) {
 				e.printStackTrace();
 				System.exit(-2);

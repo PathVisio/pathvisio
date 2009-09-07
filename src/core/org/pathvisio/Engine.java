@@ -18,11 +18,14 @@ package org.pathvisio;
 
 import java.awt.Color;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.SwingUtilities;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
@@ -128,35 +131,50 @@ public class Engine
 		
 		Pathway pathway = new Pathway();
 		importer.doImport(file, pathway);
-		createVPathway(pathway);
-		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
-		if (vPathway != null)
-		{
-			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
+		
+		newPathwayHelper (pathway);
+	}
+	
+	/**
+	 * After loading a pathway from disk,
+	 * run createVPathway on EDT thread to prevent concurrentModificationException
+	 */
+	private void newPathwayHelper(final Pathway pathway) throws ConverterException
+	{
+		try {
+			// switch back to EDT
+			SwingUtilities.invokeAndWait(new Runnable()
+			{
+				public void run()
+				{
+					createVPathway(pathway);
+					fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
+					if (vPathway != null)
+					{
+						fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
+					}
+				}
+			});
+		} catch (InterruptedException e) {
+			throw new ConverterException (e);
+		} catch (InvocationTargetException e) {
+			throw new ConverterException (e);
 		}
 	}
-		
+	
 	/**
 	 * Open a pathway from a gpml file
-	 */
-	
-	
+	 */	
 	public void openPathway(File pathwayFile) throws ConverterException
 	{
-		Pathway pathway = null;		
 		String pwf = pathwayFile.toString();
 		
 		// initialize new JDOM gpml representation and read the file
-		pathway = new Pathway();
+		final Pathway pathway = new Pathway();
 		pathway.readFromXml(new File(pwf), true);
 		//Only set the pathway field after the data is loaded
 		//(Exception thrown on error, this part will not be reached)
-		createVPathway(pathway);
-		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
-		if (vPathway != null)
-		{
-			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
-		}
+		newPathwayHelper(pathway);
 	}
 	
 	public File openPathway(URL url) throws ConverterException {
@@ -188,7 +206,6 @@ public class Engine
 		// make sure there are no problems with references.
 		p.fixReferences();
 		p.writeToXml(toFile, true);
-
 	}
 	
 	/**

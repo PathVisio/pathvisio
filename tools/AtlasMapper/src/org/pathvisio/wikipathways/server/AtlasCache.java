@@ -83,6 +83,7 @@ public class AtlasCache {
 				cache.delete();
 				genes = updateCache(p);
 			}
+			in.close();
 		} else {
 			Logger.log.trace("Downloading atlas data...");
 			genes = updateCache(p);

@@ -343,12 +343,12 @@ public class Revision
 		<!-- Copy files needed for webstart !-->
 		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
 		<copy file="visplugins.jar" toDir="${webstart.dir}/www"/>
-		<signjar jar="pathvisio.jar" lazy="true" 
+		<signjar jar="pathvisio.jar" 
 			alias="PV" storepass="${keystore.password}" keystore="lib/visioKeyStore"/>
 		<copy toDir="${webstart.dir}/www/lib">
 			<fileset dir="lib" includes="**/*.jar"/>
 		</copy>
-		<signjar alias="PV" lazy = "true" 
+		<signjar alias="PV"  
 			storepass="${keystore.password}" keystore="lib/visioKeyStore">
 			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>
 		</signjar>
@@ -413,7 +413,7 @@ public class Revision
 			</condition>
 		</fail>
 		<!-- Sign all jar files -->
-		<signjar alias="PV" lazy = "true" 
+		<signjar alias="PV"  
 			storepass="${keystore.password}" keystore="lib/visioKeyStore">
 			<fileset dir="${build.wpi.applet}" includes="**/*.jar"/>
 			<fileset dir="${build.wpi.bin}" includes="**/*.jar"/>

@@ -115,6 +115,21 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 		return stub;
 	}
 	
+	/**
+	 * Check if a working connection to the wikipathways
+	 * web service is available.
+	 */
+	public boolean isConnected() {
+		try {
+			//Try to list organisms, if fails then we're probably
+			//not connected
+			listOrganisms();
+			return true;
+		} catch (RemoteException e) {
+			return false;
+		}
+	}
+	
 	private void setProperties() {
 		//Using global properties, but need to initialize moduleproperties anyway.
 		props = new ModulePropertiesImpl(CLIENT_ID, "wsc");

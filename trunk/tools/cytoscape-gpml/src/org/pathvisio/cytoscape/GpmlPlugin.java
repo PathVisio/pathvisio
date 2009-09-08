@@ -99,7 +99,8 @@ import phoebe.PhoebeCanvasDropListener;
  */
 public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListener, PropertyChangeListener {
 	GpmlHandler gpmlHandler;
-
+	CyWikiPathwaysClient wpclient;
+	
 	private static GpmlPlugin instance;
 	
 	/**
@@ -147,10 +148,15 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		JMenu gpmlMenu = new JMenu("Gpml plugin");
 		gpmlMenu.add(new AttributeMapperAction(this));
 		pluginMenu.add(gpmlMenu);
-
-		WebServiceClientManager.registerClient(new CyWikiPathwaysClient(this));
+		
+		wpclient = new CyWikiPathwaysClient(this);
+		WebServiceClientManager.registerClient(wpclient);
 	}
 
+	public CyWikiPathwaysClient getWikiPathwaysClient() {
+		return wpclient;
+	}
+	
 	public GpmlHandler getGpmlHandler() {
 		return gpmlHandler;
 	}

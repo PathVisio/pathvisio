@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -71,6 +72,15 @@ public class WikiPathwaysClientTest extends TestCase {
 		try {
 			WSPathwayInfo[] r = client.listPathways();
 			Logger.log.trace("Get pathway list returned " + r.length + " pathways");
+			r = client.listPathways(Organism.HomoSapiens);
+			Logger.log.trace("Get pathway list for Homo sapiens returned " + r.length + " pathways");
+			//Check if all pathways are indeed human
+			for(WSPathwayInfo wpi : r) {
+				if(!Organism.HomoSapiens.latinName().equals(wpi.getSpecies())) {
+					fail("Get pathway list for Homo sapiens included non-human pathway: " + 
+							wpi.getId() + " (" + wpi.getSpecies() + ")");
+				}
+			}
 		} catch(Exception e) {
 			e.printStackTrace();
 			fail(e.getMessage());

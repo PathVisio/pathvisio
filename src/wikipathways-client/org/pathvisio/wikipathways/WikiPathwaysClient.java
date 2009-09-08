@@ -91,7 +91,19 @@ public class WikiPathwaysClient {
 	 * List all pathways on WikiPathways
 	 */
 	public WSPathwayInfo[] listPathways() throws RemoteException {
-		WSPathwayInfo[] r = port.listPathways();
+		WSPathwayInfo[] r = port.listPathways(null);
+		if(r == null) r = new WSPathwayInfo[0];
+		return r;
+	}
+	
+	/**
+	 * List all pathways on WikiPathways for the given organism
+	 * @param organism The organism to filter by.
+	 * @return
+	 * @throws RemoteException
+	 */
+	public WSPathwayInfo[] listPathways(Organism organism) throws RemoteException {
+		WSPathwayInfo[] r = port.listPathways(organism.latinName());
 		if(r == null) r = new WSPathwayInfo[0];
 		return r;
 	}

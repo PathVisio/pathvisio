@@ -239,6 +239,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 
 	private void doQuery() 
 	{
+		setText("Loading");
 		currRef = input.getXref();
 		
 		//System.err.println("\tSetting input " + e + " using " + threads);

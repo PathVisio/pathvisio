@@ -128,16 +128,18 @@ public class DataNodeDialog extends PathwayElementDialog {
 			    //The result set
 				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>(); 
 			    
-		    	Set<Xref> tempset = new HashSet<Xref>();
-		    	tempset.addAll( gdb.freeSearch( text, QUERY_LIMIT ) );
-		    	tempset.addAll( gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT ) );
-		    	for (Xref x : tempset)
+		    	for (Xref x : gdb.freeSearch( text, QUERY_LIMIT ))
 		    	{
 		    		for (String s : gdb.getAttributes (x, "Symbol"))
 		    		{
 		    			result.add (new XrefWithSymbol (x, s));
 			    		break; // only put the first symbol found
 		    		}
+		    	}
+		    	for (Map.Entry<Xref, String> i : 
+		    		gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT).entrySet())
+		    	{
+		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
 		    	}
 				return result;
 			}
@@ -247,10 +249,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 				List<String> symbols = new ArrayList<String>();
 				try
 				{
-					for (Xref ref : gdb.freeAttributeSearch(text, "Symbol", 10))
-					{
-						symbols.addAll (gdb.getAttributes(ref, "Symbol"));
-					}
+					symbols.addAll
+						(gdb.freeAttributeSearch(text, "Symbol", 10).values());
 				}
 				catch (IDMapperException ignore) {}
 				return symbols;

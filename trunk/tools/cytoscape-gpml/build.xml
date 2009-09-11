@@ -16,6 +16,7 @@
 		<fileset dir="${axis.lib.dir}" includes="*.jar" />
 		<pathelement location="${pathvisio.lib.dir}/jdom.jar" />
 		<pathelement location="${pathvisio.lib.dir}/bridgedb.jar" />
+		<pathelement location="${pathvisio.lib.dir}/bridgedb-bio.jar" />
 		<pathelement location="${pathvisio.lib.dir}/resources.jar" />
 		<pathelement location="${pathvisio.lib.dir}/BrowserLauncher.jar" />
 		<pathelement location="${pathvisio.dir}/pathvisio.jar" />
@@ -54,6 +55,7 @@
 			<fileset dir="${pathvisio.dir}" includes="wikipathways-client.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="resources.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="bridgedb.jar" />
+			<fileset dir="${pathvisio.lib.dir}" includes="bridgedb-bio.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="jdom.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="forms-1.2.0.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="BrowserLauncher.jar" />

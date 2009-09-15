@@ -80,6 +80,8 @@ public class WPDownloadPlugin implements Plugin
 		}
 	}
 
+	public void done() {}
+
 	private final WpAction wpAction = new WpAction();
 	
 	private class WpAction extends AbstractAction

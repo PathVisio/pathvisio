@@ -19,6 +19,9 @@ package org.pathvisio.visualization.plugins;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractListModel;
+import javax.swing.ComboBoxModel;
+import javax.swing.JComboBox;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager.GexManagerEvent;
@@ -27,6 +30,8 @@ import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.visualization.Visualization;
+import org.pathvisio.visualization.VisualizationEvent;
+import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.VisualizationMethodProvider;
 import org.pathvisio.visualization.VisualizationMethodRegistry;
@@ -34,11 +39,11 @@ import org.pathvisio.visualization.gui.VisualizationDialog;
 
 /**
  * Plugin that registers several visualization methods
- * @author thomas
- *
  */
-public class VisualizationPlugin implements Plugin {
-
+public class VisualizationPlugin implements Plugin 
+{
+	private JComboBox visualizationCombo;
+	
 	public void init(PvDesktop aDesktop) 
 	{
 		final PvDesktop desktop = aDesktop;
@@ -76,10 +81,15 @@ public class VisualizationPlugin implements Plugin {
 				aDesktop)
 		);
 		
+		// combo box in toolbar to select visualization
+ 		visualizationCombo = new JComboBox(new VisualizationComboModel(
+ 				desktop.getVisualizationManager()));
+		desktop.getSwingEngine().getApplicationPanel().addToToolbar(visualizationCombo);
+		
 		Legend legendPane = new Legend(desktop);
 		desktop.getSideBarTabbedPane().addTab ("Legend", legendPane);
 	}
-
+	
 	/**
 	 * Action / Menu item for opening the visualization dialog
 	 */
@@ -110,6 +120,79 @@ public class VisualizationPlugin implements Plugin {
 			boolean isConnected = ste.getGexManager().isConnected();
 			Logger.log.trace("Visualization options action, gexmanager event, connected: " + isConnected);
 			setEnabled(isConnected);
+		}
+	}
+
+	/**
+	 * Model for ComboBox in toolbar, that selects you one of the
+	 * visualizations contained in VisualizationManager, or "No Visualization"
+	 */
+	private static class VisualizationComboModel extends AbstractListModel 
+		implements ComboBoxModel, VisualizationManager.VisualizationListener
+	{
+		private static final String NO_VISUALIZATION = "No Visualization";
+		private final VisualizationManager manager;
+		VisualizationComboModel (VisualizationManager manager)
+		{
+			this.manager = manager;
+			manager.addListener(this);
+			//TODO: remove this listener on plugin unload.
+		}
+		
+		public void visualizationEvent(VisualizationEvent e) 
+		{
+			switch (e.getType())
+			{
+			case VisualizationEvent.VISUALIZATION_ADDED:
+				fireIntervalAdded(this, 0, manager.getVisualizations().size() + 1);
+				//TODO: smaller interval?
+				break;
+			case VisualizationEvent.VISUALIZATION_REMOVED:
+				fireIntervalRemoved(this, 0, manager.getVisualizations().size() + 1);
+				//TODO: smaller interval?
+				break;
+			case VisualizationEvent.VISUALIZATION_MODIFIED:
+				fireContentsChanged(this, 0, manager.getVisualizations().size() + 1);
+				//TODO: smaller interval?
+				break;
+			case VisualizationEvent.VISUALIZATION_SELECTED:
+				fireContentsChanged(this, 0, manager.getVisualizations().size() + 1);
+				break;
+			}
+		}
+	
+		public Object getSelectedItem() 
+		{
+			Object result = manager.getActiveVisualization();
+			if (result == null)
+			{
+				result = NO_VISUALIZATION;
+			}			
+			return result;
+		}
+	
+		public void setSelectedItem(Object arg0) 
+		{
+			if (arg0 instanceof Visualization)
+				manager.setActiveVisualization((Visualization)arg0);		
+			else
+				manager.setActiveVisualization(-1);
+		}
+	
+		public Object getElementAt(int arg0) 
+		{
+			if (arg0 == 0)
+			{
+				return NO_VISUALIZATION;
+			}
+			else
+			{
+				return manager.getVisualizations().get(arg0-1);
+			}
+		}
+	
+		public int getSize() {
+			return manager.getVisualizations().size() + 1;
 		}
 	}
 }

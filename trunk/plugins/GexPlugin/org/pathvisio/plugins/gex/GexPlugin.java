@@ -43,7 +43,9 @@ public class GexPlugin implements Plugin {
 		desktop.registerMenuAction ("Data", importAction);
 		desktop.registerMenuAction ("Data", selectAction);
 	}
-	
+
+	public void done() {};
+
 	/**
 	 * Import gex data and create a new gex database from it
 	 */

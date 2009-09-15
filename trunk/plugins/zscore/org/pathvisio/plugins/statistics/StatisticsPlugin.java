@@ -111,6 +111,8 @@ public class StatisticsPlugin implements Plugin
 		desktop.registerMenuAction ("Data", statisticsAction);
 	}
 	
+	public void done() {};
+
 	/**
 	 * Statistics menu action in the Data menu
 	 */

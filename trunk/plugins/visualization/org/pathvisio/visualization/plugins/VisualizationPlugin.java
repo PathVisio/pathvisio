@@ -43,10 +43,12 @@ import org.pathvisio.visualization.gui.VisualizationDialog;
 public class VisualizationPlugin implements Plugin 
 {
 	private JComboBox visualizationCombo;
+	private PvDesktop desktop;
+	private VisualizationComboModel model;
 	
 	public void init(PvDesktop aDesktop) 
 	{
-		final PvDesktop desktop = aDesktop;
+		desktop = aDesktop;
 		
 		//Register the visualization methods
 		VisualizationMethodRegistry reg = 
@@ -82,14 +84,20 @@ public class VisualizationPlugin implements Plugin
 		);
 		
 		// combo box in toolbar to select visualization
- 		visualizationCombo = new JComboBox(new VisualizationComboModel(
- 				desktop.getVisualizationManager()));
+ 		model = new VisualizationComboModel(desktop.getVisualizationManager());
+		visualizationCombo = new JComboBox(model);
 		desktop.getSwingEngine().getApplicationPanel().addToToolbar(visualizationCombo);
 		
 		Legend legendPane = new Legend(desktop);
 		desktop.getSideBarTabbedPane().addTab ("Legend", legendPane);
 	}
-	
+
+	public void done() 
+	{
+		model.dispose();
+	};
+
+
 	/**
 	 * Action / Menu item for opening the visualization dialog
 	 */
@@ -136,7 +144,14 @@ public class VisualizationPlugin implements Plugin
 		{
 			this.manager = manager;
 			manager.addListener(this);
-			//TODO: remove this listener on plugin unload.
+		}
+
+		/**
+		 * Call this to unregister from VisualizationManager
+		 */
+		public void dispose()
+		{
+			manager.removeListener(this);
 		}
 		
 		public void visualizationEvent(VisualizationEvent e) 

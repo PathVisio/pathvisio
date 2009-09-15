@@ -20,11 +20,16 @@ import org.pathvisio.gui.swing.PvDesktop;
 
 /**
  * This interface needs to be implemented by PathVisio plugins
- * @author thomas
  */
 public interface Plugin {
 	/**
 	 * Called on loading the plugin
 	 */
 	public void init(PvDesktop desktop);
+
+	/**
+	 * Called on unloading plugin.
+	 * Give plugin chance to unregister listeners, stop timers, close connections, etc.
+	 */
+	public void done();
 }

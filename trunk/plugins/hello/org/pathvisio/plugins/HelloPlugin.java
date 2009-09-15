@@ -40,6 +40,8 @@ public class HelloPlugin implements Plugin
 		desktop.registerMenuAction ("Help", helloAction);
 	}
 
+	public void done() {}
+
 	private final HelloAction helloAction = new HelloAction();
 	
 	/**

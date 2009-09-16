@@ -38,6 +38,9 @@
   
   <target name="jar" depends="build">
 	<jar jarfile="${jar.name}">
+	<manifest>
+		<attribute name="PathVisio-Plugin-Class" value="org.pathvisio.plugins.HelloPlugin"/>
+	</manifest>
 	  <fileset dir="build" includes="**/*.class"/>
 	</jar>
   </target>

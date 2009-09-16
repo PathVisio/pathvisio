@@ -262,7 +262,9 @@ public class WikiPathwaysCache
 	public WSPathwayInfo getPathwayInfo(File cacheFile) throws FileNotFoundException, IOException {
 		File info = getInfoFile(cacheFile);
 		Properties prop = new Properties();
-		prop.load(new FileInputStream(info));
+		FileInputStream in = new FileInputStream(info);
+		prop.load(in);
+		in.close();
 		WSPathwayInfo pi = new WSPathwayInfo(
 				prop.getProperty("Id"),
 				prop.getProperty("Url"),

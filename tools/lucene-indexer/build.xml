@@ -5,9 +5,9 @@
 	<property name="lib.dir" value="lib"/>
 	<property name="dist.dir" value="dist"/>
 	<property name="pathvisio.dir" value="../../"/>
-	<property name="lucene.jar" value="lucene-core-2.2.0.jar"/>
 	<property name="jar.name" value="wikipathways-indexer.jar"/>
-
+	<property name="service.jar.name" value="wikipathways-indexer-service.jar"/>
+	
 	<path id="class.path">
 		<pathelement location="${build.dir}"/>
 		<fileset dir="lib">
@@ -61,7 +61,14 @@
 
 		<jar jarfile="${jar.name}">
 			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.indexer.WikiPathwaysIndexer"/>
+				<attribute name="Main-Class" value="org.wikipathways.indexer.WikiPathwaysIndexer"/>
+				<attribute name="Class-Path" value="${class.path.manifest}"/>
+			</manifest>
+			<fileset dir="${build.dir}" includes="**/*.class"/>
+		</jar>
+		<jar jarfile="${service.jar.name}">
+			<manifest>
+				<attribute name="Main-Class" value="org.wikipathways.indexer.Server"/>
 				<attribute name="Class-Path" value="${class.path.manifest}"/>
 			</manifest>
 			<fileset dir="${build.dir}" includes="**/*.class"/>
@@ -70,6 +77,7 @@
 
 	<target name="dist" depends="jar" description="Copies jar and external libraries to dist path">
 		<copy file="${jar.name}" toDir="${dist.dir}"/>
+		<copy file="${service.jar.name}" toDir="${dist.dir}"/>
 		<copy file="${pathvisio.dir}/lib/jdom.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/derby.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/resources.jar" toDir="${dist.dir}/lib"/>
@@ -78,9 +86,13 @@
 		<copy file="${pathvisio.dir}/wikipathways-client.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/bridgedb.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/bridgedb-bio.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${lib.dir}/${lucene.jar}" toDir="${dist.dir}/lib"/>
-		<copy file="gdb.config" toDir="${dist.dir}"/>
+		<copy file="bridge.config" toDir="${dist.dir}"/>
 		<copy file="indexer.config" toDir="${dist.dir}"/>
+		<copy toDir="${dist.dir}/lib">
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar"/>
+			</fileset>
+		</copy>
 		<copy toDir="${dist.dir}/lib">
 			<fileset dir="${pathvisio.dir}/lib/axis-1_4/lib/">
 				<include name="**/*.jar"/>

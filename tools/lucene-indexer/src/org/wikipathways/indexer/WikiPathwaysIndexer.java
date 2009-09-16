@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.indexer;
+package org.wikipathways.indexer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,6 +40,8 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.GdbProvider;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.indexer.GpmlIndexer;
+import org.pathvisio.indexer.SourceProvider;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.wikipathways.WikiPathwaysCache;
@@ -93,6 +95,10 @@ public class WikiPathwaysIndexer extends Timer{
 		parseIndexConfig(indexConfig);
 		parseGdbConfig(gdbConfig);
 		init();
+	}
+	
+	public File getIndexPath() {
+		return indexPath;
 	}
 	
 	private void init() throws ServiceException, ConverterException {

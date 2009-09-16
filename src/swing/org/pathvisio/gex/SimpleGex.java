@@ -277,7 +277,7 @@ public class SimpleGex
 			
 			// get all cross-refs for this id				
 			Set<Xref> destRefs = new HashSet<Xref>();
-			if (gdb.isConnected())
+			if (gdb.isConnected() && srcRef.getId() != null && srcRef.getDataSource() != null)
 			{
 				for (Xref destRef : gdb.mapID(srcRef, null))
 				{

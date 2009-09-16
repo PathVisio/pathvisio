@@ -287,6 +287,10 @@ public class Revision
 
 	<target name="visplugins-jar" depends="compile-visplugins" description="Generates jar with visualization plugins">
 		<jar jarfile="visplugins.jar">
+			<manifest>
+				<attribute name="PathVisio-Plugin-Class" 
+					value="org.pathvisio.plugins.gex.GexPlugin, org.pathvisio.plugins.statistics.StatisticsPlugin, org.pathvisio.visualization.plugins.VisualizationPlugin"/>
+			</manifest>
 			<fileset dir="${build.visplugins.dir}" includes="**/*.class"/>
 		</jar>
 	</target>

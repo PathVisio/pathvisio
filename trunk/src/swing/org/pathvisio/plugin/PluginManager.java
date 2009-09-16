@@ -136,8 +136,8 @@ public class PluginManager {
 		{
 			JarFile jarFile = new JarFile(file);
 			Logger.log.trace("\tLoading from jar file " + jarFile);
-			String pluginClass = jarFile.getManifest().getMainAttributes().getValue("PathVisio-Plugin-Class");
-			if (pluginClass == null)
+			String pluginClasses = jarFile.getManifest().getMainAttributes().getValue("PathVisio-Plugin-Class");
+			if (pluginClasses == null)
 			{
 				Logger.log.trace("No PathVisio-Plugin-Class attribute found, scanning.");
 				Enumeration<?> e = jarFile.entries();
@@ -161,10 +161,13 @@ public class PluginManager {
 			}
 			else
 			{
-				Logger.log.trace("PathVisio-Plugin-Class is " + pluginClass);
+				Logger.log.trace("PathVisio-Plugin-Class is " + pluginClasses);
 				URL u = new URL("jar", "", file.toURL() + "!/");
 				ClassLoader cl = new URLClassLoader(new URL[] { u }, this.getClass().getClassLoader());
-				loadByClassName (pluginClass, inf, cl);
+				for (String pluginClass : pluginClasses.split("[\\s,;:]+"))
+				{
+					loadByClassName (pluginClass, inf, cl);
+				}
 			}
 		}
 		catch (IOException ex)

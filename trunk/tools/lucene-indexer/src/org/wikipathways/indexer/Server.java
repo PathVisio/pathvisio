@@ -31,6 +31,8 @@ public class Server {
 	void startIndexer(boolean rebuild) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
 		if(rebuild) {
 			indexer.rebuild();
+		} else {
+			indexer.update();
 		}
 		indexer.start();
 	}
@@ -65,11 +67,7 @@ public class Server {
 			server.startService(par.getPort());
 		} catch(Exception e) {
 			e.printStackTrace();
-			printUsage();
+			parser.printUsage(System.err);
 		}
-	}
-	
-	static void printUsage() {
-		
 	}
 }

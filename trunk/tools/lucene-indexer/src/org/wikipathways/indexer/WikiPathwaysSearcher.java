@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
@@ -22,7 +23,6 @@ import org.pathvisio.indexer.DataNodeIndexer;
 
 public class WikiPathwaysSearcher {
 	Searcher searcher;
-	
 	public WikiPathwaysSearcher(IndexSearcher searcher) {
 		this.searcher = searcher;
 	}
@@ -37,7 +37,6 @@ public class WikiPathwaysSearcher {
 	}
 	
 	public List<SearchResult> queryByXrefs(Collection<Xref> xrefs, int limit) throws IOException {
-		System.err.println(xrefs);
 		BooleanQuery query = new BooleanQuery();
 		for(Xref x : xrefs) {
 			Query tq = null;
@@ -80,8 +79,8 @@ public class WikiPathwaysSearcher {
 		return results;
 	}
 	
-	public List<String> listXrefs(String pathwaySource, String sysCode) throws IOException {
-		List<String> xrefs = new ArrayList<String>();
+	public Set<String> listXrefs(String pathwaySource, String sysCode) throws IOException {
+		Set<String> xrefs = new TreeSet<String>();
 
 		TermQuery query = new TermQuery(new Term(
 				DataNodeIndexer.FIELD_INDEXERID, DataNodeIndexer.class.getName() + pathwaySource)
@@ -89,9 +88,12 @@ public class WikiPathwaysSearcher {
 		TopDocs hits = searcher.search(query, null, 10000);
 		for(ScoreDoc sd : hits.scoreDocs) {
 			Document xrefDoc = searcher.doc(sd.doc);
-			String idcode = xrefDoc.get(DataNodeIndexer.FIELD_XID_CODE);
-			if(idcode != null && idcode.endsWith(":" + sysCode)) {
-				xrefs.add(xrefDoc.get(DataNodeIndexer.FIELD_XID));
+			String[] idcodes = xrefDoc.getValues(DataNodeIndexer.FIELD_XID_CODE);
+			if(idcodes == null) continue;
+			for(String idcode : idcodes) {
+				if(idcode.endsWith(":" + sysCode)) {
+					xrefs.add(idcode.substring(0, idcode.lastIndexOf(':')));
+				}
 			}
 		}
 		return xrefs;

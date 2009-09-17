@@ -31,7 +31,7 @@ public class XrefsResource extends IndexResource {
 				str.append(x);
 				str.append("\n");
 			}
-			return new StringRepresentation(str, MediaType.TEXT_PLAIN);
+			return new StringRepresentation(str.toString().trim(), MediaType.TEXT_PLAIN);
 		} catch(Exception e) {
 			e.printStackTrace();
 			setStatus(Status.SERVER_ERROR_INTERNAL);

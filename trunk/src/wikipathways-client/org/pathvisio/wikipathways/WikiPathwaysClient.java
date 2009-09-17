@@ -30,6 +30,7 @@ import java.util.TimeZone;
 
 import javax.xml.rpc.ServiceException;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.model.ConverterException;
@@ -312,20 +313,36 @@ public class WikiPathwaysClient {
 		return r;
 	}
 	
-	public WSSearchResult[] findPathwaysByXref(Xref xref) throws RemoteException {
-		String code = null;
-		if(xref.getDataSource() != null) {
-			code = xref.getDataSource().getSystemCode();
+	/**
+	 * Search for pathways containing one of the given xrefs by taking
+	 * into account cross-references to other database systems.
+	 * @param xrefs
+	 * @return
+	 * @throws RemoteException
+	 */
+	public WSSearchResult[] findPathwaysByXref(Xref... xrefs) throws RemoteException {
+		String[] ids = new String[xrefs.length];
+		String[] codes = new String[xrefs.length];
+		for(int i = 0; i < xrefs.length; i++) {
+			ids[i] = xrefs[i].getId();
+			DataSource ds = xrefs[i].getDataSource();
+			if(ds == null) {
+				codes[i] = null;
+			} else {
+				codes[i] = ds.getSystemCode();
+			}
 		}
-		WSSearchResult[] r =  port.findPathwaysByXref(xref.getId(), code);
+		WSSearchResult[] r =  port.findPathwaysByXref(ids, codes);
 		if(r == null) r = new WSSearchResult[0];
 		return r;
 	}
 	
+	/**
+	 * @deprecated Use {@link #findPathwaysByXref(Xref...)} with a
+	 * proper xref (id + datasource) instead.
+	 */
 	public WSSearchResult[] findPathwaysByXref(String id) throws RemoteException {
-		WSSearchResult[] r =  port.findPathwaysByXref(id, null);
-		if(r == null) r = new WSSearchResult[0];
-		return r;
+		return findPathwaysByXref(new Xref(id, null));
 	}
 	
 	public WSSearchResult[] findInteractions(String query) throws RemoteException {

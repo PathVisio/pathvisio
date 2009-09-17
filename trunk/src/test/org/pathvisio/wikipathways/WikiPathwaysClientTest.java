@@ -139,6 +139,20 @@ public class WikiPathwaysClientTest extends TestCase {
 			);
 			assertNotNull(results);
 			assertTrue(results.length > 0);
+			
+			results = client.findPathwaysByXref(
+					new Xref("GO:0016021", BioDataSource.GENE_ONTOLOGY)
+			);
+			assertNotNull(results);
+			assertTrue(results.length > 0);
+			
+			results = client.findPathwaysByXref(
+					new Xref("8743", BioDataSource.ENTREZ_GENE),
+					new Xref("GO:0016021", BioDataSource.GENE_ONTOLOGY),
+					new Xref("1234", null)
+			);
+			assertNotNull(results);
+			assertTrue(results.length > 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			fail(e.getMessage());

@@ -1,7 +1,9 @@
 package org.wikipathways.indexer;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -10,23 +12,39 @@ import org.w3c.dom.Element;
 public class SearchResult {
 	float score;
 	Document doc;
+	FieldFilter fieldFilter;
 	
-	public SearchResult(Document doc, float score) {
+	public SearchResult(Document doc, float score, FieldFilter fieldFilter) {
 		this.doc = doc;
 		this.score = score;
+		this.fieldFilter = fieldFilter;
+	}
+
+	public SearchResult(Document doc, float score) {
+		this(doc, score, null);
 	}
 	
-
 	private Element asXml(org.w3c.dom.Document xmlDoc) {
 		Element result = xmlDoc.createElement(ELM_RESULT);
 		result.setAttribute(ATTR_SCORE, "" + score);
 		
+		Set<String> addedFields = new HashSet<String>();
+		
 		List<Field> fields = (List<Field>)doc.getFields();
 		for(Field f : fields) {
-			Element fe = xmlDoc.createElement(ELM_FIELD);
-			fe.setAttribute("Name", f.name());
-			fe.setAttribute("Value", f.stringValue());
-			result.appendChild(fe);
+			if(fieldFilter != null) {
+				if(!fieldFilter.include(f.name(), f.stringValue())) {
+					continue;
+				}
+			}
+			String fid = f.name() + f.stringValue();
+			if(!addedFields.contains(fid)) {
+				Element fe = xmlDoc.createElement(ELM_FIELD);
+				fe.setAttribute("Name", f.name());
+				fe.setAttribute("Value", f.stringValue());
+				result.appendChild(fe);
+				addedFields.add(fid);
+			}
 		}
 		
 		return result;

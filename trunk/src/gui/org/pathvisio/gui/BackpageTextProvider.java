@@ -97,12 +97,13 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 			{
 				String bpInfo; 
 					
+				Map<String, Set<String>> attributes = attributeMapper.getAttributes(e.getXref());
 				if (!type.equals ("Metabolite"))
 				{
-					String symbol = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Symbol"));
-					String description = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Description"));
-					String synonyms = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Synonyms"));
-					String chromosome = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Chromosome"));
+					String symbol = Utils.oneOf (attributes.get("Symbol"));
+					String description = Utils.oneOf (attributes.get("Description"));
+					String synonyms = Utils.oneOf (attributes.get("Synonyms"));
+					String chromosome = Utils.oneOf (attributes.get("Chromosome"));
 										
 					bpInfo = 
 						"<TABLE border = 1>" +
@@ -115,8 +116,8 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 				}
 				else
 				{
-					String symbol = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "Symbol"));
-					String bruto = Utils.oneOf (attributeMapper.getAttributes(e.getXref(), "BrutoFormula"));
+					String symbol = Utils.oneOf (attributes.get("Symbol"));
+					String bruto = Utils.oneOf (attributes.get("BrutoFormula"));
 										
 					bpInfo = 
 						"<TABLE border = 1>" +

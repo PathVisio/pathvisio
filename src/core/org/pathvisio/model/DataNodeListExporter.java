@@ -125,8 +125,7 @@ public class DataNodeListExporter implements PathwayExporter {
 				} else { //Lookup the cross-references for the wanted database code
 					try
 					{
-						Set<Xref> refs = gdbManager.getCurrentGdb().mapID(elm.getXref(), 
-								Utils.setOf (resultDs));
+						Set<Xref> refs = gdbManager.getCurrentGdb().mapID(elm.getXref(), resultDs);
 						for(Xref ref : refs) {
 							line += ref.getId() + multiRefSep;
 						}

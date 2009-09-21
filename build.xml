@@ -615,7 +615,7 @@ public class Revision
 		</java>
 	</target>
 
-	<target name="compile-wpclient" depends="wpclient-axis,wikipathways-jar">
+	<target name="compile-wpclient" depends="wpclient-axis,wikipathways-jar,jar">
 		<javac srcdir="${axis.wpclient.dir}" debug="true" destdir="${build.wpclient.dir}">
 			<classpath refid="wpclient.class.path" />
 		</javac>

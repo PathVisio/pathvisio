@@ -45,7 +45,7 @@ public class Criterion
 	private static final String DISPLAY_SAMPLE = "|Displayed sample|";
 	
 	/** operators that can be used in a Criterion */
-	public static final String[] TOKENS = {"AND", "OR", "=", "<", ">", "<=", ">="};
+	public static final String[] TOKENS = {"AND", "OR", "=", "<", ">", "<=", ">=", "<>"};
 	
 	private Map<String, Object> symTab = new HashMap<String, Object>();
 
@@ -119,7 +119,13 @@ public class Criterion
 	private boolean evaluate () throws CriterionException
 	{
 		Token e = parse();
-		return e.evaluateAsBool();
+		e.printMe(0);
+		Boolean result = e.evaluateAsBool();
+		if (result == null)
+		{
+			throw new CriterionException ("Expected Boolean expression");
+		}
+		else return result;	
 	}
 
 	private Token parse() throws CriterionException {
@@ -128,7 +134,7 @@ public class Criterion
 
 		Token e = expression();
 		Token t = getToken();
-		if (t.type != Token.TOKEN_END)
+		if (t.type != TokenType.END)
 		{
 			nextToken = null;
 			throw new CriterionException("Multiple expressions found, second expression " +
@@ -208,7 +214,7 @@ public class Criterion
 			putBack (ch);									
 			try
 			{
-				token = new Token(Token.TOKEN_NUMBER, Double.parseDouble(value));
+				token = new Token(TokenType.NUMBER_LITERAL, Double.parseDouble(value));
 			}
 			catch (NumberFormatException e)
 			{
@@ -220,31 +226,35 @@ public class Criterion
 		case '<':
 			ch = eatChar();
 			if (ch == '=')
-				token = new Token(Token.TOKEN_LE);	
+				token = new Token(TokenType.LE);	
+			else if (ch == '>')
+			{
+				token = new Token(TokenType.NE);
+			}
 			else
 			{
-				token = new Token(Token.TOKEN_LT);
+				token = new Token(TokenType.LT);
 				putBack (ch);
 			}
 			break;
 		case '>':
 			ch = eatChar();
 			if (ch == '=')
-				token = new Token(Token.TOKEN_GE);	
+				token = new Token(TokenType.GE);	
 			else
 			{
-				token = new Token(Token.TOKEN_GT);
+				token = new Token(TokenType.GT);
 				putBack (ch);
 			}
 			break;
 		case '=': 
-			token = new Token(Token.TOKEN_EQ);
+			token = new Token(TokenType.EQ);
 			break;
 		case '(': 
-			token = new Token(Token.TOKEN_LPAREN);
+			token = new Token(TokenType.LPAREN);
 			break;
 		case ')': 
-			token = new Token(Token.TOKEN_RPAREN);
+			token = new Token(TokenType.RPAREN);
 			break;
 		case '[': {
 			ch = eatChar();
@@ -254,13 +264,23 @@ public class Criterion
 				value += ch;
 				ch = eatChar();
 			}
-			token = new Token(Token.TOKEN_ID, value);                 
+			token = new Token(TokenType.ID, value);                 
+		} break;
+		case '"': {
+			ch = eatChar();
+			String value = "";
+			while (ch != '"' && ch != '\0')
+			{
+				value += ch;
+				ch = eatChar();
+			}
+			token = new Token(TokenType.STRING_LITERAL, value);                 
 		} break;
 		case 'A':	
 
 			if (eatChar() == 'N' && eatChar() == 'D')
 			{
-				token = new Token (Token.TOKEN_AND);
+				token = new Token (TokenType.AND);
 			}
 			else
 			{
@@ -272,7 +292,7 @@ public class Criterion
 			ch = eatChar();
 			if (ch == 'R')
 			{
-				token = new Token (Token.TOKEN_OR);
+				token = new Token (TokenType.OR);
 			}
 			else
 			{
@@ -281,7 +301,7 @@ public class Criterion
 			}
 			break;
 		case '\0':
-			token = new Token (Token.TOKEN_END);
+			token = new Token (TokenType.END);
 			break;
 		default:
 			throw new CriterionException("Unexpected end of expression at position " + charNr);
@@ -301,22 +321,27 @@ public class Criterion
 	{
 		Token result;
 		Token t = getLookAhead();
-		if (t.type == Token.TOKEN_NUMBER)
+		if (t.type == TokenType.NUMBER_LITERAL)
 		{
 			getToken();
 			result = t;
 		}
-		else if (t.type == Token.TOKEN_ID)
+		else if (t.type == TokenType.STRING_LITERAL)
 		{
 			getToken();
 			result = t;
 		}
-		else if (t.type == Token.TOKEN_LPAREN)
+		else if (t.type == TokenType.ID)
+		{
+			getToken();
+			result = t;
+		}
+		else if (t.type == TokenType.LPAREN)
 		{
 			getToken();
 			result = expression();
 			t = getToken();			
-			if (t.type != Token.TOKEN_RPAREN)
+			if (t.type != TokenType.RPAREN)
 			{
 				nextToken = null;
 				throw new CriterionException("Number of opening and closing brackets does not match");
@@ -335,30 +360,24 @@ public class Criterion
 		eats a subterm
 			forms:
 			subterm -> factor morefactors
-			morefactors -> "<=|=|>=|>|<" factor morefactors
+			morefactors -> "<=|=|>=|>|<" factor
 						| empty
 	 */
 	private Token subterm() throws CriterionException
 	{
 		Token result;
 		result = factor();
-		while (true)
+		Token t = getLookAhead();
+		if (t.type == TokenType.EQ || t.type == TokenType.GE ||
+				t.type == TokenType.LE || t.type == TokenType.GT ||
+				t.type == TokenType.LT || t.type == TokenType.NE)
 		{
-			Token t = getLookAhead();
-			if (t.type == Token.TOKEN_EQ || t.type == Token.TOKEN_GE ||
-					t.type == Token.TOKEN_LE || t.type == Token.TOKEN_GT ||
-					t.type == Token.TOKEN_LT)
-			{
-				getToken();
-				t.left = result;
-				t.right = subterm();
-				result = t;
-			}
-			else
-			{
-				return result;
-			}
-		}		
+			getToken();
+			t.left = result;
+			t.right = factor();
+			result = t;
+		}
+		return result;
 	}
 
 	/*
@@ -375,7 +394,7 @@ public class Criterion
 		while (true)
 		{
 			Token t = getLookAhead();
-			if (t.type == Token.TOKEN_AND)
+			if (t.type == TokenType.AND)
 			{
 				getToken();
 				t.left = result;
@@ -403,7 +422,7 @@ public class Criterion
 		while (true)
 		{
 			Token t = getLookAhead();
-			if (t.type == Token.TOKEN_OR)
+			if (t.type == TokenType.OR)
 			{
 				getToken();
 				t.left = result;			
@@ -417,30 +436,33 @@ public class Criterion
 		}
 	}
 
+	private enum TokenType {
+		END,
+		NUMBER_LITERAL,
+		STRING_LITERAL,
+		ID,
+		EQ,
+		GT,
+		LT,
+		GE,
+		LE,
+		NE,
+		AND,
+		OR,
+		LPAREN,
+		RPAREN;
+	}
+
 	/**
 	 * This class represents a single token of an expression
 	 */
 	private class Token {
-		public int type;
-		public static final int TOKEN_NONE = -2;
-		public static final int TOKEN_END = -1;
-		public static final int TOKEN_NUMBER = 0;
-		public static final int TOKEN_ID = 1;
-		public static final int TOKEN_EQ = 2;
-		public static final int TOKEN_GT = 3;
-		public static final int TOKEN_LT = 4;
-		public static final int TOKEN_GE = 5;
-		public static final int TOKEN_LE = 6;
-		public static final int TOKEN_AND = 7;
-		public static final int TOKEN_OR = 8;
-		public static final int TOKEN_LPAREN = 9;
-		public static final int TOKEN_RPAREN = 10;
+		private TokenType type;
+		private Object literalValue; // in case it is a number or string literal
+		private String symbolValue; // in case it is a symbol or string literal
 
-		public double numberValue; // in case it is a number...
-		public String symbolValue; // in case it is a symbol
-
-		Token left = null;
-		Token right = null;
+		private Token left = null;
+		private Token right = null;
 
 		void printMe (int level)
 		{
@@ -450,46 +472,54 @@ public class Criterion
 			}
 			switch (type)
 			{
-			case Token.TOKEN_AND:
+			case AND:
 				Logger.log.trace("AND");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
-			case Token.TOKEN_OR:
+			case OR:
 				Logger.log.trace("OR");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
-			case Token.TOKEN_LE:
+			case LE:
 				Logger.log.trace("<=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
-			case Token.TOKEN_LT:
+			case LT:
 				Logger.log.trace("<");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
-			case Token.TOKEN_GT:
+			case GT:
 				Logger.log.trace(">");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
-			case Token.TOKEN_GE:
+			case GE:
 				Logger.log.trace(">=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
-			case Token.TOKEN_EQ:
+			case EQ:
 				Logger.log.trace("=");
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
-			case Token.TOKEN_ID:
+			case NE:
+				Logger.log.trace("<>");
+				left.printMe(level + 1);
+				right.printMe(level + 1);
+				break;
+			case ID:
 				Logger.log.trace("ID: " + symbolValue);
 				break;
-			case Token.TOKEN_NUMBER:
-				Logger.log.trace("NUMBER: " + numberValue);
+			case NUMBER_LITERAL:
+				Logger.log.trace("NUMBER_LITERAL: " + literalValue);
+				break;
+			case STRING_LITERAL:
+				Logger.log.trace("STRING_LITERAL: " + literalValue);
 				break;
 			}
 		}
@@ -497,107 +527,114 @@ public class Criterion
 		/**
 		 * returns true if arg is true, returns false if arg is false or null
 		 */
-		private boolean nullIsFalse(Boolean arg)
+		private boolean trueNotNull(Object arg) throws CriterionException
 		{
-			return arg == null ? false : arg;
+			if (arg != null && !(arg instanceof Boolean)) throw new CriterionException
+				("Expected type Boolean, got " + arg.getClass().getCanonicalName());
+			return arg == null ? false : (Boolean)arg;
 		}
 		
 		Boolean evaluateAsBool() throws CriterionException
 		{
-			switch (type)
-			{
-			case Token.TOKEN_AND:
-				if (nullIsFalse(left.evaluateAsBool()) && nullIsFalse(right.evaluateAsBool()))
-					return true;
-				else
-					return false;
-			case Token.TOKEN_OR:
-				if (nullIsFalse(left.evaluateAsBool()) || nullIsFalse(right.evaluateAsBool()))
-					return true;
-				else
-					return false;
-			case Token.TOKEN_EQ:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				if (lval.equals(rval))
-					return true;
-				else
-					return false;
-				}
-			case Token.TOKEN_GE:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				if (lval >= rval)
-					return true;
-				else
-					return false;
-				}
-			case Token.TOKEN_LE:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				if (lval <= rval)
-					return true;
-				else
-					return false;
-				}
-			case Token.TOKEN_GT:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				if (lval > rval)
-					return true;
-				else
-					return false;
-				}
-			case Token.TOKEN_LT:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				if (lval < rval)
-					return true;
-				else
-					return false;
-				}
-			}
-			throw new CriterionException("Can't evaluate this expression as boolean");
+			Object value = evaluate();
+			if (value instanceof Boolean) return (Boolean)value;
+			else return null;
+		}
+
+		Double evaluateAsDouble() throws CriterionException
+		{
+			Object value = evaluate();
+			if (value instanceof Double) return (Double)value;
+			else return null;
 		}
 
 		/**
 		 * May return null, meaning "NA"
 		 */
-		Double evaluateAsDouble() throws CriterionException
+		Object evaluate() throws CriterionException
 		{
 			String error = "";
 			switch (type)
 			{
-			case Token.TOKEN_ID:
+			case AND:
+				return Boolean.valueOf(
+						trueNotNull(left.evaluateAsBool()) && 
+						trueNotNull(right.evaluateAsBool()));
+			case OR:
+				return Boolean.valueOf(
+						trueNotNull(left.evaluateAsBool()) || 
+						trueNotNull(right.evaluateAsBool()));
+			case EQ:
+				{
+				Object lval = left.evaluate();
+				Object rval = right.evaluate();
+				return Boolean.valueOf (
+						lval == null ? rval == null : lval.equals(rval));
+				}
+			case NE:
+				{
+				Object lval = left.evaluate();
+				Object rval = right.evaluate();
+				return Boolean.valueOf (
+						!(lval == null ? rval == null : lval.equals(rval)));
+				}
+			case GE:
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				return Boolean.valueOf (lval >= rval);
+				}
+			case LE:
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				return Boolean.valueOf (lval <= rval);
+				}
+			case GT:
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				return Boolean.valueOf (lval > rval);
+				}
+			case LT:
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				return Boolean.valueOf (lval < rval);
+				}
+			case ID:
 				if(!symTab.containsKey(symbolValue)) {//symbol has no value
 					error = "Sample '[" + symbolValue + "]' has no value";
 					break;
 				}
-				Object value = symTab.get(symbolValue);
-				if (value instanceof Double) return (Double)value;
-				else return null;
-			case Token.TOKEN_NUMBER:
-				return numberValue;
+				return symTab.get(symbolValue);
+			case NUMBER_LITERAL:
+				return literalValue;
+			case STRING_LITERAL:
+				return literalValue;
 			default:
-				error = "Can't evaluate this expression as numeric";
+				error = "Can't evaluate this expression";
 			}
 			throw new CriterionException(error);
 		}
 
-		Token (int aType) { type = aType; numberValue = 0; symbolValue = ""; }
-		Token (int aType, double aNumberValue) { type = aType; numberValue = aNumberValue; symbolValue = ""; }
-		Token (int aType, String aSymbolValue) { type = aType; numberValue = 0; symbolValue = aSymbolValue; }
+		Token (TokenType aType) { type = aType; literalValue = 0; symbolValue = ""; }
+		Token (TokenType aType, String aValue)
+		{ 
+			type = aType; 
+			if (aType == TokenType.ID)
+			{
+				literalValue = null; symbolValue = (String)aValue;
+			}
+			else
+			{
+				literalValue = aValue; symbolValue = "";
+			}
+		}
+		Token (TokenType aType, double aValue) { type = aType; literalValue = aValue; symbolValue = ""; }
 	}
 }
-
-

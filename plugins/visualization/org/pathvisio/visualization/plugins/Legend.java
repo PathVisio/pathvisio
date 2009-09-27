@@ -22,6 +22,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -38,6 +40,7 @@ import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.visualization.colorset.ColorSetObject;
+import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 
 /**
 * This class shows a legend for the currently loaded visualization and color-sets.
@@ -88,15 +91,21 @@ public class Legend extends JPanel implements VisualizationListener {
 		
 		boolean advanced = colorSetManager.getColorSets().size() > 1;
 		
+		Set<ColorSet> usedColorSets = new HashSet<ColorSet>();
+		
 		for (VisualizationMethod vm : v.getMethods())
 		{
 			if (vm instanceof ColorByExpression)
 			{
 				ypos = drawSamples (g, (ColorByExpression)vm, xpos, ypos, advanced);
+				for (ConfiguredSample cs : ((ColorByExpression)vm).getConfiguredSamples())
+				{
+					usedColorSets.add(cs.getColorSet());
+				}
 			}
 		}
 		
-		for (ColorSet cs : colorSetManager.getColorSets())
+		for (ColorSet cs : usedColorSets)
 		{
 			ypos = drawColorset(g, cs, xpos, ypos, advanced);
 		}

@@ -47,7 +47,7 @@ public class Criterion
 	/** operators that can be used in a Criterion */
 	public static final String[] TOKENS = {"AND", "OR", "=", "<", ">", "<=", ">="};
 	
-	private Map<String, Double> symTab = new HashMap<String, Double>();
+	private Map<String, Object> symTab = new HashMap<String, Object>();
 
 	private String expression = "";
 		
@@ -83,9 +83,8 @@ public class Criterion
 	}
 	
 	/** 
-	 * Set symbol values. Filters out any values that are not of type Double,
-	 * currently Criterion can not do calculations with them.
-	 * 
+	 * Set symbol values.
+	 * <p>
 	 * You have to set all symbol values together. Any previously set
 	 * symbol values are cleared.
 	 */
@@ -95,7 +94,7 @@ public class Criterion
 		for(String key : data.keySet()) 
 		{
 			Object value = data.get(key);
-			if(value instanceof Double) symTab.put (key, (Double)value);
+			symTab.put (key, value);
 		}
 	}
 	
@@ -104,7 +103,7 @@ public class Criterion
 		if (expression == null) throw new NullPointerException();
 		setSampleData(data);
 		Object value = data.get(displaySampleId);
-		if(value instanceof Double) symTab.put (DISPLAY_SAMPLE, (Double)value);
+		symTab.put (DISPLAY_SAMPLE, value);
 
 		return evaluate();
 	}
@@ -495,50 +494,86 @@ public class Criterion
 			}
 		}
 
-		boolean evaluateAsBool() throws CriterionException
+		/**
+		 * returns true if arg is true, returns false if arg is false or null
+		 */
+		private boolean nullIsFalse(Boolean arg)
+		{
+			return arg == null ? false : arg;
+		}
+		
+		Boolean evaluateAsBool() throws CriterionException
 		{
 			switch (type)
 			{
 			case Token.TOKEN_AND:
-				if (left.evaluateAsBool() && right.evaluateAsBool())
+				if (nullIsFalse(left.evaluateAsBool()) && nullIsFalse(right.evaluateAsBool()))
 					return true;
 				else
 					return false;
 			case Token.TOKEN_OR:
-				if (left.evaluateAsBool() || right.evaluateAsBool())
+				if (nullIsFalse(left.evaluateAsBool()) || nullIsFalse(right.evaluateAsBool()))
 					return true;
 				else
 					return false;
 			case Token.TOKEN_EQ:
-				if (left.evaluateAsDouble() == right.evaluateAsDouble())
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				if (lval.equals(rval))
 					return true;
 				else
 					return false;
+				}
 			case Token.TOKEN_GE:
-				if (left.evaluateAsDouble() >= right.evaluateAsDouble())
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				if (lval >= rval)
 					return true;
 				else
 					return false;
+				}
 			case Token.TOKEN_LE:
-				if (left.evaluateAsDouble() <= right.evaluateAsDouble())
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				if (lval <= rval)
 					return true;
 				else
 					return false;
+				}
 			case Token.TOKEN_GT:
-				if (left.evaluateAsDouble() > right.evaluateAsDouble())
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				if (lval > rval)
 					return true;
 				else
 					return false;
+				}
 			case Token.TOKEN_LT:
-				if (left.evaluateAsDouble() < right.evaluateAsDouble())
+				{
+				Double lval = left.evaluateAsDouble();
+				Double rval = right.evaluateAsDouble();
+				if (lval == null || rval == null) return null;
+				if (lval < rval)
 					return true;
 				else
 					return false;
+				}
 			}
 			throw new CriterionException("Can't evaluate this expression as boolean");
 		}
 
-		double evaluateAsDouble() throws CriterionException
+		/**
+		 * May return null, meaning "NA"
+		 */
+		Double evaluateAsDouble() throws CriterionException
 		{
 			String error = "";
 			switch (type)
@@ -548,7 +583,9 @@ public class Criterion
 					error = "Sample '[" + symbolValue + "]' has no value";
 					break;
 				}
-				return (Double)symTab.get(symbolValue);
+				Object value = symTab.get(symbolValue);
+				if (value instanceof Double) return (Double)value;
+				else return null;
 			case Token.TOKEN_NUMBER:
 				return numberValue;
 			default:

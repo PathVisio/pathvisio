@@ -17,12 +17,19 @@
 package org.pathvisio.visualization.colorset;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.pathvisio.preferences.PreferenceManager;
+
 import junit.framework.TestCase;
 
 public class Test extends TestCase 
 {
 	public void testColorSet()
 	{
+		PreferenceManager.init();
 		ColorSet cs = new ColorSet("Default");
 		assertEquals (cs.getName(), "Default");
 	}
@@ -30,6 +37,7 @@ public class Test extends TestCase
 	
 	public void testGradient()
 	{
+		PreferenceManager.init();
 		ColorSet cs = new ColorSet("Test");
 		ColorGradient cg = new ColorGradient (cs);
 		assertEquals (cg.getColorValuePairs().size(), 0);
@@ -44,4 +52,75 @@ public class Test extends TestCase
 		assertEquals (cg.getColorValuePairs().size(), 2);
 		assertEquals (cg.getColor(0.0), new Color (127,0,127));
 	}
+	
+	Map<String, Object> symbols = new HashMap<String, Object>();
+	
+	boolean evalExpr(String expr) throws Criterion.CriterionException
+	{
+		Criterion crit = new Criterion();
+		crit.setExpression(expr, new ArrayList<String>(symbols.keySet()));
+		return crit.evaluate (symbols);
+	}
+	
+	boolean checkSyntax(String expr)
+	{
+		Criterion crit = new Criterion();
+		return (crit.setExpression(expr, new ArrayList<String>(symbols.keySet()))) == null;
+	}
+	
+	public void testExpressions() throws Criterion.CriterionException
+	{
+		symbols.put ("x", 5.0);
+		symbols.put ("y", -1.0);
+	
+		assertFalse (checkSyntax ("5 = 5 = 5"));
+		assertFalse (checkSyntax ("5 < 6 > 5"));
+		assertFalse (checkSyntax ("abcd"));
+		assertFalse (checkSyntax ("[x] < -0.5 3"));
+		assertFalse (checkSyntax ("[x] < -0.5 AND"));
+		assertFalse (checkSyntax ("([x] < -0.5"));
+		assertTrue  (checkSyntax ("([x] < -0.5)"));
+		assertFalse (checkSyntax ("x = 5.0.0"));
+		
+		assertFalse (evalExpr ("[x] < -0.5"));
+		assertTrue  (evalExpr ("5.0 > [y]"));
+		assertTrue  (evalExpr ("[x] = 5.0"));
+		assertFalse (evalExpr ("[y] = -5.0"));
+		assertFalse (evalExpr ("[x] < 0 AND [y] < 0"));
+		assertFalse (evalExpr ("[x] < 0 AND [y] > 0"));
+		assertTrue  (evalExpr ("[x] > 0 AND [y] < 0"));
+		assertFalse (evalExpr ("[x] > 0 AND [y] > 0"));
+		assertTrue  (evalExpr ("[x] = 0 AND [y] = 0 OR [x] = 5.0 AND [y] = -1.0"));
+		assertTrue  (evalExpr ("([x] = 0 AND [y] = 0) OR ([x] = 5.0 AND [y] = -1.0)"));
+		assertFalse (evalExpr ("[x] = 0 AND ([y] = 0 OR [x] = -5.0) AND [y] = -1.0"));
+		
+		symbols.clear();
+		symbols.put ("jouw waarde", 5.0);
+		symbols.put ("mijn waarde", -1.0);
+		assertTrue  (evalExpr ("[jouw waarde] < 0 OR [mijn waarde] < 0"));
+		assertFalse (evalExpr ("[jouw waarde] < 0 OR [mijn waarde] > 0"));
+		assertTrue  (evalExpr ("[jouw waarde] > 0 OR [mijn waarde] < 0"));
+		assertTrue  (evalExpr ("[jouw waarde] > 0 OR [mijn waarde] > 0"));
+	}
+
+	/* added for bug 952 
+	 * test correct dealing of NA values */
+	public void testExprWithNA() throws Criterion.CriterionException
+	{
+		symbols.put ("var1", "NA");
+		symbols.put ("var2", 1.0);
+		
+		assertTrue  (evalExpr ("([var2] > 0) OR ([var1] > 0)")); // true OR NA				
+		assertTrue  (evalExpr ("([var1] > 0) OR ([var2] > 0)")); // NA OR true
+		
+		assertFalse (evalExpr ("([var2] < 0) OR ([var1] < 0)")); // false OR NA 
+		assertFalse  (evalExpr ("([var1] < 0) OR ([var2] < 0)")); // NA OR false
+		
+		assertFalse (evalExpr ("([var2] < 0) AND ([var1] < 0)")); // false AND NA
+		assertFalse  (evalExpr ("([var1] < 0) AND ([var2] < 0)")); // NA AND false
+		
+		assertFalse (evalExpr ("([var2] > 0) AND ([var1] > 0)")); // true AND NA	
+		assertFalse  (evalExpr ("([var1] > 0) AND ([var2] > 0)")); // NA AND true
+	}
+	
 }

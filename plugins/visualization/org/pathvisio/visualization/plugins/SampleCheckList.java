@@ -19,7 +19,6 @@ package org.pathvisio.visualization.plugins;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +45,9 @@ public class SampleCheckList extends JCheckBoxList {
 		super(false);
 		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
 		if(gex != null) {
-			List<Sample> samples = new ArrayList<Sample>();
 			try
 			{
-				samples.addAll(gex.getSamples().values());
+				setSamples(gex.getOrderedSamples(), selection);
 			}
 			catch (IDMapperException ex)
 			{
@@ -57,11 +55,6 @@ public class SampleCheckList extends JCheckBoxList {
 				Logger.log.error ("Could not fetch samples from database", ex);
 			}
 			
-			Collections.sort(samples);
-			
-			setSamples(
-					samples, selection
-			);
 		} else {
 			setSamples(
 					new ArrayList<Sample>(), new ArrayList<Sample>()

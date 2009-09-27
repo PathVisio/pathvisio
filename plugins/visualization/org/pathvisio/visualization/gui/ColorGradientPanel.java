@@ -47,7 +47,7 @@ public class ColorGradientPanel extends JPanel
 			StringBuilder cspecs = new StringBuilder();
 			String sep = ", pref:grow, ";
 
-			for(ColorValuePair cvp : colors) {
+			for(int i = 0; i < colors.size(); ++i) {
 				cspecs.append("20dlu" + sep);
 			}
 			setLayout(new FormLayout(

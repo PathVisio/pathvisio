@@ -68,7 +68,7 @@ public class ColorRulePanel extends JPanel
 	 */
 	private void setExpresion()
 	{
-		List<String> sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames();
+		List<String> sampleNames = gexManager.getCurrentGex().getSampleNames();
 		String expr = txtExpr.getText();
 		
 		String error = cr.setExpression(expr, sampleNames);
@@ -125,8 +125,11 @@ public class ColorRulePanel extends JPanel
 		lstSamples.setEnabled(active);
 	}
 	
-	ColorRulePanel ()
+	private final GexManager gexManager;
+	
+	ColorRulePanel (GexManager gexManager)
 	{
+		this.gexManager = gexManager;
 		FormLayout layout = new FormLayout("4dlu, pref, 4dlu, pref, 4dlu", 
 		"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
 
@@ -172,7 +175,7 @@ public class ColorRulePanel extends JPanel
 			}
 		} );
 		
-		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+		SimpleGex gex = gexManager.getCurrentGex();
 		final List<String> sampleNames = gex.getSampleNames();
 		lstSamples = new JList(sampleNames.toArray());
 

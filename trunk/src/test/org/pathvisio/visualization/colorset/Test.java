@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
 
 import junit.framework.TestCase;
@@ -65,7 +66,8 @@ public class Test extends TestCase
 	boolean checkSyntax(String expr)
 	{
 		Criterion crit = new Criterion();
-		return (crit.setExpression(expr, new ArrayList<String>(symbols.keySet()))) == null;
+		String result = crit.setExpression(expr, new ArrayList<String>(symbols.keySet()));
+		return (result == null);
 	}
 	
 	public void testExpressions() throws Criterion.CriterionException
@@ -110,8 +112,8 @@ public class Test extends TestCase
 		symbols.put ("var1", "NA");
 		symbols.put ("var2", 1.0);
 		
-		assertTrue  (evalExpr ("([var2] > 0) OR ([var1] > 0)")); // true OR NA				
 		assertTrue  (evalExpr ("([var1] > 0) OR ([var2] > 0)")); // NA OR true
+		assertTrue  (evalExpr ("([var2] > 0) OR ([var1] > 0)")); // true OR NA				
 		
 		assertFalse (evalExpr ("([var2] < 0) OR ([var1] < 0)")); // false OR NA 
 		assertFalse  (evalExpr ("([var1] < 0) OR ([var2] < 0)")); // NA OR false
@@ -123,4 +125,18 @@ public class Test extends TestCase
 		assertFalse  (evalExpr ("([var1] > 0) AND ([var2] > 0)")); // NA AND true
 	}
 	
+	public void testStringLiteral () throws Criterion.CriterionException
+	{
+		symbols.put ("color", "red");
+		symbols.put ("y", -1.0);
+		assertFalse (checkSyntax ("\"red\" > [color]"));
+		assertTrue  (checkSyntax ("[color] = \"red\""));
+		assertTrue  (checkSyntax ("\"red\" = [color]"));
+		assertTrue  (evalExpr ("[color] = \"red\""));
+		assertFalse (evalExpr ("[color] = \"green\""));
+		assertTrue  (evalExpr ("\"green\" <> [color]"));
+		assertFalse (evalExpr ("\"red\" <> [color]"));
+		assertTrue  (evalExpr ("\"green\" <> \"red\""));
+		assertTrue  (evalExpr ("\"green\" = \"green\""));
+	}
 }

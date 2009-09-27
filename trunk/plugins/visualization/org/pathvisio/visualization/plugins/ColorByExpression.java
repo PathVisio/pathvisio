@@ -70,6 +70,7 @@ public class ColorByExpression extends VisualizationMethod {
 	List<URL> imageURLs;
 
 	private final GexManager gexManager;
+	GexManager getGexManager() { return gexManager; }
 	
 	private List<URL> defaultURLs() {
 		return new ArrayList<URL>(Arrays.asList(new URL[] {

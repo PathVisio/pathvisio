@@ -28,6 +28,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import org.pathvisio.gex.GexManager;
 import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
@@ -42,11 +43,13 @@ public class ColorSetChooser extends JPanel implements ActionListener {
 	static final String ACTION_REMOVE = "Remove";
 	static final String ACTION_MODIFY = "Modify";
 	
-	ColorSetManager csMgr;
-	ColorSetCombo colorSetCombo;
-
-	public ColorSetChooser(ColorSetManager csMgr) {
+	private final ColorSetManager csMgr;
+	private ColorSetCombo colorSetCombo;
+	private final GexManager gexManager;
+	
+	public ColorSetChooser(ColorSetManager csMgr, GexManager gexManager) {
 		this.csMgr = csMgr;
+		this.gexManager = gexManager;
 
 		setLayout(new FormLayout(
 				"fill:pref:grow, 4dlu, pref", "pref"
@@ -84,7 +87,7 @@ public class ColorSetChooser extends JPanel implements ActionListener {
 		if(ACTION_NEW.equals(action)) {
 
 			ColorSet cs = new ColorSet(csMgr);
-			ColorSetDlg dlg = new ColorSetDlg(cs, null, this);
+			ColorSetDlg dlg = new ColorSetDlg(cs, null, this, gexManager);
 			dlg.setVisible(true);
 			csMgr.addColorSet(cs);
 			colorSetCombo.refresh();
@@ -99,7 +102,7 @@ public class ColorSetChooser extends JPanel implements ActionListener {
 		} else if(ACTION_MODIFY.equals(action)) {
 			ColorSet cs = colorSetCombo.getSelectedColorSet();
 			if(cs != null) {
-				ColorSetDlg dlg = new ColorSetDlg(cs, null, this);
+				ColorSetDlg dlg = new ColorSetDlg(cs, null, this, gexManager);
 				dlg.setVisible(true);
 			}
 			colorSetCombo.refresh();

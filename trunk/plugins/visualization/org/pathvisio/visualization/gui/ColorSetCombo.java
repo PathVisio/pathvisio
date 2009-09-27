@@ -36,6 +36,9 @@ import javax.swing.border.Border;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
+/**
+ * Drop-down box that lets you select one of the existing renderers from a list.
+ */
 public class ColorSetCombo extends JComboBox implements ActionListener {
 	
 	ColorSetManager csMgr;
@@ -65,6 +68,10 @@ public class ColorSetCombo extends JComboBox implements ActionListener {
 		}
 	}
 	
+	/** 
+	 * ListCellRenderer that renders a ColorSet, including rules and gradients.
+	 * Can be used to preview colorSets in a comboBox or list.
+	 */
 	class ColorSetRenderer extends JLabel implements ListCellRenderer 
 	{
 

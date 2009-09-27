@@ -22,6 +22,7 @@ import java.awt.Frame;
 
 import javax.swing.JScrollPane;
 
+import org.pathvisio.gex.GexManager;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.visualization.colorset.ColorSet;
 
@@ -35,11 +36,11 @@ public class ColorSetDlg extends OkCancelDialog
 {
 	ColorSet cs;
 	
-	public ColorSetDlg (ColorSet cs, Frame frame, Component locationComp)
+	public ColorSetDlg (ColorSet cs, Frame frame, Component locationComp, GexManager gexManager)
 	{
 		super (frame, "Edit Color Set", locationComp, true, true);
 		this.cs = cs;
-		setDialogComponent(new JScrollPane(new ColorSetPanel(cs)));
+		setDialogComponent(new JScrollPane(new ColorSetPanel(cs, gexManager)));
 		setMinimumSize(new Dimension(200, 300));
 		pack();
 	}

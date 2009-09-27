@@ -168,14 +168,14 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			List<Sample> selected = method.getSelectedSamples();
 			for (Sample s : selected) if (s == null) throw new NullPointerException();
 			sampleList = new SortSampleCheckList(
-					selected
+					selected, method.getGexManager()
 			);
 			sampleList.getList().addActionListener(this);
 			sampleList.getList().setActionCommand(ACTION_SAMPLE);
 			sampleList.getList().getModel().addListDataListener(this);
 			ColorSetManager csm = method.getVisualization()
 											.getManager().getColorSetManager();
-			ColorSetChooser csChooser = new ColorSetChooser(csm);
+			ColorSetChooser csChooser = new ColorSetChooser(csm, method.getGexManager());
 			colorSetCombo = csChooser.getColorSetCombo();
 			colorSetCombo.setActionCommand(ACTION_COMBO);
 			colorSetCombo.addActionListener(this);
@@ -251,7 +251,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			));
 			
 			sampleList = new SortSampleCheckList(
-					method.getSelectedSamples()
+					method.getSelectedSamples(), method.getGexManager()
 			);
 			sampleList.getList().addActionListener(this);
 			sampleList.getList().setActionCommand(ACTION_SAMPLE);
@@ -367,7 +367,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			
 			ColorSetManager csm = method.getVisualization()
 			.getManager().getColorSetManager();
-			ColorSetChooser csChooser = new ColorSetChooser(csm);
+			ColorSetChooser csChooser = new ColorSetChooser(csm, method.getGexManager());
 			colorSetCombo = csChooser.getColorSetCombo();
 			colorSetCombo.setActionCommand(ACTION_COMBO);
 			colorSetCombo.addActionListener(this);

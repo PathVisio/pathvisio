@@ -41,9 +41,9 @@ public class SampleCheckList extends JCheckBoxList {
 	Map<JCheckBox, Sample> checkbox2sample = new HashMap<JCheckBox, Sample>();
 	Map<Sample, JCheckBox> sample2checkbox = new HashMap<Sample, JCheckBox>();
 	
-	public SampleCheckList(List<? extends Sample> selection) {
+	public SampleCheckList(List<? extends Sample> selection, GexManager gexManager) {
 		super(false);
-		SimpleGex gex = GexManager.getCurrent().getCurrentGex();
+		SimpleGex gex = gexManager.getCurrentGex();
 		if(gex != null) {
 			try
 			{

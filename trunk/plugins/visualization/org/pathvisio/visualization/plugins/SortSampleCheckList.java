@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
+import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.Sample;
 import org.pathvisio.util.Resources;
 
@@ -53,8 +54,8 @@ public class SortSampleCheckList extends JPanel implements ActionListener {
 	
 	SampleCheckList checkList;
 	
-	public SortSampleCheckList(List<? extends Sample> selected) {
-		checkList = new SampleCheckList(selected);
+	public SortSampleCheckList(List<? extends Sample> selected, GexManager gexManager) {
+		checkList = new SampleCheckList(selected, gexManager);
 
 		setLayout(new FormLayout(
 				"fill:pref:grow, 2dlu, pref", 

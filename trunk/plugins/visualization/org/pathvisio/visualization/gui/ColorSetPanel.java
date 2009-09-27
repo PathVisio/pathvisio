@@ -41,6 +41,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.GexManager;
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
@@ -71,7 +72,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 	
 	private JTable rulesTable;
 	
-	ColorSetPanel (ColorSet cs)
+	ColorSetPanel (ColorSet cs, GexManager gexManager)
 	{
 		colorSet = cs;
 
@@ -103,7 +104,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		gradientPanel.add(gradientCombo, cc.xy(3, 1));
 		
 		add(new JLabel("Rules:"), cc.xy(1, 3, "l, c"));
-		rulesPanel = new ColorRulePanel();
+		rulesPanel = new ColorRulePanel(gexManager);
 		
 		rulesPanel.setBorder(BorderFactory.createEtchedBorder());
 		
@@ -129,6 +130,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		refresh();
 	}
 
+	/** TableCellRenderer that displays a single RGB color */
 	public class ColorRenderer extends JLabel implements TableCellRenderer 
 	{
 

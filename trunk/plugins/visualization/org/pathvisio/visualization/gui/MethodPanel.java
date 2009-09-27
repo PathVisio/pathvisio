@@ -30,6 +30,9 @@ import javax.swing.JPanel;
 
 import org.pathvisio.visualization.VisualizationMethod;
 
+/**
+ * Wraps around the configuration panel of a VisualizationMethod
+ */
 public class MethodPanel extends JPanel implements ActionListener {
 	VisualizationMethod method;
 	JPanel configPanel;

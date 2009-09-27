@@ -259,7 +259,7 @@ public class TextByExpression extends VisualizationMethod
 		);
 		panel.setLayout(layout);
 		
-		sampleList = new SortSampleCheckList(useSamples);
+		sampleList = new SortSampleCheckList(useSamples, gexManager);
 
 		sampleList.getList().setActionCommand(ACTION_SAMPLE);
 		sampleList.getList().getModel().addListDataListener(this);

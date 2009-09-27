@@ -65,7 +65,7 @@ public class BackpageExpression implements BackpageHook
 		}
 		
 		String dataString = "";
-		for(Sample s : gex.getSamples().values())
+		for(Sample s : gex.getOrderedSamples())
 		{
 			dataString += "<TR><TH>" + s.getName();
 			for(ReporterData d : pwData)

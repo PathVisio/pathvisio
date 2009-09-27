@@ -160,6 +160,21 @@ public class SimpleGex
 	}
 
 	/**
+	 * Returns samples as a list, ordered by Id.
+	 * <p>
+	 * Note that there is no guarantee that the index of a Sample in the list
+	 * is equal to the id of that sample.
+	 * In other words, result.get(n).getId() < result.get(n+1).getId(), but 
+	 * NOT: result.get(n).getId() == n
+	 */
+	public List<Sample> getOrderedSamples() throws IDMapperException
+	{
+		List<Sample> result = new ArrayList<Sample>(getSamples().values());
+		Collections.sort (result);
+		return result;
+	}
+
+	/**
 	 * Reads a list of Samples from the database,
 	 * and returns them, indexed by key.
 	 * 

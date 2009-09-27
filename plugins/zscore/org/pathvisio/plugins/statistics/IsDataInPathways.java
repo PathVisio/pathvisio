@@ -40,8 +40,8 @@ import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
-import org.pathvisio.util.Utils;
 import org.pathvisio.util.PathwayParser.ParseException;
+import org.pathvisio.util.Utils;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -96,7 +96,7 @@ public class IsDataInPathways
 			ReporterData data = gex.getRow(i);
 			Xref src = data.getXref();
 			counts.put (src, new ArrayList<String>());
-			for (Xref dest : gdb.mapID(data.getXref(), null))
+			for (Xref dest : gdb.mapID(data.getXref()))
 			{
 				dataRefs.put (dest, src);
 			}

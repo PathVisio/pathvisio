@@ -29,7 +29,6 @@ import org.bridgedb.AttributeMapper;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
@@ -157,7 +156,7 @@ public class BackpageTextProvider implements ApplicationEventListener, Selection
 		public static String getHtml(PathwayElement e, IDMapper gdb) {
 			try
 			{
-				Set<Xref> crfs = gdb.mapID(e.getXref(), null);
+				Set<Xref> crfs = gdb.mapID(e.getXref());
 				crfs.add(e.getXref());
 				if(crfs.size() == 0) return "";
 				StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");

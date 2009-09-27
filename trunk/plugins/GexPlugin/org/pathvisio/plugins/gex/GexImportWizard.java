@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui.swing;
+package org.pathvisio.plugins.gex;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -60,8 +60,8 @@ import org.bridgedb.rdb.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gex.GexTxtImporter;
-import org.pathvisio.gex.ImportInformation;
+import org.pathvisio.gui.swing.DataSourceModel;
+import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;

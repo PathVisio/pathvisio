@@ -242,7 +242,7 @@ public class SearchPane extends JPanel
 				"", pk, false, true);
 				
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
-			protected Boolean doInBackground() throws Exception {
+			protected Boolean doInBackground() {
 				pk.setTaskName("Opening pathway");
 				try {
 					engine.setWrapper (swingEngine.createWrapper());

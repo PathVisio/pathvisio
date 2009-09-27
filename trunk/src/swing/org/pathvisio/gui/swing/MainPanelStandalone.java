@@ -38,7 +38,6 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.gex.BackpageExpression;
-import org.pathvisio.gex.GexManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Resources;
@@ -112,9 +111,12 @@ public class MainPanelStandalone extends MainPanel
 		mb.add(helpMenu);
 	}
 	
+	private final PvDesktop desktop;
+	
 	public MainPanelStandalone(PvDesktop desktop)
 	{
 		super(desktop.getSwingEngine(), null);
+		this.desktop = desktop;
 		
 		standaloneActions = new StandaloneActions(desktop);
 	}
@@ -128,7 +130,7 @@ public class MainPanelStandalone extends MainPanel
 		sidebarTabbedPane.addTab ("Search", searchPane); 
 
 		// backpage hook for showing expression data.
-		bpt.addBackpageHook(new BackpageExpression(swingEngine.getGdbManager(), GexManager.getCurrent()));
+		bpt.addBackpageHook(new BackpageExpression(swingEngine.getGdbManager(), desktop.getGexManager()));
 	}
 
 	@Override

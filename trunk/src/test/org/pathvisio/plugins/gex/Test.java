@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gex;
+package org.pathvisio.plugins.gex;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +32,12 @@ import org.bridgedb.rdb.DataDerbyDirectory;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.bridgedb.rdb.SimpleGdb;
 import org.bridgedb.rdb.SimpleGdbFactory;
+import org.pathvisio.gex.GexManager;
+import org.pathvisio.gex.ReporterData;
+import org.pathvisio.gex.Sample;
+import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.plugins.gex.GexTxtImporter;
+import org.pathvisio.plugins.gex.ImportInformation;
 import org.pathvisio.preferences.PreferenceManager;
 
 import junit.framework.TestCase;

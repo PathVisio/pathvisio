@@ -21,7 +21,6 @@ import java.util.List;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
 import org.pathvisio.model.PathwayElement;

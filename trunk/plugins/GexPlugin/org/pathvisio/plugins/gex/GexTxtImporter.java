@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gex;
+package org.pathvisio.plugins.gex;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -35,7 +35,9 @@ import org.bridgedb.Xref;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
-import org.pathvisio.gex.ImportInformation.ColumnType;
+import org.pathvisio.gex.GexManager;
+import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.plugins.gex.ImportInformation.ColumnType;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.ProgressKeeper;
 

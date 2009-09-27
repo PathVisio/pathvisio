@@ -14,12 +14,11 @@
 // See the License for the specific language governing permissions and 
 // limitations under the License.
 //
-package org.pathvisio.gui.swing;
+package org.pathvisio.plugins.gex;
 
 
 import javax.swing.table.AbstractTableModel;
 
-import org.pathvisio.gex.ImportInformation;
 
 /**
  * for table used in the header page of the GexImportWizard.

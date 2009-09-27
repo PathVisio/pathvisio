@@ -24,7 +24,6 @@ import javax.swing.JOptionPane;
 import org.bridgedb.rdb.DBConnector;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gui.swing.GexImportWizard;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;
 

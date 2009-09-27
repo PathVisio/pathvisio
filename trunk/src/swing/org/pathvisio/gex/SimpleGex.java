@@ -36,7 +36,6 @@ import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.rdb.DBConnector;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.util.ProgressKeeper;
@@ -294,7 +293,7 @@ public class SimpleGex
 			Set<Xref> destRefs = new HashSet<Xref>();
 			if (gdb.isConnected() && srcRef.getId() != null && srcRef.getDataSource() != null)
 			{
-				for (Xref destRef : gdb.mapID(srcRef, null))
+				for (Xref destRef : gdb.mapID(srcRef))
 				{
 					// add only the ones that are in the dest filter.
 					if (destFilter.contains(destRef.getDataSource()))

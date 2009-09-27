@@ -87,6 +87,8 @@ public class Criterion
 	 * <p>
 	 * You have to set all symbol values together. Any previously set
 	 * symbol values are cleared.
+	 * <p>
+	 * Note that only String or Double values will work reliably.
 	 */
 	private void setSampleData(Map<String, Object> data)
 	{
@@ -119,13 +121,12 @@ public class Criterion
 	private boolean evaluate () throws CriterionException
 	{
 		Token e = parse();
-		e.printMe(0);
-		Boolean result = e.evaluateAsBool();
-		if (result == null)
+		Object value = e.evaluate();
+		if (value instanceof Boolean) return (Boolean)value;
+		else 		
 		{
 			throw new CriterionException ("Expected Boolean expression");
 		}
-		else return result;	
 	}
 
 	private Token parse() throws CriterionException {
@@ -391,21 +392,15 @@ public class Criterion
 	{
 		Token result;
 		result = subterm();
-		while (true)
+		Token t = getLookAhead();
+		if (t.type == TokenType.AND)
 		{
-			Token t = getLookAhead();
-			if (t.type == TokenType.AND)
-			{
-				getToken();
-				t.left = result;
-				t.right = term();
-				result = t;
-			}
-			else
-			{
-				return result;
-			}
+			getToken();
+			t.left = result;
+			t.right = term();
+			result = t;
 		}
+		return result;
 	}
 
 
@@ -419,21 +414,15 @@ public class Criterion
 	{
 		Token result;
 		result = term();
-		while (true)
+		Token t = getLookAhead();
+		if (t.type == TokenType.OR)
 		{
-			Token t = getLookAhead();
-			if (t.type == TokenType.OR)
-			{
-				getToken();
-				t.left = result;			
-				t.right = expression();
-				result = t;
-			}
-			else
-			{
-				return result;
-			}				
+			getToken();
+			t.left = result;			
+			t.right = expression();
+			result = t;
 		}
+		return result;
 	}
 
 	private enum TokenType {
@@ -452,7 +441,16 @@ public class Criterion
 		LPAREN,
 		RPAREN;
 	}
-
+	/**
+	 * returns true if arg is true, returns false if arg is false or null
+	 */
+	private boolean trueNotNull(Object arg) throws CriterionException
+	{
+		if (arg != null && !(arg instanceof Boolean)) throw new CriterionException
+			("Expected type Boolean, got " + arg.getClass().getCanonicalName());
+		return arg == null ? false : (Boolean)arg;
+	}
+	
 	/**
 	 * This class represents a single token of an expression
 	 */
@@ -466,146 +464,84 @@ public class Criterion
 
 		void printMe (int level)
 		{
+			String result = "";
 			for (int i = 0; i < level; ++i)
 			{
-				Logger.log.trace ("--- ");
+				result += ("--- ");
 			}
+			result += type;
 			switch (type)
 			{
 			case AND:
-				Logger.log.trace("AND");
-				left.printMe(level + 1);
-				right.printMe(level + 1);
-				break;
 			case OR:
-				Logger.log.trace("OR");
-				left.printMe(level + 1);
-				right.printMe(level + 1);
-				break;
 			case LE:
-				Logger.log.trace("<=");
-				left.printMe(level + 1);
-				right.printMe(level + 1);
-				break;
 			case LT:
-				Logger.log.trace("<");
-				left.printMe(level + 1);
-				right.printMe(level + 1);
-				break;
 			case GT:
-				Logger.log.trace(">");
-				left.printMe(level + 1);
-				right.printMe(level + 1);
-				break;
 			case GE:
-				Logger.log.trace(">=");
-				left.printMe(level + 1);
-				right.printMe(level + 1);
-				break;
 			case EQ:
-				Logger.log.trace("=");
-				left.printMe(level + 1);
-				right.printMe(level + 1);
-				break;
 			case NE:
-				Logger.log.trace("<>");
+				Logger.log.trace(result);
 				left.printMe(level + 1);
 				right.printMe(level + 1);
 				break;
 			case ID:
-				Logger.log.trace("ID: " + symbolValue);
+				Logger.log.trace(result + " [" + symbolValue + "]");
 				break;
 			case NUMBER_LITERAL:
-				Logger.log.trace("NUMBER_LITERAL: " + literalValue);
-				break;
 			case STRING_LITERAL:
-				Logger.log.trace("STRING_LITERAL: " + literalValue);
+				Logger.log.trace(result + " (" + literalValue + ")");
 				break;
 			}
 		}
 
-		/**
-		 * returns true if arg is true, returns false if arg is false or null
+		/** 
+		 * Helper function. Check that both parameters are instances of Double,
+		 * and both are non-null.
 		 */
-		private boolean trueNotNull(Object arg) throws CriterionException
+		private boolean isNonNullDouble(Object lval, Object rval)
 		{
-			if (arg != null && !(arg instanceof Boolean)) throw new CriterionException
-				("Expected type Boolean, got " + arg.getClass().getCanonicalName());
-			return arg == null ? false : (Boolean)arg;
+			return (lval != null && lval instanceof Double &&
+					rval != null && rval instanceof Double);
 		}
 		
-		Boolean evaluateAsBool() throws CriterionException
-		{
-			Object value = evaluate();
-			if (value instanceof Boolean) return (Boolean)value;
-			else return null;
-		}
-
-		Double evaluateAsDouble() throws CriterionException
-		{
-			Object value = evaluate();
-			if (value instanceof Double) return (Double)value;
-			else return null;
-		}
-
 		/**
 		 * May return null, meaning "NA"
 		 */
 		Object evaluate() throws CriterionException
 		{
+			Object lval = null;
+			Object rval = null;
+			if (left != null) lval = left.evaluate();
+			if (right != null) rval = right.evaluate();
 			String error = "";
 			switch (type)
 			{
 			case AND:
 				return Boolean.valueOf(
-						trueNotNull(left.evaluateAsBool()) && 
-						trueNotNull(right.evaluateAsBool()));
+						trueNotNull(lval) && 
+						trueNotNull(rval));
 			case OR:
 				return Boolean.valueOf(
-						trueNotNull(left.evaluateAsBool()) || 
-						trueNotNull(right.evaluateAsBool()));
+						trueNotNull(lval) || 
+						trueNotNull(rval));
 			case EQ:
-				{
-				Object lval = left.evaluate();
-				Object rval = right.evaluate();
 				return Boolean.valueOf (
 						lval == null ? rval == null : lval.equals(rval));
-				}
 			case NE:
-				{
-				Object lval = left.evaluate();
-				Object rval = right.evaluate();
 				return Boolean.valueOf (
 						!(lval == null ? rval == null : lval.equals(rval)));
-				}
 			case GE:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				return Boolean.valueOf (lval >= rval);
-				}
+				if (!isNonNullDouble (lval, rval)) return null;
+				return Boolean.valueOf ((Double)lval >= (Double)rval);
 			case LE:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				return Boolean.valueOf (lval <= rval);
-				}
+				if (!isNonNullDouble (lval, rval)) return null;
+				return Boolean.valueOf ((Double)lval <= (Double)rval);
 			case GT:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				return Boolean.valueOf (lval > rval);
-				}
+				if (!isNonNullDouble (lval, rval)) return null;
+				return Boolean.valueOf ((Double)lval > (Double)rval);
 			case LT:
-				{
-				Double lval = left.evaluateAsDouble();
-				Double rval = right.evaluateAsDouble();
-				if (lval == null || rval == null) return null;
-				return Boolean.valueOf (lval < rval);
-				}
+				if (!isNonNullDouble (lval, rval)) return null;
+				return Boolean.valueOf ((Double)lval < (Double)rval);
 			case ID:
 				if(!symTab.containsKey(symbolValue)) {//symbol has no value
 					error = "Sample '[" + symbolValue + "]' has no value";
@@ -613,7 +549,6 @@ public class Criterion
 				}
 				return symTab.get(symbolValue);
 			case NUMBER_LITERAL:
-				return literalValue;
 			case STRING_LITERAL:
 				return literalValue;
 			default:

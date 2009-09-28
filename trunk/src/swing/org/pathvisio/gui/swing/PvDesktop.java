@@ -24,6 +24,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import org.bridgedb.IDMapperException;
@@ -38,6 +39,8 @@ import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.plugin.PluginManager;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.StandaloneCompat;
 import org.pathvisio.view.VPathway;
@@ -65,7 +68,8 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	private final GexManager gexManager;
 	private final SwingEngine swingEngine;
 	private final StandaloneCompat compat;
-	
+	private final PreferencesDlg preferencesDlg;
+
 	/**
 	 * During construction, visualizationManager and gexManager will be initialized.
 	 * SwingEngine needs to have been initialized already.
@@ -82,8 +86,94 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				swingEngine.getEngine(), gexManager);
 		visualizationManager.addListener(this);
 		compat = new StandaloneCompat(this);
+		preferencesDlg = new PreferencesDlg(PreferenceManager.getCurrent());
+		initPanels();
 	}
 
+	public void initPanels()
+	{		
+		preferencesDlg.addPanel ("Display", 
+			preferencesDlg.builder()
+			.integerField (
+				GlobalPreference.GUI_SIDEPANEL_SIZE,
+				"Initial side panel size (percent of window size):", 0, 100)
+			.booleanField ( 
+				GlobalPreference.DATANODES_ROUNDED,
+				"Use rounded rectangles for data nodes")
+			.integerField(
+				GlobalPreference.MAX_NR_CITATIONS,
+				"Maximum citations to show (use -1 to show all)",
+				-1, 1000)
+			.booleanField(
+				GlobalPreference.SNAP_TO_ANGLE, 
+				"Snap to angle when moving line and rotation handles")
+			.integerField (
+				GlobalPreference.SNAP_TO_ANGLE_STEP,
+				"Distance between snap-steps in degrees:", 1, 90)
+			.booleanField (
+				GlobalPreference.MIM_SUPPORT,
+				"Load support for molecular interaction maps (MIM) at program start")
+			.booleanField (
+				GlobalPreference.SHOW_ADVANCED_PROPERTIES,									   
+				"Show advanced properties (e.g. references)")
+			.booleanField (
+				GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL,									   
+				"Use Java System look-and-feel at program start")
+			.booleanField(
+				GlobalPreference.ENABLE_DOUBLE_BUFFERING, 
+				"Enable double-buffering (pathway is drawn slower, but flickerless)")
+			.build());		
+		
+		
+		preferencesDlg.addPanel ("Display.Colors", 
+				preferencesDlg.builder()
+			.colorField(
+				GlobalPreference.COLOR_NO_CRIT_MET, 
+				"Default color for 'no criteria met':")
+			.colorField(
+				GlobalPreference.COLOR_NO_GENE_FOUND, 
+				"Default color for 'gene not found':")
+			.colorField(
+				GlobalPreference.COLOR_NO_DATA_FOUND, 
+				"Default color for 'no data found':")
+			.colorField(
+				GlobalPreference.COLOR_SELECTED, 
+				"Line color for selected objects:")
+			.colorField(
+				GlobalPreference.COLOR_HIGHLIGHTED,
+				"Highlight color")
+			.build());
+		
+		preferencesDlg.addPanel ("Files", preferencesDlg.builder()
+			.fileField(
+				GlobalPreference.FILE_LOG, 
+				"Log file:", false) 
+			.build());
+		
+		preferencesDlg.addPanel ("Directories", preferencesDlg.builder()
+			.fileField (GlobalPreference.DIR_PWFILES,
+				"Gpml pathways:", true)
+			.fileField (GlobalPreference.DIR_GDB,
+				"Gene databases:", true)
+			.fileField (GlobalPreference.DIR_EXPR,
+				"Expression datasets:", true)
+			.build());
+		
+		preferencesDlg.addPanel ("Database", preferencesDlg.builder()
+			.stringField (GlobalPreference.DB_ENGINE_GDB,
+				"Database connector class for gene database:")
+			.stringField (GlobalPreference.DB_ENGINE_GEX,
+				"Database connector class for expression dataset:")
+			.build());
+		
+	}
+
+	/** return the preferences dialog, can be used to add panels */
+	public PreferencesDlg getPreferencesDlg()
+	{
+		return preferencesDlg;
+	}
+	
 	/**
 	 * Return the global visualizationManager instance.
 	 */

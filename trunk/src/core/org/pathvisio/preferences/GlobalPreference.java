@@ -67,27 +67,27 @@ public enum GlobalPreference implements Preference
 	GUI_SIDEPANEL_SIZE("30"),
 
 	// pathway base dir 
-	DIR_PWFILES(new File(getDataDir().toString(), "pathways").toString()),
+	DIR_PWFILES(new File(getDataDir(), "pathways").toString()),
 	// gdb base dir
-	DIR_GDB(new File(getDataDir().toString(), "gene databases").toString()),
+	DIR_GDB(new File(getDataDir(), "gene databases").toString()),
 	// expr base dir
-	DIR_EXPR(new File(getDataDir().toString(), "expression datasets").toString()),
+	DIR_EXPR(new File(getDataDir(), "expression datasets").toString()),
 	
 	// pathway last used dir
-	DIR_LAST_USED_OPEN(new File(getDataDir().toString(), "pathways").toString()),
+	DIR_LAST_USED_OPEN(new File(getDataDir(), "pathways").toString()),
 	// pathway last used dir
-	DIR_LAST_USED_SAVE(new File(getDataDir().toString(), "pathways").toString()),
+	DIR_LAST_USED_SAVE(new File(getDataDir(), "pathways").toString()),
 	// gdb last used dir
-	DIR_LAST_USED_PGDB(new File(getDataDir().toString(), "gene databases").toString()),
+	DIR_LAST_USED_PGDB(new File(getDataDir(), "gene databases").toString()),
 	// expr last used dir
-	DIR_LAST_USED_PGEX(new File(getDataDir().toString(), "expression datasets").toString()),
+	DIR_LAST_USED_PGEX(new File(getDataDir(), "expression datasets").toString()),
 	// seach pane last used dir
-	DIR_LAST_USED_SEARCHPANE(new File(getDataDir().toString(), "pathways").toString()),
+	DIR_LAST_USED_SEARCHPANE(new File(getDataDir(), "pathways").toString()),
 	
-	DIR_LAST_USED_EXPRESSION_IMPORT(new File(getDataDir().toString(), "expression datasets").toString()),
+	DIR_LAST_USED_EXPRESSION_IMPORT(new File(getDataDir(), "expression datasets").toString()),
 	
-	DIR_LAST_USED_IMPORT(new File(getDataDir().toString(), "pathways").toString()),
-	DIR_LAST_USED_EXPORT(new File(getDataDir().toString(), "pathways").toString()),
+	DIR_LAST_USED_IMPORT(new File(getDataDir(), "pathways").toString()),
+	DIR_LAST_USED_EXPORT(new File(getDataDir(), "pathways").toString()),
 	
 	MOST_RECENT_1 ((File)null),
 	MOST_RECENT_2 ((File)null),
@@ -133,11 +133,6 @@ public enum GlobalPreference implements Preference
 		return defaultValue;
 	}
 	
-	public void setDefault(String defValue) {
-		defaultValue = defValue;
-	}
-		
-	
 	private static File dirApplication = null;
 	private static File dirData = null;
 	
@@ -159,7 +154,4 @@ public enum GlobalPreference implements Preference
 		}
 		return dirData;
 	}
-	
-
-
 }

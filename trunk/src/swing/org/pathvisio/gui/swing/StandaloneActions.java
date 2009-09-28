@@ -59,7 +59,7 @@ public class StandaloneActions
 		newAction = new NewAction(swingEngine);
 		selectGeneDbAction = new SelectGeneDbAction(swingEngine, "Gene");
 		selectMetaboliteDbAction = new SelectGeneDbAction(swingEngine, "Metabolite");
-		preferencesAction = new PreferencesAction(swingEngine);
+		preferencesAction = new PreferencesAction(desktop);
 		searchAction = new SearchAction(swingEngine);
 		pluginManagerAction = new PluginManagerAction(desktop);
 	}
@@ -220,20 +220,20 @@ public class StandaloneActions
 	public static class PreferencesAction extends AbstractAction 
 	{
 
-		SwingEngine swingEngine;
+		PvDesktop desktop;
 
-		public PreferencesAction(SwingEngine swingEngine) 
+		public PreferencesAction(PvDesktop aDesktop) 
 		{
 			super();
-			this.swingEngine = swingEngine;
+			this.desktop = aDesktop;
 			putValue(NAME, "Preferences");
 			putValue(SHORT_DESCRIPTION, "Edit preferences");
 		}
 		
 		public void actionPerformed(ActionEvent e) 
 		{
-			PreferencesDlg dlg = new PreferencesDlg();
-			dlg.createAndShowGUI(swingEngine);
+			PreferencesDlg dlg = desktop.getPreferencesDlg();
+			dlg.createAndShowGUI(desktop.getSwingEngine());
 		}
 	}
 

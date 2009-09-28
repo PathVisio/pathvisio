@@ -59,11 +59,7 @@ public class WPDownloadPlugin implements Plugin
 		
 		public String getDefault() {
 			return defaultValue;
-		}
-		
-		public void setDefault(String defValue) {
-			defaultValue = defValue;
-		}			
+		}		
 	}
 	
 	private PvDesktop desktop;

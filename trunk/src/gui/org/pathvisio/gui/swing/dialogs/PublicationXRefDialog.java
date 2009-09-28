@@ -22,6 +22,7 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,6 +48,7 @@ import org.pathvisio.data.PubMedQuery;
 import org.pathvisio.data.PubMedResult;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.util.ProgressKeeper;
+import org.xml.sax.SAXException;
 
 /**
  * Dialog for entering citations. For convenience, you
@@ -113,7 +115,8 @@ public class PublicationXRefDialog extends OkCancelDialog {
 				"", pk, true, true);
 				
 		SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-			protected Void doInBackground() throws Exception {
+			protected Void doInBackground() throws SAXException, IOException
+			{
 				pk.setTaskName("Querying PubMed");
 				pmq.execute();
 				pk.finished();

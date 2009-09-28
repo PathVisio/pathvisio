@@ -218,6 +218,12 @@ public class Visualization
 		return false;
 	}
 	
+	@Override public int hashCode()
+	{
+		// equals based on getName(), so hashCode as well.
+		return name.hashCode();
+	}
+	
 	public String toString() {
 		return name;
 	}

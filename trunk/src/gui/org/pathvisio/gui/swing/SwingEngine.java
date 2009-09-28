@@ -156,7 +156,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				"", pk, false, true);
 				
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
-			protected Boolean doInBackground() throws Exception {
+			protected Boolean doInBackground() {
 				pk.setTaskName("Opening pathway");
 				try {
 					engine.setWrapper (createWrapper());
@@ -181,7 +181,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				"", pk, false, true);
 				
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
-			protected Boolean doInBackground() throws Exception {
+			protected Boolean doInBackground() {
 				pk.setTaskName("Opening pathway");
 				try {
 					engine.setWrapper (createWrapper());
@@ -205,7 +205,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				"", pk, false, true);
 				
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean,Boolean>() {
-			protected Boolean doInBackground() throws Exception {
+			protected Boolean doInBackground() {
 				pk.setTaskName("Importing pathway");
 				try {
 					boolean editMode = engine.hasVPathway() ? engine.getActiveVPathway().isEditMode() : true;
@@ -284,7 +284,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			final Pathway clone = engine.getActivePathway().clone();
 			
 			SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
-				protected Boolean doInBackground() throws Exception {
+				protected Boolean doInBackground() {
 					try {
 						pk.setTaskName("Exporting pathway");
 						engine.exportPathway(f, clone);

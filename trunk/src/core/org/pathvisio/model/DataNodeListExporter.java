@@ -22,14 +22,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.pathvisio.data.GdbManager;
-import org.pathvisio.util.Utils;
 
 /**
  * Exporter that writes a pathway as a list

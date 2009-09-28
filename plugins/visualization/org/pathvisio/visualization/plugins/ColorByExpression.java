@@ -53,8 +53,8 @@ import org.pathvisio.util.Resources;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationManager.VisualizationException;
 import org.pathvisio.visualization.VisualizationMethod;
+import org.pathvisio.visualization.VisualizationManager.VisualizationException;
 import org.pathvisio.visualization.colorset.ColorSet;
 
 /**
@@ -338,7 +338,7 @@ public class ColorByExpression extends VisualizationMethod {
 	 * Add a sample to use for visualization
 	 * @param s The sample to add
 	 */
-	void addUseSample(Sample s) {
+	public void addUseSample(Sample s) {
 		if(s != null) {
 			if(!useSamples.contains(s)) useSamples.add(new ConfiguredSample(s));
 			modified();

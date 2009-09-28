@@ -17,7 +17,9 @@
 package org.pathvisio.gui.swing;
 
 import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -67,9 +69,21 @@ public class PreferencesDlg
 		
 		Collections.sort (panelTitles);
 
+		DefaultMutableTreeNode prevNode = null;
+		String prevTitle = null;
+		
 		for (String title : panelTitles)
-		{	
-			top.add (new DefaultMutableTreeNode (title));
+		{
+			if (prevTitle != null && title.startsWith(prevTitle + "."))
+			{
+				prevNode.add (new DefaultMutableTreeNode (title));
+			}
+			else
+			{
+				prevNode = new DefaultMutableTreeNode (title);
+				prevTitle = title;
+				top.add (prevNode);
+			}
 		}
 		
 		return top;
@@ -77,6 +91,13 @@ public class PreferencesDlg
 	
 	private Map <String, PreferencePanel> panels = new HashMap <String, PreferencePanel>();
 	
+	/**
+	 * @param title The title of this panel, that will be visible in the JTree on the left
+	 *  side of the dialog. You can use a dot (.) to group panels in the tree: for 
+	 * 	example title "Display.Colors" will be arranged under "Display" in the tree (but "Display"
+	 *  needs to exist). Grouping goes only one level deep. 
+	 * @param panel use @link{PreferencePanel.builder()} to construct an @link{PreferencePanel}. 
+	 */
 	public void addPanel (String title, PreferencePanel panel)
 	{
 		panels.put (title, panel);
@@ -87,6 +108,13 @@ public class PreferencesDlg
 		return new PreferencePanel.Builder(PreferenceManager.getCurrent()); 
 	}
 
+	/**
+	 * PreferencePanel groups a number of preferences.
+	 * <p>
+	 * Use @link{PreferencePanel.builder()} to create one.
+	 * You can use the chained .xxxField() methods to add the preferences that you want to edit,
+	 * with a description.
+	 */
 	public static class PreferencePanel implements ActionListener
 	{
 		private JPanel panel;
@@ -334,8 +362,12 @@ public class PreferencesDlg
 				btnRestore.setText ("Restore Defaults");
 				btnRestore.addActionListener(result);
 				
-				builder.append (btnRestore);
-				builder.nextLine();
+				// add button to the bottom-right of the panel
+				CellConstraints cc = new CellConstraints();
+				builder.appendRow(RowSpec.decode("fill:pref:grow"));
+				builder.add (btnRestore, 
+						cc.xyw(builder.getColumn(), builder.getRow(), 5, "right, bottom"));
+				
 
 				result.panel = builder.getPanel();
 				return result;
@@ -345,7 +377,7 @@ public class PreferencesDlg
 			{
 				JCheckBox cb = new JCheckBox (desc);
 				BooleanFieldEditor editor = result.new BooleanFieldEditor (p, cb);
-				builder.append (cb);
+				builder.append (cb, 3);
 				builder.nextLine();
 				result.editors.add(editor);
 				return this;
@@ -427,7 +459,17 @@ public class PreferencesDlg
 		DefaultMutableTreeNode top = createNodes();
 		
 		JPanel pnlButtons = new JPanel();
-		JTree trCategories = new JTree(top);
+		JTree trCategories = new JTree(top) 
+		{
+			// custom drawing of titles: only display part after . for subnodes.
+			@Override public String convertValueToText(Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus)
+			{
+				String title = "" + value;
+				int pos = title.indexOf(".");
+				if (pos < 0) return title;
+				else return title.substring (pos + 1);
+			}
+		};
 		final JPanel pnlSettings = new JPanel();
 				
 		JButton btnOk = new JButton();
@@ -481,7 +523,7 @@ public class PreferencesDlg
 		pnlButtons.add (btnCancel);
 		
 		dlg.add (new JScrollPane (pnlSettings), BorderLayout.CENTER);
-		dlg.add (trCategories, BorderLayout.WEST);
+		dlg.add (new JScrollPane (trCategories), BorderLayout.WEST);
 		dlg.add (pnlButtons, BorderLayout.SOUTH);
 		
 		dlg.pack();

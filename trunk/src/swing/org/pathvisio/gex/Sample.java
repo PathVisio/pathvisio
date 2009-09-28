@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gex;
 
+import java.sql.Types;
+
 /**
  * This class represents a record in the Sample table of the Expression database. 
  */
@@ -31,8 +33,22 @@ public class Sample implements Comparable<Sample>
 	 * for this sample
 	 * @param name		represents the 'name' column in the Sample table, the name of the
 	 * sample
+	 */
+	public Sample(int idSample, String name) {
+		this.name = name;
+		this.idSample = idSample;
+		this.dataType = Types.REAL; //For backwards compatibility
+	}
+	
+	/**
+	 * Constructor of this class
+	 * @param idSample	represents the 'idSample' column in the Sample table, an unique identifier
+	 * for this sample
+	 * @param name		represents the 'name' column in the Sample table, the name of the
+	 * sample
 	 * @param dataType	represents the 'dataType' column in the Sample table, the data type of
 	 * the values stored in the column (using the field contsants in {@link java.sql.Types})
+	 * @deprecated dataType is not used anymore.
 	 */
 	public Sample(int idSample, String name, int dataType)
 	{
@@ -43,7 +59,15 @@ public class Sample implements Comparable<Sample>
 	
 	public String getName() { return name == null ? "" : name; }
 	protected void setName(String nm) { name = nm; }
+	/**
+	 * @deprecated A sample does not have a fixed data type anymore, 
+	 * the type is determined upon loading the data entry.
+	 */
 	public int getDataType() { return dataType; }
+	/**
+	 * @deprecated A sample does not have a fixed data type anymore, 
+	 * the type is determined upon loading the data entry.
+	 */
 	protected void setDataType(int type) { dataType = type; }
 	public int getId() { return idSample; }
 	protected void setId(int id) { idSample = id; }

@@ -62,12 +62,25 @@ public class Test extends TestCase
 		crit.setExpression(expr, new ArrayList<String>(symbols.keySet()));
 		return crit.evaluate (symbols);
 	}
-	
+
+	double evalDouble(String expr) throws Criterion.CriterionException
+	{
+		Criterion crit = new Criterion();
+		crit.setExpression(expr, new ArrayList<String>(symbols.keySet()));
+		return crit.evaluateAsDouble (symbols);
+	}
+
 	boolean checkSyntax(String expr)
 	{
 		Criterion crit = new Criterion();
 		String result = crit.setExpression(expr, new ArrayList<String>(symbols.keySet()));
 		return (result == null);
+	}
+
+	public void setUp()
+	{
+		Logger.log.setStream(System.err);
+		Logger.log.setLogLevel(true, true, true, true, true, true);
 	}
 	
 	public void testExpressions() throws Criterion.CriterionException
@@ -138,5 +151,21 @@ public class Test extends TestCase
 		assertFalse (evalExpr ("\"red\" <> [color]"));
 		assertTrue  (evalExpr ("\"green\" <> \"red\""));
 		assertTrue  (evalExpr ("\"green\" = \"green\""));
+	}
+	
+	public void testCalc() throws Criterion.CriterionException
+	{
+		assertEquals (0.0, evalDouble ("-1.0 - -1.0"), 0.01);
+		assertEquals (-1.0, evalDouble ("1.0 - 2.0"), 0.01);
+		assertEquals (2.0, evalDouble ("1.0 - -1.0"), 0.01);
+		assertEquals (-10.0, evalDouble ("-2.5 * 4.0"), 0.01);
+		assertEquals (2.0, evalDouble ("3.2 / 1.6"), 0.01);
+		assertEquals (14.1, evalDouble ("3.0 * 4.0 + 2.1"), 0.01);
+		assertEquals (14.1, evalDouble ("2.1 + 3.0 * 4.0"), 0.01);
+		assertEquals (18.3, evalDouble ("3.0 * (4.0 + 2.1)"), 0.01);
+
+		assertTrue (evalExpr ("2.0 + 0.01 > 2.0"));
+		assertFalse (evalExpr ("2 >= 2 + 0.01 "));
+
 	}
 }

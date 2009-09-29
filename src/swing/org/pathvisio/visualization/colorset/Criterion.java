@@ -44,8 +44,12 @@ public class Criterion
 	
 	private static final String DISPLAY_SAMPLE = "|Displayed sample|";
 	
-	/** operators that can be used in a Criterion */
+	/** Some of the operators that can be used in a Criterion */
 	public static final String[] TOKENS = {"AND", "OR", "=", "<", ">", "<=", ">=", "<>"};
+	/* Note that we exclude some for brevity: 
+	 * 			"+", "-", "/", "*"  
+	 */
+	
 	
 	private Map<String, Object> symTab = new HashMap<String, Object>();
 
@@ -115,6 +119,19 @@ public class Criterion
 		return evaluate();
 	}
 	
+	public double evaluateAsDouble(Map<String, Object> data) throws CriterionException
+	{
+		setSampleData(data);
+		Token e = parse();
+		e.printMe(0);
+		Object value = e.evaluate();
+		if (value instanceof Double) return (Double)value;
+		else 		
+		{
+			throw new CriterionException ("Expected Double expression");
+		}
+	}
+	
 	//Boolean expression parser by Martijn
 	String input;
 	int charNr;
@@ -133,7 +150,7 @@ public class Criterion
 		charNr = 0;
 		input = expression;
 
-		Token e = expression();
+		Token e = boolexpression();
 		Token t = getToken();
 		if (t.type != TokenType.END)
 		{
@@ -141,6 +158,7 @@ public class Criterion
 			throw new CriterionException("Multiple expressions found, second expression " +
 					"starts at position " + charNr);
 		}
+		e.printMe(0);
 		return e;
 	}
 	
@@ -200,7 +218,6 @@ public class Criterion
 		// read token
 		switch (ch)
 		{
-		case '-':
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9':
 		case '.': 
@@ -212,7 +229,7 @@ public class Criterion
 				value += ch;
 				ch = eatChar();
 			}
-			putBack (ch);									
+			putBack (ch);
 			try
 			{
 				token = new Token(TokenType.NUMBER_LITERAL, Double.parseDouble(value));
@@ -277,6 +294,21 @@ public class Criterion
 			}
 			token = new Token(TokenType.STRING_LITERAL, value);                 
 		} break;
+		case '-':
+			token = new Token(TokenType.SUB);
+			break;
+		case '+':
+			token = new Token(TokenType.ADD);
+			break;
+		case '/':
+			token = new Token(TokenType.DIV);
+			break;
+		case '*':
+			token = new Token(TokenType.MUL);
+			break;
+		case ',':
+			token = new Token(TokenType.COMMA);
+			break;
 		case 'A':	
 
 			if (eatChar() == 'N' && eatChar() == 'D')
@@ -311,14 +343,7 @@ public class Criterion
 		return token;
 	}
 
-	/*
-		eats a factor
-			forms:
-			- number
-			- identifier
-			- "(" expression ")"
-	 */
-	private Token factor() throws CriterionException
+	private Token positivefactor() throws CriterionException
 	{
 		Token result;
 		Token t = getLookAhead();
@@ -340,7 +365,7 @@ public class Criterion
 		else if (t.type == TokenType.LPAREN)
 		{
 			getToken();
-			result = expression();
+			result = boolexpression();
 			t = getToken();			
 			if (t.type != TokenType.RPAREN)
 			{
@@ -356,18 +381,82 @@ public class Criterion
 		return result;
 	}
 
-
 	/*
-		eats a subterm
+		eats a factor
 			forms:
-			subterm -> factor morefactors
-			morefactors -> "<=|=|>=|>|<" factor
-						| empty
+			- number
+			- SUB boolexpression
+			- identifier
+			- "(" boolexpression ")"
 	 */
-	private Token subterm() throws CriterionException
+	private Token factor() throws CriterionException
+	{
+		Token result;
+		Token t = getLookAhead();
+		if (t.type == TokenType.SUB)
+		{
+			getToken();
+			result = new Token(TokenType.UNARY_MINUS);
+			result.left = positivefactor();
+		}
+		else
+		{
+			result = positivefactor();
+		}
+		return result;
+	}
+	
+	/*
+	 eats a numeric expression
+		forms:
+		subboolterm -> boolfactor moreboolfactors
+		moreboolfactors -> "<=|=|>=|>|<" boolfactor
+					| empty
+	*/
+	
+	private Token term() throws CriterionException
 	{
 		Token result;
 		result = factor();
+		Token t = getLookAhead();
+		if (t.type == TokenType.MUL || 
+			t.type == TokenType.DIV)
+		{
+			getToken();
+			t.left = result;
+			t.right = term();
+			result = t;
+		}
+		return result;
+	}
+	
+	private Token expression() throws CriterionException
+	{
+		Token result;
+		result = term();
+		Token t = getLookAhead();
+		if (t.type == TokenType.SUB || 
+			t.type == TokenType.ADD)
+		{
+			getToken();
+			t.left = result;
+			t.right = expression();
+			result = t;
+		}
+		return result;
+	}
+	
+	/*
+		eats a subboolterm
+			forms:
+			subboolterm -> boolfactor moreboolfactors
+			moreboolfactors -> "<=|=|>=|>|<" boolfactor
+						| empty
+	 */
+	private Token subboolterm() throws CriterionException
+	{
+		Token result;
+		result = expression();
 		Token t = getLookAhead();
 		if (t.type == TokenType.EQ || t.type == TokenType.GE ||
 				t.type == TokenType.LE || t.type == TokenType.GT ||
@@ -375,7 +464,7 @@ public class Criterion
 		{
 			getToken();
 			t.left = result;
-			t.right = factor();
+			t.right = expression();
 			result = t;
 		}
 		return result;
@@ -388,16 +477,16 @@ public class Criterion
 			moresubterms -> "AND" subterm moresubterms
 						| empty
 	 */
-	private Token term() throws CriterionException
+	private Token boolterm() throws CriterionException
 	{
 		Token result;
-		result = subterm();
+		result = subboolterm();
 		Token t = getLookAhead();
 		if (t.type == TokenType.AND)
 		{
 			getToken();
 			t.left = result;
-			t.right = term();
+			t.right = boolterm();
 			result = t;
 		}
 		return result;
@@ -406,20 +495,20 @@ public class Criterion
 
 	/* eats an expression
 			forms:
-			expression -> term moreterms
-			moreterms -> "OR" term moreterms
+			boolexpressio -> boolterm moreboolterms
+			moreboolterms -> "OR" boolterm moreboolterms
 				| empty
 	 */
-	private Token expression() throws CriterionException
+	private Token boolexpression() throws CriterionException
 	{
 		Token result;
-		result = term();
+		result = boolterm();
 		Token t = getLookAhead();
 		if (t.type == TokenType.OR)
 		{
 			getToken();
 			t.left = result;			
-			t.right = expression();
+			t.right = boolexpression();
 			result = t;
 		}
 		return result;
@@ -439,7 +528,13 @@ public class Criterion
 		AND,
 		OR,
 		LPAREN,
-		RPAREN;
+		RPAREN,
+		SUB,
+		ADD,
+		MUL,
+		DIV,
+		COMMA,
+		UNARY_MINUS;
 	}
 	/**
 	 * returns true if arg is true, returns false if arg is false or null
@@ -472,6 +567,10 @@ public class Criterion
 			result += type;
 			switch (type)
 			{
+			case SUB:
+			case MUL:
+			case ADD:
+			case DIV:
 			case AND:
 			case OR:
 			case LE:
@@ -502,6 +601,15 @@ public class Criterion
 		{
 			return (lval != null && lval instanceof Double &&
 					rval != null && rval instanceof Double);
+		}
+
+		/** 
+		 * Helper function. Check that both parameters are instances of Double,
+		 * and both are non-null.
+		 */
+		private boolean isNonNullDouble(Object lval)
+		{
+			return (lval != null && lval instanceof Double);
 		}
 		
 		/**
@@ -551,6 +659,21 @@ public class Criterion
 			case NUMBER_LITERAL:
 			case STRING_LITERAL:
 				return literalValue;
+			case SUB:
+				if (!isNonNullDouble (lval, rval)) return null;
+				return (Double)lval -(Double)rval;
+			case ADD:
+				if (!isNonNullDouble (lval, rval)) return null;
+				return (Double)lval + (Double)rval;
+			case UNARY_MINUS:
+				if (!isNonNullDouble (lval)) return null;
+				return -(Double)lval;
+			case MUL:
+				if (!isNonNullDouble (lval, rval)) return null;
+				return (Double)lval * (Double)rval;
+			case DIV:
+				if (!isNonNullDouble (lval, rval)) return null;
+				return (Double)lval / (Double)rval;
 			default:
 				error = "Can't evaluate this expression";
 			}

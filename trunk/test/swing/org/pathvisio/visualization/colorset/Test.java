@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
 import junit.framework.TestCase;
 
@@ -167,5 +168,26 @@ public class Test extends TestCase
 		assertTrue (evalExpr ("2.0 + 0.01 > 2.0"));
 		assertFalse (evalExpr ("2 >= 2 + 0.01 "));
 
+	}
+	
+	public void testNot() throws Criterion.CriterionException
+	{
+		assertTrue  (evalExpr ("2 > 1"));
+		assertFalse (evalExpr ("NOT (2 > 1)"));
+		// precedence: NOT before AND
+		assertFalse (evalExpr ("NOT (2 > 1) AND (1 > 2)"));
+	}
+	
+	public void testFunc() throws CriterionException
+	{
+		assertEquals (2, evalDouble("AVERAGE(LOG(2, 2), LOG10(100, 0), SQRT(9))"), 0.01);
+		assertEquals (2, evalDouble("SUM(1.0, 0.5, 0.25, 0.25)"), 0.01);
+		assertEquals (3, evalDouble("MAX(1.0, 2.0, 3.0)"), 0.01);
+		assertEquals (1, evalDouble("MIN(1.0, 2.0, 3.0)"), 0.01);
+		assertEquals (2, evalDouble("SUM(SIN(0.5 * 3.14159), COS(0))"), 0.01);
+		assertEquals (6, evalDouble("LOG(64, 2)"), 0.01);
+		assertEquals (-1, evalDouble("IF (3 > 5, 1, -1)"), 0.01);
+		assertEquals (14, evalDouble("SUMSQ(1, 2, 3)"), 0.01);
+		assertTrue (evalExpr("ISNUMBER(1.0) AND NOT ISNUMBER(\"hello\")"));
 	}
 }

@@ -16,6 +16,8 @@
 //
 package org.pathvisio.visualization.colorset;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,6 +198,12 @@ public class Criterion
 		return nextToken;
 	}
 
+	
+	abstract static class Func
+	{
+		abstract Object call(List<Object> params);
+	}
+	
 	// note: token is taken away from input!
 	private Token getToken() throws CriterionException
 	{      
@@ -309,28 +317,37 @@ public class Criterion
 		case ',':
 			token = new Token(TokenType.COMMA);
 			break;
-		case 'A':	
-
-			if (eatChar() == 'N' && eatChar() == 'D')
-			{
-				token = new Token (TokenType.AND);
-			}
-			else
-			{
-				throw new CriterionException("Invalid character 'A' at position " + (charNr - 2) + 
-				"\n- Expected start of 'AND'");
-			}
-			break;
-		case 'O':
+		case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G':
+		case 'H': case 'I': case 'J': case 'K': case 'L': case 'M':
+		case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T':
+		case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+			String value = "" + ch;
 			ch = eatChar();
-			if (ch == 'R')
+			while ((ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9'))
+			{
+				value += ch;
+				ch = eatChar();
+			}
+			putBack (ch);
+			if ("OR".equals (value))
 			{
 				token = new Token (TokenType.OR);
 			}
+			else if ("AND".equals (value))
+			{
+				token = new Token (TokenType.AND);
+			}
+			else if ("NOT".equals (value))
+			{
+				token = new Token (TokenType.NOT);
+			}
+			else if (Functions.valueOf(value) != null)
+			{
+				token = new Token (TokenType.FUNC, value);
+			}
 			else
 			{
-				throw new CriterionException("Invalid character 'O' at position " + (charNr - 1) + 
-				"\n- Expected start of 'OR'");
+				throw new CriterionException("Invalid keyword or function name " + value + " at position " + charNr);
 			}
 			break;
 		case '\0':
@@ -343,6 +360,14 @@ public class Criterion
 		return token;
 	}
 
+	/*
+	eats a factor
+		forms:
+		- number
+		- identifier
+		- "(" boolexpression ")"
+		- FUNC paramlist
+	*/
 	private Token positivefactor() throws CriterionException
 	{
 		Token result;
@@ -373,6 +398,28 @@ public class Criterion
 				throw new CriterionException("Number of opening and closing brackets does not match");
 			}			
 		}
+		else if (t.type == TokenType.FUNC)
+		{
+			result = getToken();
+			t = getToken();
+			if (t.type != TokenType.LPAREN)
+			{
+				nextToken = null;
+				throw new CriterionException("Expected '(' after FUNC");
+			}
+			result.funcParams = new ArrayList<Token>();
+			t = getLookAhead();
+			while (true)
+			{
+				result.funcParams.add(boolexpression());
+				t = getToken();
+				if (t.type == TokenType.RPAREN) break; // end of param list.
+				if (t.type != TokenType.COMMA)
+				{
+					throw new CriterionException("Expected ',' or ')' at position" + charNr);
+				}
+			}
+		}
 		else
 		{
 			nextToken = null;
@@ -381,14 +428,6 @@ public class Criterion
 		return result;
 	}
 
-	/*
-		eats a factor
-			forms:
-			- number
-			- SUB boolexpression
-			- identifier
-			- "(" boolexpression ")"
-	 */
 	private Token factor() throws CriterionException
 	{
 		Token result;
@@ -397,6 +436,11 @@ public class Criterion
 		{
 			getToken();
 			result = new Token(TokenType.UNARY_MINUS);
+			result.left = positivefactor();
+		}
+		else if (t.type == TokenType.NOT)
+		{
+			result = getToken();
 			result.left = positivefactor();
 		}
 		else
@@ -527,6 +571,7 @@ public class Criterion
 		NE,
 		AND,
 		OR,
+		NOT,
 		LPAREN,
 		RPAREN,
 		SUB,
@@ -534,7 +579,8 @@ public class Criterion
 		MUL,
 		DIV,
 		COMMA,
-		UNARY_MINUS;
+		UNARY_MINUS,
+		FUNC;
 	}
 	/**
 	 * returns true if arg is true, returns false if arg is false or null
@@ -553,7 +599,7 @@ public class Criterion
 		private TokenType type;
 		private Object literalValue; // in case it is a number or string literal
 		private String symbolValue; // in case it is a symbol or string literal
-
+		private List<Token> funcParams = null;
 		private Token left = null;
 		private Token right = null;
 
@@ -632,6 +678,8 @@ public class Criterion
 				return Boolean.valueOf(
 						trueNotNull(lval) || 
 						trueNotNull(rval));
+			case NOT:
+				return !trueNotNull(lval);
 			case EQ:
 				return Boolean.valueOf (
 						lval == null ? rval == null : lval.equals(rval));
@@ -674,6 +722,14 @@ public class Criterion
 			case DIV:
 				if (!isNonNullDouble (lval, rval)) return null;
 				return (Double)lval / (Double)rval;
+			case FUNC:
+				Func f = Functions.valueOf(symbolValue).def;
+				List<Object> values = new ArrayList<Object>();
+				for (Token t : funcParams)
+				{
+					values.add(t.evaluate());
+				}
+				return f.call (values);
 			default:
 				error = "Can't evaluate this expression";
 			}
@@ -684,7 +740,7 @@ public class Criterion
 		Token (TokenType aType, String aValue)
 		{ 
 			type = aType; 
-			if (aType == TokenType.ID)
+			if (aType == TokenType.ID || aType == TokenType.FUNC)
 			{
 				literalValue = null; symbolValue = (String)aValue;
 			}

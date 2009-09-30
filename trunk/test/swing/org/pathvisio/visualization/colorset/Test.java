@@ -21,11 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
-
-import junit.framework.TestCase;
 
 public class Test extends TestCase 
 {
@@ -68,7 +68,14 @@ public class Test extends TestCase
 	{
 		Criterion crit = new Criterion();
 		crit.setExpression(expr, new ArrayList<String>(symbols.keySet()));
-		return crit.evaluateAsDouble (symbols);
+		return (Double)crit.evaluateAsObject (symbols);
+	}
+
+	Object eval(String expr) throws Criterion.CriterionException
+	{
+		Criterion crit = new Criterion();
+		crit.setExpression(expr, new ArrayList<String>(symbols.keySet()));
+		return crit.evaluateAsObject (symbols);
 	}
 
 	boolean checkSyntax(String expr)
@@ -178,7 +185,7 @@ public class Test extends TestCase
 		assertFalse (evalExpr ("NOT (2 > 1) AND (1 > 2)"));
 	}
 	
-	public void testFunc() throws CriterionException
+	public void testStatFunc() throws CriterionException
 	{
 		assertEquals (2, evalDouble("AVERAGE(LOG(2, 2), LOG10(100, 0), SQRT(9))"), 0.01);
 		assertEquals (2, evalDouble("SUM(1.0, 0.5, 0.25, 0.25)"), 0.01);
@@ -188,6 +195,33 @@ public class Test extends TestCase
 		assertEquals (6, evalDouble("LOG(64, 2)"), 0.01);
 		assertEquals (-1, evalDouble("IF (3 > 5, 1, -1)"), 0.01);
 		assertEquals (14, evalDouble("SUMSQ(1, 2, 3)"), 0.01);
+		assertEquals (0.0, evalDouble("STDEV(1, 1, 1)"), 0.01);
+		assertEquals (5.0, evalDouble("STDEV(6, 8, -3, 10, 4)"), 0.01);
+		assertEquals (2.0, evalDouble("STDEV(1, 3, 5)"), 0.01);
+		assertEquals (0.0, evalDouble("VAR(1, 1, 1)"), 0.01);
+		assertEquals (25.0, evalDouble("VAR(6, 8, -3, 10, 4)"), 0.01);
+		assertEquals (4.0, evalDouble("VAR(1, 3, 5)"), 0.01);
+		
+		assertEquals(0.2319, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),1,1)"), 0.01);
+		assertEquals(0.2706, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),1,2)"), 0.01);
+		assertEquals(0.2767, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),1,3)"), 0.01);
+		assertEquals(0.4639, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),2,1)"), 0.01);
+		assertEquals(0.5413, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),2,2)"), 0.01);
+		assertEquals(0.5535, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),2,3)"), 0.01);
+
 		assertTrue (evalExpr("ISNUMBER(1.0) AND NOT ISNUMBER(\"hello\")"));
 	}
+
+	public void testStringFunc() throws CriterionException
+	{
+		assertEquals (3, evalDouble("LEN(\"abc\")"), 0.01);
+		assertEquals ("e", eval("RIGHT(\"abcde\")"));
+		assertEquals ("de", eval("RIGHT(\"abcde\",2)"));
+		assertEquals ("bc", eval("MID(\"abcde\", 2, 2)"));
+		assertEquals ("abc", eval("LEFT(\"abcde\",3)"));
+		assertEquals (3.0, eval("FIND(\"ss\", \"mississippi\")"));
+		assertEquals (3.0, eval("FIND(\"ss\", \"mississippi\", 3)"));
+		assertEquals (6.0, eval("FIND(\"ss\", \"mississippi\", 4)"));
+	}
+
 }

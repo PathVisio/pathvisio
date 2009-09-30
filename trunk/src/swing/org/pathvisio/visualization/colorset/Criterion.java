@@ -17,7 +17,6 @@
 package org.pathvisio.visualization.colorset;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,17 +120,12 @@ public class Criterion
 		return evaluate();
 	}
 	
-	public double evaluateAsDouble(Map<String, Object> data) throws CriterionException
+	public Object evaluateAsObject(Map<String, Object> data) throws CriterionException
 	{
 		setSampleData(data);
 		Token e = parse();
 		e.printMe(0);
-		Object value = e.evaluate();
-		if (value instanceof Double) return (Double)value;
-		else 		
-		{
-			throw new CriterionException ("Expected Double expression");
-		}
+		return e.evaluate();
 	}
 	
 	//Boolean expression parser by Martijn
@@ -198,8 +192,11 @@ public class Criterion
 		return nextToken;
 	}
 
-	
-	abstract static class Func
+	/**
+	 * Interface for the excel-like functions that
+	 * can be used in Criterions.
+	 */
+	interface Operation
 	{
 		abstract Object call(List<Object> params);
 	}
@@ -723,7 +720,7 @@ public class Criterion
 				if (!isNonNullDouble (lval, rval)) return null;
 				return (Double)lval / (Double)rval;
 			case FUNC:
-				Func f = Functions.valueOf(symbolValue).def;
+				Operation f = Functions.valueOf(symbolValue);
 				List<Object> values = new ArrayList<Object>();
 				for (Token t : funcParams)
 				{

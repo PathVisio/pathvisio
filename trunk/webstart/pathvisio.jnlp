@@ -21,6 +21,7 @@
 		 <jar href="lib/bridgedb-bio.jar"/>
 		 <jar href="lib/swing-worker-1.1.jar"/>
 		 <jar href="lib/BrowserLauncher.jar"/>
+		 <jar href="lib/commons-math-2.0.jar"/>
 		 <jar href="lib/batik/batik-awt-util.jar"/>
 		 <jar href="lib/batik/batik-bridge.jar"/>
 		 <jar href="lib/batik/batik-css.jar"/>

@@ -49,6 +49,7 @@
 		<include name="forms-1.2.0.jar"/>
 		<include name="swing-worker-1.1.jar"/>
 		<include name="BrowserLauncher.jar"/>
+		<include name="commons-math-2.0.jar"/>
 	  </fileset>
 	</path>
 	
@@ -96,6 +97,7 @@
 		<pathelement location="${build.swing.dir}"/>
 		<fileset dir="lib">
 			<include name="BrowserLauncher.jar"/>
+			<include name="commons-math-2.0.jar"/>
 		</fileset>
 	</path>
 

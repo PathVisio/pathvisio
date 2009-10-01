@@ -17,9 +17,12 @@
 package org.pathvisio.visualization.colorset;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.pathvisio.debug.Logger;
 
@@ -204,6 +207,9 @@ public class Criterion
 	// note: token is taken away from input!
 	private Token getToken() throws CriterionException
 	{      
+		Set<String> functionNames = new HashSet<String>();
+		for (Functions f : Functions.values()) functionNames.add (f.name());
+
 		Token token = null;
 		if (nextToken != null)
 		{
@@ -338,7 +344,7 @@ public class Criterion
 			{
 				token = new Token (TokenType.NOT);
 			}
-			else if (Functions.valueOf(value) != null)
+			else if (functionNames.contains(value))
 			{
 				token = new Token (TokenType.FUNC, value);
 			}
@@ -720,13 +726,24 @@ public class Criterion
 				if (!isNonNullDouble (lval, rval)) return null;
 				return (Double)lval / (Double)rval;
 			case FUNC:
-				Operation f = Functions.valueOf(symbolValue);
+				Functions f = Functions.valueOf(symbolValue);
+				if (funcParams.size() < f.getMinArgs())
+				{
+					throw new CriterionException ("Too few arguments for function " + symbolValue);
+				}
 				List<Object> values = new ArrayList<Object>();
 				for (Token t : funcParams)
 				{
 					values.add(t.evaluate());
 				}
-				return f.call (values);
+				try
+				{
+					return f.call (values);
+				}
+				catch (ClassCastException ex)
+				{
+					throw new CriterionException ("Wrong type - " + ex.getMessage());
+				}
 			default:
 				error = "Can't evaluate this expression";
 			}

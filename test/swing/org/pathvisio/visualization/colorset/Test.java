@@ -185,6 +185,40 @@ public class Test extends TestCase
 		assertFalse (evalExpr ("NOT (2 > 1) AND (1 > 2)"));
 	}
 	
+	public void assertFail(String expr)
+	{		
+		// type error:
+		try { 
+			eval(expr);
+			fail("CriterionException expected");
+		}
+		catch (CriterionException ex)
+		{
+			// success
+		}
+	}
+	
+	public void testFuncFail() throws CriterionException
+	{
+		// type errors
+		assertFail ("LOG10(ARRAY(1.0))");
+		assertFail ("LEN(1.0)");
+		assertFail ("TTEST (1,1,1,1)");
+		assertFail ("SUM(\"a\", \"b\")");
+		assertFail ("TTEST (1,1,1,1)");
+		assertFail ("RIGHT(1 < 2)");
+		
+		// too few arguments
+		assertFail ("IF()");
+		assertFail ("RIGHT()");
+		assertFail ("LEN()");
+		assertFail ("LOG(1)");
+		assertFail ("LOG10()");
+		
+		// non-existing function
+		assertFail ("NONSENSE()");
+	}
+	
 	public void testStatFunc() throws CriterionException
 	{
 		assertEquals (2, evalDouble("AVERAGE(LOG(2, 2), LOG10(100, 0), SQRT(9))"), 0.01);

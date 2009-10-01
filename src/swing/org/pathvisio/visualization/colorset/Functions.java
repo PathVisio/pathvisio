@@ -30,7 +30,7 @@ import org.pathvisio.visualization.colorset.Criterion.Operation;
  */
 enum Functions implements Operation
 {
-	SUM() {
+	SUM(0, "SUM(numbers...): sum of all parameters. Example: SUM(1,2,3) -> 6") {
 		public Object call(List<Object> params) 
 		{
 			double sum = 0;
@@ -38,7 +38,7 @@ enum Functions implements Operation
 			return sum;
 		}
 	},
-	SUMSQ() {
+	SUMSQ(0, "SUMSQ(numbers...): sum of the squares of all parameters. Example: SUMSQ(1, 2, 3) -> 14") {
 		public Object call(List<Object> params) 
 		{
 			double sumSq = 0;
@@ -46,27 +46,35 @@ enum Functions implements Operation
 			return sumSq;
 		}
 	},
-	VAR (){
+	VAR (0, "VAR(numbers...): variance of the parameters, defined as the squared deviation from the mean, divided by degrees of freedom.")
+	{
 		public Object call(List<Object> params) 
 		{
 			double[] doubles = toDoublesArray(params);
 			return 	StatUtils.variance(doubles);
 		}
 	},
-	STDEV () {
+	STDEV (0, "STDEV(numbers...): standard deviation of the parameters, defined as the square root of the variance") 
+	{
 		public Object call(List<Object> params) 
 		{
 			double[] doubles = toDoublesArray(params);
 			return Math.sqrt (StatUtils.variance(doubles));
 		}
 	},
-	ARRAY () {
+	ARRAY (0, "ARRAY(numbers...): Turns a series of objects into an array object, required for the TTEST function") {
 		public Object call(List<Object> params) 
 		{
 			return params;
 		}
 	},
-	TTEST () {
+	TTEST (4, "TTEST(array, array, tails, type): Student's T-Test. " +
+			"Parameters 1 and 2 are each an ARRAY of measures. " +
+			"The third parameter is either 1 for a one-tailed test or 2 for a two-tailed test. " +
+			"The fourth parameter is 1 for a paired t-test, 2 for a homoscedastic (equal variance) " +
+			" test or 3 for a t-test with non-equal variances. " +
+			"Example: TTEST(ARRAY(1,2),ARRAY(3,4),2,1") 
+	{
 		public Object call(List<Object> params) 
 		{
 			double[] doubles1 = toDoublesArray((List<?>)params.get(0));
@@ -98,7 +106,8 @@ enum Functions implements Operation
 			return result;
 		}
 	},	
- 	LEFT() {
+ 	LEFT(2, "LEFT(string, length): left part of a string. Example: LEFT(\"abc\",2) -> \"ab\"") 
+ 	{
 		public Object call(List<Object> params) 
 		{
 			String s = (String)params.get(0);
@@ -106,7 +115,7 @@ enum Functions implements Operation
 			return s.substring(0, (int)len);
 		}
 	},
-	MID() {
+	MID(3, "MID(string, start, length): middle part of a string. Example: MID(\"abc\", 2, 1) -> \"b\"") {
 		public Object call(List<Object> params) 
 		{
 			String s = (String)params.get(0);
@@ -116,7 +125,10 @@ enum Functions implements Operation
 			return s.substring((int)start - 1, (int)(start + len - 1));
 		}
 	},
-	FIND () {
+	FIND (2, "FIND(query, string [, start]): looks for a substring in a string. " +
+			"First parameter is the string to search for, " +
+			"second is the string to search in. An optional third parameter determines the start " +
+			"position. Example: FIND(\"ss\", \"mississippi\") -> 3") {
 		public Object call(List<Object> params) 
 		{
 			String s1 = (String)params.get(0);
@@ -126,14 +138,18 @@ enum Functions implements Operation
 			return new Double(s2.indexOf(s1, (int)start - 1) + 1);
 		}
 	},
-	LEN() {
+	LEN(1, "LEN(string): Returns the length of a string") {
 		public Object call(List<Object> params) 
 		{
 			String s1 = (String)params.get(0);
 			return new Double(s1.length());
 		}
 	},
-	RIGHT() {
+	RIGHT(1, "RIGHT (string [, length]): the right part of a string. " +
+			"The first parameter is the input string, " +
+			"the optional second parameter determines the length to return. Example: " +
+			"RIGHT(\"abcde\",2) -> \"de\"") 
+	{
 		public Object call(List<Object> params) 
 		{
 			String s1 = (String)params.get(0);
@@ -142,7 +158,7 @@ enum Functions implements Operation
 			return s1.substring(s1.length() - (int)len);
 		}
 	},
-	AVERAGE() {
+	AVERAGE(0, "AVERAGE(numbers...): Average of a list of values. Example: AVERAGE(3,4,5) -> 4") {
 		public Object call(List<Object> params) 
 		{
 			double sum = 0;
@@ -150,7 +166,8 @@ enum Functions implements Operation
 			return sum / params.size();
 		}
 	},
-	MAX() {
+	MAX(0, "MAX(numbers...): Maximum of a list of values. Example: MAX(3,4,5) -> 5") 
+	{
 		public Object call(List<Object> params) 
 		{
 			Double max = null;
@@ -159,7 +176,7 @@ enum Functions implements Operation
 			return max;
 		}
 	},
-	MIN() {
+	MIN(0, "MIN(numbers...): Minimum of a list of values. Example: MIN(3,4,5) -> 3") {
 		public Object call(List<Object> params) 
 		{
 			Double min = null;
@@ -168,7 +185,7 @@ enum Functions implements Operation
 			return min;
 		}
 	},
-	LOG() {
+	LOG(2, "LOG(number, base): Calculate logarithm. Example: LOG(64,2) -> 6") {
 		public Object call(List<Object> params) 
 		{
 			double number = (Double)params.get(0);
@@ -176,7 +193,7 @@ enum Functions implements Operation
 			return (Math.log (number) / Math.log (base));
 		}
 	},
-	POWER() {
+	POWER(2, "POWER(number, base): Raises a number to a power. Example: POWER(2,3) -> 8") {
 		public Object call(List<Object> params) 
 		{
 			double number = (Double)params.get(0);
@@ -184,28 +201,29 @@ enum Functions implements Operation
 			return Math.pow (number, base);
 		}
 	},
-	EXP() {
+	EXP(1, "EXP(number): Calculates the exponent, i.e. a power of e") {
 		public Object call(List<Object> params) 
 		{
 			double number = (Double)params.get(0);
 			return Math.exp (number);
 		}
 	},
-	SIN() {
+	SIN(1, "SIN(number): sine of a number in radians")
+	{
 		public Object call(List<Object> params) 
 		{
 			double arg = (Double)params.get(0);
 			return Math.sin (arg);
 		}
 	},
-	COS() {
+	COS(1, "COS(number): cosine of a number in radians") {
 		public Object call(List<Object> params) 
 		{
 			double arg = (Double)params.get(0);
 			return Math.cos (arg);
 		}
 	},
-	SQRT() {
+	SQRT(1, "SQRT(number): square root of a number") {
 		public Object call(List<Object> params) 
 		{
 			double arg = (Double)params.get(0);
@@ -213,7 +231,7 @@ enum Functions implements Operation
 		}
 	},
 	//TODO: 2nd param of ROUND: digits
-	ROUND () {
+	ROUND (1, "ROUND(number): Rounds a number to the nearest whole integer") {
 		public Object call(List<Object> params) 
 		{
 			double arg = (Double)params.get(0);
@@ -221,7 +239,7 @@ enum Functions implements Operation
 		}
 	},
 	//TODO: 2nd param of CEILING: significance
-	CEILING() {
+	CEILING(1, "CEILING(number): round a number up") {
 		public Object call(List<Object> params) 
 		{
 			double arg = (Double)params.get(0);
@@ -229,34 +247,36 @@ enum Functions implements Operation
 		}
 	},
 	//TODO: 2nd param of FLOOR: significance
-	FLOOR() {
+	FLOOR(1, "FLOOR(number): round a number down") {
 		public Object call(List<Object> params) 
 		{
 			double arg = (Double)params.get(0);
 			return Math.floor (arg);
 		}
 	},
-	LOG10() {
+	LOG10(1, "LOG10(number): Base-10 logarithm") {
 		public Object call(List<Object> params) 
 		{
 			double number = (Double)params.get(0);
 			return (Math.log10 (number));
 		}
 	},
-	IF() {
+	IF(3, "IF(condition,true value,false value): Make a decision. " +
+			"Returns true-value or false-value depending on the condition. " +
+			"Example: IF(2 > 1, \"greater\", \"less\") -> \"greater\"") {
 		public Object call(List<Object> params) 
 		{
 			Boolean condition = (Boolean)params.get(0);
 			if (condition) return params.get(1); else return params.get(2);
 		}
 	},
-	ABS() {
+	ABS(1, "ABS(number): the absolute value") {
 		public Object call(List<Object> params) 
 		{
 			return Math.abs((Double)params.get(0));
 		}
 	},
-	CONCATENATE() {
+	CONCATENATE(0, "CONCATENATE(strings...): joins strings together") {
 		public Object call(List<Object> params) 
 		{
 			StringBuilder builder = new StringBuilder();
@@ -264,13 +284,13 @@ enum Functions implements Operation
 			return builder.toString();
 		}
 	},
-	TRIM() {
+	TRIM(1, "TRIM(string): removes whitespace at the start or end of a string") {
 		public Object call(List<Object> params) 
 		{
 			return ((String)params.get(0)).trim();
 		}
 	},
-	ISNUMBER() {
+	ISNUMBER(1, "ISNUMBER(value): returns TRUE if the value is a number") {
 		public Object call(List<Object> params) 
 		{
 			return (params.get(0) instanceof Double);
@@ -278,6 +298,20 @@ enum Functions implements Operation
 	},
 	
 	;	
+	
+	private final int minArgs;
+	private final String help;
+	
+	Functions(int minArgs, String help)
+	{
+		this.minArgs = minArgs;
+		this.help = help;
+	}
+	
+	public int getMinArgs()
+	{
+		return minArgs;
+	}
 	
 	// helper
 	private static double[] toDoublesArray (List<?> list)

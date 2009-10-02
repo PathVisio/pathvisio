@@ -74,7 +74,7 @@ public class ColorRulePanel extends JPanel
 		String error = cr.setExpression(expr, sampleNames);
 		if (error == null)
 		{
-			errorMsg.setText("Expression OK");
+			errorMsg.setText("Rule logic OK");
 			errorMsg.setForeground(Color.GREEN);
 		}
 		else
@@ -156,7 +156,7 @@ public class ColorRulePanel extends JPanel
 			}
 		});
 		
-		add (new JLabel ("Expression: "), cc.xy (2,2));
+		add (new JLabel ("Rule logic: "), cc.xy (2,2));
 		add (txtExpr, cc.xy (4, 2));
 		
 		lstOperators = new JList(Criterion.TOKENS);
@@ -193,7 +193,7 @@ public class ColorRulePanel extends JPanel
 		} );
 		add (new JScrollPane (lstSamples), cc.xy (4,4));
 		
-		errorMsg = new JLabel("Expression OK");
+		errorMsg = new JLabel("Rule logic OK");
 		add (errorMsg, cc.xyw (2, 6, 3));
 		
 		colorLabel = new JLabel(" ");

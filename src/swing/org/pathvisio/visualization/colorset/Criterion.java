@@ -738,7 +738,7 @@ public class Criterion
 				}
 				try
 				{
-					return f.call (values);
+					return ((Operation)f).call (values);
 				}
 				catch (ClassCastException ex)
 				{

@@ -53,7 +53,6 @@ import org.pathvisio.visualization.colorset.Criterion;
  */
 public class ColorRulePanel extends JPanel 
 {
-
 	private JLabel colorLabel; 
 	private ColorRule cr = null;
 	private JTextField txtExpr;

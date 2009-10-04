@@ -120,12 +120,24 @@ public class CachedData
 			return Collections.emptyList();
 	}
 	
+	private IDMapper mapper = null;
+	
+	/**
+	 * Set the mapper that is used for ID Mapping.
+	 * TODO In the future I want to set this in the constructor, and
+	 * make mapper final.
+	 */
+	public void setMapper(IDMapper mapper)
+	{
+		this.mapper = mapper;
+	}
+
 	/**
 	 * Loads expression data for all the given gene ids into memory
 	 * @param srcRefs	Genes to cache the expression data for
 	 * (typically all genes in a pathway)
 	 */
-	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p, IDMapper gdb) throws IDMapperException
+	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p) throws IDMapperException
 	{	
 		// seed samples cache
 		parent.getSamples();
@@ -145,7 +157,7 @@ public class CachedData
 		{				
 			if(hasData(srcRef)) continue;
 			
-			for (ReporterData r : getDataForXref(srcRef, gdb, destFilter)) 
+			for (ReporterData r : getDataForXref(srcRef, mapper, destFilter)) 
 				addData(srcRef, r);
 			
 			if(p != null)

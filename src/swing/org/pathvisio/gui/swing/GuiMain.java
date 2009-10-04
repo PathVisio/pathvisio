@@ -46,6 +46,8 @@ import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager.GexManagerEvent;
 import org.pathvisio.gex.GexManager.GexManagerListener;
+import org.pathvisio.gex.CachedData;
+import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.SwingEngine.Browser;
 import org.pathvisio.model.BatikImageWithDataExporter;
@@ -58,6 +60,7 @@ import org.pathvisio.model.RasterImageWithDataExporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.MIMShapes;
+import org.pathvisio.visualization.VisualizationManager;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -410,10 +413,13 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	{
 		engine.addPathwayExporter(new MappFormat());
 		engine.addPathwayExporter(new GpmlFormat());
-		engine.addPathwayExporter(new RasterImageWithDataExporter(ImageExporter.TYPE_PNG, pvDesktop.getVisualizationManager()));
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_SVG, pvDesktop.getVisualizationManager()));
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_TIFF, pvDesktop.getVisualizationManager()));
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PDF, pvDesktop.getVisualizationManager()));	
+		
+		GexManager gex = pvDesktop.getGexManager();
+		VisualizationManager vis = pvDesktop.getVisualizationManager();
+		engine.addPathwayExporter(new RasterImageWithDataExporter(ImageExporter.TYPE_PNG, gex, vis));
+		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_SVG, gex, vis));
+		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_TIFF, gex, vis));
+		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PDF, gex, vis));	
 		engine.addPathwayExporter(new DataNodeListExporter(gdbManager));
 		engine.addPathwayExporter(new EUGeneExporter());
 	}

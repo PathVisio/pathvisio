@@ -25,6 +25,10 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.bridgedb.IDMapperException;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.CachedData;
+import org.pathvisio.gex.GexManager;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationManager;
 
@@ -35,8 +39,9 @@ import org.pathvisio.visualization.VisualizationManager;
  */
 public class RasterImageWithDataExporter extends ImageExporter 
 {
-	final VisualizationManager visualizationManager;
+	private final VisualizationManager visualizationManager;
 	protected boolean dataVisible = true; // true by default
+	private final GexManager gexManager;
 	
 	/**
 	 * Use a buffered image for exporting
@@ -44,13 +49,14 @@ public class RasterImageWithDataExporter extends ImageExporter
 	 * @param type must be one of javax.imageio.ImageIO.getWriterFormatNames().
 	 * 	e.g. "gif", "png" or "jpeg". Throws an IllegalArgumentException otherwise
 	 */
-	public RasterImageWithDataExporter(String type, VisualizationManager mgr) 
+	public RasterImageWithDataExporter(String type, GexManager gexManager, VisualizationManager mgr) 
 	{
 		super(type);
 		List<String> formatNames = Arrays.asList (ImageIO.getWriterFormatNames());
 		if (!formatNames.contains (type))
 			throw new IllegalArgumentException ("Unkown Image type " + type);
 		visualizationManager = mgr;
+		this.gexManager = gexManager;
 	}
 
 	public void doExport(File file, Pathway pathway) throws ConverterException 
@@ -62,6 +68,14 @@ public class RasterImageWithDataExporter extends ImageExporter
 		if (dataVisible)
 		{
 			vPathway.addVPathwayListener(visualizationManager);
+			try
+			{
+				gexManager.getCachedData().syncSeed(pathway.getDataNodeXrefs());
+			}
+			catch (IDMapperException ex)
+			{
+				Logger.log.error ("Could not get data", ex);
+			}
 		}
 		
 		BufferedImage image = new BufferedImage(vPathway.getVWidth(), vPathway.getVHeight(), 

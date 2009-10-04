@@ -186,7 +186,7 @@ public class TextByExpression extends VisualizationMethod
 	}
 	
 	Object getSampleStringMult(Sample s, List<ReporterData> refdata, String sep) {
-		if(mean) return CachedData.getAverageSampleData(refdata).getSampleData(s);
+		if(mean) return ReporterData.createListSummary(refdata).getSampleData(s);
 		
 		StringBuilder strb = new StringBuilder();
 		for(ReporterData d : refdata) {

@@ -16,7 +16,9 @@
 //
 package org.pathvisio.gex;
 
+import java.sql.Types;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.bridgedb.Xref;
@@ -117,6 +119,60 @@ public class ReporterData
 	void setSampleAsObject (Sample sample, Object data)
 	{
 		sampleData.put(sample, data);
+	}
+
+	/**
+	 * Generates a summary-ReporterData by summarizing a List of ReporterData.
+	 * Strings are concatenated, doubles are averaged.
+	 * @param dlist list to summarize.
+	 * @return summary ReporterData
+	 */
+	public static ReporterData createListSummary(List<ReporterData> dlist)
+	{
+		ReporterData result = new ReporterData(null, -1);
+		if(dlist != null && dlist.size() > 0) {
+			for(Sample key : dlist.get(0).getSampleData().keySet())
+			{
+				int dataType = key.getDataType();
+				if(dataType == Types.REAL) {
+					result.setSampleAsObject(key, averageDouble(dlist, key));
+				} else {
+					result.setSampleAsObject(key, averageString(dlist, key));
+				}
+			}
+		}
+		return result;
+	}
+	
+	
+	private static Object averageDouble(List<ReporterData> dlist, Sample s)
+	{
+		double avg = 0;
+		int n = 0;
+		for(ReporterData d : dlist) {
+			try { 
+				Double value = (Double)d.getSampleData(s);
+				if( !value.isNaN() ) {
+					avg += value;
+					n++;
+				}
+			} catch(Exception e) { }
+		}
+		if(n > 0) {
+			return avg / n;
+		} else {
+			return Double.NaN;
+		}
+	}
+	
+	private static Object averageString(List<ReporterData> dlist, Sample s)
+	{
+		StringBuilder sb = new StringBuilder();
+		for(ReporterData d : dlist) {
+			sb.append(d.getSampleData(s) + ", ");
+		}
+		int end = sb.lastIndexOf(", ");
+		return end < 0 ? "" : sb.substring(0, end).toString();
 	}
 	
 }

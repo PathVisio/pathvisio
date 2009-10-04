@@ -322,6 +322,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			}
 		}
 		swingEngine.getGdbManager().removeGdbEventListener(this);
+		mainPanel.dispose();
 		pvDesktop.getGexManager().removeListener(this);
 		pvDesktop.dispose();
 		swingEngine.getEngine().dispose();
@@ -371,15 +372,15 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		pvDesktop = new PvDesktop (swingEngine);
 		swingEngine.getGdbManager().initPreferred();
 		
-		MainPanelStandalone mps = new MainPanelStandalone(pvDesktop);
-		mps.createAndShowGUI();
+		mainPanel = new MainPanelStandalone(pvDesktop);
+		mainPanel.createAndShowGUI();
 
-		JFrame frame = createAndShowGUI(mps, swingEngine);
+		JFrame frame = createAndShowGUI(mainPanel, swingEngine);
 		initImporters(engine);
 		initExporters(engine, swingEngine.getGdbManager());
 		MIMShapes.registerShapes();
 		swingEngine.setFrame(frame);
-		swingEngine.setApplicationPanel(mps);
+		swingEngine.setApplicationPanel(mainPanel);
 		
 		// load plugins from the default plugin dir
 		pluginLocations.add("" + new File (GlobalPreference.getApplicationDir(), "plugins"));

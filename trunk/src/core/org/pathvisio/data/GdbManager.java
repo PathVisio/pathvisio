@@ -42,7 +42,7 @@ import org.pathvisio.preferences.PreferenceManager;
  */
 public class GdbManager extends AbstractListModel 
 {
-	private IDMapperStack currentGdb = new IDMapperStack();
+	private final IDMapperStack currentGdb = new IDMapperStack();
 	private IDMapper metabolites;
 	private IDMapper genes;
 	

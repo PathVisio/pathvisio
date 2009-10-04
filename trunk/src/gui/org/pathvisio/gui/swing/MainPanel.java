@@ -56,6 +56,8 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.BackpageTextProvider;
+import org.pathvisio.gui.BackpageTextProvider.BackpageAttributes;
+import org.pathvisio.gui.BackpageTextProvider.BackpageXrefs;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
@@ -201,8 +203,11 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		
 		propertiesScrollPane = new JScrollPane(propertyTable);
 		
-		bpt = new BackpageTextProvider (swingEngine.getEngine(), swingEngine.getGdbManager());
-		backpagePane = new BackpagePane(bpt);
+		bpt = new BackpageTextProvider ();
+		bpt.addBackpageHook(new BackpageAttributes(swingEngine.getGdbManager().getCurrentGdb()));
+		bpt.addBackpageHook(new BackpageXrefs(swingEngine.getGdbManager().getCurrentGdb()));
+
+		backpagePane = new BackpagePane(bpt, swingEngine.getEngine());
 		backpagePane.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -474,5 +479,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public JTabbedPane getSideBarTabbedPane()
 	{
 		return sidebarTabbedPane;
+	}
+	
+	public void dispose()
+	{
+		backpagePane.dispose();
 	}
 }

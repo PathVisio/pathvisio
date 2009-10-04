@@ -98,7 +98,8 @@ public class Test extends TestCase
 		Xref ref1 = new Xref("7124", BioDataSource.ENTREZ_GENE);
 		Xref ref2 = new Xref("1909_at", BioDataSource.AFFY); 
 		List<Xref> refs = Arrays.asList(new Xref[] { ref1, ref2 }); 
-		gex.cacheData(refs, null, gdb);
+		CachedData cache = new CachedData(gex);
+		cache.cacheData(refs, null, gdb);
 		
 		Sample s = gex.getSample(1);
 		assertEquals (1, s.getId());
@@ -106,7 +107,7 @@ public class Test extends TestCase
 		assertEquals ("Control 2", s.getName());
 
 		//check that there is only one row of data
-		List<ReporterData> data1 = gex.getCachedData(ref1);
+		List<ReporterData> data1 = cache.getData(ref1);
 		assertEquals (1, data1.size());
 		
 		// looking up a particular data point in two different ways: L:7124, sample "Control 2"
@@ -114,7 +115,7 @@ public class Test extends TestCase
 		assertEquals (0.993159836, (Double)data1.get(0).getByName().get("Control 2"), 0.001);
 		
 		// test for aggregating data (in this case we're averaging over just one row)
-		ReporterData row = ReporterData.createListSummary(gex.getCachedData().getData(ref2));
+		ReporterData row = ReporterData.createListSummary(cache.getData(ref2));
 		// check data point for X:1909_at, which corresponds to L:596
 		assertEquals (0.045334852, (Double)(row.getSampleData().get(s)), 0.001);
 		

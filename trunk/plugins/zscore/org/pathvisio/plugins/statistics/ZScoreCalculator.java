@@ -26,10 +26,9 @@ import java.util.Map;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.ReporterData;
-import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.Stats;
@@ -49,7 +48,7 @@ public class ZScoreCalculator
 	private Map<PathwayInfo, StatisticsPathwayResult> statsMap = 
 		new HashMap<PathwayInfo, StatisticsPathwayResult>();
 	
-	public ZScoreCalculator(Criterion crit, File pwDir, SimpleGex gex, IDMapper gdb, ProgressKeeper pk)
+	public ZScoreCalculator(Criterion crit, File pwDir, CachedData gex, IDMapper gdb, ProgressKeeper pk)
 	{
 		if (pk != null)
 		{
@@ -183,7 +182,7 @@ public class ZScoreCalculator
 	{
 		int cGeneTotal = 0;
 		int cGenePositive = 0;
-		List<ReporterData> rows = result.gex.getCachedData().getData(srcRef);
+		List<ReporterData> rows = result.gex.getData(srcRef);
 		
 		if (rows != null)
 		{

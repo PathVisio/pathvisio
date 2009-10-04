@@ -33,6 +33,7 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
@@ -207,7 +208,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	 * when an expression dataset is available and a pathway is open.
 	 */
 	public void loadGexCache() {
-		final SimpleGex gex = gexManager.getCurrentGex();
+		final CachedData gex = gexManager.getCachedData();
 		final Pathway p = swingEngine.getEngine().getActivePathway();
 		if(p != null && gex != null) {
 			final ProgressKeeper pk = new ProgressKeeper(

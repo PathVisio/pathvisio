@@ -47,7 +47,7 @@ public class BackpageExpression implements BackpageHook
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	private static String getDataString(Xref idc, IDMapper gdb, SimpleGex gex) throws IDMapperException
+	private static String getDataString(Xref idc, IDMapper gdb, CachedData gex) throws IDMapperException
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
@@ -55,7 +55,7 @@ public class BackpageExpression implements BackpageHook
 		String colNames = "<TR><TH>Sample name";
 		if(!gex.isConnected()) return noDataFound;
 		
-		List<ReporterData> pwData = gex.getCachedData(idc);
+		List<ReporterData> pwData = gex.getData(idc);
 		
 		if(pwData == null) return noDataFound;
 		
@@ -78,10 +78,10 @@ public class BackpageExpression implements BackpageHook
 
 	public String getHtml(PathwayElement e) 
 	{
-		return getHtml(e, gdbManager.getCurrentGdb(), gexManager.getCurrentGex());
+		return getHtml(e, gdbManager.getCurrentGdb(), gexManager.getCachedData());
 	}
 	
-	public static String getHtml(PathwayElement e, IDMapper gdb, SimpleGex gex) {
+	public static String getHtml(PathwayElement e, IDMapper gdb, CachedData gex) {
 		String text = "";
 		try
 		{

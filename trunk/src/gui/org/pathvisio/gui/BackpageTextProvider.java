@@ -19,6 +19,7 @@ package org.pathvisio.gui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -155,20 +156,14 @@ public class BackpageTextProvider
 				Set<Xref> crfs = gdb.mapID(e.getXref());
 				crfs.add(e.getXref());
 				if(crfs.size() == 0) return "";
+				List<Xref> sortedRefs = new ArrayList<Xref>(crfs);
+				Collections.sort(sortedRefs);
 				StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
-				for(Xref cr : crfs) {
+				for(Xref cr : sortedRefs) {
 					String idtxt = cr.getId();
 					String url = cr.getUrl();
 					if(url != null) {
-						int os = Utils.getOS();
-						if(os == Utils.OS_WINDOWS) {
-							//In windows: open in new browser window
-							idtxt = "<a href='" + url + "' target='_blank'>" + idtxt + "</a>";
-						} else {
-							//This doesn't work under ubuntu, so no new windoe there
-							idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
-						}
-	
+						idtxt = "<a href='" + url + "'>" + idtxt + "</a>";	
 					}
 					String dbName = cr.getDataSource().getFullName();
 					crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");

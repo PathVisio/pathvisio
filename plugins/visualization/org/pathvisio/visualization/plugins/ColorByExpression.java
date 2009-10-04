@@ -45,9 +45,11 @@ import org.jdom.Element;
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.CachedData;
+import org.pathvisio.gex.CachedData.Callback;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
+import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.GeneProduct;
@@ -222,7 +224,7 @@ public class ColorByExpression extends VisualizationMethod {
 	
 	}
 	
-	void drawArea(GeneProduct gp, Rectangle area, Graphics2D g2d) {
+	void drawArea(final GeneProduct gp, Rectangle area, Graphics2D g2d) {
 		int nr = useSamples.size();
 		int left = area.width % nr; //Space left after dividing, give to last rectangle
 		int w = area.width / nr;
@@ -242,10 +244,29 @@ public class ColorByExpression extends VisualizationMethod {
 				Logger.log.trace("No colorset for sample " + s);
 				continue; //No ColorSet for this sample
 			}
-			if(cache.hasData(idc)) 
-				drawSample(s, cache.getData(idc), r, g2d);
+			if(cache.hasData(idc))
+			{
+				List<ReporterData> data = cache.getData(idc);
+				if (data.size() > 0)
+				{
+					drawSample(s, data, r, g2d);
+				}
+				else
+				{
+					drawNoDataFound(s, area, g2d);
+				}
+			}
 			else 
-				drawNoDataFound(s, area, g2d);
+			{
+				cache.asyncGet(idc, new Callback()
+				{
+					public void callback()
+					{
+						gp.markDirty();
+						gp.getDrawing().redraw();
+					}
+				});
+			}
 		}
 		g2d.setClip(origClip);
 		g2d.setColor(Color.BLACK);

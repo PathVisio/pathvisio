@@ -359,7 +359,7 @@ public class Line extends Graphics implements Adjustable
 		return anchors.values();
 	}
 	
-	protected void markDirty() {
+	public void markDirty() {
 		super.markDirty();
 		for(VAnchor va : anchors.values()) {
 			va.markDirty();

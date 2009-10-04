@@ -17,7 +17,6 @@
 package org.pathvisio.visualization.colorset;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,8 +45,6 @@ public class Criterion
 		
 	}
 	
-	private static final String DISPLAY_SAMPLE = "|Displayed sample|";
-	
 	/** Some of the operators that can be used in a Criterion */
 	public static final String[] TOKENS = {"AND", "OR", "=", "<", ">", "<=", ">=", "<>"};
 	/* Note that we exclude some for brevity: 
@@ -66,7 +63,7 @@ public class Criterion
 	{  
 		return expression; 
 	}
-	
+
 	/**
 	 * set and expression and available symbols.
 	 * The symbols do not need to be mapped to values at this point.
@@ -106,16 +103,6 @@ public class Criterion
 			Object value = data.get(key);
 			symTab.put (key, value);
 		}
-	}
-	
-	public boolean evaluate(Map<String, Object> data, String displaySampleId) throws CriterionException 
-	{
-		if (expression == null) throw new NullPointerException();
-		setSampleData(data);
-		Object value = data.get(displaySampleId);
-		symTab.put (DISPLAY_SAMPLE, value);
-
-		return evaluate();
 	}
 	
 	public boolean evaluate(Map<String, Object> data) throws CriterionException {

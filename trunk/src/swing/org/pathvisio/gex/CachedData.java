@@ -39,6 +39,7 @@ import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.debug.ThreadSafe;
+import org.pathvisio.debug.WorkerThreadOnly;
 import org.pathvisio.util.ProgressKeeper;
 
 
@@ -107,6 +108,26 @@ public class CachedData
 		Logger.log.info ("CACHE: " + tasks + " tasks");
 	}
 	
+	@WorkerThreadOnly
+	private void syncGet(Xref ref)
+	{
+		try {
+			if (!data.containsKey (ref))
+			{
+				Logger.log.debug ("CACHE: calculating " + ref);
+				Set<DataSource> destFilter = parent.getUsedDatasources();
+				List<ReporterData> result = 
+					new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilter)); 
+				
+				Logger.log.debug ("CACHE: finished calculating " + ref);
+				data.put (ref, result);
+			}
+		} catch (IDMapperException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+	
 	public void asyncGet(final Xref ref, final Callback callback)
 	{
 		updateTasks (+1);
@@ -114,23 +135,7 @@ public class CachedData
 		{
 			public void run() 
 			{
-				// modifying data here is thread-safe, because this is always 
-				// run in a singleThreadPoolExecutor
-				try {
-					if (!data.containsKey (ref))
-					{
-						Logger.log.debug ("CACHE: calculating " + ref);
-						Set<DataSource> destFilter = parent.getUsedDatasources();
-						List<ReporterData> result = 
-							new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilter)); 
-						
-						Logger.log.debug ("CACHE: finished calculating " + ref);
-						data.put (ref, result);
-					}
-				} catch (IDMapperException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}		
+				syncGet(ref);
 				updateTasks (-1);
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
@@ -199,6 +204,22 @@ public class CachedData
 		
 		//TODO preseed cache with srcRefs in background.
 		// somehow with lower priority than the ones for visualization
+	}
+
+	@WorkerThreadOnly
+	/**
+	 * Load expression data for given Xrefs into cache.
+	 * Waits until the process is done.
+	 */
+	public void syncSeed(Collection<Xref> srcRefs) throws IDMapperException
+	{	
+		// seed samples cache
+		parent.getSamples();
+		
+		for (Xref ref : srcRefs)
+		{
+			syncGet(ref);
+		}
 	}
 	
 	public void clearCache()

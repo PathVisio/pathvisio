@@ -31,6 +31,10 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
+import org.bridgedb.IDMapperException;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.CachedData;
+import org.pathvisio.gex.GexManager;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationManager;
 import org.w3c.dom.DOMImplementation;
@@ -43,10 +47,12 @@ import org.w3c.dom.Document;
 public class BatikImageWithDataExporter extends ImageExporter 
 {
 	private final VisualizationManager visualizationManager;
+	private final GexManager gexManager;
 	
-	public BatikImageWithDataExporter(String type, VisualizationManager visualizationManager) 
+	public BatikImageWithDataExporter(String type, GexManager gexManager, VisualizationManager visualizationManager) 
 	{
 		super(type);
+		this.gexManager = gexManager;
 		this.visualizationManager = visualizationManager;
 	}
 
@@ -59,7 +65,6 @@ public class BatikImageWithDataExporter extends ImageExporter
 	{
 		dataVisible = value;
 	}
-	
 
 	public void doExport(File file, Pathway pathway) throws ConverterException
 	{
@@ -70,6 +75,14 @@ public class BatikImageWithDataExporter extends ImageExporter
 		if (dataVisible)
 		{
 			vPathway.addVPathwayListener(visualizationManager);
+			try
+			{
+				gexManager.getCachedData().syncSeed(pathway.getDataNodeXrefs());
+			}
+			catch (IDMapperException ex)
+			{
+				Logger.log.error ("Could not get data", ex);
+			}
 		}
 
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();

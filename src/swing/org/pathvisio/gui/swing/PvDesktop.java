@@ -212,7 +212,8 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		final Pathway p = swingEngine.getEngine().getActivePathway();
 		if(p != null && gex != null) {					
 			try
-			{	
+			{
+				gex.clearCache();
 				gex.setMapper (swingEngine.getGdbManager().getCurrentGdb());
 				gex.preSeed(p.getDataNodeXrefs());
 			}
@@ -314,6 +315,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		visualizationManager.removeListener(this);
 		visualizationManager.dispose();
 		gexManager.removeListener(compat);
+		gexManager.close();
 		disposed = true;
 	}
 

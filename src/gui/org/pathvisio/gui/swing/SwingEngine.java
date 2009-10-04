@@ -575,9 +575,9 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				throw new IllegalArgumentException("Not a Swing database connector");
 			}
 	
-			String dbName = "idmapper-pgdb:" + dbcon.openChooseDbDialog(null);
-			
-			if(dbName == null) return;
+			String result = dbcon.openChooseDbDialog(null);
+			if (result == null) return;
+			String dbName = "idmapper-pgdb:" + result;
 			
 			if (dbType.equals("Gene"))
 			{

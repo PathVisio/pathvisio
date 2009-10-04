@@ -381,7 +381,8 @@ public class ZScoreCalculator
 			pk.setTaskName("Reading dataset");
 			pk.setProgress(20);
 		}
-		result.gex.cacheData(pwyMap.getSrcRefs(), null, result.gdb);
+		result.gex.setMapper (result.gdb);
+		result.gex.cacheData(pwyMap.getSrcRefs(), null);
 		
 		// calculate dataMap
 		if (pk != null) 

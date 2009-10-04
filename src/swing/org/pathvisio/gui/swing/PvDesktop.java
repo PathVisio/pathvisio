@@ -224,7 +224,8 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 					pk.setTaskName("Loading expression data");
 					try
 					{	
-						gex.cacheData(p.getDataNodeXrefs(), pk, swingEngine.getGdbManager().getCurrentGdb());
+						gex.setMapper (swingEngine.getGdbManager().getCurrentGdb());
+						gex.cacheData(p.getDataNodeXrefs(), pk);
 					}
 					catch (IDMapperException e)
 					{

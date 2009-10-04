@@ -99,7 +99,8 @@ public class Test extends TestCase
 		Xref ref2 = new Xref("1909_at", BioDataSource.AFFY); 
 		List<Xref> refs = Arrays.asList(new Xref[] { ref1, ref2 }); 
 		CachedData cache = new CachedData(gex);
-		cache.cacheData(refs, null, gdb);
+		cache.setMapper(gdb);
+		cache.cacheData(refs, null);
 		
 		Sample s = gex.getSample(1);
 		assertEquals (1, s.getId());

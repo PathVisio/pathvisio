@@ -32,6 +32,7 @@ import org.bridgedb.rdb.DataDerbyDirectory;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.bridgedb.rdb.SimpleGdb;
 import org.bridgedb.rdb.SimpleGdbFactory;
+import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
@@ -115,7 +116,7 @@ public class Test extends TestCase
 		assertEquals (0.993159836, (Double)data1.get(0).getByName().get("Control 2"), 0.001);
 		
 		// test for aggregating data (in this case we're averaging over just one row)
-		ReporterData row = gex.getCachedData().getAverageSampleData(ref2);
+		ReporterData row = CachedData.getAverageSampleData(gex.getCachedData().getData(ref2));
 		// check data point for X:1909_at, which corresponds to L:596
 		assertEquals (0.045334852, (Double)(row.getSampleData().get(s)), 0.001);
 		

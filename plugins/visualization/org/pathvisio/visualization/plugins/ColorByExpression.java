@@ -243,7 +243,7 @@ public class ColorByExpression extends VisualizationMethod {
 				continue; //No ColorSet for this sample
 			}
 			if(cache.hasData(idc)) 
-				drawSample(s, idc, r, g2d);
+				drawSample(s, cache.getData(idc), r, g2d);
 			else 
 				drawNoDataFound(s, area, g2d);
 		}
@@ -270,15 +270,14 @@ public class ColorByExpression extends VisualizationMethod {
 	Color lineColor;
 	boolean drawLine = false;
 	
-	void drawSampleAvg(ConfiguredSample s, Xref idc, CachedData cache, Rectangle area, Graphics2D g2d) {
+	void drawSampleAvg(ConfiguredSample s, List<ReporterData> data, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
-		Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getSample());
+		Color rgb = cs.getColor(CachedData.getAverageSampleData(data), s.getSample());
 		drawColoredRectangle(area, rgb, g2d);
 	}
 	
-	void drawSampleBar(ConfiguredSample s, Xref idc, CachedData cache, Rectangle area, Graphics2D g2d) {
+	void drawSampleBar(ConfiguredSample s, List<ReporterData> refdata, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
-		List<ReporterData> refdata = cache.getData(idc);
 		int n = refdata.size();
 		int left = area.height % n;
 		int h = area.height / n;
@@ -305,25 +304,24 @@ public class ColorByExpression extends VisualizationMethod {
 		modified();
 	}
 
-	void drawSample(ConfiguredSample s, Xref idc, Rectangle area, Graphics2D g2d) {
-		CachedData cache = gexManager.getCurrentGex().getCachedData();
+	void drawSample(ConfiguredSample s, List<ReporterData> data, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		
 		if(s.hasImage()) {
-			Color rgb = cs.getColor(cache.getAverageSampleData(idc), s.getSample());
+			Color rgb = cs.getColor(CachedData.getAverageSampleData(data), s.getSample());
 			drawImage(s, rgb, area, g2d);
 		} else {
-			if(cache.hasMultipleData(idc)) {
+			if(data.size() > 1) {
 				switch(s.getAmbigiousType()) {
 				case ConfiguredSample.AMBIGIOUS_AVG:
-					drawSampleAvg(s, idc, cache, area, g2d);
+					drawSampleAvg(s, data, area, g2d);
 					break;
 				case ConfiguredSample.AMBIGIOUS_BARS:
-					drawSampleBar(s, idc, cache, area, g2d);
+					drawSampleBar(s, data, area, g2d);
 					break;
 				}
 			} else {
-				Color rgb = cs.getColor(cache.getSingleData(idc), s.getSample());
+				Color rgb = cs.getColor(data.get(0), s.getSample());
 				drawColoredRectangle(area, rgb, g2d);
 			}
 		}

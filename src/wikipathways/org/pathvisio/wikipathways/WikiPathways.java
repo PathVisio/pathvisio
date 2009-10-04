@@ -235,6 +235,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		getEngine().dispose();
 		getSwingEngine().dispose();
 		swingEngine = null;
+		mainPanel.dispose();
 		mainPanel = null;
 		disposed = true;
 	}

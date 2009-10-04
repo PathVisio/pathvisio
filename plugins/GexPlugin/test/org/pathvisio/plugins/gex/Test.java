@@ -108,15 +108,13 @@ public class Test extends TestCase
 		//check that there is only one row of data
 		List<ReporterData> data1 = gex.getCachedData(ref1);
 		assertEquals (1, data1.size());
-		// another way of saying the same thing:
-		assertFalse (gex.getCachedData().hasMultipleData(ref1)); 
 		
 		// looking up a particular data point in two different ways: L:7124, sample "Control 2"
 		assertEquals (0.993159836, (Double)data1.get(0).getSampleData(s), 0.001);
 		assertEquals (0.993159836, (Double)data1.get(0).getByName().get("Control 2"), 0.001);
 		
 		// test for aggregating data (in this case we're averaging over just one row)
-		ReporterData row = CachedData.getAverageSampleData(gex.getCachedData().getData(ref2));
+		ReporterData row = ReporterData.createListSummary(gex.getCachedData().getData(ref2));
 		// check data point for X:1909_at, which corresponds to L:596
 		assertEquals (0.045334852, (Double)(row.getSampleData().get(s)), 0.001);
 		

@@ -272,7 +272,7 @@ public class ColorByExpression extends VisualizationMethod {
 	
 	void drawSampleAvg(ConfiguredSample s, List<ReporterData> data, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
-		Color rgb = cs.getColor(CachedData.getAverageSampleData(data), s.getSample());
+		Color rgb = cs.getColor(ReporterData.createListSummary(data), s.getSample());
 		drawColoredRectangle(area, rgb, g2d);
 	}
 	
@@ -308,7 +308,7 @@ public class ColorByExpression extends VisualizationMethod {
 		ColorSet cs = s.getColorSet();
 		
 		if(s.hasImage()) {
-			Color rgb = cs.getColor(CachedData.getAverageSampleData(data), s.getSample());
+			Color rgb = cs.getColor(ReporterData.createListSummary(data), s.getSample());
 			drawImage(s, rgb, area, g2d);
 		} else {
 			if(data.size() > 1) {

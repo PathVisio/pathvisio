@@ -44,6 +44,7 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.ProgressDialog;
@@ -390,7 +391,7 @@ public class StatisticsPlugin implements Plugin
 			btnSave.setEnabled (false);
 		    
 			ProgressKeeper pk = new ProgressKeeper(100);
-			final ZScoreWorker worker = new ZScoreWorker(crit, pwDir, gm.getCurrentGex(), se.getGdbManager().getCurrentGdb(), pk);
+			final ZScoreWorker worker = new ZScoreWorker(crit, pwDir, gm.getCachedData(), se.getGdbManager().getCurrentGdb(), pk);
 			ProgressDialog d = new ProgressDialog(
 					JOptionPane.getFrameForComponent(dlg), 
 					"Calculating Z-scores", pk, true, true
@@ -408,10 +409,10 @@ public class StatisticsPlugin implements Plugin
 			private StatisticsTableModel temp;
 			private boolean useMappFinder;
 			
-			ZScoreWorker(Criterion crit, File pwDir, SimpleGex gex, IDMapper gdb, ProgressKeeper pk)
+			ZScoreWorker(Criterion crit, File pwDir, CachedData cache, IDMapper gdb, ProgressKeeper pk)
 			{
 				this.pk = pk;
-				calculator = new ZScoreCalculator (crit, pwDir, gex, gdb, pk);
+				calculator = new ZScoreCalculator (crit, pwDir, cache, gdb, pk);
 				temp = new StatisticsTableModel();
 				temp.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
 				tblResult.setModel(temp);

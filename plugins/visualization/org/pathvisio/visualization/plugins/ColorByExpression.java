@@ -235,7 +235,7 @@ public class ColorByExpression extends VisualizationMethod {
 					w + ((i == nr - 1) ? left : 0), area.height);
 			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
 			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
-			CachedData cache = gexManager.getCurrentGex().getCachedData();
+			CachedData cache = gexManager.getCachedData();
 			if(cache == null) continue;
 			
 			if(s.getColorSet() == null) {

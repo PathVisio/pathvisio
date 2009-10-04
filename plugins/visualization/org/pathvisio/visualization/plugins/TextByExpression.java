@@ -53,7 +53,6 @@ import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
-import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.FontChooser;
@@ -101,10 +100,9 @@ public class TextByExpression extends VisualizationMethod
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			SimpleGex gex = gexManager.getCurrentGex();
-			if(gex == null) return;
 			
-			CachedData  cache = gex.getCachedData();
+			CachedData  cache = gexManager.getCachedData();
+			if (cache == null) return;
 			
 			String id = gp.getPathwayElement().getGeneID();
 			DataSource ds = gp.getPathwayElement().getDataSource();
@@ -138,7 +136,7 @@ public class TextByExpression extends VisualizationMethod
 	public Component visualizeOnToolTip(Graphics g) {
 		if(g instanceof GeneProduct) {
 			GeneProduct gp = (GeneProduct) g;
-			CachedData  cache = gexManager.getCurrentGex().getCachedData();
+			CachedData  cache = gexManager.getCachedData();
 			
 			Xref idc = new Xref(
 					gp.getPathwayElement().getGeneID(), 

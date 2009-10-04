@@ -49,6 +49,9 @@ public class GexManager
 	private SimpleGex currentGex = null; 
 	public SimpleGex getCurrentGex() { return currentGex; }
 	
+	private CachedData cachedData = null;
+	public CachedData getCachedData() { return cachedData; }
+
 	/**
 	 * Returns true if the current gex is initialized
 	 * (non-null), and if it is connected.
@@ -73,6 +76,7 @@ public class GexManager
 	{
 		close(); // close old gex.
 		currentGex = gex;
+		cachedData = new CachedData(gex);
 		fireExpressionDataEvent(new GexManagerEvent(gex, GexManagerEvent.CONNECTION_OPENED));
 	}
 	
@@ -146,6 +150,7 @@ public class GexManager
 			Logger.log.error ("Problem while closing previous gex", e);
 		}
 		currentGex = null; // garbage collection
+		cachedData = null;
 	}
 	
 	/**

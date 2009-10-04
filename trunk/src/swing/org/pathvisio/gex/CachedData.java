@@ -98,15 +98,14 @@ public class CachedData {
 	}
 	
 	/**
-	 * Get the averaged sample data for the given gene-product
-	 * @param idc The IdCodePair that represents the gene-product to get the data for
-	 * @return a HashMap where the keys represent the sample ids and the values the averaged data
-	 * @see ReporterData#getSampleData()
+	 * Generates a summary-ReporterData by summarizing a List of ReporterData.
+	 * Strings are concatenated, doubles are averaged.
+	 * @param dlist list to summarize.
+	 * @return summary ReporterData
 	 */
-	public ReporterData getAverageSampleData(Xref idc)
+	public static ReporterData getAverageSampleData(List<ReporterData> dlist)
 	{
 		ReporterData result = new ReporterData(null, -1);
-		List<ReporterData> dlist = data.get(idc);
 		if(dlist != null && dlist.size() > 0) {
 			for(Sample key : dlist.get(0).getSampleData().keySet())
 			{
@@ -122,7 +121,7 @@ public class CachedData {
 	}
 	
 	
-	private Object averageDouble(List<ReporterData> dlist, Sample s)
+	private static Object averageDouble(List<ReporterData> dlist, Sample s)
 	{
 		double avg = 0;
 		int n = 0;
@@ -142,7 +141,7 @@ public class CachedData {
 		}
 	}
 	
-	private Object averageString(List<ReporterData> dlist, Sample s)
+	private static Object averageString(List<ReporterData> dlist, Sample s)
 	{
 		StringBuilder sb = new StringBuilder();
 		for(ReporterData d : dlist) {

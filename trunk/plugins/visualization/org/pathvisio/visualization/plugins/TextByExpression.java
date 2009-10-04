@@ -124,7 +124,7 @@ public class TextByExpression extends VisualizationMethod
 			int th = g2d.getFontMetrics().getHeight();
 			int w = 0, i = 0;
 			for(Sample s : useSamples) {
-				String str = getDataString(s, idc, cache, SEP + "\n") + 
+				String str = getDataString(s, cache.getData(idc), SEP + "\n") + 
 					(++i == useSamples.size() ? "" : SEP);
 				if (str.length() == 0) continue;
 				TextLayout tl = new TextLayout(str, f, g2d.getFontRenderContext());
@@ -158,7 +158,7 @@ public class TextByExpression extends VisualizationMethod
 				gbc.gridx = 0;
 				panel.add(new JLabel(getLabelLeftText(s)), gbc);
 				gbc.gridx = 1;
-				panel.add(new JLabel(getLabelRightText(s, idc, cache)), gbc);
+				panel.add(new JLabel(getLabelRightText(s, cache.getData(idc))), gbc);
 			}
 			return panel;
 		} else return null;
@@ -168,16 +168,16 @@ public class TextByExpression extends VisualizationMethod
 		return s.getName() + ":";
 	}
 	
-	String getLabelRightText(Sample s, Xref idc, CachedData cache) {
-		return getDataString(s, idc, cache, SEP);
+	String getLabelRightText(Sample s, List<ReporterData> data) {
+		return getDataString(s, data, SEP);
 	}
 	
-	String getDataString(Sample s, Xref idc, CachedData cache, String multSep) {	
+	String getDataString(Sample s, List<ReporterData> data, String multSep) {	
 		Object str = null;
-		if(cache.hasMultipleData(idc))
-			str = formatData(getSampleStringMult(s, idc, cache, multSep));
+		if(data.size() > 1)
+			str = formatData(getSampleStringMult(s, data, multSep));
 		else
-			str =  formatData(getSampleData(s, cache.getSingleData(idc)));
+			str =  formatData(getSampleData(s, data.get(0)));
 		return str == null ? "" : str.toString();
 	}
 	
@@ -185,10 +185,9 @@ public class TextByExpression extends VisualizationMethod
 		return data.getSampleData(s);
 	}
 	
-	Object getSampleStringMult(Sample s, Xref idc, CachedData cache, String sep) {
-		if(mean) return cache.getAverageSampleData(idc).getSampleData(s);
+	Object getSampleStringMult(Sample s, List<ReporterData> refdata, String sep) {
+		if(mean) return CachedData.getAverageSampleData(refdata).getSampleData(s);
 		
-		List<ReporterData> refdata = cache.getData(idc);
 		StringBuilder strb = new StringBuilder();
 		for(ReporterData d : refdata) {
 			String str = "" + formatData(d.getSampleData(s));

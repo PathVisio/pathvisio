@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.security.auth.callback.Callback;
@@ -173,13 +174,17 @@ public class CachedData
 	private IDMapper mapper = null;
 	
 	/**
-	 * Set the mapper that is used for ID Mapping.
+	 * Set the mapper that is used for ID Mapping. Clears cache if necessary.
 	 * TODO In the future I want to set this in the constructor, and
 	 * make mapper final.
 	 */
 	public void setMapper(IDMapper mapper)
 	{
-		this.mapper = mapper;
+		if (this.mapper != mapper)
+		{
+			this.mapper = mapper;
+			clearCache();
+		}
 	}
 
 	/**
@@ -194,6 +199,11 @@ public class CachedData
 		
 		//TODO preseed cache with srcRefs in background.
 		// somehow with lower priority than the ones for visualization
+	}
+	
+	public void clearCache()
+	{
+		data.clear();
 	}
 
 	public String getDbName()
@@ -219,5 +229,10 @@ public class CachedData
 	List<Sample> getOrderedSamples() throws IDMapperException
 	{
 		return parent.getOrderedSamples();
+	}
+	
+	public void dispose()
+	{
+		((ExecutorService)executor).shutdown();
 	}
 }

@@ -150,6 +150,7 @@ public class GexManager
 			Logger.log.error ("Problem while closing previous gex", e);
 		}
 		currentGex = null; // garbage collection
+		cachedData.dispose();
 		cachedData = null;
 	}
 	

@@ -21,8 +21,10 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.TexturePaint;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
@@ -67,6 +69,21 @@ import org.pathvisio.visualization.colorset.ColorSet;
 public class ColorByExpression extends VisualizationMethod {
 	static final Color DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
 	static final Color LINE_COLOR_DEFAULT = Color.BLACK;
+	
+	static private final Paint STRIPE_PATTERN;
+	static
+	{
+		BufferedImage buf = new BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB);
+		java.awt.Graphics g = buf.getGraphics();
+		g.setColor(Color.GRAY);
+		g.fillRect(0, 0, 8, 8);
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillPolygon(
+				new int[] {4, 0, 0, 8}, new int[] {0, 4, 8, 0}, 4);
+		g.fillPolygon(
+				new int[] {8, 4, 8}, new int[] {4, 8, 8}, 3);
+		STRIPE_PATTERN = new TexturePaint(buf, new Rectangle(0,0,8,8));
+	}
 	
 	private List<ConfiguredSample> useSamples = new ArrayList<ConfiguredSample>();
 	List<URL> imageURLs;
@@ -258,6 +275,7 @@ public class ColorByExpression extends VisualizationMethod {
 			}
 			else 
 			{
+				drawWaitingForData(area, g2d);
 				cache.asyncGet(idc, new Callback()
 				{
 					public void callback()
@@ -277,7 +295,18 @@ public class ColorByExpression extends VisualizationMethod {
 		ColorSet cs = s.getColorSet();
 		drawColoredRectangle(area, cs.getColor(ColorSet.ID_COLOR_NO_DATA_FOUND), g2d);
 	}
-	
+
+	void drawWaitingForData (Rectangle r, Graphics2D g2d) 
+	{
+		g2d.setPaint(STRIPE_PATTERN);
+		g2d.fill(r);
+		
+		if(drawLine) {
+			g2d.setColor(getLineColor());
+			g2d.draw(r);
+		}
+	}
+
 	void drawColoredRectangle(Rectangle r, Color c, Graphics2D g2d) {			
 		g2d.setColor(c);
 		g2d.fill(r);

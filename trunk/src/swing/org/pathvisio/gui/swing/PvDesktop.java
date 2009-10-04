@@ -210,40 +210,16 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	public void loadGexCache() {
 		final CachedData gex = gexManager.getCachedData();
 		final Pathway p = swingEngine.getEngine().getActivePathway();
-		if(p != null && gex != null) {
-			final ProgressKeeper pk = new ProgressKeeper(
-					(int)1E5
-			);
-			final ProgressDialog d = new ProgressDialog(
-					JOptionPane.getFrameForComponent(swingEngine.getApplicationPanel()), 
-					"", pk, false, true
-			);
-					
-			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-				protected Void doInBackground() {
-					pk.setTaskName("Loading expression data");
-					try
-					{	
-						gex.setMapper (swingEngine.getGdbManager().getCurrentGdb());
-						gex.cacheData(p.getDataNodeXrefs(), pk);
-					}
-					catch (IDMapperException e)
-					{
-						Logger.log.error ("Exception while caching expression data ", e);
-					}
-					pk.finished();
-					return null;
-				}
-				
-				@Override
-				protected void done()
-				{
-					swingEngine.getEngine().getActiveVPathway().redraw();
-				}
-			};
-			
-			sw.execute();
-			d.setVisible(true);
+		if(p != null && gex != null) {					
+			try
+			{	
+				gex.setMapper (swingEngine.getGdbManager().getCurrentGdb());
+				gex.preSeed(p.getDataNodeXrefs());
+			}
+			catch (IDMapperException e)
+			{
+				Logger.log.error ("Exception while caching expression data ", e);
+			}			
 		}
 	}
 	

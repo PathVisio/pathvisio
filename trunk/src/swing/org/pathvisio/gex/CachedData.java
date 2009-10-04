@@ -24,6 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import javax.security.auth.callback.Callback;
+import javax.swing.SwingUtilities;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapper;
@@ -31,6 +37,7 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
+import org.pathvisio.debug.ThreadSafe;
 import org.pathvisio.util.ProgressKeeper;
 
 
@@ -45,7 +52,8 @@ import org.pathvisio.util.ProgressKeeper;
 public class CachedData 
 {
 	//Data objects for gene-products on the pathway
-	Map<Xref, List<ReporterData>> data = new HashMap<Xref, List<ReporterData>>(); 
+	private final ConcurrentHashMap<Xref, List<ReporterData>> data = new ConcurrentHashMap<Xref, List<ReporterData>>(); 
+	private final Executor executor;
 
 	private final SimpleGex parent;
 	
@@ -57,6 +65,7 @@ public class CachedData
 	public CachedData (SimpleGex parent)
 	{
 		this.parent = parent;
+		executor = Executors.newSingleThreadExecutor();
 	}
 	
 	/**
@@ -76,19 +85,60 @@ public class CachedData
 	public List<ReporterData> getData(Xref idc) {
 		return data.get(idc);
 	}
-	
-	/**
-	 * Add cached data for the given gene-product
-	 * @param idc The IdCodePair that represents the gene-product for which the data has to be added
-	 * @param d The data that has to be added
-	 */
-	protected void addData(Xref idc, ReporterData d) {
-		List<ReporterData> dlist = data.get(idc);
-		if(dlist == null) 
-			data.put(idc, dlist = new ArrayList<ReporterData>());
-		dlist.add(d);
-	}
 
+	public interface Callback
+	{
+		public void callback();
+	}
+	
+	private volatile int tasks = 0;
+
+	// called from two different threads
+	@ThreadSafe
+	private void updateTasks (int delta)
+	{
+		int oldtasks = tasks;
+		tasks += delta;
+		if (oldtasks == 0 || tasks == 0)
+		{
+			Logger.log.info ("CACHE: " + (tasks == 0 ? "STOPPED" : "STARTED"));
+		}
+		Logger.log.info ("CACHE: " + tasks + " tasks");
+	}
+	
+	public void asyncGet(final Xref ref, final Callback callback)
+	{
+		updateTasks (+1);
+		executor.execute (new Runnable()
+		{
+			public void run() 
+			{
+				// modifying data here is thread-safe, because this is always 
+				// run in a singleThreadPoolExecutor
+				try {
+					if (!data.containsKey (ref))
+					{
+						Logger.log.debug ("CACHE: calculating " + ref);
+						Set<DataSource> destFilter = parent.getUsedDatasources();
+						List<ReporterData> result = 
+							new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilter)); 
+						
+						Logger.log.debug ("CACHE: finished calculating " + ref);
+						data.put (ref, result);
+					}
+				} catch (IDMapperException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}		
+				updateTasks (-1);
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+					callback.callback();
+				}});
+			}
+		});
+	}
+	
 	private Collection<ReporterData> getDataForXref(Xref srcRef, IDMapper gdb, Set<DataSource> destFilter) throws IDMapperException
 	{
 		// get all cross-refs for this id				
@@ -133,45 +183,17 @@ public class CachedData
 	}
 
 	/**
-	 * Loads expression data for all the given gene ids into memory
-	 * @param srcRefs	Genes to cache the expression data for
-	 * (typically all genes in a pathway)
+	 * Starts loading expression data for all the given gene ids into memory
+	 * @param srcRefs Xrefs to cache the expression data for
+	 * 	(typically all genes and metabolites in a pathway)
 	 */
-	public void cacheData(Collection<Xref> srcRefs, ProgressKeeper p) throws IDMapperException
+	public void preSeed(Collection<Xref> srcRefs) throws IDMapperException
 	{	
 		// seed samples cache
 		parent.getSamples();
 		
-		StopWatch timer = new StopWatch();
-		timer.start();
-		
-		/* 
-		 * since datasets often use only one or a few system codes,
-		 * we get a big efficiency improvement if we only look at cross-refs
-		 * that occur in the dataset.  We create a destFilter to filter out
-		 * those cross-refs
-		 */
-		Set<DataSource> destFilter = parent.getUsedDatasources();		
-		
-		for(Xref srcRef : srcRefs)
-		{				
-			if(hasData(srcRef)) continue;
-			
-			for (ReporterData r : getDataForXref(srcRef, mapper, destFilter)) 
-				addData(srcRef, r);
-			
-			if(p != null)
-			{
-				if (p.isCancelled()) //Check if the process is interrupted
-				{
-					return;
-				}
-				p.worked(p.getTotalWork() / srcRefs.size()); //Update the progress
-			}
-		}
-		if (p != null) p.finished();
-		timer.stopToLog("Caching expression data\t\t\t");
-		Logger.log.trace("> Nr of ids queried:\t" + srcRefs.size());
+		//TODO preseed cache with srcRefs in background.
+		// somehow with lower priority than the ones for visualization
 	}
 
 	public String getDbName()

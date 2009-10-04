@@ -382,7 +382,7 @@ public class ZScoreCalculator
 			pk.setProgress(20);
 		}
 		result.gex.setMapper (result.gdb);
-		result.gex.cacheData(pwyMap.getSrcRefs(), null);
+		result.gex.preSeed(pwyMap.getSrcRefs());
 		
 		// calculate dataMap
 		if (pk != null) 

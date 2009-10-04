@@ -76,7 +76,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		}
 	}
 	
-	protected void markDirty() {
+	public void markDirty() {
 		super.markDirty();
 		if (citation != null) citation.markDirty();
 	}

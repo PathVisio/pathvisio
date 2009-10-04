@@ -100,7 +100,7 @@ public class Test extends TestCase
 		List<Xref> refs = Arrays.asList(new Xref[] { ref1, ref2 }); 
 		CachedData cache = new CachedData(gex);
 		cache.setMapper(gdb);
-		cache.cacheData(refs, null);
+		cache.preSeed(refs);
 		
 		Sample s = gex.getSample(1);
 		assertEquals (1, s.getId());

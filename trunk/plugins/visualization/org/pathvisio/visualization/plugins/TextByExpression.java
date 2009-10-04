@@ -174,7 +174,7 @@ public class TextByExpression extends VisualizationMethod
 		Object str = null;
 		if(data.size() > 1)
 			str = formatData(getSampleStringMult(s, data, multSep));
-		else
+		else if (data.size() == 1)
 			str =  formatData(getSampleData(s, data.get(0)));
 		return str == null ? "" : str.toString();
 	}

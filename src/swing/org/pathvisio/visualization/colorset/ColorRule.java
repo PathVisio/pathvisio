@@ -71,8 +71,9 @@ public class ColorRule extends ColorSetObject
 		super(parent, xml);
 	}
 	
-	@Override Color getColor(ReporterData data, Sample key) throws CriterionException {
-		if(criterion.evaluate(data.getByName(), key.getName())) return color;
+	@Override Color getColor(ReporterData data, Sample key) throws CriterionException 
+	{
+		if (criterion.evaluate(data.getByName())) return color;
 		return null;
 	}
 	

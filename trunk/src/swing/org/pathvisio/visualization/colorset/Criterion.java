@@ -51,10 +51,10 @@ public class Criterion
 	 * 			"+", "-", "/", "*"  
 	 */
 	
-	
 	private Map<String, Object> symTab = new HashMap<String, Object>();
 
 	private String expression = "";
+	private Token parsed = null;
 		
 	/**
 	 * Get the current expression, an empty string by default.
@@ -80,6 +80,7 @@ public class Criterion
 			symTab.put (s, 1.0);
 		}
 		try {
+			parsed = parse();
 			evaluate();
 			return null;
 		} catch(CriterionException e) { 
@@ -114,7 +115,6 @@ public class Criterion
 	{
 		setSampleData(data);
 		Token e = parse();
-		e.printMe(0);
 		return e.evaluate();
 	}
 	
@@ -123,8 +123,8 @@ public class Criterion
 	int charNr;
 	private boolean evaluate () throws CriterionException
 	{
-		Token e = parse();
-		Object value = e.evaluate();
+		if (parsed == null) throw new IllegalStateException("must call parse before evaluate");
+		Object value = parsed.evaluate();
 		if (value instanceof Boolean) return (Boolean)value;
 		else 		
 		{
@@ -144,7 +144,6 @@ public class Criterion
 			throw new CriterionException("Multiple expressions found, second expression " +
 					"starts at position " + charNr);
 		}
-		e.printMe(0);
 		return e;
 	}
 	

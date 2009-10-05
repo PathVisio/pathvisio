@@ -105,7 +105,7 @@ public class XRefBot extends Bot {
 					Xref xref = pwe.getXref();
 					for(IDMapperRdb gdb : gdbs.getGdbs(org)) {
 						try {
-							if(gdb.xrefExists(xref)) {
+							if(xref.getId() != null && xref.getDataSource() != null && gdb.xrefExists(xref)) {
 								exists = true;
 								break;
 							}

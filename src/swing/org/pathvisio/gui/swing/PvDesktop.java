@@ -216,6 +216,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				gex.clearCache();
 				gex.setMapper (swingEngine.getGdbManager().getCurrentGdb());
 				gex.preSeed(p.getDataNodeXrefs());
+				swingEngine.getEngine().getActiveVPathway().redraw();
 			}
 			catch (IDMapperException e)
 			{

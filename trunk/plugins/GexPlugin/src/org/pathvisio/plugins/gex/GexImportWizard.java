@@ -929,7 +929,7 @@ public class GexImportWizard extends Wizard
 	    public void displayingPanel() 
 	    {
 			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
-				protected Void doInBackground() throws Exception {
+				@Override protected Void doInBackground() throws Exception {
 					pk.setTaskName("Importing pathway");
 					try 
 					{
@@ -939,9 +939,6 @@ public class GexImportWizard extends Wizard
 								standaloneEngine.getSwingEngine().getGdbManager().getCurrentGdb(),
 								standaloneEngine.getGexManager()
 						);
-
-						getWizard().setNextFinishButtonEnabled(true);
-						getWizard().setBackButtonEnabled(true);
 					} 
 					catch (Exception e) 
 					{
@@ -953,6 +950,12 @@ public class GexImportWizard extends Wizard
 						pk.finished();
 					}
 					return null;
+				}
+				
+				@Override public void done()
+				{
+					getWizard().setNextFinishButtonEnabled(true);
+					getWizard().setBackButtonEnabled(true);
 				}
 			};
 			sw.execute();

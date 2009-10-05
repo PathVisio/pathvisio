@@ -55,7 +55,8 @@ for my $file (@bridgeFiles) {
 			$date = "20$date";
 		}
 	} else {
-		die "Unable to parse date from bridgedb database file name: $file\n";
+		print "Unable to parse date from bridgedb database file name: $file\n";
+		next;
 	}
 	# Parse organism
 	if($file =~ m/^([A-Z]{1}[a-z]{1})_Derby/) {
@@ -64,7 +65,8 @@ for my $file (@bridgeFiles) {
 	} elsif($file =~ m/metabolites/) {
 		$org = "*";
 	} else {
-		die "Unable to parse organism code from bridgedb database file name: $file\n";
+		print "Unable to parse organism code from bridgedb database file name: $file\n";
+		next;
 	}
 	$filesByOrganism{$org}{$date} = $file;
 }

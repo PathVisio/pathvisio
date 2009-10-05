@@ -174,8 +174,9 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 	{
 		assert (!disposed);
 		engine.removeApplicationEventListener(this);
-		engine.getActiveVPathway().removeSelectionListener(this);
-		disposed = true;
+		VPathway vpwy = engine.getActiveVPathway();
+		if (vpwy != null) vpwy.removeSelectionListener(this);
 		executor.shutdown();
+		disposed = true;
 	}	
 }

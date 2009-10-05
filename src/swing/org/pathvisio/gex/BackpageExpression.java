@@ -32,18 +32,12 @@ import org.pathvisio.model.PathwayElement;
 public class BackpageExpression implements BackpageHook
 {
 	private final IDMapper mapper;
-	private final CachedData gex;
+	private final GexManager gexManager;
 	
 	public BackpageExpression (GdbManager gdbManager, GexManager gexManager)
 	{
 		this.mapper = gdbManager.getCurrentGdb();
-		this.gex = gexManager.getCachedData();
-	}
-
-	public BackpageExpression (IDMapper mapper, CachedData data)
-	{
-		this.mapper = mapper;
-		this.gex = data;
+		this.gexManager = gexManager;
 	}
 
 	/**
@@ -61,7 +55,7 @@ public class BackpageExpression implements BackpageHook
 		String colNames = "<TR><TH>Sample name";
 		if(!gex.isConnected()) return noDataFound;
 		
-		List<ReporterData> pwData = gex.getData(idc);
+		List<ReporterData> pwData = gex.syncGet(idc);
 		
 		if(pwData == null) return noDataFound;
 		
@@ -84,7 +78,7 @@ public class BackpageExpression implements BackpageHook
 
 	public String getHtml(PathwayElement e) 
 	{
-		return getHtml(e, mapper, gex);
+		return getHtml(e, mapper, gexManager.getCachedData());
 	}
 	
 	public static String getHtml(PathwayElement e, IDMapper gdb, CachedData gex) {

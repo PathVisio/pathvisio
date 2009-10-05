@@ -74,8 +74,9 @@ public class CachedData
 	}
 	
 	/**
-	 * Get the cached data the given gene-product
-	 * @param idc The IdCodePair that represents the gene-product for which the data has to be returned
+	 * Get the cached data the given gene-product. If there was nothing in cache
+	 * it returns 0. Should be used only in combination with asyncGet.
+	 * @param idc The Xref for which the data has to be returned
 	 * @return a list of {@link ReporterData} object containing the cached data, or null when no data is available
 	 */
 	public List<ReporterData> getData(Xref idc) {
@@ -99,19 +100,24 @@ public class CachedData
 		{
 			Logger.log.info ("CACHE: " + (tasks == 0 ? "STOPPED" : "STARTED"));
 		}
-		Logger.log.info ("CACHE: " + tasks + " tasks");
 	}
 	
-	@WorkerThreadOnly
-	private void syncGet(Xref ref) throws IDMapperException
+	@WorkerThreadOnly 
+	public List<ReporterData> syncGet(Xref ref) throws IDMapperException
 	{
+		List<ReporterData> result;
 		if (!data.containsKey (ref))
 		{
 			Set<DataSource> destFilter = parent.getUsedDatasources();
-			List<ReporterData> result = 
+			result = 
 				new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilter));
 			data.put (ref, result);
 		}
+		else
+		{
+			result = data.get(ref);
+		}
+		return result;
 	}
 	
 	public void asyncGet(final Xref ref, final Callback callback)
@@ -157,8 +163,7 @@ public class CachedData
 		{
 			destRefs.add(srcRef);
 		}
-		
-		
+
 		if(destRefs.size() > 0)
 		{								
 			return parent.getData(destRefs);

@@ -19,17 +19,14 @@ package org.pathvisio.gex;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.security.auth.callback.Callback;
 import javax.swing.SwingUtilities;
 
 import org.bridgedb.DataSource;
@@ -37,11 +34,8 @@ import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.debug.StopWatch;
 import org.pathvisio.debug.ThreadSafe;
 import org.pathvisio.debug.WorkerThreadOnly;
-import org.pathvisio.util.ProgressKeeper;
-
 
 /**
  * This class represents cached expression data for a pathway.
@@ -109,23 +103,15 @@ public class CachedData
 	}
 	
 	@WorkerThreadOnly
-	private void syncGet(Xref ref)
+	private void syncGet(Xref ref) throws IDMapperException
 	{
-		try {
-			if (!data.containsKey (ref))
-			{
-				Logger.log.debug ("CACHE: calculating " + ref);
-				Set<DataSource> destFilter = parent.getUsedDatasources();
-				List<ReporterData> result = 
-					new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilter)); 
-				
-				Logger.log.debug ("CACHE: finished calculating " + ref);
-				data.put (ref, result);
-			}
-		} catch (IDMapperException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+		if (!data.containsKey (ref))
+		{
+			Set<DataSource> destFilter = parent.getUsedDatasources();
+			List<ReporterData> result = 
+				new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilter));
+			data.put (ref, result);
+		}
 	}
 	
 	public void asyncGet(final Xref ref, final Callback callback)
@@ -135,7 +121,12 @@ public class CachedData
 		{
 			public void run() 
 			{
-				syncGet(ref);
+				try {
+					syncGet(ref);
+				} catch (IDMapperException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				updateTasks (-1);
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {

@@ -180,11 +180,11 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
 				"", pk, false, true);
 				
+		engine.setWrapper (createWrapper());
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
 			protected Boolean doInBackground() {
 				pk.setTaskName("Opening pathway");
 				try {
-					engine.setWrapper (createWrapper());
 					engine.openPathway(f);
 					return true;
 				} catch(ConverterException e) {

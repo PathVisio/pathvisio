@@ -103,12 +103,14 @@ public class DataNodeDialog extends PathwayElementDialog {
 	 * Search for symbols or ids in the synonym databases that match
 	 * the given text
 	 */
-	private void search(final String text) {
-		if(text == null || "".equals(text)) {
+	private void search(String aText) 
+	{
+		if(aText == null || "".equals(aText.trim())) {
 			JOptionPane.showMessageDialog(this, "No search term specified, " +
 			"please type something in the 'Search' field");
 			return;
 		}
+		final String text = aText.trim();
 
 		final ProgressKeeper progress = new ProgressKeeper();
 		ProgressDialog dialog = new ProgressDialog(null, "Searching", progress, true, true);

@@ -241,24 +241,28 @@ public class SearchPane extends JPanel
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(swingEngine.getApplicationPanel()), 
 				"", pk, false, true);
 				
+		engine.setWrapper (swingEngine.createWrapper());
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
-			protected Boolean doInBackground() {
+			@Override protected Boolean doInBackground() {
 				pk.setTaskName("Opening pathway");
 				try {
-					engine.setWrapper (swingEngine.createWrapper());
 					engine.openPathway(mr.getFile());
 					
-					if(chkHighlight.isSelected()) {
-						highlightResults(mr);
-					}
-
 					return true;
 				} catch(ConverterException e) {
 					swingEngine.handleConverterException(e.getMessage(), null, e);
 					return false;
 				} finally {
 					pk.finished();
+				}				
+			}
+
+			@Override public void done()
+			{
+				if(chkHighlight.isSelected()) {
+					highlightResults(mr);
 				}
+
 			}
 		};
 		

@@ -260,7 +260,8 @@ public class StatisticsPlugin implements Plugin
 		private SwingEngine se;
 		private JDialog dlg;
 		private JTable tblResult;
-				
+		private JLabel lblResult;
+		
 		/**
 		 * Save the statistics results to tab delimted text
 		 */
@@ -302,7 +303,7 @@ public class StatisticsPlugin implements Plugin
 			
 			FormLayout layout = new FormLayout (
 					"4dlu, pref:grow, 4dlu, pref, 4dlu", 
-					"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, fill:pref:grow");
+					"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, fill:pref:grow");
 			dlg.setLayout(layout);
 			
 			CellConstraints cc = new CellConstraints();
@@ -344,6 +345,10 @@ public class StatisticsPlugin implements Plugin
 
 			dlg.add (pnlButtons, cc.xyw (2,8,3));
 			
+			lblResult = new JLabel(); //Label for adding general results after analysis is done
+			
+			dlg.add(lblResult, cc.xyw(2, 10, 3));
+			
 			tblResult = new JTable ();
 			tblResult.addMouseListener(new MouseAdapter()
 			{
@@ -358,7 +363,7 @@ public class StatisticsPlugin implements Plugin
 				}
 			});
 
-			dlg.add (new JScrollPane (tblResult), cc.xyw (2,10,3));
+			dlg.add (new JScrollPane (tblResult), cc.xyw (2,12,3));
 						
 			btnCalc.addActionListener(new ActionListener ()
 			{
@@ -452,7 +457,12 @@ public class StatisticsPlugin implements Plugin
 						{
 							// replace temp tableModel with definitive one
 							tblResult.setModel(result.stm);
+							lblResult.setText(
+								"<html>Rows in data (N): " + result.getBigN() +
+								"<br>Rows meeting criterion (R): " + result.getBigR()
+							);
 							StatisticsDlg.this.result = result;
+							//dlg.pack();
 						}
 					} 
 					catch (InterruptedException e) 

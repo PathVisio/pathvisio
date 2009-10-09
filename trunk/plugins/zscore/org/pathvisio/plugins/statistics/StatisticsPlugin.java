@@ -224,7 +224,7 @@ public class StatisticsPlugin implements Plugin
 							String toInsert = Criterion.TOKENS[selectedIndex];
 							TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 						}
-						//txtExpr.requestFocus();
+						txtExpr.requestFocus();
 					}
 				} );
 				
@@ -240,7 +240,7 @@ public class StatisticsPlugin implements Plugin
 							String toInsert = "[" + sampleNames.get(selectedIndex) + "]"; 
 							TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 						}
-						//txtExpr.requestFocus();
+						txtExpr.requestFocus();
 					}
 				} );
 		

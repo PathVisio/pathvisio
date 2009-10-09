@@ -412,7 +412,7 @@ public class Criterion
 		else
 		{
 			nextToken = null;
-			throw new CriterionException("Wrong token at position " + charNr);
+			throw new CriterionException("Error in expression at position " + charNr);
 		}
 		return result;
 	}

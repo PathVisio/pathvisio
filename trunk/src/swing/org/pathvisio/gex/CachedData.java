@@ -101,16 +101,23 @@ public class CachedData
 			Logger.log.info ("CACHE: " + (tasks == 0 ? "STOPPED" : "STARTED"));
 		}
 	}
-	
+
+	// set of data sources that occur in SimpleGex.
+	private Set<DataSource> destFilterCache = null;
+
 	@WorkerThreadOnly 
 	public List<ReporterData> syncGet(Xref ref) throws IDMapperException
 	{
+		if (destFilterCache == null)
+		{
+			destFilterCache = parent.getUsedDatasources();
+		}
+
 		List<ReporterData> result;
 		if (!data.containsKey (ref))
 		{
-			Set<DataSource> destFilter = parent.getUsedDatasources();
 			result = 
-				new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilter));
+				new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilterCache));
 			data.put (ref, result);
 		}
 		else

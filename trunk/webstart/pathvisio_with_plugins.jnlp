@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp codebase="http://www.pathvisio.org/webstart" href="pathvisio_with_plugins.jnlp">
 	<information>
-		 <title>PathVisio 1.1 with plugins</title>
+		 <title>PathVisio 2</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>
@@ -9,7 +9,7 @@
 		<shortcut>
 			<desktop/>
 			<menu submenu="PathVisio"/>
-		</shortcut>	
+		</shortcut>
 	</information>
 	<resources>
 		 <j2se version="1.5+" java-vm-args="-Xmx512M"/>

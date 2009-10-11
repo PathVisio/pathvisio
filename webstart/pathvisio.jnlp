@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jnlp codebase="http://www.pathvisio.org/webstart" href="pathvisio.jnlp">
 	<information>
-		 <title>PathVisio 1.1</title>
+		 <title>PathVisio 2</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>
@@ -9,11 +9,12 @@
 		<shortcut>
 			<desktop/>
 			<menu submenu="PathVisio"/>
-		</shortcut>	
+		</shortcut>
 	</information>
 	<resources>
 		 <j2se version="1.5+" java-vm-args="-Xmx512M"/>
 		 <jar href="pathvisio.jar"/>
+		 <jar href="visplugins.jar"/>
 		 <jar href="lib/resources.jar"/>
 		 <jar href="lib/derby.jar"/>
 		 <jar href="lib/jdom.jar"/>
@@ -42,7 +43,14 @@
 	     <jar href="lib/batik/batik-anim.jar"/>
 	     <jar href="lib/forms-1.2.0.jar"/>
 	</resources>
-	<application-desc main-class="org.pathvisio.gui.swing.GuiMain"/>
+	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
+		<argument>-p</argument>
+		<argument>org.pathvisio.visualization.plugins.VisualizationPlugin</argument>
+		<argument>-p</argument>
+		<argument>org.pathvisio.plugins.statistics.StatisticsPlugin</argument>
+		<argument>-p</argument>
+		<argument>org.pathvisio.plugins.gex.GexPlugin</argument>
+	</application-desc>
 	<security>
 		 <all-permissions/>
 	</security>

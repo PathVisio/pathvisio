@@ -113,7 +113,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return mainPanel != null;
 	}	
 	
-	public void handleConverterException(String message, Component c, ConverterException e) {
+	public void handleConverterException(String message, Component c, Exception e) {
 		if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
 		{
 			JOptionPane.showMessageDialog(c,
@@ -145,7 +145,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		try {
 			return sw.get();
 		} catch (Exception e) {
-			Logger.log.error("Unable to perform task: " + pk.getTaskName(), e);
+			handleConverterException("Unable to perform conversion", null, e);
 			return false;
 		}
 	}

@@ -77,7 +77,8 @@ public class BatikImageWithDataExporter extends ImageExporter
 			vPathway.addVPathwayListener(visualizationManager);
 			try
 			{
-				gexManager.getCachedData().syncSeed(pathway.getDataNodeXrefs());
+				if (gexManager.getCachedData() != null)
+					gexManager.getCachedData().syncSeed(pathway.getDataNodeXrefs());
 			}
 			catch (IDMapperException ex)
 			{

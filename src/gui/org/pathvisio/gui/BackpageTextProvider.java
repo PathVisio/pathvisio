@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -96,37 +97,41 @@ public class BackpageTextProvider
 
 			try
 			{
-				String bpInfo; 
+				StringBuilder bpInfo = new StringBuilder("<TABLE border = 1>"); 
 					
 				Map<String, Set<String>> attributes = attributeMapper.getAttributes(e.getXref());
+				String[][] table;
+				
 				if (!type.equals ("Metabolite"))
 				{
-					String symbol = Utils.oneOf (attributes.get("Symbol"));
-					String description = Utils.oneOf (attributes.get("Description"));
-					String synonyms = Utils.oneOf (attributes.get("Synonyms"));
-					String chromosome = Utils.oneOf (attributes.get("Chromosome"));
-										
-					bpInfo = 
-						"<TABLE border = 1>" +
-						"<TR><TH>Gene ID:<TH>" + e.getXref().getId() + 
-						"<TR><TH>Gene Symbol:<TH>" + symbol + 
-						"<TR><TH>Synonyms:<TH>" + synonyms +
-						"<TR><TH>Description:<TH>" + description +
-						"<TR><TH>Chr:<TH>" + chromosome +
-						"</TABLE>";
+					table = new String[][] { 
+					   {"Gene ID", e.getXref().getId()},
+					   {"Gene Symbol", Utils.oneOf(attributes.get("Symbol"))},
+					   {"Synonyms", Utils.oneOf (attributes.get("Synonyms"))},
+					   {"Description", Utils.oneOf (attributes.get("Synonyms"))},
+					   {"Chr", Utils.oneOf (attributes.get("Chromosome"))},
+					};
 				}
 				else
 				{
-					String symbol = Utils.oneOf (attributes.get("Symbol"));
-					String bruto = Utils.oneOf (attributes.get("BrutoFormula"));
-										
-					bpInfo = 
-						"<TABLE border = 1>" +
-						"<TR><TH>Metabolite:<TH>" + symbol + 
-						"<TR><TH>Bruto Formula:<TH>" +  bruto + 
-						"</TABLE>";
+					table = new String[][] {
+						{"Metabolite", Utils.oneOf (attributes.get("Symbol"))},
+						{"Bruto Formula", Utils.oneOf (attributes.get("BrutoFormula"))},
+						};
 				}
-				text += (bpInfo != null ? bpInfo :  "<I>No " + type + " information found</I>"); 
+				
+				for (String[] row : table)
+				{
+					if (!(row[1] == null))
+					{
+						bpInfo.append ("<TR><TH>");
+						bpInfo.append (row[0]);
+						bpInfo.append (":<TH>");
+						bpInfo.append (row[1]);
+					}
+				}
+				bpInfo.append ("</TABLE>");
+				text += bpInfo.toString(); 
 			}
 			catch (IDMapperException ex)
 			{

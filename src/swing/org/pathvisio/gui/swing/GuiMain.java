@@ -103,23 +103,39 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 
 	public void parseArgs(String [] args)
 	{	
-		for(int i = 0; i < args.length - 1; i++) 
+		for(int i = 0; i < args.length; i++) 
 		{
 			if("-p".equals(args[i])) 
 			{
-				pluginLocations.add(args[i + 1]);
 				i++;
-			}
-			else if ("-d".equals(args[i]))
-			{
-				pgexFile = args[i + 1];
-				if (!new File(pgexFile).exists())
+				if (i < args.length) 
+					pluginLocations.add(args[i]);
+				else
 				{
-					System.out.println ("Data file '" + pgexFile + "' not found"); 
+					System.out.println ("Missing plugin location after -p option"); 
 					printHelp();
 					System.exit(-1);
 				}
+			}
+			else if ("-d".equals(args[i]))
+			{
 				i++;
+				if (i < args.length) 
+				{
+					pgexFile = args[i];
+					if (!new File(pgexFile).exists())
+					{
+						System.out.println ("Data file '" + pgexFile + "' not found"); 
+						printHelp();
+						System.exit(-1);
+					}
+				}
+				else
+				{
+					System.out.println ("Missing data file location after -d option"); 
+					printHelp();
+					System.exit(-1);
+				}
 			}
 			else if ("-o".equals(args[i])) 
 			{
@@ -145,7 +161,6 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 						System.exit(-1);
 					}							
 				}
-				i++;
 			}
 		}
 	}

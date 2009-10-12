@@ -112,15 +112,18 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 			if(id != null) {
 				Pathway pathway = getImageManager().getPathway(wsr);
 				String idlist = "<ul>";
-				for(WSIndexField f : wsr.getFields()) {
+				WSIndexField[] fields = wsr.getFields();
+				if(fields == null) fields = new WSIndexField[0];
+				for(WSIndexField f : fields) {
 					if("graphId".equals(f.getName())) {
 						for(String graphId : f.getValues()) {
 							PathwayElement pwe = pathway.getElementById(graphId);
 							if(pwe != null) {
 								idlist += "<li>" + pwe.getTextLabel() + " (";
 								Xref xref = pwe.getXref();
+								DataSource ds = xref.getDataSource();
 								idlist += "<a href='" + xref.getUrl() + "'>" +
-									xref.getId() + ", " + xref.getDatabaseName() + "</a>)";
+									xref.getId() + (ds == null ? "" : ", " + ds.getFullName()) + "</a>)";
 							}
 						}
 					}

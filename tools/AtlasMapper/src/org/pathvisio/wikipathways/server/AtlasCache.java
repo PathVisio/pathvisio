@@ -96,7 +96,7 @@ public class AtlasCache {
 		Organism org = Organism.fromLatinName(
 				pathway.getMappInfo().getOrganism()
 		);
-		Set<DataSource> ensDs = Utils.setOf(AtlasMapperServiceImpl.getEnsemblDataSource(org));
+		DataSource ensDs = AtlasMapperServiceImpl.getEnsemblDataSource(org);
 		
 		if(org == null) {
 			org = Organism.HomoSapiens;

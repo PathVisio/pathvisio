@@ -142,7 +142,6 @@ public class AtlasVisualizer {
 	
 	private Map<PathwayElement, Set<Xref>> createEnsemblMap() throws IDMapperException {
 		DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
-		Set<DataSource> orgEnsSet = Utils.setOf(orgEns);
 		
 		Map<PathwayElement, Set<Xref>> ensMap = new HashMap<PathwayElement, Set<Xref>>();
 		for(PathwayElement pwElm : pathway.getDataObjects()) {
@@ -152,7 +151,7 @@ public class AtlasVisualizer {
 				
 				for(int i = 0; i < gdbs.size(); i++) {
 					if(xref.getId() == null || xref.getDataSource() == null) continue;
-					ensRefs.addAll(gdbs.get(i).mapID(xref, orgEnsSet));
+					ensRefs.addAll(gdbs.get(i).mapID(xref, orgEns));
 				}
 				
 				ensMap.put(pwElm, ensRefs);

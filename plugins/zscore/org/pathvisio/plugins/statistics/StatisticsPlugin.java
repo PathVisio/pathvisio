@@ -224,7 +224,11 @@ public class StatisticsPlugin implements Plugin
 							String toInsert = Criterion.TOKENS[selectedIndex];
 							TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 						}
+						// after clicking on the list, move focus back to text field so
+						// user can continue typing
 						txtExpr.requestFocusInWindow();
+						// on Mac L&F, requesting focus leads to selecting the whole field
+						// move caret a bit to work around. Last char is a space anyway.
 						txtExpr.setCaretPosition(txtExpr.getDocument().getLength() - 1);
 					}
 				} );
@@ -241,7 +245,11 @@ public class StatisticsPlugin implements Plugin
 							String toInsert = "[" + sampleNames.get(selectedIndex) + "]"; 
 							TextFieldUtils.insertAtCursorWithSpace(txtExpr, toInsert);
 						}
+						// after clicking on the list, move focus back to text field so
+						// user can continue typing
 						txtExpr.requestFocusInWindow();
+						// on Mac L&F, requesting focus leads to selecting the whole field
+						// move caret a bit to work around. Last char is a space anyway.
 						txtExpr.setCaretPosition(txtExpr.getDocument().getLength() - 1);
 					}
 				} );

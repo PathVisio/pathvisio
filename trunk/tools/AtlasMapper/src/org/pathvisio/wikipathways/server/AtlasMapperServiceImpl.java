@@ -184,7 +184,6 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			
 			Organism org = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
 			DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(org);
-			Set<DataSource> orgEnsSet = Utils.setOf(orgEns);
 			
 			List<IDMapperRdb> gdbs = getCacheManager().getGdbProvider().getGdbs(org);
 
@@ -202,7 +201,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 					for(IDMapperRdb gdb : gdbs) {
 						Xref x = pwe.getXref();
 						if(x.getId() == null || x.getDataSource() == null) continue;
-						xrefs.addAll(gdb.mapID(x, orgEnsSet));
+						xrefs.addAll(gdb.mapID(x, orgEns));
 					}
 					
 					for(Xref x : xrefs) {

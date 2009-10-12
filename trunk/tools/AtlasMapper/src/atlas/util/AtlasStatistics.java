@@ -61,7 +61,6 @@ public class AtlasStatistics {
 	void printStatistics(Collection<WSPathwayInfo> pathways, Organism organism) throws ServiceException, IDMapperException, ConverterException, IOException, ClassNotFoundException {
 		//A set of all unique Ensembl genes in the pathways
 		DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
-		Set<DataSource> orgEnsSet = Utils.setOf(orgEns);
 		File idsCache = new File(cachePath, organism + ".ids");
 		Set<String> ensIds = new HashSet<String>();
 		if(idsCache.exists()) {
@@ -75,7 +74,7 @@ public class AtlasStatistics {
 					for(Xref x : p.getDataNodeXrefs()) {
 						if(x.getId() == null || x.getDataSource() == null) continue;
 						for(IDMapperRdb gdb : gdbProv.getGdbs(Organism.fromLatinName(wpi.getSpecies()))) {
-							for(Xref ens : gdb.mapID(x, orgEnsSet)) {
+							for(Xref ens : gdb.mapID(x, orgEns)) {
 								ensIds.add(ens.getId());
 							}
 						}

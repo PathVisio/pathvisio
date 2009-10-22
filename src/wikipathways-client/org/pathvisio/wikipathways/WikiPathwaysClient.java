@@ -32,6 +32,7 @@ import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
@@ -142,6 +143,20 @@ public class WikiPathwaysClient {
 		byte[] data = getPathwayAs(fileType, id, revision);
 		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
 		out.write(data);
+	}
+	
+	/**
+	 * Get a list of external references on the pathway (gene, protein or metabolite ids), 
+	 * translated to the given database system. 
+	 * @param id The pathway id
+	 * @param dataSource The data source to translate to (e.g. BioDataSource.ENTREZ_GENE)
+	 * @return The identifiers of the external references.
+	 * @throws RemoteException
+	 */
+	public String[] getXrefList(String id, DataSource dataSource) throws RemoteException {
+		String[] xrefs = port.getXrefList(id, dataSource.getSystemCode());
+		if(xrefs == null) xrefs = new String[0];
+		return xrefs;
 	}
 	
 	/**

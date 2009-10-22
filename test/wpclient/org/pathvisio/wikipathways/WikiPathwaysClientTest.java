@@ -68,6 +68,15 @@ public class WikiPathwaysClientTest extends TestCase {
 		}
 	}
 	
+	public void testGetXrefs() {
+		try {
+			String[] ids = client.getXrefList("WP4", BioDataSource.ENTREZ_GENE);
+			assertTrue("Number of returned ids is zero", ids.length >= 0);
+		} catch(Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
+		}
+	}
 	public void testListPathways() {
 		try {
 			WSPathwayInfo[] r = client.listPathways();

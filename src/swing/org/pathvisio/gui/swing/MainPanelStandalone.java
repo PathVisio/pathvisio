@@ -16,8 +16,6 @@
 //
 package org.pathvisio.gui.swing;
 
-import com.mammothsoftware.frwk.ddb.DropDownButton;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -41,6 +39,8 @@ import org.pathvisio.gex.BackpageExpression;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Resources;
+
+import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 /**
  * the mainPanel for the standalone (non-applet) version of PathVisio.
@@ -130,7 +130,7 @@ public class MainPanelStandalone extends MainPanel
 		sidebarTabbedPane.addTab ("Search", searchPane); 
 
 		// backpage hook for showing expression data.
-		bpt.addBackpageHook(new BackpageExpression(swingEngine.getGdbManager(), desktop.getGexManager()));
+		bpt.addBackpageHook(new BackpageExpression(desktop.getGexManager()));
 	}
 
 	@Override

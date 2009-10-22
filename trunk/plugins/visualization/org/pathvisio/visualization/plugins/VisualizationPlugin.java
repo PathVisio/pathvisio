@@ -22,6 +22,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JTabbedPane;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager.GexManagerEvent;
@@ -89,7 +90,10 @@ public class VisualizationPlugin implements Plugin
 		desktop.getSwingEngine().getApplicationPanel().addToToolbar(visualizationCombo);
 		
 		Legend legendPane = new Legend(desktop);
-		desktop.getSideBarTabbedPane().addTab ("Legend", legendPane);
+		JTabbedPane tabPane = desktop.getSideBarTabbedPane();
+		if(tabPane != null) {
+			tabPane.addTab ("Legend", legendPane);
+		}
 	}
 
 	public void done() 

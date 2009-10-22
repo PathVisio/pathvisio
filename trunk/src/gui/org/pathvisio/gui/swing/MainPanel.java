@@ -16,8 +16,6 @@
 //
 package org.pathvisio.gui.swing;
 
-import com.mammothsoftware.frwk.ddb.DropDownButton;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -52,7 +50,6 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.jfree.util.Log;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.debug.Logger;
@@ -72,6 +69,8 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
+
+import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 /**
  * this is the contents of the main window in the WikiPathways applet,
@@ -355,7 +354,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public void addToToolbar(Component c, String group) {
 		JToolBar tb = getToolBar();
 		if(tb == null) {
-			Log.warn("Trying to register toolbar action while no toolbar is available " +
+			Logger.log.warn("Trying to register toolbar action while no toolbar is available " +
 					"(running in headless mode?)");
 			return;
 		}

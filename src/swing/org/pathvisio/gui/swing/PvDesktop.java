@@ -23,12 +23,9 @@ import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import org.bridgedb.IDMapperException;
-import org.jdesktop.swingworker.SwingWorker;
-import org.jfree.util.Log;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.GdbEvent;
@@ -36,13 +33,11 @@ import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.StandaloneCompat;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationEvent;
@@ -264,7 +259,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	{
 		JMenuBar menuBar = swingEngine.getApplicationPanel().getMenuBar();
 		if(menuBar == null) {
-			Log.warn("Trying to register menu action while no menubar is available " +
+			Logger.log.warn("Trying to register menu action while no menubar is available " +
 					"(running in headless mode?)");
 			return;
 		}

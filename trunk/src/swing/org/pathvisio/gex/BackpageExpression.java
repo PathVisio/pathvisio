@@ -18,10 +18,8 @@ package org.pathvisio.gex;
 
 import java.util.List;
 
-import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.pathvisio.data.GdbManager;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
 import org.pathvisio.model.PathwayElement;
 
@@ -31,12 +29,10 @@ import org.pathvisio.model.PathwayElement;
  */
 public class BackpageExpression implements BackpageHook
 {
-	private final IDMapper mapper;
 	private final GexManager gexManager;
 	
-	public BackpageExpression (GdbManager gdbManager, GexManager gexManager)
+	public BackpageExpression (GexManager gexManager)
 	{
-		this.mapper = gdbManager.getCurrentGdb();
 		this.gexManager = gexManager;
 	}
 
@@ -47,7 +43,7 @@ public class BackpageExpression implements BackpageHook
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	private static String getDataString(Xref idc, IDMapper gdb, CachedData gex) throws IDMapperException
+	private static String getDataString(Xref idc, CachedData gex) throws IDMapperException
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
@@ -78,17 +74,17 @@ public class BackpageExpression implements BackpageHook
 
 	public String getHtml(PathwayElement e) 
 	{
-		return getHtml(e, mapper, gexManager.getCachedData());
+		return getHtml(e, gexManager.getCachedData());
 	}
 	
-	public static String getHtml(PathwayElement e, IDMapper gdb, CachedData gex) {
+	public static String getHtml(PathwayElement e, CachedData gex) {
 		String text = "";
 		try
 		{
 			//Get the expression data information if available
 			if(gex != null) {
 				text += "<H1>Expression data</H1>";
-				text += getDataString(e.getXref(), gdb, gex);
+				text += getDataString(e.getXref(), gex);
 			}				
 		}
 		catch (IDMapperException ex)

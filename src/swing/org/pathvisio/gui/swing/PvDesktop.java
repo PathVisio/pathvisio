@@ -28,6 +28,7 @@ import javax.swing.JTabbedPane;
 
 import org.bridgedb.IDMapperException;
 import org.jdesktop.swingworker.SwingWorker;
+import org.jfree.util.Log;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.data.GdbEvent;
@@ -262,6 +263,11 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	public void registerMenuAction (String submenu, Action a)	
 	{
 		JMenuBar menuBar = swingEngine.getApplicationPanel().getMenuBar();
+		if(menuBar == null) {
+			Log.warn("Trying to register menu action while no menubar is available " +
+					"(running in headless mode?)");
+			return;
+		}
 		for (int i = 0; i < menuBar.getMenuCount(); ++i)
 		{
 			JMenu menuAt = menuBar.getMenu(i);

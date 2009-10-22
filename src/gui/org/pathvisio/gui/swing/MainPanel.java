@@ -52,6 +52,7 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.jfree.util.Log;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.debug.Logger;
@@ -353,6 +354,11 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	public void addToToolbar(Component c, String group) {
 		JToolBar tb = getToolBar();
+		if(tb == null) {
+			Log.warn("Trying to register toolbar action while no toolbar is available " +
+					"(running in headless mode?)");
+			return;
+		}
 		tb.add(c);
 		addToToolbarGroup(c, group);
 	}

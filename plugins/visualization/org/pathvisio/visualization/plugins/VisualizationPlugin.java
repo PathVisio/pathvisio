@@ -89,7 +89,7 @@ public class VisualizationPlugin implements Plugin
 		visualizationCombo = new JComboBox(model);
 		desktop.getSwingEngine().getApplicationPanel().addToToolbar(visualizationCombo);
 		
-		Legend legendPane = new Legend(desktop);
+		Legend legendPane = new Legend(desktop.getVisualizationManager());
 		JTabbedPane tabPane = desktop.getSideBarTabbedPane();
 		if(tabPane != null) {
 			tabPane.addTab ("Legend", legendPane);

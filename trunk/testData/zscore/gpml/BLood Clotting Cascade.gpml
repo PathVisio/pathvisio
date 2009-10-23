@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="Blood Clotting Cascade" Data-Source="GenMAPP 2.0" Version="20060316" Author="Andrew Kwa" Maintainer="Nathan Salomonis" Email="nsalomonis@gladstone.ucsf.edu" Copyright="2000, Gladstone Institutes" Last-Modified="3/7/02" Organism="Mus musculus">
+  <Comment Source="GenMAPP notes"></Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Graphics BoardWidth="14825.25" BoardHeight="9396.75" WindowWidth="15062.0" WindowHeight="11509.0" />
+  <DataNode TextLabel="F12" Type="GeneProduct" BackpageHead="F12 | coagulation factor XII (Hageman factor)" GraphId="ec952">
+    <Graphics Color="000000" CenterX="900.0" CenterY="1100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="58992" />
+  </DataNode>
+  <DataNode TextLabel="F9" Type="GeneProduct" BackpageHead="F9 | coagulation factor IX" GraphId="d1916">
+    <Graphics Color="000000" CenterX="2800.0" CenterY="2600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14071" />
+  </DataNode>
+  <DataNode TextLabel="F10" Type="GeneProduct" BackpageHead="F10 | coagulation factor X" GraphId="f36f9">
+    <Graphics Color="000000" CenterX="5050.0" CenterY="3600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14058" />
+  </DataNode>
+  <DataNode TextLabel="Serpine1" Type="GeneProduct" BackpageHead="Serpine1 | serine (or cysteine) proteinase inh..." GraphId="c51ae">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="6500.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18787" />
+  </DataNode>
+  <DataNode TextLabel="Serpinb2" Type="GeneProduct" BackpageHead="Serpinb2 | serine (or cysteine) proteinase inh..." GraphId="b1175">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="6800.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18788" />
+  </DataNode>
+  <DataNode TextLabel="F8" Type="GeneProduct" BackpageHead="F8 | coagulation factor VIII" GraphId="b1aa3">
+    <Graphics Color="000000" CenterX="8150.0" CenterY="1050.0" Width="1100.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14069" />
+  </DataNode>
+  <DataNode TextLabel="F8a" Type="GeneProduct" BackpageHead="F8a | factor 8-associated gene A" GraphId="e846d">
+    <Graphics Color="000000" CenterX="8150.0" CenterY="1350.0" Width="1100.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14070" />
+  </DataNode>
+  <DataNode TextLabel="Plat" Type="GeneProduct" BackpageHead="Plat | plasminogen activator tissue" GraphId="fc118">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="7750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18791" />
+  </DataNode>
+  <DataNode TextLabel="F5" Type="GeneProduct" BackpageHead="F5 | coagulation factor V" GraphId="dda9a">
+    <Graphics Color="000000" CenterX="10300.0" CenterY="2200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14067" />
+  </DataNode>
+  <DataNode TextLabel="Fgl2" Type="GeneProduct" BackpageHead="Fgl2 | fibrinogen-like protein 2" GraphId="e43d8">
+    <Graphics Color="000000" CenterX="8850.0" CenterY="3650.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14190" />
+  </DataNode>
+  <DataNode TextLabel="F2" Type="GeneProduct" BackpageHead="F2 | coagulation factor II" GraphId="a26a1">
+    <Graphics Color="000000" CenterX="7150.0" CenterY="4800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14061" />
+  </DataNode>
+  <DataNode TextLabel="Fga" Type="GeneProduct" BackpageHead="Fga | fibrinogen alpha polypeptide" GraphId="c3be5">
+    <Graphics Color="000000" CenterX="8300.0" CenterY="5600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14161" />
+  </DataNode>
+  <DataNode TextLabel="Plau" Type="GeneProduct" BackpageHead="Plau | plasminogen activator urokinase" GraphId="fa108">
+    <Graphics Color="000000" CenterX="7000.0" CenterY="6700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18792" />
+  </DataNode>
+  <DataNode TextLabel="Plg" Type="GeneProduct" BackpageHead="Plg | plasminogen" GraphId="f8be8">
+    <Graphics Color="000000" CenterX="7000.0" CenterY="7750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18815" />
+  </DataNode>
+  <DataNode TextLabel="Serpinf2" Type="GeneProduct" BackpageHead="Serpinf2 | serine (or cysteine) proteinase inh..." GraphId="ec2c6">
+    <Graphics Color="000000" CenterX="9850.0" CenterY="6700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18816" />
+  </DataNode>
+  <DataNode TextLabel="F13b" Type="GeneProduct" BackpageHead="F13b | coagulation factor XIII beta subunit" GraphId="a8f8f">
+    <Graphics Color="000000" CenterX="12750.0" CenterY="4500.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14060" />
+  </DataNode>
+  <DataNode TextLabel="F10" Type="GeneProduct" BackpageHead="F10 | coagulation factor X" GraphId="cba05">
+    <Graphics Color="000000" CenterX="1800.0" CenterY="1850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14058" />
+  </DataNode>
+  <DataNode TextLabel="Vwf" Type="GeneProduct" BackpageHead="Vwf | Von Willebrand factor homolog" GraphId="d1cc8">
+    <Graphics Color="000000" CenterX="10500.0" CenterY="1200.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="22371" />
+  </DataNode>
+  <DataNode TextLabel="F7" Type="GeneProduct" BackpageHead="F7 | coagulation factor VII" GraphId="db579">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="4700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14068" />
+  </DataNode>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1250.0" y="1100.0" />
+      <Point x="2250.0" y="1100.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2250.0" y="1850.0" />
+      <Point x="3550.0" y="1850.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3150.0" y="2600.0" />
+      <Point x="4750.0" y="2600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5400.0" y="3600.0" />
+      <Point x="8250.0" y="3600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7500.0" y="4800.0" />
+      <Point x="9100.0" y="4800.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="8600.0" y="5600.0" />
+      <Point x="9750.0" y="5600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10000.0" y="1200.0" />
+      <Point x="9250.0" y="1200.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7700.0" y="1600.0" />
+      <Point x="7150.0" y="2350.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="6450.0" y="2800.0" />
+      <Point x="6450.0" y="3500.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="8800.0" y="3950.0" />
+      <Point x="8800.0" y="4700.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2800.0" y="1250.0" />
+      <Point x="2800.0" y="1700.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4200.0" y="2000.0" />
+      <Point x="4200.0" y="2550.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9400.0" y="5000.0" />
+      <Point x="9400.0" y="5500.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3300.0" y="4700.0" />
+      <Point x="3900.0" y="4700.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5150.0" y="4450.0" />
+      <Point x="5800.0" y="3800.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10700.0" y="5850.0" />
+      <Point x="11500.0" y="6250.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="12750.0" y="5900.0" />
+      <Point x="12050.0" y="6250.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="12750.0" y="4650.0" />
+      <Point x="12750.0" y="5350.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10000.0" y="2450.0" />
+      <Point x="9550.0" y="3050.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3550.0" y="4150.0" />
+      <Point x="3550.0" y="4550.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="250.0" y="700.0" />
+      <Point x="2200.0" y="700.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="300.0" y="3600.0" />
+      <Point x="2350.0" y="3600.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5050.0" y="7750.0" />
+      <Point x="6400.0" y="7750.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7600.0" y="7750.0" />
+      <Point x="9350.0" y="7750.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11750.0" y="7450.0" />
+      <Point x="11750.0" y="8150.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10450.0" y="7750.0" />
+      <Point x="11550.0" y="7750.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2850.0" y="6100.0" />
+      <Point x="4450.0" y="6100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2000.0" y="3900.0" />
+      <Point x="2600.0" y="3900.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7000.0" y="7000.0" />
+      <Point x="7000.0" y="7500.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11750.0" y="6600.0" />
+      <Point x="11750.0" y="7100.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4350.0" y="7000.0" />
+      <Point x="4350.0" y="7550.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9850.0" y="7000.0" />
+      <Point x="9850.0" y="7550.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="Factor XIIa" GraphId="c857b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2950.0" CenterY="1100.0" Width="1295.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Factor XIa" GraphId="b2594">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4250.0" CenterY="1800.0" Width="1235.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Factor VIIIa" GraphId="ccf3a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7400.0" CenterY="2600.0" Width="1355.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Factor IXa" GraphId="c6d0d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="5550.0" CenterY="2600.0" Width="1235.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Factor Xa" GraphId="f009f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8000.0" CenterY="3250.0" Width="1175.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Factor Va" GraphId="ffac8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9650.0" CenterY="3250.0" Width="1175.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Thrombin" GraphId="f6b8b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9700.0" CenterY="4800.0" Width="1190.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Fibrin Monomer" GraphId="d8758">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="10800.0" CenterY="5600.0" Width="1880.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Factor XIIIa" GraphId="aa964">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12800.0" CenterY="5600.0" Width="1355.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Fibrin Polymer" GraphId="ebeaa">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11750.0" CenterY="6450.0" Width="1745.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Factor VIIa" GraphId="baf3b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4650.0" CenterY="4700.0" Width="1295.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="+" GraphId="a52c3">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6450.0" CenterY="2600.0" Width="215.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="+" GraphId="ab8e6">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8800.0" CenterY="3250.0" Width="215.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Intrinsic Pathway" GraphId="d6244">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1250.0" CenterY="500.0" Width="2045.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Extrinsic Pathway" GraphId="ddc91">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1300.0" CenterY="3450.0" Width="2135.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Tissue Factor" GraphId="e61e4">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3500.0" CenterY="3900.0" Width="1640.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Plasmin" GraphId="e27c0">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9950.0" CenterY="7750.0" Width="995.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Fibrin" GraphId="f2e47">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11750.0" CenterY="7300.0" Width="740.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Fibrin Split Products" GraphId="df78a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11800.0" CenterY="8400.0" Width="2420.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Thrombolysis" GraphId="c34a3">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3650.0" CenterY="5900.0" Width="1655.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Tissue Injury" GraphId="b9f77">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1200.0" CenterY="3900.0" Width="1550.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Shape Type="Brace" Style="Solid" GraphId="e630e">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="9150.0" CenterY="1200.0" Width="800.0" Height="130.0" ZOrder="16384" Rotation="1.5707963267948966" />
+  </Shape>
+  <Shape Type="Brace" Style="Solid" GraphId="bcecd">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="3250.0" CenterY="4700.0" Width="800.0" Height="130.0" ZOrder="16384" Rotation="1.5707963267948966" />
+  </Shape>
+  <InfoBox CenterX="4966.0" CenterY="8529.5" />
+  <Legend CenterX="26.5" CenterY="6318.0" />
+</Pathway>
+

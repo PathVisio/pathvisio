@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="Electron Transport Chain" Data-Source="GenMAPP 2.0" Version="20060316" Author="Kam Dahlquist, Meredith Braymer" Email="genmapp@gladstone.ucsf.edu" Copyright="2002, Gladstone Institutes" Last-Modified="12/04/03" Organism="Mus musculus">
+  <Comment Source="GenMAPP notes">Cytochrome B560 (large), COX2, COX3, OSCP, ATP Synthase D chain, and ATP Synthase Protein 8 updated.  B8 Subunit, B14 Subunit, B14.5 Subunit, B15 Subunit, B22 Subunit, AGGG Subunit, PDSW Subunit, 9.6 kDa Subunit, 13 kDa-B Subunit, 19 kDa Subunit, 24 kDa Subunit, 30 kDa Subunit, 42 kDa Subunit, Coupling Factor B, UCP4 added.</Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Graphics BoardWidth="21120.0" BoardHeight="11357.5" WindowWidth="16875.0" WindowHeight="12225.0" />
+  <DataNode TextLabel="Atpif1" Type="GeneProduct" BackpageHead="Atpif1 | ATPase inhibitory factor 1" GraphId="cfc09">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="9900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11983" />
+  </DataNode>
+  <DataNode TextLabel="Cox6c" Type="GeneProduct" BackpageHead="Cox6c | cytochrome c oxidase subunit VIc" GraphId="a18c1">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="5500.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12864" />
+  </DataNode>
+  <DataNode TextLabel="Cox17" Type="GeneProduct" BackpageHead="Cox17 | cytochrome c oxidase subunit XVII ass..." GraphId="c7a06">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="8450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12856" />
+  </DataNode>
+  <DataNode TextLabel="Surf1" Type="GeneProduct" BackpageHead="Surf1 | surfeit gene 1" GraphId="a188f">
+    <Comment Source="GenMAPP remarks">sp P09925</Comment>
+    <Graphics Color="000000" CenterX="8250.0" CenterY="8750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="20930" />
+  </DataNode>
+  <DataNode TextLabel="Ucp1" Type="GeneProduct" BackpageHead="Ucp1 | uncoupling protein 1 (mitochondrial pr..." GraphId="bef31">
+    <Graphics Color="000000" CenterX="14850.0" CenterY="2800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="22227" />
+  </DataNode>
+  <DataNode TextLabel="Ucp2" Type="GeneProduct" BackpageHead="Ucp2 | uncoupling protein 2 (mitochondrial pr..." GraphId="d85a4">
+    <Graphics Color="000000" CenterX="14850.0" CenterY="3100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="22228" />
+  </DataNode>
+  <DataNode TextLabel="Ucp3" Type="GeneProduct" BackpageHead="Ucp3 | uncoupling protein 3 (mitochondrial pr..." GraphId="b5ab5">
+    <Graphics Color="000000" CenterX="14850.0" CenterY="3400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="22229" />
+  </DataNode>
+  <DataNode TextLabel="Cycs" Type="GeneProduct" BackpageHead="Cycs | cytochrome c somatic" GraphId="f5477">
+    <Graphics Color="000000" CenterX="7000.0" CenterY="750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13063" />
+  </DataNode>
+  <DataNode TextLabel="Cyct" Type="GeneProduct" BackpageHead="Cyct | cytochrome c testis" GraphId="d9c55">
+    <Graphics Color="000000" CenterX="7000.0" CenterY="1050.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13067" />
+  </DataNode>
+  <DataNode TextLabel="COX1" Type="GeneProduct" BackpageHead="COX1 | cytochrome c oxidase subunit I" GraphId="aafba">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="2800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17708" />
+  </DataNode>
+  <DataNode TextLabel="COX2" Type="GeneProduct" BackpageHead="COX2 | cytochrome c oxidase subunit II" GraphId="e4255">
+    <Comment Source="GenMAPP remarks">P00405</Comment>
+    <Graphics Color="000000" CenterX="8250.0" CenterY="3100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17709" />
+  </DataNode>
+  <DataNode TextLabel="COX3" Type="GeneProduct" BackpageHead="COX3 | cytochrome c oxidase subunit III" GraphId="cab96">
+    <Comment Source="GenMAPP remarks">P00416</Comment>
+    <Graphics Color="000000" CenterX="8250.0" CenterY="3400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17710" />
+  </DataNode>
+  <DataNode TextLabel="Cox4i1" Type="GeneProduct" BackpageHead="Cox4i1 | cytochrome c oxidase subunit IV isofor..." GraphId="ebeed">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="3700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12857" />
+  </DataNode>
+  <DataNode TextLabel="Cox5a" Type="GeneProduct" BackpageHead="Cox5a | cytochrome c oxidase subunit Va" GraphId="ec5d4">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="4000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12858" />
+  </DataNode>
+  <DataNode TextLabel="Cox5b" Type="GeneProduct" BackpageHead="Cox5b | cytochrome c oxidase subunit Vb" GraphId="da2d3">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="4300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12859" />
+  </DataNode>
+  <DataNode TextLabel="Cox6a2" Type="GeneProduct" BackpageHead="Cox6a2 | cytochrome c oxidase subunit VI a p..." GraphId="aa313">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="4600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12862" />
+  </DataNode>
+  <DataNode TextLabel="Cox6a1" Type="GeneProduct" BackpageHead="Cox6a1 | cytochrome c oxidase subunit VI a p..." GraphId="f553e">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="4900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12861" />
+  </DataNode>
+  <DataNode TextLabel="Cox6b1" Type="GeneProduct" BackpageHead="Cox6b1 | cytochrome c oxidase subunit VIb pol..." GraphId="c89a9">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="5200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="110323" />
+  </DataNode>
+  <DataNode TextLabel="Cox7a1" Type="GeneProduct" BackpageHead="Cox7a1 | cytochrome c oxidase subunit VIIa 1..." GraphId="ceb4d">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="6100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12865" />
+  </DataNode>
+  <DataNode TextLabel="Cox7a2" Type="GeneProduct" BackpageHead="Cox7a2 | cytochrome c oxidase subunit VIIa 2..." GraphId="a7b5b">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="5800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12866" />
+  </DataNode>
+  <DataNode TextLabel="Cox7b" Type="GeneProduct" BackpageHead="Cox7b | cytochrome c oxidase subunit VIIb" GraphId="b675a">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="6700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66142" />
+  </DataNode>
+  <DataNode TextLabel="Cox7c" Type="GeneProduct" BackpageHead="Cox7c | cytochrome c oxidase subunit VIIc" GraphId="a4e9c">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="7000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12867" />
+  </DataNode>
+  <DataNode TextLabel="Cox8b" Type="GeneProduct" BackpageHead="Cox8b | cytochrome c oxidase subunit VIIIb" GraphId="eedbc">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="7300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12869" />
+  </DataNode>
+  <DataNode TextLabel="Cox8a" Type="GeneProduct" BackpageHead="Cox8a | cytochrome c oxidase subunit VIIIa" GraphId="a0d24">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="7600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12868" />
+  </DataNode>
+  <DataNode TextLabel="ATP8" Type="GeneProduct" BackpageHead="ATP8 | ATP synthase F0 subunit 8" GraphId="d2075">
+    <Comment Source="GenMAPP remarks">P03930</Comment>
+    <Graphics Color="000000" CenterX="11450.0" CenterY="8800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17706" />
+  </DataNode>
+  <DataNode TextLabel="Slc25a4" Type="GeneProduct" BackpageHead="Slc25a4 | solute carrier family 25 (mitochondr..." GraphId="ad8e0">
+    <Graphics Color="000000" CenterX="17350.0" CenterY="2800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11739" />
+  </DataNode>
+  <DataNode TextLabel="Slc25a5" Type="GeneProduct" BackpageHead="Slc25a5 | solute carrier family 25 (mitochondr..." GraphId="a9a2f">
+    <Graphics Color="000000" CenterX="17350.0" CenterY="3100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11740" />
+  </DataNode>
+  <DataNode TextLabel="Atp5a1" Type="GeneProduct" BackpageHead="Atp5a1 | ATP synthase H+ transporting mitoch..." GraphId="f4be9">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="2800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11946" />
+  </DataNode>
+  <DataNode TextLabel="Atp5b" Type="GeneProduct" BackpageHead="Atp5b | ATP synthase H+ transporting mitochon..." GraphId="d4c0a">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="3100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11947" />
+  </DataNode>
+  <DataNode TextLabel="Atp5c1" Type="GeneProduct" BackpageHead="Atp5c1 | ATP synthase H+ transporting mitoch..." GraphId="e377a">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="3400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11949" />
+  </DataNode>
+  <DataNode TextLabel="Atp5d" Type="GeneProduct" BackpageHead="Atp5d | ATP synthase H+ transporting mitocho..." GraphId="cc3c4">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="3700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66043" />
+  </DataNode>
+  <DataNode TextLabel="Atp5e" Type="GeneProduct" BackpageHead="Atp5e | ATP synthase H+ transporting mitocho..." GraphId="b1c56">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="4000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67126" />
+  </DataNode>
+  <DataNode TextLabel="Atp5j" Type="GeneProduct" BackpageHead="Atp5j | ATP synthase H+ transporting mitocho..." GraphId="c8c4a">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="4700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11957" />
+  </DataNode>
+  <DataNode TextLabel="Atp5o" Type="GeneProduct" BackpageHead="Atp5o | ATP synthase H+ transporting mitocho..." GraphId="f5670">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="5000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="28080" />
+  </DataNode>
+  <DataNode TextLabel="ATP6" Type="GeneProduct" BackpageHead="ATP6 | ATP synthase F0 subunit 6" GraphId="e5c18">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="5800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17705" />
+  </DataNode>
+  <DataNode TextLabel="Atp5f1" Type="GeneProduct" BackpageHead="Atp5f1 | ATP synthase H+ transporting mitoch..." GraphId="f819c">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="6100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11950" />
+  </DataNode>
+  <DataNode TextLabel="Atp5g1" Type="GeneProduct" BackpageHead="Atp5g1 | ATP synthase H+ transporting mitoch..." GraphId="f65e1">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="6500.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11951" />
+  </DataNode>
+  <DataNode TextLabel="Atp5g2" Type="GeneProduct" BackpageHead="Atp5g2 | ATP synthase H+ transporting mitoch..." GraphId="a926e">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="6800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67942" />
+  </DataNode>
+  <DataNode TextLabel="Atp5g3" Type="GeneProduct" BackpageHead="Atp5g3 | ATP synthase H+ transporting mitoch..." GraphId="c2195">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="7100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="228033" />
+  </DataNode>
+  <DataNode TextLabel="Atp5h" Type="GeneProduct" BackpageHead="Atp5h | ATP synthase H+ transporting mitocho..." GraphId="ab1a5">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="7500.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="71679" />
+  </DataNode>
+  <DataNode TextLabel="Atp5k" Type="GeneProduct" BackpageHead="Atp5k | ATP synthase H+ transporting mitocho..." GraphId="b4c76">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="7800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11958" />
+  </DataNode>
+  <DataNode TextLabel="Atp5j2" Type="GeneProduct" BackpageHead="Atp5j2 | ATP synthase H+ transporting mitoch..." GraphId="fd90d">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="8100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="57423" />
+  </DataNode>
+  <DataNode TextLabel="Atp5l" Type="GeneProduct" BackpageHead="Atp5l | ATP synthase H+ transporting mitocho..." GraphId="f60db">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="8400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="27425" />
+  </DataNode>
+  <DataNode TextLabel="Slc25a14" Type="GeneProduct" BackpageHead="Slc25a14 | solute carrier family 25 (mitochond..." GraphId="ee169">
+    <Graphics Color="000000" CenterX="14850.0" CenterY="4000.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="20523" />
+  </DataNode>
+  <DataNode TextLabel="Cox7a2l" Type="GeneProduct" BackpageHead="Cox7a2l | cytochrome c oxidase subunit VIIa pol..." GraphId="cedf0">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="6400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="20463" />
+  </DataNode>
+  <DataNode TextLabel="ND2" Type="GeneProduct" BackpageHead="ND2 | NADH dehydrogenase subunit 2" GraphId="fa703">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="3100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17717" />
+  </DataNode>
+  <DataNode TextLabel="ND3" Type="GeneProduct" BackpageHead="ND3 | NADH dehydrogenase subunit 3" GraphId="ff86b">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="3400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17718" />
+  </DataNode>
+  <DataNode TextLabel="ND4" Type="GeneProduct" BackpageHead="ND4 | NADH dehydrogenase subunit 4" GraphId="f88c7">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="3700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17719" />
+  </DataNode>
+  <DataNode TextLabel="ND5" Type="GeneProduct" BackpageHead="ND5 | NADH dehydrogenase subunit 5" GraphId="e1c55">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="4000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17721" />
+  </DataNode>
+  <DataNode TextLabel="ND6" Type="GeneProduct" BackpageHead="ND6 | NADH dehydrogenase subunit 6" GraphId="c96e4">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="4300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17722" />
+  </DataNode>
+  <DataNode TextLabel="ND4L" Type="GeneProduct" BackpageHead="ND4L | NADH dehydrogenase subunit 4L" GraphId="f47f0">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="4600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17720" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa1" Type="GeneProduct" BackpageHead="Ndufa1 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="fedfa">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="7300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="54405" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa4" Type="GeneProduct" BackpageHead="Ndufa4 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="e4e03">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="7000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17992" />
+  </DataNode>
+  <DataNode TextLabel="Ndufs6" Type="GeneProduct" BackpageHead="Ndufs6 | NADH dehydrogenase (ubiquinone) Fe-S p..." GraphId="f18aa">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="8200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="407785" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa3" Type="GeneProduct" BackpageHead="Ndufa3 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="d6329">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="5200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66091" />
+  </DataNode>
+  <DataNode TextLabel="Sdha" Type="GeneProduct" BackpageHead="Sdha | succinate dehydrogenase complex subuni..." GraphId="bbd06">
+    <Graphics Color="000000" CenterX="3400.0" CenterY="2800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66945" />
+  </DataNode>
+  <DataNode TextLabel="Sdhb" Type="GeneProduct" BackpageHead="Sdhb | succinate dehydrogenase complex subuni..." GraphId="ac7eb">
+    <Graphics Color="000000" CenterX="3400.0" CenterY="3100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67680" />
+  </DataNode>
+  <DataNode TextLabel="Sdhc" Type="GeneProduct" BackpageHead="Sdhc | succinate dehydrogenase complex subuni..." GraphId="f9486">
+    <Graphics Color="000000" CenterX="3400.0" CenterY="3400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66052" />
+  </DataNode>
+  <DataNode TextLabel="Sdhd" Type="GeneProduct" BackpageHead="Sdhd | succinate dehydrogenase complex subuni..." GraphId="bab07">
+    <Graphics Color="000000" CenterX="3400.0" CenterY="3700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66925" />
+  </DataNode>
+  <DataNode TextLabel="Uqcrc1" Type="GeneProduct" BackpageHead="Uqcrc1 | ubiquinol-cytochrome c reductase core ..." GraphId="dbb34">
+    <Graphics Color="000000" CenterX="5950.0" CenterY="2800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="22273" />
+  </DataNode>
+  <DataNode TextLabel="Uqcrc2" Type="GeneProduct" BackpageHead="Uqcrc2 | ubiquinol cytochrome c reductase core ..." GraphId="bf270">
+    <Graphics Color="000000" CenterX="5950.0" CenterY="3100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67003" />
+  </DataNode>
+  <DataNode TextLabel="Uqcrh" Type="GeneProduct" BackpageHead="Uqcrh | ubiquinol-cytochrome c reductase hinge ..." GraphId="a9774">
+    <Graphics Color="000000" CenterX="5950.0" CenterY="4000.0" Width="1500.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66576" />
+  </DataNode>
+  <DataNode TextLabel="CYTB" Type="GeneProduct" BackpageHead="CYTB | cytochrome b" GraphId="e582e">
+    <Graphics Color="000000" CenterX="5950.0" CenterY="4300.0" Width="1500.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17711" />
+  </DataNode>
+  <DataNode TextLabel="1500040F11Rik" Type="GeneProduct" BackpageHead="1500040F11Rik | RIKEN cDNA 1500040F11 gene" GraphId="b7461">
+    <Graphics Color="000000" CenterX="5950.0" CenterY="3700.0" Width="1500.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="22272" />
+  </DataNode>
+  <DataNode TextLabel="ND1" Type="GeneProduct" BackpageHead="ND1 | NADH dehydrogenase subunit 1" GraphId="d7c23">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="2800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17716" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa2" Type="GeneProduct" BackpageHead="Ndufa2 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="abff4">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="4900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17991" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa6" Type="GeneProduct" BackpageHead="Ndufa6 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="b4e37">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="5500.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67130" />
+  </DataNode>
+  <DataNode TextLabel="Ndufb4" Type="GeneProduct" BackpageHead="Ndufb4 | NADH dehydrogenase (ubiquinone) 1 beta..." GraphId="a3e2f">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="6100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68194" />
+  </DataNode>
+  <DataNode TextLabel="Ndufb9" Type="GeneProduct" BackpageHead="Ndufb9 | NADH dehydrogenase (ubiquinone) 1 bet..." GraphId="da6d4">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="6400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66218" />
+  </DataNode>
+  <DataNode TextLabel="Ndufb2" Type="GeneProduct" BackpageHead="Ndufb2 | NADH dehydrogenase (ubiquinone) 1 bet..." GraphId="daaf4">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="6700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68198" />
+  </DataNode>
+  <DataNode TextLabel="Ndufb10" Type="GeneProduct" BackpageHead="Ndufb10 | NADH dehydrogenase (ubiquinone) 1 be..." GraphId="b3e7a">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="7600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68342" />
+  </DataNode>
+  <DataNode TextLabel="AI256775" Type="GeneProduct" BackpageHead="AI256775 | expressed sequence AI256775" GraphId="e8a97">
+    <Graphics Color="000000" CenterX="5950.0" CenterY="4600.0" Width="1500.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="218341" />
+  </DataNode>
+  <DataNode TextLabel="Atp5s" Type="GeneProduct" BackpageHead="Atp5s | ATP synthase H+ transporting mitocho..." GraphId="c489f">
+    <Graphics Color="000000" CenterX="11450.0" CenterY="9100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68055" />
+  </DataNode>
+  <DataNode TextLabel="Slc25a27" Type="GeneProduct" BackpageHead="Slc25a27 | solute carrier family 25 member 27..." GraphId="d2a41">
+    <Graphics Color="000000" CenterX="14850.0" CenterY="3700.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="74011" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa7" Type="GeneProduct" BackpageHead="Ndufa7 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="cfd4c">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="5800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66416" />
+  </DataNode>
+  <DataNode TextLabel="Ndufab1" Type="GeneProduct" BackpageHead="Ndufab1 | NADH dehydrogenase (ubiquinone) 1 a..." GraphId="c4bf5">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="7900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="70316" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa5" Type="GeneProduct" BackpageHead="Ndufa5 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="d4cc8">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="8500.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68202" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa8" Type="GeneProduct" BackpageHead="Ndufa8 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="f4667">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="8800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68375" />
+  </DataNode>
+  <DataNode TextLabel="Ndufv2" Type="GeneProduct" BackpageHead="Ndufv2 | NADH dehydrogenase (ubiquinone) flavop..." GraphId="db951">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="9100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="72900" />
+  </DataNode>
+  <DataNode TextLabel="Ndufs3" Type="GeneProduct" BackpageHead="Ndufs3 | NADH dehydrogenase (ubiquinone) Fe-S p..." GraphId="f5fad">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="9400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68349" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa9" Type="GeneProduct" BackpageHead="Ndufa9 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="bad4d">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="9700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66108" />
+  </DataNode>
+  <DataNode TextLabel="Ndufa10" Type="GeneProduct" BackpageHead="Ndufa10 | NADH dehydrogenase (ubiquinone) 1 alp..." GraphId="a3585">
+    <Graphics Color="000000" CenterX="1050.0" CenterY="10000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67273" />
+  </DataNode>
+  <DataNode TextLabel="Uqcrb" Type="GeneProduct" BackpageHead="Uqcrb | ubiquinol-cytochrome c reductase bindin..." GraphId="d5589">
+    <Graphics Color="000000" CenterX="5950.0" CenterY="3400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67530" />
+  </DataNode>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="100.0" y="2700.0" />
+      <Point x="19200.0" y="2700.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="100.0" y="2900.0" />
+      <Point x="19200.0" y="2900.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5950.0" y="1650.0" />
+      <Point x="6850.0" y="1100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7350.0" y="1100.0" />
+      <Point x="8100.0" y="1650.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1100.0" y="1650.0" />
+      <Point x="2000.0" y="1100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5000.0" y="1100.0" />
+      <Point x="5750.0" y="1650.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2000.0" y="1100.0" />
+      <Point x="5000.0" y="1100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3550.0" y="1650.0" />
+      <Point x="4450.0" y="1100.0" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="C subunit" GraphId="f9a6d">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="10200.0" CenterY="6800.0" Width="965.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="F1 Complex" GraphId="f3ad8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11450.0" CenterY="2350.0" Width="1445.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Stalk" GraphId="db81f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11450.0" CenterY="4400.0" Width="650.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="F0 Complex" GraphId="b35df">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11450.0" CenterY="5450.0" Width="1445.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="binds ATP Synthase beta" GraphId="cc4cf">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="11450.0" CenterY="9500.0" Width="2450.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Uncoupling Protein" GraphId="d987f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="14850.0" CenterY="2350.0" Width="2300.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Complex I" GraphId="c2ba7">
+    <Graphics FontWeight="Bold" FontSize="240" Color="000000" CenterX="1050.0" CenterY="1850.0" Width="1580.0" Height="360.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Complex IV" GraphId="f90ff">
+    <Graphics FontWeight="Bold" FontSize="240" Color="000000" CenterX="8250.0" CenterY="1850.0" Width="1775.0" Height="360.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Complex III" GraphId="db9ba">
+    <Graphics FontWeight="Bold" FontSize="240" Color="000000" CenterX="5950.0" CenterY="1850.0" Width="1730.0" Height="360.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Complex II" GraphId="f7a49">
+    <Graphics FontWeight="Bold" FontSize="240" Color="000000" CenterX="3400.0" CenterY="1850.0" Width="1655.0" Height="360.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Oxidoreductase" GraphId="c592e">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="1050.0" CenterY="2450.0" Width="1580.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="NADH-Ubiquinone" GraphId="f42a2">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="1050.0" CenterY="2200.0" Width="1775.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Succinate-Ubiquinone" GraphId="ebdb5">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="3400.0" CenterY="2200.0" Width="2180.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Oxidoreductase" GraphId="c82aa">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="3400.0" CenterY="2450.0" Width="1580.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Ubiquinol-Cytochrome C" GraphId="e5dba">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="5950.0" CenterY="2200.0" Width="2390.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Reductase" GraphId="c8191">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="5950.0" CenterY="2450.0" Width="1070.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Cytochrome C" GraphId="c975b">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="8250.0" CenterY="2200.0" Width="1415.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Oxidase" GraphId="d30d3">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="8250.0" CenterY="2450.0" Width="860.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="ATP Synthase (Complex V)" GraphId="f2ad6">
+    <Graphics FontWeight="Bold" FontSize="240" Color="000000" CenterX="11450.0" CenterY="1850.0" Width="4130.0" Height="360.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Adenine Nucleotide" GraphId="a9001">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="17350.0" CenterY="2150.0" Width="2315.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Translocator" GraphId="ac5f9">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="17350.0" CenterY="2450.0" Width="1535.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Ubiquinone" GraphId="b7b35">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3450.0" CenterY="1100.0" Width="1415.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Assembly" GraphId="a233e">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8300.0" CenterY="8050.0" Width="1205.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Shape Type="Brace" Style="Solid" GraphId="eac2d">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="10700.0" CenterY="6800.0" Width="1000.0" Height="130.0" ZOrder="16384" Rotation="4.71238898038469" />
+  </Shape>
+  <InfoBox CenterX="75.0" CenterY="10325.0" />
+  <Legend CenterX="14125.0" CenterY="5125.0" />
+</Pathway>
+

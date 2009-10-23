@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="Translation Factors" Data-Source="GenMAPP 2.0" Version="20060316" Author="Kam Dahlquist, Meredith Braymer" Maintainer="GenMAPP.org" Email="genmapp@gladstone.ucsf.edu" Copyright="2001, Gladstone Institutes" Last-Modified=" " Organism="Mus musculus">
+  <Comment Source="GenMAPP notes">eIF3 p36, eIF3 p40, eIF3 p 47, eIF2 alpha, eIF2B alpha, eIF2B gamma, eIF2B epsilon, 4E-BP3, eIF5, and eEF1 gamma updated. eIF3 p110, eIF3 p116, eIF4G-I, eIF4G-II added.</Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Graphics BoardWidth="21920.25" BoardHeight="13365.0" WindowWidth="19380.0" WindowHeight="14152.0" />
+  <DataNode TextLabel="Eif3s8" Type="GeneProduct" BackpageHead="Eif3s8 | eukaryotic translation initiation fac..." GraphId="d4b75">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="3950.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="56347" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s9" Type="GeneProduct" BackpageHead="Eif3s9 | eukaryotic translation initiation fac..." GraphId="c1b83">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="4250.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="27979" />
+  </DataNode>
+  <DataNode TextLabel="Sui1-rs1" Type="GeneProduct" BackpageHead="Sui1-rs1 | suppressor of initiator codon mutat..." GraphId="fb64b">
+    <Graphics Color="000000" CenterX="8250.0" CenterY="9550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="20918" />
+  </DataNode>
+  <DataNode TextLabel="Eif2s1" Type="GeneProduct" BackpageHead="Eif2s1 | eukaryotic translation initiation fac..." GraphId="c5b3a">
+    <Graphics Color="000000" CenterX="4150.0" CenterY="5000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13665" />
+  </DataNode>
+  <DataNode TextLabel="Eif2s3y" Type="GeneProduct" BackpageHead="Eif2s3y | eukaryotic translation initiation fa..." GraphId="cf232">
+    <Comment Source="GenMAPP remarks">sp acc# Q9Z0N2</Comment>
+    <Graphics Color="000000" CenterX="4150.0" CenterY="5900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26908" />
+  </DataNode>
+  <DataNode TextLabel="Eif2s3x" Type="GeneProduct" BackpageHead="Eif2s3x | eukaryotic translation initiation fa..." GraphId="b52a1">
+    <Graphics Color="000000" CenterX="4150.0" CenterY="5600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26905" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s1" Type="GeneProduct" BackpageHead="Eif3s1 | eukaryotic translation initiation fac..." GraphId="d7716">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="1850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="78655" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s2" Type="GeneProduct" BackpageHead="Eif3s2 | eukaryotic translation initiation fac..." GraphId="b4c0a">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="2150.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="54709" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s3" Type="GeneProduct" BackpageHead="Eif3s3 | eukaryotic translation initiation fac..." GraphId="f2eb5">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="2450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68135" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s4" Type="GeneProduct" BackpageHead="Eif3s4 | eukaryotic translation initiation fac..." GraphId="a98c7">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="2750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="53356" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s5" Type="GeneProduct" BackpageHead="Eif3s5 | eukaryotic translation initiation fac..." GraphId="e9a5f">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="3050.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66085" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s6" Type="GeneProduct" BackpageHead="Eif3s6 | eukaryotic translation initiation fac..." GraphId="b0245">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="3350.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="16341" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s7" Type="GeneProduct" BackpageHead="Eif3s7 | eukaryotic translation initiation fac..." GraphId="d16a5">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="3650.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="55944" />
+  </DataNode>
+  <DataNode TextLabel="Eif3s10" Type="GeneProduct" BackpageHead="Eif3s10 | eukaryotic translation initiation fa..." GraphId="a50ef">
+    <Graphics Color="000000" CenterX="2250.0" CenterY="4550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13669" />
+  </DataNode>
+  <DataNode TextLabel="Pabpc1" Type="GeneProduct" BackpageHead="Pabpc1 | poly A binding protein cytoplasmic 1..." GraphId="a5f35">
+    <Graphics Color="000000" CenterX="6800.0" CenterY="11400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18458" />
+  </DataNode>
+  <DataNode TextLabel="Eif4ebp1" Type="GeneProduct" BackpageHead="Eif4ebp1 | eukaryotic translation initiation fa..." GraphId="ec238">
+    <Graphics Color="000000" CenterX="2300.0" CenterY="8550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13685" />
+  </DataNode>
+  <DataNode TextLabel="Eif4ebp2" Type="GeneProduct" BackpageHead="Eif4ebp2 | eukaryotic translation initiation fa..." GraphId="bf3c7">
+    <Graphics Color="000000" CenterX="2300.0" CenterY="8850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13688" />
+  </DataNode>
+  <DataNode TextLabel="Eif4ebp3" Type="GeneProduct" BackpageHead="Eif4ebp3 | eukaryotic translation initiation fa..." GraphId="f28cc">
+    <Graphics Color="000000" CenterX="2300.0" CenterY="9150.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="108112" />
+  </DataNode>
+  <DataNode TextLabel="Paip1" Type="GeneProduct" BackpageHead="Paip1 | polyadenylate binding protein-interacti..." GraphId="a45f7">
+    <Graphics Color="000000" CenterX="6800.0" CenterY="12000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="218693" />
+  </DataNode>
+  <DataNode TextLabel="Eif2s2" Type="GeneProduct" BackpageHead="Eif2s2 | eukaryotic translation initiation fac..." GraphId="fa7b4">
+    <Graphics Color="000000" CenterX="4150.0" CenterY="5300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67204" />
+  </DataNode>
+  <DataNode TextLabel="Etf1" Type="GeneProduct" BackpageHead="Etf1 | eukaryotic translation termination facto..." GraphId="ecc56">
+    <Graphics Color="000000" CenterX="19100.0" CenterY="1250.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="225363" />
+  </DataNode>
+  <DataNode TextLabel="eRF3" Type="GeneProduct" GraphId="bfbc8">
+    <Graphics Color="000000" CenterX="19100.0" CenterY="1550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="ERF3" />
+  </DataNode>
+  <DataNode TextLabel="Eef1a2" Type="GeneProduct" BackpageHead="Eef1a2 | eukaryotic translation elongation fact..." GraphId="af6c4">
+    <Graphics Color="000000" CenterX="16800.0" CenterY="1550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13628" />
+  </DataNode>
+  <DataNode TextLabel="Eef1b2" Type="GeneProduct" BackpageHead="Eef1b2 | eukaryotic translation elongation fact..." GraphId="fdd62">
+    <Graphics Color="000000" CenterX="16800.0" CenterY="1850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="55949" />
+  </DataNode>
+  <DataNode TextLabel="Eef1g" Type="GeneProduct" BackpageHead="Eef1g | eukaryotic translation elongation facto..." GraphId="fe399">
+    <Graphics Color="000000" CenterX="16800.0" CenterY="2150.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="67160" />
+  </DataNode>
+  <DataNode TextLabel="Eef1d" Type="GeneProduct" BackpageHead="Eef1d | eukaryotic translation elongation facto..." GraphId="f1cc3">
+    <Graphics Color="000000" CenterX="16800.0" CenterY="2450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66656" />
+  </DataNode>
+  <DataNode TextLabel="Eef1a1" Type="GeneProduct" BackpageHead="Eef1a1 | eukaryotic translation elongation fact..." GraphId="f962a">
+    <Graphics Color="000000" CenterX="16800.0" CenterY="1250.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13627" />
+  </DataNode>
+  <DataNode TextLabel="Eef2k" Type="GeneProduct" BackpageHead="Eef2k | eukaryotic elongation factor-2 kinase" GraphId="ecc87">
+    <Graphics Color="000000" CenterX="16800.0" CenterY="4400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13631" />
+  </DataNode>
+  <DataNode TextLabel="Pabpc2" Type="GeneProduct" BackpageHead="Pabpc2 | poly A binding protein cytoplasmic 2..." GraphId="f2f45">
+    <Graphics Color="000000" CenterX="6800.0" CenterY="11700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18459" />
+  </DataNode>
+  <DataNode TextLabel="Eif2b1" Type="GeneProduct" BackpageHead="Eif2b1 | eukaryotic translation initiation fac..." GraphId="d8e39">
+    <Graphics Color="000000" CenterX="7050.0" CenterY="2450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="209354" />
+  </DataNode>
+  <DataNode TextLabel="Eif2b2" Type="GeneProduct" BackpageHead="Eif2b2 | eukaryotic translation initiation fac..." GraphId="fba1c">
+    <Graphics Color="000000" CenterX="7050.0" CenterY="2750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="217715" />
+  </DataNode>
+  <DataNode TextLabel="Eif2b3" Type="GeneProduct" BackpageHead="Eif2b3 | eukaryotic translation initiation fac..." GraphId="cbff5">
+    <Graphics Color="000000" CenterX="7050.0" CenterY="3050.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="108067" />
+  </DataNode>
+  <DataNode TextLabel="Eif2b4" Type="GeneProduct" BackpageHead="Eif2b4 | eukaryotic translation initiation fac..." GraphId="ffc87">
+    <Graphics Color="000000" CenterX="7050.0" CenterY="3350.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13667" />
+  </DataNode>
+  <DataNode TextLabel="Eif2b5" Type="GeneProduct" BackpageHead="Eif2b5 | eukaryotic translation initiation fac..." GraphId="dff98">
+    <Graphics Color="000000" CenterX="7050.0" CenterY="3650.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="224045" />
+  </DataNode>
+  <DataNode TextLabel="Itgb4bp" Type="GeneProduct" BackpageHead="Itgb4bp | integrin beta 4 binding protein" GraphId="f8206">
+    <Graphics Color="000000" CenterX="11200.0" CenterY="6900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="16418" />
+  </DataNode>
+  <DataNode TextLabel="Eif5a" Type="GeneProduct" BackpageHead="Eif5a | eukaryotic translation initiation facto..." GraphId="afd36">
+    <Graphics Color="000000" CenterX="13000.0" CenterY="7350.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="276770" />
+  </DataNode>
+  <DataNode TextLabel="Eif5" Type="GeneProduct" BackpageHead="Eif5 | eukaryotic translation initiation factor..." GraphId="fcbec">
+    <Graphics Color="000000" CenterX="13000.0" CenterY="7050.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="217869" />
+  </DataNode>
+  <DataNode TextLabel="Eif4g1" Type="GeneProduct" BackpageHead="Eif4g1 | eukaryotic translation initiation fac..." GraphId="d8059">
+    <Graphics Color="000000" CenterX="3850.0" CenterY="9950.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="208643" />
+  </DataNode>
+  <DataNode TextLabel="Eif4g2" Type="GeneProduct" BackpageHead="Eif4g2 | eukaryotic translation initiation fac..." GraphId="a4e7c">
+    <Graphics Color="000000" CenterX="3850.0" CenterY="10250.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13690" />
+  </DataNode>
+  <DataNode TextLabel="Eif4e" Type="GeneProduct" BackpageHead="Eif4e | eukaryotic translation initiation facto..." GraphId="c688b">
+    <Graphics Color="000000" CenterX="4350.0" CenterY="8850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13684" />
+  </DataNode>
+  <DataNode TextLabel="Eif4a1" Type="GeneProduct" BackpageHead="Eif4a1 | eukaryotic translation initiation fact..." GraphId="a589a">
+    <Graphics Color="000000" CenterX="9750.0" CenterY="9550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13681" />
+  </DataNode>
+  <DataNode TextLabel="Eif4a2" Type="GeneProduct" BackpageHead="Eif4a2 | eukaryotic translation initiation fact..." GraphId="c091f">
+    <Graphics Color="000000" CenterX="9750.0" CenterY="9850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13682" />
+  </DataNode>
+  <DataNode TextLabel="Eif4b" Type="GeneProduct" BackpageHead="Eif4b | eukaryotic translation initiation facto..." GraphId="b12be">
+    <Graphics Color="000000" CenterX="9750.0" CenterY="10150.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="75705" />
+  </DataNode>
+  <DataNode TextLabel="Eif1a" Type="GeneProduct" BackpageHead="Eif1a | eukaryotic translation initiation facto..." GraphId="e712c">
+    <Graphics Color="000000" CenterX="650.0" CenterY="5000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13664" />
+  </DataNode>
+  <DataNode TextLabel="Prkr" Type="GeneProduct" BackpageHead="Prkr | protein kinase interferon-inducible do..." GraphId="fe936">
+    <Graphics Color="000000" CenterX="6900.0" CenterY="5300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19106" />
+  </DataNode>
+  <DataNode TextLabel="Eif2ak1" Type="GeneProduct" BackpageHead="Eif2ak1 | eukaryotic translation initiation fac..." GraphId="c1284">
+    <Graphics Color="000000" CenterX="6900.0" CenterY="5000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="15467" />
+  </DataNode>
+  <DataNode TextLabel="Wbscr1" Type="GeneProduct" BackpageHead="Wbscr1 | Williams-Beuren syndrome chromosome re..." GraphId="f4b35">
+    <Comment Source="GenMAPP remarks">Q9WUK2</Comment>
+    <Graphics Color="000000" CenterX="9750.0" CenterY="10450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="22384" />
+  </DataNode>
+  <DataNode TextLabel="Eef2" Type="GeneProduct" BackpageHead="Eef2 | eukaryotic translation elongation factor..." GraphId="c84b9">
+    <Comment Source="GenMAPP remarks">sp P58252</Comment>
+    <Graphics Color="000000" CenterX="16800.0" CenterY="3200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13629" />
+  </DataNode>
+  <DataNode TextLabel="Eif2ak3" Type="GeneProduct" BackpageHead="Eif2ak3 | eukaryotic translation initiation fac..." GraphId="e149d">
+    <Comment Source="GenMAPP remarks">E2K3_MOUSE</Comment>
+    <Graphics Color="000000" CenterX="6900.0" CenterY="5600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13666" />
+  </DataNode>
+  <DataNode TextLabel="IF2" Type="GeneProduct" BackpageHead="IF2" GraphId="dbd29">
+    <Graphics Color="000000" CenterX="700.0" CenterY="5650.0" Width="600.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="MGI" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Eif4g3" Type="GeneProduct" BackpageHead="Eif4g3 | eukaryotic translation initiation fac..." GraphId="e5375">
+    <Graphics Color="000000" CenterX="3850.0" CenterY="10550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="230861" />
+  </DataNode>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="6300.0" y="3900.0" />
+      <Point x="5250.0" y="4800.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3200.0" y="8850.0" />
+      <Point x="3800.0" y="8850.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="13450.0" y="8800.0" />
+      <Point x="6050.0" y="8800.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="13450.0" y="11200.0" />
+      <Point x="8150.0" y="11200.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4800.0" y="8350.0" />
+      <Point x="5500.0" y="8550.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4800.0" y="9350.0" />
+      <Point x="5450.0" y="9100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7100.0" y="8950.0" />
+      <Point x="11000.0" y="8950.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="6400.0" y="5300.0" />
+      <Point x="4850.0" y="5300.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4000.0" y="6550.0" />
+      <Point x="6250.0" y="8750.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="12950.0" y="7600.0" />
+      <Point x="12050.0" y="8600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11200.0" y="7150.0" />
+      <Point x="11200.0" y="7650.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="16850.0" y="4200.0" />
+      <Point x="16850.0" y="3400.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="AAAAAAAAAAAAAAA" GraphId="bd46e">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6850.0" CenterY="11050.0" Width="2555.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="m7G" GraphId="bda22">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="5750.0" CenterY="8800.0" Width="605.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="AUG" GraphId="e3f64">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11750.0" CenterY="8800.0" Width="605.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="mRNA" GraphId="aee34">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="13150.0" CenterY="10950.0" Width="815.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Guanine Nucleotide Exchange" GraphId="d47b2">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="6000.0" CenterY="4300.0" Width="2975.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Recruitment of 43S" GraphId="bdf2b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6450.0" CenterY="7250.0" Width="2255.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="scanning" GraphId="a2552">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9050.0" CenterY="9150.0" Width="1145.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Cap Binding Complex" GraphId="c3e51">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1850.0" CenterY="10550.0" Width="2585.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="43S Pre-initiation Complex" GraphId="cd30d">
+    <Comment Source="GenMAPP remarks">Also contains 40S subunit and initiator tRNA.</Comment>
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2400.0" CenterY="6350.0" Width="3095.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Recruitment of 60S subunit" GraphId="bc950">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="10850.0" CenterY="7900.0" Width="3185.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="and first peptide bond" GraphId="aaab1">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="10550.0" CenterY="8200.0" Width="2585.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="60S Subunit" GraphId="bfa48">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12250.0" CenterY="4300.0" Width="1475.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="40S Subunit" GraphId="a0e3d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2050.0" CenterY="5600.0" Width="1475.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Pre-initiation Complex" GraphId="d9fda">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6600.0" CenterY="7550.0" Width="2600.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Translocation" GraphId="b0153">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="15150.0" CenterY="3200.0" Width="1655.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Binds aminoacyl-tRNA" GraphId="c6a90">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="14500.0" CenterY="1850.0" Width="2660.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Termination" GraphId="f83d9">
+    <Graphics FontWeight="Bold" FontSize="210" Color="000000" CenterX="19100.0" CenterY="750.0" Width="1655.0" Height="315.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Elongation" GraphId="e46da">
+    <Graphics FontWeight="Bold" FontSize="210" Color="000000" CenterX="16800.0" CenterY="750.0" Width="1475.0" Height="315.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Initiation" GraphId="c675b">
+    <Graphics FontWeight="Bold" FontSize="210" Color="000000" CenterX="7850.0" CenterY="550.0" Width="1205.0" Height="315.0" ZOrder="28672" />
+  </Label>
+  <Shape Type="Arc" Style="Solid" GraphId="db457">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="13500.0" CenterY="10000.0" Width="2350.0" Height="1175.0" ZOrder="16384" Rotation="4.712389" />
+  </Shape>
+  <Shape Type="Arc" Style="Solid" GraphId="dbaaf">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="4800.0" CenterY="8850.0" Width="1000.0" Height="500.0" ZOrder="16384" Rotation="1.570796" />
+  </Shape>
+  <Shape Type="Arc" Style="Solid" GraphId="d9f49">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="5500.0" CenterY="8850.0" Width="550.0" Height="275.0" ZOrder="16384" Rotation="1.570796" />
+  </Shape>
+  <Shape Type="Oval" Style="Solid" GraphId="fb7ac">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="6800.0" CenterY="11050.0" Width="2700.0" Height="707.1068" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" Style="Solid" GraphId="aec68">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="4900.0" CenterY="10200.0" Width="1702.9386" Height="1700.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" Style="Solid" GraphId="a1e33">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="2500.0" CenterY="5100.0" Width="3901.282" Height="2100.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" Style="Solid" GraphId="ec183">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="12350.0" CenterY="5550.0" Width="5700.876" Height="3100.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Brace" Style="Solid" GraphId="e0fc4">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="7850.0" CenterY="750.0" Width="14800.0" Height="130.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Brace" Style="Solid" GraphId="c468f">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="15900.0" CenterY="1850.0" Width="1700.0" Height="130.0" ZOrder="16384" Rotation="4.71238898038469" />
+  </Shape>
+  <InfoBox CenterX="16325.0" CenterY="5275.0" />
+  <Legend CenterX="16525.0" CenterY="6875.0" />
+</Pathway>
+

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="Glycogen Metabolism" Data-Source="GenMAPP 2.0" Version="20060316" Author="Kam Dahlquist, Meredith Braymer" Email="genmapp@gladstone.ucsf.edu" Copyright="2002, Gladstone Institutes" Last-Modified="12/04/03" Organism="Mus musculus">
+  <Comment Source="GenMAPP notes">Phosphoglucomutase and UDP-Glucose Pyrophosphorylase updated.  Glycogen Phosphorylase liver, Phosphorylase B Kinase alpha liver, PP2A B subunit R5 delta, PP2A A subunit R1 alpha, PP2A B subunit R2 alpha, PP2A B subunit R5 alpha, PP2A B subunit R5 beta added.</Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Graphics BoardWidth="16280.0" BoardHeight="10835.0" WindowWidth="15864.0" WindowHeight="11766.0" />
+  <DataNode TextLabel="Pgm1" Type="GeneProduct" BackpageHead="Pgm1 | phosphoglucomutase 1" GraphId="f2db9">
+    <Graphics Color="000000" CenterX="4100.0" CenterY="5350.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66681" />
+  </DataNode>
+  <DataNode TextLabel="Ugp2" Type="GeneProduct" BackpageHead="Ugp2 | UDP-glucose pyrophosphorylase 2" GraphId="f5c85">
+    <Graphics Color="000000" CenterX="10950.0" CenterY="3450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="216558" />
+  </DataNode>
+  <DataNode TextLabel="Gyg1" Type="GeneProduct" BackpageHead="Gyg1 | glycogenin 1" GraphId="b7676">
+    <Graphics Color="000000" CenterX="12750.0" CenterY="4050.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="27357" />
+  </DataNode>
+  <DataNode TextLabel="Gys1" Type="GeneProduct" BackpageHead="Gys1 | glycogen synthase 1 muscle" GraphId="bbaaa">
+    <Graphics Color="000000" CenterX="11900.0" CenterY="5000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14936" />
+  </DataNode>
+  <DataNode TextLabel="Gys3" Type="GeneProduct" BackpageHead="Gys3 | glycogen synthase 3 brain" GraphId="e4b7d">
+    <Graphics Color="000000" CenterX="11900.0" CenterY="5300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14937" />
+  </DataNode>
+  <DataNode TextLabel="Branching Enzyme" Type="GeneProduct" BackpageHead="Branching Enzyme" GraphId="a4612">
+    <Graphics Color="000000" CenterX="11900.0" CenterY="6700.0" Width="1900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="GenBank" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Debranching Enzyme" Type="GeneProduct" BackpageHead="Debranching Enzyme" GraphId="d0aee">
+    <Graphics Color="000000" CenterX="1100.0" CenterY="5100.0" Width="2100.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="GenBank" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Pygm" Type="GeneProduct" BackpageHead="Pygm | muscle glycogen phosphorylase" GraphId="a3871">
+    <Graphics Color="000000" CenterX="4100.0" CenterY="4150.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19309" />
+  </DataNode>
+  <DataNode TextLabel="Gsk3b" Type="GeneProduct" BackpageHead="Gsk3b | glycogen synthase kinase 3 beta" GraphId="ee18c">
+    <Graphics Color="000000" CenterX="14350.0" CenterY="5150.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="56637" />
+  </DataNode>
+  <DataNode TextLabel="Phka1" Type="GeneProduct" BackpageHead="Phka1 | phosphorylase kinase alpha 1" GraphId="a8c13">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="1850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18679" />
+  </DataNode>
+  <DataNode TextLabel="Phkg1" Type="GeneProduct" BackpageHead="Phkg1 | phosphorylase kinase gamma 1" GraphId="b13ed">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="2450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18682" />
+  </DataNode>
+  <DataNode TextLabel="Phkg2" Type="GeneProduct" BackpageHead="Phkg2 | phosphorylase kinase gamma 2 (testis)..." GraphId="ec5e3">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="2750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="68961" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r5e" Type="GeneProduct" BackpageHead="Ppp2r5e | protein phosphatase 2 regulatory su..." GraphId="d011b">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="9100.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26932" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r5c" Type="GeneProduct" BackpageHead="Ppp2r5c | protein phosphatase 2 regulatory su..." GraphId="dcf18">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="8500.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26931" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2ca" Type="GeneProduct" BackpageHead="Ppp2ca | protein phosphatase 2a catalytic sub..." GraphId="b8553">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="6700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19052" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2cb" Type="GeneProduct" BackpageHead="Ppp2cb | protein phosphatase 2a catalytic sub..." GraphId="c71ad">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="7000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19053" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r4" Type="GeneProduct" BackpageHead="Ppp2r4 | protein phosphatase 2A regulatory su..." GraphId="b71fa">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="9400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="110854" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r3a" Type="GeneProduct" BackpageHead="Ppp2r3a | protein phosphatase 2 (formerly 2A)..." GraphId="e9a9d">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="9700.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19054" />
+  </DataNode>
+  <DataNode TextLabel="Pygl" Type="GeneProduct" BackpageHead="Pygl | liver glycogen phosphorylase" GraphId="e67b0">
+    <Graphics Color="000000" CenterX="4100.0" CenterY="3850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="110095" />
+  </DataNode>
+  <DataNode TextLabel="Phka2" Type="GeneProduct" BackpageHead="Phka2 | phosphorylase kinase alpha 2" GraphId="bc6d9">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="2150.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="110094" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r5d" Type="GeneProduct" BackpageHead="Ppp2r5d | protein phosphatase 2 regulatory su..." GraphId="f72c4">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="8800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="21770" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r1a" Type="GeneProduct" BackpageHead="Ppp2r1a | protein phosphatase 2 (formerly 2A)..." GraphId="c900e">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="7300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="51792" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r2a" Type="GeneProduct" BackpageHead="Ppp2r2a | protein phosphatase 2 (formerly 2A)..." GraphId="afdd4">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="7600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="71978" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r5a" Type="GeneProduct" BackpageHead="Ppp2r5a | protein phosphatase 2 regulatory su..." GraphId="b2704">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="7900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="226849" />
+  </DataNode>
+  <DataNode TextLabel="Ppp2r5b" Type="GeneProduct" BackpageHead="Ppp2r5b | protein phosphatase 2 regulatory su..." GraphId="def64">
+    <Graphics Color="000000" CenterX="7500.0" CenterY="8200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="225849" />
+  </DataNode>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4100.0" y="3550.0" />
+      <Point x="4100.0" y="4550.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1100.0" y="4800.0" />
+      <Point x="1100.0" y="5600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1100.0" y="3400.0" />
+      <Point x="3300.0" y="3400.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1100.0" y="3400.0" />
+      <Point x="1100.0" y="4350.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4100.0" y="5050.0" />
+      <Point x="4100.0" y="5850.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4100.0" y="6350.0" />
+      <Point x="4100.0" y="7100.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1150.0" y="6000.0" />
+      <Point x="3700.0" y="7150.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10950.0" y="3150.0" />
+      <Point x="10950.0" y="3850.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11900.0" y="4300.0" />
+      <Point x="11900.0" y="6000.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11900.0" y="6400.0" />
+      <Point x="11900.0" y="7150.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="13750.0" y="5150.0" />
+      <Point x="12650.0" y="5150.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7450.0" y="850.0" />
+      <Point x="7450.0" y="1250.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7500.0" y="3100.0" />
+      <Point x="4850.0" y="4000.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7500.0" y="3050.0" />
+      <Point x="11200.0" y="5100.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7500.0" y="6050.0" />
+      <Point x="11300.0" y="5350.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7500.0" y="6050.0" />
+      <Point x="4900.0" y="4250.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="Glycogen" GraphId="caa64">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4050.0" CenterY="3400.0" Width="1175.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Glucose" GraphId="c9d9d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1100.0" CenterY="5800.0" Width="1025.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Glucose-6-phosphate" GraphId="b7086">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4150.0" CenterY="6050.0" Width="2540.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Glucose-1-phosphate" GraphId="cb102">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11100.0" CenterY="2900.0" Width="2540.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Glycogen (n+1)" GraphId="b8b59">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11900.0" CenterY="6200.0" Width="1805.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="UDP-Glucose   +" GraphId="a8a76">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11050.0" CenterY="4050.0" Width="1940.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Glycogen" GraphId="e5ded">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11900.0" CenterY="7400.0" Width="1175.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Glycolysis" GraphId="c5de2">
+    <Graphics FontWeight="Bold" FontSize="180" Color="0000ff" CenterX="3950.0" CenterY="7300.0" Width="1265.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Glycogen (n-1)      +      Glucose-1-phosphate" GraphId="b248b">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2800.0" CenterY="4800.0" Width="5060.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Degradation" GraphId="e5438">
+    <Graphics FontWeight="Bold" FontSize="210" Color="000000" CenterX="4000.0" CenterY="2650.0" Width="1670.0" Height="315.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Synthesis" GraphId="c6317">
+    <Graphics FontWeight="Bold" FontSize="210" Color="000000" CenterX="11850.0" CenterY="2150.0" Width="1385.0" Height="315.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Phosphorylase Kinase B" GraphId="d4ce9">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7500.0" CenterY="1450.0" Width="2915.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="cAMP" GraphId="d6145">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7450.0" CenterY="700.0" Width="740.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Ser/Thr Protein Phosphatase 2A" GraphId="ad81f">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7500.0" CenterY="6400.0" Width="3740.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Shape Type="Brace" Style="Solid" GraphId="d7400">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="7500.0" CenterY="3100.0" Width="2900.0" Height="130.0" ZOrder="16384" Rotation="3.141592653589793" />
+  </Shape>
+  <Shape Type="Brace" Style="Solid" GraphId="d89b0">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="7500.0" CenterY="6050.0" Width="3700.0" Height="130.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="125.0" CenterY="8975.0" />
+  <Legend CenterX="9475.0" CenterY="7675.0" />
+</Pathway>
+

@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="Eicosanoid Synthesis" Data-Source="GenMAPP 2.0" Version="20060316" Author="Andrew Kwa" Email="genampp@gladstone.ucsf.edu" Copyright="2000, Gladstone Institutes" Last-Modified="9/28/04" Organism="Mus musculus">
+  <Comment Source="GenMAPP notes"></Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Graphics BoardWidth="18416.75" BoardHeight="11376.75" WindowWidth="18740.0" WindowHeight="12330.0" />
+  <DataNode TextLabel="Pla2g6" Type="GeneProduct" BackpageHead="Pla2g6 | phospholipase A2 group VI" GraphId="dd62e">
+    <Graphics Color="000000" CenterX="9750.0" CenterY="2350.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="53357" />
+  </DataNode>
+  <DataNode TextLabel="Alox5ap" Type="GeneProduct" BackpageHead="Alox5ap | arachidonate 5-lipoxygenase activatin..." GraphId="ac39b">
+    <Graphics Color="000000" CenterX="8900.0" CenterY="4000.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11690" />
+  </DataNode>
+  <DataNode TextLabel="Alox5" Type="GeneProduct" BackpageHead="Alox5 | arachidonate 5-lipoxygenase" GraphId="c86e9">
+    <Graphics Color="000000" CenterX="8900.0" CenterY="4300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11689" />
+  </DataNode>
+  <DataNode TextLabel="Tbxas1" Type="GeneProduct" BackpageHead="Tbxas1 | thromboxane A synthase 1 platelet" GraphId="ca7af">
+    <Graphics Color="000000" CenterX="3500.0" CenterY="4300.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="21391" />
+  </DataNode>
+  <DataNode TextLabel="Ptgs1" Type="GeneProduct" BackpageHead="Ptgs1 | prostaglandin-endoperoxide synthase 1" GraphId="ce9ff">
+    <Graphics Color="000000" CenterX="6100.0" CenterY="4450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19224" />
+  </DataNode>
+  <DataNode TextLabel="Ptgs2" Type="GeneProduct" BackpageHead="Ptgs2 | prostaglandin-endoperoxide synthase 2" GraphId="fa4c0">
+    <Graphics Color="000000" CenterX="6100.0" CenterY="4750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19225" />
+  </DataNode>
+  <DataNode TextLabel="Ptgis" Type="GeneProduct" BackpageHead="Ptgis | prostaglandin I2 (prostacyclin) synthas..." GraphId="f161f">
+    <Graphics Color="000000" CenterX="2200.0" CenterY="5750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19223" />
+  </DataNode>
+  <DataNode TextLabel="Ptgds" Type="GeneProduct" BackpageHead="Ptgds | prostaglandin D2 synthase (brain)" GraphId="a4d9b">
+    <Graphics Color="000000" CenterX="2600.0" CenterY="6850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19215" />
+  </DataNode>
+  <DataNode TextLabel="Ptges" Type="GeneProduct" BackpageHead="Ptges | prostaglandin E synthase" GraphId="adc24">
+    <Graphics Color="000000" CenterX="4250.0" CenterY="6850.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="64292" />
+  </DataNode>
+  <DataNode TextLabel="PGD2 11-ketoreduc" Type="GeneProduct" GraphId="e7ba0">
+    <Comment Source="GenMAPP remarks">PGD2 11-keto reductase</Comment>
+    <Graphics Color="000000" CenterX="2500.0" CenterY="8750.0" Width="1900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Lta4h" Type="GeneProduct" BackpageHead="Lta4h | leukotriene A4 hydrolase" GraphId="fa01d">
+    <Graphics Color="000000" CenterX="6600.0" CenterY="7050.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="16993" />
+  </DataNode>
+  <DataNode TextLabel="Alox5ap" Type="GeneProduct" BackpageHead="Alox5ap | arachidonate 5-lipoxygenase activatin..." GraphId="c20b3">
+    <Graphics Color="000000" CenterX="7600.0" CenterY="5600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11690" />
+  </DataNode>
+  <DataNode TextLabel="Alox5" Type="GeneProduct" BackpageHead="Alox5 | arachidonate 5-lipoxygenase" GraphId="f0723">
+    <Graphics Color="000000" CenterX="7600.0" CenterY="5900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11689" />
+  </DataNode>
+  <DataNode TextLabel="Peroxidase?" Type="GeneProduct" GraphId="b96ab">
+    <Graphics Color="000000" CenterX="9200.0" CenterY="5750.0" Width="1300.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Uniprot/TrEMBL" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Peroxidase?" Type="GeneProduct" GraphId="a00a8">
+    <Graphics Color="000000" CenterX="12300.0" CenterY="6550.0" Width="1300.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Uniprot/TrEMBL" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Ltc4s" Type="GeneProduct" BackpageHead="Ltc4s | leukotriene C4 synthase" GraphId="f4435">
+    <Graphics Color="000000" CenterX="8550.0" CenterY="7250.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17001" />
+  </DataNode>
+  <DataNode TextLabel="Dpep1" Type="GeneProduct" BackpageHead="Dpep1 | dipeptidase 1 (renal)" GraphId="b9121">
+    <Graphics Color="000000" CenterX="9400.0" CenterY="9400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13479" />
+  </DataNode>
+  <DataNode TextLabel="Alox15" Type="GeneProduct" BackpageHead="Alox15 | arachidonate 15-lipoxygenase" GraphId="cc390">
+    <Graphics Color="000000" CenterX="11300.0" CenterY="4150.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11687" />
+  </DataNode>
+  <DataNode TextLabel="Alox12e" Type="GeneProduct" BackpageHead="Alox12e | arachidonate lipoxygenase epidermal..." GraphId="e097f">
+    <Graphics Color="000000" CenterX="11300.0" CenterY="4450.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11685" />
+  </DataNode>
+  <DataNode TextLabel="Alox12" Type="GeneProduct" BackpageHead="Alox12 | arachidonate 12-lipoxygenase" GraphId="bd325">
+    <Graphics Color="000000" CenterX="11300.0" CenterY="4750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11684" />
+  </DataNode>
+  <DataNode TextLabel="Alox15b" Type="GeneProduct" BackpageHead="Alox15b | arachidonate 15-lipoxygenase second..." GraphId="d7f0b">
+    <Graphics Color="000000" CenterX="14000.0" CenterY="4350.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11688" />
+  </DataNode>
+  <DataNode TextLabel="Pla2g5" Type="GeneProduct" BackpageHead="Pla2g5 | phospholipase A2 group V" GraphId="a19ec">
+    <Graphics Color="000000" CenterX="9750.0" CenterY="2650.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18784" />
+  </DataNode>
+  <DataNode TextLabel="Pla2g2c" Type="GeneProduct" BackpageHead="Pla2g2c | phospholipase A2 group IIC" GraphId="a3eb0">
+    <Graphics Color="000000" CenterX="9750.0" CenterY="2050.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18781" />
+  </DataNode>
+  <DataNode TextLabel="Pla2g2a" Type="GeneProduct" BackpageHead="Pla2g2a | phospholipase A2 group IIA (platele..." GraphId="e5030">
+    <Graphics Color="000000" CenterX="9750.0" CenterY="1450.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18780" />
+  </DataNode>
+  <DataNode TextLabel="Pla2g12a" Type="GeneProduct" BackpageHead="Pla2g12a | phospholipase A2 group XIIA" GraphId="b9e6a">
+    <Graphics Color="000000" CenterX="9750.0" CenterY="1750.0" Width="1000.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="66350" />
+  </DataNode>
+  <DataNode TextLabel="Ggt1" Type="GeneProduct" BackpageHead="Ggt1 | gamma-glutamyltransferase 1" GraphId="fdaa4">
+    <Graphics Color="000000" CenterX="9400.0" CenterY="8400.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="14598" />
+  </DataNode>
+  <DataNode TextLabel="Ptges2" Type="GeneProduct" BackpageHead="Ptges2 | prostaglandin E synthase 2" GraphId="c1b7f">
+    <Graphics Color="000000" CenterX="4250.0" CenterY="6550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="96979" />
+  </DataNode>
+  <DataNode TextLabel="Peroxidase?" Type="GeneProduct" GraphId="f55ec">
+    <Graphics Color="000000" CenterX="14900.0" CenterY="6600.0" Width="1300.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Uniprot/TrEMBL" ID="" />
+  </DataNode>
+  <DataNode TextLabel="PGE2 9-ketoreduc" Type="GeneProduct" GraphId="f414f">
+    <Comment Source="GenMAPP remarks">PGE2 9-keto reductase</Comment>
+    <Graphics Color="000000" CenterX="4450.0" CenterY="8750.0" Width="1800.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Uniprot/TrEMBL" ID="" />
+  </DataNode>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9750.0" y="1050.0" />
+      <Point x="9750.0" y="3200.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9150.0" y="3650.0" />
+      <Point x="8550.0" y="4800.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3350.0" y="6000.0" />
+      <Point x="1950.0" y="7600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3050.0" y="5750.0" />
+      <Point x="600.0" y="5750.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4750.0" y="8050.0" />
+      <Point x="3650.0" y="9800.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3400.0" y="3250.0" />
+      <Point x="2800.0" y="2300.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3500.0" y="5500.0" />
+      <Point x="3500.0" y="3700.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3600.0" y="6050.0" />
+      <Point x="4700.0" y="7600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7950.0" y="5250.0" />
+      <Point x="7200.0" y="6250.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="8800.0" y="5250.0" />
+      <Point x="9550.0" y="6250.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="6950.0" y="6600.0" />
+      <Point x="6200.0" y="7600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7500.0" y="6650.0" />
+      <Point x="9300.0" y="7700.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9400.0" y="8100.0" />
+      <Point x="9400.0" y="8800.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9400.0" y="9100.0" />
+      <Point x="9400.0" y="9800.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10450.0" y="3650.0" />
+      <Point x="12200.0" y="5400.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="12950.0" y="3400.0" />
+      <Point x="14900.0" y="5350.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="12250.0" y="5900.0" />
+      <Point x="12250.0" y="7350.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="14900.0" y="5850.0" />
+      <Point x="14900.0" y="7300.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2050.0" y="8100.0" />
+      <Point x="3200.0" y="9800.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="550.0" y="5750.0" />
+      <Point x="550.0" y="9650.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3600.0" y="3250.0" />
+      <Point x="4300.0" y="2250.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10800.0" y="3400.0" />
+      <Point x="12950.0" y="3400.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="8650.0" y="3400.0" />
+      <Point x="3900.0" y="5650.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="Cell Membrane" GraphId="be9b8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9750.0" CenterY="900.0" Width="1775.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Arachadonic Acid" GraphId="d8c3e">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9750.0" CenterY="3400.0" Width="2105.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="PGH2" GraphId="e3eb1">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3500.0" CenterY="5750.0" Width="740.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="5-HPETE" GraphId="a1bbe">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="8400.0" CenterY="5050.0" Width="1115.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="12-HPETE" GraphId="ba93e">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12200.0" CenterY="5650.0" Width="1250.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="15-HPETE" GraphId="e32ee">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="14900.0" CenterY="5650.0" Width="1250.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="15-HETE" GraphId="d7529">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="14950.0" CenterY="7600.0" Width="1085.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="12-HETE" GraphId="ed08a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12300.0" CenterY="7700.0" Width="1085.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="LTC4" GraphId="bb8bb">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9400.0" CenterY="7900.0" Width="695.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="LTD4" GraphId="f017a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9400.0" CenterY="9000.0" Width="695.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="LTE4" GraphId="e3484">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9400.0" CenterY="10050.0" Width="680.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="PGI2" GraphId="faf01">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1250.0" CenterY="5750.0" Width="620.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="PGF2-alpha" GraphId="a1059">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3500.0" CenterY="10000.0" Width="1415.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="PGE2" GraphId="b57ce">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4800.0" CenterY="7850.0" Width="725.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="PGD2" GraphId="adcac">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1950.0" CenterY="7850.0" Width="740.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="TXA2" GraphId="e5320">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="3500.0" CenterY="3450.0" Width="695.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Lipox = Lipoxygenase" GraphId="e0d80">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12300.0" CenterY="8800.0" Width="2600.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="ETE = Eicosatetraenoic Acid" GraphId="df121">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12600.0" CenterY="9250.0" Width="3305.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="HP = Hydroperoxy" GraphId="cf981">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12050.0" CenterY="9700.0" Width="2180.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="H = Hydroxy" GraphId="fd8e6">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="11700.0" CenterY="10150.0" Width="1490.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="diH = Dihydroxy" GraphId="b9cb7">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="15400.0" CenterY="8850.0" Width="1910.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="PG = Prostaglandin" GraphId="ea0a2">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="15600.0" CenterY="9300.0" Width="2285.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="LT = Leukotriene" GraphId="ec615">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="15450.0" CenterY="9750.0" Width="2000.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="TX = Thromboxane" GraphId="ecdb8">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="15550.0" CenterY="10200.0" Width="2255.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="6-KetoPGF2-alpha" GraphId="ab3f1">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="1100.0" CenterY="10000.0" Width="2165.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="5-HETE" GraphId="ef076">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9700.0" CenterY="6450.0" Width="950.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="LTA4" GraphId="e6972">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="7150.0" CenterY="6450.0" Width="680.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="LTB4" GraphId="e1695">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6100.0" CenterY="7850.0" Width="695.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="TXA3" GraphId="d1502">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2750.0" CenterY="2100.0" Width="695.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="TXB2" GraphId="ac45d">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4400.0" CenterY="2100.0" Width="710.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <InfoBox CenterX="125.0" CenterY="125.0" />
+  <Legend CenterX="13825.0" CenterY="125.0" />
+</Pathway>
+

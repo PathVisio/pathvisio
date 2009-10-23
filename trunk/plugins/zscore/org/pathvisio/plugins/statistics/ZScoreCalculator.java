@@ -20,8 +20,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
@@ -85,33 +87,15 @@ public class ZScoreCalculator
 		 * Do a permutation test to calculate permP and adjP
 		 */
 		public abstract void permute();
+		
+		/**
+		 * calculate n and r for a single pathway.
+		 * 
+		 * dataMap should already have been initialized
+		 */
+		public abstract StatisticsPathwayResult calculatePathway(PathwayInfo pi);
 	}
 
-	/**
-	 * calculate n and r for a single pathway.
-	 * 
-	 * dataMap should already have been initialized
-	 */
-	private StatisticsPathwayResult calculatePathway(PathwayInfo pi) 
-	{
-		int cPwyMeasured = 0;
-		int cPwyPositive = 0;
-		int cPwyTotal = pi.srcRefs.size();
-		
-		for (Xref ref : pi.srcRefs)
-		{
-			RefInfo refInfo = dataMap.get(ref);
-			if (refInfo.isMeasured()) cPwyMeasured++;
-			if (refInfo.isPositive()) cPwyPositive++;
-		}
-		
-		double zscore = Stats.zscore(cPwyMeasured, cPwyPositive, result.bigN, result.bigR); 
-		StatisticsPathwayResult spr = new StatisticsPathwayResult(
-				pi.file, pi.name,
-				cPwyMeasured, cPwyPositive, cPwyTotal, zscore);
-		return spr;
-	}
-	
 	/**
 	 * Information about the result of evaluating a criterion on a xref.
 	 * 
@@ -120,23 +104,35 @@ public class ZScoreCalculator
 	 */
 	private static class RefInfo
 	{
-		final int probesMeasured;
-		final int probesPositive;
+		final Set<String> probesMeasured;
+		final Set<String> probesPositive;
 		
 		/**
 		 * Initialize. 
 		 * @param aProbesMeasured must be >= 0
 		 * @param aProbesPostive must be >= 0, and <= aProbesMeasured.
 		 */
-		RefInfo(int aProbesMeasured, int aProbesPositive)
+		RefInfo(Set<String> aProbesMeasured, Set<String> aProbesPositive)
 		{
 			probesMeasured = aProbesMeasured;
 			probesPositive = aProbesPositive;
-			if (probesMeasured < 0) throw new IllegalArgumentException();
-			if (probesPositive < 0) throw new IllegalArgumentException();
-			if (probesPositive > probesMeasured) throw new IllegalArgumentException();
+			if (probesPositive.size() > probesMeasured.size()) throw new IllegalArgumentException();
 		}
 
+		/**
+		 * Get the measured probes
+		 */
+		public Set<String> getProbesMeasured() {
+			return probesMeasured;
+		}
+		
+		/**
+		 * Get the positive probes
+		 */
+		public Set<String> getProbesPositive() {
+			return probesPositive;
+		}
+		
 		/**
 		 * Calculate the positive fraction of probes. 
 		 * E.g if 2 out of 3 probes are positive, count only 2/3.
@@ -144,7 +140,7 @@ public class ZScoreCalculator
 		 */
 		double getPositiveFraction()
 		{
-			return (double)probesPositive / (double)probesMeasured;
+			return (double)probesPositive.size() / (double)probesMeasured.size();
 		}
 		
 		/** 
@@ -160,7 +156,7 @@ public class ZScoreCalculator
 		 */
 		boolean isPositive()
 		{
-			return probesPositive > 0;
+			return probesPositive.size() > 0;
 		}
 		
 		/**
@@ -168,7 +164,7 @@ public class ZScoreCalculator
 		 */
 		boolean isMeasured()
 		{
-			return probesMeasured > 0;
+			return probesMeasured.size() > 0;
 		}		
 	}
 	
@@ -180,20 +176,22 @@ public class ZScoreCalculator
 	 */
 	private RefInfo evaluateRef (Xref srcRef)
 	{
-		int cGeneTotal = 0;
-		int cGenePositive = 0;
+		Set<String> cGeneTotal = new HashSet<String>();
+		Set<String> cGenePositive = new HashSet<String>();
+		
 		List<ReporterData> rows = result.gex.getData(srcRef);
 		
 		if (rows != null)
 		{
-			cGeneTotal = rows.size();			
 			for (ReporterData row : rows)
 			{
 				if (pk != null && pk.isCancelled()) return null;
+				// Use group (line number) to identify a measurement
+				cGeneTotal.add(row.getGroup() + "");
 				try
 				{	
 					boolean eval = result.crit.evaluate(row.getByName());
-					if (eval) cGenePositive++;
+					if (eval) cGenePositive.add(row.getGroup() + "");
 				}
 				catch (CriterionException e)
 				{
@@ -248,6 +246,36 @@ public class ZScoreCalculator
 		{
 			//TODO: currently only implemented for MappFinderMethod.
 			// adjP and permP will be 0 for all pathways
+		}
+		
+		/**
+		 * Calculates n and r for a pathway the alternative way:
+		 * <UL>
+		 * <LI>n: the number of rows in the dataset that map to a gene in the pathway.
+		 * <LI>r: the number of significant rows in the dataset that map to a gene in the pathway.
+		 * </UL>
+		 */
+		public StatisticsPathwayResult calculatePathway(PathwayInfo pi) 
+		{
+			Set<String> probesMeasured = new HashSet<String>();
+			Set<String> probesPositive = new HashSet<String>();
+			
+			for (Xref ref : pi.srcRefs)
+			{
+				RefInfo refInfo = dataMap.get(ref);
+				probesMeasured.addAll(refInfo.getProbesMeasured());
+				probesPositive.addAll(refInfo.getProbesPositive());
+			}
+			
+			int cPwyMeasured = probesMeasured.size();
+			int cPwyPositive = probesPositive.size();
+			int cPwyTotal = pi.srcRefs.size();
+
+			double zscore = Stats.zscore(cPwyMeasured, cPwyPositive, result.bigN, result.bigR); 
+			StatisticsPathwayResult spr = new StatisticsPathwayResult(
+					pi.file, pi.name,
+					cPwyMeasured, cPwyPositive, cPwyTotal, zscore);
+			return spr;
 		}
 	}
 	
@@ -349,6 +377,32 @@ public class ZScoreCalculator
 			}		
 		}
 	
+		/**
+		 * Calculates n and r for a pathway the MAPPFinder way:
+		 * <UL>
+		 * <LI>n: the number of genes on the pathway that map to at least one row in the dataset.
+		 * <LI>r: the subset of n that has at least one significant row in the dataset.
+		 * </UL>
+		 */
+		public StatisticsPathwayResult calculatePathway(PathwayInfo pi) 
+		{
+			int cPwyMeasured = 0;
+			int cPwyPositive = 0;
+			int cPwyTotal = pi.srcRefs.size();
+			
+			for (Xref ref : pi.srcRefs)
+			{
+				RefInfo refInfo = dataMap.get(ref);
+				if (refInfo.isMeasured()) cPwyMeasured++;
+				if (refInfo.isPositive()) cPwyPositive++;
+			}
+			
+			double zscore = Stats.zscore(cPwyMeasured, cPwyPositive, result.bigN, result.bigR); 
+			StatisticsPathwayResult spr = new StatisticsPathwayResult(
+					pi.file, pi.name,
+					cPwyMeasured, cPwyPositive, cPwyTotal, zscore);
+			return spr;
+		}
 	}
 	
 	private void calculateDataMap()
@@ -411,7 +465,7 @@ public class ZScoreCalculator
 				pk.setTaskName("Analyzing " + pi.file.getName());
 				pk.setProgress((int)((0.6 + (0.2 * (double)i / (double)pwyMap.pathways.size())) * 100.0));
 			}
-			StatisticsPathwayResult spr = calculatePathway(pi);
+			StatisticsPathwayResult spr = m.calculatePathway(pi);
 			statsMap.put (pi, spr);
 			if (spr != null) result.stm.addRow (spr);
 		}

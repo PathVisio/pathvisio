@@ -28,18 +28,17 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.VisualizationMethod;
+import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.colorset.ColorGradient;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.visualization.colorset.ColorSetObject;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 
 /**
@@ -50,9 +49,9 @@ public class Legend extends JPanel implements VisualizationListener {
 	final ColorSetManager colorSetManager;
 	final VisualizationManager visualizationManager;
 	
-	public Legend(PvDesktop desktop)
+	public Legend(VisualizationManager visualizationManager)
 	{
-		visualizationManager = desktop.getVisualizationManager();
+		this.visualizationManager = visualizationManager;
 		visualizationManager.addListener(this);
 		colorSetManager = visualizationManager.getColorSetManager();
 		setBorder (BorderFactory.createLineBorder(Color.BLACK));

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="New Pathway" Version="20091022">
+  <Graphics BoardWidth="2878.5542168674633" BoardHeight="3252.951807228912" WindowWidth="18000.0" WindowHeight="12000.0" />
+  <DataNode TextLabel="Mapk9" Type="GeneProduct" BackpageHead="Mapk9" GraphId="b5539">
+    <Graphics Color="000000" CenterX="2016.8674698795112" CenterY="2507.228915662647" Width="1199.9999999999998" Height="299.9999999999999" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26420" />
+  </DataNode>
+  <DataNode TextLabel="Tln1" Type="GeneProduct" BackpageHead="Tln1" GraphId="c51fa">
+    <Graphics Color="000000" CenterX="2016.8674698795119" CenterY="1607.2289156626475" Width="1199.9999999999995" Height="299.9999999999999" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="21894" />
+  </DataNode>
+  <DataNode TextLabel="Tnxb" Type="GeneProduct" GraphId="b10f0">
+    <Graphics Color="000000" CenterX="2016.8674698795112" CenterY="2207.228915662647" Width="1199.9999999999998" Height="300.00000000000017" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="81877" />
+  </DataNode>
+  <DataNode TextLabel="Actn1" Type="GeneProduct" BackpageHead="ACTN" GraphId="cf99f">
+    <Graphics Color="000000" CenterX="2016.867469879512" CenterY="1307.2289156626475" Width="1199.9999999999998" Height="299.9999999999999" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="109711" />
+  </DataNode>
+  <DataNode TextLabel="Pdpk1" Type="GeneProduct" BackpageHead="Pdpk1" GraphId="cd5db">
+    <Graphics Color="000000" CenterX="2016.8674698795116" CenterY="1907.2289156626473" Width="1199.9999999999998" Height="299.9999999999999" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18607" />
+  </DataNode>
+  <DataNode TextLabel="GeneProduct" Type="GeneProduct" GraphId="a28bd">
+    <Graphics Color="000000" CenterX="2016.8674698795112" CenterY="2807.228915662647" Width="1199.9999999999998" Height="299.9999999999999" ZOrder="32768" />
+    <Xref Database="EMBL" ID="1234" />
+  </DataNode>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

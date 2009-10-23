@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="Complement Activation, Classical Pathway" Data-Source="GenMAPP 2.0" Version="20060316" Author="Nathan Salomonis" Email="nsalomonis@gladstone.ucsf.edu" Last-Modified="3/1/02" Organism="Mus musculus">
+  <Comment Source="GenMAPP notes"></Comment>
+  <Comment Source="GenMAPP remarks">Adapted from http://www.biocarta.com</Comment>
+  <Graphics BoardWidth="14550.25" BoardHeight="8877.0" WindowWidth="13636.0" WindowHeight="10277.0" />
+  <DataNode TextLabel="C1qb" Type="GeneProduct" BackpageHead="C1qb | complement component 1 q subcomponent..." GraphId="a8da2">
+    <Graphics Color="000000" CenterX="2550.0" CenterY="1900.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12260" />
+  </DataNode>
+  <DataNode TextLabel="C1qa" Type="GeneProduct" BackpageHead="C1qa | complement component 1 q subcomponent..." GraphId="cb370">
+    <Graphics Color="000000" CenterX="2550.0" CenterY="1600.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12259" />
+  </DataNode>
+  <DataNode TextLabel="C1qg" Type="GeneProduct" BackpageHead="C1qg | complement component 1 q subcomponent..." GraphId="aa17b">
+    <Graphics Color="000000" CenterX="2550.0" CenterY="2200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12262" />
+  </DataNode>
+  <DataNode TextLabel="C1r" Type="GeneProduct" BackpageHead="C1r | complement component 1 r subcomponent" GraphId="c13bc">
+    <Graphics Color="000000" CenterX="800.0" CenterY="2550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="50909" />
+  </DataNode>
+  <DataNode TextLabel="C1s" Type="GeneProduct" BackpageHead="C1s | complement component 1 s subcomponent" GraphId="cfe42">
+    <Graphics Color="000000" CenterX="1500.0" CenterY="3250.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="50908" />
+  </DataNode>
+  <DataNode TextLabel="Daf2" Type="GeneProduct" BackpageHead="Daf2 | decay accelerating factor 2" GraphId="b7136">
+    <Graphics Color="000000" CenterX="5850.0" CenterY="2050.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13137" />
+  </DataNode>
+  <DataNode TextLabel="Daf1" Type="GeneProduct" BackpageHead="Daf1 | decay accelerating factor 1" GraphId="fc709">
+    <Graphics Color="000000" CenterX="5850.0" CenterY="1750.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13136" />
+  </DataNode>
+  <DataNode TextLabel="C2" Type="GeneProduct" BackpageHead="C2 | complement component 2 (within H-2S)" GraphId="b20e1">
+    <Graphics Color="000000" CenterX="6350.0" CenterY="4200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12263" />
+  </DataNode>
+  <DataNode TextLabel="C4" Type="GeneProduct" BackpageHead="C4 | complement component 4 (within H-2S)" GraphId="abfcf">
+    <Graphics Color="000000" CenterX="5050.0" CenterY="4200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12268" />
+  </DataNode>
+  <DataNode TextLabel="C3" Type="GeneProduct" BackpageHead="C3 | complement component 3" GraphId="ce52c">
+    <Graphics Color="000000" CenterX="7650.0" CenterY="4200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12266" />
+  </DataNode>
+  <DataNode TextLabel="Hc" Type="GeneProduct" BackpageHead="Hc | hemolytic complement" GraphId="b0bad">
+    <Graphics Color="000000" CenterX="8950.0" CenterY="4200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="15139" />
+  </DataNode>
+  <DataNode TextLabel="C6" Type="GeneProduct" BackpageHead="C6 | complement component 6" GraphId="cdd21">
+    <Graphics Color="000000" CenterX="9450.0" CenterY="4800.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12274" />
+  </DataNode>
+  <DataNode TextLabel="1700013L23Rik" Type="GeneProduct" BackpageHead="1700013L23Rik | RIKEN cDNA 1700013L23 gene" GraphId="a839e">
+    <Graphics Color="000000" CenterX="10600.0" CenterY="5900.0" Width="800.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="69379" />
+  </DataNode>
+  <DataNode TextLabel="C9" Type="GeneProduct" BackpageHead="C9 | complement component 9" GraphId="c7a92">
+    <Graphics Color="000000" CenterX="11150.0" CenterY="6550.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="12279" />
+  </DataNode>
+  <DataNode TextLabel="Masp1" Type="GeneProduct" BackpageHead="Masp1 | mannan-binding lectin serine protease 1..." GraphId="a2192">
+    <Graphics Color="000000" CenterX="6400.0" CenterY="3200.0" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17174" />
+  </DataNode>
+  <DataNode TextLabel="C7" Type="GeneProduct" BackpageHead="C7 | complement component 7" GraphId="c3983">
+    <Comment Source="GenMAPP remarks">MGI:88235  LL:109828</Comment>
+    <Graphics Color="000000" CenterX="9950.0" CenterY="5350.0" Width="700.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="109828" />
+  </DataNode>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1100.0" y="4100.0" />
+      <Point x="8850.0" y="4100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1100.0" y="4300.0" />
+      <Point x="8850.0" y="4300.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1600.0" y="3050.0" />
+      <Point x="1750.0" y="2900.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1000.0" y="2900.0" />
+      <Point x="2950.0" y="2900.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="850.0" y="2750.0" />
+      <Point x="1000.0" y="2900.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="850.0" y="2750.0" />
+      <Point x="850.0" y="2650.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1600.0" y="3050.0" />
+      <Point x="1600.0" y="3150.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2850.0" y="2900.0" />
+      <Point x="3500.0" y="2900.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2650.0" y="2900.0" />
+      <Point x="2500.0" y="2750.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2500.0" y="2750.0" />
+      <Point x="2400.0" y="2550.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2400.0" y="2550.0" />
+      <Point x="2400.0" y="2350.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2400.0" y="3950.0" />
+      <Point x="3100.0" y="3050.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="4100.0" y="3050.0" />
+      <Point x="5000.0" y="3950.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="6150.0" y="4450.0" />
+      <Point x="6200.0" y="4400.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="100.0" y="6600.0" />
+      <Point x="650.0" y="6600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="8850.0" y="4250.0" />
+      <Point x="10050.0" y="5450.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="8900.0" y="4100.0" />
+      <Point x="10100.0" y="5300.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="7500.0" y="4450.0" />
+      <Point x="7550.0" y="4400.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10050.0" y="5500.0" />
+      <Point x="11250.0" y="6700.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10100.0" y="5350.0" />
+      <Point x="11300.0" y="6550.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11100.0" y="6700.0" />
+      <Point x="11100.0" y="8000.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11250.0" y="6700.0" />
+      <Point x="11250.0" y="8000.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="8800.0" y="4450.0" />
+      <Point x="8850.0" y="4400.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="9600.0" y="4050.0" />
+      <Point x="9750.0" y="4050.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="9750.0" y="4050.0" />
+      <Point x="10000.0" y="4300.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="10000.0" y="4300.0" />
+      <Point x="10000.0" y="4600.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="10050.0" y="4700.0" />
+      <Point x="10200.0" y="4700.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="10200.0" y="4700.0" />
+      <Point x="10450.0" y="4950.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="10450.0" y="4950.0" />
+      <Point x="10450.0" y="5250.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="10700.0" y="5300.0" />
+      <Point x="10850.0" y="5300.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="10850.0" y="5300.0" />
+      <Point x="11100.0" y="5550.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="11100.0" y="5550.0" />
+      <Point x="11100.0" y="5850.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="11250.0" y="5900.0" />
+      <Point x="11400.0" y="5900.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="11400.0" y="5900.0" />
+      <Point x="11650.0" y="6150.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="11650.0" y="6150.0" />
+      <Point x="11650.0" y="6450.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11350.0" y="7150.0" />
+      <Point x="11600.0" y="6900.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11600.0" y="6900.0" />
+      <Point x="11900.0" y="6900.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11900.0" y="6900.0" />
+      <Point x="11900.0" y="7100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11900.0" y="7100.0" />
+      <Point x="11750.0" y="7250.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11750.0" y="7250.0" />
+      <Point x="11750.0" y="7450.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11350.0" y="7550.0" />
+      <Point x="11600.0" y="7800.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11600.0" y="7800.0" />
+      <Point x="11900.0" y="7800.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11900.0" y="7800.0" />
+      <Point x="11900.0" y="7550.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11900.0" y="7550.0" />
+      <Point x="11750.0" y="7400.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11350.0" y="7350.0" />
+      <Point x="11750.0" y="7350.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9600.0" y="7250.0" />
+      <Point x="12350.0" y="7250.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="12350.0" y="7450.0" />
+      <Point x="9550.0" y="7450.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="0000ff">
+      <Point x="4700.0" y="3450.0" />
+      <Point x="4900.0" y="3650.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="0000ff">
+      <Point x="100.0" y="6900.0" />
+      <Point x="650.0" y="6900.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="0000ff">
+      <Point x="650.0" y="6800.0" />
+      <Point x="650.0" y="7000.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="6200.0" y="3400.0" />
+      <Point x="5100.0" y="3950.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="ff0000">
+      <Point x="6350.0" y="3400.0" />
+      <Point x="6350.0" y="3950.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="11850.0" y="6450.0" />
+      <Point x="12000.0" y="6450.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="12000.0" y="6450.0" />
+      <Point x="12250.0" y="6700.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="12250.0" y="6700.0" />
+      <Point x="12250.0" y="7000.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="0000ff">
+      <Point x="4850.0" y="3500.0" />
+      <Point x="5550.0" y="3200.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="0000ff">
+      <Point x="5550.0" y="3200.0" />
+      <Point x="5900.0" y="2250.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2250.0" y="4650.0" />
+      <Point x="2250.0" y="4350.0" ArrowHead="Receptor" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2350.0" y="4650.0" />
+      <Point x="2350.0" y="4350.0" ArrowHead="Receptor" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2250.0" y="4750.0" />
+      <Point x="2250.0" y="5100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2050.0" y="4150.0" />
+      <Point x="2100.0" y="4100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2550.0" y="4150.0" />
+      <Point x="2500.0" y="4100.0" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2350.0" y="4650.0" />
+      <Point x="2250.0" y="4650.0" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="antigen/antibody" GraphId="a3bf0">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="2300.0" CenterY="4950.0" Width="1685.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="complex" GraphId="c2b2f">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="2250.0" CenterY="5200.0" Width="905.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="C1 complex" GraphId="cfc77">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="4300.0" CenterY="2900.0" Width="1430.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="aggregated IgG," GraphId="e1b9e">
+    <Graphics FontWeight="Bold" FontSize="120" Color="000000" CenterX="2250.0" CenterY="5500.0" Width="1250.0" Height="180.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="IgM-antigen complex," GraphId="bfde4">
+    <Graphics FontWeight="Bold" FontSize="120" Color="000000" CenterX="2250.0" CenterY="5700.0" Width="1655.0" Height="180.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="polyanions, RNA, DNA" GraphId="c2e69">
+    <Graphics FontWeight="Bold" FontSize="120" Color="000000" CenterX="2250.0" CenterY="5900.0" Width="1685.0" Height="180.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="lipopolysacharides" GraphId="efb76">
+    <Graphics FontWeight="Bold" FontSize="120" Color="000000" CenterX="2250.0" CenterY="6100.0" Width="1475.0" Height="180.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Membrane" GraphId="c3854">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="10850.0" CenterY="7700.0" Width="1100.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="attack complex" GraphId="aa397">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="10850.0" CenterY="7950.0" Width="1535.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Ions" GraphId="f16c4">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="9150.0" CenterY="7250.0" Width="575.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="H  O" GraphId="f8c27">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="12600.0" CenterY="7450.0" Width="560.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="2" GraphId="ee688">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="12600.0" CenterY="7600.0" Width="185.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Cytoplasm" GraphId="beeec">
+    <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="6950.0" CenterY="5450.0" Width="1310.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Plasma" GraphId="fd944">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="450.0" CenterY="4000.0" Width="785.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Membrane" GraphId="e96c8">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="600.0" CenterY="4250.0" Width="1100.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Prevents Complement Attack" GraphId="a398b">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="2250.0" CenterY="6950.0" Width="2825.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Proteolytic Cleavage" GraphId="aec32">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="1850.0" CenterY="6600.0" Width="2060.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Complex" GraphId="ef765">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="12700.0" CenterY="6250.0" Width="935.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Formation" GraphId="d1e83">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="12700.0" CenterY="6500.0" Width="1055.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Shape Type="Arc" Style="Solid" GraphId="b7acf">
+    <Graphics FillColor="Transparent" Color="ff0000" CenterX="5650.0" CenterY="4450.0" Width="900.0" Height="450.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Arc" Style="Solid" GraphId="c6e75">
+    <Graphics FillColor="Transparent" Color="ff0000" CenterX="7000.0" CenterY="4450.0" Width="900.0" Height="450.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Arc" Style="Solid" GraphId="fda2b">
+    <Graphics FillColor="Transparent" Color="ff0000" CenterX="8300.0" CenterY="4450.0" Width="900.0" Height="450.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Arc" Style="Solid" GraphId="d33e8">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="2250.0" CenterY="4500.0" Width="150.0" Height="100.0" ZOrder="16384" Rotation="1.570796" />
+  </Shape>
+  <Shape Type="Arc" Style="Solid" GraphId="e4d52">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="2250.0" CenterY="4700.0" Width="150.0" Height="100.0" ZOrder="16384" Rotation="1.570796" />
+  </Shape>
+  <Shape Type="Rectangle" Style="Solid" GraphId="d7273">
+    <Graphics FillColor="dfdfdf" Color="000000" CenterX="10750.0" CenterY="7250.0" Width="1200.0" Height="200.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Rectangle" Style="Solid" GraphId="a5899">
+    <Graphics FillColor="dfdfdf" Color="000000" CenterX="10750.0" CenterY="7450.0" Width="1200.0" Height="200.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" Style="Solid" GraphId="cfb9e">
+    <Graphics FillColor="808080" Color="000000" CenterX="2300.0" CenterY="3900.0" Width="200.0" Height="400.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" Style="Solid" GraphId="e5f74">
+    <Graphics FillColor="c0c0c0" Color="000000" CenterX="2200.0" CenterY="4000.0" Width="200.0" Height="400.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" Style="Solid" GraphId="e8f76">
+    <Graphics FillColor="c0c0c0" Color="000000" CenterX="2400.0" CenterY="4000.0" Width="200.0" Height="400.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <Shape Type="Oval" Style="Solid" GraphId="ba64f">
+    <Graphics FillColor="dfdfdf" Color="000000" CenterX="2300.0" CenterY="4100.0" Width="200.0" Height="400.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="75.0" CenterY="7440.0" />
+  <Legend CenterX="9875.0" CenterY="675.0" />
+</Pathway>
+

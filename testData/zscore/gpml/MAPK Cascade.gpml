@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="MAPK Cascade" Data-Source="GenMAPP 2.0" Version="20060316" Author="Nathan Salomonis and Ismael Reyes" Maintainer="GenMAPP.org" Email="nsalomonis@gladstone.ucsf.edu" Copyright="2000, Gladstone Institutes" Organism="Mus musculus">
+  <Comment Source="GenMAPP notes"></Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Graphics BoardWidth="13035.0" BoardHeight="11871.2" WindowWidth="12812.0" WindowHeight="12357.0" />
+  <DataNode TextLabel="Hras1" Type="GeneProduct" BackpageHead="Hras1 | Harvey rat sarcoma virus oncogene 1" GraphId="e8617">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="2749.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="15461" />
+  </DataNode>
+  <DataNode TextLabel="Kras" Type="GeneProduct" BackpageHead="Kras | v-Ki-ras2 Kirsten rat sarcoma viral onco..." GraphId="fb31a">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="3649.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="16653" />
+  </DataNode>
+  <DataNode TextLabel="Nras" Type="GeneProduct" BackpageHead="Nras | neuroblastoma ras oncogene" GraphId="e479a">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="3049.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18176" />
+  </DataNode>
+  <DataNode TextLabel="Rras" Type="GeneProduct" BackpageHead="Rras | Harvey rat sarcoma oncogene subgroup R..." GraphId="d9a92">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="3349.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="20130" />
+  </DataNode>
+  <DataNode TextLabel="Plcb3" Type="GeneProduct" BackpageHead="Plcb3 | phospholipase C beta 3" GraphId="d6b7f">
+    <Graphics Color="000000" CenterX="5400.0" CenterY="1899.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="18797" />
+  </DataNode>
+  <DataNode TextLabel="Map3k1" Type="GeneProduct" BackpageHead="Map3k1 | mitogen activated protein kinase kinas..." GraphId="e9f03">
+    <Graphics Color="000000" CenterX="6750.0" CenterY="4499.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26401" />
+  </DataNode>
+  <DataNode TextLabel="Map3k2" Type="GeneProduct" BackpageHead="Map3k2 | mitogen activated protein kinase kinas..." GraphId="fe237">
+    <Graphics Color="000000" CenterX="6750.0" CenterY="4799.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26405" />
+  </DataNode>
+  <DataNode TextLabel="Map3k3" Type="GeneProduct" BackpageHead="Map3k3 | mitogen activated protein kinase kinas..." GraphId="b7bd1">
+    <Graphics Color="000000" CenterX="6750.0" CenterY="5099.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26406" />
+  </DataNode>
+  <DataNode TextLabel="Map2k1" Type="GeneProduct" BackpageHead="Map2k1 | mitogen activated protein kinase kinas..." GraphId="c4c9d">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="5949.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26395" />
+  </DataNode>
+  <DataNode TextLabel="Map2k2" Type="GeneProduct" BackpageHead="Map2k2 | mitogen activated protein kinase kinas..." GraphId="eb6f0">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="6249.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26396" />
+  </DataNode>
+  <DataNode TextLabel="Mapk3" Type="GeneProduct" BackpageHead="Mapk3 | mitogen activated protein kinase 3" GraphId="a9a1e">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="7099.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26417" />
+  </DataNode>
+  <DataNode TextLabel="Mapk1" Type="GeneProduct" BackpageHead="Mapk1 | mitogen activated protein kinase 1" GraphId="e0730">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="7399.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26413" />
+  </DataNode>
+  <DataNode TextLabel="Jun" Type="GeneProduct" BackpageHead="Jun | Jun oncogene" GraphId="b900d">
+    <Graphics Color="000000" CenterX="6250.0" CenterY="9949.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="16476" />
+  </DataNode>
+  <DataNode TextLabel="Map2k3" Type="GeneProduct" BackpageHead="Map2k3 | mitogen activated protein kinase kinas..." GraphId="b956b">
+    <Graphics Color="000000" CenterX="10950.0" CenterY="8499.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26397" />
+  </DataNode>
+  <DataNode TextLabel="Map2k4" Type="GeneProduct" BackpageHead="Map2k4 | mitogen activated protein kinase kinas..." GraphId="ee2be">
+    <Graphics Color="000000" CenterX="7050.0" CenterY="7599.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26398" />
+  </DataNode>
+  <DataNode TextLabel="Mapk10" Type="GeneProduct" BackpageHead="Mapk10 | mitogen activated protein kinase 10" GraphId="f8799">
+    <Graphics Color="000000" CenterX="7050.0" CenterY="8349.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26414" />
+  </DataNode>
+  <DataNode TextLabel="Braf" Type="GeneProduct" BackpageHead="Braf | Braf transforming gene" GraphId="ec289">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="5099.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="109880" />
+  </DataNode>
+  <DataNode TextLabel="Raf1" Type="GeneProduct" BackpageHead="Raf1 | v-raf-1 leukemia viral oncogene 1" GraphId="bf4ad">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="4499.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="110157" />
+  </DataNode>
+  <DataNode TextLabel="Map2k6" Type="GeneProduct" BackpageHead="Map2k6 | mitogen activated protein kinase kinas..." GraphId="f71fa">
+    <Graphics Color="000000" CenterX="9300.0" CenterY="6849.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26399" />
+  </DataNode>
+  <DataNode TextLabel="Mbp" Type="GeneProduct" BackpageHead="Mbp | myelin basic protein" GraphId="c137c">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="8049.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17196" />
+  </DataNode>
+  <DataNode TextLabel="Mtap2" Type="GeneProduct" BackpageHead="Mtap2 | microtubule-associated protein 2" GraphId="fb315">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="8349.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="17756" />
+  </DataNode>
+  <DataNode TextLabel="Elk1" Type="GeneProduct" BackpageHead="Elk1 | ELK1 member of ETS oncogene family" GraphId="c0191">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="8649.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="13712" />
+  </DataNode>
+  <DataNode TextLabel="Rasa3" Type="GeneProduct" BackpageHead="Rasa3 | RAS p21 protein activator 3" GraphId="b6b35">
+    <Comment Source="GenMAPP remarks">check this one again:PAK1_MOUSE</Comment>
+    <Graphics Color="000000" CenterX="6900.0" CenterY="2799.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="19414" />
+  </DataNode>
+  <DataNode TextLabel="RapGAPII" Type="GeneProduct" BackpageHead="RapGAPII" GraphId="acab2">
+    <Graphics Color="000000" CenterX="1400.0" CenterY="1899.5" Width="1050.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="GenBank" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Sipa1" Type="GeneProduct" BackpageHead="Sipa1 | signal-induced proliferation associated..." GraphId="b8bb2">
+    <Comment Source="GenMAPP remarks">not confirmed SwissProt ID</Comment>
+    <Graphics Color="000000" CenterX="600.0" CenterY="2999.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="20469" />
+  </DataNode>
+  <DataNode TextLabel="Araf" Type="GeneProduct" BackpageHead="Araf | v-raf murine sarcoma 3611 viral oncogene..." GraphId="fd103">
+    <Graphics Color="000000" CenterX="4400.0" CenterY="4799.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="11836" />
+  </DataNode>
+  <DataNode TextLabel="Mapk14" Type="GeneProduct" BackpageHead="Mapk14 | mitogen activated protein kinase 14" GraphId="c79d2">
+    <Graphics Color="000000" CenterX="9300.0" CenterY="7599.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26416" />
+  </DataNode>
+  <DataNode TextLabel="Map2k7" Type="GeneProduct" BackpageHead="Map2k7 | mitogen activated protein kinase kinas..." GraphId="d54e8">
+    <Graphics Color="000000" CenterX="7050.0" CenterY="6849.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26400" />
+  </DataNode>
+  <DataNode TextLabel="Map3k12" Type="GeneProduct" BackpageHead="Map3k12 | mitogen activated protein kinase kina..." GraphId="bdb49">
+    <Graphics Color="000000" CenterX="6750.0" CenterY="5399.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="26404" />
+  </DataNode>
+  <DataNode TextLabel="Mapk12" Type="GeneProduct" BackpageHead="Mapk12 | mitogen-activated protein kinase 12" GraphId="ec38f">
+    <Graphics Color="000000" CenterX="9300.0" CenterY="7899.5" Width="900.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="Entrez Gene" ID="29857" />
+  </DataNode>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1650.0" y="3449.5" />
+      <Point x="2000.0" y="3799.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="550.0" y="2749.5" />
+      <Point x="800.0" y="2499.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="800.0" y="2499.5" />
+      <Point x="2000.0" y="2499.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2000.0" y="2499.5" />
+      <Point x="2250.0" y="2749.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="700.0" y="2199.5" />
+      <Point x="1000.0" y="2499.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2250.0" y="3299.5" />
+      <Point x="2100.0" y="3449.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2100.0" y="3449.5" />
+      <Point x="750.0" y="3449.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="750.0" y="3449.5" />
+      <Point x="500.0" y="3199.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1400.0" y="1399.5" />
+      <Point x="1400.0" y="1699.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1000.0" y="1249.5" />
+      <Point x="1750.0" y="1249.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="1100.0" y="1299.5" />
+      <Point x="1700.0" y="1299.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5350.0" y="1399.5" />
+      <Point x="5350.0" y="1699.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4950.0" y="1249.5" />
+      <Point x="5700.0" y="1249.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5050.0" y="1299.5" />
+      <Point x="5650.0" y="1299.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="3700.0" y="1549.5" />
+      <Point x="4400.0" y="2499.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5400.0" y="2149.5" />
+      <Point x="4700.0" y="2499.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="6150.0" y="2799.5" />
+      <Point x="5650.0" y="2799.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4400.0" y="3849.5" />
+      <Point x="4400.0" y="4299.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4400.0" y="5299.5" />
+      <Point x="4400.0" y="5749.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4400.0" y="6449.5" />
+      <Point x="4400.0" y="6899.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5550.0" y="3699.5" />
+      <Point x="6750.0" y="4299.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="5900.0" y="5099.5" />
+      <Point x="4700.0" y="5699.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7000.0" y="5349.5" />
+      <Point x="8100.0" y="6049.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7050.0" y="7049.5" />
+      <Point x="7050.0" y="7399.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="7050.0" y="7799.5" />
+      <Point x="7050.0" y="8149.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9300.0" y="7049.5" />
+      <Point x="9300.0" y="7399.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="10250.0" y="8249.5" />
+      <Point x="9950.0" y="7949.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="2950.0" y="2999.5" />
+      <Point x="3650.0" y="2999.5" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4400.0" y="8849.5" />
+      <Point x="4400.0" y="9299.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="6900.0" y="8549.5" />
+      <Point x="6300.0" y="9749.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="6250.0" y="10149.5" />
+      <Point x="6250.0" y="10499.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="9350.0" y="7799.5" />
+      <Point x="6650.0" y="10499.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="900.0" y="8899.5" />
+      <Point x="11850.0" y="8899.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Broken">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="850.0" y="8999.5" />
+      <Point x="11850.0" y="8999.5" />
+    </Graphics>
+  </Line>
+  <Line Style="Solid">
+    <Graphics ZOrder="12288" Color="000000">
+      <Point x="4400.0" y="7399.5" />
+      <Point x="4400.0" y="7849.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="GDP" GraphId="cb112">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="2200.0" CenterY="3949.5" Width="500.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Activated" GraphId="c8660">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="2350.0" CenterY="2899.5" Width="965.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="GTP" GraphId="dfd00">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="550.0" CenterY="2199.5" Width="485.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="G" GraphId="bbff5">
+    <Graphics FontWeight="Bold" FontSize="270" Color="000000" CenterX="1350.0" CenterY="949.5" Width="365.0" Height="435.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="i" GraphId="d1e68">
+    <Graphics FontWeight="Bold" FontSize="240" Color="000000" CenterX="1550.0" CenterY="1049.5" Width="155.0" Height="360.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="G" GraphId="f2319">
+    <Graphics FontWeight="Bold" FontSize="270" Color="000000" CenterX="5300.0" CenterY="949.5" Width="365.0" Height="435.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="q" GraphId="c048f">
+    <Graphics FontWeight="Bold" FontSize="240" Color="000000" CenterX="5550.0" CenterY="999.5" Width="275.0" Height="360.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="and G" GraphId="a8fdc">
+    <Graphics FontWeight="Bold" FontSize="180" Color="0000ff" CenterX="3850.0" CenterY="1349.5" Width="755.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="g" GraphId="d4240">
+    <Graphics FontName="Symbol" FontWeight="Bold" FontSize="180" Color="0000ff" CenterX="4300.0" CenterY="1399.5" Width="200.0" Height="300.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="b" GraphId="d325f">
+    <Graphics FontName="Symbol" FontWeight="Bold" FontSize="180" Color="0000ff" CenterX="3350.0" CenterY="1399.5" Width="245.0" Height="300.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="G" GraphId="d9a81">
+    <Graphics FontWeight="Bold" FontSize="180" Color="0000ff" CenterX="3150.0" CenterY="1349.5" Width="260.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Stress Activated Pathways" GraphId="b8e40">
+    <Graphics FontWeight="Bold" FontSize="120" Color="000000" CenterX="7100.0" CenterY="6549.5" Width="2075.0" Height="180.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="p38 MAPK Pathway" GraphId="af2d1">
+    <Graphics FontWeight="Bold" FontSize="120" Color="000000" CenterX="9350.0" CenterY="6549.5" Width="1520.0" Height="180.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Growth and Mitogenesis" GraphId="e8ebd">
+    <Graphics FontWeight="Bold" FontSize="165" Color="000000" CenterX="4400.0" CenterY="9449.5" Width="2660.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Apoptosis" GraphId="f125a">
+    <Graphics FontWeight="Bold" FontSize="180" Color="0000ff" CenterX="6250.0" CenterY="10649.5" Width="1250.0" Height="285.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Nucleus" GraphId="ec74b">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="10100.0" CenterY="9199.5" Width="830.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Label TextLabel="Rap1GAP" GraphId="d73cf">
+    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="2350.0" CenterY="3149.5" Width="980.0" Height="240.0" ZOrder="28672" />
+  </Label>
+  <Shape Type="Brace" Style="Solid" GraphId="f20c2">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="5550.0" CenterY="3249.5" Width="1400.0" Height="130.0" ZOrder="16384" Rotation="1.5707963267948966" />
+  </Shape>
+  <Shape Type="Brace" Style="Solid" GraphId="dfa9d">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="5950.0" CenterY="4999.5" Width="1250.0" Height="130.0" ZOrder="16384" Rotation="4.71238898038469" />
+  </Shape>
+  <Shape Type="Brace" Style="Solid" GraphId="a1ed2">
+    <Graphics FillColor="Transparent" Color="000000" CenterX="8100.0" CenterY="6249.5" Width="4100.0" Height="130.0" ZOrder="16384" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="8565.0" CenterY="4500.0" />
+  <Legend CenterX="8640.5" CenterY="1138.0" />
+</Pathway>
+

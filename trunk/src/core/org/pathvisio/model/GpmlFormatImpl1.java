@@ -947,7 +947,8 @@ public class GpmlFormatImpl1
 		o.setTextLabel (getAttribute("Label", "TextLabel", e));
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	
-    	o.setMFontSize (Integer.parseInt(graphics.getAttributeValue("FontSize")));
+    	String fontSizeString = getAttribute("Label.Graphics", "FontSize", graphics);
+    	o.setMFontSize (Integer.parseInt(fontSizeString));
     	
     	String fontWeight = getAttribute("Label.Graphics", "FontWeight", graphics);
     	String fontStyle = getAttribute("Label.Graphics", "FontStyle", graphics);

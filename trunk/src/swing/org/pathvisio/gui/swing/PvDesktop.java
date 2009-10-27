@@ -156,8 +156,6 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			.build());
 		
 		preferencesDlg.addPanel ("Database", preferencesDlg.builder()
-			.stringField (GlobalPreference.DB_ENGINE_GDB,
-				"Database connector class for gene database:")
 			.stringField (GlobalPreference.DB_ENGINE_GEX,
 				"Database connector class for expression dataset:")
 			.build());

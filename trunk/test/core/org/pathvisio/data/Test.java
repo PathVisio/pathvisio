@@ -37,7 +37,7 @@ public class Test extends TestCase implements GdbEventListener
 
 	public void gdbEvent (GdbEvent e)
 	{
-		if (e.getType() == GdbEvent.GDB_CONNECTED)
+		if (e.getType() == GdbEvent.Type.ADDED)
 		{
 			eventReceived = true;
 		}

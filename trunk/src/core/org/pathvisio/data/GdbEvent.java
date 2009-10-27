@@ -29,24 +29,26 @@ public class GdbEvent  extends EventObject
 	   when it was selected from the data -> select gdb menu
 	   or during data import.
 	 */
-	public static final int GDB_CONNECTED = 7;
-	public static final int GDB_REMOVED = 8;
+	public enum Type { 
+		ADDED,
+		REMOVED
+	};
 
-	private int type;
+	private Type type;
 	
 	/**
 	 * @param source the source of this event, should be a GdbManager
 	 * @param type Currently the only implemented type is GDB_CONNECTED
 	 * @param name the name of the database that was connected (if type == GDB_CONNECTED)
 	 */
-	public GdbEvent(Object source, int type, String name) 
+	public GdbEvent(Object source, Type type, String name) 
 	{
 		super(source);
 		this.type = type;
 		this.dbName = name;
 	}
 
-	public int getType() { return type; }
+	public Type getType() { return type; }
 		
 	/**
 	 * The name of the database that was connected.

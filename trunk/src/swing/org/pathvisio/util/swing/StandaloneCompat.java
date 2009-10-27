@@ -44,7 +44,7 @@ public class StandaloneCompat implements GdbEventListener, GexManagerListener
 	{
 		switch (e.getType())
 		{
-		case GdbEvent.GDB_CONNECTED:
+		case ADDED:
 			{
 				String name = e.getName();
 				

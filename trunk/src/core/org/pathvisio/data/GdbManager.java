@@ -101,7 +101,7 @@ public class GdbManager extends AbstractListModel
 	{
 		if (connectString == null) throw new NullPointerException();
 		IDMapper result = currentGdb.addIDMapper(connectString);
-		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, connectString);
+		GdbEvent e = new GdbEvent (this, GdbEvent.Type.ADDED, connectString);
 		fireGdbEvent (e);
 		Logger.log.trace("Added extra database: " + connectString);
 		return result;
@@ -113,7 +113,7 @@ public class GdbManager extends AbstractListModel
 		currentGdb.removeIDMapper(mapper);
 		if (mapper == metabolites) metabolites = null;
 		if (mapper == genes) genes = null;
-		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_REMOVED, mapper.toString());
+		GdbEvent e = new GdbEvent (this, GdbEvent.Type.REMOVED, mapper.toString());
 		fireGdbEvent (e);
 		mapper.close();
 	}

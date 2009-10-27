@@ -224,7 +224,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	}
 	
 	public void gdbEvent(GdbEvent e) {
-		if(e.getType() == GdbEvent.GDB_CONNECTED) {
+		if(e.getType() == GdbEvent.Type.ADDED) {
 			setGdbStatus(gdbLabel, mdbLabel);
 		}
 	}

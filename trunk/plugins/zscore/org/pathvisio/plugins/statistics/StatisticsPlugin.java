@@ -16,6 +16,9 @@
 //
 package org.pathvisio.plugins.statistics;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -41,7 +44,6 @@ import javax.swing.event.DocumentListener;
 
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.CachedData;
@@ -58,9 +60,6 @@ import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.SimpleFileFilter;
 import org.pathvisio.util.swing.TextFieldUtils;
 import org.pathvisio.visualization.colorset.Criterion;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A PathVisio plugin that lets you do simple overrepresentation analysis on pathways.
@@ -185,8 +184,9 @@ public class StatisticsPlugin implements Plugin
 				sampleNames = aSampleNames;
 				
 				FormLayout layout = new FormLayout (
-						"4dlu, pref:grow, 4dlu, pref, 4dlu", 
-						"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
+						"4dlu, min:grow, 4dlu, min:grow, 4dlu", 
+						"4dlu, pref, 4dlu, pref, 4dlu, [50dlu,min]:grow, 4dlu, pref, 4dlu");
+				layout.setColumnGroups(new int[][]{{2,4}});
 				setLayout(layout);
 				CellConstraints cc = new CellConstraints();
 				add (new JLabel ("Expression: "), cc.xy(2,2));
@@ -313,7 +313,7 @@ public class StatisticsPlugin implements Plugin
 			
 			FormLayout layout = new FormLayout (
 					"4dlu, pref:grow, 4dlu, pref, 4dlu", 
-					"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, fill:pref:grow");
+					"4dlu, fill:[pref,250dlu], 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, fill:min:grow");
 			dlg.setLayout(layout);
 			
 			CellConstraints cc = new CellConstraints();
@@ -394,6 +394,7 @@ public class StatisticsPlugin implements Plugin
 			});
 	
 			dlg.pack();
+			dlg.setSize(600, 600); //TODO store preference
 			dlg.setLocationRelativeTo(se.getFrame());
 			dlg.setVisible(true);
 		}

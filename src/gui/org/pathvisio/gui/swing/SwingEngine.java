@@ -36,6 +36,7 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.Globals;
+import org.pathvisio.data.DBConnDerby;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
@@ -558,24 +559,11 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		try 
 		{
-			/**
-			 * Get the preferred database connector to connect to Gex or Gdb databases, 
-			 * and try to cast it to swingDbConnector.
-			 * throws an exception if that fails
-			 */
-			DBConnectorSwing dbcon;
-			DBConnector dbc = getGdbManager().getDBConnector();
-			if(dbc instanceof DBConnectorSwing) 
-			{
-				dbcon = (DBConnectorSwing)dbc;
-			} 
-			else 
-			{
-				//TODO: better handling of error
-				throw new IllegalArgumentException("Not a Swing database connector");
-			}
-	
+			// Get the database connector to connect to Gdb databases.
+			// Currently there is only one option: DBConnDerby();
+			DBConnectorSwing dbcon = new DBConnDerby();
 			String result = dbcon.openChooseDbDialog(null);
+			
 			if (result == null) return;
 			String dbName = "idmapper-pgdb:" + result;
 			

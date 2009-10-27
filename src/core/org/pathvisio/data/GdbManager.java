@@ -181,24 +181,7 @@ public class GdbManager extends AbstractListModel
 	 * TODO: move to src/swing (only used standalone)
 	 */
 	public void initPreferred()
-	{
-		try
-		{
-			dbConnector = getDBConnector();
-		}
-		catch (ClassNotFoundException e)
-		{
-			Logger.log.error ("Could not initialize gene databases", e);
-		}
-		catch (IllegalAccessException e)
-		{
-			Logger.log.error ("Could not initialize gene databases", e);
-		}
-		catch (InstantiationException e)
-		{
-			Logger.log.error ("Could not initialize gene databases", e);
-		}		
-		
+	{		
 		PreferenceManager prefs = PreferenceManager.getCurrent();
 		// first do the Gene database
 		String gdbName = prefs.get (GlobalPreference.DB_CONNECTSTRING_GDB);
@@ -226,39 +209,6 @@ public class GdbManager extends AbstractListModel
 				Logger.log.error("Setting previous Metabolite db failed.", e);
 			}
 		}
-	}
-
-	
-	private DBConnector dbConnector = null;
-	
-	@Deprecated
-	public void setDBConnector(DBConnector value)
-	{
-		dbConnector = value;
-	}
-	
-	@Deprecated
-	public DBConnector getDBConnector() throws 
-		ClassNotFoundException, 
-		InstantiationException, 
-		IllegalAccessException 
-	{
-		if (dbConnector == null)
-		{
-			String className = null;
-			className = PreferenceManager.getCurrent().get(GlobalPreference.DB_ENGINE_GEX);
-			
-			if(className == null) return null;
-				
-			Class<?> dbc = Class.forName(className);
-			Object o = dbc.newInstance();
-			if(o instanceof DBConnector) 
-			{
-				dbConnector = (DBConnector)dbc.newInstance();
-				dbConnector.setDbType(DBConnector.TYPE_GDB);
-			}
-		}
-		return dbConnector;
 	}
 
 	public Object getElementAt(int arg0) 

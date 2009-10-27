@@ -30,6 +30,7 @@ public class GdbEvent  extends EventObject
 	   or during data import.
 	 */
 	public static final int GDB_CONNECTED = 7;
+	public static final int GDB_REMOVED = 8;
 
 	private int type;
 	

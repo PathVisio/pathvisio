@@ -25,8 +25,6 @@ import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
 import org.bridgedb.rdb.DBConnector;
-import org.bridgedb.rdb.SimpleGdb;
-import org.bridgedb.rdb.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -85,30 +83,41 @@ public class GdbManager extends AbstractListModel
 	 * 
 	 * use null to disconnect the current db
 	 */
-	public void setMetaboliteDb(String dbName) throws IDMapperException
+	public void setMetaboliteDb(String connectString) throws IDMapperException
 	{
-		if (dbName == null)
+		removeMapper(metabolites);
+		metabolites = null;
+		if (connectString != null)
 		{
-			currentGdb.removeIDMapper(metabolites);
-			metabolites = null;
-		}
-		else
-		{
-			String connectString = dbName;
 			metabolites = currentGdb.addIDMapper(connectString);
 			if (metabolites != null)
 			{
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_METADB, (connectString));
 			}
-		}
-		
-		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, dbName);
-		fireGdbEvent (e);
-		Logger.log.trace("Current Gene Database: " + dbName);
-	
+		}		
 	}
 	
-
+	public IDMapper addMapper(String connectString) throws IDMapperException
+	{
+		if (connectString == null) throw new NullPointerException();
+		IDMapper result = currentGdb.addIDMapper(connectString);
+		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, connectString);
+		fireGdbEvent (e);
+		Logger.log.trace("Added extra database: " + connectString);
+		return result;
+	}
+	
+	public void removeMapper(IDMapper mapper) throws IDMapperException
+	{
+		if (mapper == null) return; // ignore
+		currentGdb.removeIDMapper(mapper);
+		if (mapper == metabolites) metabolites = null;
+		if (mapper == genes) genes = null;
+		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_REMOVED, mapper.toString());
+		fireGdbEvent (e);
+		mapper.close();
+	}
+	
 	/**
 	 * Implement this interface if you want to listen to Gdb Events.
 	 */
@@ -133,6 +142,8 @@ public class GdbManager extends AbstractListModel
 	private void fireGdbEvent (GdbEvent e)
 	{
 		for(GdbEventListener l : gdbEventListeners) l.gdbEvent(e);
+		// also notify ListModel listeners
+		this.fireContentsChanged(this, 0, currentGdb.getSize());
 	}
 		
 	private List<GdbEventListener> gdbEventListeners  = new ArrayList<GdbEventListener>();
@@ -146,37 +157,18 @@ public class GdbManager extends AbstractListModel
 	 * 
 	 * use null to disconnect the current db.
 	 */
-	public void setGeneDb(String dbName) throws IDMapperException
+	public void setGeneDb(String connectString) throws IDMapperException
 	{
-		if (dbName == null)
+		removeMapper(genes);
+		genes = null;
+		if (connectString != null)
 		{
-			if (genes != null) currentGdb.removeIDMapper(genes);
-			genes = null;
-		}
-		else
-		{
-			String connectString = dbName;
 			genes = currentGdb.addIDMapper(connectString);
 			if (genes != null)
 			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_GDB, connectString);
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_GDB, (connectString));
 			}
-		}
-		GdbEvent e = new GdbEvent (this, GdbEvent.GDB_CONNECTED, dbName);
-		fireGdbEvent (e);
-		Logger.log.trace("Current Gene Database: " + dbName);
-	}
-	
-	/**
-	 * Helper method
-	 * Connect to a database using the 
-	 * DBConnector set in the global preferences.
-	 */
-	private SimpleGdb connect(String gdbName) throws IDMapperException
-	{
-		if (dbConnector == null) throw new NullPointerException();
-		SimpleGdb gdb = SimpleGdbFactory.createInstance(gdbName, dbConnector, DBConnector.PROP_NONE);
-		return gdb;
+		}		
 	}
 	
 	/**

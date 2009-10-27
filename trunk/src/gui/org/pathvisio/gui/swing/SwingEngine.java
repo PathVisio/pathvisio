@@ -30,14 +30,11 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.bridgedb.bio.Organism;
-import org.bridgedb.rdb.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.Globals;
-import org.pathvisio.data.DBConnDerby;
-import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
@@ -547,46 +544,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public JFrame getFrame()
 	{
 		return frame;
-	}
-	
-	/**
-	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
-	 * current database type.
-	 * dbType is "Metabolite" or "Gene" and is only used in messages to the user.
-	 * TODO: move to src/swing (only used standalone)
-	 */
-	public void selectGdb (String dbType)
-	{
-		try 
-		{
-			// Get the database connector to connect to Gdb databases.
-			// Currently there is only one option: DBConnDerby();
-			DBConnectorSwing dbcon = new DBConnDerby();
-			String result = dbcon.openChooseDbDialog(null);
-			
-			if (result == null) return;
-			String dbName = "idmapper-pgdb:" + result;
-			
-			if (dbType.equals("Gene"))
-			{
-				getGdbManager().setGeneDb(dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, dbName);
-			}
-			else
-			{
-				getGdbManager().setMetaboliteDb(dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);					
-			}
-		} 
-		catch(Exception ex) 
-		{
-			String msg = "Failed to open " + dbType + " Database; " + ex.getMessage();
-			JOptionPane.showMessageDialog(null, 
-					"Error: " + msg + "\n\n" + "See the error log for details.",
-					"Error",
-					JOptionPane.ERROR_MESSAGE);
-			Logger.log.error(msg, ex);
-		}
 	}
 	
 	private Browser browser = null;

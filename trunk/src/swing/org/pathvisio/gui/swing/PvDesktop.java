@@ -23,11 +23,14 @@ import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import org.bridgedb.IDMapperException;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.data.DBConnDerby;
+import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.debug.Logger;
@@ -338,4 +341,44 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	{
 		return manager;
 	}
+
+	/**
+	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
+	 * current database type.
+	 * dbType is "Metabolite" or "Gene" and is only used in messages to the user.
+	 */
+	public void selectGdb (String dbType)
+	{
+		try 
+		{
+			// Get the database connector to connect to Gdb databases.
+			// Currently there is only one option: DBConnDerby();
+			DBConnectorSwing dbcon = new DBConnDerby();
+			String result = dbcon.openChooseDbDialog(null);
+			
+			if (result == null) return;
+			String dbName = "idmapper-pgdb:" + result;
+			
+			if (dbType.equals("Gene"))
+			{
+				swingEngine.getGdbManager().setGeneDb(dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, dbName);
+			}
+			else
+			{
+				swingEngine.getGdbManager().setMetaboliteDb(dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);					
+			}
+		} 
+		catch(Exception ex) 
+		{
+			String msg = "Failed to open " + dbType + " Database; " + ex.getMessage();
+			JOptionPane.showMessageDialog(null, 
+					"Error: " + msg + "\n\n" + "See the error log for details.",
+					"Error",
+					JOptionPane.ERROR_MESSAGE);
+			Logger.log.error(msg, ex);
+		}
+	}
+
 }

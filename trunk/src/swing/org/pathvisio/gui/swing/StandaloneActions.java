@@ -57,8 +57,8 @@ public class StandaloneActions
 		openAction = new OpenAction(swingEngine);
 		helpAction = new HelpAction();
 		newAction = new NewAction(swingEngine);
-		selectGeneDbAction = new SelectGeneDbAction(swingEngine, "Gene");
-		selectMetaboliteDbAction = new SelectGeneDbAction(swingEngine, "Metabolite");
+		selectGeneDbAction = new SelectGeneDbAction(desktop, "Gene");
+		selectMetaboliteDbAction = new SelectGeneDbAction(desktop, "Metabolite");
 		preferencesAction = new PreferencesAction(desktop);
 		searchAction = new SearchAction(swingEngine);
 		pluginManagerAction = new PluginManagerAction(desktop);
@@ -184,17 +184,16 @@ public class StandaloneActions
 	 */
 	public static class SelectGeneDbAction extends AbstractAction 
 	{
-
-		SwingEngine swingEngine;
+		PvDesktop desktop;
 
 		String dbType;
 		/** 
 		 * type should be "Gene" or "Metabolite"
 		 */
-		public SelectGeneDbAction(SwingEngine swingEngine, String type) 
+		public SelectGeneDbAction(PvDesktop desktop, String type) 
 		{
 			super();
-			this.swingEngine = swingEngine;
+			this.desktop = desktop;
 			dbType = type;
 			assert (dbType.equals ("Gene") || dbType.equals ("Metabolite"));
 			putValue(NAME, "Select " + dbType + " Database");
@@ -203,7 +202,7 @@ public class StandaloneActions
 
 		public void actionPerformed(ActionEvent e) 
 		{
-			swingEngine.selectGdb(dbType);
+			desktop.selectGdb(dbType);
 		}
 		
 	}

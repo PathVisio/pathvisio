@@ -818,7 +818,7 @@
     <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="2500.0" CenterY="5000.0" Width="230.0" Height="285.0" />
   </Label>
   <Label TextLabel="p53 Related" GraphId="c3e">
-    <Graphics FontWeight="Bold" FontSize="150" Color="000000" CenterX="13050.0" CenterY="7550.0" Width="1205.0" Height="240.0" />
+    <Graphics FontWeight="Bold" Color="000000" CenterX="13050.0" CenterY="7550.0" Width="1205.0" Height="240.0" />
   </Label>
   <Label TextLabel="Interferon regulatory factors" GraphId="d49">
     <Graphics FontWeight="Bold" FontSize="180" Color="000000" CenterX="16450.0" CenterY="7500.0" Width="3275.0" Height="285.0" />

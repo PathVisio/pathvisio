@@ -48,18 +48,16 @@ import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.VisualizationMethodRegistry;
 
 /**
- * StandaloneEngine is a singleton that ties together several
+ * PvDesktop ties together several
  * other important singletons and provides access to them for
- * the entire swing standalone application (not SWT).
- * StandaloneEngine provides functionality for the Standalone application
- * such as data visualization and access to gene expression data. It
+ * the entire PathVisio standalone application.
+ * PvDesktop provides access to components  
+ * such as data visualization and gene expression data. It
  * is also a contact point for Plugins, and makes sure
  * Gex data is cached when a suitable pgdb, pgex and gpml are loaded.
- * 
- * StandaloneEngine is a singleton: There should be always exactly 
+ * <p>
+ * PvDesktop is a singleton: There should be always exactly 
  * one instance of it.
- * 
- * //TODO: this class will probably be renamed in the future  
  */
 public class PvDesktop implements ApplicationEventListener, GdbEventListener, VisualizationManager.VisualizationListener
 {

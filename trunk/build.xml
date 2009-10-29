@@ -625,9 +625,9 @@ public class Revision
 	</target>
 	
 	<target name="tarbin-wpclient" depends="jar-wpclient" description="Create a binary tarball for the WikiPathways client">
-		<property name="binbase" value="wikipathways_client_bin-${pathvisio.version}-r${subversion_revision}" />
+		<property name="binbase2" value="wikipathways_client_bin-${pathvisio.version}-r${subversion_revision}" />
 		
-		<zip destfile="${release.dir}/${binbase}.zip">
+		<zip destfile="${release.dir}/${binbase2}.zip">
 			<zipfileset dir="." prefix="wikipathways_client-${pathvisio.version}">
 				<include name="wikipathways-client.jar" />
 				<include name="lib/jdom.jar" />
@@ -642,8 +642,8 @@ public class Revision
 				<include name="lib/bridgedb-bio.jar"/>
 			</zipfileset>
 		</zip>
-		<tar destfile="${release.dir}/${binbase}.tar.gz" compression="gzip">
-		  <zipfileset src="${release.dir}/${binbase}.zip"/>
+		<tar destfile="${release.dir}/${binbase2}.tar.gz" compression="gzip">
+		  <zipfileset src="${release.dir}/${binbase2}.zip"/>
 		</tar>
 	</target>
 	

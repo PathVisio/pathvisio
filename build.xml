@@ -493,6 +493,7 @@ public class Revision
 				<include name="lib/jdom.jar"/>
 				<include name="lib/bridgedb.jar"/>
 				<include name="lib/bridgedb-bio.jar"/>
+				<include name="lib/commons-math-2.0.jar"/>
 <!--				<include name="lib/paxtools/*.jar"/> -->
 				<include name="lib/resources.jar"/>
 				<include name="lib/swing-worker-1.1.jar"/>

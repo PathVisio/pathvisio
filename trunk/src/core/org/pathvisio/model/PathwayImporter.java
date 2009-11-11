@@ -21,6 +21,20 @@ import java.io.File;
 /** implemented by classes that can import a pathway from various different types */
 public interface PathwayImporter {
 	public String getName();
-	public String[] getExtensions();	
+	
+	/**
+	 * Get the possible extensions this importer can read (e.g. txt).
+	 * The extensions must be unique, the correct importer will be chosen
+	 * based on file extension. 
+	 * @return An array with the possible extensions (without '.')
+	 */
+	public String[] getExtensions();
+	
+	/**
+	 * @param File that contains pathway information
+	 * @returns the result of the import, a fresh Pathway instance
+	 * @throws ConverterException if the input file could not be read or parsed,
+	 * 		or doesn't contain correct pathway information.
+	 */
 	public Pathway doImport(File file) throws ConverterException;
 }

@@ -31,7 +31,9 @@ public interface PathwayExporter {
 	public String getName();
 	
 	/**
-	 * Get the possible extensions this exporter writes to (e.g. txt)
+	 * Get the possible extensions this exporter writes to (e.g. txt).
+	 * The extension must be unique, the correct exporter will be chosen
+	 * based on file extension. 
 	 * @return An array with the possible extensions (without '.')
 	 */
 	public String[] getExtensions();

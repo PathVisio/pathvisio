@@ -1033,11 +1033,13 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);
 	}
 	
-	public void doImport(File file, Pathway pathway) throws ConverterException {
-        String inputString = file.getAbsolutePath();
+	public Pathway doImport(File file) throws ConverterException {
+        Pathway pathway = new Pathway();
+		String inputString = file.getAbsolutePath();
 
         MappFormat.readFromMapp (inputString, pathway);
         pathway.setSourceFile(null); //Don't save back to mapp file
+        return pathway;
 	}
 
     private static Color fromMappColor(String s)

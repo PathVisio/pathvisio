@@ -671,11 +671,6 @@ public class Pathway
 		clearChangedFlag();
 	}
 	
-	public void readFromMapp (File file) throws ConverterException
-	{
-        new MappFormat().doImport(file, this);
-	}
-	
 	public void writeToMapp (File file) throws ConverterException
 	{
 		new MappFormat().doExport(file, this);

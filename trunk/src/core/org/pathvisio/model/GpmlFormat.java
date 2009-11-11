@@ -64,9 +64,11 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		BioDataSource.init();
 	}
 	
-	public void doImport(File file, Pathway pathway) throws ConverterException
+	public Pathway doImport(File file) throws ConverterException
 	{
+		Pathway pathway = new Pathway();
 		readFromXml(pathway, file, true);
+		return pathway;
 	}
 
 	public void doExport(File file, Pathway pathway) throws ConverterException

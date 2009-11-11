@@ -422,14 +422,14 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	{
 		if (Utils.getOS() == Utils.OS_WINDOWS)
 		{
-			data.readFromMapp(new File("testData/test.mapp"));
+			data = new MappFormat().doImport(new File("testData/test.mapp"));
 			assertTrue ("Loaded a bunch of objects from mapp", data.getDataObjects().size() > 20);
 			File temp = File.createTempFile ("data.test", ".mapp");
 			temp.deleteOnExit();
 			data.writeToMapp(temp);
 			
 			try {
-				data.readFromMapp(new File ("testData/test.gpml"));
+				data = new MappFormat().doImport(new File ("testData/test.gpml"));
 				fail ("Loading wrong format, Exception expected");
 			} catch (Exception e) {}
 		}	

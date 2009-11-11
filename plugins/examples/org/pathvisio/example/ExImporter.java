@@ -55,12 +55,13 @@ public class ExImporter implements Plugin
 		 * Called after the user selected a file and picked this importer from the
 		 * File types dropdown.
 		 * <p>
-		 * The Pathway parameter is an empty pathway. 
-		 * Our job is to read file and add contents to pathway.
+		 * Our job is to create a new Pathway object, fill its contents
+		 * and return it.
 		 */
-		public void doImport(File file, Pathway pathway)
+		public Pathway doImport(File file)
 				throws ConverterException 
 		{
+			Pathway pathway = new Pathway();
 			try
 			{
 				// some constants: this is the size of each label
@@ -99,6 +100,7 @@ public class ExImporter implements Plugin
 			{
 				throw new ConverterException (ex);
 			}
+			return pathway;
 		}
 
 		private static final String[] EXTENSIONS = new String[] { "txt" };

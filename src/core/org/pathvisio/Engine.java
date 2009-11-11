@@ -130,8 +130,7 @@ public class Engine
 		
 		if(importer == null) throw new ConverterException( "No importer for '" + ext +  "' files" );
 		
-		Pathway pathway = new Pathway();
-		importer.doImport(file, pathway);
+		Pathway pathway = importer.doImport(file);
 		
 		newPathwayHelper (pathway);
 	}

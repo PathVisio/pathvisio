@@ -17,6 +17,7 @@
 package org.pathvisio.util;
 
 import java.awt.Font;
+import java.awt.geom.Point2D;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -166,5 +167,27 @@ public class Utils {
     public static boolean stringEquals(String str1, String str2) {
         return str1 == null ? str2 == null : str1.equals(str2);
     }
+
+    /**
+	 * Get the direction of the line on the x axis
+	 * @param start The start point of the line
+	 * @param end The end point of the line
+	 * @return 1 if the direction is positive (from left to right),
+	 * -1 if the direction is negative (from right to left)
+	 */
+	public static int getDirectionX(Point2D start, Point2D end) {
+		return (int)Math.signum(end.getX() - start.getX());
+	}
+
+	/**
+	 * Get the direction of the line on the y axis
+	 * @param start The start point of the line
+	 * @param end The end point of the line
+	 * @return 1 if the direction is positive (from top to bottom),
+	 * -1 if the direction is negative (from bottom to top)
+	 */
+	public static int getDirectionY(Point2D start, Point2D end) {
+		return (int)Math.signum(end.getY() - start.getY());
+	}
 
 }

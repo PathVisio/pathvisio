@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.pathvisio.model.ConnectorShape.WayPoint;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
+import org.pathvisio.util.Utils;
 
 /**
  * MLine - basically a PathwayElement, but overrides some methods
@@ -226,10 +227,8 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 			if(e instanceof PathwayElement) {
 				side = getSide(getMStart().getRelX(), getMStart().getRelY());
 			} else if(e instanceof MAnchor) {
-				side = getOppositeSide(
-						getSide(getMStartX(), getMStartY(), getMEndX(), getMEndY())
-				);
-			}
+                side= getAttachedLineDirection((MAnchor)e);
+            }
 		}
 		return side;
 	}
@@ -248,15 +247,93 @@ public class MLine extends PathwayElement implements ConnectorRestrictions {
 			if(e instanceof PathwayElement) {
 				side = getSide(getMEnd().getRelX(), getMEnd().getRelY());
 			} else if(e instanceof MAnchor) {
-				side = getOppositeSide(
-						getSide(getMEndX(), getMEndY(), getMStartX(), getMStartY())
-				);
-			}
+                side= getAttachedLineDirection((MAnchor)e);
+            }
 		}
 		return side;
 	}
-	
-	public void adjustWayPointPreferences(WayPoint[] waypoints) {
+
+    private int getAttachedLineDirection(MAnchor anchor) {
+        int side;
+        double pos = anchor.getPosition();
+        MLine attLine = ((MLine)anchor.getParent());
+        if (attLine.getConnectorShape() instanceof ElbowConnectorShape) {
+            ConnectorShape.Segment attSeg = findAnchorSegment(attLine, pos);
+            int orientationX = Utils.getDirectionX(attSeg.getMStart(), attSeg.getMEnd());
+            int orientationY = Utils.getDirectionY(attSeg.getMStart(), attSeg.getMEnd());
+            side = getSide(orientationY, orientationX);
+        } else {
+            side = getOppositeSide(getSide(getMEndX(), getMEndY(), getMStartX(), getMStartY()));
+            if (attLine.almostPerfectAlignment(side)) {
+                side = getClockwisePerpendicularSide(side);
+            }
+        }
+        return side;
+    }
+
+    private ConnectorShape.Segment findAnchorSegment(MLine attLine, double pos) {
+        ConnectorShape.Segment[] segments = attLine.getConnectorShape().getSegments();
+        Double totLength = 0.0;
+        ConnectorShape.Segment attSeg = null;
+        for (ConnectorShape.Segment segment:segments) {
+            totLength = totLength + segment.getMLength();
+        }
+        Double currPos;
+        Double segSum = 0.0;
+        for (ConnectorShape.Segment segment:segments) {
+            segSum = segSum + segment.getMLength();
+            currPos = segSum / totLength;
+            attSeg = segment;
+            if (currPos > pos) {
+                break;
+            }
+        }
+        return attSeg;
+    }
+
+    /**
+     * Check if either the line segment has less than or equal to
+     * 10 degree alignment with the side passed
+     * @param startLine
+     * @param endLine
+     * @return true if <= 10 degree alignment
+     * else false
+     */
+    private boolean almostPerfectAlignment(int side){
+        int MAXOFFSET = 30; /* cutoff point where we see a shallow 
+        	angle still as either horizontal or vertical */ 
+                // X axis
+        if ((side == SIDE_EAST) || (side == SIDE_WEST)) {
+            double angleDegree = (180/Math.PI)*Math.atan2(Math.abs(getStartPoint().getY() - getEndPoint().getY()), Math.abs(getStartPoint().getX() - getEndPoint().getX()));
+            if (angleDegree <= MAXOFFSET)
+                return true;
+        } else {//north south or Y axis
+            double angleDegree = (180/Math.PI)*Math.atan2(Math.abs(getStartPoint().getX() - getEndPoint().getX()), Math.abs(getStartPoint().getY() - getEndPoint().getY()));
+            if (angleDegree <= MAXOFFSET)
+                return true;
+        }
+        return false;
+    }
+
+	/**
+	 * Returns the Perpendicular for a SIDE_* constant (e.g. SIDE_EAST <-> SIDE_WEST)
+	 */
+	private int getClockwisePerpendicularSide(int side) {
+	    switch(side) {
+	    case SIDE_EAST:
+	        return SIDE_SOUTH;
+	    case SIDE_WEST:
+	        return SIDE_NORTH;
+	    case SIDE_NORTH:
+	        return SIDE_EAST;
+	    case SIDE_SOUTH:
+	        return SIDE_WEST;
+	    }
+	    return -1;
+	}
+    
+
+    public void adjustWayPointPreferences(WayPoint[] waypoints) {
 		List<MPoint> mpoints = getMPoints();
 		for(int i = 0; i < waypoints.length; i++) {
 			WayPoint wp = waypoints[i];

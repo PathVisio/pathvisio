@@ -22,6 +22,9 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
+import org.pathvisio.preferences.PreferenceManager;
+
+
 /**
  * Standalone version of the GpmlDiff Applet,
  * mainly used for testing purposes.
@@ -36,6 +39,7 @@ class GpmlDiffGui
 
 	public static void main (String[] argv)
 	{
+		PreferenceManager.init();
 		JFrame window = new JFrame();
 		final GpmlDiffWindow panel = new GpmlDiffWindow(window);
 		panel.addFileActions();

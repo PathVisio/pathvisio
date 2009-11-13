@@ -427,10 +427,10 @@ public class Revision
 
 		<!-- copy to /var/www/wikipathways -->
 		<copy toDir="${wikipathways.dest.applet}">
-			<fileset dir="${build.wpi.applet}" includes="**/*.*" />			
+			<fileset dir="${build.wpi.applet}" includes="**/*" />			
 		</copy>
 		<copy toDir="${wikipathways.dest.bin}">
-			<fileset dir="${build.wpi.bin}" includes="**/*.*" />
+			<fileset dir="${build.wpi.bin}" includes="**/*" />
 		</copy>
 	</target>
 	

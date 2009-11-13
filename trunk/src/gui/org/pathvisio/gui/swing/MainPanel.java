@@ -106,6 +106,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	protected SwingEngine swingEngine;
 
 	private final PathwayElementMenuListener pathwayElementMenuListener;
+
+	public PathwayTableModel getModel(){
+		return model;
+	}
 	
 	public PathwayElementMenuListener getPathwayElementMenuListener()
 	{

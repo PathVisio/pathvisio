@@ -190,4 +190,8 @@ public class Utils {
 		return (int)Math.signum(end.getY() - start.getY());
 	}
 
+
+	public static boolean isEmpty(String str) {
+		return str == null || str.length() == 0;
+	}
 }

@@ -88,6 +88,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 {
 	//TreeMap has better performance than HashMap
 	//in the (common) case where no attributes are present
+	//This map should never contain non-null values, if a value
+	//is set to null the key should be removed.
 	private Map<String, String> attributes = new TreeMap<String, String>();
 	
 	/**
@@ -106,10 +108,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	
 	/**
 	 * set a dynamic property.
+	 * Setting to null means removing this dynamic property altogether
 	 */
 	public void setDynamicProperty (String key, String value)
 	{
-		attributes.put (key, value);
+		if (value == null)
+			attributes.remove(key);
+		else
+			attributes.put (key, value);
 		fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
 				PathwayEvent.MODIFIED_GENERAL));
 	}

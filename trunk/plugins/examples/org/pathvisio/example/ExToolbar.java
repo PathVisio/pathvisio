@@ -17,9 +17,10 @@
 package org.pathvisio.example;
 
 import java.awt.event.ActionEvent;
+import java.net.URL;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.pathvisio.ApplicationEvent;
@@ -56,9 +57,26 @@ public class ExToolbar implements Plugin, Engine.ApplicationEventListener
 	{
 		toolbarAction.setEnabled(desktop.getSwingEngine().getEngine().hasVPathway());
 	}
+
+	private final MyToolbarAction toolbarAction = new MyToolbarAction();
 	
-	private Action toolbarAction = new AbstractAction()
+	private class MyToolbarAction extends AbstractAction
 	{
+		private static final String ICON_PATH = "org/pathvisio/example/example-icon.gif";
+		
+		MyToolbarAction()
+		{
+			// Short description will be the mouse tooltip label
+			putValue(SHORT_DESCRIPTION, "My Toolbar Action");
+			
+			// icon in the toolbar. Use a 16x16 gif or png image.
+			// The resource should be in the class path
+			URL url = ExToolbar.class.getClassLoader().getResource(ICON_PATH);
+			if (url == null) throw new IllegalStateException("Could not load resource " + 
+					ICON_PATH + ", please check that it is in the class-path");
+			putValue(SMALL_ICON, new ImageIcon(url));
+		}
+		
 		public void actionPerformed(ActionEvent arg0) 
 		{
 			JOptionPane.showMessageDialog(desktop.getFrame(), "Hello World");	

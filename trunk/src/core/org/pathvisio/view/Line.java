@@ -531,8 +531,11 @@ public class Line extends Graphics implements Adjustable
 	
 	protected void vMoveBy(double vdx, double vdy)
 	{
-		for(VPoint p : points) {
-			p.vMoveBy(vdx, vdy);
+		// move MPoints directly, not every MPoint is represented
+		// by a VPoint but we want to move them all.
+		for(MPoint p : gdata.getMPoints()) 
+		{
+			p.moveBy(canvas.mFromV(vdx), canvas.mFromV(vdy));
 		}
 		//Redraw graphRefs
 		for(GraphRefContainer ref : gdata.getReferences()) {

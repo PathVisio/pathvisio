@@ -30,73 +30,136 @@ import org.pathvisio.model.ShapeType;
  */
 public class MIMShapes
 {
-	public static void registerShapes()
+	public static final LineType MIM_NECESSARY_STIMULATION = LineType.create ("mim-necessary-stimulation", "Arrow");
+    public static final LineType MIM_BINDING = LineType.create ("mim-binding", "Arrow");
+    public static final LineType MIM_CONVERSION = LineType.create ("mim-conversion", "Arrow");
+    public static final LineType MIM_STIMULATION = LineType.create ("mim-stimulation", "Arrow");
+    public static final LineType MIM_MODIFICATION = LineType.create ("mim-modification", "Arrow");
+    public static final LineType MIM_CATALYSIS =LineType.create ("mim-catalysis", "Arrow");
+    public static final LineType MIM_INHIBITION = LineType.create ("mim-inhibition", "Arrow");
+    public static final LineType MIM_CLEAVAGE = LineType.create ("mim-cleavage", "Arrow");
+    public static final LineType MIM_COVALENT_BOND = LineType.create ("mim-covalent-bond", "Arrow");
+    public static final LineType MIM_BRANCHING_LEFT = LineType.create ("mim-branching-left", null);
+    public static final LineType MIM_BRANCHING_RIGHT = LineType.create ("mim-branching-right", null);
+    public static final LineType MIM_TRANSLATION = LineType.create ("mim-transcription-translation", "Arrow");
+    public static final LineType MIM_GAP = LineType.create ("mim-gap", null);
+
+    public static void registerShapes()
 	{
 		ShapeRegistry.registerShape ("mim-phosphorylated", getPluggableShape (MIM_PHOSPHORYLATED));
 		ShapeRegistry.registerShape ("mim-degradation", getPluggableShape (MIM_DEGRADATION));
 		ShapeRegistry.registerShape ("mim-interaction", getPluggableShape (MIM_INTERACTION));
-		ShapeRegistry.registerArrow ("mim-necessary-stimulation", getMIMNecessary(), ArrowShape.FillType.OPEN);
-		ShapeRegistry.registerArrow ("mim-binding", getMIMBinding(), ArrowShape.FillType.CLOSED);
-		ShapeRegistry.registerArrow ("mim-conversion", getMIMConversion(), ArrowShape.FillType.CLOSED);		
-		ShapeRegistry.registerArrow ("mim-stimulation", getMIMStimulation(), ArrowShape.FillType.OPEN);
-		ShapeRegistry.registerArrow ("mim-catalysis", getMIMCatalysis(), ArrowShape.FillType.OPEN);		
-		ShapeRegistry.registerArrow ("mim-cleavage", getMIMCleavage(), ArrowShape.FillType.WIRE);
-		ShapeRegistry.registerArrow ("mim-inhibition", getMIMInhibition(), ArrowShape.FillType.OPEN, TBARWIDTH + TBAR_GAP);
-		
-		ShapeType.create ("mim-phosphorylated", null);
+
+		ShapeRegistry.registerArrow (MIM_NECESSARY_STIMULATION.getName(), getMIMNecessary(), ArrowShape.FillType.OPEN, ARROWWIDTH);
+		ShapeRegistry.registerArrow (MIM_BINDING.getName(), getMIMBinding(), ArrowShape.FillType.CLOSED);
+		ShapeRegistry.registerArrow (MIM_CONVERSION.getName(), getMIMConversion(), ArrowShape.FillType.CLOSED, ARROWWIDTH);
+		ShapeRegistry.registerArrow (MIM_STIMULATION.getName(), getMIMStimulation(), ArrowShape.FillType.OPEN, ARROWWIDTH);
+        ShapeRegistry.registerArrow (MIM_MODIFICATION.getName(), getMIMBinding(), ArrowShape.FillType.CLOSED);
+		ShapeRegistry.registerArrow (MIM_CATALYSIS.getName(), getMIMCatalysis(), ArrowShape.FillType.OPEN, CATALYSIS_DIAM + CATALYSIS_GAP);
+        ShapeRegistry.registerArrow (MIM_CLEAVAGE.getName(), getMIMCleavage(), ArrowShape.FillType.WIRE,CLEAVAGE_FIRST);
+        ShapeRegistry.registerArrow (MIM_BRANCHING_LEFT.getName(), getMIMBranching(LEFT), ArrowShape.FillType.OPEN, BRANCH_LOCATION);
+        ShapeRegistry.registerArrow (MIM_BRANCHING_RIGHT.getName(), getMIMBranching(RIGHT), ArrowShape.FillType.OPEN, BRANCH_LOCATION);
+		ShapeRegistry.registerArrow (MIM_INHIBITION.getName(), getMIMInhibition(),  ArrowShape.FillType.OPEN,TBARWIDTH + TBAR_GAP);
+        ShapeRegistry.registerArrow (MIM_COVALENT_BOND.getName(), getMIMCovalentBond(), ArrowShape.FillType.OPEN);
+        ShapeRegistry.registerArrow (MIM_TRANSLATION.getName(), getMIMTranslation(), ArrowShape.FillType.WIRE, ARROWWIDTH + ARROWHEIGHT);
+        ShapeRegistry.registerArrow (MIM_GAP.getName(), getMIMGap(), ArrowShape.FillType.OPEN, 150);
+
+        ShapeType.create ("mim-phosphorylated", null);
 		ShapeType.create ("mim-degradation", null);
 		ShapeType.create ("mim-interaction", null);
-		
-		LineType.create ("mim-necessary-stimulation", "Arrow");
-		LineType.create ("mim-binding", "Arrow");
-		LineType.create ("mim-conversion", "Arrow");
-		LineType.create ("mim-stimulation", "Arrow");
-		LineType.create ("mim-catalysis", "Arrow");
-		LineType.create ("mim-inhibition", "Arrow");
-		LineType.create ("mim-cleavage", null);
 	}
 
-	private static final int MIM_PHOSPHORYLATED = 0;
+    private static final int MIM_PHOSPHORYLATED = 0;
 	private static final int MIM_DEGRADATION = 1;
 	private static final int MIM_INTERACTION = 2;
 
-	static final int CLEAVAGE_FIRST = 100;
-	static final int CLEAVAGE_SECOND = 500;
+    private static final int BOND_SIZE = 125;
 
+    static private java.awt.Shape getMIMCovalentBond ()
+    {
+        return new Rectangle2D.Double(
+            -BOND_SIZE + 1, -BOND_SIZE/2,
+            BOND_SIZE, BOND_SIZE
+        );
+    }
+
+	//Cleavage line ending constants
+	static final int CLEAVAGE_FIRST = 150;
+	static final int CLEAVAGE_SECOND = 300;
+	static final int CLEAVAGE_GAP = CLEAVAGE_SECOND - CLEAVAGE_FIRST;
+
+	//Branch line ending constants
+	 private static final int LEFT = 0;
+	 private static final int RIGHT = 1;
+	 private static final int BRANCH_LOCATION = 125;
+	 private static final int BRANCHTHICKNESS = 1;
+
+	 //method to create the MIM Branch RIGHT and LEFT line endings
+	 // a 4 sided structure with small thickness works better tha
+	 // a line.(Maybe the affine trasform has a issue with a line
+	 //as opposed to a thin quadrilateral)
+	static private java.awt.Shape getMIMBranching (int direction)
+    {
+		if (direction == RIGHT) {
+			GeneralPath path = new GeneralPath();
+			path.moveTo (0, 0);
+			path.lineTo (BRANCH_LOCATION, -BRANCH_LOCATION);
+			path.lineTo(BRANCH_LOCATION,-BRANCH_LOCATION  + BRANCHTHICKNESS);
+			path.lineTo(BRANCHTHICKNESS, 0);
+			path.closePath();
+			return path;
+		}
+		else
+		{
+			GeneralPath path = new GeneralPath();
+			path.moveTo (0, 0);
+			path.lineTo (BRANCH_LOCATION, BRANCH_LOCATION);
+			path.lineTo(BRANCH_LOCATION,BRANCH_LOCATION  - BRANCHTHICKNESS);
+			path.lineTo(BRANCHTHICKNESS,0);
+			path.closePath();
+			return path;
+		}
+    }
+
+	//method to create the MIM Cleavage lie ending
 	static private java.awt.Shape getMIMCleavage ()
 	{
 		GeneralPath path = new GeneralPath();
 		path.moveTo (0, 0);
-		path.lineTo (-CLEAVAGE_FIRST, -CLEAVAGE_FIRST);
-		path.lineTo (CLEAVAGE_SECOND, -CLEAVAGE_FIRST);
+		path.lineTo (0, -CLEAVAGE_FIRST);
+		path.lineTo (CLEAVAGE_SECOND, CLEAVAGE_FIRST);
 		return path;
 	}
 
-	static final int CATALISYS_DIAM = 175;
-	
+	static final int CATALYSIS_DIAM = 125;
+	static final int CATALYSIS_GAP = CATALYSIS_DIAM/4;
+	static final int CATALYSIS_GAP_HEIGHT = 100;
+	//create the ellipse for catalysis line ending
 	static private java.awt.Shape getMIMCatalysis ()
 	{
 		return new Ellipse2D.Double	(
-			-CATALISYS_DIAM / 2, -CATALISYS_DIAM / 2,
-			CATALISYS_DIAM, CATALISYS_DIAM);
+			0, -CATALYSIS_DIAM/2,
+			CATALYSIS_DIAM, CATALYSIS_DIAM);
 	}
 
 	private static final int ARROWHEIGHT = 65;
 	private static final int ARROWWIDTH = 140;
-	private static final int ARROW_NECESSARY_CROSSBAR = 200;
-	
-	static private java.awt.Shape getMIMStimulation ()
-	{
+	private static final int ARROW_NECESSARY_CROSSBAR = 100;
+
+	private static GeneralPath getArrowShapedPath() {
 		GeneralPath path = new GeneralPath();
-		path.moveTo (0, 0);
-		path.lineTo (-ARROWWIDTH, -ARROWHEIGHT);
-		path.lineTo (-ARROWWIDTH, ARROWHEIGHT);
+		path.moveTo (0, -ARROWHEIGHT);
+		path.lineTo (ARROWWIDTH, 0);
+		path.lineTo (0, ARROWHEIGHT);
 		path.closePath();
 		return path;
 	}
 
-	static private java.awt.Shape getMIMBinding ()
-	{
+	static private java.awt.Shape getMIMStimulation () {
+		return getArrowShapedPath();
+	}
+
+	static private java.awt.Shape getMIMBinding () {
 		GeneralPath path = new GeneralPath();
 		path.moveTo (0, 0);
 		path.lineTo (-ARROWWIDTH, -ARROWHEIGHT);
@@ -106,30 +169,41 @@ public class MIMShapes
 		return path;
 	}
 
-	static private java.awt.Shape getMIMConversion ()
-	{
-		GeneralPath path = new GeneralPath();
-		path.moveTo (0, 0);
-		path.lineTo (-ARROWWIDTH, -ARROWHEIGHT);
-		path.lineTo (-ARROWWIDTH, ARROWHEIGHT);
-		path.closePath();
-		return path;
+	static private java.awt.Shape getMIMConversion () {
+		return getArrowShapedPath();
 	}
 
-	static private java.awt.Shape getMIMNecessary ()
-	{
-		GeneralPath path = new GeneralPath();
-		path.moveTo (0, 0);
-		path.lineTo (-ARROWWIDTH, -ARROWHEIGHT);
-		path.lineTo (-ARROWWIDTH, ARROWHEIGHT);
-		path.closePath();
+	static private java.awt.Shape getMIMNecessary () {
+		GeneralPath path = getArrowShapedPath();
 		path.moveTo (-ARROW_NECESSARY_CROSSBAR, -ARROWHEIGHT);
 		path.lineTo (-ARROW_NECESSARY_CROSSBAR, ARROWHEIGHT);
 		return path;
 	}
 
-	/**
-	   Internal, 
+    final static int TAIL = ARROWWIDTH / 2;
+
+    static private Shape getMIMTranslation() {
+        GeneralPath path = new GeneralPath();
+		path.moveTo (-TAIL, 0);
+		path.lineTo (-TAIL, ARROWHEIGHT *2);
+        path.lineTo (TAIL, ARROWHEIGHT * 2);
+        path.lineTo (TAIL, ARROWHEIGHT * 3);
+		path.lineTo (TAIL + ARROWWIDTH, ARROWHEIGHT * 2);
+        path.lineTo (TAIL, ARROWHEIGHT);
+        path.lineTo (TAIL, ARROWHEIGHT * 2);
+        return path;
+    }
+
+    static private java.awt.Shape getMIMGap () {
+        GeneralPath path = new GeneralPath();
+        path.moveTo (0, 0);
+        path.moveTo (0, 5);
+        return path;
+    }
+
+
+    /**
+	   Internal,
 	   Only for general shape types that can be described as a path.
 	   The shapes are constructed as a general path with arbitrary size
 	   and then resized to fit w and h parameters.
@@ -175,7 +249,7 @@ public class MIMShapes
 			path.curveTo (7.08f, 29.65f, 0.20f, 23.18f, 0.20f, 15.20f);
 			path.curveTo (0.20f, 7.23f, 7.08f, 0.76f, 15.55f, 0.76f);
 			path.curveTo (24.02f, 0.76f, 30.90f, 7.23f, 30.90f, 15.20f);
-			path.closePath();			
+			path.closePath();
 			break;
 		default:
 			assert (false);
@@ -183,28 +257,18 @@ public class MIMShapes
 		return path;
 	}
 
-	// copied from BasicShapes
+	// copied from BasicShapes for T-Bar
 	private static final int TBARHEIGHT = 225;
-	private static final int TBARMASKHEIGHT = 15 * 3;
 	private static final int TBARWIDTH = 1;
-	private static final int TBAROFFSET = 150;
 	private static final int TBAR_GAP = 100;
 
 	// copied from BasicShapes.getTBar()
 	private static Shape getMIMInhibition()
 	{
 		return new Rectangle2D.Double(
-			-TBAROFFSET, -TBARHEIGHT / 2,
+			0, -TBARHEIGHT / 2,
 			TBARWIDTH, TBARHEIGHT
 			);
 	}
 
-	// copied from BasicShapes.getTBarFill
-	private static Shape getMIMInhibitionFill() 
-	{
-		return new Rectangle2D.Double(
-			-TBAROFFSET + TBARWIDTH, -TBARMASKHEIGHT / 2,
-			TBAROFFSET * 2 - TBARWIDTH, TBARMASKHEIGHT
-		);
-	}	
 }

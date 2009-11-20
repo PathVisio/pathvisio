@@ -79,16 +79,17 @@ public class ShapeRegistry
 	{
 		shapeMap.put (key, sh);
 	}
-
+	
 	/**
 	 * Register an arrow shape
 	 * @param key The key used to identify the arrow shape
 	 * @param sh The shape used to draw the stroke
-	 * @param fillShape The shape used to draw the fill (in case fillType is open or closed
 	 * @param fillType The fill type, see {@link ArrowShape}
+	 * @param lineEndingLength The line ending width
 	 */
-	static public void registerArrow (String key, Shape sh, Shape fillShape, ArrowShape.FillType fillType) {
-		arrowMap.put(key, new ArrowShape (sh, fillShape, fillType));
+	static public void registerArrow (String key, Shape sh, ArrowShape.FillType fillType, int lineEndingLength) {
+		//pass in zero as the gap between line line ending and anchor
+		arrowMap.put(key, new ArrowShape (sh, fillType, lineEndingLength));
 	}
 	
 	/**

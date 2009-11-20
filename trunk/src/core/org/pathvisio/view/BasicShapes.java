@@ -57,7 +57,7 @@ class BasicShapes
 			"Rectangle", new Rectangle (0, 0, 10, 10));
 
 		ShapeRegistry.registerArrow ("Arrow", getArrowHead(), ArrowShape.FillType.CLOSED);
-		ShapeRegistry.registerArrow ("TBar", getTBar(), getTBarFill(), ArrowShape.FillType.OPEN);
+		ShapeRegistry.registerArrow ("TBar", getTBar(), ArrowShape.FillType.OPEN, TBARWIDTH + TBAR_GAP);
 		ShapeRegistry.registerArrow ("LigandRound", getLRound(), ArrowShape.FillType.CLOSED);
 		ShapeRegistry.registerArrow ("ReceptorRound", getRRound(), ArrowShape.FillType.WIRE);
 		ShapeRegistry.registerArrow ("Receptor", getReceptor(), ArrowShape.FillType.WIRE);
@@ -74,9 +74,8 @@ class BasicShapes
 	private static final int ARROWHEIGHT = 65;
 	private static final int ARROWWIDTH = 140;
 	private static final int TBARHEIGHT = 225;
-	private static final int TBARMASKHEIGHT = 15 * 3;
 	private static final int TBARWIDTH = 1;
-	private static final int TBAROFFSET = 150;
+	private static final int TBAR_GAP = 100;
 	private static final int LRDIAM = 175;
 	private static final int RRDIAM = LRDIAM + 50;
 	private static final int LIGANDWIDTH = 125;
@@ -87,6 +86,7 @@ class BasicShapes
 	private static final int ANCHOR_DEFAULT_SIZE = 50;
 	private static final int ANCHOR_CIRCLE_SIZE = 125;
 	
+
 	private static Shape getArrowHead()
 	{
 		int[] xpoints = new int[] { 0, -ARROWWIDTH, -ARROWWIDTH };
@@ -97,17 +97,9 @@ class BasicShapes
 	private static Shape getTBar()
 	{
 		return new Rectangle2D.Double(
-			-TBAROFFSET, -TBARHEIGHT / 2,
+			0, -TBARHEIGHT / 2,
 			TBARWIDTH, TBARHEIGHT
 			);
-	}
-	
-	private static Shape getTBarFill() 
-	{
-		return new Rectangle2D.Double(
-			-TBAROFFSET + TBARWIDTH, -TBARMASKHEIGHT / 2,
-			TBAROFFSET * 2 - TBARWIDTH, TBARMASKHEIGHT
-		);
 	}
 		
 	private static Shape getLRound()

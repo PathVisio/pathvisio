@@ -19,6 +19,7 @@ package org.pathvisio.model;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
+import org.pathvisio.model.ConnectorShape.Segment;
 import org.pathvisio.view.LinAlg;
 import org.pathvisio.view.LinAlg.Point;
 
@@ -38,6 +39,20 @@ public class StraightConnectorShape extends AbstractConnector {
 		));
 		setWayPoints(new WayPoint[0]);
 	}
+	
+	
+	
+	/**
+	 *  Calculate shape from the width of the line endings
+	 *  This gets 
+	 */
+	 protected java.awt.Shape calculateShape(Segment[] segments)
+	 {
+		 Point2D start = segments[0].getMStart();
+		 Point2D end = segments[segments.length - 1].getMEnd();
+		 return (new Line2D.Double(start,end));
+	 }
+	 
 	
 	public boolean hasValidWaypoints(ConnectorRestrictions restrictions) {
 		return false;

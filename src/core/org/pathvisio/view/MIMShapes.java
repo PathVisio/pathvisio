@@ -41,7 +41,7 @@ public class MIMShapes
 		ShapeRegistry.registerArrow ("mim-stimulation", getMIMStimulation(), ArrowShape.FillType.OPEN);
 		ShapeRegistry.registerArrow ("mim-catalysis", getMIMCatalysis(), ArrowShape.FillType.OPEN);		
 		ShapeRegistry.registerArrow ("mim-cleavage", getMIMCleavage(), ArrowShape.FillType.WIRE);
-		ShapeRegistry.registerArrow ("mim-inhibition", getMIMInhibition(), getMIMInhibitionFill(), ArrowShape.FillType.OPEN);
+		ShapeRegistry.registerArrow ("mim-inhibition", getMIMInhibition(), ArrowShape.FillType.OPEN, TBARWIDTH + TBAR_GAP);
 		
 		ShapeType.create ("mim-phosphorylated", null);
 		ShapeType.create ("mim-degradation", null);
@@ -188,7 +188,8 @@ public class MIMShapes
 	private static final int TBARMASKHEIGHT = 15 * 3;
 	private static final int TBARWIDTH = 1;
 	private static final int TBAROFFSET = 150;
-	
+	private static final int TBAR_GAP = 100;
+
 	// copied from BasicShapes.getTBar()
 	private static Shape getMIMInhibition()
 	{

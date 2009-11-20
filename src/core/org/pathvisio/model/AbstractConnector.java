@@ -17,6 +17,9 @@
 package org.pathvisio.model;
 
 import java.awt.Shape;
+import java.awt.geom.Point2D;
+
+import org.pathvisio.model.ConnectorShape.Segment;
 
 /**
  * Abstract connectorshape implementation that deals 
@@ -34,6 +37,39 @@ public abstract class AbstractConnector implements ConnectorShape {
 		return shape;
 	}
 	
+	
+	abstract protected Shape calculateShape(Segment[] segments);
+	 
+	 /**
+	  *  Calculate shape from the width of the line endings
+	  *   
+	  */
+	 public Shape calculateAdjustedShape(double startGap, double endGap)
+	 {
+		 //gets the segments to local array 
+		 Segment[] segments = getSegments();
+		 int numSegments=segments.length;
+		 Segment[] localsegments = new Segment[numSegments];
+		 
+		 for (int i=0;i<segments.length;i++)
+		 	localsegments[i]=new Segment(segments[i].getMStart(),segments[i].getMEnd());
+		 
+		 //co-ordinate calculations on start and end segments
+		 //make changes on the segment array downloaded 
+		 Point2D adjustedLineEnd = segments[segments.length - 1].calculateNewEndPoint(endGap);
+		 localsegments[numSegments -1] = new Segment(segments[numSegments - 1].getMStart(),adjustedLineEnd);
+		          
+		 
+		 //now for the first segment in the connector shape
+		 Point2D adjustedLineStart = segments[0].calculateNewStartPoint(startGap);
+		 localsegments[0] = new Segment(adjustedLineStart,localsegments[0].getMEnd());
+		 
+		 Shape  adjustedShape = calculateShape(localsegments);
+		 
+		 return adjustedShape;
+	 }
+	 
+	 
 	/**
 	 * Set the shape cache that will be returned by {@link #getShape()}
 	 */

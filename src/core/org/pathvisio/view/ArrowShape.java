@@ -68,19 +68,20 @@ public class ArrowShape
 	 * Normally, this constructor is not called directly. 
 	 * Use {@link ShapeRegistry.registerShape} instead to define a new ArrowShape.
 	 */
-	public ArrowShape (Shape shape, Shape fillShape, FillType fillType) {
+	public ArrowShape (Shape shape, FillType fillType, int gap) {
 		this.shape = shape;
 		this.fillType = fillType;
-		this.fillShape = fillShape != null ? fillShape : shape;
+		this.gap = gap;
+		
 	}
 	
 	/**
 	 * Normally, this constructor is not called directly. 
 	 * Use {@link ShapeRegistry.registerShape} instead to define a new ArrowShape.
 	 */
-	public ArrowShape (Shape shape, FillType fillType)
-	{
-		this(shape, shape, fillType);
+	public ArrowShape (Shape shape, FillType fillType) {
+		this.shape = shape;
+		this.fillType = fillType;
 	}
 	
 	/**
@@ -93,12 +94,17 @@ public class ArrowShape
 	 */
 	public Shape getShape() { return shape; }
 	
+	
 	/**
-	 * @return the body of this arrow type. If this is null, {@link getShape} is used instead
+	 * @return the gap at the end of the line, for arrow shapes
+	 * 	that should not overlap the thing the line is connected with. 
 	 */
-	public Shape getFillShape() { return fillShape; }
+	public double getGap() 
+	{
+		return (double)gap;
+	}
 	
 	private Shape shape;
 	private FillType fillType;
-	private Shape fillShape;
+	private int gap = 0;
 }

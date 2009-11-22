@@ -37,6 +37,7 @@ import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.Resources;
+import org.pathvisio.util.Utils;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
@@ -470,7 +471,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			super();
 			putValue(NAME, "Delete");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					java.awt.event.KeyEvent.VK_DELETE, 0));
+					(Utils.getOS() == Utils.OS_MAC ? java.awt.event.KeyEvent.VK_BACK_SPACE 
+							: java.awt.event.KeyEvent.VK_DELETE),
+					0));
 		}
 
 		public void actionPerformed(ActionEvent e) {

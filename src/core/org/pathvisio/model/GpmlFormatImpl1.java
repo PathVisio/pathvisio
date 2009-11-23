@@ -1331,8 +1331,32 @@ public class GpmlFormatImpl1
 	private static void addGraphIds(Pathway pathway) throws ConverterException {
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			String id = pe.getGraphId();
-			if(id == null || "".equals(id)) {
-				pe.setGeneratedGraphId();
+			if(id == null || "".equals(id)) 
+			{
+				if (pe.getObjectType() == ObjectType.LINE)
+				{
+					// because we forgot to write out graphId's on Lines on older pathways
+					// generate a graphId based on hash of coordinates
+					// so that pathways with branching history still have the same id.
+					// This part may be removed for future versions of GPML (2010+)
+					
+					StringBuilder builder = new StringBuilder();
+					builder.append(pe.getMStartX());
+					builder.append(pe.getMStartY());
+					builder.append(pe.getMEndX());
+					builder.append(pe.getMEndY());
+					builder.append(pe.getStartLineType());
+					builder.append(pe.getEndLineType());
+					
+					String newId;
+					int i = 1;
+					do
+					{
+						newId = "id" + Integer.toHexString((builder.toString() + ("_" + i)).hashCode());
+					}
+					while (pathway.getGraphIds().contains(newId));
+					pe.setGraphId(newId);
+				}
 			}
 		}
 	}

@@ -309,7 +309,8 @@ public abstract class DefaultTemplates {
 			
 			lastCatLine.getMStart().linkTo(lastCatalyst, 0, 1);
 			lastCatLine.getMEnd().linkTo(anchor, 0, 0);
-			
+			lastCatLine.setEndLineType(MIMShapes.MIM_CATALYSIS);
+
 			return new PathwayElement[] { lastStartNode, lastEndNode, lastLine, lastCatalyst };
 		}
 		

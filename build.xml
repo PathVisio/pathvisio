@@ -30,6 +30,8 @@
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="checkstyle.output.file" value="warnings.txt"/>
 
+	<property name="keystore.password" value="PathVisio" />
+	
 	<!-- libraries used by pathvisio-core.jar -->
 	<path id="core.libs">
 	  <fileset dir="lib">
@@ -338,11 +340,6 @@ public class Revision
 	</target>
 
 	<target name="prepare-webstart" depends="jar,resources-jar,visplugins-jar" description="prepares webstart">
-		<fail message="You must specify a keystore password for opening visioKeyStore: ant -Dkeystore.password=***** [ant target]">
-			<condition>
-				<not> <isset property="keystore.password"/> </not>
-			</condition>
-		</fail>
 		<mkdir dir="${webstart.dir}/www"/>
 		<!-- Update latest version file -->
 		<echo file="${webstart.dir}/www/latestversion">${subversion_revision}</echo>

@@ -85,7 +85,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final SelectAllAction selectAll;
 	public final GroupAction toggleGroup;
 	public final ComplexAction toggleComplex;
-	public final DeleteAction delete;
+	public final DeleteAction delete1;
+	public final DeleteAction delete2;
 	public final CopyAction copy;
 	public final PasteAction paste;
 	public final KeyMoveAction keyMove;
@@ -110,7 +111,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		selectAll = new SelectAllAction();
 		toggleGroup = new GroupAction();
 		toggleComplex = new ComplexAction();
-		delete = new DeleteAction();
+		delete1 = new DeleteAction(java.awt.event.KeyEvent.VK_DELETE);
+		delete2 = new DeleteAction(java.awt.event.KeyEvent.VK_BACK_SPACE);
 		copy = new CopyAction(engine);
 		paste = new PasteAction(engine);
 		keyMove = new KeyMoveAction(engine, null);
@@ -128,8 +130,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(toggleGroup, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(toggleComplex, GROUP_ENABLE_EDITMODE);
 		registerToGroup(toggleComplex, GROUP_ENABLE_WHEN_SELECTION);
-		registerToGroup(delete, GROUP_ENABLE_EDITMODE);
-		registerToGroup(delete, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(delete1, GROUP_ENABLE_EDITMODE);
+		registerToGroup(delete1, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(copy, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_EDITMODE);
@@ -467,13 +469,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 
 	private class DeleteAction extends AbstractAction {
 
-		public DeleteAction() {
+		public DeleteAction(int ke) {
 			super();
 			putValue(NAME, "Delete");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(
-					(Utils.getOS() == Utils.OS_MAC ? java.awt.event.KeyEvent.VK_BACK_SPACE 
-							: java.awt.event.KeyEvent.VK_DELETE),
-					0));
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(ke , 0));
 		}
 
 		public void actionPerformed(ActionEvent e) {

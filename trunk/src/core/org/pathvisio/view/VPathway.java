@@ -1465,7 +1465,8 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		registerKeyboardAction(viewActions.toggleGroup);
 		registerKeyboardAction(viewActions.toggleComplex);
 		registerKeyboardAction(viewActions.selectAll);
-		registerKeyboardAction(viewActions.delete);
+		registerKeyboardAction(viewActions.delete1);
+		registerKeyboardAction(viewActions.delete2);
 		registerKeyboardAction(viewActions.undo);
 		registerKeyboardAction(viewActions.addAnchor);
 		registerKeyboardAction(viewActions.orderBringToFront);

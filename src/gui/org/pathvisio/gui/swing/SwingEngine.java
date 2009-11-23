@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -46,6 +47,7 @@ import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.Compat;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
@@ -111,8 +113,9 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return mainPanel != null;
 	}	
 	
-	public void handleConverterException(String message, Component c, Exception e) {
-		if (e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
+	public void handleConverterException(String message, Component c, Throwable e) {
+		if (e.getMessage() != null && 
+				e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
 		{
 			JOptionPane.showMessageDialog(c,
 					message + "\n\n" +
@@ -142,8 +145,12 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		d.setVisible(true);
 		try {
 			return sw.get();
-		} catch (Exception e) {
-			handleConverterException("Unable to perform conversion", null, e);
+		} catch (ExecutionException e)
+		{
+			handleConverterException("Exception during conversion", null, e.getCause());
+			return false;
+		} catch (InterruptedException e) {
+			handleConverterException("Conversion was cancelled or interrupted", null, e);
 			return false;
 		}
 	}

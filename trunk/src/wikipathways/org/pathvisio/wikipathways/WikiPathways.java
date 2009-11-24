@@ -25,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,8 +46,6 @@ import org.apache.xmlrpc.client.XmlRpcTransport;
 import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 import org.apache.xmlrpc.common.XmlRpcStreamRequestConfig;
 import org.apache.xmlrpc.util.HttpUtil;
-import org.bridgedb.rdb.DBConnector;
-import org.bridgedb.rdb.DBConnectorDerbyServer;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Globals;
@@ -223,10 +222,14 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 
 		//Connect to the gene database
 		if(isUseGdb()) {
-			DBConnectorDerbyServer.init(parameters.getValue(Parameter.GDB_SERVER), 1527);
+			Class.forName("org.bridgedb.webservice.bridgerest.BridgeRest");
 			GdbManager gdbManager = swingEngine.getGdbManager();
-			gdbManager.setGeneDb("idmapper-derbyclient:" + getPwSpecies());
-			gdbManager.setMetaboliteDb("idmapper-derbyclient:metabolites");
+			
+			String server = parameters.getValue(Parameter.GDB_SERVER);
+			if(!server.endsWith("/")) server = server + "/";
+			String url = "idmapper-bridgerest:" + server + URLEncoder.encode(getPwSpecies(), "UTF-8");
+			Logger.log.trace("Bridgedb connection string: " + url);
+			gdbManager.setGeneDb(url);
 		}
 	}
 

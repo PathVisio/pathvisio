@@ -98,7 +98,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 
 		//Don't show delete if the element cannot be deleted
 		if(!(e instanceof InfoBox)) {
-			menu.add(vActions.delete);
+			menu.add(vActions.delete1);
 		}
 				
 		JMenu selectMenu = new JMenu("Select");

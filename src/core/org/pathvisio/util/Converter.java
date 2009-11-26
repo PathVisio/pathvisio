@@ -131,5 +131,6 @@ public class Converter {
 			printUsage();
 			System.exit(-1);
 		}
+		System.exit(0); //Everything OK, now force exit
     }
 }

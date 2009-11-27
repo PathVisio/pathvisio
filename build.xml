@@ -7,6 +7,7 @@
 
 	<property name="src.dir" value="src"/>
 	<property name="pathvisio.version" value="2.0.1"/>
+	<property name="debug.mode" value="true"/>
 
 	<!-- WikiPathways client -->
 	<property name="axis.wpclient.dir" value="src-axis-wpclient"/>
@@ -185,7 +186,7 @@ public class Revision
 		<javac srcdir="src/core"
 			   includes="**"
 			   destdir="${build.core.dir}"
-			   debug="true"
+			   debug="${debug.mode}"
 			   source="1.5">
 		  <classpath refid="project.core.class.path"/>
 		</javac>
@@ -195,7 +196,7 @@ public class Revision
 		<javac srcdir="src/gui"
 			   includes="**"
 			   destdir="${build.gui.dir}"
-			   debug="true"
+			   debug="${debug.mode}"
 			   source="1.5">
 			<classpath refid="project.gui.class.path"/>
 		</javac>
@@ -205,7 +206,7 @@ public class Revision
 		<javac srcdir="src/swing" 
                includes="**"			   
                destdir="${build.swing.dir}"
-			   debug="true"
+			   debug="${debug.mode}"
 			   source="1.5">
           <classpath refid="project.swing.class.path"/>
 		</javac>
@@ -216,6 +217,7 @@ public class Revision
 		<javac srcdir="src/wikipathways"
 			includes="**"
 			destdir="${build.wikipathways.dir}"
+			debug="${debug.mode}"
 			source="1.5">
 			<classpath refid="project.wikipathways.class.path"/>
 		</javac>
@@ -225,21 +227,21 @@ public class Revision
 		<javac srcdir="plugins/visualization"
 			   includes="**"
 			   destdir="${build.visplugins.dir}"
-			   debug="true"
+			   debug="${debug.mode}"
 			   source="1.5">
 			<classpath refid="project.swing.class.path"/>
 		</javac>
 		<javac srcdir="plugins/zscore"
 			   includes="**"
 			   destdir="${build.visplugins.dir}"
-			   debug="true"
+			   debug="${debug.mode}"
 			   source="1.5">
 			<classpath refid="project.swing.class.path"/>
 		</javac>
 		<javac srcdir="plugins/GexPlugin"
 			   includes="**"
 			   destdir="${build.visplugins.dir}"
-			   debug="true"
+			   debug="${debug.mode}"
 			   source="1.5">
 			<classpath refid="project.swing.class.path"/>
 		</javac>
@@ -516,7 +518,7 @@ public class Revision
 	<target name="tar" depends="tarsrc,tarbin" description="create both source and binary tarballs and zips"/>
 
 	<target name="test" depends="compile-swing">
-		<javac srcdir="test/core" debug="true" 
+		<javac srcdir="test/core" debug="${debug.mode}" 
 					includes="**"
 					destdir="${build.core.dir}"
 					source="1.5">
@@ -532,7 +534,7 @@ public class Revision
 			</batchtest>
 		</junit>
 
-		<javac srcdir="test/swing" debug="true" 
+		<javac srcdir="test/swing" debug="${debug.mode}" 
 					includes="**"
 					destdir="${build.swing.dir}"
 					source="1.5">
@@ -606,10 +608,10 @@ public class Revision
 	</target>
 
 	<target name="compile-wpclient" depends="wpclient-axis,wikipathways-jar,jar">
-		<javac srcdir="${axis.wpclient.dir}" debug="true" destdir="${build.wpclient.dir}">
+		<javac srcdir="${axis.wpclient.dir}" debug="${debug.mode}" destdir="${build.wpclient.dir}">
 			<classpath refid="wpclient.class.path" />
 		</javac>
-		<javac srcdir="${src.dir}/wikipathways-client" debug="true" destdir="${build.wpclient.dir}">
+		<javac srcdir="${src.dir}/wikipathways-client" debug="${debug.mode}" destdir="${build.wpclient.dir}">
 			<classpath refid="wpclient.class.path" />
 		</javac>
 	</target>

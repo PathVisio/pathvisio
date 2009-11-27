@@ -22,8 +22,8 @@ import junit.framework.TestCase;
 
 public class Test extends TestCase {
 	
-	/*
 	public void testConverter() {
+	/*
 		//TODO: test doesn't work anymore because Converter.main now always calls System.exit
 		// design a new test.
 		try {
@@ -32,6 +32,6 @@ public class Test extends TestCase {
 			e.printStackTrace(System.err);
 			fail("Unable to convert GPML file to SVG");
 		}
-	}
 	*/
+	}
 }

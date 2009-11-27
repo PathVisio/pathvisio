@@ -365,7 +365,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		PreferenceManager.init();
 		Engine engine = new Engine();
 		initLog(engine);
-		engine.setApplicationName("PathVisio 2");
+		engine.setApplicationName("PathVisio 2.0.1");
 		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
 		{
 			try {

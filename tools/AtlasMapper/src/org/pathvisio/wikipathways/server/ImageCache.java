@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.server;
@@ -39,31 +39,31 @@ public class ImageCache {
 	static final String CACHE_PATH = "cache_images/";
 	static final String SEP_REV = "@";
 	public static final String GET_ID = "id";
-	
+
 	private PathwayCache pathwayCache;
 	private AtlasCache atlasCache;
 	private String basePath;
 	private GdbProvider gdbs;
-	
+
 	private long retention_time = -1;
-	
+
 	public ImageCache(String basePath, PathwayCache pathwayCache, AtlasCache atlasCache, GdbProvider gdbs) {
 		this.pathwayCache = pathwayCache;
 		this.atlasCache = atlasCache;
 		this.basePath = basePath;
 		this.gdbs = gdbs;
-		
+
 		new File(basePath + "/" + CACHE_PATH).mkdirs();
 	}
-	
+
 	public void setRetentionTime(long retention_time) {
 		this.retention_time = retention_time;
 	}
-	
+
 	public String getImageUrl(String pathwayId, List<Factor> factors) throws ConverterException, FileNotFoundException, ServiceException, IOException, ClassNotFoundException, IDMapperException {
 		WPPathway pathway = pathwayCache.getPathway(pathwayId);
 		GeneSet atlasGenes = atlasCache.getGeneSet(pathwayId);
-		
+
 		File cache = getCacheFile(pathway.getId(), pathway.getRevision(), factors);
 		if(!cache.exists() || !CacheManager.checkCacheAge(cache, retention_time)) {
 			Organism org = Organism.fromLatinName(pathway.getPathway().getMappInfo().getOrganism());
@@ -77,11 +77,11 @@ public class ImageCache {
 		}
 		return "getImage?" + GET_ID + "=" + cache.getName();
 	}
-	
+
 	public byte[] getImageData(String id) throws IOException {
 		return getBytesFromFile(getCacheFile(id));
 	}
-	
+
 	/**
 	 * Read the given file into a byte array.
 	 */
@@ -104,11 +104,11 @@ public class ImageCache {
         is.close();
         return bytes;
     }
-    
+
 	private File getCacheFile(String imageId) {
 		return new File(basePath + "/" + CACHE_PATH, imageId);
 	}
-	
+
 	private File getCacheFile(String id, String revision, List<Factor> factors) {
 		String factorId = "";
 		for(Factor f : factors) factorId += f.hashCode() + SEP_REV;

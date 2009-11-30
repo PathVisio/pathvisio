@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing.dialogs;
@@ -76,7 +76,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 	CompleterQueryTextField symText;
 	CompleterQueryTextField idText;
 	private PermissiveComboBox dbCombo;
-	private DataSourceModel dsm;	
+	private DataSourceModel dsm;
 
 	public void refresh() {
 		super.refresh();
@@ -90,7 +90,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		pack();
 	}
 
-	private void applyAutoFill(XrefWithSymbol ref) 
+	private void applyAutoFill(XrefWithSymbol ref)
 	{
 		String sym = ref.getSymbol();
 		if (sym == null || sym.equals ("")) sym = ref.getId();
@@ -103,7 +103,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 	 * Search for symbols or ids in the synonym databases that match
 	 * the given text
 	 */
-	private void search(String aText) 
+	private void search(String aText)
 	{
 		if(aText == null || "".equals(aText.trim())) {
 			JOptionPane.showMessageDialog(this, "No search term specified, " +
@@ -118,14 +118,14 @@ public class DataNodeDialog extends PathwayElementDialog {
 
 		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
 			private static final int QUERY_LIMIT = 200;
-			
+
 			protected List<XrefWithSymbol> doInBackground() throws IDMapperException
 			{
 				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
 
 			    //The result set
-				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>(); 
-			    
+				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
+
 		    	for (Xref x : gdb.freeSearch( text, QUERY_LIMIT ))
 		    	{
 		    		for (String s : gdb.getAttributes (x, "Symbol"))
@@ -134,14 +134,14 @@ public class DataNodeDialog extends PathwayElementDialog {
 			    		break; // only put the first symbol found
 		    		}
 		    	}
-		    	for (Map.Entry<Xref, String> i : 
+		    	for (Map.Entry<Xref, String> i :
 		    		gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT).entrySet())
 		    	{
 		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
 		    	}
 				return result;
 			}
-			
+
 			@Override
 			public void done()
 			{
@@ -149,7 +149,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 				if (!progress.isCancelled())
 				{
 					List<XrefWithSymbol> results = null;
-					try 
+					try
 					{
 						results = get();
 						//Show results to user
@@ -161,20 +161,20 @@ public class DataNodeDialog extends PathwayElementDialog {
 								applyAutoFill(selected);
 							}
 						} else {
-							JOptionPane.showMessageDialog(DataNodeDialog.this, 
+							JOptionPane.showMessageDialog(DataNodeDialog.this,
 									"No results for '" + text + "'");
 						}
 					} catch (InterruptedException e) {
 						//Ignore, thread interrupted. Same as cancel.
-					} 
+					}
 					catch (ExecutionException e) {
-						JOptionPane.showMessageDialog(DataNodeDialog.this, 
+						JOptionPane.showMessageDialog(DataNodeDialog.this,
 								"Exception occurred while searching,\n" +
-								"see error log for details.", "Error", 
+								"see error log for details.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 						Logger.log.error("Error while searching", e);
 					}
-				}				
+				}
 			}
 		};
 		sw.execute();
@@ -218,7 +218,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				search(searchText.getText());			
+				search(searchText.getText());
 			}
 		});
 		searchButton.setToolTipText("Search the synonym database for references, based on the text label");
@@ -266,7 +266,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 					refs = gdb.freeSearch(text, 100);
 				}
 				catch (IDMapperException ignore) {}
-				
+
 				//Only take identifiers
 				List<String> ids = new ArrayList<String>();
 				for (Xref ref : refs) ids.add(ref.getId());
@@ -318,17 +318,17 @@ public class DataNodeDialog extends PathwayElementDialog {
 		dsm.addListDataListener(new ListDataListener()
 		{
 
-			public void contentsChanged(ListDataEvent arg0) 
+			public void contentsChanged(ListDataEvent arg0)
 			{
 				getInput().setDataSource((DataSource)dsm.getSelectedItem());
-				
+
 			}
 
 			public void intervalAdded(ListDataEvent arg0) {	}
 
 			public void intervalRemoved(ListDataEvent arg0) { }
 		});
-		
+
 //		dbCombo.addActionListener(new ActionListener() {
 //			public void actionPerformed(ActionEvent e) {
 //				DataSource item = (DataSource)dbCombo.getSelectedItem();

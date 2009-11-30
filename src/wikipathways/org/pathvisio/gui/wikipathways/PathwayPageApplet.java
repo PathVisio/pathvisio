@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.wikipathways;
@@ -69,17 +69,17 @@ public class PathwayPageApplet extends JApplet {
 				PathwayPageApplet.this.requestFocusInWindow();
 			}
 		});
-		
+
 		try {
 			Logger.log.trace(this + ": INIT CALLED....");
 
 			PreferenceManager.init();
 			final Engine engine = new Engine();
 			SwingEngine swingEngine = new SwingEngine(engine);
-			
+
 			uiHandler = new UserInterfaceHandler(PathwayPageApplet.this);
 			wiki = new WikiPathways(uiHandler, swingEngine);
-			
+
 			parseArguments();
 
 			//Init with progress monitor
@@ -90,11 +90,11 @@ public class PathwayPageApplet extends JApplet {
 					} catch(AccessControlException ae) {
 							onError("You didn't accept the certificate needed to run this applet.\n" +
 									"After restarting the browser, click the edit button and choose" +
-									"\n'Run' in the security dialog that pops up.", 
+									"\n'Run' in the security dialog that pops up.",
 							"Security exception");
 					} catch(Exception e) {
 						Logger.log.error("Error while starting applet", e);
-						String msg =  e.getClass() + 
+						String msg =  e.getClass() +
 						"\n See error log (" + PreferenceManager.getCurrent().get(GlobalPreference.WP_FILE_LOG) + ") for details";
 						JOptionPane.showMessageDialog(
 								PathwayPageApplet.this, msg, "Error while initializing editor", JOptionPane.ERROR_MESSAGE);
@@ -114,7 +114,7 @@ public class PathwayPageApplet extends JApplet {
 			});
 
 			Logger.log.trace(this + ": Performing init in background");
-			uiHandler.runWithProgress(r, "", false, true);			
+			uiHandler.runWithProgress(r, "", false, true);
 		} catch(Exception e) {
 			onError("Error: " + e.getClass() + ": " + e.getMessage(), "Error");
 		}
@@ -124,12 +124,12 @@ public class PathwayPageApplet extends JApplet {
 		Logger.log.trace("Applet.stop called, stopping save reminder");
 		if(wiki != null) SaveReminder.stopSaveReminder(wiki);
 	}
-	
+
 	public void start() {
 		Logger.log.trace("Applet.start called, starting save reminder");
 		if(wiki != null) wiki.startSaveReminder();
 	}
-	
+
 	public void destroy() {
 		Logger.log.trace("Applet.destroy called, stopping save reminder");
 		if(wiki != null) {
@@ -139,7 +139,7 @@ public class PathwayPageApplet extends JApplet {
 		}
 		uiHandler = null;
 	}
-	
+
 	private void onError(String msg, String title) {
 		JOptionPane.showMessageDialog(this, msg, title, JOptionPane.ERROR_MESSAGE);
 		getAppletContext().showDocument(getDocumentBase(), "_self");
@@ -159,7 +159,7 @@ public class PathwayPageApplet extends JApplet {
 	}
 
 	/**
-	 * In this method the WikiPathways class is initiated, 
+	 * In this method the WikiPathways class is initiated,
 	 * by calling {@link WikiPathways#init(ProgressKeeper, URL)}
 	 * @see {@link WikiPathways#init(ProgressKeeper, URL)}
 	 * @param pk
@@ -174,7 +174,7 @@ public class PathwayPageApplet extends JApplet {
 	public boolean mayExit() {
 		return wiki != null ? wiki.mayExit() : true;
 	}
-	
+
 	protected void doInit() {
 		//May be implemented by subclasses
 	}
@@ -184,13 +184,13 @@ public class PathwayPageApplet extends JApplet {
 	}
 
 	private JFrame fullScreenFrame;
-	
+
 	public boolean isFullScreen() {
-		return fullScreenFrame != null;		
+		return fullScreenFrame != null;
 	}
-	
+
 	/**
-	 * Makes the applet go to fullscreen mode. 
+	 * Makes the applet go to fullscreen mode.
 	 * Creates a new frame and transfers the mainPanel from
 	 * the applet to the frame.
 	 * @see #toEmbedded(boolean)
@@ -198,19 +198,19 @@ public class PathwayPageApplet extends JApplet {
 	protected void toFullScreen() {
 		final MainPanel mainPanel = wiki.getMainPanel();
 		fullScreenFrame = new JFrame();
-		
+
 		PathwayElement mappInfo = wiki.getPathway().getMappInfo();
-		
+
 		fullScreenFrame.setTitle("WikiPathways editor - " + mappInfo.getMapInfoName());
-		
+
 		wiki.getPathway().getMappInfo().addListener(new PathwayElementListener() {
 			public void gmmlObjectModified(PathwayEvent e) {
-				fullScreenFrame.setTitle("WikiPathways editor - " + 
+				fullScreenFrame.setTitle("WikiPathways editor - " +
 						e.getAffectedData().getMapInfoName());
 			}
 		});
 		getContentPane().repaint();
-		
+
 		fullScreenFrame.getContentPane().add(mainPanel);
 
 		fullScreenFrame.addWindowListener(new WindowAdapter() {
@@ -247,7 +247,7 @@ public class PathwayPageApplet extends JApplet {
 		validate();
 		repaint();
 	}
-	
+
 	/**
 	 * Get the default description that will be used
 	 * when the changes are saved to the server
@@ -257,7 +257,7 @@ public class PathwayPageApplet extends JApplet {
 	protected String getDefaultDescription() {
 		return null;
 	}
-	
+
 	protected void createToolbar() {
 		JToolBar toolbar = new JToolBar(JToolBar.VERTICAL);
 		toolbar.setFloatable(false);

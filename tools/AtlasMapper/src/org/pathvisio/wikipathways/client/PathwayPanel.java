@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.client;
@@ -33,37 +33,37 @@ public class PathwayPanel extends StatePanel {
 	TextBox pathwayTextBox;
 	SuggestBox pathwayBox;
 	MultiWordSuggestOracle pathwayOracle;
-	
+
 	Panel pathwayProgress;
-	
+
 	State currState;
-	
+
 	public PathwayPanel(AtlasMapper main) {
 		super("Select pathway", main);
 		Grid grid = new Grid(2, 3);
 		grid.setWidget(1, 0, new Label("Pathway:"));
-		
+
 		pathwayProgress = new HorizontalPanel();
 		pathwayProgress.addStyleName(STYLE_PROGRESS);
 		pathwayProgress.add(new Image("loader.gif"));
 		pathwayProgress.add(new Label("Loading pathways..."));
-		
+
 		grid.setWidget(1, 2, pathwayProgress);
-		
+
 		organismBox = new ListBox();
-		
+
 		pathwayOracle = new MultiWordSuggestOracle();
 		pathwayTextBox = new TextBox();
 		pathwayBox = new SuggestBox(pathwayOracle, pathwayTextBox);
 		pathwayTextBox.setEnabled(false);
-		
+
 		queryPathways();
-		
+
 		grid.setWidget(1, 1, pathwayBox);
-		
+
 		add(grid, CENTER);
 	}
-	
+
 	public State getState(boolean nextPanel) {
 		State state = new State();
 		if(currState != null) {
@@ -81,16 +81,16 @@ public class PathwayPanel extends StatePanel {
 		}
 		return state;
 	}
-	
+
 	public void setState(State state) {
 		currState = state;
 		pathwayBox.setText(state.getValue(State.KEY_PATHWAY));
 	}
-	
+
 	AtlasMapperServiceAsync getService() {
 		return main.getService();
 	}
-	
+
 	void queryPathways() {
 		AsyncCallback<PathwayInfo[]> callback = new AsyncCallback<PathwayInfo[]>() {
 			public void onFailure(Throwable caught) {
@@ -101,7 +101,7 @@ public class PathwayPanel extends StatePanel {
 				pathwayOracle.clear();
 				for(PathwayInfo p : result) {
 					pathwayOracle.add(
-						p.id + ID_SEP + "( " + p.name + ", " + p.organism + " )"	
+						p.id + ID_SEP + "( " + p.name + ", " + p.organism + " )"
 					);
 				}
 				pathwayTextBox.setEnabled(true);
@@ -111,9 +111,9 @@ public class PathwayPanel extends StatePanel {
 		pathwayProgress.setVisible(true);
 		getService().getPathways(callback);
 	}
-	
+
 	static final String ID_SEP = " ";
 	static final String ALL_ORG = "All organisms";
-	
+
 	static final String STYLE_PROGRESS = "pathwaypanel-progress";
 }

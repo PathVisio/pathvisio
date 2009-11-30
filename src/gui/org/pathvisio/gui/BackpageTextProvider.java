@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui;
@@ -44,9 +44,9 @@ import org.pathvisio.util.Utils;
  * <p>
  * Two basic BackpageHooks are defined here: @link{BackpageAttributes} and
  * {@link BackpageXrefs}. However, these are not automatically registered, that
- * is the responsibility of the instantiator. 
+ * is the responsibility of the instantiator.
  */
-public class BackpageTextProvider 
+public class BackpageTextProvider
 {
 	/**
 	 * Hook into the backpage text provider,
@@ -55,33 +55,33 @@ public class BackpageTextProvider
 	public static interface BackpageHook
 	{
 		/**
-		 * Return a fragment of html-formatted text. The returned fragment should not 
+		 * Return a fragment of html-formatted text. The returned fragment should not
 		 * contain &lt;html> or &lt;body> tags, but it can contain most other
-		 * html tags. 
+		 * html tags.
 		 * <p>
 		 * The function getHtml is normally called from a worker thread.
 		 */
 		@WorkerThreadOnly
 		public String getHtml (PathwayElement e);
 	}
-	
+
 	/**
-	 * A @{link BackpageHook} that generates a section with a description 
-	 * and a few other attributes to the backpage panel. 
+	 * A @{link BackpageHook} that generates a section with a description
+	 * and a few other attributes to the backpage panel.
 	 */
 	public static class BackpageAttributes implements BackpageHook
 	{
 		private final AttributeMapper attributeMapper;
-		
+
 		public BackpageAttributes (AttributeMapper attr)
 		{
 			attributeMapper = attr;
 		}
-		
+
 		public String getHtml(PathwayElement e) {
 			String text = "";
-			String type = e.getDataNodeType(); 
-			
+			String type = e.getDataNodeType();
+
 			// type will be displayed in the header, make either "Metabolite" or "Gene";
 			text += "<H1>" + type + " information</H1><P>";
 
@@ -97,14 +97,14 @@ public class BackpageTextProvider
 
 			try
 			{
-				StringBuilder bpInfo = new StringBuilder("<TABLE border = 1>"); 
-					
+				StringBuilder bpInfo = new StringBuilder("<TABLE border = 1>");
+
 				Map<String, Set<String>> attributes = attributeMapper.getAttributes(e.getXref());
 				String[][] table;
-				
+
 				if (!type.equals ("Metabolite"))
 				{
-					table = new String[][] { 
+					table = new String[][] {
 					   {"Gene ID", e.getXref().getId()},
 					   {"Gene Symbol", Utils.oneOf(attributes.get("Symbol"))},
 					   {"Synonyms", Utils.oneOf (attributes.get("Synonyms"))},
@@ -119,7 +119,7 @@ public class BackpageTextProvider
 						{"Bruto Formula", Utils.oneOf (attributes.get("BrutoFormula"))},
 						};
 				}
-				
+
 				for (String[] row : table)
 				{
 					if (!(row[1] == null))
@@ -131,7 +131,7 @@ public class BackpageTextProvider
 					}
 				}
 				bpInfo.append ("</TABLE>");
-				text += bpInfo.toString(); 
+				text += bpInfo.toString();
 			}
 			catch (IDMapperException ex)
 			{
@@ -139,22 +139,22 @@ public class BackpageTextProvider
 				Logger.log.error ("Error fetching backpage info", ex);
 			}
 			return text;
-		}		
+		}
 	}
-	
+
 	/**
 	 * A @{link BackpageHook} that adds a list of crossref links to
-	 * the backpage panel. 
+	 * the backpage panel.
 	 */
 	public static class BackpageXrefs implements BackpageHook
 	{
 		private final IDMapper gdb;
-		
+
 		public BackpageXrefs (IDMapper mapper)
 		{
 			gdb = mapper;
 		}
-		
+
 		public String getHtml(PathwayElement e) {
 			try
 			{
@@ -168,7 +168,7 @@ public class BackpageTextProvider
 					String idtxt = cr.getId();
 					String url = cr.getUrl();
 					if(url != null) {
-						idtxt = "<a href='" + url + "'>" + idtxt + "</a>";	
+						idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
 					}
 					String dbName = cr.getDataSource().getFullName();
 					crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");
@@ -177,12 +177,12 @@ public class BackpageTextProvider
 			}
 			catch (IDMapperException ex)
 			{
-				return "Exception occured while getting cross-references</br>\n" 
+				return "Exception occured while getting cross-references</br>\n"
 					+ ex.getMessage() + "\n";
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Register a BackpageHook with this text provider. Backpage fragments
 	 * are generated in the order that the hooks were registered.
@@ -191,19 +191,19 @@ public class BackpageTextProvider
 	{
 		hooks.add (hook);
 	}
-	
+
 	private final List<BackpageHook> hooks = new ArrayList<BackpageHook>();
-	
-	public BackpageTextProvider() 
+
+	public BackpageTextProvider()
 	{
-		initializeHeader();		
+		initializeHeader();
 	}
-	
+
 	/**
 	 * generates html for a given PathwayElement. Combines the base
 	 * header with fragments from all BackpageHooks into one html String.
 	 */
-	public String getBackpageHTML(PathwayElement e) 
+	public String getBackpageHTML(PathwayElement e)
 	{
 		if (e == null || e.getObjectType() != ObjectType.DATANODE ||
 				e.getDataSource() == null) return "<p>No data</p>";
@@ -227,7 +227,7 @@ public class BackpageTextProvider
 	 * Reads the header of the HTML content displayed in the browser. This header is displayed in the
 	 * file specified in the {@link HEADERFILE} field
 	 */
-	private void initializeHeader() 
+	private void initializeHeader()
 	{
 		try {
 			BufferedReader input = new BufferedReader(new InputStreamReader(
@@ -240,6 +240,6 @@ public class BackpageTextProvider
 		} catch (Exception e) {
 			Logger.log.error("Unable to read header file for backpage browser: " + e.getMessage(), e);
 		}
-	}	
-	
+	}
+
 }

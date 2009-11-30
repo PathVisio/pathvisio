@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.client;
@@ -32,16 +32,16 @@ import com.google.gwt.user.client.ui.Widget;
 public class ImagePanel extends StatePanel implements MouseListener {
 	State currentState;
 	Image image;
-	
+
 	GeneInfo[] geneInfo;
 	Label description;
-	
+
 	public ImagePanel(AtlasMapper main) {
 		super("", main);
-		
+
 		HorizontalPanel legend = new HorizontalPanel();
 		legend.addStyleName(STYLE_LEGEND);
-		
+
 		SimplePanel down = new SimplePanel();
 		down.addStyleName(STYLE_LEGEND_COLOR);
 		down.addStyleName(STYLE_LEGEND_DOWN);
@@ -49,7 +49,7 @@ public class ImagePanel extends StatePanel implements MouseListener {
 		downLabel.addStyleName(STYLE_LEGEND_LABEL);
 		legend.add(down);
 		legend.add(downLabel);
-		
+
 		SimplePanel up = new SimplePanel();
 		up.addStyleName(STYLE_LEGEND_COLOR);
 		up.addStyleName(STYLE_LEGEND_UP);
@@ -65,45 +65,45 @@ public class ImagePanel extends StatePanel implements MouseListener {
 		noneLabel.addStyleName(STYLE_LEGEND_LABEL);
 		legend.add(none);
 		legend.add(noneLabel);
-		
+
 		add(legend, NORTH);
 
 		description = new Label(
-				"Loading gene data..."	
+				"Loading gene data..."
 		);
 		description.addStyleName(STYLE_DESCRIPTION);
 		add(description, NORTH);
 
 		image = new Image();
-		image.addMouseListener(this); 
+		image.addMouseListener(this);
 		add(image, CENTER);
 	}
-	
+
 	protected boolean hasNext() {
 		return false;
 	}
-	
+
 	public State getState(boolean nextPanel) {
 		return currentState;
 	}
-	
+
 	public void setState(State state) {
 		currentState = state;
 		main.startProgress();
-		
+
 		String pathway = state.getValue(State.KEY_PATHWAY);
 		String factorType = state.getValue(State.KEY_FACTOR_TYPE);
 		String[] factorValues = null;
-		
+
 		String valueString = state.getValue(State.KEY_FACTOR_VALUES);
 		if(valueString != null) {
-			factorValues = valueString.split(FactorPanel.SEP_FACTOR); 
+			factorValues = valueString.split(FactorPanel.SEP_FACTOR);
 		}
-		
+
 		AsyncCallback<String> callback = new AsyncCallback<String>() {
 			public void onFailure(Throwable caught) {
 				Window.alert("Error: " + caught.getMessage());
-				main.stopProgress(ImagePanel.this);	
+				main.stopProgress(ImagePanel.this);
 			}
 			public void onSuccess(String result) {
 				image.setUrl(result);
@@ -111,7 +111,7 @@ public class ImagePanel extends StatePanel implements MouseListener {
 			}
 		};
 		main.getService().getImageUrl(pathway, factorType, factorValues, callback);
-		
+
 		//Query gene info
 		AsyncCallback<GeneInfo[]> callback2 = new AsyncCallback<GeneInfo[]>() {
 			public void onFailure(Throwable caught) {
@@ -124,17 +124,17 @@ public class ImagePanel extends StatePanel implements MouseListener {
 				geneInfo = result;
 			}
 		};
-		
+
 		Set<String> factorSet = new HashSet<String>();
 		for(String f : factorValues) factorSet.add(f);
-		
+
 		main.getService().getGeneInfo(pathway, factorType, factorSet, callback2);
 	}
-	
+
 	private Set<GeneInfo> getGenesAt(int x, int y) {
 		Set<GeneInfo> genes = new HashSet<GeneInfo>();
 		if(geneInfo == null) return genes;
-		
+
 		double rx = (double)x / image.getWidth();
 		double ry = (double)y / image.getHeight();
 
@@ -155,13 +155,13 @@ public class ImagePanel extends StatePanel implements MouseListener {
 			showTooltip(image.getAbsoluteLeft() + x, image.getAbsoluteTop() + y, genes);
 		}
 	}
-	
+
 	public void onMouseEnter(Widget sender) {
 	}
-	
+
 	public void onMouseLeave(Widget sender) {
 	}
-	
+
 	public void onMouseMove(Widget sender, final int x, final int y) {
 		if(getGenesAt(x, y).size() > 0) {
 			image.addStyleName(STYLE_GENE_HOVER);
@@ -179,7 +179,7 @@ public class ImagePanel extends StatePanel implements MouseListener {
 		tooltip.setWidget(new GeneTooltip(genes));
 		tooltip.show();
 	}
-	
+
 	public static final String STYLE_GENE_HOVER = "gene-hover";
 	public static final String STYLE_LEGEND_COLOR = "legend-color";
 	public static final String STYLE_LEGEND_DOWN = "legend-down";

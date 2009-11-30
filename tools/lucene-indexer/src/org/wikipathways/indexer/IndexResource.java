@@ -29,12 +29,12 @@ public class IndexResource extends ServerResource {
 
 	static Representation createXmlError(String message) {
 		try {
-			DomRepresentation result = new DomRepresentation(MediaType.TEXT_XML);  
-			Document d = result.getDocument();  
+			DomRepresentation result = new DomRepresentation(MediaType.TEXT_XML);
+			Document d = result.getDocument();
 
-			Element eltError = d.createElement("error");  
-			Element eltMessage = d.createElement("message");  
-			eltMessage.appendChild(d.createTextNode(message));  
+			Element eltError = d.createElement("error");
+			Element eltMessage = d.createElement("message");
+			eltMessage.appendChild(d.createTextNode(message));
 			eltError.appendChild(eltMessage);
 			d.appendChild(eltError);
 			return result;

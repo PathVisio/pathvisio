@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 //Source: http://www.chka.de/swing/table/row-headers/
@@ -42,7 +42,7 @@ public class RowHeaderResizer
     private JTable      view;
 
     private boolean enabled;
-    
+
 
     public RowHeaderResizer(JScrollPane pane)
     {
@@ -50,14 +50,14 @@ public class RowHeaderResizer
 
         this.pane.addContainerListener(this);
     }
-    
+
     public void setEnabled(boolean what)
     {
         if (enabled == what)
             return;
 
         enabled = what;
-        
+
         if (enabled)
             addListeners();
         else
@@ -93,7 +93,7 @@ public class RowHeaderResizer
         this.corner = pane.getCorner(JScrollPane.UPPER_LEFT_CORNER);
     }
 
-    
+
     public void componentAdded(ContainerEvent e)
     {
         componentRemoved(e);
@@ -105,24 +105,24 @@ public class RowHeaderResizer
             removeListeners();
 
         lookupComponents();
-        
+
         if (enabled)
             addListeners();
     }
-    
+
 
     private boolean active;
-    
+
     private int startX,        startWidth;
-    
+
     private int minWidth, maxWidth;
-    
+
     private Dimension size;
-    
+
     private static final int PIXELS = 10;
-    
+
     private static final Cursor RESIZE_CURSOR = Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
-    
+
     private Cursor oldCursor;
 
 
@@ -156,19 +156,19 @@ public class RowHeaderResizer
             oldCursor = null;
         }
     }
-    
-    
+
+
     public void mousePressed(MouseEvent e)
     {
         startX = e.getX();
-        
+
         startWidth = rowHeader.getWidth();
-        
+
         if (startWidth - startX > PIXELS)
             return;
-        
+
         active = true;
-        
+
         if (oldCursor == null)
         {
             oldCursor = corner.getCursor();
@@ -178,32 +178,32 @@ public class RowHeaderResizer
         minWidth = rowHeader.getMinimumSize().width;
         maxWidth = rowHeader.getMaximumSize().width;
     }
-    
+
     public void mouseReleased(MouseEvent e)
     {
         active = false;
     }
-    
+
     public void mouseDragged(MouseEvent e)
     {
         if (!active)
             return;
-        
+
         size = viewport.getPreferredSize();
-        
+
         int newX = e.getX();
-        
+
         size.width = startWidth + e.getX() - startX;
-        
+
         if (size.width < minWidth)
             size.width = minWidth;
         else if (size.width > maxWidth)
             size.width = maxWidth;
-        
+
         viewport.setPreferredSize(size);
-        
+
         view.sizeColumnsToFit(-1);
-        
+
         pane.revalidate();
     }
 }

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.bots;
@@ -37,19 +37,19 @@ import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 public class ConnectorBot extends Bot {
 	static final String CURATIONTAG = "Curation:NoInteractions";
 	static final String PROP_THRESHOLD = "threshold";
-	
+
 	double threshold;
-	
+
 	public ConnectorBot(Properties props) throws BotException {
 		super(props);
 		String thr = props.getProperty(PROP_THRESHOLD);
 		if(thr != null) threshold = Double.parseDouble(thr);
 	}
-	
+
 	public String getTagName() {
 		return CURATIONTAG;
 	}
-	
+
 	public BotReport createReport(Collection<Result> results) {
 		BotReport report = new BotReport(
 			new String[] {
@@ -71,7 +71,7 @@ public class ConnectorBot extends Bot {
 		}
 		return report;
 	}
-	
+
 	protected Result scanPathway(File pathwayFile) throws BotException {
 		try {
 			ConnectorBotResult report = new ConnectorBotResult(
@@ -85,7 +85,7 @@ public class ConnectorBot extends Bot {
 
 			for(PathwayElement pwe : pathway.getDataObjects()) {
 				if(pwe.getObjectType() == ObjectType.LINE) {
-					boolean valid = 
+					boolean valid =
 						pwe.getMStart().isLinked() &&
 						pwe.getMEnd().isLinked();
 
@@ -98,29 +98,29 @@ public class ConnectorBot extends Bot {
 			throw new BotException(e);
 		}
 	}
-	
+
 	private class ConnectorBotResult extends Result {
 		WSPathwayInfo pathwayInfo;
-		
+
 		Map<PathwayElement, Boolean> lines = new HashMap<PathwayElement, Boolean>();
-		
+
 		public ConnectorBotResult(WSPathwayInfo pathwayInfo) {
 			super(pathwayInfo);
 			this.pathwayInfo = pathwayInfo;
 		}
-		
+
 		public boolean equalsTag(String tag) {
 			return getTagText().equals(tag);
 		}
-		
+
 		public boolean shouldTag() {
 			return getPercentValid() < threshold;
 		}
-		
+
 		public void addLine(PathwayElement pwe, boolean valid) {
 			lines.put(pwe, valid);
 		}
-		
+
 		public WSPathwayInfo getPathwayInfo() {
 			return pathwayInfo;
 		}
@@ -128,19 +128,19 @@ public class ConnectorBot extends Bot {
 		public int getNrLines() {
 			return lines.size();
 		}
-		
+
 		public double getPercentValid() {
 			return (double)(100 * getNrValid()) / getNrLines();
 		}
-		
+
 		public double getPercentInvalid() {
 			return (double)(100 * getNrInvalid()) / getNrLines();
 		}
-		
+
 		public int getNrInvalid() {
 			return getNrLines() - getNrValid();
 		}
-		
+
 		public int getNrValid() {
 			int v = 0;
 			for(PathwayElement pwe : lines.keySet()) {
@@ -150,14 +150,14 @@ public class ConnectorBot extends Bot {
 			}
 			return v;
 		}
-		
+
 		public String getTagText() {
 			String txt = getNrInvalid() + " out of " + getNrLines() +
 				" lines are not properly connected.";
 			return txt;
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			Logger.log.trace("Starting ConnectorBot");
@@ -170,7 +170,7 @@ public class ConnectorBot extends Bot {
 			printUsage();
 		}
 	}
-	
+
 	static private void printUsage() {
 		System.out.println(
 			"Usage:\n" +

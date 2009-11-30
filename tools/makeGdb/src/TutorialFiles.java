@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
@@ -32,7 +32,7 @@ class TutorialFiles
     	StopWatch timer = new StopWatch();
     	System.out.println ("Timer started");
     	timer.start();
-		
+
 		final String tutorialPwy = "example-data/Hs_Apoptosis.gpml";
 		Pathway pwy = new Pathway();
 		try
@@ -44,7 +44,7 @@ class TutorialFiles
 			e.printStackTrace();
 			return;
 		}
-		
+
 		List<Xref> refs = pwy.getDataNodeXrefs();
 
 		assert (refs.contains (new Xref ("8717", DataSource.ENTREZ_GENE)));
@@ -68,12 +68,12 @@ class TutorialFiles
 			e.printStackTrace();
 			return;
 		}
-		
+
 		try
 		{
 			DataDerby connector = new DataDerby();
 			int error = 0;
-			String dest = GlobalPreference.getDataDir() + File.separator + 
+			String dest = GlobalPreference.getDataDir() + File.separator +
 				"gene databases" + File.separator + "tutorial";
 			SimpleGdb targetGdb = SimpleGdbFactory.createInstance(dest, connector, DBConnector.PROP_RECREATE);
 			targetGdb.createGdbTables();
@@ -85,11 +85,11 @@ class TutorialFiles
 					Xref ensRef = new Xref (ensId, DataSource.ENSEMBL);
 					String bpText = sourceGdb.getBpInfo(ensRef);
 					error += targetGdb.addGene(ensRef, bpText);
-					
-					
-					
+
+
+
 					List<Xref> newRefs = sourceGdb.ensId2Refs(ensId, null);
-										
+
 					for (Xref j : newRefs)
 					{
 						if (j.getDataSource() == DataSource.UNIGENE ||
@@ -102,11 +102,11 @@ class TutorialFiles
 							System.out.println(i + "\t" + j);
 						}
 					}
-							
+
 				}
-						
-				
-				
+
+
+
 		}
     		targetGdb.commit();
     		targetGdb.createGdbIndices();

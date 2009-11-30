@@ -21,15 +21,15 @@ public class InferatorLabelFix {
 		String url = args[0];
 		String user = args[1];
 		String pass = args[2];
-		
+
 		try {
 			Logger.log.setLogLevel(false, false, false, true, true, true);
 			WikiPathwaysClient client = new WikiPathwaysClient(new URL(url));
-			
+
 			client.login(user, pass);
-			
+
 			Pattern pat = Pattern.compile("&amp;(.+?;)");
-			
+
 			for(WSPathwayInfo pwi : client.listPathways()) {
 				WSPathway wsp = client.getPathway(pwi.getId());
 				Pathway p = WikiPathwaysClient.toPathway(wsp);
@@ -64,6 +64,6 @@ public class InferatorLabelFix {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 }

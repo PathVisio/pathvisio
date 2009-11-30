@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gpmldiff;
@@ -38,13 +38,13 @@ class DgpmlOutputter extends DiffOutputter
 {
 	Document doc = null;
 	OutputStream out;
-	
+
 	DgpmlOutputter(File f) throws IOException
 	{
 		this();
 		out = new FileOutputStream(f);
 	}
-	
+
 	DgpmlOutputter()
 	{
 		out = System.out;
@@ -60,7 +60,7 @@ class DgpmlOutputter extends DiffOutputter
 		f.setTextMode(Format.TextMode.PRESERVE);
 		f.setLineSeparator(System.getProperty("line.separator"));
 		xmlcode.setFormat(f);
-		
+
 		//Open a filewriter
 		PrintWriter writer = new PrintWriter(out);
 		xmlcode.output(doc, writer);
@@ -94,12 +94,12 @@ class DgpmlOutputter extends DiffOutputter
 	PathwayElement curOldElt = null;
 	PathwayElement curNewElt = null;
 	Element curModifyElement = null;
-	
+
 	public void modifyStart (PathwayElement oldElt, PathwayElement newElt)
 	{
 		curOldElt = oldElt;
 		curNewElt = newElt;
-		
+
 		curModifyElement = (new Element("Modify"));
 		try
 		{
@@ -120,7 +120,7 @@ class DgpmlOutputter extends DiffOutputter
 	{
 		assert (curOldElt != null);
 		assert (curNewElt != null);
-		
+
 		Element e = new Element ("Change");
 		e.setAttribute("attr", attr);
 		e.setAttribute("old", oldVal);

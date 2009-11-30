@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.server;
@@ -50,28 +50,28 @@ import atlas.model.GeneSet;
 public class AtlasCache {
 	static final String CACHE_PATH = "cache_atlas/";
 	static final String SEP_REV = "@";
-	
+
 	private PathwayCache pathwayCache;
 	private String basePath;
 	private GdbProvider gdbs;
-	
+
 	private long retention_time = -1;
-	
+
 	public AtlasCache(String basePath, PathwayCache pathwayCache, GdbProvider gdbs) {
 		this.pathwayCache = pathwayCache;
 		this.basePath = basePath;
 		this.gdbs = gdbs;
-		
+
 		new File(basePath + "/" + CACHE_PATH).mkdirs();
 	}
-	
+
 	public void setRetentionTime(long retention_time) {
 		this.retention_time = retention_time;
 	}
-	
+
 	public GeneSet getGeneSet(String id) throws FileNotFoundException, ServiceException, IOException, ConverterException, ClassNotFoundException, IDMapperException {
 		WPPathway p = pathwayCache.getPathway(id);
-		
+
 		File cache = getCacheFile(p.getId(), p.getRevision());
 		GeneSet genes = null;
 		if(cache.exists() && CacheManager.checkCacheAge(cache, retention_time)) {
@@ -90,20 +90,20 @@ public class AtlasCache {
 		}
 		return genes;
 	}
-	
+
 	private GeneSet updateCache(WPPathway p) throws ServiceException, FileNotFoundException, IOException, IDMapperException {
 		Pathway pathway = p.getPathway();
 		Organism org = Organism.fromLatinName(
 				pathway.getMappInfo().getOrganism()
 		);
 		DataSource ensDs = AtlasMapperServiceImpl.getEnsemblDataSource(org);
-		
+
 		if(org == null) {
 			org = Organism.HomoSapiens;
 			Logger.log.warn("No organism found in pahtway " + p.getId() + ", assuming human");
 		}
 		List<IDMapperRdb> gdbList = gdbs.getGdbs(org);
-		
+
 		//Get all ensembl genes on the pathway
 		Set<String> ensIds = new HashSet<String>();
 		for(Xref x : pathway.getDataNodeXrefs()) {
@@ -128,11 +128,11 @@ public class AtlasCache {
 		out.close();
 		return atlasGenes;
 	}
-	
+
 	private File getCacheFile(String id, String revision) {
 		return new File(basePath + "/" + CACHE_PATH, id + SEP_REV + revision);
 	}
-	
+
 	public void updateAllCache() {
 		try {
 			WSPathwayInfo[] pathways = pathwayCache.getClient().listPathways();
@@ -142,7 +142,7 @@ public class AtlasCache {
 					"MEM: "	+ (Runtime.getRuntime().totalMemory() -
 					      Runtime.getRuntime().freeMemory()) / 1000000
 				);
-				Logger.log.info("Updating pathway " + i++ + "/" + pathways.length + "; " + p.getId() + 
+				Logger.log.info("Updating pathway " + i++ + "/" + pathways.length + "; " + p.getId() +
 						" (" + p.getName() + ", " + p.getSpecies() + ")");
 				getGeneSet(p.getId());
 			}
@@ -150,7 +150,7 @@ public class AtlasCache {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		PreferenceManager.init();
 		BioDataSource.init();

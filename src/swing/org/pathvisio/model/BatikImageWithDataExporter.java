@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -44,12 +44,12 @@ import org.w3c.dom.Document;
  * Same as BatikImageExporter, but can also include visualized data
  * in the resulting image.
  */
-public class BatikImageWithDataExporter extends ImageExporter 
+public class BatikImageWithDataExporter extends ImageExporter
 {
 	private final VisualizationManager visualizationManager;
 	private final GexManager gexManager;
-	
-	public BatikImageWithDataExporter(String type, GexManager gexManager, VisualizationManager visualizationManager) 
+
+	public BatikImageWithDataExporter(String type, GexManager gexManager, VisualizationManager visualizationManager)
 	{
 		super(type);
 		this.gexManager = gexManager;
@@ -57,7 +57,7 @@ public class BatikImageWithDataExporter extends ImageExporter
 	}
 
 	protected boolean dataVisible = true; // true by default
-	
+
 	/**
 	 * Use this method to disable / enable export of the current data visualization
 	 */
@@ -70,7 +70,7 @@ public class BatikImageWithDataExporter extends ImageExporter
 	{
 		VPathway vPathway = new VPathway(null);
 		vPathway.fromModel(pathway);
-		
+
 		// if data visualization is enabled, link this VPathway up to the visualization manager.
 		if (dataVisible)
 		{
@@ -88,7 +88,7 @@ public class BatikImageWithDataExporter extends ImageExporter
 
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);
-		
+
 		SVGGraphics2D svgG2d = new SVGGraphics2D(svg);
 		vPathway.draw(svgG2d);
 
@@ -96,11 +96,11 @@ public class BatikImageWithDataExporter extends ImageExporter
 		//to be calculated correctly
 		Dimension size = vPathway.calculateVSize();
 		svgG2d.setSVGCanvasSize(size);
-				
+
 		Transcoder t = null;
 		if			(getType().equals(TYPE_SVG)) {
 			try {
-				Writer out = new FileWriter(file);			
+				Writer out = new FileWriter(file);
 				svgG2d.stream(out, true);
 				out.flush();
 				out.close();
@@ -134,7 +134,7 @@ public class BatikImageWithDataExporter extends ImageExporter
 
 			// Save the image.
 			t.transcode(input, output);
-			
+
 		    // Flush and close the stream.
 	        ostream.flush();
 	        ostream.close();

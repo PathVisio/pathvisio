@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -39,12 +39,12 @@ public class StraightConnectorShape extends AbstractConnector {
 		));
 		setWayPoints(new WayPoint[0]);
 	}
-	
-	
-	
+
+
+
 	/**
 	 *  Calculate shape from the width of the line endings
-	 *  This gets 
+	 *  This gets
 	 */
 	 protected java.awt.Shape calculateShape(Segment[] segments)
 	 {
@@ -52,12 +52,12 @@ public class StraightConnectorShape extends AbstractConnector {
 		 Point2D end = segments[segments.length - 1].getMEnd();
 		 return (new Line2D.Double(start,end));
 	 }
-	 
-	
+
+
 	public boolean hasValidWaypoints(ConnectorRestrictions restrictions) {
 		return false;
 	}
-	
+
 	public Point2D fromLineCoordinate(double l) {
 		Segment[] segments = getSegments();
 		Point2D start = segments[0].getMStart();
@@ -67,7 +67,7 @@ public class StraightConnectorShape extends AbstractConnector {
 		double vsy = start.getY();
 		double vex = end.getX();
 		double vey = end.getY();
-		
+
 		int dirx = vsx > vex ? -1 : 1;
 		int diry = vsy > vey ? -1 : 1;
 

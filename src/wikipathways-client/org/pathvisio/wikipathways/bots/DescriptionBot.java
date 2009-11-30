@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.bots;
@@ -33,7 +33,7 @@ import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
  */
 public class DescriptionBot extends Bot {
 	private static final String CURATIONTAG = "Curation:MissingDescription";
-	
+
 	public DescriptionBot(Properties props) throws BotException {
 		super(props);
 	}
@@ -44,7 +44,7 @@ public class DescriptionBot extends Bot {
 		);
 		report.setTitle("DescriptionBot scan report");
 		report.setDescription("Checks pathways for an empty description field");
-		
+
 		int nrMissing = 0;
 		for(Result r : result) {
 			DescriptionResult dr = (DescriptionResult)r;
@@ -55,16 +55,16 @@ public class DescriptionBot extends Bot {
 		report.setComment("Number of pathways missing description", "" + nrMissing);
 		return report;
 	}
-	
+
 	public String getTagName() {
 		return CURATIONTAG;
 	}
-	
+
 	protected Result scanPathway(File pathwayFile) throws BotException {
 		try {
 			Pathway p = new Pathway();
 			p.readFromXml(pathwayFile, true);
-			
+
 			String comment = null;
 			for(Comment c : p.getMappInfo().getComments()) {
 				if(WikiPathways.COMMENT_DESCRIPTION.equals(c.getSource())) {
@@ -79,7 +79,7 @@ public class DescriptionBot extends Bot {
 			throw new BotException(e);
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		try {
 			Logger.log.trace("Starting DescriptionBot");
@@ -92,7 +92,7 @@ public class DescriptionBot extends Bot {
 			printUsage();
 		}
 	}
-	
+
 	static private void printUsage() {
 		System.out.println(
 			"Usage:\n" +
@@ -103,10 +103,10 @@ public class DescriptionBot extends Bot {
 			"(extension will be added automatically)\n"
 		);
 	}
-	
+
 	class DescriptionResult extends Result {
 		boolean hasDescription;
-		
+
 		public DescriptionResult(WSPathwayInfo pathwayInfo, boolean hasDescription) {
 			super(pathwayInfo);
 			this.hasDescription = hasDescription;

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.server;
@@ -57,14 +57,14 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class AtlasMapperServiceImpl extends RemoteServiceServlet implements AtlasMapperService {
 	private ClientManager clientMgr;
 	private CacheManager cacheMgr;
-	
+
 	private ClientManager getClientManager() {
 		if(clientMgr == null) {
 			clientMgr = new ClientManager(getServletContext());
 		}
 		return clientMgr;
 	}
-	
+
 	private CacheManager getCacheManager() throws ServiceException {
 		if(cacheMgr == null) {
 			cacheMgr = new CacheManager(
@@ -74,11 +74,11 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 		}
 		return cacheMgr;
 	}
-	
+
 	private WikiPathwaysClient getClient() throws ServiceException {
 		return getClientManager().getClient();
 	}
-	
+
 	public AtlasMapperServiceImpl() {
 		PreferenceManager.init();
 		BioDataSource.init();
@@ -92,7 +92,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public PathwayInfo[] getPathways() {
 		try {
 			WSPathwayInfo[] result = getClient().listPathways();
@@ -110,11 +110,11 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public FactorInfo[] getFactors(String pathwayId) {
 		try {
 			GeneSet atlasGenes = getCacheManager().getAtlasCache().getGeneSet(pathwayId);
-			
+
 			Set<Factor> factors = atlasGenes.getFactors();
 			Map<String, Set<String>> factorInfo = new HashMap<String, Set<String>>();
 			for(Factor f : factors) {
@@ -124,7 +124,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 				}
 				values.add(f.getValue());
 			}
-			
+
 			FactorInfo[] result = new FactorInfo[factorInfo.size()];
 			int i = 0;
 			for(String name : factorInfo.keySet()) {
@@ -138,7 +138,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public String getImageUrl(String pathway, String factorType,
 			String[] factorValues) {
 		try {
@@ -154,7 +154,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public PathwayInfo getPathwayInfo(String pathway) {
 		try {
 			WSPathwayInfo wsi = getClient().getPathwayInfo(pathway);
@@ -168,7 +168,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public GeneInfo[] getGeneInfo(String pathwayId, String factorType, Set<String> factorValues) {
 		try {
 			GeneSet atlasGenes = getCacheManager().getAtlasCache().getGeneSet(pathwayId);
@@ -177,14 +177,14 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			VPathway vPathway = new VPathway(new VPathwayWrapperBase());
 			vPathway.fromModel(pathway);
 			Dimension vsize = vPathway.calculateVSize();
-			
+
 			double[] msize = new double[2];
 			msize[0] = vPathway.mFromV(vsize.getWidth());
 			msize[1] = vPathway.mFromV(vsize.getHeight());
-			
+
 			Organism org = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
 			DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(org);
-			
+
 			List<IDMapperRdb> gdbs = getCacheManager().getGdbProvider().getGdbs(org);
 
 			List<GeneInfo> genes = new ArrayList<GeneInfo>();
@@ -196,21 +196,21 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 					bounds[1] = pwe.getMTop() / msize[1];
 					bounds[2] = (pwe.getMLeft() + pwe.getMWidth()) / msize[0];
 					bounds[3] = (pwe.getMTop() + pwe.getMHeight()) / msize[1];
-					
+
 					Set<Xref> xrefs = new HashSet<Xref>();
 					for(IDMapperRdb gdb : gdbs) {
 						Xref x = pwe.getXref();
 						if(x.getId() == null || x.getDataSource() == null) continue;
 						xrefs.addAll(gdb.mapID(x, orgEns));
 					}
-					
+
 					for(Xref x : xrefs) {
 						Map<String, Set<ExpressionValue>> data = new HashMap<String, Set<ExpressionValue>>();
 						Gene atlasGene = atlasGenes.getGene(x.getId());
 						if(atlasGene == null) continue; //No atlas data for this gene
-						
+
 						Set<String> experiments = new HashSet<String>();
-						
+
 						for(Factor f : atlasGene.getFactors()) {
 							if(!factorValues.contains(f.getValue())) {
 								continue; //Skip this data if not a selected factor
@@ -225,23 +225,23 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 								if(fd.getExperiment() != null) experiments.add(fd.getExperiment());
 							}
 						}
-						
+
 						GeneInfo gi = new GeneInfo(
 							pwe.getTextLabel() + " (" + pwe.getXref() + ")",
 							x.getId(),
 							data,
 							bounds
 						);
-						
+
 						gi.setGeneLink(x.getUrl());
 						gi.setGeneLinkName(x.getDataSource().getFullName());
 						String exp = "";
 						for(String e : experiments) exp += e + ", ";
-						
+
 						gi.setWarehouseLink(
 								"http://www.ebi.ac.uk/microarray-as/aew/DW?queryFor=gene&gene_query=" +
 								x.getId() + "&" +
-								"species=" + org.latinName() + 
+								"species=" + org.latinName() +
 								"&displayInsitu=on&exp_query=" + exp
 						);
 						genes.add(gi);
@@ -254,7 +254,7 @@ public class AtlasMapperServiceImpl extends RemoteServiceServlet implements Atla
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static DataSource getEnsemblDataSource(Organism org) {
 		if(Organism.ArabidopsisThaliana.equals(org)) {
 			return BioDataSource.UNIPROT;

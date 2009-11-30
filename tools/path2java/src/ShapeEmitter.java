@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 import java.awt.geom.Point2D;
@@ -31,20 +31,20 @@ class ShapeEmitter implements Emitter
 	{
 		return path;
 	}
-		
+
 	ShapeEmitter ()
 	{
 		path = new GeneralPath();
 		pen = new Point2D.Double (0,0);
 	}
-		
+
 	public void move (Point2D p)
-	{			
+	{
 		path.moveTo ((float)p.getX(), (float)p.getY());
 		pen = p;
 		start = p;
 	}
-		
+
 	public void close ()
 	{
 		path.closePath();
@@ -81,7 +81,7 @@ class ShapeEmitter implements Emitter
 		a.setStartPoint (pen);
 		a.setWidth (r.getX() * 2);
 		a.setHeight (r.getY() * 2);
-		
+
 		// ration is ignored, Arc2D can't handle it.
 		path.append(a.)
 			pen = p;
@@ -97,9 +97,9 @@ class ShapeEmitter implements Emitter
 	{
 		assert (false);
 	}
-		
+
 	public void moveRelative (Point2D p)
-	{			
+	{
 		path.moveTo ((float)(pen.getX() + p.getX()), (float)(pen.getY() + p.getY()));
 		pen.setLocation (pen.getX() + p.getX(), pen.getY() + p.getY());
 		start = pen;
@@ -134,7 +134,7 @@ class ShapeEmitter implements Emitter
 	{
 		assert (false);
 	}
-		
+
 	public void flush()
 	{
 	}
@@ -143,17 +143,17 @@ class ShapeEmitter implements Emitter
 	{
 		assert (false);
 	}
-	
+
 	public void vertical (double y)
 	{
 		assert (false);
 	}
-	
+
 	public void horizontalRelative (double x)
 	{
 		assert (false);
 	}
-	
+
 	public void verticalRelative (double y)
 	{
 		assert (false);

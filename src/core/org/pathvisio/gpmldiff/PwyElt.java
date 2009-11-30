@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gpmldiff;
@@ -27,7 +27,7 @@ import org.pathvisio.model.PropertyType;
    Utility class for pathway element methods related to gpmldiff.
 */
 class PwyElt
-{			
+{
 	static String summary(PathwayElement elt)
 	{
 		if (elt == null) return "null"; // TODO, why is this necessary?
@@ -46,11 +46,11 @@ class PwyElt
 		if (props.contains(PropertyType.STARTX))
 			result += ",x1=" + elt.getStaticProperty(PropertyType.STARTX);
 		if (props.contains(PropertyType.STARTY))
-			result += ",y1=" + elt.getStaticProperty(PropertyType.STARTY);		
+			result += ",y1=" + elt.getStaticProperty(PropertyType.STARTY);
 		if (props.contains(PropertyType.ENDX))
 			result += ",x2=" + elt.getStaticProperty(PropertyType.ENDX);
 		if (props.contains(PropertyType.ENDY))
-			result += ",y2=" + elt.getStaticProperty(PropertyType.ENDY);		
+			result += ",y2=" + elt.getStaticProperty(PropertyType.ENDY);
 		if (props.contains(PropertyType.GRAPHID))
 			result += ",id=" + elt.getStaticProperty(PropertyType.GRAPHID);
 		if (props.contains(PropertyType.STARTGRAPHREF))
@@ -85,7 +85,7 @@ class PwyElt
 	{
 		Map<String, String> oldContents = getContents (oldElt);
 		Map<String, String> newContents = getContents (newElt);
-				
+
 		boolean opened = false; // indicates if modifyStart has been
 								// sent already for current PwyElt.
 		for (String key : oldContents.keySet())
@@ -112,6 +112,6 @@ class PwyElt
 		{
 			outputter.modifyEnd();
 			opened = false;
-		}				 
+		}
 	}
 }

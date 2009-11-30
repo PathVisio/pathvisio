@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -37,11 +37,11 @@ public class ShapeRegistry
 	private static Shape defaultShape = null;
 	private static ArrowShape defaultArrow = null;
 	private static AnchorShape defaultAnchor = null;
-	
+
 	private static Map <String, Shape> shapeMap = new HashMap <String, Shape>();
 	private static Map <String, ArrowShape> arrowMap = new HashMap <String, ArrowShape>();
 	private static Map <String, AnchorShape> anchorMap = new HashMap <String, AnchorShape>();
-	
+
 	static
 	{
 		GeneralPath temp = new GeneralPath();
@@ -53,7 +53,7 @@ public class ShapeRegistry
 		temp.moveTo (-30,-30);
 		temp.lineTo (30,30);
 		temp.moveTo (-30,30);
-		temp.lineTo (30,-30);		
+		temp.lineTo (30,-30);
 		defaultArrow = new ArrowShape (temp, ArrowShape.FillType.OPEN);
 
 		temp = new GeneralPath();
@@ -79,7 +79,7 @@ public class ShapeRegistry
 	{
 		shapeMap.put (key, sh);
 	}
-	
+
 	/**
 	 * Register an arrow shape
 	 * @param key The key used to identify the arrow shape
@@ -91,7 +91,7 @@ public class ShapeRegistry
 		//pass in zero as the gap between line line ending and anchor
 		arrowMap.put(key, new ArrowShape (sh, fillType, lineEndingLength));
 	}
-	
+
 	/**
 	 * Register an arrow shape
 	 * @param key The key used to identify the arrow shape
@@ -102,7 +102,7 @@ public class ShapeRegistry
 	{
 		arrowMap.put (key, new ArrowShape (sh, fillType));
 	}
-	
+
 	static public void registerAnchor (String key, Shape sh)
 	{
 		anchorMap.put (key, new AnchorShape (sh));
@@ -138,7 +138,7 @@ public class ShapeRegistry
 		}
 		return sh;
 	}
-	
+
 	/**
 	   Returns a named shape, scaled in such a way that it has a
 	   bounding rect equal to x, y, w, h.

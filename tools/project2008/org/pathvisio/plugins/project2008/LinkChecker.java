@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.plugins.project2008;
@@ -40,15 +40,15 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 
 /**
- * In the link checker for each pathway is is checked if the links in that pathway exist in the 
- * database. An output file is created that shows a table. On the right column of that table the 
+ * In the link checker for each pathway is is checked if the links in that pathway exist in the
+ * database. An output file is created that shows a table. On the right column of that table the
  * filenames are shown and on the left column of the table the percentage is shown of the links
  * that exist in the database.
  */
 
-public class LinkChecker 
+public class LinkChecker
 {
-	
+
 	public static void printUsage(String error)
 	{
 		System.out.println ("LinkChecker\n" +
@@ -57,7 +57,7 @@ public class LinkChecker
 				"Usage:\n"+
 				"	java LinkChecker online <dbDir> <cacheDir> <outFile>\n" +
 				"	java LinkChecker local <dbDir> <pwDir> <outFile>\n" +
-				"\n" + 
+				"\n" +
 				"Where dbDir is a directory containing gene databases,\n"+
 				"cachedir is a directory containing wikipahtways pathways,\n"+
 				"and pwDir is the root of a directory tree containing pathways in GPML format.\n"+
@@ -66,14 +66,14 @@ public class LinkChecker
 	}
 
 	/**
-	 * If connected to the internet, the boolean online has to be set to true. 
+	 * If connected to the internet, the boolean online has to be set to true.
 	 */
 	boolean isOnline = true; // set to true if connected to the internet
-	
-	/** 
+
+	/**
 	 * Check if the String[] args is given, and make Files containing the directories to
-	 * the pathways and databases 
-	 */ 
+	 * the pathways and databases
+	 */
 	File dbDir = null;
 	File pwDir = null;
 	PrintWriter out;
@@ -144,7 +144,7 @@ public class LinkChecker
 			System.exit(1);
 		}
 	}
-	
+
 	private static class LinkCheckResult
 	{
 		File f = null;
@@ -155,14 +155,14 @@ public class LinkChecker
 		boolean parseOk = false;
 		boolean databaseOk = false;
 	}
-	
+
 	LocalGdbManager localGdbManager = null;
-	
+
 	private List<LinkCheckResult> readPathways(List<File> pwyFiles)
 	{
 		List<LinkCheckResult> results = new ArrayList<LinkCheckResult>();
 		XMLReader xmlReader = null;
-		
+
 		try
 		{
 			xmlReader = XMLReaderFactory.createXMLReader();
@@ -177,7 +177,7 @@ public class LinkChecker
 		{
 			LinkCheckResult result = new LinkCheckResult();
 			result.f = filename;
-			
+
 			Logger.log.info ("Checking " + filename);
 			SimpleGdb currentGdb = localGdbManager.getDatabaseForPathway(filename);
 			/**
@@ -212,39 +212,39 @@ public class LinkChecker
 			{
 				// ignore parse errors
 				Logger.log.error ("Couldn't parse " + filename);
-			}			
+			}
 			results.add (result);
 		}
 		return results;
 	}
-	
+
 	private void report(List<LinkCheckResult> results)
 	{
-		Collections.sort (results, new Comparator<LinkCheckResult>() 
+		Collections.sort (results, new Comparator<LinkCheckResult>()
 		{
-			public int compare(LinkCheckResult a, LinkCheckResult b) 
+			public int compare(LinkCheckResult a, LinkCheckResult b)
 			{
 				if (!(a.parseOk && b.parseOk)) return a.parseOk ? 1 : (b.parseOk ? -1 : 0);
-				
+
 				int result = a.organism.compareTo(b.organism);
 				if (result == 0)
 				{
 					int pctA = a.countTotal == 0 ? 0 : Math.round(100 * a.countTrue / a.countTotal);
 					int pctB = b.countTotal == 0 ? 0 : Math.round(100 * b.countTrue / b.countTotal);
-					
+
 					result = pctA - pctB;
 				}
 				return result;
 			}
 		});
-		
+
 		String titleOfHTMLPage = "LinkChecker.java results";
 		out.print("<HTML><HEAD><TITLE>"+titleOfHTMLPage+"</TITLE></HEAD><BODY><center><h1>"+titleOfHTMLPage+"</h1><TABLE border=\"1\"><TR><TD><B>Filename</B></TD><TD><B>Percentage found in Gdb</B></TD></B></TR>");
 
 		for (LinkCheckResult result : results)
-		{			
+		{
 			String percentage;
-			
+
 			if (result.countTotal != 0)
 			{
 				int percentageint = Math.round(100* result.countTrue / result.countTotal);
@@ -254,14 +254,14 @@ public class LinkChecker
 			{
 				percentage = ("<font color=\"red\"><b>total: 0</b></font>");
 			}
-			
+
 			out.println (
 				tr	(
 						td (result.f.getName()) + "\n" +
 						td (result.databaseOk ? percentage : "Database not found")
 					)
 				);
-			
+
 		}
 
 		/**
@@ -269,11 +269,11 @@ public class LinkChecker
 		 */
 		out.print("</TABLE></center></BODY></HTML>");
 		out.close();
-		System.out.println ("Done writing html");		
+		System.out.println ("Done writing html");
 	}
-	
+
 	/**
-	 * Get a list of files of pathways. 
+	 * Get a list of files of pathways.
 	 */
 	private List<File> getPwyFiles()
 	{
@@ -282,10 +282,10 @@ public class LinkChecker
 		if (isOnline)
 		{
 			/**
-			 * If the boolean online is true, first the data is loaded from the last changed 
-			 * pathway. With the date of this last change, the data of the other recently 
+			 * If the boolean online is true, first the data is loaded from the last changed
+			 * pathway. With the date of this last change, the data of the other recently
 			 * changed pathways can also be loaded.
-			 */		
+			 */
 			WikiPathwaysCache wp = new WikiPathwaysCache(pwDir);
 			wp.update();
 			pwyFiles = wp.getFiles();
@@ -296,22 +296,22 @@ public class LinkChecker
 		}
 		return pwyFiles;
 	}
-	
+
 	private void run()
-	{		
-		List<File> pwyFiles = getPwyFiles();		
+	{
+		List<File> pwyFiles = getPwyFiles();
 		// initialize local Gdb manager
-		localGdbManager = new LocalGdbManager(dbDir);		
-		List<LinkCheckResult> results = readPathways(pwyFiles);		
+		localGdbManager = new LocalGdbManager(dbDir);
+		List<LinkCheckResult> results = readPathways(pwyFiles);
 		report (results);
 	}
-	
+
 	/**
 	* in the String[] args, 3 arguments are given:
 	* in example:
 	* "C:\\databases\\"
 	* "C:\pathways"
-	* 
+	*
 	* The first one is the directory that contains the databases.
 	* The second one is the directory that contains the pathway cache.
 	*/
@@ -321,11 +321,11 @@ public class LinkChecker
 		linkChecker.parseArgs (args);
 		linkChecker.run();
 	}
-	
+
 	private int countExistingXrefs (List <Xref> xrefList, SimpleGdb database)
 	{
 		int countTrue = 0;
-		
+
 		for (Xref xref : xrefList)
 		{
 			try {
@@ -340,17 +340,17 @@ public class LinkChecker
 		}
 		return countTrue;
 	}
-	
+
 	/** wrap a td tag around msg */
 	private String td (String msg)
 	{
 		return "<td>" + msg + "</td>";
 	}
-	
+
 	/** wrap a tr tag around msg */
 	private String tr (String msg)
 	{
 		return "<tr>" + msg + "</tr>";
 	}
-		
+
 }

@@ -5,38 +5,38 @@ import com.nexes.wizard.*;
 import java.awt.*;
 
 public class TestPanel3Descriptor extends WizardPanelDescriptor {
-    
+
     public static final String IDENTIFIER = "SERVER_CONNECT_PANEL";
-    
+
     TestPanel3 panel3;
-    
+
     public TestPanel3Descriptor() {
-        
+
         panel3 = new TestPanel3();
         setPanelDescriptorIdentifier(IDENTIFIER);
         setPanelComponent(panel3);
-        
+
     }
 
     public Object getNextPanelDescriptor() {
         return FINISH;
     }
-    
+
     public Object getBackPanelDescriptor() {
         return TestPanel2Descriptor.IDENTIFIER;
     }
-    
-    
+
+
     public void aboutToDisplayPanel() {
-        
+
         panel3.setProgressValue(0);
         panel3.setProgressText("Connecting to Server...");
 
         getWizard().setNextFinishButtonEnabled(false);
         getWizard().setBackButtonEnabled(false);
-        
+
     }
-    
+
     public void displayingPanel() {
 
             Thread t = new Thread() {
@@ -61,10 +61,10 @@ public class TestPanel3Descriptor extends WizardPanelDescriptor {
                     getWizard().setBackButtonEnabled(true);
 
                 } catch (InterruptedException e) {
-                    
+
                     panel3.setProgressValue(0);
                     panel3.setProgressText("An Error Has Occurred");
-                    
+
                     getWizard().setBackButtonEnabled(true);
                 }
 
@@ -73,7 +73,7 @@ public class TestPanel3Descriptor extends WizardPanelDescriptor {
 
         t.start();
     }
-    
+
     public void aboutToHidePanel() {
         //  Can do something here, but we've chosen not not.
     }
@@ -82,7 +82,7 @@ public class TestPanel3Descriptor extends WizardPanelDescriptor {
 	protected Component createContents() {
 		// TODO Auto-generated method stub
 		return new TestPanel3();
-	}   
-    
-            
+	}
+
+
 }

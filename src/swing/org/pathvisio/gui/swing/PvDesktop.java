@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
@@ -51,12 +51,12 @@ import org.pathvisio.visualization.VisualizationMethodRegistry;
  * PvDesktop ties together several
  * other important singletons and provides access to them for
  * the entire PathVisio standalone application.
- * PvDesktop provides access to components  
+ * PvDesktop provides access to components
  * such as data visualization and gene expression data. It
  * is also a contact point for Plugins, and makes sure
  * Gex data is cached when a suitable pgdb, pgex and gpml are loaded.
  * <p>
- * PvDesktop is a singleton: There should be always exactly 
+ * PvDesktop is a singleton: There should be always exactly
  * one instance of it.
  */
 public class PvDesktop implements ApplicationEventListener, GdbEventListener, VisualizationManager.VisualizationListener
@@ -88,13 +88,13 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	}
 
 	public void initPanels()
-	{		
-		preferencesDlg.addPanel ("Display", 
+	{
+		preferencesDlg.addPanel ("Display",
 			preferencesDlg.builder()
 			.integerField (
 				GlobalPreference.GUI_SIDEPANEL_SIZE,
 				"Initial side panel size (percent of window size):", 0, 100)
-			.booleanField ( 
+			.booleanField (
 				GlobalPreference.DATANODES_ROUNDED,
 				"Use rounded rectangles for data nodes")
 			.integerField(
@@ -102,7 +102,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				"Maximum citations to show (use -1 to show all)",
 				-1, 1000)
 			.booleanField(
-				GlobalPreference.SNAP_TO_ANGLE, 
+				GlobalPreference.SNAP_TO_ANGLE,
 				"Snap to angle when moving line and rotation handles")
 			.integerField (
 				GlobalPreference.SNAP_TO_ANGLE_STEP,
@@ -111,42 +111,42 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				GlobalPreference.MIM_SUPPORT,
 				"Load support for molecular interaction maps (MIM) at program start")
 			.booleanField (
-				GlobalPreference.SHOW_ADVANCED_PROPERTIES,									   
+				GlobalPreference.SHOW_ADVANCED_PROPERTIES,
 				"Show advanced properties (e.g. references)")
 			.booleanField (
-				GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL,									   
+				GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL,
 				"Use Java System look-and-feel at program start")
 			.booleanField(
-				GlobalPreference.ENABLE_DOUBLE_BUFFERING, 
+				GlobalPreference.ENABLE_DOUBLE_BUFFERING,
 				"Enable double-buffering (pathway is drawn slower, but flickerless)")
-			.build());		
-		
-		
-		preferencesDlg.addPanel ("Display.Colors", 
+			.build());
+
+
+		preferencesDlg.addPanel ("Display.Colors",
 				preferencesDlg.builder()
 			.colorField(
-				GlobalPreference.COLOR_NO_CRIT_MET, 
+				GlobalPreference.COLOR_NO_CRIT_MET,
 				"Default color for 'no criteria met':")
 			.colorField(
-				GlobalPreference.COLOR_NO_GENE_FOUND, 
+				GlobalPreference.COLOR_NO_GENE_FOUND,
 				"Default color for 'gene not found':")
 			.colorField(
-				GlobalPreference.COLOR_NO_DATA_FOUND, 
+				GlobalPreference.COLOR_NO_DATA_FOUND,
 				"Default color for 'no data found':")
 			.colorField(
-				GlobalPreference.COLOR_SELECTED, 
+				GlobalPreference.COLOR_SELECTED,
 				"Line color for selected objects:")
 			.colorField(
 				GlobalPreference.COLOR_HIGHLIGHTED,
 				"Highlight color")
 			.build());
-		
+
 		preferencesDlg.addPanel ("Files", preferencesDlg.builder()
 			.fileField(
-				GlobalPreference.FILE_LOG, 
-				"Log file:", false) 
+				GlobalPreference.FILE_LOG,
+				"Log file:", false)
 			.build());
-		
+
 		preferencesDlg.addPanel ("Directories", preferencesDlg.builder()
 			.fileField (GlobalPreference.DIR_PWFILES,
 				"Gpml pathways:", true)
@@ -155,12 +155,12 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			.fileField (GlobalPreference.DIR_EXPR,
 				"Expression datasets:", true)
 			.build());
-		
+
 		preferencesDlg.addPanel ("Database", preferencesDlg.builder()
 			.stringField (GlobalPreference.DB_ENGINE_GEX,
 				"Database connector class for expression dataset:")
 			.build());
-		
+
 	}
 
 	/** return the preferences dialog, can be used to add panels */
@@ -168,19 +168,19 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	{
 		return preferencesDlg;
 	}
-	
+
 	/**
 	 * Return the global visualizationManager instance.
 	 */
-	public VisualizationManager getVisualizationManager() 
+	public VisualizationManager getVisualizationManager()
 	{
 		return visualizationManager;
 	}
-	
+
 	public VisualizationMethodRegistry getVisualizationMethodRegistry()
 	{
 		return VisualizationMethodRegistry.getCurrent();
-	}	
+	}
 
 	/**
 	 * returns the global gexManager instance.
@@ -197,7 +197,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	{
 		return swingEngine;
 	}
-	
+
 	/**
 	 * Load the Gex cache for the current pathway. Only starts loading
 	 * when an expression dataset is available and a pathway is open.
@@ -205,7 +205,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	public void loadGexCache() {
 		final CachedData gex = gexManager.getCachedData();
 		final Pathway p = swingEngine.getEngine().getActivePathway();
-		if(p != null && gex != null) {					
+		if(p != null && gex != null) {
 			try
 			{
 				gex.clearCache();
@@ -216,17 +216,17 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			catch (IDMapperException e)
 			{
 				Logger.log.error ("Exception while caching expression data ", e);
-			}			
+			}
 		}
 	}
-	
+
 
 	/**
 	 * Update Gex cache in response to opening pathways.
 	 */
-	public void applicationEvent(ApplicationEvent e) 
+	public void applicationEvent(ApplicationEvent e)
 	{
-		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) 
+		if(e.getType() == ApplicationEvent.PATHWAY_OPENED)
 		{
 			loadGexCache();
 		}
@@ -235,26 +235,26 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	/**
 	 * Update gex cache in response to opening / closing gene databases
 	 */
-	public void gdbEvent(GdbEvent e) 
+	public void gdbEvent(GdbEvent e)
 	{
-		loadGexCache();			
+		loadGexCache();
 	}
 
 	/**
 	 * Shortcut for getSwingEngine().getFrame()
 	 * Returns frame of main application window.
-	 * Useful for positioning / parenting dialogs 
+	 * Useful for positioning / parenting dialogs
 	 */
 	public JFrame getFrame()
 	{
 		return swingEngine.getFrame();
 	}
-	
+
 	/**
 	 * register an action as a menu item
 	 * @param submenu one of "File", "Edit", "Data" or "Help"
 	 */
-	public void registerMenuAction (String submenu, Action a)	
+	public void registerMenuAction (String submenu, Action a)
 	{
 		JMenuBar menuBar = swingEngine.getApplicationPanel().getMenuBar();
 		if(menuBar == null) {
@@ -272,17 +272,17 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			}
 		}
 	}
-	
+
 	/**
-	 * Returns the JTabbedPane that corresponds to the side-bar 
-	 * shortcut for 
+	 * Returns the JTabbedPane that corresponds to the side-bar
+	 * shortcut for
 	 * swingEngine.getApplicationPanel.getSideBarTabbedPane.
 	 */
 	public JTabbedPane getSideBarTabbedPane()
 	{
 		return swingEngine.getApplicationPanel().getSideBarTabbedPane();
 	}
-	
+
 	public void addPathwayElementMenuHook(PathwayElementMenuHook hook)
 	{
 		swingEngine.getApplicationPanel().getPathwayElementMenuListener().addPathwayElementMenuHook(hook);
@@ -290,13 +290,13 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 
 	private boolean disposed = false;
 	/**
-	 * free all resources (such as listeners) held by this class. 
+	 * free all resources (such as listeners) held by this class.
 	 * Owners of this class must explicitly dispose of it to clean up.
 	 */
 	public void dispose()
 	{
 		assert (!disposed);
-		
+
 		//explicit clean shutdown of gex prevents file from being left open
 		if (gexManager.isConnected())
 		{
@@ -320,7 +320,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		disposed = true;
 	}
 
-	public void visualizationEvent(VisualizationEvent e) 
+	public void visualizationEvent(VisualizationEvent e)
 	{
 		// redraw Pathway
 		VPathway vPwy = swingEngine.getEngine().getActiveVPathway();
@@ -328,13 +328,13 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	}
 
 	private PluginManager manager = null;
-	
+
 	public void initPlugins(List<String> locations)
 	{
 		if (manager != null) throw new IllegalStateException ("Can't initialize plugin manager twice!");
-		manager = new PluginManager(locations, this);	
+		manager = new PluginManager(locations, this);
 	}
-	
+
 	public PluginManager getPluginManager()
 	{
 		return manager;
@@ -347,16 +347,16 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	 */
 	public void selectGdb (String dbType)
 	{
-		try 
+		try
 		{
 			// Get the database connector to connect to Gdb databases.
 			// Currently there is only one option: DBConnDerby();
 			DBConnectorSwing dbcon = new DBConnDerby();
 			String result = dbcon.openChooseDbDialog(null);
-			
+
 			if (result == null) return;
 			String dbName = "idmapper-pgdb:" + result;
-			
+
 			if (dbType.equals("Gene"))
 			{
 				swingEngine.getGdbManager().setGeneDb(dbName);
@@ -365,13 +365,13 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			else
 			{
 				swingEngine.getGdbManager().setMetaboliteDb(dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);					
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);
 			}
-		} 
-		catch(Exception ex) 
+		}
+		catch(Exception ex)
 		{
 			String msg = "Failed to open " + dbType + " Database; " + ex.getMessage();
-			JOptionPane.showMessageDialog(null, 
+			JOptionPane.showMessageDialog(null,
 					"Error: " + msg + "\n\n" + "See the error log for details.",
 					"Error",
 					JOptionPane.ERROR_MESSAGE);

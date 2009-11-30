@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.plugins;
@@ -69,7 +69,7 @@ import org.pathvisio.visualization.colorset.ColorSet;
 public class ColorByExpression extends VisualizationMethod {
 	static final Color DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
 	static final Color LINE_COLOR_DEFAULT = Color.BLACK;
-	
+
 	static private final Paint STRIPE_PATTERN;
 	static
 	{
@@ -84,31 +84,31 @@ public class ColorByExpression extends VisualizationMethod {
 				new int[] {8, 4, 8}, new int[] {4, 8, 8}, 3);
 		STRIPE_PATTERN = new TexturePaint(buf, new Rectangle(0,0,8,8));
 	}
-	
+
 	private List<ConfiguredSample> useSamples = new ArrayList<ConfiguredSample>();
 	List<URL> imageURLs;
 
 	private final GexManager gexManager;
 	GexManager getGexManager() { return gexManager; }
-	
+
 	private List<URL> defaultURLs() {
 		return new ArrayList<URL>(Arrays.asList(new URL[] {
 				Resources.getResourceURL("protein_hi.bmp"),
 				Resources.getResourceURL("mRNA_hi.bmp") }));
 	}
-	
+
 	public ColorByExpression(Visualization v, String registeredName, GexManager gexManager) {
 		super(v, registeredName);
 		this.gexManager = gexManager;
 		setIsConfigurable(true);
 		setUseProvidedArea(true);
 	}
-	
+
 	public Component visualizeOnToolTip(Graphics g) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	/**
 	 * Check whether advanced settings are used
 	 */
@@ -124,7 +124,7 @@ public class ColorByExpression extends VisualizationMethod {
 		}
 		return getSingleColorSet() == null;
 	}
-	
+
 	/**
 	 * Set a single colorset for all samples.
 	 */
@@ -133,7 +133,7 @@ public class ColorByExpression extends VisualizationMethod {
 			s.setColorSet(cs);
 		}
 	}
-	
+
 	/**
 	 * Get the single colorset that is used for all
 	 * samples. Returns null when different colorsets are
@@ -152,7 +152,7 @@ public class ColorByExpression extends VisualizationMethod {
 		}
 		return cs;
 	}
-	
+
 	/**
 	 * Get the configured sample for the given sample. Returns
 	 * null when no configured sample is found.
@@ -165,7 +165,7 @@ public class ColorByExpression extends VisualizationMethod {
 		}
 		return null;
 	}
-	
+
 	public String getDescription() {
 		return "Color DataNodes by their expression value";
 	}
@@ -173,52 +173,52 @@ public class ColorByExpression extends VisualizationMethod {
 	public String getName() {
 		return "Expression as color";
 	}
-	
+
 	public JPanel getConfigurationPanel() {
 		return new ColorByExpressionPanel(this);
 	}
-	
+
 	public List<ConfiguredSample> getConfiguredSamples() {
 		return useSamples;
 	}
-	
+
 	public List<Sample> getSelectedSamples() {
 		List<Sample> samples = new ArrayList<Sample>();
-		
-		for(ConfiguredSample cs : useSamples) 
+
+		for(ConfiguredSample cs : useSamples)
 		{
 			samples.add(cs.getSample());
 		}
 		return samples;
 	}
-	
-	List<URL> getImageURLs() { 
+
+	List<URL> getImageURLs() {
 		if(imageURLs == null) imageURLs = defaultURLs();
 		return imageURLs;
 	}
-	
+
 	void addImageURL(URL url) {
 		if(!getImageURLs().contains(url)) getImageURLs().add(url);
 	}
-	
+
 	void removeImageURL(URL url) {
 		if(url.getProtocol().equals("file")) getImageURLs().remove(url);
 	}
-	
+
 	void drawImage(ConfiguredSample is, Color rgb, Rectangle area, Graphics2D g2d) {
 		Image img = is.getImage(rgb);
 		if(img != null) {
 			drawBackground(area, g2d);
-			
+
 			Dimension scaleTo = is.getScaleSize(new Dimension(area.width, area.height));
 			Image simg = img.getScaledInstance(scaleTo.width, scaleTo.height, Image.SCALE_SMOOTH);
-									
+
 			int xs = area.width - scaleTo.width;
 			int ys = area.height - scaleTo.height;
 			g2d.drawImage(simg, area.x + xs / 2, area.y + ys / 2, null);
 		}
 	}
-		
+
 	void drawBackground(Rectangle area, Graphics2D g2d) {
 		g2d.setColor(Color.WHITE);
 		g2d.fill(area);
@@ -227,20 +227,20 @@ public class ColorByExpression extends VisualizationMethod {
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
 		if(!(g instanceof GeneProduct)) return;
 		if(useSamples.size() == 0) return; //Nothing to draw
-		
+
 		GeneProduct gp = (GeneProduct) g;
-		
+
 		Shape da = getVisualization().provideDrawArea(this, g);
 		Rectangle area = da.getBounds();
-		
+
 		drawArea(gp, area, g2d);
-		
+
 //		Color c = gp.getPathwayElement().getColor();
 //		g2d.setColor(c);
 //		g2d.fill(area);
-	
+
 	}
-	
+
 	void drawArea(final GeneProduct gp, Rectangle area, Graphics2D g2d) {
 		int nr = useSamples.size();
 		int left = area.width % nr; //Space left after dividing, give to last rectangle
@@ -256,7 +256,7 @@ public class ColorByExpression extends VisualizationMethod {
 			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
 			CachedData cache = gexManager.getCachedData();
 			if(cache == null) continue;
-			
+
 			if(s.getColorSet() == null) {
 				Logger.log.trace("No colorset for sample " + s);
 				continue; //No ColorSet for this sample
@@ -273,7 +273,7 @@ public class ColorByExpression extends VisualizationMethod {
 					drawNoDataFound(s, area, g2d);
 				}
 			}
-			else 
+			else
 			{
 				drawWaitingForData(area, g2d);
 				cache.asyncGet(idc, new Callback()
@@ -290,42 +290,42 @@ public class ColorByExpression extends VisualizationMethod {
 		g2d.setColor(Color.BLACK);
 		g2d.draw (gp.getShape());
 	}
-	
+
 	void drawNoDataFound(ConfiguredSample s, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		drawColoredRectangle(area, cs.getColor(ColorSet.ID_COLOR_NO_DATA_FOUND), g2d);
 	}
 
-	void drawWaitingForData (Rectangle r, Graphics2D g2d) 
+	void drawWaitingForData (Rectangle r, Graphics2D g2d)
 	{
 		g2d.setPaint(STRIPE_PATTERN);
 		g2d.fill(r);
-		
+
 		if(drawLine) {
 			g2d.setColor(getLineColor());
 			g2d.draw(r);
 		}
 	}
 
-	void drawColoredRectangle(Rectangle r, Color c, Graphics2D g2d) {			
+	void drawColoredRectangle(Rectangle r, Color c, Graphics2D g2d) {
 		g2d.setColor(c);
 		g2d.fill(r);
-		
+
 		if(drawLine) {
 			g2d.setColor(getLineColor());
 			g2d.draw(r);
 		}
 	}
-	
+
 	Color lineColor;
 	boolean drawLine = false;
-	
+
 	void drawSampleAvg(ConfiguredSample s, List<ReporterData> data, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		Color rgb = cs.getColor(ReporterData.createListSummary(data), s.getSample());
 		drawColoredRectangle(area, rgb, g2d);
 	}
-	
+
 	void drawSampleBar(ConfiguredSample s, List<ReporterData> refdata, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		int n = refdata.size();
@@ -339,16 +339,16 @@ public class ColorByExpression extends VisualizationMethod {
 			drawColoredRectangle(r, rgb, g2d);
 		}
 	}
-	
+
 	void setLineColor(Color rgb) {
 		if(rgb != null)	{
 			lineColor = rgb;
 			modified();
 		}
 	}
-	
+
 	Color getLineColor() { return lineColor == null ? LINE_COLOR_DEFAULT : lineColor; }
-	
+
 	void setDrawLine(boolean draw) {
 		drawLine = draw;
 		modified();
@@ -356,7 +356,7 @@ public class ColorByExpression extends VisualizationMethod {
 
 	void drawSample(ConfiguredSample s, List<ReporterData> data, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
-		
+
 		if(s.hasImage()) {
 			Color rgb = cs.getColor(ReporterData.createListSummary(data), s.getSample());
 			drawImage(s, rgb, area, g2d);
@@ -376,12 +376,12 @@ public class ColorByExpression extends VisualizationMethod {
 			}
 		}
 	}
-	
-	void setUseSamples(List<ConfiguredSample> samples) 
+
+	void setUseSamples(List<ConfiguredSample> samples)
 	{
 		useSamples = samples;
 	}
-	
+
 	/**
 	 * Add a sample to use for visualization
 	 * @param s The sample to add
@@ -392,7 +392,7 @@ public class ColorByExpression extends VisualizationMethod {
 			modified();
 		}
 	}
-	
+
 	/**
 	 * Remove a sample from the samples that will be used for visualization
 	 * @param s
@@ -403,20 +403,20 @@ public class ColorByExpression extends VisualizationMethod {
 			modified();
 		}
 	}
-	
+
 	public final Element toXML() {
 		Element xml = super.toXML();
 		saveAttributes(xml);
 		for(ConfiguredSample s : useSamples) xml.addContent(s.toXML());
 		return xml;
 	}
-	
+
 	final static String XML_ELM_URL = "image";
 	static final String XML_ATTR_DRAWLINE = "drawLine";
 	static final String XML_ELM_LINECOLOR = "lineColor";
-	
+
 	/**
-	 * Implement this method to save attributes to the XML element 
+	 * Implement this method to save attributes to the XML element
 	 * that contain additional configuration of this plug-ins
 	 * @param xml The XML element to save the attributes to
 	 */
@@ -436,9 +436,9 @@ public class ColorByExpression extends VisualizationMethod {
 			Logger.log.error("Unable to parse settings for plugin", e);
 		}
 	}
-	
+
 	/**
-	 * Implement this method to save attributes to the XML element 
+	 * Implement this method to save attributes to the XML element
 	 * that contain additional configuration of this plug-ins
 	 * @param xml The XML element to save the attributes to
 	 */
@@ -452,7 +452,7 @@ public class ColorByExpression extends VisualizationMethod {
 		xml.setAttribute(XML_ATTR_DRAWLINE, Boolean.toString(drawLine));
 		xml.addContent(ColorConverter.createColorElement(XML_ELM_LINECOLOR, getLineColor()));
 	}
-	
+
 	public final void loadXML(Element xml) {
 		super.loadXML(xml);
 		loadAttributes(xml);
@@ -462,21 +462,21 @@ public class ColorByExpression extends VisualizationMethod {
 			} catch(VisualizationException e) {
 				Logger.log.error("Unable to load plugin settings", e);
 			}
-		}	
+		}
 	}
-	
+
 	/**
 	 * This class stores the configuration for a sample that is selected for
 	 * visualization. In this implementation, a color-set to use for visualization is stored.
 	 * Extend this class to store additional configuration data.
 	 */
-	class ConfiguredSample {		
+	class ConfiguredSample {
 		public static final int AMBIGIOUS_AVG = 0;
 		public static final int AMBIGIOUS_BARS = 1;
 
 		ColorSet colorSet = null;
 		int ambigious = AMBIGIOUS_BARS;
-		
+
 		BufferedImage cacheImage;
 		URL imageURL;
 		Color replaceColor = DEFAULT_TRANSPARENT;
@@ -485,27 +485,27 @@ public class ColorByExpression extends VisualizationMethod {
 		private Sample sample;
 
 		int getAmbigiousType() { return ambigious; }
-		
-		void setAmbigiousType(int type) { 
+
+		void setAmbigiousType(int type) {
 			ambigious = type;
 			modified();
 		}
-		
-		public Sample getSample() 
+
+		public Sample getSample()
 		{
 			return sample;
 		}
-		
+
 		public int getId() {
 			return sample.getId();
 		}
-		
+
 		final static String XML_ATTR_ASPECT = "maintain-aspect-ratio";
 		final static String XML_ATTR_TOLERANCE = "tolerance";
 		final static String XML_ATTR_IMAGE = "image-url";
 		final static String XML_ATTR_REPLACE = "replace-color";
 		final static String XML_ATTR_AMBIGIOUS = "ambigious";
-				
+
 		protected void saveAttributes(Element xml) {
 			xml.setAttribute(XML_ATTR_AMBIGIOUS, Integer.toString(ambigious));xml.setAttribute(XML_ATTR_ASPECT, Boolean.toString(getMaintainAspect()));
 			if(imageURL != null) {
@@ -515,7 +515,7 @@ public class ColorByExpression extends VisualizationMethod {
 				xml.addContent(ColorConverter.createColorElement(XML_ATTR_REPLACE, getReplaceColor()));
 			}
 		}
-		
+
 		protected void loadAttributes(Element xml) {
 			int amb = Integer.parseInt(xml.getAttributeValue(XML_ATTR_AMBIGIOUS));
 			setAmbigiousType(amb);
@@ -530,11 +530,11 @@ public class ColorByExpression extends VisualizationMethod {
 				Logger.log.error("Unable to load plugin", e);
 			}
 		}
-		
+
 		static final String XML_ELEMENT = "sample";
 		static final String XML_ATTR_ID = "id";
 		static final String XML_ATTR_COLORSET = "colorset";
-		
+
 		private final Element toXML() {
 			Element xml = new Element(XML_ELEMENT);
 			xml.setAttribute(XML_ATTR_ID, Integer.toString(sample.getId()));
@@ -542,11 +542,11 @@ public class ColorByExpression extends VisualizationMethod {
 			saveAttributes(xml);
 			return xml;
 		}
-		
-		private final void loadXML(Element xml) throws VisualizationException 
+
+		private final void loadXML(Element xml) throws VisualizationException
 		{
 			int id = Integer.parseInt(xml.getAttributeValue(XML_ATTR_ID));
-			
+
 			String csn = xml.getAttributeValue(XML_ATTR_COLORSET);
 			try
 			{
@@ -556,16 +556,16 @@ public class ColorByExpression extends VisualizationMethod {
 			{
 				throw new VisualizationException(ex);
 			}
-			
-			if (sample == null) 
+
+			if (sample == null)
 			{
 				throw new VisualizationException("Couldn't find Sample with id " + id);
 			}
-			
+
 			setColorSet(getVisualization().getManager().getColorSetManager().getColorSet(csn));
 			loadAttributes(xml);
 		}
-		
+
 		/**
 		 * Create a configured sample based on an existing sample
 		 * @param s The sample to base the configured sample on
@@ -574,11 +574,11 @@ public class ColorByExpression extends VisualizationMethod {
 			if (s == null) throw new NullPointerException();
 			sample = s;
 		}
-		
+
 		protected ColorByExpression getMethod() {
 			return ColorByExpression.this;
 		}
-		
+
 		/**
 		 * Create a configured sample from the information in the given XML element
 		 * @param xml The XML element containing information to create the configured sample from
@@ -587,15 +587,15 @@ public class ColorByExpression extends VisualizationMethod {
 		public ConfiguredSample(Element xml) throws VisualizationException {
 			loadXML(xml);
 		}
-		
+
 		/**
 		 * Set the color-set to use for visualization of this sample
 		 */
-		protected void setColorSet(ColorSet cs) { 
+		protected void setColorSet(ColorSet cs) {
 			colorSet = cs;
 			modified();
 		}
-		
+
 		/**
 		 * Get the color-set to use for visualization of this sample
 		 * @return the color-set
@@ -603,7 +603,7 @@ public class ColorByExpression extends VisualizationMethod {
 		protected ColorSet getColorSet() {
 			return colorSet;
 		}
-		
+
 		/**
 		 * Get the name of the color-sets that is selected for visualization
 		 * @return The name of the selected color-set, or "no colorsets available", if no
@@ -612,49 +612,49 @@ public class ColorByExpression extends VisualizationMethod {
 		protected String getColorSetName() {
 			ColorSet cs = getColorSet();
 			return cs == null ? "no colorsets available" : cs.getName();
-		}	
+		}
 
 		boolean aspectRatio = true;
-		
-		public void setURL(URL url) { 
+
+		public void setURL(URL url) {
 			imageURL = url;
 			invalidateImageCache();
 			modified();
 		}
-		
+
 		public void setDefaultURL() {
 			setURL(defaultURLs().get(0));
 		}
-		
-		public URL getURL() { 
-			return imageURL; 
+
+		public URL getURL() {
+			return imageURL;
 		}
-		
+
 		public boolean hasImage() {
 			return imageURL != null;
 		}
-		
-		public void setReplaceColor(Color rgb) { 
+
+		public void setReplaceColor(Color rgb) {
 			if(rgb != null) replaceColor = rgb;
 			invalidateImageCache();
 			modified();
 		}
 		public Color getReplaceColor() { return replaceColor; }
-		public void setMaintainAspect(boolean maintain) { 
+		public void setMaintainAspect(boolean maintain) {
 			aspectRatio = maintain;
 			invalidateImageCache();
 			modified();
 		}
 		public boolean getMaintainAspect() { return aspectRatio;}
-		
-		public void setTolerance(int tol) { 
+
+		public void setTolerance(int tol) {
 			tolerance = tol;
 			invalidateImageCache();
 			modified();
 		}
-		
+
 		public int getTolerance() { return tolerance; }
-		
+
 		public BufferedImage getImage() {
 			if(imageURL == null) return null;
 			if(cacheImage == null) {
@@ -668,20 +668,20 @@ public class ColorByExpression extends VisualizationMethod {
 			}
 			return cacheImage.getSubimage(0, 0, cacheImage.getWidth(), cacheImage.getHeight());
 		}
-		
+
 		private void invalidateImageCache() {
 			scaledImages.clear();
 			coloredImages.clear();
 			cacheImage = null;
 		}
-		
+
 		private Map<Dimension, Image> scaledImages = new HashMap<Dimension, Image>();
 		private Map<Color, Image> coloredImages = new HashMap<Color, Image>();
-		
+
 		public Image getImage(Dimension size) {
 			return getImage(size, null);
 		}
-		
+
 		public Image getImage(Color replaceWith) {
 			Image img = coloredImages.get(replaceWith);
 			if(img == null) {
@@ -692,20 +692,20 @@ public class ColorByExpression extends VisualizationMethod {
 			}
 			return img;
 		}
-		
+
 		public Image getImage(Dimension size, Color replaceWith) {
 			Image img = scaledImages.get(size);
 			if(img == null) {
 				img = getImage(replaceWith);
 				if(img == null) return null;
-				
+
 				size = getScaleSize(size);
 				img = img.getScaledInstance(size.width, size.height, Image.SCALE_SMOOTH);
 				scaledImages.put(size, img);
 			}
 			return img;
 		}
-		
+
 		public Dimension getScaleSize(Dimension target) {
 			if(aspectRatio) {
 				BufferedImage img = getImage();
@@ -716,7 +716,7 @@ public class ColorByExpression extends VisualizationMethod {
 			}
 			return target;
 		}
-		
+
 		Image doReplaceColor(Image img, final Color oldColor, final Color newColor, final int tol) {
 			RGBImageFilter f = new RGBImageFilter() {
 				public int filterRGB(int x, int y, int rgb) {
@@ -730,7 +730,7 @@ public class ColorByExpression extends VisualizationMethod {
 			ImageProducer pr = new FilteredImageSource(img.getSource(), f);
 			return Toolkit.getDefaultToolkit().createImage(pr);
 		}
-		
+
 		boolean compareColor(Color rgb1, Color rgb2, int tolerance) {
 			return 	rgb2.getRed() >= rgb1.getRed() - tolerance &&
 					rgb2.getRed() <= rgb1.getRed() + tolerance &&
@@ -739,11 +739,11 @@ public class ColorByExpression extends VisualizationMethod {
 					rgb2.getBlue() >= rgb1.getBlue() - tolerance &&
 					rgb2.getBlue() <= rgb1.getBlue() + tolerance;
 		}
-		
+
 	}
 
 	@Override
-	public int defaultDrawingOrder() 
+	public int defaultDrawingOrder()
 	{
 		return -1;
 	}

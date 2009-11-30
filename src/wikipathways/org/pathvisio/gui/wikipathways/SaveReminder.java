@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.wikipathways;
@@ -32,12 +32,12 @@ import org.pathvisio.wikipathways.WikiPathways;
 public class SaveReminder extends Timer {
 	private long interval;
 	WikiPathways wiki;
-	
+
 	private static Map<WikiPathways, SaveReminder> reminders = new HashMap<WikiPathways, SaveReminder>();
-	
+
 	/**
 	 * Start the timer that pops up a save reminder at the given interval.
-	 * When a timer is already running, the interval will be updated to the 
+	 * When a timer is already running, the interval will be updated to the
 	 * given interval
 	 * @param wiki	An instance of the WikiPathways class that contains the pathway and
 	 * UserInterfaceHandler
@@ -52,7 +52,7 @@ public class SaveReminder extends Timer {
 			reminder.setMinutesInterval(minutesInterval);
 		}
 	}
-	
+
 	/**
 	 * Stops the save reminder for the given wiki
 	 */
@@ -63,27 +63,27 @@ public class SaveReminder extends Timer {
 			reminders.remove(wiki);
 		}
 	}
-	
+
 	private SaveReminder(WikiPathways wiki, double minutesInterval) {
 		super("WikiPathways save reminder", true);
 		this.wiki = wiki;
 		setMinutesInterval(minutesInterval);
 		schedule(new SaveTask(), interval);
 	}
-	
+
 	private void setMinutesInterval(double minutesInterval) {
 		this.interval = (long)(minutesInterval * 1000 * 60);
 	}
-	
+
 	private class SaveTask extends TimerTask {
 		public void run() {
 			askAutoSave();
 		}
-		
+
 	}
-	
+
 	private void askAutoSave() {
-		String msg = 
+		String msg =
 			"It has been " + (interval / (1000 * 60)) +
 			" minutes ago since you last saved the pathway.\n " +
 			"Would you like to save now?";

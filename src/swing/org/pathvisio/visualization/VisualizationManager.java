@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization;
@@ -49,7 +49,7 @@ import org.pathvisio.visualization.colorset.ColorSetManager;
 /**
  * Maintains the visualizations
  */
-public class VisualizationManager implements GexManagerListener, VPathwayListener, ApplicationEventListener 
+public class VisualizationManager implements GexManagerListener, VPathwayListener, ApplicationEventListener
 {
 	/** Exceptions for the Visualization Manager,
 	 * such as failure while loading stored visualization xml */
@@ -58,18 +58,18 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		public VisualizationException (String msg) { super (msg); }
 		public VisualizationException (Throwable t) { super (t); }
 	}
-	
+
 	/**
 	   name of the top-level xml element
 	 */
 	public static final String XML_ELEMENT = "visualizations";
-	
+
 	private final ColorSetManager colorSetMgr;
 	private final Engine engine;
 	private final GexManager gexManager;
 	private final VisualizationMethodRegistry methodRegistry;
-	
-	public VisualizationManager(VisualizationMethodRegistry methodRegistry, 
+
+	public VisualizationManager(VisualizationMethodRegistry methodRegistry,
 			Engine engine, GexManager gexManager) {
 		colorSetMgr = new ColorSetManager();
 		this.engine = engine;
@@ -85,15 +85,15 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			loadXML();
 		}
 	}
-	
+
 	public Engine getEngine() {
 		return engine;
 	}
-	
+
 	public ColorSetManager getColorSetManager() {
 		return colorSetMgr;
 	}
-	
+
 	/**
 	   Interface for objects that want to listen to VisualizationEvents
 	*/
@@ -106,7 +106,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	 */
 	private List<Visualization> visualizations = new ArrayList<Visualization>();
 	private int active = -1;
-	
+
 	/**
 	   Obtain the currently active visualization. This is the visualization shown
 	   in the open pathway.
@@ -128,7 +128,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	}
 
 	/**
-	   Set which visualization will be active, by Object	   
+	   Set which visualization will be active, by Object
 	 */
 	public void setActiveVisualization(Visualization v) {
 		int index = getVisualizations().indexOf(v);
@@ -147,7 +147,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	 */
 	public String[] getNames() {
 		String[] names = new String[visualizations.size()];
-		for(int i = 0; i < names.length; i++) 
+		for(int i = 0; i < names.length; i++)
 			names[i] = visualizations.get(i).getName();
 		return names;
 	}
@@ -192,7 +192,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		toRemove.addAll(visualizations);
 		for(Visualization v : toRemove) removeVisualization(v);
 	}
-	
+
 	/**
 	   get a new name for a visualization, that is guaranteed to be unique
 	 */
@@ -208,11 +208,11 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	   check if a name already exists.
 	 */
 	public  boolean nameExists(String name) {
-		for(Visualization v : visualizations) 
+		for(Visualization v : visualizations)
 			if(v.getName().equalsIgnoreCase(name)) return true;
 		return false;
 	}
-	
+
 	/**
 	   List of listeners
 	 */
@@ -241,10 +241,10 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			l.visualizationEvent(e);
 		}
 	}
-	
+
 	/**
 	 * Refreshes the vpathway and fires visualization events after
-	 * a visualization has been modified. 
+	 * a visualization has been modified.
 	 * @param v The visualization that has been modified.
 	 */
 	protected void visualizationModified(Visualization v) {
@@ -253,20 +253,20 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			vp.redraw();
 		}
 		fireVisualizationEvent(new VisualizationEvent(
-			this, VisualizationEvent.VISUALIZATION_MODIFIED	
+			this, VisualizationEvent.VISUALIZATION_MODIFIED
 		));
 	}
 
-	public void gexManagerEvent(GexManagerEvent e) 
+	public void gexManagerEvent(GexManagerEvent e)
 	{
 		switch (e.getType())
 		{
 		case GexManagerEvent.CONNECTION_OPENED:
 			loadXML();
-			break;		
+			break;
 		case GexManagerEvent.CONNECTION_CLOSED:
 			clearVisualizations();
-			break;			
+			break;
 		default:
 			assert (false); // Shouldn't occur.
 		}
@@ -287,7 +287,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			return null;
 		}
 	}
-	
+
 	public  OutputStream getXmlOutput() {
 		try {
 			File f = new File(gexManager.getCurrentGex().getDbName() + ".xml");
@@ -299,28 +299,28 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			return null;
 		}
 	}
-	
+
 	public  void saveXML() {
 		if(!gexManager.isConnected()) return;
-		
+
 		OutputStream out = getXmlOutput();
-		
+
 		Logger.log.trace("Saving visualizations and color sets to xml: " + out);
 		Document xmlDoc = new Document();
 		Element root = new Element(ROOT_XML_ELEMENT);
 		xmlDoc.setRootElement(root);
-		
+
 		root.addContent(colorSetMgr.getXML());
-		
+
 		Element vis = new Element(XML_ELEMENT);
-		
+
 		for(Visualization v : getVisualizations()) {
 			vis.addContent(v.toXML());
 		}
 		root.addContent(vis);
-		
+
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-		
+
 		try {
 			xmlOut.output(xmlDoc, out);
 			out.close();
@@ -328,22 +328,22 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			Logger.log.error("Unable to save visualization settings", e);
 		}
 	}
-	
+
 
 	/**
 	   use a jdom Element to initialize the VisualizationManger
 	 */
-	public void loadXML(Element xml) {		
+	public void loadXML(Element xml) {
 		if(xml == null) return;
-		
+
 		for(Object o : xml.getChildren(Visualization.XML_ELEMENT)) {
 			Visualization vis = Visualization.fromXML((Element) o, methodRegistry, this);
 			if(!visualizations.contains(vis)) {
-				addVisualization(vis);				
+				addVisualization(vis);
 			}
 		}
 	}
-	
+
 	public  void loadXML() {
 		Logger.log.trace("Loading xml for visualization settings");
 		Document doc = getXML();
@@ -356,7 +356,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		loadXML(vis);
 		Logger.log.trace("Finished loading xml for visualization settings");
 	}
-	
+
 	public  Document getXML() {
 		InputStream in = getXmlInput();
 		Document doc;
@@ -365,18 +365,18 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			SAXBuilder parser = new SAXBuilder();
 			doc = parser.build(in);
 			in.close();
-			
+
 			root = doc.getRootElement();
 		} catch(Exception e) {
 			doc = new Document();
 			root = new Element(ROOT_XML_ELEMENT);
 			doc.setRootElement(root);
-			
-		}		
+
+		}
 		return doc;
 	}
 
-	
+
 	public void vPathwayEvent(VPathwayEvent e) {
 		if(e.getType() == VPathwayEvent.ELEMENT_DRAWN) {
 			Visualization v = getActiveVisualization();
@@ -401,7 +401,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 
 	private boolean disposed = false;
 	/**
-	 * free all resources (such as listeners) held by this class. 
+	 * free all resources (such as listeners) held by this class.
 	 * Owners of this class must explicitly dispose of it to clean up.
 	 */
 	public void dispose()

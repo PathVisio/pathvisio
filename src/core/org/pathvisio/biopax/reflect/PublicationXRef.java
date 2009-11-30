@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.biopax.reflect;
@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class PublicationXRef extends BiopaxElement {
 	static final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
-	
+
 	public PublicationXRef() {
 		super();
 		setName("PublicationXRef");
@@ -39,7 +39,7 @@ public class PublicationXRef extends BiopaxElement {
 				PropertyType.YEAR,
 			});
 	}
-	
+
 	private String getPropertyValue(PropertyType pt) {
 		BiopaxProperty p = getProperty(pt.name());
 		if(p != null) {
@@ -48,44 +48,44 @@ public class PublicationXRef extends BiopaxElement {
 			return null;
 		}
 	}
-	
+
 	private void setPropertyValue(PropertyType pt, String value) {
-		addProperty(new BiopaxProperty(pt, value));	
+		addProperty(new BiopaxProperty(pt, value));
 	}
-	
-	public String getTitle() { 
+
+	public String getTitle() {
 		return getPropertyValue(PropertyType.TITLE);
 	}
-	
+
 	public void setTitle(String title) {
 		setPropertyValue(PropertyType.TITLE, title);
 	}
-	
+
 	public String getSource() {
 		return getPropertyValue(PropertyType.SOURCE);
 	}
-	
+
 	public void setSource(String source) {
 		setPropertyValue(PropertyType.SOURCE, source);
 	}
-	
+
 	public String getYear() {
 		return getPropertyValue(PropertyType.YEAR);
 	}
-	
+
 	public void setYear(String year) {
 		setPropertyValue(PropertyType.YEAR, year);
 	}
-	
+
 	public String getPubmedId() {
 		return getPropertyValue(PropertyType.ID);
 	}
-	
+
 	public void setPubmedId(String id) {
 		setPropertyValue(PropertyType.ID, id);
 		setPropertyValue(PropertyType.DB, "PubMed");
 	}
-	
+
 	public List<String> getAuthors() {
 		List<String> authors = new ArrayList<String>();
 		for(BiopaxProperty p : getProperties(PropertyType.AUTHORS.name())) {
@@ -93,11 +93,11 @@ public class PublicationXRef extends BiopaxElement {
 		}
 		return authors;
 	}
-	
+
 	public void addAuthor(String author) {
 		setPropertyValue(PropertyType.AUTHORS, author);
 	}
-	
+
 	public void removeAuthor(String author) {
 		for(BiopaxProperty p : getProperties(PropertyType.AUTHORS.name())) {
 			if(author.equals(p.getValue())) {
@@ -105,13 +105,13 @@ public class PublicationXRef extends BiopaxElement {
 			}
 		}
 	}
-	
+
 	private void clearAuthors() {
 		for(BiopaxProperty p : getProperties(PropertyType.AUTHORS.name())) {
 			removeProperty(p);
 		}
 	}
-	
+
 	public void setAuthors(String authorString) {
 		clearAuthors();
 		String[] authors = parseAuthorString(authorString);
@@ -119,9 +119,9 @@ public class PublicationXRef extends BiopaxElement {
 			if(a != null && a.length() > 0) addAuthor(a.trim());
 		}
 	}
-		
+
 	public static final String AUTHOR_SEP = ";";
-	
+
 	public String[] parseAuthorString(String s) {
 		String[] splitted = s.split(AUTHOR_SEP);
 		String[] result = new String[splitted.length];
@@ -130,11 +130,11 @@ public class PublicationXRef extends BiopaxElement {
 		}
 		return result;
 	}
-	
+
 	public String getAuthorString() {
 		return createAuthorString(getAuthors());
 	}
-	
+
 	public static String createAuthorString(List<String> authors) {
 		String as = "";
 		for(String a : authors) {
@@ -145,11 +145,11 @@ public class PublicationXRef extends BiopaxElement {
 		}
 		return as;
 	}
-	
+
 	public String toHTML() {
 		return toString();
 	}
-	
+
 	public String toString() {
 		String title = getTitle();
 		String pmid = getPubmedId();
@@ -157,7 +157,7 @@ public class PublicationXRef extends BiopaxElement {
 		String source = getSource();
 		String year = getYear();
 		if(title != null && title.length() > 0) {
-			title += "; "; 
+			title += "; ";
 		} else {
 			title = "";
 		}
@@ -177,7 +177,7 @@ public class PublicationXRef extends BiopaxElement {
 			year += "; ";
 		}
 		if(pmid != null && pmid.length() > 0) {
-			pmid = "<A href='" + PUBMED_URL + pmid + "'>" + 
+			pmid = "<A href='" + PUBMED_URL + pmid + "'>" +
 				"PubMed" + "</A>";
 		} else {
 			pmid = "";

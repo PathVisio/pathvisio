@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways;
@@ -50,19 +50,19 @@ public class WikiPathwaysCache
 	static final String PW_EXT = "gpml";
 	static final String PW_EXT_DOT = "." + PW_EXT;
 	static final String INFO_EXT = "info";
-	
+
 	private File cacheDirectory;
 	private WikiPathwaysClient wpClient;
 	private List<File> files;
-	
+
 	public WikiPathwaysCache(File cacheDirectory) throws ServiceException {
 		this(new WikiPathwaysClient(), cacheDirectory);
 	}
-	
-	public WikiPathwaysCache(WikiPathwaysClient wpClient, File cacheDirectory) 
+
+	public WikiPathwaysCache(WikiPathwaysClient wpClient, File cacheDirectory)
 	{
 		this.wpClient = wpClient;
-		
+
 		if (!(cacheDirectory.exists() && cacheDirectory.isDirectory()))
 		{
 			throw new IllegalArgumentException ("Illegal cache directory " + cacheDirectory);
@@ -70,7 +70,7 @@ public class WikiPathwaysCache
 		this.cacheDirectory = cacheDirectory;
 		files = FileUtils.getFiles(cacheDirectory, PW_EXT, true);
 	}
-	
+
 	public List<File> getFiles()
 	{
 		return files;
@@ -83,7 +83,7 @@ public class WikiPathwaysCache
 	{
 		return update (null);
 	}
-	
+
 	/**
 	 * Check for missing / outdated pathways
 	 * and download them.
@@ -91,22 +91,22 @@ public class WikiPathwaysCache
 	 * @param keeper: an optional ProgressKeeper, may be null
 	 * @return A list of files that were updated (either modified, added or deleted)
 	 * 	the returned list can be partial if the task was cancelled
-	 * @throws IOException 
-	 * @throws ConverterException 
+	 * @throws IOException
+	 * @throws ConverterException
 	 */
-	public Collection<File> update(ProgressKeeper keeper) throws ConverterException, IOException 
+	public Collection<File> update(ProgressKeeper keeper) throws ConverterException, IOException
 	{
 		if (keeper != null) keeper.setTaskName("Checking last modified date");
 
 		Set<File> changedFiles = new HashSet<File>();
-		
-		long localdate = dateLastModified (files);
-		Date d = new Date(localdate); 
-		DateFormat df = DateFormat.getDateTimeInstance();
-		Logger.log.info("Date last modified: " + df.format(d)); 
 
-		Logger.log.info("---[Updating new and removed pathways]---");		
-		if (keeper != null) 
+		long localdate = dateLastModified (files);
+		Date d = new Date(localdate);
+		DateFormat df = DateFormat.getDateTimeInstance();
+		Logger.log.info("Date last modified: " + df.format(d));
+
+		Logger.log.info("---[Updating new and removed pathways]---");
+		if (keeper != null)
 		{
 			keeper.setTaskName("Fetching pathway list");
 			if (keeper.isCancelled()) return changedFiles;
@@ -117,56 +117,56 @@ public class WikiPathwaysCache
 		changedFiles.addAll(purgeRemoved(pathways));
 		changedFiles.addAll(downloadNew(pathways, keeper));
 
-		if (keeper != null) 
+		if (keeper != null)
 		{
 			keeper.setTaskName("Fetching recently changed pathways");
 			if (keeper.isCancelled()) return changedFiles;
 		}
-		
+
 		Logger.log.info("---[Get Recently Changed pathways]---");
-		
+
 		changedFiles.addAll(processRecentChanges(d, keeper));
-		
+
 		Logger.log.info("---[Ready]---");
 		Logger.log.info("Updated pathways: " + changedFiles);
-		
+
 		// update list of files in cache.
-		if (keeper != null) 
+		if (keeper != null)
 		{
 			keeper.setTaskName("Updating local pathway list");
 			if (keeper.isCancelled()) return changedFiles;
 		}
 
 		files = FileUtils.getFiles(cacheDirectory, "gpml", true);
-		
+
 		return changedFiles;
 	}
-	
+
 	private List<File> downloadNew(Collection<WSPathwayInfo> pathways, ProgressKeeper keeper) throws ConverterException, IOException {
 		Set<WSPathwayInfo> newPathways = new HashSet<WSPathwayInfo>();
-		
+
 		int i = 0;
-		for(WSPathwayInfo p : pathways) 
-		{	
+		for(WSPathwayInfo p : pathways)
+		{
 			File f = pathwayToFile(p);
 			if(!f.exists()) {
 				newPathways.add(p);
 			}
-			
-		}		
+
+		}
 		return downloadFiles(newPathways, keeper);
 	}
-	
+
 	/**
-	 * In this method it is possible to download only the pathways that are recently changed. 
+	 * In this method it is possible to download only the pathways that are recently changed.
 	 * @return a list of files in the cache that has been updated (partial if interrupted)
-	 * @throws ConverterException 
-	 * @throws IOException 
+	 * @throws ConverterException
+	 * @throws IOException
 	 */
 	private List<File> processRecentChanges (Date d, ProgressKeeper keeper) throws ConverterException, IOException
 	{
 		// given path: path to store the pathway cache
-		// and date: the date of the most recent changed 
+		// and date: the date of the most recent changed
 		// get the pathwaylist; all the known pathways are
 		// stored in a list
 		WSPathwayInfo[] changes = wpClient.getRecentChanges(d);
@@ -180,19 +180,19 @@ public class WikiPathwaysCache
 		}
 		return downloadFiles(changeAndExist, keeper);
 	}
-		
+
 	/**
 	 * Download the latest version of all given pathways to the cache directory
 	 * @return The list of downloaded files (partial list if interrupted)
-	 * @throws ConverterException 
-	 * @throws IOException 
+	 * @throws ConverterException
+	 * @throws IOException
 	 */
 	private List<File> downloadFiles (Collection<WSPathwayInfo> pathways, ProgressKeeper keeper) throws ConverterException, IOException {
 		List<File> files = new ArrayList<File>();
-		
+
 		int i = 1;
 		for(WSPathwayInfo pwi : pathways) {
-			if (keeper != null) keeper.report("Downloading " + pwi.getName());			
+			if (keeper != null) keeper.report("Downloading " + pwi.getName());
 
 			File file = pathwayToFile(pwi);
 			WSPathway wsp = wpClient.getPathway(pwi.getId());
@@ -201,9 +201,9 @@ public class WikiPathwaysCache
 			// also write a file that stores some pathway info
 			writeInfoFile(pwi);
 			files.add(file);
-			Logger.log.info("Downloaded file "+(i++)+" of "+pathways.size()+ ": " + 
+			Logger.log.info("Downloaded file "+(i++)+" of "+pathways.size()+ ": " +
 					pwi.getName() + "(" + pwi.getSpecies() + ")");
-			if (keeper != null) 
+			if (keeper != null)
 			{
 				keeper.worked (50 / pathways.size());
 				if (keeper.isCancelled()) return files;
@@ -211,22 +211,22 @@ public class WikiPathwaysCache
 		}
 		return files;
 	}
-	
+
 	private File pathwayToFile(WSPathwayInfo pathway) {
 		String species = pathway.getSpecies();
-		
+
 		// construct the download path
 		String pathToDownload = cacheDirectory + File.separator + species + File.separator;
-		
+
 		//	make a folder for a species when it doesn't exist
 		new File(pathToDownload).mkdirs();
-		
+
 		// download the pathway and give status in console
 		File pwFile = new File (pathToDownload + pathway.getId() + PW_EXT_DOT);
-		
+
 		return pwFile;
 	}
-	
+
 	private void writeInfoFile(WSPathwayInfo pathway) throws IOException {
 		Properties prop = new Properties();
 		prop.setProperty("Name", pathway.getName());
@@ -236,21 +236,21 @@ public class WikiPathwaysCache
 		prop.setProperty("Id", pathway.getId());
 		prop.save(new FileOutputStream(getInfoFile(pathwayToFile(pathway))), "");
 	}
-	
+
 	private File getInfoFile(File pathwayFile) {
 		return new File(pathwayFile.getAbsolutePath() + "." + INFO_EXT);
 	}
-	
+
 	//Assume that files are in the form: http://host/index.php/Pathway:{Organism}:{PathwayName}
 	private String fileToPathwayName(File f) {
-		String filename = f.getName(); // gpml file 
+		String filename = f.getName(); // gpml file
 		String pwyName = filename.substring(0, filename.length() - PW_EXT_DOT.length()); // remove the extension and the first 3 characters i.e. ACE-Inhibitor_pathway_PharmGKB
 		//Parse the pathway name
 		int slash = pwyName.lastIndexOf('/');
 		pwyName = pwyName.substring(slash);
 		return pwyName;
 	}
-	
+
 	/**
 	 * Get the source url (that points to the pathway
 	 * on WikiPathways) for the given cache file.
@@ -258,7 +258,7 @@ public class WikiPathwaysCache
 	public String cacheFileToUrl(File f) throws FileNotFoundException, IOException {
 		return getPathwayInfo(f).getUrl();
 	}
-	
+
 	public WSPathwayInfo getPathwayInfo(File cacheFile) throws FileNotFoundException, IOException {
 		File info = getInfoFile(cacheFile);
 		Properties prop = new Properties();
@@ -274,14 +274,14 @@ public class WikiPathwaysCache
 		);
 		return pi;
 	}
-	
+
 	private List<File> purgeRemoved(Collection<WSPathwayInfo> pathways) {
 		Set<File> remoteFiles = new HashSet<File>();
 		for(WSPathwayInfo p : pathways) remoteFiles.add(pathwayToFile(p));
-		
+
 		List<File> cacheFiles = FileUtils.getFiles(cacheDirectory, PW_EXT, true);
 		List<File> deleted = new ArrayList<File>();
-		
+
 		for (File file : cacheFiles) {
 			if(!remoteFiles.contains(file)) {
 				deleted.add(file);
@@ -291,14 +291,14 @@ public class WikiPathwaysCache
 				getInfoFile(file).deleteOnExit();
 			}
 		}
-		
+
 		return deleted;
 	}
-	
+
 	/**
 	 * In this method the date is returned when the last change is made in a pathway. The
 	 * property that has to be given is:
-	 * 'pathways' (a list of pathways you want to have the most recent date from). 
+	 * 'pathways' (a list of pathways you want to have the most recent date from).
 	 */
 	private static long dateLastModified(List<File> pathways)
 	{

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -36,7 +36,7 @@ import org.pathvisio.view.LinAlg.Point;
 
 /**
  * This is an {@link Graphics} class representing shapelike forms,
- * and provides implementation for containing 8 handles placed in a 
+ * and provides implementation for containing 8 handles placed in a
  * (rotated) rectangle around the shape and a rotation handle
  */
 public abstract class GraphicsShape extends Graphics implements LinkProvider, Adjustable {
@@ -55,27 +55,27 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	Handle handleNW;
 	//Rotation handle
 	Handle handleR;
-	
+
 	Handle[] handles = new Handle[] {};
-			
+
 	public GraphicsShape(VPathway canvas, PathwayElement o)
 	{
-		super(canvas, o);		
+		super(canvas, o);
 	}
-	
+
 	protected void createHandles()
 	{
 		handleN	= new Handle(Handle.Freedom.Y, this, this);
 		handleE	= new Handle(Handle.Freedom.X, this, this);
 		handleS	= new Handle(Handle.Freedom.Y, this, this);
 		handleW	= new Handle(Handle.Freedom.X, this, this);
-				
+
 		handleNE = new Handle(Handle.Freedom.FREE, this, this);
 		handleSE = new Handle(Handle.Freedom.FREE, this, this);
 		handleSW = new Handle(Handle.Freedom.FREE, this, this);
 		handleNW = new Handle(Handle.Freedom.FREE, this, this);
-		
-		
+
+
 		handleN.setCursorHint(Cursor.N_RESIZE_CURSOR);
 		handleE.setCursorHint(Cursor.E_RESIZE_CURSOR);
 		handleS.setCursorHint(Cursor.S_RESIZE_CURSOR);
@@ -84,8 +84,8 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		handleSE.setCursorHint(Cursor.SE_RESIZE_CURSOR);
 		handleSW.setCursorHint(Cursor.SW_RESIZE_CURSOR);
 		handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
-		
-		if(	this instanceof GeneProduct || 
+
+		if(	this instanceof GeneProduct ||
 				this instanceof Label)
 		{
 			// No rotation handle for these objects
@@ -99,7 +99,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		{
 			handleR = new Handle(Handle.Freedom.ROTATION, this, this);
 			handleR.setCursorHint(Cursor.MOVE_CURSOR);
-			
+
 			handles = new Handle[]
 			{
 					handleN, handleNE, handleE, handleSE,
@@ -109,14 +109,14 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		setHandleLocation();
 	}
-	
+
 	protected void setVScaleRectangle(Rectangle2D r) {
 		gdata.setMWidth(mFromV(r.getWidth()));
 		gdata.setMHeight(mFromV(r.getHeight()));
 		gdata.setMLeft(mFromV(r.getX()));
 		gdata.setMTop(mFromV(r.getY()));
 	}
-		
+
 	protected void vMoveBy(double vdx, double vdy)
 	{
 		gdata.setMLeft(gdata.getMLeft()  + mFromV(vdx));
@@ -131,12 +131,12 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			}
 		}
 	}
-		
+
 	public Handle[] getHandles()
 	{
 		return handles;
 	}
-	
+
 	/**
 	 * Translate the given point to internal coordinate system
 	 * (origin in center and axis direction rotated with this objects rotation
@@ -184,14 +184,14 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		else if(angle > Math.PI*2) gdata.setRotation (angle - Math.PI*2);
 		else gdata.setRotation(angle);
 	}
-	
+
 	public void adjustToHandle(Handle h, double vnewx, double vnewy)
 	{
 		//Rotation
 		if 	(h == handleR)
 		{
 			Point cur = mRelativeToCenter(new Point(mFromV(vnewx), mFromV(vnewy)));
-			
+
 			double rotation = Math.atan2(cur.y, cur.x);
 			if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
 					canvas.isSnapToAngle())
@@ -201,13 +201,13 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 						GlobalPreference.SNAP_TO_ANGLE_STEP) * Math.PI / 180;
 				rotation = Math.round (rotation / snapStep) * snapStep;
 			}
-			setRotation (rotation);				
+			setRotation (rotation);
 			return;
 		}
-					
+
 		// Transformation
 		Point iPos = mToInternal(new Point(mFromV(vnewx), mFromV(vnewy)));
-		
+
 		double idx = 0;
 		double idy = 0;
 		double idw = 0;
@@ -246,15 +246,15 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		if(newh < 0)
 		{
 			setVerticalOppositeHandle(h);
-			newh = -newh;			
+			newh = -newh;
 		}
 
 		gdata.setMWidth(neww);
-		gdata.setMHeight(newh);		
+		gdata.setMHeight(newh);
 		Point vcr = LinAlg.rotate(new Point (idx, idy), -gdata.getRotation());
 		gdata.setMCenterX (gdata.getMCenterX() + vcr.x);
 		gdata.setMCenterY (gdata.getMCenterY() + vcr.y);
-						  
+
 	}
 
 	private void setHorizontalOppositeHandle(Handle h)
@@ -281,8 +281,8 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		else if(h == handleSW) opposite = handleNW;
 		else opposite = h;
 		canvas.setPressedObject(opposite);
-	}									   
-	
+	}
+
 	/**
 	 * Sets the handles at the correct location;
 	 * @param ignore the position of this handle will not be adjusted
@@ -298,7 +298,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		handleS.setMLocation(p.x, p.y);
 		p = mToExternal(-gdata.getMWidth()/2, 0);
 		handleW.setMLocation(p.x, p.y);
-		
+
 		p = mToExternal(gdata.getMWidth()/2, -gdata.getMHeight()/2);
 		handleNE.setMLocation(p.x, p.y);
 		p = mToExternal(gdata.getMWidth()/2, gdata.getMHeight()/2);
@@ -313,10 +313,10 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			p = mToExternal(gdata.getMWidth()/2 + M_ROTATION_HANDLE_POSITION, 0);
 			handleR.setMLocation(p.x, p.y);
 		}
-		
+
 		for(Handle h : getHandles()) h.rotation = gdata.getRotation();
 	}
-	
+
 	protected Shape calculateVOutline()
 	{
 		//Include rotation and stroke
@@ -333,7 +333,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	protected Shape getVShape(boolean rotate) {
 		return getShape(rotate, false); //Get the shape without border
 	}
-	
+
 	/**
 	 * Returns the shape that should be drawn
 	 * @parameter rotate whether to take into account rotation or not
@@ -343,12 +343,12 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	protected Shape getShape(boolean rotate, boolean stroke)
 	{
 		if(stroke) {
-			return getShape(rotate, DEFAULT_STROKE.getLineWidth());			
+			return getShape(rotate, DEFAULT_STROKE.getLineWidth());
 		} else {
 			return getShape(rotate, 0);
 		}
 	}
-	
+
 	/**
 	 * Returns the shape that should be drawn
 	 * @parameter rotate whether to take into account rotation or not
@@ -371,19 +371,19 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		return s;
 	}
-	
+
 	public void gmmlObjectModified(PathwayEvent e)
 	{
 		markDirty(); // mark everything dirty
 		if (handles.length > 0) setHandleLocation();
 	}
-	
+
 	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
-	
+
 	private static final int MIN_SIZE_LA = 15 * 25;
 	private int numLinkanchorsH = -1;
 	private int numLinkanchorsV = -1;
-	
+
 	public List<LinkAnchor> getLinkAnchors() {
 		//Number of link anchors depends on the size of the object
 		//If the width/height is large enough, there will be three link anchors per side,
@@ -395,7 +395,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		return linkAnchors;
 	}
-	
+
 	private void createLinkAnchors(int numH, int numV) {
 		linkAnchors.clear();
 		double deltaH = 2.0/(numH + 1);
@@ -411,23 +411,23 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		numLinkanchorsH = numH;
 		numLinkanchorsV = numV;
 	}
-	
+
 	boolean showLinkAnchors = false;
-	
+
 	public void showLinkAnchors() {
 		if(!showLinkAnchors) {
 			showLinkAnchors = true;
 			markDirty();
 		}
 	}
-	
+
 	public void hideLinkAnchors() {
 		if(showLinkAnchors) {
 			showLinkAnchors = false;
 			markDirty();
 		}
 	}
-	
+
 	public LinkAnchor getLinkAnchorAt(Point2D p) {
 		for(LinkAnchor la : getLinkAnchors()) {
 			if(la.getMatchArea().contains(p)) {
@@ -436,7 +436,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		return null;
 	}
-	
+
 	@Override protected void destroyHandles()
 	{
 		for(Handle h : handles) {
@@ -444,7 +444,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		handles = new Handle[] {};
 	}
-	
+
 	protected void doDraw(Graphics2D g2d) {
 		if(showLinkAnchors) {
 			for(LinkAnchor la : getLinkAnchors()) {

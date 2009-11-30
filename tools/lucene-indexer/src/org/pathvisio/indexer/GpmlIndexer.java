@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.indexer;
@@ -34,35 +34,35 @@ import org.pathvisio.util.FileUtils;
 
 /**
  * Maintains an index for a collection of GPML files
- * 
+ *
  * @author thomas
  */
 public class GpmlIndexer {
 	Set<Class<? extends IndexerBase>> indexers = new HashSet<Class<? extends IndexerBase>>();
-	
+
 	IndexWriter writer;
 	Set<File> gpmlFiles = new HashSet<File>();
 	GdbProvider gdbs;
 	SourceProvider sourceProvider = new SourceProvider() {
 		public String getSource(File gpmlFile) { return gpmlFile.getAbsolutePath(); }
 	};
-	
+
 	/**
 	 * Create an index for GPML file.
-	 * 
+	 *
 	 * @param indexPath
 	 *            The path to store the index
 	 * @param gpmlPath
 	 *            The path containing the GPML files to index
-	 * @throws IOException 
-	 * @throws ConverterException 
-	 * @throws LockObtainFailedException 
-	 * @throws CorruptIndexException 
+	 * @throws IOException
+	 * @throws ConverterException
+	 * @throws LockObtainFailedException
+	 * @throws CorruptIndexException
 	 */
 	public GpmlIndexer(File indexPath, File gpmlPath, GdbProvider gdbs) throws CorruptIndexException, LockObtainFailedException, ConverterException, IOException {
 		this(
-			new IndexWriter(indexPath, new SimpleAnalyzer()), 
-			new HashSet<File>(FileUtils.getFiles(gpmlPath, "gpml", true)), 
+			new IndexWriter(indexPath, new SimpleAnalyzer()),
+			new HashSet<File>(FileUtils.getFiles(gpmlPath, "gpml", true)),
 			gdbs
 		);
 	}
@@ -81,10 +81,10 @@ public class GpmlIndexer {
 		indexers.add(RelationshipIndexer.class);
 		indexers.add(LiteratureIndexer.class);
 	}
-	
+
 	Set<IndexerBase> createIndexers(String source, Pathway pathway, IndexWriter writer) {
 		Set<IndexerBase> instances = new HashSet<IndexerBase>();
-		
+
 		for(Class<? extends IndexerBase> ic : indexers) {
 			try {
 				Constructor<? extends IndexerBase> c = ic.getConstructor(
@@ -99,7 +99,7 @@ public class GpmlIndexer {
 		}
 		return instances;
 	}
-	
+
 	public void setWriter(IndexWriter writer) {
 		this.writer = writer;
 	}
@@ -107,7 +107,7 @@ public class GpmlIndexer {
 	public void setSourceProvider(SourceProvider spv) {
 		sourceProvider = spv;
 	}
-	
+
 	/**
 	 * Updates the index for all listed files
 	 */
@@ -127,7 +127,7 @@ public class GpmlIndexer {
 		writer.optimize();
 		writer.close();
 	}
-	
+
 	/**
 	 * Updates the index for the given GPML file
 	 */

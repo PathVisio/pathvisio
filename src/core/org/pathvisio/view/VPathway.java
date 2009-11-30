@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -65,7 +65,7 @@ import org.pathvisio.view.ViewActions.KeyMoveAction;
  * This class implements and handles a drawing. Graphics objects are stored in
  * the drawing and can be visualized. The class also provides methods for mouse
  * and key event handling.
- * 
+ *
  * It's necessary to call PreferenceManager.init() before you can instantiate
  * this class.
  */
@@ -78,11 +78,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	private boolean selectionEnabled = true;
 
 	private Pathway temporaryCopy = null;
-	
+
 	/**
 	 * Retuns true if snap to anchors is enabled
 	 */
-	public boolean isSnapToAnchors() 
+	public boolean isSnapToAnchors()
 	{
 		return PreferenceManager.getCurrent().getBoolean(GlobalPreference.SNAP_TO_ANCHOR);
 	}
@@ -144,7 +144,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	{
 		return data;
 	}
-	
+
 	/**
 	 * Returns the associated org.pathvisio.model.Pathway object
 	 */
@@ -159,7 +159,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Checks if this drawing is in edit mode
-	 * 
+	 *
 	 * @return false if in edit mode, true if not
 	 */
 	public boolean isEditMode()
@@ -169,7 +169,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Constructor for this class.
-	 * 
+	 *
 	 * @param parent
 	 *            Optional gui-specific wrapper for this VPathway
 	 */
@@ -247,12 +247,12 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public void replacePathway(Pathway originalState)
 	{
 		boolean changed = data.hasChanged();
-		
+
 		clearSelection();
 		drawingObjects = new ArrayList<VPathwayElement>();
 		// transfer selectionBox with corresponding listeners
 		SelectionBox newSelection = new SelectionBox(this);
-		for(Iterator<SelectionListener> i = selection.getListeners().iterator(); i.hasNext(); ) 
+		for(Iterator<SelectionListener> i = selection.getListeners().iterator(); i.hasNext(); )
 		{
 			SelectionListener l = i.next();
 			newSelection.addListener(l);
@@ -265,12 +265,12 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		data = null;
 		pointsMtoV = new HashMap<MPoint, VPoint>();
 		fromModel(originalState);
-		
+
 		if(changed != originalState.hasChanged()) {
 			data.fireStatusFlagEvent(new StatusFlagEvent(originalState.hasChanged()));
 		}
 	}
-	
+
 	/**
 	 * @deprecated use fromModel instead
 	 */
@@ -306,17 +306,17 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	}
 
 	Template newTemplate = null;
-	
+
 	/**
-	 * Method to set the template that provides the new graphics type that has 
+	 * Method to set the template that provides the new graphics type that has
 	 * to be added next time the user clicks on the drawing.
-	 * 
+	 *
 	 * @param shape A template that provides the elements to be added
 	 */
 	public void setNewTemplate(Template t) {
 		newTemplate = t;
 	}
-	
+
 	private Rectangle dirtyRect = null;
 
 	/**
@@ -346,7 +346,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Sets the MappInfo containing information on the pathway
-	 * 
+	 *
 	 * @param mappInfo
 	 */
 	public void setMappInfo(InfoBox mappInfo)
@@ -365,7 +365,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Adds an element to the drawing
-	 * 
+	 *
 	 * @param o
 	 *            the element to add
 	 */
@@ -377,7 +377,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Gets the view representation {@link Graphics} of the given model element
 	 * {@link PathwayElement}
-	 * 
+	 *
 	 * @param e
 	 * @return the {@link Graphics} representing the given
 	 *         {@link PathwayElement} or <code>null</code> if no view is
@@ -417,7 +417,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Set this drawing to editmode
-	 * 
+	 *
 	 * @param editMode
 	 *            true if editmode has to be enabled, false if disabled (view
 	 *            mode)
@@ -441,20 +441,20 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Get the current zoomfactor used. 1/15 means 100%, 15 gpml unit = 1 pixel
 	 * 2/15 means 200%, 7.5 gpml unit = 1 pixel
-	 * 
+	 *
 	 * The 15/1 ratio is there because of the Visual Basic legacy of GenMAPP
-	 * 
+	 *
 	 * To distinguish between model coordinates and view coordinates, we prefix
 	 * all coordinates with either v or m (or V or M). For example:
-	 * 
+	 *
 	 * mTop = gdata.getMTop(); vTop = GeneProduct.getVTop();
-	 * 
+	 *
 	 * Calculations done on M's and V's should always match. The only way to
 	 * convert is to use the functions mFromV and vFromM.
-	 * 
+	 *
 	 * Correct: mRight = mLeft + mWidth; Wrong: mLeft += vDx; Fixed: mLeft +=
 	 * mFromV(vDx);
-	 * 
+	 *
 	 * @return the current zoomfactor
 	 */
 	public double getZoomFactor()
@@ -464,7 +464,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * same as getZoomFactor, but in %
-	 * 
+	 *
 	 * @return
 	 */
 	public double getPctZoom()
@@ -474,7 +474,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Sets the drawings zoom in percent
-	 * 
+	 *
 	 * @param pctZoomFactor
 	 *            zoomfactor in percent
 	 * @see getFitZoomFactor() for fitting the pathway inside the viewport.
@@ -496,7 +496,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Calculate the zoom factor that would
-	 * make the pathway fit in the viewport. 
+	 * make the pathway fit in the viewport.
 	 */
 	public double getFitZoomFactor()
 	{
@@ -509,7 +509,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 						/ drawingSize.height);
 		return result;
 	}
-	
+
 	public void setPressedObject(VPathwayElement o)
 	{
 		pressedObject = o;
@@ -517,7 +517,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 
 	private LinkAnchor currentLinkAnchor;
-	
+
 	/**
 	 * @arg p2d point where mouse is at
 	 */
@@ -528,9 +528,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			dragUndoState = DRAG_UNDO_CHANGED;
 		}
 		hideLinkAnchors();
-		
+
 		List<LinkProvider> objects = getLinkProvidersAt(p2d);
-		
+
 		//Fix for preventing grouped line to link to its own group
 		//Remove the group from the list of linkproviders
 		//Also remove the line anchors to prevent linking a line
@@ -546,7 +546,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				objects.remove(va);
 			}
 		}
-		
+
 		VPoint p = (VPoint) g.getAdjustable();
 		GraphIdContainer idc = null;
 		for (LinkProvider lp : objects)
@@ -580,11 +580,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 		}
 	}
-	
+
 	private boolean snapToAngle;
-	
+
 	/**
-	 * Check whether line movement and rotations should snap 
+	 * Check whether line movement and rotations should snap
 	 * to angle.
 	 * @see GlobalPreference#SNAP_TO_ANGLE for the global setting
 	 * @see GlobalPreference#SNAP_TO_ANGLE_STEP for the angle step to be used
@@ -604,7 +604,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public void mouseMove(MouseEvent ve)
 	{
 		snapToAngle = ve.isKeyDown(MouseEvent.M_SHIFT);
-		
+
 		// If draggin, drag the pressed object
 		// And only when the right button isn't clicked
 		if (pressedObject != null && isDragging && !ve.isKeyDown(java.awt.event.MouseEvent.BUTTON3_DOWN_MASK))
@@ -633,7 +633,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				linkPointToObject(new Point2D.Double(ve.getX(), ve.getY()),
 						(Handle) pressedObject);
 			}
-			
+
 			if (pressedObject instanceof Graphics)
 			{ //notify parents of any moving children!
 				((Graphics) pressedObject).getPathwayElement().notifyParentGroup();
@@ -652,7 +652,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				}
 			}
 			lastMouseOver.removeAll(toRemove);
-			
+
 			//Process mouseenter events
 			for(VPathwayElement vpe : objects) {
 				if(!lastMouseOver.contains(vpe)) {
@@ -663,51 +663,51 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				}
 			}
 		}
-		
+
 		hoverManager.reset(ve);
 	}
 
 	private Set<VPathwayElement> lastMouseOver = new HashSet<VPathwayElement>();
 	private HoverManager hoverManager = new HoverManager();
-	
+
 	private class HoverManager implements ActionListener {
 		static final int DELAY = 1000; //tooltip delay in ms
 		boolean tooltipDisplayed = false;
-		
+
 		MouseEvent lastEvent = null;
-		
+
 		Timer timer;
 
 		public HoverManager() {
 			timer = new Timer(DELAY, this);
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			if(!tooltipDisplayed) {
 				 fireVPathwayEvent(
 						new VPathwayEvent(
-							VPathway.this, 
+							VPathway.this,
 							getObjectsAt(lastEvent.getLocation()), lastEvent,
 							VPathwayEvent.ELEMENT_HOVER)
 				);
 				 tooltipDisplayed = true;
 			}
 		}
-		
+
 		void reset(MouseEvent e) {
 			lastEvent = e;
 			tooltipDisplayed = false;
 			timer.restart();
 		}
-		
+
 		void stop() {
 			timer.stop();
 		}
 	}
-	
+
 	/**
 	 * Handles movement of objects with the arrow keys
-	 * 
+	 *
 	 * @param ks
 	 */
 	public void moveByKey(KeyStroke ks, int increment)
@@ -852,7 +852,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Paints all components in the drawing. This method is called automatically
 	 * in the painting process
-	 * 
+	 *
 	 * @param g2d
 	 *            Graphics2D object the pathway should be drawn onto
 	 * @param area
@@ -867,7 +867,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			//save original, non-clipped, to pass on to VPathwayEvent
 			Graphics2D g2dFull = (Graphics2D)g2d.create();
-			
+
 			if (area == null)
 			{
 				area = g2d.getClipBounds();
@@ -877,18 +877,18 @@ public class VPathway implements PathwayListener, PathwayElementListener
 					area = new Rectangle(0, 0, size.width, size.height);
 				}
 			}
-	
+
 			if (erase)
 			{
 				g2d.setColor(java.awt.Color.WHITE);
 				g2d.fillRect(area.x, area.y, area.width, area.height);
 			}
-	
+
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
-	
+
 			g2d.clip(area);
 			g2d.setColor(java.awt.Color.BLACK);
 			Collections.sort(drawingObjects);
@@ -945,11 +945,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	static final int MULTI_SELECT_MASK = MouseEvent.M_SHIFT |
 		(Utils.getOS() == Utils.OS_MAC ? MouseEvent.M_META : MouseEvent.M_CTRL);
-	
+
 	/**
 	 * Handles event when on mouseDown in case the drawing is in view mode (does
 	 * nothing yet)
-	 * 
+	 *
 	 * @param e
 	 *            the mouse event to handle
 	 */
@@ -972,7 +972,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Initializes selection, resetting the selectionbox and then setting it to
 	 * the position specified
-	 * 
+	 *
 	 * @param vp -
 	 *            the point to start with the selection
 	 */
@@ -1021,11 +1021,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				VPathwayElement parent = ((Handle) pressedObject).getParent();
 				parent.select();
 				//Special treatment for anchor
-				if(parent instanceof VAnchor) 
+				if(parent instanceof VAnchor)
 				{
 					doClickSelect(p2d, modifierPressed);
 				}
-			} 
+			}
 			else
 			{
 				doClickSelect(p2d, modifierPressed);
@@ -1046,9 +1046,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Find the object at a particular location on the drawing
-	 * 
+	 *
 	 * if you want to get more than one,
-	 * 
+	 *
 	 * @see #getObjectsAt(Point2D)
 	 */
 	public VPathwayElement getObjectAt(Point2D p2d)
@@ -1067,9 +1067,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Find all objects at a particular location on the drawing
-	 * 
+	 *
 	 * if you only need the top object,
-	 * 
+	 *
 	 * @see #getObjectAt(Point2D)
 	 */
 	public List<VPathwayElement> getObjectsAt(Point2D p2d)
@@ -1100,9 +1100,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * if modifierPressed is true, the selected object will be added to
 	 * the selection, rather than creating a new selection with just one object.
-	 * if modifierPressed is true when selecting a Group object, then a 
+	 * if modifierPressed is true when selecting a Group object, then a
 	 * new selection is made of the children, allowing selection into groups.
-	 * 
+	 *
 	 * modifierPressed should be true when either SHIFT or CTRL/COMMAND is pressed.
 	 */
 	void doClickSelect(Point2D p2d, boolean modifierPressed)
@@ -1123,7 +1123,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			} else
 			{ // Not in selection:
 				// add
-				selection.addToSelection(pressedObject); 
+				selection.addToSelection(pressedObject);
 			}
 			pressedObject = selection; // Set dragging to selectionbox
 		} else
@@ -1154,7 +1154,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 * pathvisio distinguishes between placing objects with a click or with a
 	 * drag. If you don't move the cursor in between the mousedown and mouseup
 	 * event, the object is placed with a default initial size.
-	 * 
+	 *
 	 * vDragStart is used to determine the mousemovement during the click.
 	 */
 	private Point vDragStart;
@@ -1162,11 +1162,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * dragUndoState determines what should be done when you release the mouse
 	 * button after dragging an object.
-	 * 
+	 *
 	 * if it is DRAG_UNDO_NOT_RECORDING, it's not necessary to record an event.
 	 * This is the case when we were dragging a selection rectangle, or a new
 	 * object (in which case the change event was already recorded)
-	 * 
+	 *
 	 * in other cases, it is set to DRAG_UNDO_CHANGE_START at the start of the
 	 * drag. If additional move events occur, the state is changed to
 	 * DRAG_UNDO_CHANGED. The latter will lead to recording of the undo event.
@@ -1185,7 +1185,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Add a new object to the drawing {@see VPathway#setNewGraphics(int)}
-	 * 
+	 *
 	 * @param pwy
 	 *            The point where the user clicked on the drawing to add a new
 	 *            graphics
@@ -1197,10 +1197,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		double my = mFromV((double) ve.y);
 
 		PathwayElement[] newObjects = newTemplate.addElements(data, mx, my);
-		
+
 		isDragging = true;
 		dragUndoState = DRAG_UNDO_NOT_RECORDING;
-		
+
 		if(newObjects.length > 1) {
 			clearSelection();
 			//Multiple objects: select all and use selectionbox as dragging object
@@ -1237,7 +1237,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Select all objects of the given class
-	 * 
+	 *
 	 * @param c
 	 *            The class of the objects to be selected
 	 */
@@ -1268,7 +1268,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 * with all references to the group. If the selection is not a uniform
 	 * group, then a new group is created and each member or groups of members
 	 * is set to reference the new group.
-	 * 
+	 *
 	 * @param selection
 	 * @return If a group is created, or if the items were added to a new group,
 	 * this group is returned. If a group is removed, this method will return
@@ -1277,9 +1277,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public Group toggleGroup(List<Graphics> selection)
 	{
 		boolean groupSelection = false;
-		List<String> groupRefList = new ArrayList<String>();		
+		List<String> groupRefList = new ArrayList<String>();
 
-		/** 
+		/**
 		 * Check group status of current selection
 		 */
 		for (Graphics g : selection)
@@ -1338,7 +1338,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 						PathwayElement pe = ((Graphics) vpe).getPathwayElement();
 						if (vpe instanceof Group)
 						{
-							if (groupRefToRemove.equals(pe.getGroupId()) 
+							if (groupRefToRemove.equals(pe.getGroupId())
 									&& this.getPathwayModel().getGroupElements(pe.getGroupId()).isEmpty())
 							{
 							// Cannot remove object within getDrawingObjects()
@@ -1351,17 +1351,17 @@ public class VPathway implements PathwayListener, PathwayElementListener
 						}
 					}
 				}
-				removeDrawingObject(vpeToRemove, true);			
+				removeDrawingObject(vpeToRemove, true);
 			}
 		}
-			
+
 		// If selection was defined as a single group, then nothing more needs to happen
 		// except clearing the selection from view
 		if (!groupSelection)
 		{
 			clearSelection();
-		} 
-		// Otherwise, a new group will be formed, replacing any former groups. 
+		}
+		// Otherwise, a new group will be formed, replacing any former groups.
 		// No more nested or overlapping groups!
 		else
 		{
@@ -1371,13 +1371,13 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			group.setTextLabel("Group object");
 			group.setGroupStyle(GroupStyle.NONE);
 			String id = group.createGroupId();
-			
+
 			for (Graphics g : selection)
 			{
 				PathwayElement pe = g.getPathwayElement();
 				pe.setGroupRef(id);
 			}
-	
+
 			// Parent group should not reference self
 			group.setGroupRef(null);
 			// Select new group in view
@@ -1396,7 +1396,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		// Use registerKeyboardActions
 	}
 
-	//TODO: should use Toolkit.getMenuShortcutKeyMask(), but 
+	//TODO: should use Toolkit.getMenuShortcutKeyMask(), but
 	// that doesn't work in headless mode so screws up automated testing.
 	// solution: define keyboard shortcuts elsewhere
 	public static final KeyStroke KEY_SELECT_DATA_NODES = KeyStroke
@@ -1431,7 +1431,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 * Get the view actions, a class where several actions related to the view
 	 * are stored (delete, select) and where other actions can be registered to
 	 * a group (e.g. a group that will be disabled when edit-mode is turned off)
-	 * 
+	 *
 	 * @return an instance of the {@link ViewActions} class
 	 */
 	public ViewActions getViewActions()
@@ -1509,7 +1509,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing<BR>
 	 * Does not remove the model representation!
-	 * 
+	 *
 	 * @param toRemove
 	 *            The List containing the objects to be removed
 	 */
@@ -1520,7 +1520,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	/**
 	 * Removes the GmmlDrawingObjects in the ArrayList from the drawing
-	 * 
+	 *
 	 * @param toRemove
 	 *            The List containing the objects to be removed
 	 * @param removeFromModel
@@ -1559,7 +1559,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 							}
 						}
 					}
-					
+
 					//Remove the model object
 					data.remove(((Graphics) toRemove).getPathwayElement());
 				}
@@ -1574,7 +1574,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	{
 		gmmlObjectModified (e);
 	}
-	
+
 	public void gmmlObjectModified(PathwayEvent e)
 	{
 		switch (e.getType())
@@ -1621,7 +1621,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 		return new Dimension((int)bounds.getWidth() + 10, (int)bounds.getHeight() + 10);
 	}
-		
+
 	/**
 	 * Checks whether the board size is still large enough for the given {@link PathwayElement}
 	 * and increases the size if not
@@ -1666,7 +1666,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Makes a copy of all GmmlDataObjects in current selection, and puts them
 	 * in the global clipboard.
-	 * 
+	 *
 	 */
 	public void copyToClipboard()
 	{
@@ -1715,7 +1715,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 		// The bounds of the model to view
 		// translated shape
-		Rectangle2D vBoundsFirst = 
+		Rectangle2D vBoundsFirst =
 			gs.get(0).getVShape(true).getBounds2D();
 
 		for (int i = 1; i < gs.size(); i++)
@@ -1748,7 +1748,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			g.getPathwayElement().notifyParentGroup();
 		}
 	}
-	
+
 	/**
 	 * Align, stack or scale selected objects based on user-selected layout type
 	 */
@@ -1758,7 +1758,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 		if (selectedGraphics.size() > 0)
 		{
-			undoManager.newAction(layoutType.getDescription());		
+			undoManager.newAction(layoutType.getDescription());
 			switch (layoutType)
 			{
 				case COMMON_WIDTH:
@@ -1784,7 +1784,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 					stackGraphics(layoutType, selectedGraphics);
 					break;
 			}
-			
+
 			selection.fitToSelection();
 			redrawDirtyRect();
 		}
@@ -1823,9 +1823,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			Rectangle2D vBoundsCurr = eCurr.getVShape(true).getBounds2D();
 			switch (stackType)
 			{
-			case STACK_CENTERX:	
+			case STACK_CENTERX:
 				eCurr.vMoveBy(
-						vBoundsPrev.getCenterX() - vBoundsCurr.getCenterX(), 
+						vBoundsPrev.getCenterX() - vBoundsCurr.getCenterX(),
 						vBoundsPrev.getMaxY() - vBoundsCurr.getY());
 				break;
 			case STACK_CENTERY:
@@ -1835,22 +1835,22 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				break;
 			case STACK_LEFT:
 				eCurr.vMoveBy(
-						vBoundsPrev.getX() - vBoundsCurr.getX(), 
+						vBoundsPrev.getX() - vBoundsCurr.getX(),
 						vBoundsPrev.getMaxY() - vBoundsCurr.getY());
 				break;
 			case STACK_RIGHT:
 				eCurr.vMoveBy(
-						vBoundsPrev.getMaxX() - vBoundsCurr.getMaxX(), 
+						vBoundsPrev.getMaxX() - vBoundsCurr.getMaxX(),
 						vBoundsPrev.getMaxY() - vBoundsCurr.getY());
 				break;
 			case STACK_TOP:
 				eCurr.vMoveBy(
-						vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 
+						vBoundsPrev.getMaxX() - vBoundsCurr.getX(),
 						vBoundsPrev.getY() - vBoundsCurr.getY());
 				break;
 			case STACK_BOTTOM:
 				eCurr.vMoveBy(
-						vBoundsPrev.getMaxX() - vBoundsCurr.getX(), 
+						vBoundsPrev.getMaxX() - vBoundsCurr.getX(),
 						vBoundsPrev.getMaxY() - vBoundsCurr.getMaxY());
 				break;
 			}
@@ -1898,7 +1898,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			g.getPathwayElement().notifyParentGroup();
 		}
 	}
-	
+
 	/**
 	 * Scales selected objects by max height
 	 */
@@ -1951,7 +1951,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			g.gdata.setZOrder(base++);
 		}
 	}
-	
+
 	/**
 	 * Move a set of graphics to the bottom in the z-order stack
 	 */
@@ -1964,7 +1964,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			g.gdata.setZOrder(base++);
 		}
 	}
-	
+
 	/**
 	 * Looks for overlapping graphics with a higher z-order
 	 * and moves g on top of that.
@@ -1976,7 +1976,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			// make sure there is enough space between g and the next
 			autoRenumberZOrder();
-			
+
 			int order = g.gdata.getZOrder();
 			Graphics nextGraphics = null;
 			int nextZ = order;
@@ -1998,13 +1998,13 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 	}
 
-	/** 
-	 * makes sure there is always a minimum spacing of two between 
+	/**
+	 * makes sure there is always a minimum spacing of two between
 	 * two consecutive elements, so that we can freely move items in between
 	 */
 	private void autoRenumberZOrder()
 	{
-		List<Graphics> elts = new ArrayList<Graphics>(); 
+		List<Graphics> elts = new ArrayList<Graphics>();
 		for (VPathwayElement vp : drawingObjects)
 		{
 			if (vp instanceof Graphics)
@@ -2014,9 +2014,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 		if (elts.size() < 2) return; // nothing to renumber
 		Collections.sort (elts, new ZComparator());
-		
+
 		final int spacing = 2;
-		
+
 		int waterLevel = elts.get(0).gdata.getZOrder();
 		for (int i = 1; i < elts.size(); ++i)
 		{
@@ -2040,7 +2040,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			// make sure there is enough space between g and the previous
 			autoRenumberZOrder();
-	
+
 			int order = g.gdata.getZOrder();
 			Graphics nextGraphics = null;
 			int nextZ = order;
@@ -2064,7 +2064,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * return a list of Graphics that overlap g.
 	 * Note that the intersection of bounding rectangles is used,
-	 * so the returned list is only an approximation for rounded shapes. 
+	 * so the returned list is only an approximation for rounded shapes.
 	 */
 	public List<Graphics> getOverlappingGraphics(Graphics g)
 	{
@@ -2083,11 +2083,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 		}
 		return result;
-	}	
+	}
 
 	/**
 	 * Get all elements of the class Graphics that are currently selected
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Graphics> getSelectedGraphics()
@@ -2103,10 +2103,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Get all elements of the class Graphics that are currently selected, excluding Groups
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Graphics> getSelectedNonGroupGraphics()
@@ -2122,7 +2122,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Get all selected elements (includes non-Graphics, e.g. Handles)
 	 * @return
@@ -2156,10 +2156,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Generate new id's for a bunch of elements to be pasted, but do not actually set them.
 	 * Instead, store these new ids in a map, so that we can later update
-	 * both the graphIds and graphReferences, 
+	 * both the graphIds and graphReferences,
 	 * as well as groupIds and groupReferences.
-	 * 
-	 * idMap and newIds should be an empty map / set. 
+	 *
+	 * idMap and newIds should be an empty map / set.
 	 * It will be filled by this method.
 	 */
 	private void generateNewIds(List<PathwayElement> elements,
@@ -2171,7 +2171,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			String groupId = o.getGroupId();
 			generatePasteId(id, data.getGraphIds(), idmap, newids);
 			generatePasteId(groupId, data.getGroupIds(), idmap, newids);
-			
+
 			//For a line, also process the point ids
 			if(o.getObjectType() == ObjectType.LINE) {
 				for(MPoint mp : o.getMPoints())
@@ -2181,15 +2181,15 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 		}
 	}
-	
+
 	public void paste(List<PathwayElement> elements) {
 		paste(elements, 0);
 	}
-	
+
 	/**
 	 * Updates all id's and references of a single PathwayElement, using
 	 * the provided idMap.
-	 * 
+	 *
 	 * This will
 	 * - replace groupId of elements
 	 * - replace graphId of elements, anchors and points
@@ -2251,17 +2251,17 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 		}
 	}
-	
+
 	public void paste(List<PathwayElement> elements, int shift)
 	{
 		undoManager.newAction("Paste");
 		clearSelection();
 		Map<String, String> idmap = new HashMap<String, String>();
 		Set<String> newids = new HashSet<String>();
-	
+
 		// Step 1: generate new unique ids for copied items
 		generateNewIds (elements, idmap, newids);
-		
+
 		// Step 2: do the actual copying
 		for (PathwayElement o : elements)
 		{
@@ -2294,7 +2294,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 			// use the idMap to set consistent new id's
 			replaceIdsAndRefs (p, idmap);
-			
+
 			data.add(p); // causes lastAdded to be set
 			lastAdded.select();
 			if (!(lastAdded instanceof Group)){ // avoids "double selecting" grouped objects
@@ -2335,17 +2335,17 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	}
 
 	private List<VElementMouseListener> elementListeners = new ArrayList<VElementMouseListener>();
-	
+
 	public void addVElementMouseListener(VElementMouseListener l) {
 		if(!elementListeners.contains(l)) {
 			elementListeners.add(l);
 		}
 	}
-	
+
 	public void removeVElementMouseListener(VElementMouseListener l) {
 		elementListeners.remove(l);
 	}
-	
+
 	protected void fireVElementMouseEvent(VElementMouseEvent e)
 	{
 		for (VElementMouseListener l : elementListeners)
@@ -2353,10 +2353,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			l.vElementMouseEvent(e);
 		}
 	}
-	
+
 	/**
 	 * Adds a {@link SelectionListener} to the SelectionBox of this VPathway
-	 * 
+	 *
 	 * @param l
 	 *            The SelectionListener to add
 	 */
@@ -2368,7 +2368,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Removes a {@link SelectionListener} from the SelectionBox of this
 	 * VPathway
-	 * 
+	 *
 	 * @param l
 	 *            The SelectionListener to remove
 	 */
@@ -2402,7 +2402,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	}
 
 	private AffineTransform vFromM = new AffineTransform();
-	
+
 	public java.awt.Shape vFromM(java.awt.Shape s) {
 		vFromM.setToScale(zoomFactor, zoomFactor);
 		return vFromM.createTransformedShape(s);
@@ -2461,19 +2461,19 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			return g1.gdata.getZOrder() - g2.gdata.getZOrder();
 		}
 	}
-	
+
 	private UndoManager undoManager = new UndoManager();
 
 	/**
 	 * Activates the undo manager by providing an engine
 	 * to which the undo actions will be applied. If this
-	 * method is not called, the undo manager will not 
+	 * method is not called, the undo manager will not
 	 * record any undo actions.
 	 */
 	public void activateUndoManager(Engine engine) {
 		undoManager.activate(engine);
 	}
-	
+
 	/**
 	 * returns undoManager owned by this instance of VPathway.
 	 */
@@ -2495,7 +2495,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	private boolean disposed = false;
 	/**
-	 * free all resources (such as listeners) held by this class. 
+	 * free all resources (such as listeners) held by this class.
 	 * Owners of this class must explicitly dispose of it to clean up.
 	 */
 	public void dispose()
@@ -2517,25 +2517,25 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		hoverManager.stop();
 		disposed = true;
 	}
-	
+
 	private void addScheduled()
 	{
-		for (VPathwayElement elt : toAdd) 
+		for (VPathwayElement elt : toAdd)
 		{
 			if (!drawingObjects.contains(elt))
 			{ // Don't add duplicates!
 				drawingObjects.add(elt);
 			}
 		}
-		toAdd.clear();		
+		toAdd.clear();
 	}
-	
+
 	private void cleanUp()
 	{
 		for (Iterator<VPathwayElement> i = drawingObjects.iterator(); i.hasNext(); )
 		{
 			VPathwayElement elt = i.next();
 			if (elt.toBeRemoved()) { i.remove(); }
-		}		
+		}
 	}
 }

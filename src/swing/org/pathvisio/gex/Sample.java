@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gex;
@@ -19,14 +19,14 @@ package org.pathvisio.gex;
 import java.sql.Types;
 
 /**
- * This class represents a record in the Sample table of the Expression database. 
+ * This class represents a record in the Sample table of the Expression database.
  */
 public class Sample implements Comparable<Sample>
 {
 	int idSample;
 	String name;
 	int dataType;
-	
+
 	/**
 	 * Constructor of this class
 	 * @param idSample	represents the 'idSample' column in the Sample table, an unique identifier
@@ -39,7 +39,7 @@ public class Sample implements Comparable<Sample>
 		this.idSample = idSample;
 		this.dataType = Types.REAL; //For backwards compatibility
 	}
-	
+
 	/**
 	 * Constructor of this class
 	 * @param idSample	represents the 'idSample' column in the Sample table, an unique identifier
@@ -56,16 +56,16 @@ public class Sample implements Comparable<Sample>
 		this.name = name;
 		this.dataType = dataType;
 	}
-	
+
 	public String getName() { return name == null ? "" : name; }
 	protected void setName(String nm) { name = nm; }
 	/**
-	 * @deprecated A sample does not have a fixed data type anymore, 
+	 * @deprecated A sample does not have a fixed data type anymore,
 	 * the type is determined upon loading the data entry.
 	 */
 	public int getDataType() { return dataType; }
 	/**
-	 * @deprecated A sample does not have a fixed data type anymore, 
+	 * @deprecated A sample does not have a fixed data type anymore,
 	 * the type is determined upon loading the data entry.
 	 */
 	protected void setDataType(int type) { dataType = type; }
@@ -82,16 +82,16 @@ public class Sample implements Comparable<Sample>
 	{
 		return idSample - o.idSample;
 	}
-	
+
 	public int hashCode() {
 		return idSample;
 	}
-	
+
 	public boolean equals(Object o) {
 		if(o instanceof Sample) return ((Sample) o).idSample == idSample;
 		return false;
 	}
-	
+
 	/**
 	 * Returns a readable String representation of this object
 	 */

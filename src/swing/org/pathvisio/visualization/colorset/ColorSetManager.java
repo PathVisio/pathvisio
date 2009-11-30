@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.colorset;
@@ -31,9 +31,9 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.debug.Logger;
 
-/** 
+/**
  * Manages colorSets (a ColorSet is a combination of rules and / or gradients)
- * Can send events when a colorSet is added or removed. 
+ * Can send events when a colorSet is added or removed.
  */
 public class ColorSetManager {
 	public final static String XML_ELEMENT = "color-sets";
@@ -61,7 +61,7 @@ public class ColorSetManager {
 		if(name == null) name = getNewName();
 		addColorSet(new ColorSet(this));
 	}
-	
+
 	public void addColorSet(ColorSet cs)
 	{
 		colorSets.put(cs.getName(), cs);
@@ -83,7 +83,7 @@ public class ColorSetManager {
 				new ColorSetEvent(ColorSetManager.class, ColorSetEvent.COLORSET_REMOVED));
 		}
 	}
-	
+
 	/**
 	 * Clears all color-set information
 	 */
@@ -92,27 +92,27 @@ public class ColorSetManager {
 		fireColorSetEvent(
 				new ColorSetEvent (ColorSetManager.class, ColorSetEvent.COLORSET_REMOVED));
 	}
-	
+
 	public ColorSet getColorSet(String name) {
 		return colorSets.get(name);
 	}
 
 	public Element getXML() {
 		Element cse = new Element(XML_ELEMENT);
-				
+
 		for(ColorSet cs : colorSets.values()) cse.addContent(cs.toXML());
-		
+
 		return cse;
 	}
 
 	public void fromXML(Element xml) {
 		clearColorSets();
-		
+
 		if(xml == null) return;
 
 		for(Object o : xml.getChildren(ColorSet.XML_ELEMENT)) {
 			Logger.log.trace("Adding " + o);
-			addColorSet(ColorSet.fromXML((Element) o, this));				
+			addColorSet(ColorSet.fromXML((Element) o, this));
 		}
 	}
 
@@ -154,9 +154,9 @@ public class ColorSetManager {
 	{
 		if (listeners == null)
 			return;
-		listeners.remove (l);				
+		listeners.remove (l);
 	}
-	
+
 	/**
 	 * Interface for classes that want to receive a ColorSetEvent
 	 */

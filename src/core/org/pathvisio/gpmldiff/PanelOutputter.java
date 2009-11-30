@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gpmldiff;
@@ -35,18 +35,18 @@ import org.pathvisio.view.VPathwayElement;
  * Outputs a pathway diff to two VPathways, highlighting the elements
  * in the VPathway red, green or yellow.
  * This is the Outputter used by GpmlDiffWindow, and thus by the GpmlDiff applet.
- * TODO: this class is maybe better named DualVPathwayOutputter 
+ * TODO: this class is maybe better named DualVPathwayOutputter
  * as it's not directly linked to a panel.
  */
 class PanelOutputter extends DiffOutputter
-{	
+{
 	VPathway vpwy[] = new VPathway[2];
 
 	Pathway pwy[] = new Pathway[2];
 
 	private static final int PWY_OLD = 0;
 	private static final int PWY_NEW = 1;
-	
+
 	PanelOutputter (VPathway aOld, VPathway aNew)
 	{
 		vpwy[PWY_OLD] = aOld;
@@ -95,10 +95,10 @@ class PanelOutputter extends DiffOutputter
 		else
 		{
 			velt.highlight (Color.RED);
-			
+
 			Map <String, String> hint = new HashMap<String, String>();
 			hint.put ("element", "Element removed");
-			
+
 			Rectangle2D r = velt.getVBounds();
 			ModData mod = new ModData (
 					(int)vpwy[PWY_NEW].mFromV(r.getX() + r.getWidth() / 2),
@@ -174,7 +174,7 @@ class PanelOutputter extends DiffOutputter
 	PathwayElement curOldElt = null;
 	PathwayElement curNewElt = null;
 	Map<String, String> curHint = null;
-	
+
 	public void modifyStart (PathwayElement oldElt, PathwayElement newElt)
 	{
 		curOldElt = oldElt;
@@ -185,14 +185,14 @@ class PanelOutputter extends DiffOutputter
 	public void flush() throws IOException
 	{
 	}
-	
+
 	public void modifyEnd ()
 	{
 		VPathwayElement veltOld = findElt (curOldElt, vpwy[PWY_OLD]);
 		assert (veltOld != null);
 		veltOld.highlight (Color.YELLOW);
 		Rectangle2D r1 = veltOld.getVBounds();
-		
+
 		VPathwayElement veltNew = findElt (curNewElt, vpwy[PWY_NEW]);
 		assert (veltNew != null);
 		veltNew.highlight (Color.YELLOW);
@@ -208,7 +208,7 @@ class PanelOutputter extends DiffOutputter
 		modifications.add (mod);
 		modsByElt.put (veltOld, mod);
 		modsByElt.put (veltNew, mod);
-		
+
 		curOldElt = null;
 		curNewElt = null;
 	}
@@ -217,10 +217,10 @@ class PanelOutputter extends DiffOutputter
 
 	// TODO: accessors
 	public Map <VPathwayElement, ModData> modsByElt = new HashMap<VPathwayElement, ModData>();
-	
+
 	public void modifyAttr(String attr, String oldVal, String newVal)
 	{
-		if (attr.equalsIgnoreCase("centerx") || 
+		if (attr.equalsIgnoreCase("centerx") ||
 			attr.equalsIgnoreCase("centery"))
 		{
 			String temp =
@@ -236,7 +236,7 @@ class PanelOutputter extends DiffOutputter
 			attr.equalsIgnoreCase("startx") ||
 			attr.equalsIgnoreCase("starty"))
 		{
-			String temp = 
+			String temp =
 				curOldElt.getMStartX() + ", " +
 				curOldElt.getMStartY() + " -> " +
 				curNewElt.getMStartX() + ", " +

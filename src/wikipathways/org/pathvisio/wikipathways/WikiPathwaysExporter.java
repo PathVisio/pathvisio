@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways;
@@ -37,12 +37,12 @@ import org.pathvisio.model.Pathway;
  * Special exporter that uses the WikiPathways XMLRPC interface to
  * convert to SVG and other image formats. By letting the server
  * do all the heavy work, we don't need libraries such as Batik
- * in the Applet and thus we can keep the Applet small. 
+ * in the Applet and thus we can keep the Applet small.
  */
 public class WikiPathwaysExporter extends ImageExporter {
-	
+
 	URL rpcUrl;
-	
+
 	public WikiPathwaysExporter(URL rpcUrl, String type) {
 		super(type);
 		this.rpcUrl = rpcUrl;
@@ -72,7 +72,7 @@ public class WikiPathwaysExporter extends ImageExporter {
 			byte[] converted64 = ((String)client.execute("WikiPathways.convertPathway", params)).getBytes();
 			Base64.decodeBase64(converted64);
 			byte[] converted = Base64.decodeBase64(converted64);
-			
+
 			FileOutputStream fout = new FileOutputStream(file);
 			fout.write(converted);
 			fout.close();

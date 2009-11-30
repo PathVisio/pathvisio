@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.cytoscape.wikipathways;
@@ -53,30 +53,30 @@ import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
 /**
  * GUI for accessing the WikiPathways webservice,
- * lets the user query for a list of Pathways 
+ * lets the user query for a list of Pathways
  */
 public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 	final CyWikiPathwaysClient client;
-	
+
 	JComboBox organismCombo;
 	JTextField searchText;
 	JTable resultTable;
 	ListWithPropertiesTableModel<ResultProperty, ResultRow> tableModel;
-	
+
 	public CyWikiPathwaysClientGui(CyWikiPathwaysClient c) {
 		client = c;
-		
+
 		organismCombo = new JComboBox();
 		resetOrganisms();
-		
+
 		searchText = new JTextField();
 		searchText.setActionCommand(ACTION_SEARCH);
 		searchText.addActionListener(this);
-		
+
 		JButton searchBtn = new JButton("Search");
 		searchBtn.setActionCommand(ACTION_SEARCH);
 		searchBtn.addActionListener(this);
-		
+
 		resultTable = new JTable();
 		resultTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		resultTable.addMouseListener(new MouseAdapter() {
@@ -100,7 +100,7 @@ public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 		add(searchBtn, cc.xy(8, 2));
 		add(new JScrollPane(resultTable), cc.xyw(2, 4, 7));
 	}
-	
+
 	protected void resetOrganisms() {
 		List<String> organisms = new ArrayList<String>();
 		organisms.add(ORGANISM_ALL);
@@ -109,10 +109,10 @@ public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 		} catch (Exception e) {
 			Logger.log.error("Unable to get organisms for WikiPathways client", e);
 		}
-		
+
 		organismCombo.setModel(new DefaultComboBoxModel(organisms.toArray()));
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
 		if(ACTION_SEARCH.equals(action)) {
@@ -134,7 +134,7 @@ public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 				switch(ex.getErrorCode()) {
 				case NO_RESULT:
 					JOptionPane.showMessageDialog(
-							this, "The search didn't return any results", 
+							this, "The search didn't return any results",
 							"No results", JOptionPane.INFORMATION_MESSAGE
 					);
 					break;
@@ -159,24 +159,24 @@ public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 			request.revision = Integer.parseInt(result.getRevision());
 			WebServiceClientManager.getCyWebServiceEventSupport().fireCyWebServiceEvent(
 				new CyWebServiceEvent(
-						client.getClientID(), WSEventType.IMPORT_NETWORK, 
+						client.getClientID(), WSEventType.IMPORT_NETWORK,
 						request
 				)
 			);
 		} catch (CyWebServiceException ex) {
 			JOptionPane.showMessageDialog(
-				CyWikiPathwaysClientGui.this, "Error: " + ex.getErrorCode() + ". See error log for details", 
-				"Error", JOptionPane.ERROR_MESSAGE	
+				CyWikiPathwaysClientGui.this, "Error: " + ex.getErrorCode() + ". See error log for details",
+				"Error", JOptionPane.ERROR_MESSAGE
 			);
 		}
 	}
-	
+
 	public void setResults(WSSearchResult[] results) {
 		tableModel =
-			new ListWithPropertiesTableModel<ResultProperty, ResultRow>();	
+			new ListWithPropertiesTableModel<ResultProperty, ResultRow>();
 		if(results != null) {
-			tableModel.setColumns(new ResultProperty[] { 
-					ResultProperty.NAME, 
+			tableModel.setColumns(new ResultProperty[] {
+					ResultProperty.NAME,
 					ResultProperty.ORGANISM,
 			});
 			resultTable.setModel(tableModel);
@@ -186,21 +186,21 @@ public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 		}
 		resultTable.setModel(tableModel);
 	}
-	
+
 	/**
 	 * Represents a hit, a single row in the query results table.
 	 */
 	class ResultRow implements RowWithProperties<ResultProperty> {
 		WSSearchResult result;
-		
+
 		public ResultRow(WSSearchResult result) {
 			this.result = result;
 		}
-		
+
 		public WSSearchResult getResult() {
 			return result;
 		}
-		
+
 		public String getProperty(ResultProperty prop) {
 			switch(prop) {
 			case NAME: return result.getName();
@@ -211,7 +211,7 @@ public class CyWikiPathwaysClientGui extends JPanel implements ActionListener {
 			return null;
 		}
 	}
-	
+
 	private static final String ACTION_SEARCH = "Search";
 	private static final String ORGANISM_ALL = "All organisms";
 }

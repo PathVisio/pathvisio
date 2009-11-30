@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.util;
@@ -57,11 +57,11 @@ public class ColorExporter implements VPathwayListener {
 		vPathway = new VPathway(new VPathwayWrapperBase());
 		vPathway.fromModel(pathway);
 	}
-	
+
 	public void dispose() {
 		vPathway.dispose();
 	}
-	
+
 	public void export(BatikImageExporter exporter, File outputFile) throws ConverterException {
 		vPathway.addVPathwayListener(this);
 		doHighlight();
@@ -95,23 +95,23 @@ public class ColorExporter implements VPathwayListener {
 		Rectangle2D area = pwe.getVBounds();
 		g2d.setClip(area);
 		g2d.setColor(Color.black);
-		
+
 		String label = pwe.getPathwayElement().getTextLabel();
 		if(label != null && !"".equals(label)) {
 			TextLayout tl = new TextLayout(label, g2d.getFont(), g2d.getFontRenderContext());
 			Rectangle2D tb = tl.getBounds();
-			
-			tl.draw(g2d, 	(int)area.getX() + (int)(area.getWidth() / 2) - (int)(tb.getWidth() / 2), 
+
+			tl.draw(g2d, 	(int)area.getX() + (int)(area.getWidth() / 2) - (int)(tb.getWidth() / 2),
 					(int)area.getY() + (int)(area.getHeight() / 2) + (int)(tb.getHeight() / 2));
 		}
 	}
-	
+
 	private void doColor(Graphics2D g, Graphics vpe, List<Color> colors) {
 		Graphics2D g2d = (Graphics2D)g.create();
 		g2d.setClip(vpe.getVBounds());
-		
+
 		Rectangle area = vpe.getVBounds().getBounds();
-		
+
 		int nr = colors.size();
 		int left = area.width % nr; //Space left after dividing, give to last rectangle
 		int w = area.width / nr;
@@ -126,7 +126,7 @@ public class ColorExporter implements VPathwayListener {
 		g2d.setColor(vpe.getPathwayElement().getColor());
 		g2d.drawRect(area.x, area.y, area.width - 1, area.height - 1);
 	}
-	
+
 	/**
 	 * Highlight all object but DataNodes and Groups. Only the first color
 	 * from the hashmap will be used.
@@ -145,10 +145,10 @@ public class ColorExporter implements VPathwayListener {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		PreferenceManager.init();
-		
+
 		if(args.length < 2) {
 			printHelp();
 			System.exit(-1);
@@ -161,17 +161,17 @@ public class ColorExporter implements VPathwayListener {
 			//Enable MiM support (for export to graphics formats)
 			MIMShapes.registerShapes();
 
-			Logger.log.setStream (System.err);		
+			Logger.log.setStream (System.err);
 			Logger.log.setLogLevel (false, false, true, true, true, true);
-			
+
 			File inputFile = new File(inStr);
 			File outputFile = new File(outStr);
 			Pathway pathway = new Pathway();
 			pathway.readFromXml(inputFile, true);
-			
+
 			//Parse commandline arguments
 			Map<PathwayElement, List<Color>> colors = new HashMap<PathwayElement, List<Color>>();
-			
+
 			for(int i = 2; i < args.length - 1; i++) {
 				if("-c".equals(args[i])) {
 					PathwayElement pwe = pathway.getElementById(args[++i]);
@@ -198,7 +198,7 @@ public class ColorExporter implements VPathwayListener {
 			ColorExporter colorExp = new ColorExporter(pathway, colors);
 			colorExp.export(exporter, outputFile);
 			colorExp.dispose();
-			
+
 		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(-2);

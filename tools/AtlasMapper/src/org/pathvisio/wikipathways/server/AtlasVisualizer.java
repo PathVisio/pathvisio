@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.server;
@@ -55,7 +55,7 @@ public class AtlasVisualizer {
 	List<Factor> factors;
 	List<IDMapperRdb> gdbs;
 	Organism organism;
-	
+
 	public AtlasVisualizer(Pathway pathway, GeneSet atlasGenes, List<Factor> factors, List<IDMapperRdb> gdbs) {
 		this.pathway = pathway;
 		this.atlasGenes = atlasGenes;
@@ -64,11 +64,11 @@ public class AtlasVisualizer {
 		this.organism = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
 		PreferenceManager.init();
 	}
-	
+
 	public void export(BatikImageExporter exporter, File file) throws ConverterException, IDMapperException {
 		Map<Xref, Color[]> xrefColors = createColorMap();
 		Map<PathwayElement, Set<Xref>> ensMap = createEnsemblMap();
-		
+
 		Map<PathwayElement, List<Color>> colors = new HashMap<PathwayElement, List<Color>>();
 		for(PathwayElement pwElm : ensMap.keySet()) {
 			Set<Xref> xrefs = ensMap.get(pwElm);
@@ -87,17 +87,17 @@ public class AtlasVisualizer {
 				}
 			}
 		}
-		
+
 		ColorExporter colorExporter = new ColorExporter(pathway, colors);
 		colorExporter.export(exporter, file);
 		colorExporter.dispose();
 	}
-	
+
 	private Map<Xref, Color[]> createColorMap() {
 		Map<Xref, Color[]> xrefColors = new HashMap<Xref, Color[]>();
-		
+
 		DataSource ens = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
-		
+
 		Collection<Gene> genes = atlasGenes.getGenes();
 		for(Gene gene : genes) {
 			Xref xref = new Xref(gene.getId(), ens);
@@ -124,7 +124,7 @@ public class AtlasVisualizer {
 							avg_p += fd.getPvalue();
 						}
 					}
-					
+
 					//If the signs disagree, use gray as color
 					if(Double.isNaN(avg_p)) {
 						colors[i] = Color.gray;
@@ -136,30 +136,30 @@ public class AtlasVisualizer {
 			}
 			xrefColors.put(xref, colors);
 		}
-		
+
 		return xrefColors;
 	}
-	
+
 	private Map<PathwayElement, Set<Xref>> createEnsemblMap() throws IDMapperException {
 		DataSource orgEns = AtlasMapperServiceImpl.getEnsemblDataSource(organism);
-		
+
 		Map<PathwayElement, Set<Xref>> ensMap = new HashMap<PathwayElement, Set<Xref>>();
 		for(PathwayElement pwElm : pathway.getDataObjects()) {
 			if(pwElm.getObjectType() == ObjectType.DATANODE) {
 				Xref xref = pwElm.getXref();
 				Set<Xref> ensRefs = new HashSet<Xref>();
-				
+
 				for(int i = 0; i < gdbs.size(); i++) {
 					if(xref.getId() == null || xref.getDataSource() == null) continue;
 					ensRefs.addAll(gdbs.get(i).mapID(xref, orgEns));
 				}
-				
+
 				ensMap.put(pwElm, ensRefs);
 			}
 		}
 		return ensMap;
 	}
-	
+
 	private Color getColor(int updn, double pvalue) {
 		//Color from red (down, low p) to blue (up, low p)
 		if(updn < 0) { //Down
@@ -170,7 +170,7 @@ public class AtlasVisualizer {
 			return new Color(255, gb, gb);
 		}
 	}
-	
+
 	private Color averageColor(Color c1, Color c2) {
 		return new Color(
 				(c1.getRed() + c2.getRed()) / 2,

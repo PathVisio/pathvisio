@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 
-public class TestPanel3 extends JPanel 
+public class TestPanel3 extends JPanel
 {
 
     private JLabel anotherBlankSpace;
@@ -16,20 +16,20 @@ public class TestPanel3 extends JPanel
     private JProgressBar progressSent;
     private JLabel welcomeTitle;
     private JLabel yetAnotherBlankSpace1;
-    
+
     private JPanel contentPanel;
     private JLabel iconLabel;
     private JSeparator separator;
     private JLabel textLabel;
     private JPanel titlePanel;
-        
+
     public TestPanel3() {
-        
+
         super();
-                
+
         contentPanel = getContentPanel();
         ImageIcon icon = getImageIcon();
-        
+
         titlePanel = new javax.swing.JPanel();
         textLabel = new javax.swing.JLabel();
         iconLabel = new javax.swing.JLabel();
@@ -39,7 +39,7 @@ public class TestPanel3 extends JPanel
 
         titlePanel.setLayout(new java.awt.BorderLayout());
         titlePanel.setBackground(Color.gray);
-        
+
         textLabel.setBackground(Color.gray);
         textLabel.setFont(new Font("MS Sans Serif", Font.BOLD, 14));
         textLabel.setText("Pretending To Connect To Server");
@@ -49,7 +49,7 @@ public class TestPanel3 extends JPanel
         iconLabel.setBackground(Color.gray);
         if (icon != null)
             iconLabel.setIcon(icon);
-        
+
         titlePanel.add(textLabel, BorderLayout.CENTER);
         titlePanel.add(iconLabel, BorderLayout.EAST);
         titlePanel.add(separator, BorderLayout.SOUTH);
@@ -58,21 +58,21 @@ public class TestPanel3 extends JPanel
         JPanel secondaryPanel = new JPanel();
         secondaryPanel.add(contentPanel, BorderLayout.NORTH);
         add(secondaryPanel, BorderLayout.WEST);
-        
-    }  
-    
+
+    }
+
     public void setProgressText(String s) {
         progressDescription.setText(s);
     }
-    
+
     public void setProgressValue(int i) {
         progressSent.setValue(i);
     }
-    
-    private JPanel getContentPanel() {            
-        
+
+    private JPanel getContentPanel() {
+
         JPanel contentPanel1 = new JPanel();
-        
+
         connectorGroup = new ButtonGroup();
         welcomeTitle = new JLabel();
         jPanel1 = new JPanel();
@@ -107,12 +107,12 @@ public class TestPanel3 extends JPanel
 
         jLabel1.setText("After the sending is completed, the Back and Finish buttons will enable below.");
         contentPanel1.add(jLabel1, java.awt.BorderLayout.SOUTH);
-        
+
         return contentPanel1;
     }
-    
-    private ImageIcon getImageIcon() {        
+
+    private ImageIcon getImageIcon() {
         return null;
     }
-    
+
 }

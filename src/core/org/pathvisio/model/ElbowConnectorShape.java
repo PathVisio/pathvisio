@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -55,7 +55,7 @@ public class ElbowConnectorShape extends AbstractConnector {
 	protected Shape calculateShape() {
 		return calculateShape(getSegments());
 	}
-	
+
 	protected Shape calculateShape(Segment[] segments) {
 		GeneralPath path = new GeneralPath();
 		int i = 0;
@@ -112,10 +112,10 @@ public class ElbowConnectorShape extends AbstractConnector {
 			waypoints[0] = calculateWayPoint(start, new Point2D.Double(
 					end.getX() + SEGMENT_OFFSET * endDirection, end.getY() + SEGMENT_OFFSET * endDirection
 													), startAxis, startDirection);
-			
+
 			waypoints[1] = calculateWayPoint(end, waypoints[0], endAxis, endDirection);
 		} else if(nrSegments - 2 == 3) {
-			/*  ----- 
+			/*  -----
 			 *  |   |
 			 * [S]  | [S]
 			 *      |  |
@@ -131,7 +131,7 @@ public class ElbowConnectorShape extends AbstractConnector {
 		}
 		return waypoints;
 	}
-	
+
 	protected WayPoint calculateWayPoint(Point2D start, Point2D end, int axis, int direction) {
 		double x,y = 0;
 		if(axis == AXIS_Y) {
@@ -143,7 +143,7 @@ public class ElbowConnectorShape extends AbstractConnector {
 		}
 		return new WayPoint(x, y);
 	}
-	
+
 	protected Segment[] calculateSegments(ConnectorRestrictions restrictions, WayPoint[] waypoints) {
 		int nrSegments = getNrSegments(restrictions);
 		Segment[] segments = new Segment[nrSegments];
@@ -165,7 +165,7 @@ public class ElbowConnectorShape extends AbstractConnector {
 				segments[i + 1] = createStraightSegment(
 						segments[i].getMEnd(),
 						waypoints[i + 1],
-						axis					
+						axis
 				);
 				axis = getOppositeAxis(axis);
 			}
@@ -244,7 +244,7 @@ TLW		2	3	2	1
 	private int getNrWaypoints(int x, int y, int z) {
 //		if(waypointNumbers == null) {
 		waypointNumbers = new int[][][] {
-				new int[][] { 	
+				new int[][] {
 						new int[] { 1, 1 },
 						new int[] { 2, 2 },
 						new int[] { 1, 3 },
@@ -350,7 +350,7 @@ TLW		2	3	2	1
 		double vsy = s.getY();
 		double vex = e.getX();
 		double vey = e.getY();
-		
+
 		int dirx = vsx > vex ? -1 : 1;
 		int diry = vsy > vey ? -1 : 1;
 
@@ -359,7 +359,7 @@ TLW		2	3	2	1
 			vsy + diry * Math.abs(vsy - vey) * relative
 		);
 	}
-	
+
 	public double toLineCoordinate(Point2D v) {
 		Segment[] segments = getSegments();
 		return LinAlg.toLineCoordinates(

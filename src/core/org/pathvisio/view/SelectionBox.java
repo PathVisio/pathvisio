@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -30,11 +30,11 @@ import org.pathvisio.model.PathwayElement;
 
 /**
  * This class implements a selectionbox
- * 
+ *
  * A selectionbox has two states: 1: while dragging (being created) and 2: when
  * surrounding a selected area in Case 1, the handles can move freely, in case
  * 2, they move in such a way that the aspect ratio is always maintained.
- * 
+ *
  * It only stores the view coordinates, not the model coordinates. Therefore it
  * is important to call adjustToZoom when the zoom pct has changed, so the view
  * coordinates can be recalculated.
@@ -72,7 +72,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 		handleSE = new Handle(Handle.Freedom.FREE, this, this);
 		handleSW = new Handle(Handle.Freedom.FREE, this, this);
 		handleNW = new Handle(Handle.Freedom.FREE, this, this);
-		
+
 		// handles of selectionbox are invisible
 		handleNE.setStyle(Handle.Style.INVISIBLE);
 		handleSE.setStyle(Handle.Style.INVISIBLE);
@@ -93,7 +93,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 
 	/**
 	 * Add an object to the selection
-	 * 
+	 *
 	 * @param o
 	 */
 	public void addToSelection(VPathwayElement o)
@@ -120,7 +120,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 
 	/**
 	 * Remove an object from the selection
-	 * 
+	 *
 	 * @param o
 	 */
 	public void removeFromSelection(VPathwayElement o)
@@ -138,7 +138,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 
 	/**
 	 * Get the child object at the given coordinates (relative to canvas)
-	 * 
+	 *
 	 * @param p
 	 * @return the child object or null if none is present at the given location
 	 */
@@ -162,7 +162,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	/**
 	 * Removes or adds the object (if exists) at the given coordinates from the
 	 * selection, depending on its selection-state
-	 * 
+	 *
 	 * @param p
 	 */
 	public void objectClicked(Point2D p)
@@ -201,7 +201,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	/**
 	 * Resets the selectionbox (unselect selected objects, clear selection,
 	 * reset rectangle to upperleft corner
-	 * 
+	 *
 	 * @param clearSelection
 	 *            if true the selection is cleared
 	 */
@@ -398,7 +398,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 		//Keep track of objects that were selected via a group
 		//Don't unselect them if they're out of the selection bounds
 		Set<Graphics> groupObjects = new HashSet<Graphics>();
-		
+
 		if (isSelecting)
 		{ // Selecting, so add containing objects to selection
 			Rectangle2D bounds = getVBounds();
@@ -407,7 +407,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 				if ((o == this) || (o instanceof Handle)) {
 					continue;
 				}
-				
+
 				if(o.vIntersects(bounds) ) { //&& !(o instanceof Group)
 					//exclude objects in a group to avoid double selection
 					if(o instanceof Graphics){
@@ -421,7 +421,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 						}
 					}
 					addToSelection(o);
-					
+
 				} else if (o.isSelected() && !groupObjects.contains(o)) {
 					removeFromSelection(o);
 				}
@@ -462,7 +462,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	/**
 	 * This method implements actions performed when the width of the object
 	 * becomes negative after adjusting to a handle
-	 * 
+	 *
 	 * @param h
 	 *            The handle this object adjusted to
 	 */
@@ -477,7 +477,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	/**
 	 * This method implements actions performed when the height of the object
 	 * becomes negative after adjusting to a handle
-	 * 
+	 *
 	 * @param h
 	 *            The handle this object adjusted to
 	 */
@@ -576,11 +576,11 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	public List<SelectionListener> getListeners() {
 		return listeners;
 	}
-	
+
 	/**
 	 * Fire a {@link SelectionEvent} to notify all {@link SelectionListener}s
 	 * registered to this class
-	 * 
+	 *
 	 * @param e
 	 */
 	public void fireSelectionEvent(SelectionEvent e)
@@ -591,7 +591,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 		}
 	}
 
-	/** implement this if you want to be notified 
+	/** implement this if you want to be notified
 	 * when the set of selected objects changes */
 	public interface SelectionListener
 	{

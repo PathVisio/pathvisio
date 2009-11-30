@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.bots;
@@ -100,7 +100,7 @@ public abstract class Bot {
 			Logger.log.trace("No user account");
 			return;
 		}
-		
+
 		try {
 			WSCurationTag[] allTags = client.getCurationTagsByName(getTagName());
 			Map<String, WSCurationTag> tagsByPathway = new HashMap<String, WSCurationTag>();
@@ -166,7 +166,7 @@ public abstract class Bot {
 					}
 				}
 			}
-			
+
 			StringBuilder strb = new StringBuilder();
 			for(WSPathwayInfo pwi : overrides) {
 				strb.append("<a href='" + pwi.getUrl() + "'>" + pwi.getId() + "</a>, ");
@@ -182,7 +182,7 @@ public abstract class Bot {
 	private String checkRemoved(Result r) throws BotException {
 		try {
 			WSCurationTagHistory[] hist = client.getCurationTagHistory(r.getPathwayInfo().getId());
-			
+
 			//Find out if the tag was originally applied by this bot and then removed by a user
 			for(WSCurationTagHistory h : hist) {
 				if(user.equals(h.getUser())) {

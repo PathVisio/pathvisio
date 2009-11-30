@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gpmldiff;
@@ -45,7 +45,7 @@ class BetterSim extends SimilarityFunction
 		int possibleScore = 0;
 		int actualScore = 0;
 
-		
+
 		{
 			int max;
 			if (oldOt == ObjectType.LEGEND || oldOt == ObjectType.INFOBOX)
@@ -64,18 +64,18 @@ class BetterSim extends SimilarityFunction
 			possibleScore += max;
 			actualScore += score;
 		}
-		
+
 		for (PropertyType newProp : newProps)
 		{
 			if (oldProps.contains(newProp))
 			{
 				Object oo = oldE.getStaticProperty(newProp);
 				Object no = newE.getStaticProperty(newProp);
-				
+
 				int max = 0;
 				int score = 0;
-				
-				switch (newProp) 
+
+				switch (newProp)
 				{
 				case BOARDWIDTH:
 				case BOARDHEIGHT:
@@ -96,10 +96,10 @@ class BetterSim extends SimilarityFunction
 					// disregard x coords, we do the calculations for y coords.
 					break;
 				case STARTY:
-				{					
+				{
 					max = 300 / oldN;
 					double dx = newE.getMStartX() - oldE.getMStartX();
-					double dy = newE.getMStartY() - oldE.getMStartY();					
+					double dy = newE.getMStartY() - oldE.getMStartY();
 					double dist = Math.sqrt (dx * dx + dy * dy);
 					if (dist < 1)
 					{
@@ -127,7 +127,7 @@ class BetterSim extends SimilarityFunction
 				{
 					max = 300 / oldN;
 					double dx = newE.getMEndX() - oldE.getMEndX();
-					double dy = newE.getMEndY() - oldE.getMEndY();					
+					double dy = newE.getMEndY() - oldE.getMEndY();
 					double dist = Math.sqrt (dx * dx + dy * dy);
 					if (dist < 1)
 					{
@@ -166,7 +166,7 @@ class BetterSim extends SimilarityFunction
 						else
 						{
 							score = 0;
-						}							
+						}
 						break;
 					default:
 						if (oo != null && no != null)
@@ -183,7 +183,7 @@ class BetterSim extends SimilarityFunction
 						}
 						break;
 				}
-								
+
 				possibleScore += max;
 				actualScore += score;
 			}

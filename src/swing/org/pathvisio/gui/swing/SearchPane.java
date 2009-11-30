@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing;
@@ -68,8 +68,8 @@ import org.pathvisio.view.VPathwayElement;
 /**
  * A side panel which displays search results.
  */
-public class SearchPane extends JPanel 
-{	
+public class SearchPane extends JPanel
+{
 	private JButton btnSearch;
 	private JButton btnBrowse;
 	private JTextField txtDir;
@@ -81,19 +81,19 @@ public class SearchPane extends JPanel
 	private JLabel lblNumFound;
 	final private JComboBox cbSearchBy;
 	private SearchTableModel srs;
-	
+
 	private Engine engine;
 	private SwingEngine swingEngine;
-	
+
 	public SearchPane(SwingEngine swingEngine)
 	{
 		this.engine = swingEngine.getEngine();
 		this.swingEngine = swingEngine;
-		
+
 		txtSymbol = new JTextField();
 		txtSymbol.addActionListener(new ActionListener(){
-			
-			public void actionPerformed(ActionEvent ae) 
+
+			public void actionPerformed(ActionEvent ae)
 			{
 				doSearch();
 			}
@@ -104,48 +104,48 @@ public class SearchPane extends JPanel
 		);
 		symbolOptBuilder.append("Symbol:", txtSymbol);
 		JPanel symbolOpt = symbolOptBuilder.getPanel();
-		
+
 		txtId = new JTextField();
 		txtId.addActionListener(new ActionListener(){
 
-			public void actionPerformed(ActionEvent ae) 
+			public void actionPerformed(ActionEvent ae)
 			{
 				doSearch();
 			}
 		});
 		cbSyscode = new JComboBox(new DataSourceModel());
-		
+
 		DefaultFormBuilder idOptBuilder = new DefaultFormBuilder(
 			new FormLayout("pref, 4dlu, fill:pref:grow")
 		);
 		idOptBuilder.append("Id:", txtId);
 		idOptBuilder.append("System Code:", cbSyscode);
 		JPanel idOpt = idOptBuilder.getPanel();
-		
+
 		final JPanel opts = new JPanel();
 		final CardLayout optCards = new CardLayout();
 		opts.setLayout (optCards);
 		opts.add (symbolOpt, "SYMBOL");
 		opts.add (idOpt, "ID");
-		
+
 		JPanel searchOptBox = new JPanel();
 		FormLayout layout = new FormLayout(
 				"4dlu, pref, 4dlu, fill:pref:grow, 4dlu, pref, 4dlu",
 				"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
 		CellConstraints cc = new CellConstraints();
-		
+
 		searchOptBox.setLayout (layout);
 		Border etch = BorderFactory.createEtchedBorder();
 		searchOptBox.setBorder (BorderFactory.createTitledBorder (etch, "Search options"));
-		
+
 		searchOptBox.add (new JLabel ("Search by:"), cc.xy (2,2));
-		
+
 		cbSearchBy = new JComboBox();
 		cbSearchBy.addItem ("Symbol");
 		cbSearchBy.addItem ("ID");
 		cbSearchBy.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent ae) 
+			public void actionPerformed(ActionEvent ae)
 			{
 				int i = cbSearchBy.getSelectedIndex();
 				if (i == 0)
@@ -156,13 +156,13 @@ public class SearchPane extends JPanel
 				{
 					optCards.show(opts, "ID");
 				}
-				
+
 			}
 		}
 		);
 		searchOptBox.add (cbSearchBy, cc.xyw (4,2,3));
 		searchOptBox.add (opts, cc.xyw(2,4,5));
-		
+
 		searchOptBox.add (new JLabel("Directory to search:"), cc.xy (2,6));
 		txtDir = new JTextField();
 		txtDir.setText (PreferenceManager.getCurrent().get(GlobalPreference.DIR_LAST_USED_SEARCHPANE));
@@ -204,12 +204,12 @@ public class SearchPane extends JPanel
 				}
 			}
 		});
-		
+
 		tblResult = new JTable();
-		tblResult.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);		
+		tblResult.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tblResult.addMouseListener(new MouseAdapter()
 		{
-			public void mouseClicked(MouseEvent me) 
+			public void mouseClicked(MouseEvent me)
 			{
 				showSelectedPwy();
 			}
@@ -223,38 +223,38 @@ public class SearchPane extends JPanel
 		resultPanel.add (new JScrollPane(tblResult), BorderLayout.CENTER);
 		lblNumFound = new JLabel();
 		resultPanel.add (lblNumFound, BorderLayout.SOUTH);
-		
+
 		setLayout (new BorderLayout());
 		add (searchOptBox, BorderLayout.NORTH);
-		add (resultPanel, BorderLayout.CENTER);		
+		add (resultPanel, BorderLayout.CENTER);
 	}
-	
+
 	private void showSelectedPwy()
 	{
 		int row = tblResult.getSelectedRow();
 		final MatchResult mr = srs.getRow(row);
-		
-		//TODO: here I want to use SwingEngine.openPathway, but I need to 
+
+		//TODO: here I want to use SwingEngine.openPathway, but I need to
 		// be able to wait until the process is finished!
 		final ProgressKeeper pk = new ProgressKeeper();
-		
-		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(swingEngine.getApplicationPanel()), 
+
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(swingEngine.getApplicationPanel()),
 				"", pk, false, true);
-				
+
 		engine.setWrapper (swingEngine.createWrapper());
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
 			@Override protected Boolean doInBackground() {
 				pk.setTaskName("Opening pathway");
 				try {
 					engine.openPathway(mr.getFile());
-					
+
 					return true;
 				} catch(ConverterException e) {
 					swingEngine.handleConverterException(e.getMessage(), null, e);
 					return false;
 				} finally {
 					pk.finished();
-				}				
+				}
 			}
 
 			@Override public void done()
@@ -265,7 +265,7 @@ public class SearchPane extends JPanel
 
 			}
 		};
-		
+
 		swingEngine.processTask(pk, d, sw);
 	}
 
@@ -281,8 +281,8 @@ public class SearchPane extends JPanel
 				for (XrefWithSymbol id : mr.getMatches())
 				{
 					XrefWithSymbol ref = new XrefWithSymbol(
-							gp.getPathwayElement().getXref(), 
-							gp.getPathwayElement().getTextLabel()); 
+							gp.getPathwayElement().getXref(),
+							gp.getPathwayElement().getTextLabel());
 					if (id.equals(ref))
 					{
 						gp.highlight();
@@ -308,7 +308,7 @@ public class SearchPane extends JPanel
 			vpy.resetHighlight();
 		}
 	}
-	
+
 	/**
 	 * Invoked when you hit the search button
 	 */
@@ -321,27 +321,27 @@ public class SearchPane extends JPanel
 			if (i == 0)
 			{
 				pathwaysContainingGeneSymbol (
-						txtSymbol.getText(), 
-						new File (txtDir.getText()), 
-						tblResult, 
+						txtSymbol.getText(),
+						new File (txtDir.getText()),
+						tblResult,
 						getTopLevelAncestor());
-				
+
 			}
 			else
 			{
 				pathwaysContainingGeneID(
-						new Xref (txtId.getText(), DataSource.getByFullName("" + cbSyscode.getSelectedItem())), 
-						new File (txtDir.getText()), 
-						tblResult, 
+						new Xref (txtId.getText(), DataSource.getByFullName("" + cbSyscode.getSelectedItem())),
+						new File (txtDir.getText()),
+						tblResult,
 						getTopLevelAncestor());
 			}
 		}
 		catch (SearchMethods.SearchException e)
 		{
 			JOptionPane.showMessageDialog(
-					getTopLevelAncestor(), 
-					e.getMessage(), 
-					"Search warning", 
+					getTopLevelAncestor(),
+					e.getMessage(),
+					"Search warning",
 					JOptionPane.WARNING_MESSAGE);
 		}
 	}
@@ -355,18 +355,18 @@ public class SearchPane extends JPanel
 	 * @param pmon containing the monitor responsible for
 	 * displaying the progress
 	 */
-	public void pathwaysContainingGeneID (Xref ref, File folder, 
-			JTable srt, Component parent) 
+	public void pathwaysContainingGeneID (Xref ref, File folder,
+			JTable srt, Component parent)
 			throws SearchException
 	{
 		srs = new SearchTableModel ();
 		srt.setModel(srs);
 		srs.setColumns (new SearchTableModel.Column[] {
-				SearchTableModel.Column.PATHWAY_NAME, 
+				SearchTableModel.Column.PATHWAY_NAME,
 				SearchTableModel.Column.DIRECTORY
 				});
 		SearchMethods.searchHelper (
-				new ByXrefMatcher (swingEngine.getGdbManager().getCurrentGdb(), ref), 
+				new ByXrefMatcher (swingEngine.getGdbManager().getCurrentGdb(), ref),
 				folder, srs, lblNumFound, parent);
 	}
 
@@ -381,13 +381,13 @@ public class SearchPane extends JPanel
 	 * displaying the progress
 	 */
 	public void pathwaysContainingGeneSymbol (
-			String regex, File folder, 
-			JTable srt, Component parent) 
+			String regex, File folder,
+			JTable srt, Component parent)
 	{
 		srs = new SearchTableModel ();
 		srt.setModel(srs);
 		srs.setColumns (new SearchTableModel.Column[] {
-				SearchTableModel.Column.PATHWAY_NAME, 
+				SearchTableModel.Column.PATHWAY_NAME,
 				SearchTableModel.Column.DIRECTORY,
 				SearchTableModel.Column.NAMES
 				});
@@ -409,5 +409,5 @@ public class SearchPane extends JPanel
 			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_SEARCHPANE, fc.getCurrentDirectory());
 		}
 	}
-	
+
 }

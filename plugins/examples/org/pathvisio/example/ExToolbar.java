@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.example;
@@ -35,16 +35,16 @@ import org.pathvisio.plugin.Plugin;
 public class ExToolbar implements Plugin, Engine.ApplicationEventListener
 {
 	private PvDesktop desktop;
-	
+
 	public void init(PvDesktop desktop) {
 		this.desktop = desktop;
-		
+
 		// add our action (defined below) to the toolbar
 		desktop.getSwingEngine().getApplicationPanel().addToToolbar(toolbarAction);
-		
+
 		// register a lister so we get notified when a pathway is opened
 		desktop.getSwingEngine().getEngine().addApplicationEventListener(this);
-		
+
 		// set the initial enabled / disabled state of the action
 		updateState();
 	}
@@ -59,27 +59,27 @@ public class ExToolbar implements Plugin, Engine.ApplicationEventListener
 	}
 
 	private final MyToolbarAction toolbarAction = new MyToolbarAction();
-	
+
 	private class MyToolbarAction extends AbstractAction
 	{
 		private static final String ICON_PATH = "org/pathvisio/example/example-icon.gif";
-		
+
 		MyToolbarAction()
 		{
 			// Short description will be the mouse tooltip label
 			putValue(SHORT_DESCRIPTION, "My Toolbar Action");
-			
+
 			// icon in the toolbar. Use a 16x16 gif or png image.
 			// The resource should be in the class path
 			URL url = ExToolbar.class.getClassLoader().getResource(ICON_PATH);
-			if (url == null) throw new IllegalStateException("Could not load resource " + 
+			if (url == null) throw new IllegalStateException("Could not load resource " +
 					ICON_PATH + ", please check that it is in the class-path");
 			putValue(SMALL_ICON, new ImageIcon(url));
 		}
-		
-		public void actionPerformed(ActionEvent arg0) 
+
+		public void actionPerformed(ActionEvent arg0)
 		{
-			JOptionPane.showMessageDialog(desktop.getFrame(), "Hello World");	
+			JOptionPane.showMessageDialog(desktop.getFrame(), "Hello World");
 		}
 	};
 
@@ -88,7 +88,7 @@ public class ExToolbar implements Plugin, Engine.ApplicationEventListener
 	/**
 	 * This is called when a Pathway is opened or closed.
 	 */
-	public void applicationEvent(ApplicationEvent e) 
+	public void applicationEvent(ApplicationEvent e)
 	{
 		updateState();
 	}

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.bots;
@@ -59,11 +59,11 @@ public class BotsTest extends TestCase {
 
 	static final String wsUrl = "http://localhost/wikipathways/wpi/webservice/webservice.php";
 	static final String user = "TestUser";
-	
+
 	String botUser = "TestBot";//Should have webservice write permissions
 	String botPass = "****";
-	
-	
+
+
 	static final String pass = "h4ppyt3st1ng";
 	static final String cachePath = "tmp";
 
@@ -152,7 +152,7 @@ public class BotsTest extends TestCase {
 			e1.setGeneratedGraphId(); e2.setGeneratedGraphId();
 			line.getMStart().setGraphRef(e1.getGraphId());
 			line.getMEnd().setGraphRef(e2.getGraphId());
-			client.updatePathway(pwId, pathway, "junit test - connecting line", 
+			client.updatePathway(pwId, pathway, "junit test - connecting line",
 					Integer.parseInt(wsp.getRevision()));
 
 			//Run the bot, it should remove the tag
@@ -197,7 +197,7 @@ public class BotsTest extends TestCase {
 			PathwayElement line = PathwayElement.createPathwayElement(ObjectType.LINE);
 			pathway.add(line);
 			client.updatePathway(pwId, pathway, "junit test", Integer.parseInt(wsp.getRevision()));
-			
+
 			//Re-add the tag
 			addConnectorTag(pwId);
 
@@ -220,14 +220,14 @@ public class BotsTest extends TestCase {
 				}
 			}
 			assertFalse("Should not have added connector tag", found);
-			
+
 			//Change the number of unconnected lines, the tag should be added again
 			PathwayElement line2 = PathwayElement.createPathwayElement(ObjectType.LINE);
 			pathway.add(line2);
-			
+
 			wsp = client.getPathway(pwId);
 			client.updatePathway(pwId, pathway, "junit test", Integer.parseInt(wsp.getRevision()));
-			
+
 			addConnectorTag(pwId);
 		} catch(Exception e) {
 			e.printStackTrace();

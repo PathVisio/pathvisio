@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.cytoscape.wikipathways;
@@ -78,14 +78,14 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 	protected static final String WEBSERVICE_URL = "wikipathways.webservice.uri";
 
 	public static final String ATTR_PATHWAY_URL = "wikipathways.url";
-	
+
 	private WikiPathwaysClient stub;
 	private GpmlPlugin gpmlPlugin;
-	
+
 	public CyWikiPathwaysClient(GpmlPlugin gpmlPlugin) {
-		super(CLIENT_ID, DISPLAY_NAME, 
-				new ClientType[] { ClientType.NETWORK }, 
-				null, null, null 
+		super(CLIENT_ID, DISPLAY_NAME,
+				new ClientType[] { ClientType.NETWORK },
+				null, null, null
 		);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
 		setProperties();
@@ -95,7 +95,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 	}
 
 	private String prevURL = null;
-	
+
 	public WikiPathwaysClient getStub() {
 		String urlString = CytoscapeInit.getProperties().getProperty(WEBSERVICE_URL);
 		if(stub == null || prevURL == null || !prevURL.equals(urlString)) {
@@ -104,7 +104,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 				stub = new WikiPathwaysClient(url);
 				setClientStub(stub);
 				prevURL = urlString;
-				
+
 				if(gui != null) gui.resetOrganisms();
 			} catch (ServiceException e) {
 				Logger.log.error("Unable to create WikiPathways webservice", e);
@@ -114,7 +114,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 		}
 		return stub;
 	}
-	
+
 	/**
 	 * Check if a working connection to the wikipathways
 	 * web service is available.
@@ -129,15 +129,15 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 			return false;
 		}
 	}
-	
+
 	private void setProperties() {
 		//Using global properties, but need to initialize moduleproperties anyway.
 		props = new ModulePropertiesImpl(CLIENT_ID, "wsc");
-		
+
 		Properties p = CytoscapeInit.getProperties();
 		if(p.get(WEBSERVICE_URL) == null) {
 			p.put(
-					WEBSERVICE_URL, 
+					WEBSERVICE_URL,
 					"http://www.wikipathways.org/wpi/webservice/webservice.php"
 			);
 		}
@@ -145,28 +145,28 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 
 	public List<JMenuItem> getNodeContextMenuItems(NodeView nv) {
 		List<JMenuItem> menuList = new ArrayList<JMenuItem>();
-		
+
 		//Add an item to find interactions
 		menuList.add(new JMenuItem(new NodeInteractionsAction(this, nv)));
-		
+
 		//If the node is a found interaction, add items to open the source on WP
 		CyAttributes attr = Cytoscape.getNodeAttributes();
 		String nid = nv.getNode().getIdentifier();
 		addPathwayMenuItems(attr, nid, menuList);
 		return menuList;
 	}
-	
+
 	public List<JMenuItem> getEdgeContextMenuItems(EdgeView ev) {
 		List<JMenuItem> menuList = new ArrayList<JMenuItem>();
-		
+
 		//If the edge is a found interaction, add items to open the source on WP
 		CyAttributes attr = Cytoscape.getEdgeAttributes();
 		String eid = ev.getEdge().getIdentifier();
 		addPathwayMenuItems(attr, eid, menuList);
-		
+
 		return menuList;
 	}
-	
+
 	/**
 	 * Adds menu items to open and import pathways based on the pathway info
 	 * stored in the attributes (by the find interactions function).
@@ -196,7 +196,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 							b.openURLinBrowser(url);
 						} catch(Exception ex) {
 							JOptionPane.showMessageDialog(
-									null, "Unable to launch browser: " + ex.getMessage(), 
+									null, "Unable to launch browser: " + ex.getMessage(),
 									"Error", JOptionPane.ERROR_MESSAGE
 							);
 							Logger.log.error("Unable to open browser", ex);
@@ -217,7 +217,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 								);
 							} catch (CyWebServiceException e1) {
 								JOptionPane.showMessageDialog(
-										null, "Unable to open pathway: " + e1.getMessage(), 
+										null, "Unable to open pathway: " + e1.getMessage(),
 										"Error", JOptionPane.ERROR_MESSAGE
 								);
 								Logger.log.error("Unable to open pathway", e1);
@@ -228,7 +228,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 			}
 		}
 	}
-	
+
 	public void executeService(CyWebServiceEvent e)
 	throws CyWebServiceException {
 		if(CLIENT_ID.equals(e.getSource())) {
@@ -256,20 +256,20 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 	private static final int LEFT = -1;
 	private static final int RIGHT = 1;
 	private static final int MEDIATOR = 0;
-	
+
 	public static final String ATTR_NAME = "wikipathways.pathway";
 	public static final String ATTR_SPECIES = "wikipathways.species";
 	public static final String ATTR_ID = "wikipathways.id";
-	
+
 	protected void addInteractions(InteractionQuery query, WSSearchResult[] results) {
 		String attrValue = query.getAttributeValue();
 		Set<CyNode> addedNodes = new HashSet<CyNode>();
-		
+
 		for(WSSearchResult r : results) {
 			String[] left = new String[] {};
 			String[] right = new String[] {};
 			String[] mediator = new String[] {};
-			
+
 			//Find the relevant field values
 			for(WSIndexField f : r.getFields()) {
 				String pathway = r.getUrl();
@@ -283,7 +283,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 					mediator = f.getValues();
 				}
 			}
-			
+
 			//Add the interactions for each interaction type
 			for(String name : left) {
 				if(attrValue.equals(name)) {
@@ -310,10 +310,10 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 				}
 			}
 		}
-		
+
 		//Redraw the graph
 		((CyNetworkView)query.getNodeView().getGraphView()).redrawGraph(true, false);
-		
+
 		//Layout nodes in a circle around the source node
 		NodeView source = query.getNodeView();
 		double radius = 50 + 5 * addedNodes.size();
@@ -326,22 +326,22 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 			angle += dangle;
 		}
 	}
-	
+
 	private Set<CyNode> addInteractions(InteractionQuery query, WSSearchResult r, String[] names, int type) {
 		Set<CyNode> addedNodes = new HashSet<CyNode>();
-		
+
 		NodeView nv = query.getNodeView();
 		CyNetworkView view = (CyNetworkView)nv.getGraphView();
 		CyNetwork network = view.getNetwork();
 		CyNode n = (CyNode)nv.getNode();
-		
+
 		CyAttributes edgeAttr = Cytoscape.getEdgeAttributes();
 		CyAttributes nodeAttr = Cytoscape.getNodeAttributes();
-		
+
 		String pwUrl = r.getUrl();
 		String pwName = r.getName();
 		String pwSpecies = r.getSpecies();
-		
+
 		for(String name : names) {
 			if(name.length() == 0 || "new group".equalsIgnoreCase(name)) {
 				continue; //Skip groups and blanks
@@ -352,7 +352,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 				addedNodes.add(nn);
 			}
 			network.addNode(nn);
-			
+
 			CyNode n1 = nn;
 			CyNode n2 = n;
 			if(type == RIGHT) { //Swap order if new node is on RIGHT side
@@ -373,7 +373,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 			}
 
 			network.addEdge(edge);
-			
+
 			//Add some read-only attributes to store the source pathway info
 			addToListAttribute(edgeAttr, edge.getIdentifier(), ATTR_PATHWAY_URL, r.getUrl());
 			addToListAttribute(edgeAttr, edge.getIdentifier(), ATTR_NAME, r.getName());
@@ -394,14 +394,14 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 		}
 		return addedNodes;
 	}
-	
+
 	private void addToListAttribute(CyAttributes attr, String id, String name, Object value) {
 		List list = attr.getListAttribute(id, name);
 		if(list == null) list = new ArrayList();
 		if(!list.contains(value)) list.add(value);
 		attr.setListAttribute(id, name, list);
 	}
-	
+
 	protected void openPathway(GetPathwayParameters query) {
 		OpenTask task = new OpenTask(query);
 		JTaskConfig config = new JTaskConfig();
@@ -409,7 +409,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 		config.setModal(true);
 		TaskManager.executeTask(task, config);
 	}
-	
+
 	protected String[] listOrganisms() throws RemoteException {
 		return getStub().listOrganisms();
 	}
@@ -422,20 +422,20 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 		public String query;
 		public Organism species = null;
 	}
-	
+
 	public static class GetPathwayParameters {
 		public String id;
 		public int revision;
 	}
-	
+
 	class OpenTask implements Task {
 		TaskMonitor monitor;
 		GetPathwayParameters query;
-		
+
 		public OpenTask(GetPathwayParameters query) {
 			this.query = query;
 		}
-		
+
 		public String getTitle() {
 			return "Opening pathway...";
 		}
@@ -466,9 +466,9 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 				throws IllegalThreadStateException {
 			monitor = m;
 		}
-		
+
 	}
-	
+
 	class SearchTask implements Task, CyWebServiceEventListener {
 
 		FindPathwaysByTextParameters query;
@@ -492,12 +492,12 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							JOptionPane.showMessageDialog(
-									gui, "The search didn't return any results", 
+									gui, "The search didn't return any results",
 									"No results", JOptionPane.INFORMATION_MESSAGE
-							);					
+							);
 						}
 					});
-					
+
 				}
 			} catch (final Exception e) {
 				Logger.log.error("Error while searching", e);
@@ -506,7 +506,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 						JOptionPane.showMessageDialog(
 								gui, "Error: " + e.getMessage() + ". See log for details",
 								"Error", JOptionPane.ERROR_MESSAGE
-						);						
+						);
 					}
 				});
 			}
@@ -532,22 +532,22 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 			//			}
 		}
 	}
-	
+
 	class SearchInteractionsTask implements Task {
 		TaskMonitor monitor;
 		InteractionQuery query;
-		
+
 		public SearchInteractionsTask(InteractionQuery query) {
 			this.query = query;
 		}
-		
+
 		public String getTitle() {
 			return "Searching interactions...";
 		}
-		
+
 		public void halt() {
 		}
-		
+
 		public void run() {
 			try {
 				WSSearchResult[] result = getStub().findInteractions(query.getAttributeValue());
@@ -556,12 +556,12 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 					SwingUtilities.invokeLater(new Runnable() {
 						public void run() {
 							JOptionPane.showMessageDialog(
-									gui, "The search didn't return any results", 
+									gui, "The search didn't return any results",
 									"No results", JOptionPane.INFORMATION_MESSAGE
-							);					
+							);
 						}
 					});
-					
+
 				}
 			} catch (final Exception e) {
 				Logger.log.error("Error while searching", e);
@@ -570,12 +570,12 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 						JOptionPane.showMessageDialog(
 								gui, "Error: " + e.getMessage() + ". See log for details",
 								"Error", JOptionPane.ERROR_MESSAGE
-						);						
+						);
 					}
 				});
 			}
 		}
-		
+
 		public void setTaskMonitor(TaskMonitor m)
 				throws IllegalThreadStateException {
 			monitor = m;

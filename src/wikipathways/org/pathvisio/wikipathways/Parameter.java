@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways;
@@ -34,7 +34,7 @@ public class Parameter {
 	public static final String RPC_URL = "rpcUrl";
 	public static final String SITE_URL = "siteUrl";
 	public static final String PRIVATE = "private";
-	
+
 	/**
 	 * Parameter value: A comma seperated list of categories
 	 */
@@ -47,23 +47,23 @@ public class Parameter {
 	 * Parameter value: The revision id of the pathway
 	 */
 	public static final String REVISION = "revision";
-	
+
 	private Map<String, ParameterValue> parameters = new HashMap<String, ParameterValue>();
-	
+
 	/**
 	 * Constructor for the parameter container. Registers default parameters.
 	 */
 	public Parameter() {
 		registerDefaults();
 	}
-	
+
 	/**
 	 * Get the names of all available parameters
 	 */
 	public Set<String> getNames() {
 		return parameters.keySet();
 	}
-	
+
 	/**
 	 * Get the value for a parameter
 	 * @param name The name of the parameter
@@ -77,7 +77,7 @@ public class Parameter {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * Set the value for a parameter
 	 * @param name the name of the parameter
@@ -93,7 +93,7 @@ public class Parameter {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Check whether a parameter is required.
 	 * @param name the name of the parameter
@@ -106,7 +106,7 @@ public class Parameter {
 		}
 		return false;
 	}
-	
+
 	private void registerDefaults() {
 		add(PW_ID, new ParameterValue(""));
 		add(PW_NAME, new ParameterValue());
@@ -120,11 +120,11 @@ public class Parameter {
 		add(SITE_URL, new ParameterValue());
 		add(PRIVATE, new ParameterValue(null));
 	}
-	
+
 	private void add(String name, ParameterValue p) {
 		parameters.put(name, p);
 	}
-	
+
 	/**
 	 * Restore the default values for the parameters
 	 */
@@ -133,7 +133,7 @@ public class Parameter {
 			p.restoreDefault();
 		}
 	}
-	
+
 	/**
 	 * Container for a parameter value. Takes care of default values.
 	 * @author thomas
@@ -143,32 +143,32 @@ public class Parameter {
 		String value;
 		String defaultValue;
 		boolean isRequired;
-		
+
 		public ParameterValue() {
 			isRequired = true;
 		}
-		
+
 		public ParameterValue(String defaultValue) {
 			this.defaultValue = defaultValue;
 			isRequired = false;
 		}
-		
+
 		public String getDefaultValue() {
 			return defaultValue;
 		}
-		
+
 		private void restoreDefault() {
 			value = null;
 		}
-				
+
 		public boolean isRequired() {
 			return isRequired;
 		}
-		
+
 		public void setValue(String value) {
 			this.value = value;
 		}
-		
+
 		public String getValue() {
 			if(value == null && !isRequired()) {
 				return defaultValue;

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -33,10 +33,10 @@ import org.pathvisio.view.LinAlg.Point;
  * of an object (such as its width, rotation, etc.)
  */
 public class Handle extends VPathwayElement
-{	
+{
 	//The direction this handle is allowed to move in
 	final private Freedom freedom;
-	
+
 	/**
 	 * Freedom determines the freedom of movement of
 	 * a Handle. The freedom of a Handle is
@@ -57,19 +57,19 @@ public class Handle extends VPathwayElement
 		/** an NEGXY handle can only move diagonally, perpendicular to XY */
 		NEGXY,
 	};
-	
+
 	// Typical size of handle, in pixels
 	private static final int WIDTH 	= 8;
 	private static final int HEIGHT	= 8;
-	
+
 	/**
-	 * Style determines the visual appearance of a Handle 
+	 * Style determines the visual appearance of a Handle
 	 */
 	enum Style
 	{
-		/** 
+		/**
 		 * The default appearance: a yellow square,
-		 * suitable for adjusting width / height / scale of an object 
+		 * suitable for adjusting width / height / scale of an object
 		 */
 		DEFAULT,
 		/** Appearance for handles on line segments, a blue diamond */
@@ -81,17 +81,17 @@ public class Handle extends VPathwayElement
 	};
 
 	private Style style = Style.DEFAULT;
-	
+
 	final private Adjustable adjustable;
 	final private VPathwayElement parent;
-	
+
 	// location of this handle
 	private double mCenterx;
 	private double mCentery;
-	
+
 	// used for calculations related to rotating parent objects
 	double rotation;
-	
+
 	// the appearance of the mouse cursor when
 	// the mouse hovers over / drags this handle
 	private int cursor = Cursor.DEFAULT_CURSOR;
@@ -99,15 +99,15 @@ public class Handle extends VPathwayElement
 	/**
 	 * Constructor for this class, creates a handle given the parent, direction and canvas
 	 * @param aFreedom	 Direction this handle can be moved in (one of the Freedom enum)
-	 * @param parent	 The {@link VPathwayElement} this handle belongs to, and which 
+	 * @param parent	 The {@link VPathwayElement} this handle belongs to, and which
 	 *                   will be selected when this handle is clicked
 	 * @param adjustable The object that is being adjusted by this handle. This is usually,
 	 *                   but not always, the same as parent. For example, a Handle on a {@link VPoint}
-	 *                   has a {@link Line} as parent but the {@link VPoint} as adjustable  
+	 *                   has a {@link Line} as parent but the {@link VPoint} as adjustable
 	 */
 	public Handle(Freedom aFreedom, VPathwayElement parent, Adjustable adjustable)
 	{
-		super(parent.canvas);		
+		super(parent.canvas);
 		freedom = aFreedom;
 		this.adjustable = adjustable;
 		this.parent = parent;
@@ -123,7 +123,7 @@ public class Handle extends VPathwayElement
 	public void setStyle(Style style) {
 		this.style = style;
 	}
-	
+
 	/**
 	 * Set a hint for a cursor to use by the front-end while
 	 * dragging or hovering over this handle.
@@ -132,19 +132,19 @@ public class Handle extends VPathwayElement
 	public void setCursorHint(int cursor) {
 		this.cursor = cursor;
 	}
-	
+
 	public int getCursorHint() {
 		return cursor;
 	}
-	
-	/** 
+
+	/**
 	 * The object being adjusted by this Handle. Usually, but
 	 * not always, the same as the Parent
 	 */
 	public Adjustable getAdjustable() {
 		return adjustable;
 	}
-	
+
 	/**
 	 * The parent of this Handle, this is the object that this Handle is
 	 * near, and will be selected when clicking this Handle.
@@ -158,7 +158,7 @@ public class Handle extends VPathwayElement
 	 * @return one of {@link Freedom}
 	 */
 	public Freedom getFreedom() { return freedom; }
-		
+
 	/** Set the handle location in view coordinates */
 	public void setVLocation(double vx, double vy)
 	{
@@ -176,17 +176,17 @@ public class Handle extends VPathwayElement
 		mCentery = my;
 		markDirty();
 	}
-	
+
 	/** get the center x in view coordinates */
 	public double getVCenterX() {
 		return vFromM(mCenterx);
 	}
-	
+
 	/** get the center y in view coordinates */
 	public double getVCenterY() {
 		return vFromM(mCentery);
 	}
-	
+
 	/**
 	 * Draws itself, the look depends on style. If
 	 * the style is Style.INVISIBLE, nothing is drawn at all
@@ -194,9 +194,9 @@ public class Handle extends VPathwayElement
 	public void doDraw(Graphics2D g)
 	{
 		if(style == Style.INVISIBLE) return; // nothing to draw
-		
+
 		Shape fillShape = getFillShape();
-		
+
 		switch(style) {
 		case ROTATE:
 			g.setColor(Color.GREEN);
@@ -208,14 +208,14 @@ public class Handle extends VPathwayElement
 			g.setColor(Color.YELLOW);
 			break;
 		}
-		
+
 		g.fill(fillShape);
-		
+
 		g.setColor(Color.BLACK);
-		
-		g.draw(fillShape);		
+
+		g.draw(fillShape);
 	}
-		
+
 	/**
 	   Note: don't use Handle.vMoveBy, use vMoveTo instead.
 	   it's impossible to handle snap-to-grid correctly if you only have the delta information.
@@ -225,7 +225,7 @@ public class Handle extends VPathwayElement
 		assert (false);
 		// You shouldn't call vMoveBy on a handle! use vMoveTo instead
 	}
-	
+
 	/**
 	   Called when a mouse event forces the handle to move.
 	   Note: this doesn't cause the handle itself to move,
@@ -272,45 +272,45 @@ public class Handle extends VPathwayElement
 	public Shape calculateVOutline() {
 		return getFillShape((int)Math.ceil(DEFAULT_STROKE.getLineWidth())).getBounds();
 	}
-		
+
 	private Shape getFillShape() {
 		return getFillShape(0);
 	}
-	
+
 	/** get the FillShape
-	 * @param sw the stroke width 
+	 * @param sw the stroke width
 	 */
 	private Shape getFillShape(int sw) {
 		Shape s = null;
 		switch(style) {
 		case ROTATE:
-			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
+			s = new Ellipse2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2,
 					WIDTH + sw, HEIGHT + sw);
 			break;
 		case SEGMENT:
-			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
+			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2,
 					WIDTH + sw, HEIGHT + sw);
-			
+
 			s = AffineTransform.getRotateInstance(
 					Math.PI / 4, getVCenterX(), getVCenterY()
 			).createTransformedShape(s);
 			break;
 		default:
-			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2, 
+			s = new Rectangle2D.Double(getVCenterX() - WIDTH/2, getVCenterY() - HEIGHT/2,
 					WIDTH + sw, HEIGHT + sw);
 			break;
 		}
 		return s;
 	}
-	
+
 	/** prints some extra debug info */
-	public String toString() { 
+	public String toString() {
 		return 	"Handle with parent: " + adjustable.toString() +
-		" and direction " + freedom; 
+		" and direction " + freedom;
 	}
 
 	protected int getZOrder() {
 		return VPathway.ZORDER_HANDLE;
 	}
-	
+
 }

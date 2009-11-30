@@ -12,7 +12,7 @@ import org.restlet.resource.ResourceException;
 public class XrefsResource extends IndexResource {
 	String pathwaySource;
 	String code;
-	
+
 	protected void doInit() throws ResourceException {
 		super.doInit();
 		pathwaySource = URLDecoder.decode(
@@ -22,7 +22,7 @@ public class XrefsResource extends IndexResource {
 				(String)getRequest().getAttributes().get(IndexService.PAR_SYSCODE)
 		);
 	}
-	
+
 	@Get("text")
 	public Representation getResult() {
 		try {

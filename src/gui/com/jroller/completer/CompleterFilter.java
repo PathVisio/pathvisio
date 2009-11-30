@@ -1,12 +1,12 @@
 /*
  * Copyright Neil Cochrane 2006
  * @author neilcochrane
- * 
- * Feel free to use the code without restriction 
- * in open source projects. 
- * There is no cost or warranty attached and the code is 
- * provided as is. 
- * 
+ *
+ * Feel free to use the code without restriction
+ * in open source projects.
+ * There is no cost or warranty attached and the code is
+ * provided as is.
+ *
  * http://www.jroller.com/swinguistuff/entry/text_completion
  */
 package com.jroller.completer;
@@ -17,9 +17,9 @@ import javax.swing.JTextField;
 /**
  * A filter that will attempt to autocomplete enties into a textfield with the string representations
  * of objects in a given array.
- * 
+ *
  * Add this filter class to the Document of the text field.
- * 
+ *
  * The first match in the array is the one used to autocomplete. So sort your array by most important
  * objects first.
  * @author neilcochrane
@@ -34,8 +34,8 @@ public class CompleterFilter extends AbstractCompleterFilter
     {
         _objectList = completerObjs;
         _textField = textField;
-    }   
-    
+    }
+
     @Override
     public int getCompleterListSize()
     {
@@ -63,7 +63,7 @@ public class CompleterFilter extends AbstractCompleterFilter
       _objectList = objectsToMatch;
       _firstSelectedIndex = -1;
     }
-        
+
     protected JTextField _textField;
     protected Object[]   _objectList;
 }

@@ -31,17 +31,17 @@ import javax.swing.border.CompoundBorder;
 
 /**
  * A button that uses a mouse listener to indicate rollover.
- * 
+ *
  * @author m. bangham
  * Copyright 2005 Mammoth Software LLC
  */
 public class RolloverButton extends JButton {
-	
+
 	public RolloverButton() {
 		init();
 		initRolloverListener();
 	}
-	
+
 	public RolloverButton(Icon icon, int size) {
 		super(icon);
 		init();
@@ -49,23 +49,23 @@ public class RolloverButton extends JButton {
 
 		setFixedSize(size);
 	}
-	
+
 	public RolloverButton(Icon icon, int size, boolean isRollover) {
 		super(icon);
 		init();
 		if (isRollover) initRolloverListener();
-		
+
 		setFixedSize(size);
 	}
-	
+
 	public RolloverButton(int size, boolean isRollover) {
 		super();
 		init();
 		if (isRollover) initRolloverListener();
-		
+
 		setFixedSize(size);
 	}
-	
+
 	public RolloverButton(Action action, int size) {
 		// Note: using setAction(action) causes both icon and text
 		// to be displayed on toolbar.
@@ -80,13 +80,13 @@ public class RolloverButton extends JButton {
 		setRequestFocusEnabled(false);
 		setRolloverEnabled(true);
 	}
-	
+
 	protected void setFixedSize(int size) {
 		setPreferredSize(new Dimension(size, size));
 		setMaximumSize(new Dimension(size, size));
 		setMinimumSize(new Dimension(size, size));
 	}
-	
+
 	protected void initRolloverListener() {
 		MouseListener l = new MouseAdapter(){
 			Border curBorder = null;
@@ -104,10 +104,10 @@ public class RolloverButton extends JButton {
 		};
 		addMouseListener(l);
 	}
-	
+
 	protected Border getRolloverBorder() {
 		Border border = BorderFactory.createRaisedBevelBorder();
-		
+
 		return border;
 	}
 }

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.biopax;
@@ -40,7 +40,7 @@ import org.pathvisio.model.PathwayElement;
  */
 public class BiopaxElementManager {
 	Random random = new Random(); //Used to generate unique id's
-	
+
 	private Pathway pathway;
 	private PathwayElement bpElm;
 	private Map<String, BiopaxElement> biopax;
@@ -48,7 +48,7 @@ public class BiopaxElementManager {
 	 * Keeps track of the order of the loaded biopax elements per subclass.
 	 */
 	private Map<Class<? extends BiopaxElement>, Map<String, Integer>> ordinal;
-	
+
 	/**
 	 * Constructor for this class. Builds a map of all biopax
 	 * elements and their references
@@ -60,7 +60,7 @@ public class BiopaxElementManager {
 		ordinal = new HashMap<Class<? extends BiopaxElement>, Map<String, Integer>>();
 		refresh();
 	}
-	
+
 	/**
 	 * Check if the pathway element that contains the biopax document has changed
 	 * and update the biopax hashmap if needed.
@@ -68,7 +68,7 @@ public class BiopaxElementManager {
 	public void refresh() {
 		refresh(false);
 	}
-	
+
 	private void refresh(boolean force) {
 		PathwayElement bp = pathway.getBiopax();
 		if(bpElm != bp || force) { //Only refresh if element differs or forced
@@ -76,7 +76,7 @@ public class BiopaxElementManager {
 			bpElm = bp;
 			biopax.clear();
 			ordinal.clear();
-			
+
 			if(bp != null) {
 				Logger.log.trace("Biopax element found");
 				Document d = bp.getBiopax();
@@ -106,7 +106,7 @@ public class BiopaxElementManager {
 			}
 		}
 	}
-	
+
 	/**
 	 * Get the pathway that this instance manages the biopax elements for
 	 * @return
@@ -114,7 +114,7 @@ public class BiopaxElementManager {
 	public Pathway getPathway() {
 		return pathway;
 	}
-	
+
 	/**
 	 * Remove a biopax element from the biopax document within the GPML file.
 	 * Note: references to this element will <B>NOT</B> be removed!
@@ -127,7 +127,7 @@ public class BiopaxElementManager {
 		biopax.remove(e.getId());
 		rebuildOrdinal();
 	}
-	
+
 	/**
 	 * Checks if there are any references to the given biopax
 	 * element in the pathway.
@@ -146,7 +146,7 @@ public class BiopaxElementManager {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Get the biopax element for the given identifier
 	 * @param id the identifier
@@ -156,7 +156,7 @@ public class BiopaxElementManager {
 	public BiopaxElement getElement(String id) {
 		return biopax.get(id);
 	}
-	
+
 	/**
 	 * Add a biopax element to the biopax document, but ignore it
 	 * in the BiopaxElementManager. This method can be used for elemens that
@@ -170,7 +170,7 @@ public class BiopaxElementManager {
 		}
 		getDocument().getRootElement().addContent((Element)e.clone());
 	}
-	
+
 	/**
 	 * Adds an element to the biopax document. Also sets the id if
 	 * not specified, or not unique. This method only applies to BioPAX
@@ -180,7 +180,7 @@ public class BiopaxElementManager {
 	 */
 	public void addElement(BiopaxElement elm) {
 		Document d = getDocument();
-		
+
 		//Check if this is a valid biopax document
 		Element root = d.getRootElement();
 		if(!root.getNamespace().equals(Namespaces.RDF)) {
@@ -220,7 +220,7 @@ public class BiopaxElementManager {
 		biopax.put(elm.getId(), elm);
 		addToOrdinal(elm);
 	}
-	
+
 	private void addToOrdinal(BiopaxElement e) {
 		Map<String, Integer> classOrdinal = ordinal.get(e.getClass());
 		if(classOrdinal == null) {
@@ -229,11 +229,11 @@ public class BiopaxElementManager {
 		}
 		classOrdinal.put(e.getId(), classOrdinal.size() + 1);
 	}
-	
+
 	private void rebuildOrdinal() {
 		refresh(true);
 	}
-	
+
 	/**
 	 * Get the position of the biopax element in the document, relative
 	 * to other elements of the same class.
@@ -246,7 +246,7 @@ public class BiopaxElementManager {
 			return -1;
 		}
 	}
-	
+
 	/**
 	 * Get all biopax elements for the pathway
 	 * @return
@@ -254,22 +254,22 @@ public class BiopaxElementManager {
 	public Collection<BiopaxElement> getElements() {
 		return biopax.values();
 	}
-	
+
 	private boolean isUniqueID(String id) {
 		return !biopax.containsKey(id);
 	}
-	
+
 	private String getUniqueID() {
 		int mod = 0x600; // 3 hex letters
 		int min = 0xa00; // has to start with a letter
 		String id = "";
 		// in case this map is getting big, do more hex letters
-		if ((biopax.size()) > 1000) 
+		if ((biopax.size()) > 1000)
 		{
 			mod = 0x60000;
 			min = 0xa0000;
 		}
-				
+
 		do
 		{
 			id = Integer.toHexString(Math.abs(random.nextInt()) % mod + min);
@@ -277,7 +277,7 @@ public class BiopaxElementManager {
 		while (biopax.containsKey(id));
 		return id;
 	}
-	
+
 	/**
 	 * Get the Document instance that contains the biopax code for the pathway.
 	 * The document will be created and added to the pathway if it doesn't exist yet

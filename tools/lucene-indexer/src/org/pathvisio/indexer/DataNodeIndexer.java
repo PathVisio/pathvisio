@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.indexer;
@@ -51,7 +51,7 @@ public class DataNodeIndexer extends IndexerBase {
 	 * An identifier of a DataNode xref that is on the pathway
 	 */
 	public static final String FIELD_ID = "id";
-	
+
 	/**
 	 * An identifier/code combination
 	 * of a DataNode xref that is on the pathway.
@@ -74,14 +74,14 @@ public class DataNodeIndexer extends IndexerBase {
 	 * obtained by {@link org.pathvisio.model.DataSource#getSystemCode()}.
 	 */
 	public static final String FIELD_XID_CODE = "x.id.database";
-	
+
 	XrefAnalyzer analyzer;
-	
+
 	public DataNodeIndexer(String source, Pathway pathway, IndexWriter writer) {
 		super(source, pathway, writer);
 		analyzer = new XrefAnalyzer();
 	}
-	
+
 	public void indexPathway() throws CorruptIndexException, IOException {
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			if(pe.getObjectType() == ObjectType.DATANODE) {
@@ -89,16 +89,16 @@ public class DataNodeIndexer extends IndexerBase {
 			}
 		}
 	}
-	
+
 	void indexDataNode(PathwayElement pe) throws CorruptIndexException, IOException {
 
 		Set<Xref> addedXrefs = new HashSet<Xref>();
-		
+
 		Document doc = new Document();
 		doc.add(new Field(FIELD_GRAPHID, pe.getGraphId(), Store.YES, Index.NO));
-		
+
 		Xref xref = pe.getXref();
-		
+
 		if(xref == null || xref.getDataSource() == null || xref.getId() == null) {
 			return;
 		}
@@ -132,8 +132,8 @@ public class DataNodeIndexer extends IndexerBase {
 			doc.add(
 				new Field(
 						field_id,
-						id, 
-						Field.Store.YES, 
+						id,
+						Field.Store.YES,
 						Field.Index.UN_TOKENIZED
 				)
 			);
@@ -156,7 +156,7 @@ public class DataNodeIndexer extends IndexerBase {
 			);
 		}
 	}
-	
+
 	public static String xref2string(Xref xref) {
 		String id = xref.getId();
 		String code = "";
@@ -165,10 +165,10 @@ public class DataNodeIndexer extends IndexerBase {
 		}
 		return id + ":" + code;
 	}
-	
+
 	class XrefAnalyzer extends Analyzer {
 		SimpleAnalyzer simpleAnalyzer = new SimpleAnalyzer();
-		
+
 		public TokenStream tokenStream(String field, Reader reader) {
 			if(FIELD_XID_CODE.equals(field) || FIELD_ID_CODE.equals(field)) {
 				return new CharTokenizer(reader) {

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -34,11 +34,11 @@ import org.pathvisio.model.PathwayEvent;
  * This class is a parent class for all graphics
  * that can be added to a VPathway.
  */
-public abstract class Graphics extends VPathwayElement implements PathwayElementListener, BiopaxListener 
-{	
+public abstract class Graphics extends VPathwayElement implements PathwayElementListener, BiopaxListener
+{
 	protected PathwayElement gdata = null;
 	private Citation citation;
-	
+
 	public Graphics(VPathway canvas, PathwayElement o) {
 		super(canvas);
 		o.addListener(this);
@@ -48,12 +48,12 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		canvas.checkBoardSize(gdata);
 		checkCitation();
 	}
-	
+
 	protected Citation createCitation()
 	{
 		return new Citation(canvas, this, new Point2D.Double(1, -1));
 	}
-	
+
 	public final void checkCitation()
 	{
 		List<PublicationXRef> xrefs = gdata.getBiopaxReferenceManager().getPublicationXRefs();
@@ -66,7 +66,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 			citation.destroy();
 			citation = null;
 		}
-		
+
 		if (citation != null)
 		{
 			// already exists, no need to create / destroy
@@ -75,12 +75,12 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 			canvas.redrawDirtyRect();
 		}
 	}
-	
+
 	public void markDirty() {
 		super.markDirty();
 		if (citation != null) citation.markDirty();
 	}
-	
+
 	protected Citation getCitation() {
 		return citation;
 	}
@@ -91,7 +91,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	public PathwayElement getGmmlData() {
 		return gdata;
 	}
-	
+
 	/**
 	 * Gets the model representation (PathwayElement) of this class
 	 * @return
@@ -99,7 +99,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	public PathwayElement getPathwayElement() {
 		return gdata;
 	}
-		
+
 	boolean listen = true;
 	public void gmmlObjectModified(PathwayEvent e) {
 		if(listen)
@@ -108,11 +108,11 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 			checkCitation();
 		}
 	}
-	
+
 	public Area createVisualizationRegion() {
 		return new Area(getVBounds());
 	}
-	
+
 	/**
 	 * Get the x-coordinate of the center point of this object
 	 * adjusted to the current zoom factor
@@ -120,11 +120,11 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	 * @return the center x-coordinate
 	 */
 	public double getVCenterX() { return vFromM(gdata.getMCenterX()); }
-	
+
 	/**
 	 * Get the y-coordinate of the center point of this object
 	 * adjusted to the current zoom factor
-	 * 
+	 *
 	 * @return the center y-coordinate
 	 */
 	public double getVCenterY() { return vFromM(gdata.getMCenterY()); }
@@ -133,37 +133,37 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	 * Get the x-coordinate of the left side of this object
 	 * adjusted to the current zoom factor, but not taking into
 	 * account rotation
-	 * @note if you want the left side of the rotated object's boundary, 
+	 * @note if you want the left side of the rotated object's boundary,
 	 * use {@link #getVShape(true)}.getX();
 	 * @return
 	 */
 	public double getVLeft() { return vFromM(gdata.getMLeft()); }
-	
+
 	/**
 	 * Get the width of this object
 	 * adjusted to the current zoom factor, but not taking into
 	 * account rotation
-	 * @note if you want the width of the rotated object's boundary, 
+	 * @note if you want the width of the rotated object's boundary,
 	 * use {@link #getVShape(true)}.getWidth();
 	 * @return
 	 */
 	public double getVWidth() { return vFromM(gdata.getMWidth());  }
-	
+
 	/**
 	 * Get the y-coordinate of the top side of this object
 	 * adjusted to the current zoom factor, but not taking into
 	 * account rotation
-	 * @note if you want the top side of the rotated object's boundary, 
+	 * @note if you want the top side of the rotated object's boundary,
 	 * use {@link #getVShape(true)}.getY();
 	 * @return
 	 */
 	public double getVTop() { return vFromM(gdata.getMTop()); }
-	
+
 	/**
 	 * Get the height of this object
 	 * adjusted to the current zoom factor, but not taking into
 	 * account rotation
-	 * @note if you want the height of the rotated object's boundary, 
+	 * @note if you want the height of the rotated object's boundary,
 	 * use {@link #getVShape(true)}.getY();
 	 * @return
 	 */
@@ -175,7 +175,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	 * @return
 	 */
 	abstract protected Shape getVShape(boolean rotate);
-	
+
 	/**
 	 * Get the rectangle that represents the bounds of the shape's
 	 * direct translation from model to view, without taking into
@@ -185,14 +185,14 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	protected Rectangle2D getVScaleRectangle() {
 		return getVShape(false).getBounds2D();
 	}
-		
+
 	/**
 	 * Scales the object to the given rectangle, by taking into account
 	 * the rotation (given rectangle will be rotated back before scaling)
 	 * @param r
 	 */
 	protected abstract void setVScaleRectangle(Rectangle2D r);
-	
+
 	/**
 	 * Default implementation returns the rotated shape.
 	 * Subclasses may override (e.g. to include the stroke)
@@ -201,7 +201,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	protected Shape calculateVOutline() {
 		return getVShape(true);
 	}
-		
+
 	/**
 	 * Returns the fontstyle to create a java.awt.Font
 	 * @return the fontstyle, or Font.PLAIN if no font is available
@@ -218,29 +218,29 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		}
 		return style;
 	}
-		
+
 	protected void destroy() {
 		super.destroy();
 		gdata.removeListener(canvas);
 		gdata.removeListener(this);
 		if (citation != null) citation.destroy();
 		gdata.getBiopaxReferenceManager().removeBiopaxListener(this);
-		
+
 		//View should not remove its model
 //		Pathway parent = gdata.getParent();
 //		if(parent != null) parent.remove(gdata);
 	}
-	
+
 	/**
 	 * Returns the z-order from the model
 	 */
 	protected int getZOrder() {
 		return gdata.getZOrder();
 	}
-	
-	public void biopaxEvent(BiopaxEvent e) 
+
+	public void biopaxEvent(BiopaxEvent e)
 	{
 		checkCitation();
 	}
-	
+
 }

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.example;
@@ -35,20 +35,20 @@ import org.pathvisio.plugin.Plugin;
  * Here we convert a text file to a pathway, by making a separate
  * label out of each line.
  */
-public class ExImporter implements Plugin 
+public class ExImporter implements Plugin
 {
 	private PvDesktop desktop;
 
-	public void init(PvDesktop desktop) 
+	public void init(PvDesktop desktop)
 	{
 		this.desktop = desktop;
-		
+
 		// instantiate TextLinesImporter, our own importer, and register it
 		desktop.getSwingEngine().getEngine().addPathwayImporter(new TextLinesImporter());
 	}
 
 	public void done() {}
-	
+
 	private static class TextLinesImporter implements PathwayImporter
 	{
 		/**
@@ -59,7 +59,7 @@ public class ExImporter implements Plugin
 		 * and return it.
 		 */
 		public Pathway doImport(File file)
-				throws ConverterException 
+				throws ConverterException
 		{
 			Pathway pathway = new Pathway();
 			try
@@ -69,7 +69,7 @@ public class ExImporter implements Plugin
 				double ypos = 300;
 				double height = 300;
 				double width = 1500;
-				
+
 				// open file for reading
 				BufferedReader reader = null;
 				reader = new BufferedReader(new FileReader (file));
@@ -104,13 +104,13 @@ public class ExImporter implements Plugin
 		}
 
 		private static final String[] EXTENSIONS = new String[] { "txt" };
-		
-		public String[] getExtensions() 
+
+		public String[] getExtensions()
 		{
 			return EXTENSIONS;
 		}
 
-		public String getName() 
+		public String getName()
 		{
 			return "Lines from text file";
 		}

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio;
@@ -39,18 +39,18 @@ import org.pathvisio.view.VPathwayWrapper;
 
 /**
  * This class manages loading, importing and exporting a Pathway and VPathway together.
- * 
- * TODO: there are some unrelated Global functions in here, but the intention is to move them away in the future. 
+ *
+ * TODO: there are some unrelated Global functions in here, but the intention is to move them away in the future.
  */
-public class Engine 
-{	
+public class Engine
+{
 	private VPathway vPathway; // may be null
 	//TODO: standalone below is a hack to make Converter work
 	private Pathway standalone = null; // only used when vPathway is null
 	private VPathwayWrapper wrapper; // may also be null in case you
 									 // don't need to interact with
 									 // the pathway.
-		
+
 	public static final String SVG_FILE_EXTENSION = "svg";
 	public static final String SVG_FILTER_NAME = "Scalable Vector Graphics (*." + SVG_FILE_EXTENSION + ")";
 	public static final String PATHWAY_FILE_EXTENSION = "gpml";
@@ -62,7 +62,7 @@ public class Engine
 	 * the transparent color used in the icons for visualization of protein/mrna data
 	 */
 	public static final Color TRANSPARENT_COLOR = new Color(255, 0, 255);
-	
+
 	/**
 	   Set this to the toolkit-specific wrapper before opening or
 	   creating a new pathway otherwise Engine can't create a vPathway.
@@ -71,7 +71,7 @@ public class Engine
 	{
 		wrapper = value;
 	}
-	
+
 	/**
 	 * Gets the currently open drawing
 	 */
@@ -93,7 +93,7 @@ public class Engine
 			return vPathway.getPathwayModel();
 		}
 	}
-		
+
 	//TODO: No reason to keep this in engine, it doesn't act on active pathway
 	public void exportPathway(File file, Pathway pathway) throws ConverterException {
 		Logger.log.trace("Exporting pathway to " + file);
@@ -113,28 +113,28 @@ public class Engine
 
 		if(exporter == null) throw new ConverterException( "No exporter for '" + ext +  "' files" );
 
-		exporter.doExport(file, pathway);	
+		exporter.doExport(file, pathway);
 	}
-	
+
 	public void importPathway(File file) throws ConverterException
 	{
 		Logger.log.trace("Importing pathway from " + file);
 		String fileName = file.toString();
-		
+
 		int dot = fileName.lastIndexOf('.');
 		String ext = Engine.PATHWAY_FILE_EXTENSION; //
 		if(dot >= 0) {
 			ext = fileName.substring(dot + 1, fileName.length());
 		}
 		PathwayImporter importer = getPathwayImporter(ext);
-		
+
 		if(importer == null) throw new ConverterException( "No importer for '" + ext +  "' files" );
-		
+
 		Pathway pathway = importer.doImport(file);
-		
+
 		newPathwayHelper (pathway);
 	}
-	
+
 	/**
 	 * After loading a pathway from disk,
 	 * run createVPathway on EDT thread to prevent concurrentModificationException
@@ -161,14 +161,14 @@ public class Engine
 			throw new ConverterException (e);
 		}
 	}
-	
+
 	/**
 	 * Open a pathway from a gpml file
-	 */	
+	 */
 	public void openPathway(File pathwayFile) throws ConverterException
 	{
 		String pwf = pathwayFile.toString();
-		
+
 		// initialize new JDOM gpml representation and read the file
 		final Pathway pathway = new Pathway();
 		pathway.readFromXml(new File(pwf), true);
@@ -176,7 +176,7 @@ public class Engine
 		//(Exception thrown on error, this part will not be reached)
 		newPathwayHelper(pathway);
 	}
-	
+
 	public File openPathway(URL url) throws ConverterException {
 		//TODO insert in recent pathways
 		String protocol = url.getProtocol();
@@ -195,7 +195,7 @@ public class Engine
 		}
 		return f;
 	}
-	
+
 	/**
 	 * Save the pathway
 	 * @param p	The pathway to save
@@ -207,7 +207,7 @@ public class Engine
 		p.fixReferences();
 		p.writeToXml(toFile, true);
 	}
-	
+
 	/**
 	 * Save the currently active pathway
 	 * @param toFile	The file to save to
@@ -229,7 +229,7 @@ public class Engine
 		vPathway.dispose();
 		vPathway = null;
 	}
-	
+
 	/**
 	   Try to make a vpathway,
 	   replacing pathway with a new one.
@@ -243,19 +243,19 @@ public class Engine
 		else
 		{
 			double zoom = 100;
-			if(hasVPathway()) 
+			if(hasVPathway())
 			{
 				// save zoom Level
 				zoom = getActiveVPathway().getPctZoom();
-				
+
 				disposeVPathway();
 			}
-			
+
 			vPathway = wrapper.createVPathway();
 			vPathway.registerKeyboardActions(this);
 			vPathway.activateUndoManager(this);
 			vPathway.fromModel(p);
-			
+
 			vPathway.setPctZoom(zoom);
 			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
 		}
@@ -266,18 +266,18 @@ public class Engine
 	 */
 	public void replacePathway (Pathway p)
 	{
-		vPathway.replacePathway (p);		
+		vPathway.replacePathway (p);
 		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
 	}
-	
+
 	/**
 	 * Create a new pathway and view (Pathay and VPathway)
 	 */
 	public void newPathway() {
 		Pathway pathway = new Pathway();
 		pathway.initMappInfo();
-		
-		createVPathway(pathway);	
+
+		createVPathway(pathway);
 		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_NEW));
 		if (vPathway != null)
 		{
@@ -291,7 +291,7 @@ public class Engine
 	 * @deprecated use {@link #hasVPathway}
 	 */
 	public boolean isDrawingOpen() { return vPathway != null; }
-	
+
 	/**
 	 * Find out whether a VPathway is currently available or not
 	 * @return true if a VPathway is currently available, false if not
@@ -319,7 +319,7 @@ public class Engine
 			importers.put(ext, importer);
 		}
 	}
-	
+
 	public PathwayExporter getPathwayExporter(String ext) {
 		return exporters.get(ext);
 	}
@@ -327,32 +327,32 @@ public class Engine
 	public PathwayImporter getPathwayImporter(String ext) {
 		return importers.get(ext);
 	}
-	
+
 	public Map<String, PathwayExporter> getPathwayExporters() {
 		return exporters;
 	}
-		
+
 	public Map<String, PathwayImporter> getPathwayImporters() {
 		return importers;
 	}
-	
+
 	private List<ApplicationEventListener> applicationEventListeners  = new ArrayList<ApplicationEventListener>();
-	
+
 	/**
 	 * Add an {@link ApplicationEventListener}, that will be notified if a
 	 * property changes that has an effect throughout the program (e.g. opening a pathway)
 	 * @param l The {@link ApplicationEventListener} to add
 	 */
-	public void addApplicationEventListener(ApplicationEventListener l) 
+	public void addApplicationEventListener(ApplicationEventListener l)
 	{
 		if (l == null) throw new NullPointerException();
 		applicationEventListeners.add(l);
 	}
-	
+
 	public void removeApplicationEventListener(ApplicationEventListener l) {
 		applicationEventListeners.remove(l);
 	}
-	
+
 	/**
 	 * Fire a {@link ApplicationEvent} to notify all {@link ApplicationEventListener}s registered
 	 * to this class
@@ -361,7 +361,7 @@ public class Engine
 	private void fireApplicationEvent(ApplicationEvent e) {
 		for(ApplicationEventListener l : applicationEventListeners) l.applicationEvent(e);
 	}
-	
+
 	/**
 	 * Implement this if you want to receive events upon opening / closing
 	 * pathways
@@ -376,14 +376,14 @@ public class Engine
 	 */
 	public String getApplicationName()
 	{
-		return appName; 
+		return appName;
 	}
-	
+
 	public void setApplicationName (String value)
 	{
 		appName = value;
 	}
-	
+
 	/**
 	 * Fire a close event
 	 * TODO: move APPLICATION_CLOSE to other place
@@ -393,10 +393,10 @@ public class Engine
 		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
 		fireApplicationEvent(e);
 	}
-	
+
 	private boolean disposed = false;
 	/**
-	 * free all resources (such as listeners) held by this class. 
+	 * free all resources (such as listeners) held by this class.
 	 * Owners of this class must explicitly dispose of it to clean up.
 	 */
 	public void dispose()
@@ -406,8 +406,8 @@ public class Engine
 		applicationEventListeners.clear();
 		disposed = true;
 	}
-	
-	
+
+
 	//TODO:
 	// Constants for swing version.
 	//public static final String APPLICATION_VERSION_NAME = "PathVisio (swing version)";

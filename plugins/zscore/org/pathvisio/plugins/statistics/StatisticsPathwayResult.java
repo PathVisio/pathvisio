@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.plugins.statistics;
@@ -24,7 +24,7 @@ import org.pathvisio.util.swing.RowWithProperties;
  * Statistics calculation for a single pathway,
  * to be shown as a row in the statistics result table
  */
-public class StatisticsPathwayResult implements RowWithProperties<Column> 
+public class StatisticsPathwayResult implements RowWithProperties<Column>
 {
 	private int r = 0;
 	private int n = 0;
@@ -34,12 +34,12 @@ public class StatisticsPathwayResult implements RowWithProperties<Column>
 	private File f;
 	double permP = 0;
 	double adjP = 0;
-	
+
 	/**
 	 * Get the pathway file.
 	 */
 	public File getFile() { return f; }
-	
+
 	StatisticsPathwayResult (File f, String name, int n, int r, int total, double z)
 	{
 		this.f = f;
@@ -50,7 +50,7 @@ public class StatisticsPathwayResult implements RowWithProperties<Column>
 		this.z = z;
 	}
 
-	public String getProperty(Column prop) 
+	public String getProperty(Column prop)
 	{
 		switch (prop)
 		{
@@ -66,7 +66,7 @@ public class StatisticsPathwayResult implements RowWithProperties<Column>
 		default : throw new IllegalArgumentException("Unknown property");
 		}
 	}
-	
+
 	public double getZScore()
 	{
 		return z;

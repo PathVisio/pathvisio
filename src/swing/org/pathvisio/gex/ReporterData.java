@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gex;
@@ -27,10 +27,10 @@ import org.bridgedb.Xref;
  * This class represents a row of cached expression data for a reporter in the dataset.
  * The data is stored in a {@link HashMap} where the keys are the samples and the value
  * is an object of class {@link String} or {@link Double} for text and numeric data respectively.
- * 
+ *
  * Setters are package private, external classes are not supposed to modify this data.
  */
-public class ReporterData 
+public class ReporterData
 {
 	Xref idc;
 	int group;
@@ -46,16 +46,16 @@ public class ReporterData
 		group = groupId;
 		sampleData = new HashMap<Sample, Object>();
 	}
-	
+
 	/** set the xref (reporter) for this row. */
 	void setXref(Xref value) { idc = value; }
-	
+
 	/**
 	 * Get the reporter this object contains data for
 	 * @return The IdCodePair that represents the reporter this object contains data for
 	 */
 	public Xref getXref() { return idc; }
-	
+
 	/**
 	 * Get the group id for this object
 	 * @return a group id that can be used to distinguish identical reporters that occur more
@@ -64,7 +64,7 @@ public class ReporterData
 	 * original data file.
 	 */
 	public int getGroup() { return group; }
-	
+
 	/**
 	 * Get the data for each sample
 	 * @return A {@link HashMap} that contains the data for each sample. The key is a Sample and value
@@ -75,7 +75,7 @@ public class ReporterData
 	public Map<Sample, Object> getSampleData() {
 		return sampleData;
 	}
-	
+
 	/**
 	 * returns the same info as getSampleData(), but
 	 * using the sample name instead of the sample object as key.
@@ -89,7 +89,7 @@ public class ReporterData
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Get the cached data for the given sample (shortcut for getSampleData().get(key))
 	 * @param key The {@link Sample} to get the data for
@@ -101,7 +101,7 @@ public class ReporterData
 	{
 		return sampleData.get(key);
 	}
-	
+
 	/**
 	 * Set the data for the given sample. Data will be parsed to double if possible
 	 * @param sampleId The id of the sample to set the data for
@@ -114,7 +114,7 @@ public class ReporterData
 		catch(Exception e) { parsedData = data; }
 		sampleData.put(sample, parsedData);
 	}
-	
+
 	/** set sample directly as Object, it won't be parsed */
 	void setSampleAsObject (Sample sample, Object data)
 	{
@@ -143,14 +143,14 @@ public class ReporterData
 		}
 		return result;
 	}
-	
-	
+
+
 	private static Object averageDouble(List<ReporterData> dlist, Sample s)
 	{
 		double avg = 0;
 		int n = 0;
 		for(ReporterData d : dlist) {
-			try { 
+			try {
 				Double value = (Double)d.getSampleData(s);
 				if( !value.isNaN() ) {
 					avg += value;
@@ -164,7 +164,7 @@ public class ReporterData
 			return Double.NaN;
 		}
 	}
-	
+
 	private static Object averageString(List<ReporterData> dlist, Sample s)
 	{
 		StringBuilder sb = new StringBuilder();
@@ -174,5 +174,5 @@ public class ReporterData
 		int end = sb.lastIndexOf(", ");
 		return end < 0 ? "" : sb.substring(0, end).toString();
 	}
-	
+
 }

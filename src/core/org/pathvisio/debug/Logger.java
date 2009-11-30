@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.debug;
@@ -22,7 +22,7 @@ import java.io.PrintStream;
 
 /**
 	Logs output to a stream, with the option to filter for types of messages
-	
+
 	log levels:
 		1: Trace
 		2: debug
@@ -39,10 +39,10 @@ public class Logger
 	private boolean warnEnabled = true;
 	private boolean errorEnabled = true;
 	private boolean fatalEnabled = true;
-		
+
 	private PrintStream s = System.err;
-		
-	public PrintStream getStream () { return s; }	
+
+	public PrintStream getStream () { return s; }
 	public void setStream (PrintStream aStream) { s = aStream; }
 
 	/**
@@ -72,9 +72,9 @@ public class Logger
 				error ("Could not open log file " + dest + " for writing", e);
 			}
 		}
-		
+
 	}
-	
+
 	StopWatch logTimer;
 
 	public Logger()
@@ -82,12 +82,12 @@ public class Logger
 		logTimer = new StopWatch();
 		logTimer.start();
 	}
-	
-	/** 
+
+	/**
 		get/set log level to a certain level. The higher the level, the
-		move output. Messages above this level are discarded. 	
+		move output. Messages above this level are discarded.
 	*/
-	
+
 	public void setLogLevel (boolean debug, boolean trace, boolean info,
 		boolean warn, boolean error, boolean fatal)
 	{
@@ -100,7 +100,7 @@ public class Logger
 	}
 
 	private static final String FORMAT_STRING = "[%10.3f] ";
-	
+
 	public void trace (String msg)
 	{
 		if (traceEnabled)
@@ -109,7 +109,7 @@ public class Logger
 			s.println ("Trace: " + msg);
 		}
 	}
-	
+
 	public void debug (String msg)
 	{
 		if (debugEnabled)
@@ -118,7 +118,7 @@ public class Logger
 			s.println ("Debug: " + msg);
 		}
 	}
-	
+
 	public void info  (String msg)
 	{
 		if (infoEnabled)
@@ -130,20 +130,20 @@ public class Logger
 
 	public void warn  (String msg) { if (warnEnabled) s.println ("Warn:  " + msg); }
 
-	public void warn  (String msg, Throwable e) 
-	{ 
+	public void warn  (String msg, Throwable e)
+	{
 		if (warnEnabled) {	s.println ("Warn:  " + msg + "\n\t" + e.getMessage()); 	}
 		if (debugEnabled) {	e.printStackTrace(s); }
 	}
 
 	public void error (String msg) { if (errorEnabled) s.println ("Error: " + msg); }
-	public void error (String msg, Throwable e) 
+	public void error (String msg, Throwable e)
 	{
 		if(errorEnabled) { error(msg + "\n\t" + e.toString() + (e != null ? ": " + e.getMessage() : "")); }
 		if(debugEnabled) { e.printStackTrace(s); }
 	}
 	public void fatal (String msg) { if (fatalEnabled) s.println ("Fatal: " + msg); }
-	
+
 
 	/**
 	   Global application logger

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view.swing;
@@ -87,7 +87,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		setFocusable(true);
 		setRequestFocusEnabled(true);
 		setTransferHandler(new PathwayImportHandler());
-		
+
 		setDoubleBuffered(
 				PreferenceManager.getCurrent().getBoolean(
 						GlobalPreference.ENABLE_DOUBLE_BUFFERING));
@@ -251,7 +251,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 
 	public void copyToClipboard(Pathway source, List<PathwayElement> copyElements) {
 		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
-		clip.setContents(new PathwayTransferable(source, copyElements), 
+		clip.setContents(new PathwayTransferable(source, copyElements),
 				(PathwayImportHandler)getTransferHandler());
 		((PathwayImportHandler)getTransferHandler()).obtainedOwnership();
 	}
@@ -275,7 +275,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 					final JWindow w = new JWindow();
 					w.setLayout(new BorderLayout());
 					w.add(tip, BorderLayout.CENTER);
-					
+
 					Point p = e.getMouseEvent().getLocation();
 					SwingUtilities.convertPointToScreen(p, VPathwaySwing.this);
 					w.setLocation(p);
@@ -285,7 +285,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 					tip.getComponent(0).addMouseListener(new MouseAdapter() {
 						public void mouseExited(MouseEvent e) {
 							//Don't dispose if on scrollbars
-							if(e.getComponent().contains(e.getPoint())) 
+							if(e.getComponent().contains(e.getPoint()))
 								return;
 							//Don't dispose if mouse is down (usually when scrolling)
 							if((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0)
@@ -293,7 +293,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 							w.dispose();
 						}
 					});
-					
+
 					w.setVisible(true);
 					w.pack();
 				}
@@ -303,8 +303,8 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 
 	class PathwayToolTip extends JPanel {
 		private boolean hasContent;
-		
-		public PathwayToolTip(List<VPathwayElement> elements) {	
+
+		public PathwayToolTip(List<VPathwayElement> elements) {
 			applyToolTipStyle(this);
 			setLayout(new BorderLayout());
 			DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("pref"));
@@ -321,20 +321,20 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 			applyToolTipStyle(contents);
 			JScrollPane scroll = new JScrollPane(contents, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-			int w = contents.getPreferredSize().width + 
+			int w = contents.getPreferredSize().width +
 				scroll.getVerticalScrollBar().getPreferredSize().width + 5;
-			int h = contents.getPreferredSize().height + 
+			int h = contents.getPreferredSize().height +
 				scroll.getHorizontalScrollBar().getPreferredSize().height + 5;
 			w = Math.min(400, w);
 			h = Math.min(500, h);
 			setPreferredSize(new Dimension(w, h));
 			add(scroll, BorderLayout.CENTER);
 		}
-		
+
 		public boolean hasContent() {
 			return hasContent;
 		}
-		
+
 	}
 
 	/**
@@ -345,8 +345,8 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		c.setBackground((Color)UIManager.get("ToolTip.background"));
 		c.setFont((Font)UIManager.get("ToolTip.font"));
 	}
-	
-	public void scrollTo(Rectangle r) 
+
+	public void scrollTo(Rectangle r)
 	{
 		if (container instanceof JScrollPane)
 			((JScrollPane)container).getViewport().scrollRectToVisible(r);
@@ -372,17 +372,17 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 			((JScrollPane)container).remove(this);
 		child.removeVPathwayListener(this);
 		child.removeVElementMouseListener(this);
-		
+
 		removeMouseListener(this);
 		removeMouseMotionListener(this);
 		removeKeyListener(this);
 		setTransferHandler(null);
 
-		// clean up actions, inputs registered earlier for this component 
+		// clean up actions, inputs registered earlier for this component
 		// (otherwise VPathway won't get GC'ed, because actions contain reference to VPathay)
 		getActionMap().clear();
 		getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).clear();
-		
+
 		child = null; // free VPathway for GC
 		disposed = true;
 	}

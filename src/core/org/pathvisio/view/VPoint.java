@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -26,9 +26,9 @@ import org.pathvisio.view.LinAlg.Point;
 /**
  * One of the two endpoints of a line. Carries a single handle.
  */
-public class VPoint implements Adjustable 
+public class VPoint implements Adjustable
 {
-	// the handle that goes with this VPoint. 
+	// the handle that goes with this VPoint.
 	// This Handle is created, destroyed and generally managed by Line, not by VPoint
 	Handle handle;
 	Line line;
@@ -37,18 +37,18 @@ public class VPoint implements Adjustable
 
 	public Rectangle2D getVBounds()
 	{
-		return null; 
-		// this method does not need to be implemented, because the Handle of a 
+		return null;
+		// this method does not need to be implemented, because the Handle of a
 		// VPoint is always DIRECTION_FREE
 	}
-	
+
 	private boolean isHighlighted = false;
-	
+
 	public boolean isHighlighted()
 	{
 		return isHighlighted;
 	}
-	
+
 	public void highlight()
 	{
 		if (!isHighlighted)
@@ -57,7 +57,7 @@ public class VPoint implements Adjustable
 			line.markDirty();
 		}
 	}
-	
+
 	public void unhighlight()
 	{
 		if (isHighlighted)
@@ -66,37 +66,37 @@ public class VPoint implements Adjustable
 			line.markDirty();
 		}
 	}
-	
+
 	VPoint(VPathway canvas, MPoint mPoint, Line line) {
 		this.canvas = canvas;
 		this.mPoint = mPoint;
 		this.line = line;
 	}
-	
+
 	protected void unlink() {
 		mPoint.setGraphRef(null);
 	}
-	
+
 	protected double getVX() { return canvas.vFromM(getMPoint().getX()); }
 	protected double getVY() { return canvas.vFromM(getMPoint().getY()); }
-	
+
 	protected void setVLocation(double vx, double vy) {
 		mPoint.setX(canvas.mFromV(vx));
 		mPoint.setY(canvas.mFromV(vy));
 	}
-	
+
 	protected void vMoveBy(double dx, double dy) {
 		mPoint.moveBy(canvas.mFromV(dx), canvas.mFromV(dy));
 	}
-	
+
 	public MPoint getMPoint() {
 		return mPoint;
 	}
-	
+
 	public Line getLine() {
 		return line;
 	}
-	
+
 	public void adjustToHandle(Handle h, double vnewx, double vnewy)
 	{
 		double mcx = canvas.mFromV (vnewx);
@@ -125,20 +125,20 @@ public class VPoint implements Adjustable
 			}
 			// calculate rotation and round it off
 			double rotation = Math.atan2(basey - mcy, basex - mcx);
-			rotation = Math.round (rotation / lineSnapStep) * lineSnapStep; 
+			rotation = Math.round (rotation / lineSnapStep) * lineSnapStep;
 			// project point mcx, mcy on a line with the desired angle.
 			Point yr = new Point (Math.cos (rotation), Math.sin (rotation));
 			Point prj = LinAlg.project(new Point (basex, basey), new Point(mcx, mcy), yr);
 			mcx = prj.x;
 			mcy = prj.y;
 		}
-		
+
 		mPoint.setX(mcx);
 		mPoint.setY(mcy);
 	}
-	
-	protected Handle getHandle() 
+
+	protected Handle getHandle()
 	{
 		return handle;
-	}	
+	}
 }

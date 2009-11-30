@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gpmldiff;
@@ -35,13 +35,13 @@ import org.pathvisio.model.PathwayElement;
 /**
    Wrapper for org.pathvisio.model.Pathway that adds some extra
    functionality for gpmldiff
-*/   
+*/
 class PwyDoc
 {
 	Pathway pwy = null;
 	File src = null;
 	private boolean modified = false;
-	
+
 	/**
 	   return the wrapped Pathway.
 	 */
@@ -54,7 +54,7 @@ class PwyDoc
 	{
 		return src;
 	}
-	
+
 	private	List<PathwayElement> elts = new ArrayList<PathwayElement>();
 
 	public void add (PathwayElement value)
@@ -68,12 +68,12 @@ class PwyDoc
 		if (!elts.remove (value)) { Logger.log.error ("value not in list, couldn't remove"); };
 		modified = true;
 	}
-	
+
 	/**
 	   Return a list of all PwyElts contained in this documents
 	*/
 	public List<PathwayElement> getElts() { return elts; }
-		
+
 	/**
 	   Construct a new PwyDoc from a certain file
 	   Returns null if there is an  IO exception
@@ -92,17 +92,17 @@ class PwyDoc
 			Logger.log.error ("Converter exception", e);
 			return null;
 		}
-		
+
 		for (PathwayElement e : result.pwy.getDataObjects())
 		{
 			result.add (e);
 		}
-		
+
 		result.src = f;
 		result.modified = false;
 		return result;
 	}
-	
+
 	/** applies the cache of modified elements back to the wrapped pathway object itself */
 	public void apply ()
 	{
@@ -110,7 +110,7 @@ class PwyDoc
 		pwy.getDataObjects().addAll(elts);
 		modified = false;
 	}
-	
+
 	/** write the PwyDoc back to file. This assumes you called apply before */
 	public void write (File f) throws ConverterException
 	{
@@ -118,17 +118,17 @@ class PwyDoc
 		pwy.fixReferences();
 		pwy.writeToXml(f, true);
 	}
-	
+
 	// make default constructor private
 	private PwyDoc()
 	{
 	}
-	
+
 	public PwyDoc (Pathway aPwy)
 	{
 		assert (aPwy != null);
 		pwy = aPwy;
-		
+
 		for (PathwayElement e : pwy.getDataObjects())
 		{
 			add (e);
@@ -139,7 +139,7 @@ class PwyDoc
 	/**
 	   Calculates a table with similarity scores.
 	*/
-	static public Map2D <PathwayElement, PathwayElement, Integer> getSimTable (PwyDoc oldDoc, PwyDoc newDoc, SimilarityFunction simFun)		
+	static public Map2D <PathwayElement, PathwayElement, Integer> getSimTable (PwyDoc oldDoc, PwyDoc newDoc, SimilarityFunction simFun)
 	{
 		Map2D <PathwayElement, PathwayElement, Integer> result =
 			new Map2D <PathwayElement, PathwayElement, Integer>(
@@ -163,10 +163,10 @@ class PwyDoc
 		PrintStream out = System.out;
 
 		// empty corner cell
-		out.print ("\t"); 
+		out.print ("\t");
 		// column headers
 		for (PathwayElement newElt : newDoc.getElts())
-		{			
+		{
 			out.print(PwyElt.summary(newElt));
 			out.print("\t");
 		}
@@ -183,16 +183,16 @@ class PwyDoc
 				out.print ("\t");
 			}
 			out.println();
-		}		
+		}
 	}
-	
+
 	/**
 	 * Used for sorting pathway elements by the max matching score
 	 */
 	class MaxScoreComparator implements Comparator<PathwayElement>
 	{
 		Map <PathwayElement, Integer> scores;
-		
+
 		public MaxScoreComparator (Map<PathwayElement, Integer> scores)
 		{
 			this.scores = scores;
@@ -203,9 +203,9 @@ class PwyDoc
 			return scores.get (b) - scores.get(a);
 		}
 	}
-	
+
 	/**
-	   Finds correspondence set with the lowest cost 
+	   Finds correspondence set with the lowest cost
 
 	   Originally I planned to use Dijkstra's algorithm as described
 	   in the xmldiff whitepaper, but it turned out not to be
@@ -229,12 +229,12 @@ class PwyDoc
 		/*
 		  We're going to calculate the maximum score for each row in
 		  the table and store the results in this Map.
-		 */		
+		 */
 		Map <PathwayElement, Integer> maxScores =
 			new HashMap<PathwayElement, Integer>();
-		
+
 		for (PathwayElement oldElt : elts)
-		{						
+		{
 			int maxScore = 0;
 			for (PathwayElement newElt : newDoc.getElts())
 			{
@@ -242,7 +242,7 @@ class PwyDoc
 				if (score > maxScore)
 				{
 					maxScore = score;
-				}				
+				}
 			}
 			maxScores.put (oldElt, maxScore);
 		}
@@ -267,7 +267,7 @@ class PwyDoc
 		  project.
 		 */
 		SearchNode currentNode = null;
-		
+
 		for (PathwayElement oldElt : elts)
 		{
 			int maxScore = 0;
@@ -311,7 +311,7 @@ class PwyDoc
 	{
 		Set<PathwayElement> bothOld = new HashSet<PathwayElement>();
 		Set<PathwayElement> bothNew = new HashSet<PathwayElement>();
-				
+
 		SearchNode current = result;
 		while (current != null)
 		{

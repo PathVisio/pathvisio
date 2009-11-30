@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -32,9 +32,9 @@ import org.pathvisio.model.PathwayElement;
  */
 public class VPathwayWrapperBase implements VPathwayWrapper {
 	Dimension vSize = new Dimension();
-	
+
 	public void copyToClipboard(Pathway source, List<PathwayElement> result) {
-		
+
 	}
 
 	public VPathway createVPathway() {
@@ -54,15 +54,15 @@ public class VPathwayWrapperBase implements VPathwayWrapper {
 	}
 
 	public void redraw() {
-		
+
 	}
 
 	public void redraw(Rectangle r) {
-		
+
 	}
 
 	public void registerKeyboardAction(KeyStroke k, Action a) {
-		
+
 	}
 
 	public void setVSize(Dimension size) {
@@ -75,14 +75,14 @@ public class VPathwayWrapperBase implements VPathwayWrapper {
 	}
 
 	public void pasteFromClipboard() {
-	
+
 	}
 
 	public void scrollTo(Rectangle r) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public void dispose() {}
 
 }

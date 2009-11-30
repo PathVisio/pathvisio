@@ -22,7 +22,7 @@ import org.w3c.dom.Document;
 public class SearchXrefsRoute extends IndexResource {
 	List<String> ids = new ArrayList<String>();
 	List<String> codes = new ArrayList<String>();
-	
+
 	protected void doInit() throws ResourceException {
 		super.doInit();
 		List<Parameter> rawIds = (List<Parameter>)getRequest().getAttributes().get(IndexService.ATTR_ID);
@@ -38,13 +38,13 @@ public class SearchXrefsRoute extends IndexResource {
 			}
 		}
 	}
-	
+
 	@Get("xml")
 	public Representation getResult() {
 		try {
 			DomRepresentation domRep = new DomRepresentation(MediaType.TEXT_XML);
 			Document doc = domRep.getDocument();
-			
+
 			List<String> myCodes = null;
 			if(codes.size() == 0) {
 				myCodes = Arrays.asList(new String[ids.size()]);
@@ -59,7 +59,7 @@ public class SearchXrefsRoute extends IndexResource {
 				}
 				myCodes = codes;
 			}
-			
+
 			Set<Xref> xrefs = new HashSet<Xref>();
 			for(int i = 0; i < ids.size(); i++) {
 				DataSource ds = null;

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -19,10 +19,10 @@ package org.pathvisio.view;
 import java.awt.geom.GeneralPath;
 
 /**
- * This defines and registers some 
+ * This defines and registers some
  * Special Shapes that are very specific to GenMAPP,
  * such as the GenMAPP ProteinComplex, Vesicle and Ribosome.
- * 
+ *
  * Shapes are defined and registered in the static section of this class.
  */
 class GenMAPPShapes
@@ -39,7 +39,7 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("Ribosome", getPluggableShape (RIBOSOME));
 		ShapeRegistry.registerShape ("ProteinComplex", getPluggableShape (PROTEINB));
         ShapeRegistry.registerShape ("Vesicle", getPluggableShape (VESICLE));
-		
+
 	}
 
 	/**
@@ -55,7 +55,7 @@ class GenMAPPShapes
 	private static final int VESICLE = 6;
 
 	/**
-	   Internal, 
+	   Internal,
 	   Only for general shape types that can be described as a path.
 	   The shapes are constructed as a general path with arbitrary size
 	   and then resized to fit w and h parameters.

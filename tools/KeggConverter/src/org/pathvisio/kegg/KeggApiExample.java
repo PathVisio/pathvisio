@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.kegg;
@@ -45,16 +45,16 @@ public class KeggApiExample {
 			);
 			System.exit(1);
 		}
-		
+
 		//Get the specified organism name
 		String ec = args[0];
 		String species = args[1];
-		
+
 		//Setup a connection to KEGG
 		KEGGLocator  locator = new KEGGLocator();
 		KEGGPortType serv;
 		serv = locator.getKEGGPort();
-		
+
 		//Fetch the gene names
 		String[] genes = serv.get_genes_by_enzyme(ec, species);
 
@@ -63,7 +63,7 @@ public class KeggApiExample {
 			System.out.println("No genes found for " + ec + " (" + species + ")");
 		} else {
 			System.out.println("Enzyme " + ec + " (" + species + ") maps to the following genes: ");
-			
+
 			for(String gene : genes) {
 				System.out.println("\t" + gene);
 				LinkDBRelation[] links = serv.get_linkdb_by_entry(gene, "NCBI-GeneID", 1, 100);

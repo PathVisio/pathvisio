@@ -23,11 +23,11 @@ public class Server {
 	WikiPathwaysIndexer indexer;
 	IndexService service;
 	Component component;
-	
+
 	public Server(File indexConfig, File gdbConfig) throws ServiceException, ConverterException, CorruptIndexException, IOException {
 		indexer = new WikiPathwaysIndexer(indexConfig, gdbConfig);
 	}
-	
+
 	void startIndexer(boolean rebuild) throws CorruptIndexException, LockObtainFailedException, IOException, ConverterException {
 		if(rebuild) {
 			indexer.rebuild();
@@ -36,7 +36,7 @@ public class Server {
 		}
 		indexer.start();
 	}
-	
+
 	void startService(int port) throws Exception {
 		component = new Component();
 		component.getServers().add(Protocol.HTTP, port);
@@ -47,7 +47,7 @@ public class Server {
 		);
 		component.start();
 	}
-	
+
 	public static void main(String[] args) {
 		ServerParameters par = new ServerParameters();
 		CmdLineParser parser = new CmdLineParser(par);
@@ -58,9 +58,9 @@ public class Server {
 			parser.printUsage(System.err);
 			System.exit(-1);
 		}
-		
+
 		BioDataSource.init();
-		
+
 		try {
 			Server server = new Server(par.getIndexConfig(), par.getBridgeConfig());
 			if(!par.isNoUpdate()) server.startIndexer(par.isRebuild());

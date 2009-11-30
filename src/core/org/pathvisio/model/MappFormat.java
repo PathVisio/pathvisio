@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 // $Id: MappToGmml.java,v 1.5 2005/10/21 12:33:27 gontran Exp $
@@ -39,19 +39,19 @@ import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 
 /**
- * The class MappFormat is responsible for all interaction with 
+ * The class MappFormat is responsible for all interaction with
  * .mapp files (GenMapp pathway format). Here is also codified all the
  * assumptions about the .mapp format.
- * 
- * 
+ *
+ *
  * Certain aspects of the Mapp <-> GPML conversion are getting quite hairy,
  * as there are certain inconsistencies within GenMAPP. We intend to isolate
  * all these inconsistencies just within this class, so they don't propagate
  * to the rest of PathVisio.
- * 
+ *
  * For example:
- * 
- * Color: The "Color" column in the Objects table sometimes corresponds to 
+ *
+ * Color: The "Color" column in the Objects table sometimes corresponds to
  * fillColor (for Rect and Oval) and sometimes to LineColor (for Label, Line,
  * Arc, Brace, etc.). This gets confusing especially for Arc and Brace, because
  * they all get mapped to ObjectType.Shape. For those objects that can have
@@ -63,37 +63,37 @@ import org.pathvisio.debug.Logger;
  * of CELLB.
  */
 public class MappFormat implements PathwayImporter, PathwayExporter
-{		
-	private static final String SQL_INFO_INSERT = 
+{
+	private static final String SQL_INFO_INSERT =
 		"INSERT INTO INFO (Title, MAPP, GeneDB, Version, Author, " +
 		"Maint, Email, Copyright, Modify, Remarks, BoardWidth, BoardHeight, " +
 		"WindowWidth, WindowHeight, Notes) " +
 		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-	// note: column GeneDBVersion is not in all mapps. 
-	// Notably the mapps converted from kegg are different from the rest. 
-	private static final String SQL_OBJECTS_INSERT = 
-		"INSERT INTO OBJECTS (ObjKey, ID, SystemCode, Type, CenterX, " + 
+	// note: column GeneDBVersion is not in all mapps.
+	// Notably the mapps converted from kegg are different from the rest.
+	private static final String SQL_OBJECTS_INSERT =
+		"INSERT INTO OBJECTS (ObjKey, ID, SystemCode, Type, CenterX, " +
 		"CenterY, SecondX, SecondY, Width, Height, Rotation, " +
 		"Color, Label, Head, Remarks, Image, Links, Notes) " +
 		"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-	private static final String SQL_INFO_SELECT = 
+	private static final String SQL_INFO_SELECT =
 		"SELECT Title, MAPP, GeneDB, Version, Author, " +
 		"Maint, Email, Copyright, Modify, Remarks, BoardWidth, BoardHeight, " +
 		"WindowWidth, WindowHeight, Notes " +
 		"FROM INFO";
-	private static final String SQL_OBJECTS_SELECT = 
-		"SELECT ObjKey, ID, SystemCode, Type, CenterX, " + 
+	private static final String SQL_OBJECTS_SELECT =
+		"SELECT ObjKey, ID, SystemCode, Type, CenterX, " +
 		"CenterY, SecondX, SecondY, Width, Height, Rotation, " +
 		"Color, Label, Head, Remarks, Image, Links, Notes " +
 		"FROM OBJECTS";
-			
+
     private static final String DATABASE_AFTER = ";DriverID=22;READONLY=true";
     private static final String DATABASE_BEFORE =
             "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
-    
+
     //  These constants below define columns in the info table.
-    //  they are linked to the order of columns in the sqlInfoSelect 
+    //  they are linked to the order of columns in the sqlInfoSelect
     //  statement above
 	private static final int ICOL_TITLE = 0;
 	private static final int ICOL_MAPP = 1;
@@ -139,7 +139,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
      * in the classpath, normally in resources.jar.
      */
 	private static String mappTemplateFile = "MAPPTmpl.gtp";
-    
+
     static void readFromMapp (String filename, Pathway data)
     	throws ConverterException
     {
@@ -157,15 +157,15 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     		throw ce;
     	}
         Logger.log.debug ("Connection string: " + database);
-		
+
 		// Create the connection to the database
-        
-        try 
+
+        try
         {
 	        Connection con = DriverManager.getConnection(database, "", "");
-	        
+
 	        Statement s = con.createStatement();
-	        
+
 	        Logger.log.trace ("READING INFO TABLE");
 	        // first do the INFO table, only one row.
 		    {
@@ -174,10 +174,10 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		        int cCol = r.getMetaData().getColumnCount();
 		        String[] row = new String[cCol];
 		        for (int i = 0; i < cCol; ++i) row[i] = r.getString(i + 1);
-		        
+
 		        copyMappInfo(row, data, filename);
-	    	}    
-	
+	    	}
+
 		    Logger.log.trace ("READING OBJECTS TABLE");
 	        // now do the OBJECTS table, multiple rows
 	        {
@@ -199,8 +199,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     		throw ce;
         }
     }
-    
-    private static void copyResource(String resource, java.io.File destination) throws IOException 
+
+    private static void copyResource(String resource, java.io.File destination) throws IOException
     {
 		try {
 			ClassLoader cl = MappFormat.class.getClassLoader();
@@ -210,7 +210,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
 			int len;
 			byte[] buf=new byte[2048];
-			 
+
 			while ((len=inStream.read(buf))!=-1) {
 				outStream.write(buf,0,len);
 			}
@@ -219,26 +219,26 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		}
 	}
 
-    public static void exportMapp (String filename, 
+    public static void exportMapp (String filename,
     		String[] mappInfo, List<String[]> mappObjects) throws ConverterException
-    {    	
+    {
         String database = DATABASE_BEFORE + filename + ";DriverID=22";
-        
+
         try {
         	copyResource (mappTemplateFile, new File(filename));
-        	
+
             // Load Sun's jdbc-odbc driver
             Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
-            
+
             // Create the connection to the database
             Connection con = DriverManager.getConnection(database, "", "");
-            
+
             // Create a new sql statement
 
     		PreparedStatement sInfo = con.prepareStatement(SQL_INFO_INSERT);
             PreparedStatement sObjects = con.prepareStatement(SQL_OBJECTS_INSERT);
-            
-            
+
+
             int k = 1;
             for (String[] row : mappObjects)
             {
@@ -256,28 +256,28 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     				else if (j >= COL_CENTERX && j <= COL_ROTATION)
     				{
     					//NOTE: by using setDouble, we prevent period <-> comma digit symbol issues.
-    					//NOTE: could be optimized, now we convert 
+    					//NOTE: could be optimized, now we convert
     					// double to string and back to double again. but at least this works.
     					sObjects.setDouble (j + 1, Double.parseDouble(row[j]));
     				}
     				else
     				{
-    					// the line below is a bugfix for 
-    					// Hs_Contributed_20060824/cellular_process-GenMAPP/Hs_Signaling_of_Hepatocyte_Growth_Factor_Receptor_Biocarta.mapp. 
+    					// the line below is a bugfix for
+    					// Hs_Contributed_20060824/cellular_process-GenMAPP/Hs_Signaling_of_Hepatocyte_Growth_Factor_Receptor_Biocarta.mapp.
     					// No idea why this is necessary
     					if (row[j] == null) row[j] = "";
     					sObjects.setString(j + 1, row[j]);
     				}
     			}
-    			
-    			sObjects.executeUpdate();    			
+
+    			sObjects.executeUpdate();
     			k++;
             }
 
 			for (int j = 0; j < mappInfo.length; ++j)
 			{
 				Logger.log.trace("[" + (j + 1) + "] " + mappInfo[j]);
-				
+
 				if (j >= ICOL_BOARDWIDTH && j <= ICOL_WINDOWHEIGHT)
 				{
 					sInfo.setDouble (j + 1, Double.parseDouble (mappInfo[j]));
@@ -286,26 +286,26 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 				{
 					sInfo.setString (j + 1, mappInfo[j]);
 				}
-			}    			
+			}
 			sInfo.executeUpdate();
             con.close();
-            
+
         } catch (Exception e) {
         	throw new ConverterException(e);
         }
     }
-    
+
 	public static String[] uncopyMappInfo (Pathway data)
 	{
 		String[] mappInfo = new String[15];
-		
+
 		PathwayElement mi = null;
 		for (PathwayElement o : data.getDataObjects())
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 				mi = o;
 		}
-			
+
 		mappInfo[ICOL_TITLE] = mi.getMapInfoName();
 		mappInfo[ICOL_VERSION] = mi.getVersion();
 		mappInfo[ICOL_AUTHOR] = mi.getAuthor();
@@ -313,19 +313,19 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		mappInfo[ICOL_EMAIL] = mi.getEmail();
 		mappInfo[ICOL_COPYRIGHT] = mi.getCopyright();
 		mappInfo[ICOL_MODIFY] = mi.getLastModified();
-		
+
 		mappInfo[ICOL_NOTES] = mi.findComment("GenMAPP notes");
-		mappInfo[ICOL_REMARKS] = mi.findComment("GenMAPP remarks");		
-		
+		mappInfo[ICOL_REMARKS] = mi.findComment("GenMAPP remarks");
+
 		double[] size = mi.getMBoardSize();
 		mappInfo[ICOL_BOARDWIDTH] = "" + size[0];
 		mappInfo[ICOL_BOARDHEIGHT] = "" + size[1];
 		mappInfo[ICOL_WINDOWWIDTH] = "" + mi.getWindowWidth();
 		mappInfo[ICOL_WINDOWHEIGHT] = "" + mi.getWindowHeight();
-		
+
 		return mappInfo;
 	}
-	
+
 	// This method copies the Info table of the genmapp mapp to a new gpml
 	// pathway
 	public static void copyMappInfo(String[] row, Pathway data, String filename)
@@ -333,23 +333,23 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
 		/* Data is lost when converting from GenMAPP to GPML:
 		*
-		* GenMAPP: 
+		* GenMAPP:
 		*		"Title", "MAPP", "Version", "Author",
-		* 		"Maint", "Email", "Copyright","Modify", 
+		* 		"Maint", "Email", "Copyright","Modify",
 		*		"Remarks", "BoardWidth", "BoardHeight","WindowWidth",
 		*		"WindowHeight", "GeneDB", "Notes"
-		* GPML:    
-		*		"Name", NONE, Version, "Author",  
+		* GPML:
+		*		"Name", NONE, Version, "Author",
 		*		"MaintainedBy", "Email", "Availability", "LastModified",
-		*		"Comment", "BoardWidth", "BoardHeight", NONE, 
+		*		"Comment", "BoardWidth", "BoardHeight", NONE,
 		*		NONE, NONE, "Notes"
 		*
 		*/
-	
+
 		Logger.log.trace ("CONVERTING INFO TABLE TO GPML");
-		
+
 		PathwayElement o = data.getMappInfo();
-		
+
 		o.setMapInfoName(row[ICOL_TITLE]);
 		o.setMapInfoDataSource("GenMAPP 2.0");
 		o.setVersion(row[ICOL_VERSION]);
@@ -358,22 +358,22 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		o.setEmail(row[ICOL_EMAIL]);
 		o.setCopyright(row[ICOL_COPYRIGHT]);
 		o.setLastModified(row[ICOL_MODIFY]);
-	
+
 		o.addComment(row[ICOL_NOTES], "GenMAPP notes");
 		o.addComment(row[ICOL_REMARKS], "GenMAPP remarks");
 
 		//Board size will be calculated
 //		o.setMBoardWidth(Double.parseDouble(row[icolBoardWidth]));
 //		o.setMBoardHeight(Double.parseDouble(row[icolBoardHeight]));
-		
+
 		o.setWindowWidth(Double.parseDouble(row[ICOL_WINDOWWIDTH]));
 		o.setWindowHeight(Double.parseDouble(row[ICOL_WINDOWHEIGHT]));
-		
+
 		// guess organism based on first two characters of filename
 		String shortCode = new File (filename).getName().substring(0, 2);
 		Organism org = Organism.fromCode(shortCode);
 		if (org != null)
-		{		
+		{
 			o.setOrganism(org.latinName());
 		}
 	}
@@ -381,12 +381,12 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	public static List<String[]> uncopyMappObjects(Pathway data) throws ConverterException
 	{
 		List<String[]> result = new ArrayList<String[]>();
-		
+
 		for (PathwayElement o : data.getDataObjects())
 		{
 			ObjectType objectType = o.getObjectType();
 			String[] row = new String[18];
-			
+
 			// init:
 			row[COL_CENTERX] = "0.0";
 			row[COL_CENTERY] = "0.0";
@@ -396,7 +396,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 			row[COL_HEIGHT] = "0.0";
 			row[COL_ROTATION] = "0.0";
 			row[COL_COLOR] = "-1";
-			
+
 			switch (objectType)
 			{
 				case LINE:
@@ -404,7 +404,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 					unmapLineType(o, row);
 					result.add(row);
 					break;
-				case DATANODE:	
+				case DATANODE:
 					unmapNotesAndComments (o, row);
 					unmapGeneProductType(o, row);
 					result.add(row);
@@ -422,7 +422,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 					unmapLegendType(o, row);
 					result.add(row);
 					break;
-				case SHAPE:					
+				case SHAPE:
 					unmapNotesAndComments (o, row);
 					ShapeType s = o.getShapeType();
 					if (s == ShapeType.BRACE)
@@ -459,9 +459,9 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 					result.add(row);
 					break;
 			}
-			
+
 		}
-				
+
 		return result;
 	}
 
@@ -470,7 +470,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	 * This will create an oval shape with the same properties
 	 * (rotation, location, size and color)
 	 */
-	private static void unmapUnknownShapeType(PathwayElement o, String[] mappObject) 
+	private static void unmapUnknownShapeType(PathwayElement o, String[] mappObject)
 	{
 		mappObject[COL_TYPE] = ShapeType.OVAL.getMappName();
 		unmapShapeHalf (o, mappObject);
@@ -479,22 +479,22 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	}
 
 	private static void unmapNotesAndComments(PathwayElement o, String[] row)
-	{		
+	{
 		row[COL_NOTES] = o.findComment("GenMAPP notes");
-		row[COL_REMARKS] = o.findComment("GenMAPP remarks");		
+		row[COL_REMARKS] = o.findComment("GenMAPP remarks");
 	}
-	
+
 	private static void mapNotesAndComments(PathwayElement o, String[] row)
 	{
         if (row[COL_NOTES] != null &&
         		!row[COL_NOTES].equals(""))
-        {        	
+        {
     		o.addComment(row[COL_NOTES], "GenMAPP notes");
         }
 
         if (row[COL_REMARKS] != null &&
         		!row[COL_REMARKS].equals(""))
-        {            
+        {
     		o.addComment(row[COL_REMARKS], "GenMAPP remarks");
         }
 	}
@@ -507,40 +507,40 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		// Create the GenMAPP --> GPML mappings list for use in the switch
 		// statement
 
-		List<String> typeslist = Arrays.asList(new String[] { 
+		List<String> typeslist = Arrays.asList(new String[] {
 				"Arrow", "DottedArrow", "DottedLine", "Line",
 				"Brace", "Gene", "InfoBox", "Label", "Legend", "Oval",
 				"Rectangle", "TBar", "Receptor", "LigandSq",  "ReceptorSq",
 				"LigandRd", "ReceptorRd", "CellA", "Arc", "Ribosome",
 				"OrganA", "OrganB", "OrganC", "ProteinB", "Poly", "Vesicle"
 		});
-		PathwayElement o = null;		
-		int index = typeslist.indexOf(row[COL_TYPE]);		
+		PathwayElement o = null;
+		int index = typeslist.indexOf(row[COL_TYPE]);
 		switch(index) {
-		
+
 				case 0: /*Arrow*/
 				case 1: /*DottedArrow*/
-				case 2: /*DottedLine"*/			
+				case 2: /*DottedLine"*/
 				case 3: /*Line*/
 				case 11: /*TBar*/
-				case 12: /*Receptor*/           
-				case 13: /*LigandSq*/           
-				case 14: /*ReceptorSq*/         
+				case 12: /*Receptor*/
+				case 13: /*LigandSq*/
+				case 14: /*ReceptorSq*/
 				case 15: /*LigandRd*/
 				case 16: /*ReceptorRd*/
 						o = mapLineType(row);
 						mapNotesAndComments (o, row);
-						break;							
+						break;
 				case 4: /*Brace*/
 						o = mapBraceType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
-						break;							
+						break;
 				case 5: /*Gene*/
 						o = mapGeneProductType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
-						break;																					
+						break;
 				case 6: /*InfoBox*/
 						o = mapInfoBoxType (row, data);
 						break;
@@ -551,23 +551,23 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 						break;
 				case 8: /*Legend*/
 						o = mapLegendType(row);
-						break;							
-				case 9: /*Oval*/						
+						break;
+				case 9: /*Oval*/
 				case 10: /*Rectangle*/
 				case 18: /*Arc*/
 						o = mapShapeType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
-						break;							
+						break;
 				case 17: /*CellA*/
-				case 19: /*Ribosome*/							
-				case 20: /*OrganA*/							
-				case 21: /*OrganB*/							
+				case 19: /*Ribosome*/
+				case 20: /*OrganA*/
+				case 21: /*OrganB*/
 				case 22: /*OrganC*/
 						o = mapFixedShapeType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
-						break;							
+						break;
 				case 23: /*ProteinB*/
 				case 24: /*Poly*/
 				case 25: /*Vesicle*/
@@ -575,19 +575,19 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
 						break;
-				default: 
+				default:
 						throw new ConverterException (
-							"-> Type '" 
+							"-> Type '"
 							+ row[COL_TYPE]
 							+ "' is not recognised as a GenMAPP type "
-							+ "and is therefore not processed.\n");							
+							+ "and is therefore not processed.\n");
 		}
 		data.add(o);
     }
 
-    
+
     private static void unmapLineType (PathwayElement o, String[] mappObject)
-    {   	
+    {
     	int lineStyle = o.getLineStyle();
 		LineType lineType = o.getEndLineType();
 		String style = lineType.getMappName();
@@ -596,17 +596,17 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		}
 		if (lineStyle == LineStyle.DASHED && (lineType == LineType.ARROW || lineType == LineType.LINE))
 			style = "Dotted" + style;
-		
-		mappObject[COL_TYPE] = style;		
+
+		mappObject[COL_TYPE] = style;
 		mappObject[COL_CENTERX] = "" + o.getMStartX();
     	mappObject[COL_CENTERY] = "" + o.getMStartY();
     	mappObject[COL_SECONDX] = "" + o.getMEndX();
     	mappObject[COL_SECONDY] = "" + o.getMEndY();
-		mappObject[COL_COLOR] = toMappColor(o.getColor(), false);    	
+		mappObject[COL_COLOR] = toMappColor(o.getColor(), false);
     }
 
 	private static Map<String,LineType> mappLineTypes = initMappLineTypes();
-	
+
 	static private Map<String,LineType> initMappLineTypes()
 	{
 		Map<String,LineType> result = new HashMap<String,LineType>();
@@ -618,11 +618,11 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		}
 		return result;
 	}
-	
+
 	private static PathwayElement mapLineType(String [] mappObject) throws ConverterException
-	{		
+	{
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.LINE);
-    	
+
 		String type = mappObject[COL_TYPE];
     	if(type.startsWith("Dotted"))
     	{
@@ -632,22 +632,22 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	{
     		o.setLineStyle(LineStyle.SOLID);
     	}
-    	    	
-    	o.setEndLineType(mappLineTypes.get(type));		
-        o.setMStartX(Double.parseDouble(mappObject[COL_CENTERX]));       
+
+    	o.setEndLineType(mappLineTypes.get(type));
+        o.setMStartX(Double.parseDouble(mappObject[COL_CENTERX]));
         o.setMStartY(Double.parseDouble(mappObject[COL_CENTERY]));
         o.setMEndX(Double.parseDouble(mappObject[COL_SECONDX]));
         o.setMEndY(Double.parseDouble(mappObject[COL_SECONDY]));
-		o.setColor(fromMappColor(mappObject[COL_COLOR]));	
+		o.setColor(fromMappColor(mappObject[COL_COLOR]));
         return o;
 	}
-    
+
 	private static void unmapCenter (PathwayElement o, String[] mappObject)
 	{
 		mappObject[COL_CENTERX] = "" + o.getMCenterX();
-    	mappObject[COL_CENTERY] = "" + o.getMCenterY();	
+    	mappObject[COL_CENTERY] = "" + o.getMCenterY();
 	}
-	
+
 	private static void mapCenter (PathwayElement o, String[] mappObject)
 	{
 		o.setMCenterX(Double.parseDouble(mappObject[COL_CENTERX]));
@@ -658,44 +658,44 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	{
 		mappObject[COL_ROTATION] = "" + o.getRotation();
 	}
-	
+
 	private static void mapRotation (PathwayElement o, String[] mappObject)
 	{
 		o.setRotation(Double.parseDouble(mappObject[COL_ROTATION]));
 	}
-	
+
 	private static void unmapShape (PathwayElement o, String[] mappObject)
 	{
-    	unmapCenter(o, mappObject);    	
+    	unmapCenter(o, mappObject);
     	mappObject[COL_WIDTH] = "" + o.getMWidth();
-    	mappObject[COL_HEIGHT] = "" + o.getMHeight();	
+    	mappObject[COL_HEIGHT] = "" + o.getMHeight();
 	}
 
 	private static void mapShape (PathwayElement o, String[] mappObject)
 	{
-    	mapCenter(o, mappObject);    	
+    	mapCenter(o, mappObject);
     	o.setMWidth(Double.parseDouble(mappObject[COL_WIDTH]));
     	o.setMHeight(Double.parseDouble(mappObject[COL_HEIGHT]));
 	}
-	
+
 	private static void unmapShapeHalf (PathwayElement o, String[] mappObject)
 	{
-    	unmapCenter(o, mappObject);    	
+    	unmapCenter(o, mappObject);
     	mappObject[COL_WIDTH] = "" + o.getMWidth() / 2;
-    	mappObject[COL_HEIGHT] = "" + o.getMHeight() / 2;	
+    	mappObject[COL_HEIGHT] = "" + o.getMHeight() / 2;
 	}
 
 	private static void mapShapeHalf (PathwayElement o, String[] mappObject)
 	{
-    	mapCenter(o, mappObject);    	
+    	mapCenter(o, mappObject);
     	o.setMWidth(Double.parseDouble(mappObject[COL_WIDTH]) * 2);
-    	o.setMHeight(Double.parseDouble(mappObject[COL_HEIGHT]) * 2);	
+    	o.setMHeight(Double.parseDouble(mappObject[COL_HEIGHT]) * 2);
 	}
 
 	private static void unmapBraceType (PathwayElement o, String[] mappObject) throws ConverterException
-    {    	
-    	mappObject[COL_TYPE] = "Brace";    	
-    	mappObject[COL_ROTATION] = "" + o.getOrientation();    	
+    {
+    	mappObject[COL_TYPE] = "Brace";
+    	mappObject[COL_ROTATION] = "" + o.getOrientation();
     	unmapShape (o, mappObject);
 		mappObject[COL_COLOR] = toMappColor(o.getColor(), false);
     }
@@ -708,28 +708,28 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	o.setColor(fromMappColor(mappObject[COL_COLOR]));
     	o.setTransparent (true);
     	o.setOrientation((int)Double.parseDouble(mappObject[COL_ROTATION]));
-        return o;          
+        return o;
     }
-    
+
     private static void unmapGeneProductType (PathwayElement o, String[] mappObject) throws ConverterException
-    {    	
+    {
     	mappObject[COL_TYPE] = "Gene";
     	mappObject[COL_SYSTEMCODE] = o.getDataSource().getSystemCode();
 		mappObject[COL_HEAD] = o.getBackpageHead();
 		mappObject[COL_ID] = o.getGeneID();
 		mappObject[COL_LABEL] = o.getTextLabel();
-		mappObject[COL_LINKS] = o.getGenMappXref();    	
+		mappObject[COL_LINKS] = o.getGenMappXref();
 		unmapShape(o, mappObject);
     }
-    
+
     private static PathwayElement mapGeneProductType(String[] mappObject) throws ConverterException
 	{
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-    	
+
     	String syscode = mappObject[COL_SYSTEMCODE];
     	if (syscode == null) syscode = "";
     	syscode = syscode.trim();
-    	
+
         o.setDataSource(DataSource.getBySystemCode(syscode));
 
         o.setBackpageHead(mappObject[COL_HEAD]);
@@ -747,56 +747,56 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         String xrefv = mappObject[COL_LINKS];
         if (xrefv == null) { xrefv = ""; }
         o.setGenMappXref(xrefv);
-        
+
         mapShape(o, mappObject);
-        return o;			
+        return o;
 	}
-    
+
 	private static PathwayElement mapInfoBoxType (String[] mappObject, Pathway data)
 	{
     	PathwayElement o = data.getInfoBox();
-        
-    	mapCenter (o, mappObject);                
+
+    	mapCenter (o, mappObject);
         return o;
 	}
-	
+
 	private static void unmapInfoBoxType (PathwayElement o, String[] mappObject)
-    {    	
+    {
     	mappObject[COL_TYPE] = "InfoBox";
-    	
+
     	unmapCenter (o, mappObject);
     }
 
 	private static PathwayElement mapLegendType (String[] mappObject)
 	{
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.LEGEND);
- 
+
     	mapCenter (o, mappObject);
-    	        
+
         return o;
 	}
-	
+
 	private static void unmapLegendType (PathwayElement o, String[] mappObject)
-    {    	
+    {
     	mappObject[COL_TYPE] = "Legend";
-    	
-    	unmapCenter (o, mappObject);    	
+
+    	unmapCenter (o, mappObject);
     }
 
-	private final static int STYLE_BOLD = 1; 
+	private final static int STYLE_BOLD = 1;
 	private final static int STYLE_ITALIC = 2;
 	private final static int STYLE_UNDERLINE = 4;
 	private final static int STYLE_STRIKETHRU = 8;
-    
-    private static PathwayElement mapLabelType(String[] mappObject) 
+
+    private static PathwayElement mapLabelType(String[] mappObject)
     {
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.LABEL);
 
     	mapShape(o, mappObject);
-		o.setColor(fromMappColor(mappObject[COL_COLOR]));	
-        
+		o.setColor(fromMappColor(mappObject[COL_COLOR]));
+
     	o.setTextLabel(mappObject[COL_LABEL]);
-        
+
     	if (mappObject[COL_ID] == null)
     	{
     		o.setFontName("");
@@ -805,19 +805,19 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	{
     		o.setFontName(mappObject[COL_ID]);
     	}
-    	
-        
+
+
         o.setMFontSize(15.0 * Double.parseDouble(mappObject[COL_SECONDX]));
-        
-        String styleString = mappObject[COL_SYSTEMCODE]; 
+
+        String styleString = mappObject[COL_SYSTEMCODE];
         int style = styleString == null ? 0 : (int)(styleString.charAt(0));
-            
+
         o.setBold((style & STYLE_BOLD) > 0);
         o.setItalic((style & STYLE_ITALIC) > 0);
         o.setUnderline((style & STYLE_UNDERLINE) > 0);
         o.setStrikethru((style & STYLE_STRIKETHRU) > 0);
-        
-        
+
+
         String xrefv = mappObject[COL_LINKS];
         if (xrefv == null) { xrefv = ""; }
         o.setGenMappXref(xrefv);
@@ -825,45 +825,45 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     }
 
     private static void unmapLabelType (PathwayElement o, String[] mappObject)
-    {    	
+    {
     	mappObject[COL_TYPE] = "Label";
     	String text = o.getTextLabel();
     	if(text != null) {
     		text = text.replace("\n", " ");
     	}
     	mappObject[COL_LABEL] = text;
-    	
+
     	unmapShape(o, mappObject);
 		mappObject[COL_COLOR] = toMappColor(o.getColor(), false);
-    	
+
     	mappObject[COL_ID] = o.getFontName();
     	mappObject[COL_SECONDX] = "" + (o.getMFontSize() / 15.0);
-    	
-    	int style = 16; 
-    	// note: from VB source I learned that 16 is added to prevent field from becoming 0, 
+
+    	int style = 16;
+    	// note: from VB source I learned that 16 is added to prevent field from becoming 0,
     	// as this can't be stored in a text field in the database
-    	if (o.isBold()) style |= STYLE_BOLD;   	
-    	if (o.isItalic()) style |= STYLE_ITALIC;    	
-    	if (o.isUnderline()) style |= STYLE_UNDERLINE;    	
+    	if (o.isBold()) style |= STYLE_BOLD;
+    	if (o.isItalic()) style |= STYLE_ITALIC;
+    	if (o.isUnderline()) style |= STYLE_UNDERLINE;
     	if (o.isStrikethru()) style |= STYLE_STRIKETHRU;
-    	
+
     	char stylechars[] = new char[1];
     	stylechars[0] = (char)style;
-    	
-    	mappObject[COL_SYSTEMCODE] = new String (stylechars);    	
-		mappObject[COL_LINKS] = o.getGenMappXref();    	
+
+    	mappObject[COL_SYSTEMCODE] = new String (stylechars);
+		mappObject[COL_LINKS] = o.getGenMappXref();
     }
-    
+
 	private static PathwayElement mapShapeType(String[] mappObject)
     {
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
     	ShapeType shapeType = ShapeType.fromMappName(mappObject[COL_TYPE]);
-    	o.setShapeType(shapeType);        
+    	o.setShapeType(shapeType);
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
     		mapShapeHalf (o, mappObject);
     	else
     		mapShape (o, mappObject);
-		
+
         if (shapeType == ShapeType.ARC)
         {
         	o.setColor(fromMappColor(mappObject[COL_COLOR]));
@@ -880,40 +880,40 @@ public class MappFormat implements PathwayImporter, PathwayExporter
             {
             	o.setFillColor(fromMappColor(mappObject[COL_COLOR]));
             }
-        }        
-		
-        mapRotation (o, mappObject);        
+        }
+
+        mapRotation (o, mappObject);
         return o;
     }
-    
+
     private static void unmapShapeType (PathwayElement o, String[] mappObject)
-    {    	
+    {
     	ShapeType shapeType = o.getShapeType();
     	mappObject[COL_TYPE] = shapeType.getMappName();
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
     		unmapShapeHalf (o, mappObject);
     	else
     		unmapShape (o, mappObject);
-		
+
 		// note: when converting gpml to mapp,
 		// line color is discarded for oval and rect
     	if (shapeType == ShapeType.ARC)
     	{
-    		mappObject[COL_COLOR] = toMappColor(o.getColor(), false);	
+    		mappObject[COL_COLOR] = toMappColor(o.getColor(), false);
     	}
     	else
     	{
     		mappObject[COL_COLOR] = toMappColor(o.getFillColor(), o.isTransparent());
     	}
-		unmapRotation (o, mappObject);    	
+		unmapRotation (o, mappObject);
     }
-    
+
     private static PathwayElement mapFixedShapeType(String[] mappObject)
     {
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
         o.setShapeType(ShapeType.fromMappName(mappObject[COL_TYPE]));
         mapCenter (o, mappObject);
-        
+
         if (o.shapeType == ShapeType.CELLA)
 		{
         	o.setRotation (-1.308997);
@@ -926,7 +926,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         	o.setMHeight (600);
 		}
 		else if (o.shapeType == ShapeType.ORGANA)
-		{			
+		{
         	o.setMWidth (500);
         	o.setMHeight (2000);
 		}
@@ -940,28 +940,28 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         	o.setMWidth (600);
         	o.setMHeight (600);
         }
-        return o;        
+        return o;
     }
 
     private static void unmapFixedShapeType (PathwayElement o, String[] mappObject)
-    {    	
+    {
     	ShapeType shapeType = o.getShapeType();
     	mappObject[COL_TYPE] = shapeType.getMappName();
-    	
+
     	if (shapeType == ShapeType.CELLA)
     	{
     		mappObject[COL_ROTATION] = "-1.308997";
     		mappObject[COL_COLOR] = "0";
     		mappObject[COL_WIDTH] = "1500";
     		mappObject[COL_HEIGHT] = "375";
-    	}    	
+    	}
     	unmapShape (o, mappObject);
     }
-        
-    private static PathwayElement mapComplexShapeType(String[] mappObject) throws ConverterException 
-	{       		
+
+    private static PathwayElement mapComplexShapeType(String[] mappObject) throws ConverterException
+	{
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
-    	
+
     	if (mappObject[COL_TYPE].equals("Poly"))
         {
         	switch ((int)Double.parseDouble(mappObject[COL_SECONDY]))
@@ -970,15 +970,15 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         	case 5: o.setShapeType(ShapeType.PENTAGON); break;
         	case 6: o.setShapeType(ShapeType.HEXAGON); break;
         	default: throw
-        		new ConverterException ("Found polygon with unexpectec edge count: " + 
-        				mappObject[COL_SECONDY]); 
+        		new ConverterException ("Found polygon with unexpectec edge count: " +
+        				mappObject[COL_SECONDY]);
         	}
         }
     	else
     	{
-    		o.setShapeType(ShapeType.fromMappName(mappObject[COL_TYPE]));            
+    		o.setShapeType(ShapeType.fromMappName(mappObject[COL_TYPE]));
     	}
-        
+
     	mapCenter(o, mappObject);
     	double size = Double.parseDouble(mappObject[COL_WIDTH]);
     	o.setMWidth(size);
@@ -986,23 +986,23 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         mapRotation (o, mappObject);
         return o;
     }
-    
+
     private static void unmapComplexShapeType (PathwayElement o, String[] mappObject)
-    {   
+    {
     	ShapeType shapeType = o.getShapeType();
     	mappObject[COL_TYPE] = shapeType.getMappName();
- 		
+
     	if (shapeType == ShapeType.TRIANGLE)
     	{
     		mappObject[COL_SECONDY] = "3";
     	} else if (shapeType == ShapeType.PENTAGON)
     	{
-    		mappObject[COL_SECONDY] = "5";    		
+    		mappObject[COL_SECONDY] = "5";
 		} else if (shapeType == ShapeType.HEXAGON)
 		{
-			mappObject[COL_SECONDY] = "6";  			
+			mappObject[COL_SECONDY] = "6";
 		}
-    	
+
     	unmapCenter (o, mappObject);
     	double size = o.getMWidth();
     	mappObject[COL_WIDTH] = "" + size;
@@ -1012,11 +1012,11 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	}
     	else
     	{
-    		mappObject[COL_HEIGHT] = "400";	
+    		mappObject[COL_HEIGHT] = "400";
     	}
         unmapRotation (o, mappObject);
     }
-    
+
 	private static String[] extensions = new String[] { "mapp" };
 
 	public String getName() {
@@ -1026,13 +1026,13 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	public String[] getExtensions() {
 		return extensions;
 	}
-	
+
 	public void doExport(File file, Pathway pathway) throws ConverterException {
 		String[] mappInfo = MappFormat.uncopyMappInfo(pathway);
 		List<String[]> mappObjects = MappFormat.uncopyMappObjects(pathway);
 		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);
 	}
-	
+
 	public Pathway doImport(File file) throws ConverterException {
         Pathway pathway = new Pathway();
 		String inputString = file.getAbsolutePath();
@@ -1044,18 +1044,18 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
     private static Color fromMappColor(String s)
     {
-    	
+
     	int i = Integer.parseInt(s);
-    	
+
     	Color result = new Color(
     			i & 0xFF,
     			(i & 0xFF00) >> 8,
     			(i & 0xFF0000) >> 16
     	);
-    	
+
     	return result;
     }
-    
+
     private static String toMappColor(Color rgb, boolean fTransparent)
     {
     	if (fTransparent)

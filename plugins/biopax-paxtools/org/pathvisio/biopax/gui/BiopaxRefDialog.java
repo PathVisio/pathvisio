@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.biopax.gui;
@@ -39,10 +39,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.pathvisio.biopax.BiopaxManager;
 
-public class BiopaxRefDialog extends Dialog {	
+public class BiopaxRefDialog extends Dialog {
 	BiopaxManager biopax;
 	String ref;
-	
+
 	TableViewer tableViewer;
 
 	public BiopaxRefDialog(Shell shell, BiopaxManager bp, String ref) {
@@ -51,7 +51,7 @@ public class BiopaxRefDialog extends Dialog {
 		biopax = bp;
 		this.ref = ref;
 	}
-		
+
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID,
 				IDialogConstants.OK_LABEL, true);
@@ -62,16 +62,16 @@ public class BiopaxRefDialog extends Dialog {
 	public String getRef() {
 		return ref;
 	}
-	
+
 	public void setRef(String r) {
 		ref = r;
 	}
-	
+
 	protected Control createDialogArea(Composite parent) {
 		 Composite comp = (Composite) super.createDialogArea(parent);
 		 comp.setLayout(new GridLayout());
-		 
-		 
+
+
 		 tableViewer = new TableViewer(comp, SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
 		 Table t = tableViewer.getTable();
 		 t.setHeaderVisible(true);
@@ -81,7 +81,7 @@ public class BiopaxRefDialog extends Dialog {
 		 TableColumn tcID = new TableColumn(t, SWT.LEFT);
 		 tcID.setText("ID");
 		 tcID.setWidth(100);
-		 
+
 		 tableViewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object input) {
 				BiopaxManager bpm = (BiopaxManager)input;
@@ -95,7 +95,7 @@ public class BiopaxRefDialog extends Dialog {
 			public void dispose() { }
 
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {	}
-			 
+
 		 });
 		 tableViewer.setLabelProvider(new ITableLabelProvider() {
 			public void addListener(ILabelProviderListener l) { }
@@ -120,26 +120,26 @@ public class BiopaxRefDialog extends Dialog {
 			public void selectionChanged(SelectionChangedEvent e) {
 				BioPAXElement selected = getSelectedObject(e.getSelection());
 				setRef(selected.getRDFId());
-			}	
+			}
 		 });
-		 
+
 		 init();
-		 
+
 		 return comp;
 	}
-	
+
 	BioPAXElement getSelectedObject(ISelection s) {
 		return (BioPAXElement)
 			((IStructuredSelection)s).getFirstElement();
 	}
-	
+
 	private void update() {
 		if(tableViewer != null) {
 			tableViewer.setInput(biopax);
 			tableViewer.refresh();
 		}
 	}
-	
+
 	private void init() {
 		tableViewer.setInput(biopax);
 		BioPAXElement pe = biopax.getModel().getIdMap().get(ref);
@@ -147,5 +147,5 @@ public class BiopaxRefDialog extends Dialog {
 			tableViewer.setSelection(new StructuredSelection(pe));
 		}
 	}
-	
+
 }

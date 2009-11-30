@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.plugins.gex;
@@ -73,41 +73,41 @@ import org.pathvisio.util.swing.PermissiveComboBox;
 import org.pathvisio.util.swing.SimpleFileFilter;
 
 /**
- * Wizard to guide the user through importing a large dataset from a tab delimited text file 
+ * Wizard to guide the user through importing a large dataset from a tab delimited text file
  * in PathVisio. For example gene expression data.
  */
-public class GexImportWizard extends Wizard 
+public class GexImportWizard extends Wizard
 {
 	private ImportInformation importInformation = new ImportInformation();
-	
+
     FilePage fpd = new FilePage();
     HeaderPage hpd = new HeaderPage();
     ColumnPage cpd = new ColumnPage();
     ImportPage ipd = new ImportPage();
-    
+
     private final PvDesktop standaloneEngine;
-    
+
 	public GexImportWizard (PvDesktop standaloneEngine)
 	{
 		this.standaloneEngine = standaloneEngine;
-		
+
 		getDialog().setTitle ("Expression data import wizard");
-		
+
         this.registerWizardPanel(FilePage.IDENTIFIER, fpd);
         this.registerWizardPanel(HeaderPage.IDENTIFIER, hpd);
         this.registerWizardPanel(ColumnPage.IDENTIFIER, cpd);
         this.registerWizardPanel(ImportPage.IDENTIFIER, ipd);
-        
-        setCurrentPanel(FilePage.IDENTIFIER);        
+
+        setCurrentPanel(FilePage.IDENTIFIER);
 	}
-		
+
 	private class FilePage extends WizardPanelDescriptor implements ActionListener
 	{
 	    public static final String IDENTIFIER = "FILE_PAGE";
 	    static final String ACTION_INPUT = "input";
 	    static final String ACTION_OUTPUT = "output";
 	    static final String ACTION_GDB = "gdb";
-	    
+
 	    private JTextField txtInput;
 	    private JTextField txtOutput;
 	    private JTextField txtGdb;
@@ -115,23 +115,23 @@ public class GexImportWizard extends Wizard
 	    private JButton btnInput;
 	    private JButton btnOutput;
 	    private boolean txtFileComplete = false;
-	    
+
 		/**
 		 * Stores the given {@link File} pointing to the file containing the expresssion
 		 * data in text form to the {@link ImportInformation} object
 		 * @param file
 		 */
-		private void updateTxtFile() 
+		private void updateTxtFile()
 		{
 			String fileName = txtInput.getText();
 			File file = new File (fileName);
 			txtFileComplete = true;
-			if (!file.exists()) 
+			if (!file.exists())
 			{
 				setErrorMessage("Specified file to import does not exist");
 				txtFileComplete = false;
 			}
-			else if (!file.canRead()) 
+			else if (!file.canRead())
 			{
 				setErrorMessage("Can't access specified file containing expression data");
 				txtFileComplete = false;
@@ -152,53 +152,53 @@ public class GexImportWizard extends Wizard
 			String outFile = FileUtils.removeExtension(fileName) + ".pgex";
 
 		    txtOutput.setText(outFile);
-		    
+
 		    if (txtFileComplete)
 			{
 				setErrorMessage(null);
 				txtFileComplete = true;
 			}
 		}
-		
+
 		public void aboutToDisplayPanel()
 		{
 	        getWizard().setNextFinishButtonEnabled(txtFileComplete);
 			getWizard().setPageTitle ("Choose file locations");
 		}
-		
-	    public FilePage() 
+
+	    public FilePage()
 	    {
 	        super(IDENTIFIER);
 	    }
-	    
-	    public Object getNextPanelDescriptor() 
+
+	    public Object getNextPanelDescriptor()
 	    {
 	        return HeaderPage.IDENTIFIER;
 	    }
-	    
-	    public Object getBackPanelDescriptor() 
+
+	    public Object getBackPanelDescriptor()
 	    {
 	        return null;
-	    }  
+	    }
 
 		protected JPanel createContents()
-		{			
+		{
 			txtInput = new JTextField(40);
 		    txtOutput = new JTextField(40);
 		    txtGdb = new JTextField(40);
 		    btnGdb = new JButton ("Browse");
 		    btnInput = new JButton ("Browse");
 		    btnOutput = new JButton ("Browse");
-		    
+
 		    FormLayout layout = new FormLayout (
 		    		"right:pref, 3dlu, pref, 3dlu, pref",
 		    		"p, 3dlu, p, 3dlu, p");
-		    
+
 		    PanelBuilder builder = new PanelBuilder(layout);
 		    builder.setDefaultDialogBorder();
-		    
+
 		    CellConstraints cc = new CellConstraints();
-			
+
 			builder.addLabel ("Input file", cc.xy (1,1));
 			builder.add (txtInput, cc.xy (3,1));
 			builder.add (btnInput, cc.xy (5,1));
@@ -208,31 +208,31 @@ public class GexImportWizard extends Wizard
 			builder.addLabel ("Gene database", cc.xy (1,5));
 			builder.add (txtGdb, cc.xy (3,5));
 			builder.add (btnGdb, cc.xy (5,5));
-			
+
 			btnInput.addActionListener(this);
 			btnInput.setActionCommand(ACTION_INPUT);
 			btnOutput.addActionListener(this);
 			btnOutput.setActionCommand(ACTION_OUTPUT);
 			btnGdb.addActionListener(this);
 			btnGdb.setActionCommand(ACTION_GDB);
-			
+
 			txtInput.getDocument().addDocumentListener(new DocumentListener()
 			{
-				public void changedUpdate(DocumentEvent arg0) 
+				public void changedUpdate(DocumentEvent arg0)
 				{
 					updateTxtFile();
 				}
 
-				public void insertUpdate(DocumentEvent arg0) 
+				public void insertUpdate(DocumentEvent arg0)
 				{
 					updateTxtFile();
 				}
 
-				public void removeUpdate(DocumentEvent arg0) 
+				public void removeUpdate(DocumentEvent arg0)
 				{
-					updateTxtFile();					
+					updateTxtFile();
 				}
-				
+
 			});
 			txtGdb.setText(
 					PreferenceManager.getCurrent().get(GlobalPreference.DB_CONNECTSTRING_GDB)
@@ -240,7 +240,7 @@ public class GexImportWizard extends Wizard
 			return builder.getPanel();
 		}
 
-		public void aboutToHidePanel() 
+		public void aboutToHidePanel()
 		{
 			importInformation.guessSettings();
 			importInformation.setGexName (txtOutput.getText());
@@ -248,14 +248,14 @@ public class GexImportWizard extends Wizard
 
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
-			
+
 			if(ACTION_GDB.equals(action)) {
 				standaloneEngine.selectGdb("Gene");
 				txtGdb.setText(
 						PreferenceManager.getCurrent().get(GlobalPreference.DB_CONNECTSTRING_GDB)
 				);
 			} else if(ACTION_INPUT.equals(action)) {
-				
+
 				File defaultdir = PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT);
 				JFileChooser jfc = new JFileChooser();
 				jfc.setCurrentDirectory(defaultdir);
@@ -273,7 +273,7 @@ public class GexImportWizard extends Wizard
 				try {
 					DBConnector dbConn = standaloneEngine.getGexManager().getDBConnector();
 						String output = ((DBConnectorSwing)dbConn).openNewDbDialog(
-								getPanelComponent(), importInformation.getGexName()	
+								getPanelComponent(), importInformation.getGexName()
 						);
 						if(output != null) {
 							txtOutput.setText(output);
@@ -281,7 +281,7 @@ public class GexImportWizard extends Wizard
 				} catch(Exception ex) {
 					JOptionPane.showMessageDialog(
 							getPanelComponent(), "The database connector is not supported"
-							
+
 					);
 					Logger.log.error("No gex database connector", ex);
 				}
@@ -289,8 +289,8 @@ public class GexImportWizard extends Wizard
 		}
 
 	}
-	
-	private class HeaderPage extends WizardPanelDescriptor 
+
+	private class HeaderPage extends WizardPanelDescriptor
 	{
 	    public static final String IDENTIFIER = "HEADER_PAGE";
 		private PreviewTableModel ptm;
@@ -301,34 +301,34 @@ public class GexImportWizard extends Wizard
 		private JRadioButton rbSepSpace;
 		private JRadioButton rbSepOther;
 		//private JButton btnAdvanced;
-		
-	    public HeaderPage() 
+
+	    public HeaderPage()
 	    {
 	        super(IDENTIFIER);
 	    }
-	    
-	    public Object getNextPanelDescriptor() 
+
+	    public Object getNextPanelDescriptor()
 	    {
 	        return ColumnPage.IDENTIFIER;
 	    }
-	    
-	    public Object getBackPanelDescriptor() 
+
+	    public Object getBackPanelDescriptor()
 	    {
 	        return FilePage.IDENTIFIER;
-	    }  
-	    
+	    }
+
 	    @Override
 		protected Component createContents()
 		{
 		    FormLayout layout = new FormLayout (
 		    		"pref, 3dlu, pref, 3dlu, pref, pref:grow",
 		    		"p, 3dlu, p, 3dlu, p, 15dlu, fill:[100dlu,min]:grow");
-		    
+
 		    PanelBuilder builder = new PanelBuilder(layout);
 		    builder.setDefaultDialogBorder();
-		    
+
 		    CellConstraints cc = new CellConstraints();
-			
+
 			rbSepTab = new JRadioButton ("tab");
 			rbSepComma = new JRadioButton ("comma");
 			rbSepSemi = new JRadioButton ("semicolon");
@@ -340,13 +340,13 @@ public class GexImportWizard extends Wizard
 			bgSeparator.add (rbSepSemi);
 			bgSeparator.add (rbSepSpace);
 			bgSeparator.add (rbSepOther);
-			
+
 			builder.add (rbSepTab, cc.xy(1,1));
 			builder.add (rbSepComma, cc.xy(1,3));
 			builder.add (rbSepSemi, cc.xy(1,5));
 			builder.add (rbSepSpace, cc.xy(3,1));
 			builder.add (rbSepOther, cc.xy(3,3));
-						
+
 			final JTextField txtOther = new JTextField(3);
 			builder.add (txtOther, cc.xy(5, 3));
 
@@ -357,12 +357,12 @@ public class GexImportWizard extends Wizard
 			tblPreview = new JTable(ptm);
 			tblPreview.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			JScrollPane scrTable = new JScrollPane(tblPreview);
-			
+
 			builder.add (scrTable, cc.xyw(1,7,6));
-			
+
 			txtOther.addActionListener(new ActionListener () {
 
-				public void actionPerformed(ActionEvent arg0) 
+				public void actionPerformed(ActionEvent arg0)
 				{
 					importInformation.setDelimiter (txtOther.getText());
 					importInformation.guessSettings();
@@ -370,10 +370,10 @@ public class GexImportWizard extends Wizard
 					rbSepOther.setSelected (true);
 				}
 
-				
+
 			})
 			;
-						
+
 			rbSepComma.addActionListener(new ActionListener()
 			{
 				public void actionPerformed (ActionEvent ae)
@@ -381,7 +381,7 @@ public class GexImportWizard extends Wizard
 					importInformation.setDelimiter(",");
 					ptm.refresh();
 				}
-				
+
 			});
 			rbSepTab.addActionListener(new ActionListener()
 			{
@@ -390,7 +390,7 @@ public class GexImportWizard extends Wizard
 					importInformation.setDelimiter("\t");
 					ptm.refresh();
 				}
-				
+
 			});
 			rbSepSemi.addActionListener(new ActionListener()
 			{
@@ -407,9 +407,9 @@ public class GexImportWizard extends Wizard
 					importInformation.setDelimiter(" ");
 					ptm.refresh();
 				}
-				
+
 			});
-			
+
 			/*
 			btnAdvanced.addActionListener(new ActionListener()
 			{
@@ -420,7 +420,7 @@ public class GexImportWizard extends Wizard
 
 					final JRadioButton rbDecimalDot;
 					final JRadioButton rbDecimalComma;
-					
+
 					ButtonGroup bgDecimal = new ButtonGroup();
 					rbDecimalDot = new JRadioButton ("Use dot as decimal separator");
 					rbDecimalComma = new JRadioButton ("Use comma as decimal separator");
@@ -430,17 +430,17 @@ public class GexImportWizard extends Wizard
 
 					dlg.add(rbDecimalComma);
 					dlg.add(rbDecimalDot);
-					
+
 					rbDecimalDot.setSelected(importInformation.digitIsDot());
 					rbDecimalComma.setSelected(!importInformation.digitIsDot());
-					
+
 					JButton btnOk = new JButton ("OK");
-					
+
 					dlg.add (btnOk);
 					btnOk.addActionListener(new ActionListener()
 					{
 
-						public void actionPerformed(ActionEvent ae) 
+						public void actionPerformed(ActionEvent ae)
 						{
 							importInformation.setDigitIsDot (rbDecimalDot.isSelected());
 							dlg.dispose();
@@ -450,12 +450,12 @@ public class GexImportWizard extends Wizard
 					dlg.pack();
 					dlg.setVisible(true);
 				}
-				
-				public void actionPerformed(ActionEvent e) 
+
+				public void actionPerformed(ActionEvent e)
 				{
-					javax.swing.SwingUtilities.invokeLater(new Runnable() 
+					javax.swing.SwingUtilities.invokeLater(new Runnable()
 					{
-						
+
 						public void run() {
 							createAndShowDlg();
 						}
@@ -465,7 +465,7 @@ public class GexImportWizard extends Wizard
 			*/
 			return builder.getPanel();
 		}
-	    
+
 	    public void aboutToDisplayPanel()
 	    {
 			getWizard().setPageTitle ("Choose data delimiter");
@@ -494,56 +494,56 @@ public class GexImportWizard extends Wizard
 	    	}
 	    }
 	}
-	
-	private class ColumnPage extends WizardPanelDescriptor 
+
+	private class ColumnPage extends WizardPanelDescriptor
 	{
 	    public static final String IDENTIFIER = "COLUMN_PAGE";
 
 	    private ColumnTableModel ctm;
 		private JTable tblColumn;
-		
+
 	    private JComboBox cbColId;
 	    private JComboBox cbColSyscode;
 	    private JRadioButton rbFixedNo;
 	    private JRadioButton rbFixedYes;
 	    private JComboBox cbDataSource;
 	    private DataSourceModel mDataSource;
-	    
-	    public ColumnPage() 
+
+	    public ColumnPage()
 	    {
 	        super(IDENTIFIER);
 	    }
-	    
-	    public Object getNextPanelDescriptor() 
+
+	    public Object getNextPanelDescriptor()
 	    {
 	        return ImportPage.IDENTIFIER;
 	    }
-	    
-	    public Object getBackPanelDescriptor() 
+
+	    public Object getBackPanelDescriptor()
 	    {
 	        return HeaderPage.IDENTIFIER;
-	    }  
+	    }
 
 	    @Override
-		protected JPanel createContents() 
+		protected JPanel createContents()
 		{
 		    FormLayout layout = new FormLayout (
 		    		"pref, 7dlu, pref:grow",
 		    		"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, fill:[100dlu,min]:grow");
-		    
+
 		    PanelBuilder builder = new PanelBuilder(layout);
 		    builder.setDefaultDialogBorder();
-		    
+
 		    CellConstraints cc = new CellConstraints();
-			
+
 			rbFixedNo = new JRadioButton("Select a column to specify system code");
 			rbFixedYes = new JRadioButton("Use the same system code for all rows");
 			ButtonGroup bgSyscodeCol = new ButtonGroup ();
 			bgSyscodeCol.add (rbFixedNo);
 			bgSyscodeCol.add (rbFixedYes);
-			
+
 			cbColId = new JComboBox();
-			cbColSyscode = new JComboBox();			
+			cbColSyscode = new JComboBox();
 
 			mDataSource = new DataSourceModel();
 			cbDataSource = new PermissiveComboBox(mDataSource);
@@ -558,14 +558,14 @@ public class GexImportWizard extends Wizard
 			JTable rowHeader = new RowNumberHeader(tblColumn);
 			rowHeader.addMouseListener(new RowPopupListener());
 			JScrollPane scrTable = new JScrollPane(tblColumn);
-		    
+
 			JViewport jv = new JViewport();
 		    jv.setView(rowHeader);
 		    jv.setPreferredSize(rowHeader.getPreferredSize());
 		    scrTable.setRowHeader(jv);
 //		    scrTable.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, rowHeader
 //		            .getTableHeader());
-		    
+
 			builder.addLabel ("Select primary identifier column:", cc.xy(1,1));
 			builder.add (cbColId, cc.xy(3,1));
 
@@ -573,9 +573,9 @@ public class GexImportWizard extends Wizard
 			builder.add (cbColSyscode, cc.xy(3,5));
 			builder.add (rbFixedYes, cc.xyw (1,7,3));
 			builder.add (cbDataSource, cc.xy (3,9));
-			
+
 			builder.add (scrTable, cc.xyw(1,11,3));
-			
+
 			ActionListener rbAction = new ActionListener() {
 				public void actionPerformed (ActionEvent ae)
 				{
@@ -586,10 +586,10 @@ public class GexImportWizard extends Wizard
 			};
 			rbFixedYes.addActionListener(rbAction);
 			rbFixedNo.addActionListener(rbAction);
-			
+
 			mDataSource.addListDataListener(new ListDataListener()
 			{
-				public void contentsChanged(ListDataEvent arg0) 
+				public void contentsChanged(ListDataEvent arg0)
 				{
 					importInformation.setDataSource(mDataSource.getSelectedDataSource());
 				}
@@ -598,7 +598,7 @@ public class GexImportWizard extends Wizard
 
 				public void intervalRemoved(ListDataEvent arg0) {}
 			});
-			
+
 			cbColSyscode.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent ae)
 				{
@@ -615,28 +615,28 @@ public class GexImportWizard extends Wizard
 			});
 			return builder.getPanel();
 		}
-	    
+
 	    private class ColumnPopupListener extends MouseAdapter
 	    {
-	    	@Override public void mousePressed (MouseEvent e) 
+	    	@Override public void mousePressed (MouseEvent e)
 			{
 				showPopup(e);
 			}
-		
+
 			@Override public void mouseReleased (MouseEvent e)
 			{
 				showPopup(e);
 			}
 
 			int clickedCol;
-			
-			private void showPopup(MouseEvent e) 
+
+			private void showPopup(MouseEvent e)
 			{
 				if (e.isPopupTrigger())
 				{
 					JPopupMenu popup;
 					popup = new JPopupMenu();
-					clickedCol = tblColumn.columnAtPoint(e.getPoint()); 
+					clickedCol = tblColumn.columnAtPoint(e.getPoint());
 					if (clickedCol != importInformation.getSyscodeColumn())
 						popup.add(new SyscodeColAction());
 					if (clickedCol != importInformation.getIdColumn())
@@ -648,60 +648,60 @@ public class GexImportWizard extends Wizard
 
 			private class SyscodeColAction extends AbstractAction
 			{
-				public SyscodeColAction() 
+				public SyscodeColAction()
 				{
 					putValue(Action.NAME, "SystemCode column");
 				}
-				
-				public void actionPerformed(ActionEvent arg0) 
+
+				public void actionPerformed(ActionEvent arg0)
 				{
 					// if id and code column are about to be the same, swap them
 					if (clickedCol == importInformation.getIdColumn())
 						importInformation.setIdColumn(importInformation.getSyscodeColumn());
 					importInformation.setSysodeColumn(clickedCol);
 					columnPageRefresh();
-				}	
+				}
 			}
 
 			private class IdColAction extends AbstractAction
 			{
-				public IdColAction() 
+				public IdColAction()
 				{
 					putValue(Action.NAME, "Identifier column");
 				}
-				
-				public void actionPerformed(ActionEvent arg0) 
+
+				public void actionPerformed(ActionEvent arg0)
 				{
 					// if id and code column are about to be the same, swap them
 					if (clickedCol == importInformation.getSyscodeColumn())
 						importInformation.setSysodeColumn(importInformation.getIdColumn());
-					importInformation.setIdColumn(clickedCol); 
+					importInformation.setIdColumn(clickedCol);
 					columnPageRefresh();
-				}	
+				}
 			}
 	    }
-		
+
 	    private class RowPopupListener extends MouseAdapter
 	    {
-	    	@Override public void mousePressed (MouseEvent e) 
+	    	@Override public void mousePressed (MouseEvent e)
 			{
 				showPopup(e);
 			}
-		
+
 			@Override public void mouseReleased (MouseEvent e)
 			{
 				showPopup(e);
 			}
 
 			int clickedRow;
-			
-			private void showPopup(MouseEvent e) 
+
+			private void showPopup(MouseEvent e)
 			{
 				if (e.isPopupTrigger())
 				{
 					JPopupMenu popup;
 					popup = new JPopupMenu();
-					clickedRow = tblColumn.rowAtPoint(e.getPoint()); 
+					clickedRow = tblColumn.rowAtPoint(e.getPoint());
 					popup.add(new DataStartAction());
 					popup.add(new HeaderStartAction());
 					popup.show(e.getComponent(),
@@ -711,32 +711,32 @@ public class GexImportWizard extends Wizard
 
 			private class DataStartAction extends AbstractAction
 			{
-				public DataStartAction() 
+				public DataStartAction()
 				{
 					putValue(Action.NAME, "First data row");
 				}
-				
-				public void actionPerformed(ActionEvent arg0) 
+
+				public void actionPerformed(ActionEvent arg0)
 				{
 					importInformation.setFirstDataRow(clickedRow);
 					columnPageRefresh();
-				}	
+				}
 			}
 
 			private class HeaderStartAction extends AbstractAction
 			{
-				public HeaderStartAction() 
+				public HeaderStartAction()
 				{
 					putValue(Action.NAME, "First header row");
 				}
-				
-				public void actionPerformed(ActionEvent arg0) 
+
+				public void actionPerformed(ActionEvent arg0)
 				{
 					importInformation.setFirstHeaderRow(clickedRow);
 					columnPageRefresh();
 				}
 			}
-			
+
 	    }
 
 	    private void columnPageRefresh()
@@ -762,31 +762,31 @@ public class GexImportWizard extends Wizard
 		    getWizard().setNextFinishButtonEnabled(error == null);
 		    getWizard().setErrorMessage(error == null ? "" : error);
 			getWizard().setPageTitle ("Choose column types");
-			
+
 	    	ctm.refresh();
 	    }
-	    
+
 	    private void refreshComboBoxes()
 	    {
 	    	mDataSource.setSelectedItem(importInformation.getDataSource());
 			cbColId.setSelectedIndex(importInformation.getIdColumn());
 			cbColSyscode.setSelectedIndex(importInformation.getSyscodeColumn());
 	    }
-	    
-	    /** 
+
+	    /**
 	     * A simple cell Renderer for combo boxes that use the
 	     * column index integer as value,
 	     * but will display the column name String
 	     */
-	    private class ColumnNameRenderer extends JLabel implements ListCellRenderer 
+	    private class ColumnNameRenderer extends JLabel implements ListCellRenderer
 	    {
-			public ColumnNameRenderer() 
+			public ColumnNameRenderer()
 			{
 				setOpaque(true);
 				setHorizontalAlignment(CENTER);
 				setVerticalAlignment(CENTER);
 			}
-		
+
 			/*
 			* This method finds the image and text corresponding
 			* to the selected value and returns the label, set up
@@ -797,13 +797,13 @@ public class GexImportWizard extends Wizard
 			                        Object value,
 			                        int index,
 			                        boolean isSelected,
-			                        boolean cellHasFocus) 
+			                        boolean cellHasFocus)
 			{
 				//Get the selected index. (The index param isn't
 				//always valid, so just use the value.)
 				int selectedIndex = ((Integer)value).intValue();
-				
-				if (isSelected) 
+
+				if (isSelected)
 				{
 					setBackground(list.getSelectionBackground());
 					setForeground(list.getSelectionForeground());
@@ -811,35 +811,35 @@ public class GexImportWizard extends Wizard
 					setBackground(list.getBackground());
 					setForeground(list.getForeground());
 				}
-				
+
 				String[] cn = importInformation.getColNames();
 				String column = cn[selectedIndex];
 				setText(column);
 				setFont(list.getFont());
-				
+
 				return this;
 			}
 		}
 
 	    public void aboutToDisplayPanel()
-	    {			
+	    {
 	    	// create an array of size getSampleMaxNumCols()
 	    	Integer[] cn;
 	    	int max = importInformation.getSampleMaxNumCols();
     		cn = new Integer[max];
     		for (int i = 0; i < max; ++i) cn[i] = i;
-    		
+
 	    	cbColId.setRenderer(new ColumnNameRenderer());
 	    	cbColSyscode.setRenderer(new ColumnNameRenderer());
 	    	cbColId.setModel(new DefaultComboBoxModel(cn));
 	    	cbColSyscode.setModel(new DefaultComboBoxModel(cn));
-			
+
 			columnPageRefresh();
 			refreshComboBoxes();
-			
+
 	    	ctm.refresh();
 	    }
-	    
+
 	    @Override
 	    public void aboutToHidePanel()
 	    {
@@ -850,31 +850,31 @@ public class GexImportWizard extends Wizard
 	    	}
 	    }
 	}
-	
+
 	private class ImportPage extends WizardPanelDescriptor implements ProgressListener
 	{
 	    public static final String IDENTIFIER = "IMPORT_PAGE";
-		
-	    public ImportPage() 
+
+	    public ImportPage()
 	    {
 	        super(IDENTIFIER);
 	    }
-	    
-	    public Object getNextPanelDescriptor() 
+
+	    public Object getNextPanelDescriptor()
 	    {
 	        return FINISH;
 	    }
-	    
-	    public Object getBackPanelDescriptor() 
+
+	    public Object getBackPanelDescriptor()
 	    {
 	        return ColumnPage.IDENTIFIER;
-	    }  
-	    
+	    }
+
 	    private JProgressBar progressSent;
 	    private JTextArea progressText;
 	    private ProgressKeeper pk;
 	    private JLabel lblTask;
-	    
+
 	    @Override
 	    public void aboutToCancel()
 	    {
@@ -888,10 +888,10 @@ public class GexImportWizard extends Wizard
 	    			"fill:[100dlu,min]:grow",
 	    			"pref, pref, fill:pref:grow"
 	    	);
-	    	
+
 	    	DefaultFormBuilder builder = new DefaultFormBuilder(layout);
 	    	builder.setDefaultDialogBorder();
-	    	
+
         	pk = new ProgressKeeper((int)1E6);
         	pk.addListener(this);
 			progressSent = new JProgressBar(0, pk.getTotalWork());
@@ -899,24 +899,24 @@ public class GexImportWizard extends Wizard
 	        builder.nextLine();
 	        lblTask = new JLabel();
 	        builder.append(lblTask);
-	        
+
 	        progressText = new JTextArea();
-	       
+
 			builder.append(new JScrollPane(progressText));
 			return builder.getPanel();
 		}
-	    
+
 	    public void setProgressValue(int i)
 	    {
 	        progressSent.setValue(i);
 	    }
 
-	    public void setProgressText(String msg) 
+	    public void setProgressText(String msg)
 	    {
 	        progressText.setText(msg);
 	    }
 
-	    public void aboutToDisplayPanel() 
+	    public void aboutToDisplayPanel()
 	    {
 			getWizard().setPageTitle ("Perform import");
 	        setProgressValue(0);
@@ -926,21 +926,21 @@ public class GexImportWizard extends Wizard
 	        getWizard().setBackButtonEnabled(false);
 	    }
 
-	    public void displayingPanel() 
+	    public void displayingPanel()
 	    {
 			SwingWorker<Void, Void> sw = new SwingWorker<Void, Void>() {
 				@Override protected Void doInBackground() throws Exception {
 					pk.setTaskName("Importing pathway");
-					try 
+					try
 					{
 						GexTxtImporter.importFromTxt(
 								importInformation,
-								pk, 
+								pk,
 								standaloneEngine.getSwingEngine().getGdbManager().getCurrentGdb(),
 								standaloneEngine.getGexManager()
 						);
-					} 
-					catch (Exception e) 
+					}
+					catch (Exception e)
 					{
 						setProgressValue(0);
 						setProgressText("An Error Has Occurred");
@@ -951,7 +951,7 @@ public class GexImportWizard extends Wizard
 					}
 					return null;
 				}
-				
+
 				@Override public void done()
 				{
 					getWizard().setNextFinishButtonEnabled(true);
@@ -961,9 +961,9 @@ public class GexImportWizard extends Wizard
 			sw.execute();
 	    }
 
-		public void progressEvent(ProgressEvent e) 
+		public void progressEvent(ProgressEvent e)
 		{
-			switch(e.getType()) 
+			switch(e.getType())
 			{
 				case ProgressEvent.FINISHED:
 					progressSent.setValue(pk.getTotalWork());
@@ -980,6 +980,6 @@ public class GexImportWizard extends Wizard
 		}
 
 	}
-	
-	
+
+
 }

@@ -39,7 +39,8 @@ public class ReporterData implements Comparable<ReporterData>
 	/**
 	 * Constructor for this class. Creates a new {@link ReporterData} object for the given reporter
 	 * @param ref The IdCodePair that represents the reporter
-	 * @param groupId An id that groups the expression data from duplicate reporters
+	 * @param groupId An id that groups the expression data from duplicate reporters. groupId is also used
+	 * 	as a sorting key, to keep the order of Reporters consistent.
 	 */
 	ReporterData(Xref ref, int groupId) {
 		idc = ref;
@@ -176,9 +177,9 @@ public class ReporterData implements Comparable<ReporterData>
 	}
 
 	@Override
-	public int compareTo(ReporterData o) 
-	{		
-		return idc.compareTo(o.idc);
+	public int compareTo(ReporterData o)
+	{
+		return group - o.group;
 	}
 
 }

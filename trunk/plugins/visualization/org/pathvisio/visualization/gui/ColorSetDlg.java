@@ -41,7 +41,7 @@ public class ColorSetDlg extends OkCancelDialog
 		super (frame, "Edit Color Set", locationComp, true, true);
 		this.cs = cs;
 		setDialogComponent(new JScrollPane(new ColorSetPanel(cs, gexManager)));
-		setMinimumSize(new Dimension(200, 300));
+		setMinimumSize(new Dimension(200, 600));
 		pack();
 	}
 }

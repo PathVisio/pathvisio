@@ -1368,7 +1368,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			// Form new group with all selected elements
 			PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
 			data.add(group);
-			group.setTextLabel("Group object");
 			group.setGroupStyle(GroupStyle.NONE);
 			String id = group.createGroupId();
 

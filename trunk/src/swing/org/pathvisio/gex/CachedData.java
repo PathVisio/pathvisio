@@ -118,6 +118,7 @@ public class CachedData
 		{
 			result =
 				new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilterCache));
+			Collections.sort(result);
 			data.put (ref, result);
 		}
 		else

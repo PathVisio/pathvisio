@@ -20,8 +20,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.xml.rpc.ServiceException;
@@ -29,6 +35,7 @@ import javax.xml.rpc.ServiceException;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -106,7 +113,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 	}
 
 	private Result createPathwayResult(final WSSearchResult wsr, String id) {
-		String pdescr = null;
+		Logger.log.info("Creating pathway result for: " + wsr.getId());
 		String iddescr = null;
 		try {
 			if(id != null) {
@@ -116,7 +123,9 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 				if(fields == null) fields = new WSIndexField[0];
 				for(WSIndexField f : fields) {
 					if("graphId".equals(f.getName())) {
-						for(String graphId : f.getValues()) {
+						String[] graphIds = f.getValues();
+						if(graphIds == null) graphIds = new String[0];
+						for(String graphId : graphIds) {
 							PathwayElement pwe = pathway.getElementById(graphId);
 							if(pwe != null) {
 								idlist += "<li>" + pwe.getTextLabel() + " (";
@@ -164,6 +173,29 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		return r;
 	}
 
+	private WSSearchResult[] mergeResults(WSSearchResult[] results) {
+		List<WSSearchResult> merged = new ArrayList<WSSearchResult>();
+		Map<String, WSSearchResult> resultById = new HashMap<String, WSSearchResult>();
+		//Merge result if it's the same pathway
+		for(WSSearchResult r : results) {
+			WSSearchResult m = resultById.get(r.getId());
+			if(m == null) {
+				resultById.put(r.getId(), r);
+				merged.add(r);
+			} else {
+				//Merge fields
+				Set<WSIndexField> fields = new HashSet<WSIndexField>();
+				for(WSIndexField f : r.getFields()) fields.add(f);
+				for(WSIndexField f : m.getFields()) fields.add(f);
+				m.setFields(fields.toArray(new WSIndexField[fields.size()]));
+				//Merge score
+				m.setScore(Math.max(m.getScore(), r.getScore()));
+			}
+		}
+		
+		return merged.toArray(new WSSearchResult[merged.size()]);
+	}
+	
 	private Result[] searchText(String query) throws ServiceException, RemoteException {
 		WSSearchResult[] wsResults = getClient().findPathwaysByText(query, null);
 		Result[] results = new Result[wsResults.length];
@@ -185,6 +217,8 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 			Xref xref = new Xref(id, ds);
 			wsResults = getClient().findPathwaysByXref(xref);
 		}
+		
+		wsResults = mergeResults(wsResults);
 		
 		Result[] results = new Result[wsResults.length];
 		for(int i = 0; i < wsResults.length; i++) {

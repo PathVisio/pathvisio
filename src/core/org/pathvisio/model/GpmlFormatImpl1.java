@@ -1353,6 +1353,7 @@ public class GpmlFormatImpl1
 					do
 					{
 						newId = "id" + Integer.toHexString((builder.toString() + ("_" + i)).hashCode());
+						i++;
 					}
 					while (pathway.getGraphIds().contains(newId));
 					pe.setGraphId(newId);

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways;
@@ -57,13 +57,13 @@ import org.pathvisio.wikipathways.webservice.WikiPathwaysPortType;
  */
 public class WikiPathwaysClient {
 	private WikiPathwaysPortType port;
-	
+
 	private WSAuth auth;
-	
+
 	public WikiPathwaysClient() throws ServiceException {
 		this(null);
 	}
-	
+
 	public WikiPathwaysClient(URL portAddress) throws ServiceException {
 		if(portAddress != null) {
 			port = new WikiPathwaysLocator().getWikiPathwaysSOAPPort_Http(portAddress);
@@ -72,7 +72,7 @@ public class WikiPathwaysClient {
 		}
 		MIMShapes.registerShapes();
 	}
-	
+
 	/**
 	 * Get a info about the pathway (without getting the actual
 	 * GPML code).
@@ -80,7 +80,7 @@ public class WikiPathwaysClient {
 	public WSPathwayInfo getPathwayInfo(String id) throws RemoteException {
 		return port.getPathwayInfo(id);
 	}
-	
+
 	/**
 	 * Get a pathway from WikiPathways.
 	 * @see #toPathway(WSPathway)
@@ -88,7 +88,7 @@ public class WikiPathwaysClient {
 	public WSPathway getPathway(String id) throws RemoteException, ConverterException {
 		return getPathway(id, 0);
 	}
-	
+
 	/**
 	 * List all pathways on WikiPathways
 	 */
@@ -97,7 +97,7 @@ public class WikiPathwaysClient {
 		if(r == null) r = new WSPathwayInfo[0];
 		return r;
 	}
-	
+
 	/**
 	 * List all pathways on WikiPathways for the given organism
 	 * @param organism The organism to filter by.
@@ -109,17 +109,17 @@ public class WikiPathwaysClient {
 		if(r == null) r = new WSPathwayInfo[0];
 		return r;
 	}
-	
+
 	/**
 	 * Lists all available organisms on WikiPathways
-	 * @throws RemoteException 
+	 * @throws RemoteException
 	 */
 	public String[] listOrganisms() throws RemoteException {
 		String[] r = port.listOrganisms();
 		if(r == null) r = new String[0];
 		return r;
 	}
-	
+
 	/**
 	 * Get a specific revision of a pathway from WikiPathways
 	 * @see #toPathway(WSPathway)
@@ -128,26 +128,26 @@ public class WikiPathwaysClient {
 		WSPathway wsp = port.getPathway(id, revision);
 		return wsp;
 	}
-	
+
 	public WSPathwayHistory getPathwayHistory(String id, Date start) throws RemoteException {
 		String timestamp = dateToTimestamp(start);
 		WSPathwayHistory hist = port.getPathwayHistory(id, timestamp);
 		return hist;
 	}
-	
+
 	public byte[] getPathwayAs(String fileType, String id, int revision) throws RemoteException {
 		return port.getPathwayAs(fileType, id, revision);
 	}
-	
+
 	public void savePathwayAs(File file, String fileType, String id, int revision) throws IOException {
 		byte[] data = getPathwayAs(fileType, id, revision);
 		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
 		out.write(data);
 	}
-	
+
 	/**
-	 * Get a list of external references on the pathway (gene, protein or metabolite ids), 
-	 * translated to the given database system. 
+	 * Get a list of external references on the pathway (gene, protein or metabolite ids),
+	 * translated to the given database system.
 	 * @param id The pathway id
 	 * @param dataSource The data source to translate to (e.g. BioDataSource.ENTREZ_GENE)
 	 * @return The identifiers of the external references.
@@ -158,20 +158,20 @@ public class WikiPathwaysClient {
 		if(xrefs == null) xrefs = new String[0];
 		return xrefs;
 	}
-	
+
 	/**
 	 * Utility method to create a pathway model from the webservice class
 	 * WSPathway.
 	 * @param wsp The WSPathway object returned by the webservice.
 	 * @return The org.pathvisio.model.Pathway model representation of the GPML code.
-	 * @throws ConverterException 
+	 * @throws ConverterException
 	 */
 	public static Pathway toPathway(WSPathway wsp) throws ConverterException {
 		Pathway p = new Pathway();
 		p.readFromXml(new StringReader(wsp.getGpml()), true);
 		return p;
 	}
-	
+
 	/**
 	 * Update a pathway on WikiPathways.
 	 * Note: you need to login first, see: {@link #login(String, String)}.
@@ -181,12 +181,12 @@ public class WikiPathwaysClient {
 	 * @param revision The revision these changes were based on (to prevent conflicts)
 	 */
 	public void updatePathway(String id, Pathway pathway, String description, int revision) throws ConverterException, RemoteException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		GpmlFormat.writeToXml(pathway, out, true);
 		String gpml = out.toString();
 		port.updatePathway(id, description, gpml, revision, auth);
 	}
-	
+
 	/**
 	 * Creates a new pathway on WikiPathways.
 	 * Note: you need to login first, see: {@link #login(String, String)}.
@@ -196,12 +196,12 @@ public class WikiPathwaysClient {
 	 * @throws ConverterException
 	 */
 	public WSPathwayInfo createPathway(Pathway pathway) throws RemoteException, ConverterException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream(); 
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		GpmlFormat.writeToXml(pathway, out, true);
 		String gpml = out.toString();
 		return port.createPathway(gpml, auth);
 	}
-	
+
 	/**
 	 * Apply a curation tag to a pathway. Will overwrite existing tags with the same name.
 	 * @param id The pathway identifier
@@ -213,7 +213,7 @@ public class WikiPathwaysClient {
 	public void saveCurationTag(String id, String tagName, String tagText, int revision) throws RemoteException {
 		port.saveCurationTag(id, tagName, tagText, revision, auth);
 	}
-	
+
 	/**
 	 * Apply a curation tag to a pathway. Will overwrite existing tags with the same name.
 	 * @param id The pathway identifier
@@ -224,7 +224,7 @@ public class WikiPathwaysClient {
 	public void saveCurationTag(String id, String tagName, String text) throws RemoteException {
 		saveCurationTag(id, tagName, text, 0);
 	}
-	
+
 	/**
 	 * Remove the given curation tag from the pathway
 	 * @param id The pathway identifier
@@ -234,7 +234,7 @@ public class WikiPathwaysClient {
 	public void removeCurationTag(String id, String tagName) throws RemoteException {
 		port.removeCurationTag(id, tagName, auth);
 	}
-	
+
 	/**
 	 * Get all curation tags for the given pathway
 	 * @param id The pathway identifier
@@ -246,13 +246,13 @@ public class WikiPathwaysClient {
 		if(tags == null) tags = new WSCurationTag[0];
 		return tags;
 	}
-	
+
 	public WSCurationTag[] getCurationTagsByName(String tagName) throws RemoteException {
 		WSCurationTag[] tags = port.getCurationTagsByName(tagName);
 		if(tags == null) tags = new WSCurationTag[0];
 		return tags;
 	}
-	
+
 	/**
 	 * Get the curation tag history for the given pathway
 	 * @param id The pathway identifier
@@ -272,7 +272,7 @@ public class WikiPathwaysClient {
 		if(hist == null) hist = new WSCurationTagHistory[0];
 		return hist;
 	}
-	
+
 	/**
 	 * Get the curation tag history for the given pathway
 	 * @param id The pathway identifier
@@ -292,7 +292,7 @@ public class WikiPathwaysClient {
 	public void login(String name, String pass) throws RemoteException {
 		auth = new WSAuth(name, port.login(name, pass));
 	}
-	
+
 	/**
 	 * Get a list of recently changed pathways.
 	 * @param cutoff Only return changes since this date.
@@ -304,20 +304,20 @@ public class WikiPathwaysClient {
 		if(changes == null) changes = new WSPathwayInfo[0];
 		return changes;
 	}
-	
+
 	private static String dateToTimestamp(Date date) {
 		// turn Date into expected timestamp format, in GMT:
 		SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddHHmmss");
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf.format(date);
 	}
-	
+
 	public WSSearchResult[] findPathwaysByText(String query) throws RemoteException {
 		WSSearchResult[] r = port.findPathwaysByText(query, null);
 		if(r == null) r = new WSSearchResult[0];
 		return r;
 	}
-	
+
 	public WSSearchResult[] findPathwaysByText(String query, Organism organism) throws RemoteException {
 		String species = null;
 		if(organism != null) {
@@ -327,7 +327,7 @@ public class WikiPathwaysClient {
 		if(r == null) r = new WSSearchResult[0];
 		return r;
 	}
-	
+
 	/**
 	 * Search for pathways containing one of the given xrefs by taking
 	 * into account cross-references to other database systems.
@@ -351,7 +351,7 @@ public class WikiPathwaysClient {
 		if(r == null) r = new WSSearchResult[0];
 		return r;
 	}
-	
+
 	/**
 	 * @deprecated Use {@link #findPathwaysByXref(Xref...)} with a
 	 * proper xref (id + datasource) instead.
@@ -359,7 +359,7 @@ public class WikiPathwaysClient {
 	public WSSearchResult[] findPathwaysByXref(String id) throws RemoteException {
 		return findPathwaysByXref(new Xref(id, null));
 	}
-	
+
 	public WSSearchResult[] findInteractions(String query) throws RemoteException {
 		WSSearchResult[] r = port.findInteractions(query);
 		if(r == null) r = new WSSearchResult[0];

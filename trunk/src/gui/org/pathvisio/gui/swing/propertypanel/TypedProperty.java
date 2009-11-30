@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing.propertypanel;
@@ -68,7 +68,7 @@ import org.pathvisio.view.VPathway;
  * TypedProperty ties together functionality to view / edit a property
  * on one or more PathwayElements at the same time
  */
-public class TypedProperty implements Comparable<TypedProperty> {	
+public class TypedProperty implements Comparable<TypedProperty> {
 	Collection<PathwayElement> elements;
 	Object value;
 	Object type;
@@ -89,15 +89,15 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		vPathway = aVPathway;
 		elements = new HashSet<PathwayElement>();
 	}
-	
+
 	/**
 	 * Add a PathwayElement to the set of elements that are viewed / edited together
 	 */
 	public void addElement(PathwayElement e) {
 		elements.add(e);
-		refreshValue();		
+		refreshValue();
 	}
-	
+
 	/**
 	 * Remove a PathwayElement to the set of elements that are viewed / edited together
 	 */
@@ -105,7 +105,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		elements.remove(e);
 		refreshValue();
 	}
-	
+
 	/**
 	 * Refresh the viewer / editor value by checking all PathwayElements
 	 * This notifies the TypedProperty that one of the PathwayElements has changed
@@ -123,12 +123,12 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			first = false;
 		}
 	}
-	
+
 	/**
 	 * Number of PathwayElement's being edited / viewed
 	 */
 	public int elementCount() { return elements.size(); }
-	
+
 	/**
 	 * Get a description for the property being edited.
 	 */
@@ -143,7 +143,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return type.toString();
 		}
 	}
-	
+
 	/**
 	 * Set a value for the property being edited.
 	 * This will update all PathwayElements that are being edited at once.
@@ -169,7 +169,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	public Object getValue() {
 		return value;
 	}
-	
+
 	/**
 	 * The type of the property being edited. This is a String
 	 * if the property is dynamic, or a PropertyType is the property
@@ -183,19 +183,19 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	 * Returns true if the PathwayElement's being edited differ for this Property.
 	 */
 	public boolean hasDifferentValues() { return different; }
-	
-	
+
+
 	private VPathway vPathway;
-	
+
 	/**
 	 * Returns a TableCellRenderer suitable for rendering this property
 	 */
-	public TableCellRenderer getCellRenderer() 
+	public TableCellRenderer getCellRenderer()
 	{
 		if(hasDifferentValues()) return differentRenderer;
-		if (type instanceof PropertyType) 
+		if (type instanceof PropertyType)
 		{
-			switch(((PropertyType)type).type()) 
+			switch(((PropertyType)type).type())
 			{
 				case COLOR:
 					return colorRenderer;
@@ -245,30 +245,30 @@ public class TypedProperty implements Comparable<TypedProperty> {
 
 	/**
 	 * Returns a TableCellEditor suitable for editing this property.
-	 * 
+	 *
 	 * @param swingEngine: the comments editor requires a connection to swingEngine, so you need to pass it here.
 	 */
 	public TableCellEditor getCellEditor(SwingEngine swingEngine) {
-		if (type instanceof PropertyType) 
+		if (type instanceof PropertyType)
 		{
-			switch(((PropertyType)type).type()) 
+			switch(((PropertyType)type).type())
 			{
 				case BOOLEAN:
 					return checkboxEditor;
 				case DATASOURCE:
 				{
 					List<DataSource> dataSources = new ArrayList<DataSource>();
-					dataSources.addAll (DataSource.getFilteredSet(true, null, 
+					dataSources.addAll (DataSource.getFilteredSet(true, null,
 							Organism.fromLatinName(vPathway.getPathwayModel().getMappInfo().getOrganism())));
-					if(dataSources.size() != datasourceEditor.getItemCount()) 
+					if(dataSources.size() != datasourceEditor.getItemCount())
 					{
 						Collections.sort (dataSources, new Comparator<DataSource>() {
-		
-							public int compare(DataSource arg0, DataSource arg1) 
+
+							public int compare(DataSource arg0, DataSource arg1)
 							{
 								return ("" + arg0.getFullName()).toLowerCase().compareTo(("" + arg1.getFullName()).toLowerCase());
 							}});
-						
+
 						Object[] labels = new Object[dataSources.size()];
 						Object[] values = new Object[dataSources.size()];
 						int i = 0;
@@ -317,15 +317,15 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		}
 		else return null;
 	}
-	
+
 	/**
 	 * Return the first of the set of PathwayElement's
 	 */
-	private PathwayElement getFirstElement() 
+	private PathwayElement getFirstElement()
 	{
 		return elements.iterator().next();
 	}
-	
+
 	private static class DoubleEditor extends DefaultCellEditor {
 		public DoubleEditor() {
 			super(new JTextField());
@@ -343,7 +343,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	}
 
 	private static class IntegerEditor extends DefaultCellEditor {
-		
+
 		public IntegerEditor() {
 			super(new JTextField());
 		}
@@ -360,7 +360,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	}
 
 	private static class AngleEditor extends DefaultCellEditor {
-		
+
 		public AngleEditor() {
 			super(new JTextField());
 		}
@@ -374,26 +374,26 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			}
 			return d;
 		}
-		
+
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 			value =  (Double)(value) * 180.0 / Math.PI;
 			return super.getTableCellEditorComponent(table, value, isSelected, row, column);
 		}
 	}
-	
+
 	//TODO: merge with ComboRenderer
 	private static class ComboEditor extends DefaultCellEditor {
-		
+
 		Map<Object, Object> label2value;
 		Map<Object, Object> value2label;
 		boolean useIndex;
 		JComboBox combo;
-		
+
 		public ComboEditor(boolean editable, Object[] labels, boolean useIndex) {
 			this(labels, useIndex);
 			combo.setEditable(editable);
 		}
-		
+
 		public ComboEditor(Object[] labels, boolean useIndex) {
 			super(new JComboBox(labels));
 			combo = (JComboBox)getComponent();
@@ -406,11 +406,11 @@ public class TypedProperty implements Comparable<TypedProperty> {
 				updateData(labels, values);
 			}
 		}
-		
+
 		public int getItemCount() {
 			return label2value.size();
 		}
-		
+
 		public void updateData(Object[] labels, Object[] values) {
 			combo.setModel(new DefaultComboBoxModel(labels));
 			if(values != null) {
@@ -427,7 +427,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 				}
 			}
 		}
-		
+
 		public Object getCellEditorValue() {
 			if(label2value == null) { //Use index
 				JComboBox cb = (JComboBox)getComponent();
@@ -437,7 +437,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 				return label2value.get(label);
 			}
 		}
-		
+
 		public Component getTableCellEditorComponent(JTable table,
 				Object value, boolean isSelected, int row, int column) {
 			if(value2label != null) {
@@ -451,18 +451,18 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return combo;
 		}
 	}
-	
+
 	private static class CommentsEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 
 		static final String BUTTON_LABEL = "View/edit comments";
 		JButton button;
 		PathwayElement currentElement;
 		TypedProperty property;
-		
+
 		protected static final String EDIT = "edit";
 
 		private SwingEngine swingEngine;
-		
+
 		public CommentsEditor(SwingEngine swingEngine) {
 			this.swingEngine = swingEngine;
 			button = new JButton();
@@ -477,9 +477,9 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			if(!mayEdit()) fireEditingCanceled();
 			button.setText(BUTTON_LABEL);
 		}
-		
+
 		boolean mayEdit() { return property.elements.size() == 1; }
-		
+
 		public void actionPerformed(ActionEvent e) {
 			if(!mayEdit()) {
 				fireEditingCanceled();
@@ -508,7 +508,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return button;
 		}
 	}
-	
+
 	private static class ColorEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
 
 		Color currentColor;
@@ -573,16 +573,16 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			.getLocalGraphicsEnvironment().getAvailableFontFamilyNames(), false);
 	private static ComboEditor shapeTypeEditor= new ComboEditor(ShapeType.getValues(), false);
 	private static ComboEditor groupStyleEditor = new ComboEditor(GroupStyle.getNames(), false);
-	
+
 	private static DefaultTableCellRenderer angleRenderer = new DefaultTableCellRenderer() {
 
 		protected void setValue(Object value) {
 			super.setValue( (Double)(value) * 180.0 / Math.PI );
 		}
 	};
-	
+
 	private static ComboEditor datanodeTypeEditor = new ComboEditor(DataNodeType.getNames(), false);
-	
+
 	private static DefaultTableCellRenderer doubleRenderer = new DefaultTableCellRenderer() {
 
 		protected void setValue(Object value) {
@@ -608,7 +608,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return this;
 		}
 	}
-	
+
 	//TODO: merge with ComboEditor
 	private static class ComboRenderer extends JComboBox implements TableCellRenderer {
 
@@ -616,7 +616,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		public ComboRenderer(Object[] values) {
 			super(values);
 		}
-		
+
 		public ComboRenderer(Object[] labels, Object[] values) {
 			this(labels);
 			if(labels.length != values.length) {
@@ -637,7 +637,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 				}
 			}
 		}
-		
+
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			if(value2label != null) {
 				value = value2label.get(value);
@@ -650,7 +650,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return this;
 		}
 	}
-	
+
 	private static class FontRenderer extends JLabel implements TableCellRenderer {
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -661,7 +661,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			return this;
 		}
 	}
-	
+
 	private static class ColorRenderer extends JLabel implements TableCellRenderer {
 
 		Border unselectedBorder = null;
@@ -699,10 +699,10 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		}
 	}
 
-	public int compareTo(TypedProperty arg0) 
+	public int compareTo(TypedProperty arg0)
 	{
 		if (arg0 == null) throw new NullPointerException();
-		
+
 		if (type.getClass() != arg0.type.getClass())
 		{
 			return type instanceof PropertyType ? 1 : -1;

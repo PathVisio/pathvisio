@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 import javax.swing.*;
@@ -73,11 +73,11 @@ class Main extends JPanel
         "576.2186,1052.0536 C 566.61166,1051.9563 554.98881,1040.8563 " +
         "554.58627,1033.4711 z"
 	};
-	
+
 	class PathPane extends JPanel
 	{
 		int xco, yco;
-		
+
 		public void paintPath (Graphics2D target, String pathString)
 		{
 			try
@@ -97,7 +97,7 @@ class Main extends JPanel
 				e.printStackTrace();
 			}
 		}
-		
+
 		public void paintComponent (Graphics g)
 		{
 			xco = 0;
@@ -125,7 +125,7 @@ class Main extends JPanel
 
 		JScrollPane scroller = new JScrollPane(drawingPane);
 		scroller.setPreferredSize (new Dimension (800, 600));
-		
+
 		add (scroller);
 	}
 
@@ -149,7 +149,7 @@ class Main extends JPanel
 			pe.printStackTrace();
 		}
 	}
-	
+
 	public void run()
 	{
 // 		printPath (PATH[0]);
@@ -166,14 +166,14 @@ class Main extends JPanel
 			"path2visio\n" +
 			"Creates a series of java statements based on an svg path/p attribute.\n\n" +
 			"Usage:\n"+
-			"    path2visio \"PATH DATA\"\n");		
+			"    path2visio \"PATH DATA\"\n");
 	}
-	
+
 	public static void main(String[] argv)
 	{
 		if (argv.length > 0)
 		{
-			Main m = new Main();			
+			Main m = new Main();
 			m.printPath(argv[0]);
 		}
 		else
@@ -192,5 +192,5 @@ class Main extends JPanel
 		frame.setVisible (true);
 */
     }
-	
+
 }

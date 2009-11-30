@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gex;
@@ -38,21 +38,21 @@ import org.pathvisio.debug.Logger;
 
 /**
  * Responsible for creating and querying a pgex database.
- * SimpleGex wraps SQL statements in methods, 
+ * SimpleGex wraps SQL statements in methods,
  * so the rest of the apps don't need to know the
  * details of the Database schema.
  * For this, SimpleGex uses the generic JDBC interface.
- * 
+ *
  * It delegates dealing with the differences between Derby, Hsqldb etc.
- * to a DBConnector instance. 
+ * to a DBConnector instance.
  * You need to pass a correct DBConnector instance at creation of
- * SimpleGex. 
- * 
+ * SimpleGex.
+ *
  * In the PathVisio GUI environment, use GexManager
- * to create and connect to a centralized Gex. 
+ * to create and connect to a centralized Gex.
  * This will also automatically
  * find the right DBConnector from the preferences.
- *  
+ *
  * In a head-less or test environment, you can bypass GexManager
  * to create or connect to one or more databases of any type.
  */
@@ -61,11 +61,11 @@ public class SimpleGex
 {
 	private static final int GEX_COMPAT_VERSION = 2; //Preferred schema version
 	private static final int SAMPLE_NAME_LEN = 50; // max length of sample names
-	
+
 	private Connection con;
 	private DBConnector dbConnector;
 	private int commitCount = 0;
-	
+
 	private static CachedData cachedData;
 
 	/**
@@ -78,13 +78,13 @@ public class SimpleGex
 	 * @return	true is a connection exists, false if not
 	 */
 	public boolean isConnected() { return con != null; }
-	
+
 	private String dbName;
 	/**
 	 * Get the database name of the expression data currently loaded
 	 */
 	public String getDbName() { return dbName; }
-	
+
 	/**
 	 * Set the database name of the expression data currently loaded
 	 * (Connection is not reset)
@@ -93,10 +93,10 @@ public class SimpleGex
 
 	// cache of samples
 	private Map<Integer, Sample> samples;
-	
+
 	PreparedStatement pstSample = null;
 	PreparedStatement pstExpr = null;
-	
+
 	public void prepare() throws SQLException
 	{
 		pstSample = con.prepareStatement(
@@ -105,7 +105,7 @@ public class SimpleGex
 		" VALUES (?, ?, ?)		  ");
 		pstExpr = con.prepareStatement(
 				"INSERT INTO expression			" +
-				"	(id, code,      			" + 
+				"	(id, code,      			" +
 				"	 idSample, data, groupId)	" +
 		"VALUES	(?, ?, ?, ?, ?)			");
 	}
@@ -118,7 +118,7 @@ public class SimpleGex
 	public void addSample(int sampleId, String value, int type) throws SQLException
 	{
 		assert (pstSample != null);
-		if (value.length() >= SAMPLE_NAME_LEN) 
+		if (value.length() >= SAMPLE_NAME_LEN)
 			throw new IllegalArgumentException ("Sample name can't be longer than " + SAMPLE_NAME_LEN + " chars");
 		pstSample.setInt(1, sampleId);
 		pstSample.setString(2, value);
@@ -126,7 +126,7 @@ public class SimpleGex
 		pstSample.execute();
 		con.commit();
 	}
-	
+
 	/**
 	 * Add an expression row to the db. Must call prepare() before.
 	 */
@@ -142,13 +142,13 @@ public class SimpleGex
 		// don't even try to import annotation and other stuff
 		// give an exception if a data value is longer than 50
 		String truncValue = value;
-		if (value.length() > 50) truncValue = value.substring(0, 50);		
+		if (value.length() > 50) truncValue = value.substring(0, 50);
 		pstExpr.setString(4, truncValue);
 		pstExpr.setInt(5, group);
 		pstExpr.execute();
 		if (++commitCount % 1000 == 0) con.commit();
 	}
-	
+
 	public Sample getSample(int id) throws IDMapperException
 	{
 		return getSamples().get(id);
@@ -159,7 +159,7 @@ public class SimpleGex
 	 * <p>
 	 * Note that there is no guarantee that the index of a Sample in the list
 	 * is equal to the id of that sample.
-	 * In other words, result.get(n).getId() < result.get(n+1).getId(), but 
+	 * In other words, result.get(n).getId() < result.get(n+1).getId(), but
 	 * NOT: result.get(n).getId() == n
 	 */
 	public List<Sample> getOrderedSamples() throws IDMapperException
@@ -172,12 +172,12 @@ public class SimpleGex
 	/**
 	 * Reads a list of Samples from the database,
 	 * and returns them, indexed by key.
-	 * 
+	 *
 	 * This data is cached, so you can safely call this repeatedly.
 	 */
 	public Map<Integer, Sample> getSamples() throws IDMapperException
 	{
-		if(samples == null) 
+		if(samples == null)
 		{
 			try {
 				ResultSet r = con.createStatement().executeQuery(
@@ -187,7 +187,7 @@ public class SimpleGex
 				while(r.next())
 				{
 					int id = r.getInt(1);
-					samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));					
+					samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));
 				}
 			} catch (SQLException e) {
 				throw new IDMapperException ("SQL exception while setting samples", e);
@@ -195,11 +195,11 @@ public class SimpleGex
 		}
 		return samples;
 	}
-	
+
 	public List<String> getSampleNames() {
 		return getSampleNames(-1);
 	}
-	
+
 	public List<String> getSampleNames(int dataType) {
 		List<String> names = new ArrayList<String>();
 		List<Sample> sorted = new ArrayList<Sample>(samples.values());
@@ -210,7 +210,7 @@ public class SimpleGex
 		}
 		return names;
 	}
-	
+
 	public List<Sample> getSamples(int dataType) {
 		List<Sample> smps = new ArrayList<Sample>();
 		List<Sample> sorted = new ArrayList<Sample>(samples.values());
@@ -221,7 +221,7 @@ public class SimpleGex
 		}
 		return smps;
 	}
-	
+
 	PreparedStatement pst1 = null;
 	private PreparedStatement getPst1() throws SQLException
 	{
@@ -272,13 +272,13 @@ public class SimpleGex
 		{
 			PreparedStatement pst = getPst1();
 			Map<Integer, ReporterData> groupData = new HashMap<Integer, ReporterData>();
-		
+
 			for (Xref destRef : destRefs)
-			{	
+			{
 				pst.setString(1, destRef.getId());
 				pst.setString(2, destRef.getDataSource().getSystemCode());
 				ResultSet r = pst.executeQuery();
-				
+
 				//r contains all data mapping to the destref
 				//there could be multiple data items
 				while(r.next())
@@ -289,7 +289,7 @@ public class SimpleGex
 						data = new ReporterData(destRef, group);
 						groupData.put(group, data);
 					}
-					int idSample = r.getInt("idSample");					
+					int idSample = r.getInt("idSample");
 					data.setSampleData(samples.get(idSample), r.getString("data"));
 				}
 			}
@@ -317,18 +317,18 @@ public class SimpleGex
 		catch (InstantiationException e)
 		{
 			throw new IDMapperException (e);
-		} 
-		catch (IllegalAccessException e) 
+		}
+		catch (IllegalAccessException e)
 		{
 			throw new IDMapperException (e);
 		}
-		
+
 		dbConnector.setDbType(DBConnector.TYPE_GEX);
 		if(create)
 		{
 			createNewGex(dbName);
-		} 
-		else 
+		}
+		else
 		{
 			con = dbConnector.createConnection(dbName, DBConnector.PROP_NONE);
 			getSamples(); // init samples cache
@@ -342,20 +342,20 @@ public class SimpleGex
 //			throw new IDMapperException (e);
 //		}
 	}
-	
+
 	/**
-	 * Connects to the Expression database 
+	 * Connects to the Expression database
 	 */
 //	public static void connect() throws Exception
 //	{
 //		connect(null, false, true);
 //	}
-//	
+//
 //	public static void connect(String dbName) throws Exception
 //	{
 //		connect(dbName, false, true);
 //	}
-		
+
 	/**
 	 * Close the connection to the Expression database, with option to execute the 'SHUTDOWN COMPACT'
 	 * statement before calling {@link Connection#close()}
@@ -381,10 +381,10 @@ public class SimpleGex
 	 * Create a new database with the given name. This includes creating tables.
 	 * @param dbName The name of the database to create
 	 * @return A connection to the newly created database
-	 * @throws Exception 
+	 * @throws Exception
 	 * @throws Exception
 	 */
-	public final void createNewGex(String dbName) throws IDMapperException 
+	public final void createNewGex(String dbName) throws IDMapperException
 	{
 		con = dbConnector.createConnection(dbName, DBConnector.PROP_RECREATE);
 		this.dbName = dbName;
@@ -392,11 +392,11 @@ public class SimpleGex
 	}
 
 	/**
-	 * Excecutes several SQL statements to create the tables and indexes for storing 
+	 * Excecutes several SQL statements to create the tables and indexes for storing
 	 * the expression data
 	 */
-	protected void createGexTables() throws IDMapperException 
-	{	
+	protected void createGexTables() throws IDMapperException
+	{
 		try
 		{
 			con.setReadOnly(false);
@@ -404,7 +404,7 @@ public class SimpleGex
 			try { sh.execute("DROP TABLE info"); } catch(SQLException e) { Logger.log.warn("Warning: unable to drop expression data tables: "+e.getMessage()); }
 			try { sh.execute("DROP TABLE samples"); } catch(SQLException e) { Logger.log.warn("Warning: unable to drop expression data tables: "+e.getMessage()); }
 			try { sh.execute("DROP TABLE expression"); } catch(SQLException e) { Logger.log.warn("Warning: unable to drop expression data tables: "+e.getMessage()); }
-			
+
 			sh.execute(
 					"CREATE TABLE					" +
 					"		info							" +
@@ -419,7 +419,7 @@ public class SimpleGex
 					"     name VARCHAR(" + SAMPLE_NAME_LEN + "),					" +
 					"	  dataType INTEGER					" +
 			" )										");
-			
+
 			sh.execute(
 					"CREATE TABLE					" +
 					"		expression						" +
@@ -438,13 +438,13 @@ public class SimpleGex
 			throw new IDMapperException (e);
 		}
 	}
-	
+
 	/**
 	 * Creates indices for a newly created expression database.
 	 * @param con The connection to the expression database
 	 * @throws SQLException
 	 */
-	public void createGexIndices() throws IDMapperException 
+	public void createGexIndices() throws IDMapperException
 	{
 		try
 		{
@@ -474,7 +474,7 @@ public class SimpleGex
 	}
 
 	/**
-	 * Run this after insterting all sample / expression data 
+	 * Run this after insterting all sample / expression data
 	 * once, to defragment the db and create indices.
 	 * This method closes the current database connection in order
 	 * for the {@link DBConnector} to clean up.
@@ -499,7 +499,7 @@ public class SimpleGex
 		String newDb = dbConnector.finalizeNewDatabase(dbName);
 		setDbName(newDb);
 	}
-	
+
 	/**
 	   commit inserted data
 	 */
@@ -515,9 +515,9 @@ public class SimpleGex
 		}
 	}
 
-	
+
 	PreparedStatement pstRow = null;
-	
+
 	// lazy instantiation of pstRow
 	private PreparedStatement getPstRow() throws SQLException
 	{
@@ -530,7 +530,7 @@ public class SimpleGex
 		}
 		return pstRow;
 	}
-	
+
 	public ReporterData getRow(int rowId) throws IDMapperException
 	{
 		Map<Integer, Sample> samples = getSamples();
@@ -540,10 +540,10 @@ public class SimpleGex
 			PreparedStatement ps = getPstRow();
 			ps.setInt(1, rowId);
 			ResultSet rs = ps.executeQuery();
-			
-			Xref ref = null;			
+
+			Xref ref = null;
 			result = new ReporterData (null, rowId);
-			
+
 			while (rs.next())
 			{
 				if (ref == null)
@@ -552,12 +552,12 @@ public class SimpleGex
 					ref = new Xref (rs.getString(1), DataSource.getBySystemCode(rs.getString(2)));
 					result.setXref(ref);
 				}
-				
+
 				int sample = rs.getInt(3);
 				String value = rs.getString (4);
 				result.setSampleData(samples.get(sample), value);
 			}
-			
+
 			return result;
 		}
 		catch (SQLException e)
@@ -565,7 +565,7 @@ public class SimpleGex
 			throw new IDMapperException (e);
 		}
 	}
-	
+
 	public int getNrRow() throws IDMapperException
 	{
 		try
@@ -578,6 +578,6 @@ public class SimpleGex
 		catch (SQLException e)
 		{
 			throw new IDMapperException (e);
-		}		
+		}
 	}
 }

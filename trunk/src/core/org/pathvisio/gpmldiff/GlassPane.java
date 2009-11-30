@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gpmldiff;
@@ -44,7 +44,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * Derived from:
- * 
+ *
  * GlassPane tutorial
  * "A well-behaved GlassPane"
  * http://weblogs.java.net/blog/alexfromsun/
@@ -63,19 +63,19 @@ class GlassPane extends JPanel implements AWTEventListener
 	/**
 	 * Type of element modification
 	 */
-	private static enum Type 
+	private static enum Type
 	{
 		MODIFY,
 		ADD,
 		REMOVE
 	}
-	
+
 
     private final JPanel frame;
     private Point mousePos = new Point();
     private Type type;
     private static Color baloonPaint;
-	
+
 	// baloon margin is both the horizontal and vertical margin.
 	private static final int BALOON_SPACING = 50;
 	private static final int BALOON_MARGIN = 20;
@@ -85,7 +85,7 @@ class GlassPane extends JPanel implements AWTEventListener
 
 	private double zoomFactor = 1.0;
 
-	
+
 	private boolean alignTop = true;
 
 	void setPctZoom (double value)
@@ -96,7 +96,7 @@ class GlassPane extends JPanel implements AWTEventListener
 			repaint();
 		}
 	}
-	
+
     public GlassPane(JPanel frame)
 	{
         super(null);
@@ -125,7 +125,7 @@ class GlassPane extends JPanel implements AWTEventListener
 		type = Type.MODIFY;
 		repaint();
 	}
-	
+
 	/**
 	 * implies showHint (true)
 	 */
@@ -173,7 +173,7 @@ class GlassPane extends JPanel implements AWTEventListener
 	private Shape getHintShape()
 	{
 		Point pos = getHintPos();
-		Shape bg = new RoundRectangle2D.Double( 
+		Shape bg = new RoundRectangle2D.Double(
 			pos.getX(), pos.getY(),
 			baloonWidth, baloonHeight,
 			BALOON_MARGIN, BALOON_MARGIN
@@ -181,7 +181,7 @@ class GlassPane extends JPanel implements AWTEventListener
 		return bg;
 	}
 
-	
+
 	/**
 	   Note: don't call getHintPos() before setting baloonwidth and
 	   baloonheight to meaningful values
@@ -192,7 +192,7 @@ class GlassPane extends JPanel implements AWTEventListener
 		int ypos = alignTop ? BALOON_SPACING : (int)(getSize().getHeight() - baloonHeight - BALOON_SPACING);
 		return new Point (xpos, ypos);
 	}
-	
+
 	/**
 	   enable showing of hint.
 	 */
@@ -204,15 +204,15 @@ class GlassPane extends JPanel implements AWTEventListener
 		showHint = false;
 		repaint();
 	}
-	
+
     protected void paintComponent(Graphics g)
 	{
 		if (!showHint) return;
-		
+
         Graphics2D g2 = (Graphics2D) g;
 
         //g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));
-		
+
 		FontRenderContext frc = g2.getFontRenderContext();
 
 		// first determine size.
@@ -232,16 +232,16 @@ class GlassPane extends JPanel implements AWTEventListener
 			TextLayout tl0 = new TextLayout (entry.getKey() + ": ", fb, frc);
 			int leftwidth = (int)tl0.getBounds().getWidth();
 			layouts.put (tl0, new Point (0, (int)(ypos + tl0.getAscent())));
-			
+
 			// show the value as a plain, wrapped text.
 			// multiple TextLayouts are needed.
 			String text = entry.getValue();
 			AttributedString as = new AttributedString (text);
 			as.addAttribute(TextAttribute.FONT, f, 0, text.length());
-			
+
 			// use LineBreakMeasurer to wrap the text across multiple lines.
 			LineBreakMeasurer lbm = new LineBreakMeasurer (as.getIterator(), frc);
-			
+
 			while (lbm.getPosition() < text.length())
 			{
 				TextLayout tl = lbm.nextLayout (WRAP_WIDTH);
@@ -285,16 +285,16 @@ class GlassPane extends JPanel implements AWTEventListener
 
 		// draw lines
 		Shape oldClip = g2.getClip();
-		
+
 		g2.setStroke (new BasicStroke (5));
 		g2.setColor (baloonPaint);
 
 		clipView (g2, oldView);
-		
+
 		Point p;
 		Point s;
 		GeneralPath path;
-		
+
 		if (type != Type.ADD)
 		{
 			p = relativeToView (x1, y1, oldView);
@@ -314,10 +314,10 @@ class GlassPane extends JPanel implements AWTEventListener
 				);
 			g2.draw (path);
 		}
-		
+
 		g2.setClip(oldClip);
 		clipView (g2, newView);
-		
+
 		if (type != Type.REMOVE)
 		{
 			p = relativeToView (x2, y2, newView);
@@ -334,10 +334,10 @@ class GlassPane extends JPanel implements AWTEventListener
 				(float)p.getY(),
 				(float)p.getX(),
 				(float)p.getY());
-				
+
 			g2.draw (path);
 		}
-		
+
 		g2.dispose();
     }
 
@@ -380,7 +380,7 @@ class GlassPane extends JPanel implements AWTEventListener
 			repaint();
 		}
 	}
-	
+
     public void eventDispatched(AWTEvent event)
 	{
         if (event instanceof MouseEvent)

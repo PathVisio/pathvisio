@@ -7,7 +7,7 @@ import javax.swing.border.*;
 
 
 public class TestPanel1 extends JPanel {
- 
+
     private JLabel blankSpace;
     private JLabel jLabel1;
     private JLabel jLabel2;
@@ -21,12 +21,12 @@ public class TestPanel1 extends JPanel {
 
     private JLabel welcomeTitle;
     private JPanel contentPanel;
-    
+
     private JLabel iconLabel;
     private ImageIcon icon;
-    
+
     public TestPanel1() {
-        
+
         iconLabel = new JLabel();
         contentPanel = getContentPanel();
         contentPanel.setBorder(new EmptyBorder(new Insets(10, 10, 10, 10)));
@@ -37,22 +37,22 @@ public class TestPanel1 extends JPanel {
 
         if (icon != null)
             iconLabel.setIcon(icon);
-        
+
         iconLabel.setBorder(new EtchedBorder(EtchedBorder.RAISED));
-        
+
         add(iconLabel, BorderLayout.WEST);
-        
+
         JPanel secondaryPanel = new JPanel();
         secondaryPanel.add(contentPanel, BorderLayout.NORTH);
         add(secondaryPanel, BorderLayout.CENTER);
     }
-    
-    
+
+
     private JPanel getContentPanel() {
-        
+
         JPanel contentPanel1 = new JPanel();
         JPanel jPanel1 = new JPanel();
-        
+
         welcomeTitle = new JLabel();
         blankSpace = new JLabel();
         jLabel1 = new JLabel();
@@ -95,13 +95,13 @@ public class TestPanel1 extends JPanel {
         contentPanel1.add(jPanel1, java.awt.BorderLayout.CENTER);
 
         return contentPanel1;
-        
+
     }
 
     private ImageIcon getImageIcon() {
         return new ImageIcon((URL)getResource("clouds.jpg"));
     }
-    
+
     private Object getResource(String key) {
 
         URL url = null;
@@ -120,5 +120,5 @@ public class TestPanel1 extends JPanel {
             return null;
 
     }
- 
+
 }

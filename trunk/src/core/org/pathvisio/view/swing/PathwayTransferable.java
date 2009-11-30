@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view.swing;
@@ -64,7 +64,7 @@ public class PathwayTransferable implements Transferable {
 	public PathwayTransferable(List<PathwayElement> elements) {
 		this(null, elements);
 	}
-	
+
 	public PathwayTransferable(Pathway source, List<PathwayElement> elements) {
 		this.elements = elements;
 		if(source == null) {
@@ -79,7 +79,7 @@ public class PathwayTransferable implements Transferable {
 		XMLOutputter xmlout = new XMLOutputter(Format.getPrettyFormat());
 
 		Pathway pnew = new Pathway();
-		
+
 		Set<String> ids = new HashSet<String>();
 		Set<String> groupIds = new HashSet<String>();
 
@@ -131,14 +131,14 @@ public class PathwayTransferable implements Transferable {
 		for(BiopaxElement bpe : toRemove) {
 			bpm.removeElement(bpe);
 		}
-		
+
 		//If no mappinfo, create a dummy one that we can recognize lateron
 		if(!infoFound) {
 			PathwayElement info = PathwayElement.createPathwayElement(ObjectType.MAPPINFO);
 			info.setMapInfoDataSource(INFO_DATASOURCE);
 			pnew.add(info);
 		}
-		
+
 		try {
 			Document doc = GpmlFormat.createJdom(pnew);
 			out = xmlout.outputString(doc);
@@ -156,7 +156,7 @@ public class PathwayTransferable implements Transferable {
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		return GPML_DATA_FLAVOR.equals(flavor);
 	}
-	
+
 	/**
 	 * Gets the file url from the transferable if available.
 	 * If the transferable contains a file list, the url of the first
@@ -169,7 +169,7 @@ public class PathwayTransferable implements Transferable {
 	public static URL getFileURL(Transferable t) throws UnsupportedFlavorException, IOException {
 		//Find out if there is a javaFileListFlavor, since that's the preferred type
 		DataFlavor fallback = null;
-		
+
 		for(DataFlavor df : t.getTransferDataFlavors()) {
 			if(DataFlavor.javaFileListFlavor.equals(df)) {
 				//Return the first element of the file list
@@ -195,7 +195,7 @@ public class PathwayTransferable implements Transferable {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Get the text in the transferable if available. There is no guarantee that the
 	 * text is xml code!
@@ -215,7 +215,7 @@ public class PathwayTransferable implements Transferable {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a pathway from the data in the provided {@link Transferable}.
 	 * @param t
@@ -227,7 +227,7 @@ public class PathwayTransferable implements Transferable {
 	 */
 	public static Pathway pathwayFromTransferable(Transferable t) throws ConverterException, MalformedURLException, UnsupportedFlavorException, IOException {
 		Pathway pnew = new Pathway();
-			
+
 		String xml = getText(t);
 		if(xml != null) {
 			GpmlFormat.readFromXml(pnew, new StringReader(xml), true);
@@ -246,7 +246,7 @@ public class PathwayTransferable implements Transferable {
 			}
 			return pnew;
 		}
-		
+
 		URL url = getFileURL(t);
 		if(url != null) {
 			File file = new File(url.getFile());
@@ -259,21 +259,21 @@ public class PathwayTransferable implements Transferable {
 
 	/**
 	 * Opens a new pathway from the data in the {@link Transferable}, using the provided {@link Engine}.
-	 * If the {@link Transferable} contains a link to a file, the pathway in this file will be opened. 
+	 * If the {@link Transferable} contains a link to a file, the pathway in this file will be opened.
 	 * If the {@link Transferable} contains gpml code, a new pathway will be created, and the gpml will be
 	 * loaded into this pathway.
 	 * @param t
 	 * @param engine
-	 * @throws IOException 
-	 * @throws UnsupportedFlavorException 
-	 * @throws ConverterException 
+	 * @throws IOException
+	 * @throws UnsupportedFlavorException
+	 * @throws ConverterException
 	 */
 	public static void openPathwayFromTransferable(Transferable t, Engine engine) throws UnsupportedFlavorException, IOException, ConverterException {
 		URL url = getFileURL(t);
 		if(url != null) {
 			engine.openPathway(url);
 		}
-		
+
 		String xml = getText(t);
 		if(xml != null) {
 			engine.newPathway();

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gpmldiff;
@@ -33,7 +33,7 @@ public class GpmlDiff
 	static final String[] OUTPUT_TYPES = {"dgpml", "basic", "table"};
 	static String simFunType = "better";
 	static final String[] SIMFUN_TYPES = {"basic", "better"};
-	
+
 	/**
 	   Parse Command-line Options
 	*/
@@ -49,7 +49,7 @@ public class GpmlDiff
 				pos++;
 				if (pos >= argv.length) error = "Expected output type after -o";
 				if (error == null)
-				{				
+				{
 					outputType = argv[pos];
 					if (!Arrays.asList(OUTPUT_TYPES).contains (outputType))
 					{
@@ -67,7 +67,7 @@ public class GpmlDiff
 				pos++;
 				if (pos >= argv.length) error = "Expected simfun type after -s";
 				if (error == null)
-				{				
+				{
 					simFunType = argv[pos];
 					if (!Arrays.asList(SIMFUN_TYPES).contains (simFunType))
 					{
@@ -104,7 +104,7 @@ public class GpmlDiff
 		}
 		return error == null;
 	}
-	
+
 	/**
 	   Prints helpful info on the command line
 	*/
@@ -121,7 +121,7 @@ public class GpmlDiff
 			);
 		System.exit(1);
 	}
-	
+
 	/**
 	 * Simple straightforward utility function to create a patch of two files.
 	 */
@@ -136,7 +136,7 @@ public class GpmlDiff
 		oldDoc.writeResult (result, newDoc, out);
 		out.flush();
 	}
-	
+
 	/**
 	   Entry point.
 	*/
@@ -163,7 +163,7 @@ public class GpmlDiff
 			{
 				simFun = new BetterSim();
 			}
-				
+
 			if (outputType.equals ("table"))
 			{
 				PwyDoc.printSimTable (oldDoc, newDoc, simFun);
@@ -171,7 +171,7 @@ public class GpmlDiff
 			else
 			{
 				SearchNode result = oldDoc.findCorrespondence (newDoc, simFun, new BasicCost());
-				
+
 				DiffOutputter out = null;
 				if (outputType.equals ("basic"))
 				{

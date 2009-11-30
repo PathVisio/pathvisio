@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gpmldiff;
@@ -64,7 +64,7 @@ class Patch
 				PropertyType pt = PropertyType.getByTag(ch.attr);
 				switch (pt.type())
 				{
-				case STRING: 
+				case STRING:
 					result.setStaticProperty(pt, ch.newValue);
 					break;
 				case DOUBLE:
@@ -99,7 +99,7 @@ class Patch
 	// store insertions separately, as they don't need to be looked up
 	// in the old Pwy, they just need to be added afterwards.
 	private List<PathwayElement> insertions = new ArrayList <PathwayElement>();
-	
+
 	public void readFromReader (Reader in) throws JDOMException, IOException, ConverterException
 	{
 		SAXBuilder builder = new SAXBuilder ();
@@ -112,7 +112,7 @@ class Patch
 			{
 				ModDel mod = new ModDel();
 				mod.isDeletion = false;
-					
+
 				for (Object p : ((Element)e).getChildren())
 				{
 					Element f = ((Element)p);
@@ -129,9 +129,9 @@ class Patch
 						mod.changes.add(chg);
 					}
 				}
-				if (mod.oldElt == null) 
+				if (mod.oldElt == null)
 				{
-					// this doesn't have a valid gpml subelement. Ignore. 
+					// this doesn't have a valid gpml subelement. Ignore.
 					Logger.log.warn ("Skipping one invalid Modify element");
 					continue; // skip
 				}
@@ -170,7 +170,7 @@ class Patch
 		// scan modifications / deletions for correspondence
 		for (ModDel mod : modifications.values())
 		{
-			current = findCorrespondence (current, aPwy, mod.oldElt, simFun, costFun);				
+			current = findCorrespondence (current, aPwy, mod.oldElt, simFun, costFun);
 		}
 
 		// insertions are easy, just add them
@@ -192,24 +192,24 @@ class Patch
 				// mod goes to /dev/null
 				aPwy.remove (current.newElt);
 			}
-			else				
+			else
 			{
-				// remove the old element. 
-				
+				// remove the old element.
+
 				// Note that current.oldElt is the copy of the element in the Modification object,
 				// and current.newElt is the matching element in the pathway.
 				aPwy.remove (current.newElt);
-				
+
 				// create new elt with applied modifications
 				PathwayElement newElt = mod.makeNewElt();
-				
+
 				// and add it to the pwy.
 				aPwy.add (newElt);
 			}
-						
+
 			current = current.getParent();
 		}
-		
+
 		aPwy.apply();
 	}
 
@@ -218,7 +218,7 @@ class Patch
 	   it doesn't compare two pathways: it compares elements mentioned in the dgpml with pathways.
 	 */
 	private SearchNode findCorrespondence(SearchNode currentNode, PwyDoc oldDoc, PathwayElement newElt, SimilarityFunction simFun, CostFunction costFun)
-	{		
+	{
 		int maxScore = 0;
 		PathwayElement maxOldElt = null;
 		for (PathwayElement oldElt : oldDoc.getElts())

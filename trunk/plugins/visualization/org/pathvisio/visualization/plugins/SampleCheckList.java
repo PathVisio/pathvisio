@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.plugins;
@@ -40,7 +40,7 @@ public class SampleCheckList extends JCheckBoxList {
 	DefaultListModel model = new DefaultListModel();
 	Map<JCheckBox, Sample> checkbox2sample = new HashMap<JCheckBox, Sample>();
 	Map<Sample, JCheckBox> sample2checkbox = new HashMap<Sample, JCheckBox>();
-	
+
 	public SampleCheckList(List<? extends Sample> selection, GexManager gexManager) {
 		super(false);
 		SimpleGex gex = gexManager.getCurrentGex();
@@ -54,38 +54,38 @@ public class SampleCheckList extends JCheckBoxList {
 				//TODO: notify user with popup
 				Logger.log.error ("Could not fetch samples from database", ex);
 			}
-			
+
 		} else {
 			setSamples(
 					new ArrayList<Sample>(), new ArrayList<Sample>()
 			);
 		}
 	}
-	
-	public SampleCheckList(List<? extends Sample> samples, 
+
+	public SampleCheckList(List<? extends Sample> samples,
 			List<? extends Sample> selected) {
 		super(false);
 		setSamples(samples, selected);
 	}
-	
-	private void setSamples(List<? extends Sample> samples, 
+
+	private void setSamples(List<? extends Sample> samples,
 			List<? extends Sample> selected) {
 		model = new DefaultListModel();
-		
+
 		//First add the selected samples in order
 		for(Sample s : selected) {
 			addSample(s).setSelected(true);
 		}
 		//Add the remaining samples
-		for(Sample s : samples) {			
+		for(Sample s : samples) {
 			if(!selected.contains(s)) {
 				addSample(s);
 			}
 		}
 		setModel(model);
 	}
-	
-	private JCheckBox addSample(Sample s) 
+
+	private JCheckBox addSample(Sample s)
 	{
 		if (s == null) throw new NullPointerException();
 		JCheckBox ch = new JCheckBox();
@@ -95,7 +95,7 @@ public class SampleCheckList extends JCheckBoxList {
 		sample2checkbox.put(s, ch);
 		return ch;
 	}
-	
+
 	/**
 	 * Adds an action listener to each checkbox in the list
 	 */
@@ -104,7 +104,7 @@ public class SampleCheckList extends JCheckBoxList {
 			ch.addActionListener(l);
 		}
 	}
-	
+
 	/**
 	 * Sets the action command for each checkbox in the list
 	 */
@@ -113,15 +113,15 @@ public class SampleCheckList extends JCheckBoxList {
 			ch.setActionCommand(c);
 		}
 	}
-	
+
 	public Sample getSample(JCheckBox check) {
 		return checkbox2sample.get(check);
 	}
-	
+
 	public Sample getSelectedSample() {
 		return checkbox2sample.get(getSelectedValue());
 	}
-	
+
 	public void setSelectedSamples(Collection<Sample> select) {
 		for(JCheckBox ch : sample2checkbox.values()) {
 			ch.setSelected(false);
@@ -133,13 +133,13 @@ public class SampleCheckList extends JCheckBoxList {
 			}
 		}
 	}
-	
+
 	public boolean isSelected(Sample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) return ch.isSelected();
 		else return false;
 	}
-	
+
 	/**
 	 * Get all samples in the list in the order they are displayed
 	 */
@@ -151,7 +151,7 @@ public class SampleCheckList extends JCheckBoxList {
 		}
 		return order;
 	}
-	
+
 	/**
 	 * Get the selected samples in the list in the order they are
 	 * displayed
@@ -167,8 +167,8 @@ public class SampleCheckList extends JCheckBoxList {
 		}
 		return order;
 	}
-	
-	
+
+
 	public void moveUp(Sample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) {
@@ -180,7 +180,7 @@ public class SampleCheckList extends JCheckBoxList {
 			}
 		}
 	}
-	
+
 	public void moveDown(Sample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) {
@@ -192,7 +192,7 @@ public class SampleCheckList extends JCheckBoxList {
 			}
 		}
 	}
-	
+
 	public void moveToBottom(Sample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) {
@@ -201,7 +201,7 @@ public class SampleCheckList extends JCheckBoxList {
 			setSelectedValue(ch, true);
 		}
 	}
-	
+
 	public void moveToTop(Sample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) {

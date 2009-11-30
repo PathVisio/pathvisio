@@ -54,9 +54,9 @@ public class SearchResource extends IndexResource {
 			return IndexResource.createXmlError(e.getMessage());
 		}
 	}
-	
+
 	private Analyzer getAnalyzer(String className) throws ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-		Class<? extends Analyzer> analyzerClass = 
+		Class<? extends Analyzer> analyzerClass =
 			(Class<? extends Analyzer>)this.getClass().getClassLoader().loadClass(className);
 		return analyzerClass.getConstructor().newInstance();
 	}

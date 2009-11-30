@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing;
@@ -53,38 +53,38 @@ import org.pathvisio.view.VPathwayElement;
  * otherwise the background thread is not killed.
  */
 public class BackpagePane extends JEditorPane implements ApplicationEventListener, SelectionListener, PathwayElementListener
-{	
+{
 	private final BackpageTextProvider bpt;
 	private Engine engine;
 	private ExecutorService executor;
-	
-	public BackpagePane(BackpageTextProvider bpt, Engine engine) 
+
+	public BackpagePane(BackpageTextProvider bpt, Engine engine)
 	{
 		super();
 
 		engine.addApplicationEventListener(this);
 		VPathway vp = engine.getActiveVPathway();
 		if(vp != null) vp.addSelectionListener(this);
-	
+
 		this.engine = engine;
 
 		setEditable(false);
 		setContentType("text/html");
 		this.bpt = bpt;
-		
+
 		executor = Executors.newSingleThreadExecutor();
 	}
 
 	private PathwayElement input;
 
-	public void setInput(final PathwayElement e) 
+	public void setInput(final PathwayElement e)
 	{
 		//System.err.println("===== SetInput Called ==== " + e);
 		if(e == input) return; //Don't set same input twice
-		
+
 		//Remove pathwaylistener from old input
 		if(input != null) input.removeListener(this);
-		
+
 		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
 			input = null;
 			setText(bpt.getBackpageHTML(null));
@@ -95,7 +95,7 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 		}
 	}
 
-	private void doQuery() 
+	private void doQuery()
 	{
 		setText("Loading");
 		currRef = input.getXref();
@@ -106,7 +106,7 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 			{
 				if(input == null) return;
 				final String txt = bpt.getBackpageHTML(input);
-				
+
 				SwingUtilities.invokeLater(new Runnable()
 				{
 					public void run()
@@ -118,7 +118,7 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 			}
 		});
 	}
-	
+
 	public void selectionEvent(SelectionEvent e) {
 		switch(e.type) {
 		case SelectionEvent.OBJECT_ADDED:
@@ -140,7 +140,7 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 		}
 	}
 
-	public void applicationEvent(ApplicationEvent e) 
+	public void applicationEvent(ApplicationEvent e)
 	{
 		switch (e.getType())
 		{
@@ -155,20 +155,20 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 			}
 		}
 	}
-	
+
 	Xref currRef;
-	
+
 	public void gmmlObjectModified(PathwayEvent e) {
 		PathwayElement pe = e.getAffectedData();
 		if(input != null) {
 			Xref nref = new Xref (pe.getGeneID(), input.getDataSource());
-			if(!nref.equals(currRef)) 
+			if(!nref.equals(currRef))
 			{
 				doQuery();
-			}				
+			}
 		}
 	}
-	
+
 	private boolean disposed = false;
 	public void dispose()
 	{
@@ -178,5 +178,5 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 		if (vpwy != null) vpwy.removeSelectionListener(this);
 		executor.shutdown();
 		disposed = true;
-	}	
+	}
 }

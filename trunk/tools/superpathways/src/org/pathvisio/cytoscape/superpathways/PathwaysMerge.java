@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.cytoscape.superpathways;
@@ -342,28 +342,28 @@ public class PathwaysMerge {
 		cytoscape.view.CyNetworkView networkView = Cytoscape
 		.getNetworkView(title);
 		networkView.redrawGraph(true, false);
-		
+
 		//the following code is for display with appropriate Layout
 		/*Collection<CyLayoutAlgorithm> allLayouts=CyLayouts.getAllLayouts();
-		CyLayoutAlgorithm alg = CyLayouts.getLayout("force-directed"); 
-		LayoutProperties props = alg.getSettings(); 
+		CyLayoutAlgorithm alg = CyLayouts.getLayout("force-directed");
+		LayoutProperties props = alg.getSettings();
 		Tunable weightAttribute = props.get("edge_attribute");
 	    weightAttribute.setValue("weight");
-	    alg.updateSettings(); 
+	    alg.updateSettings();
 		networkView.applyLayout(alg);*/
-		
-		
-		
+
+
+
 
 		return network;
 	}
 
 	/**
 	 * Get a list of matched nodes/edges
-	 * 
+	 *
 	 * @param networks
 	 *            Networks to be merged
-	 * 
+	 *
 	 * @return list of map from network to node/edge
 	 */
 	protected List<Map<CyNetwork, Set<GraphObject>>> getMatchedList(
@@ -579,7 +579,7 @@ public class PathwaysMerge {
 
 		Set<GraphObject> nodes = new HashSet<GraphObject>();
 		// 'nodes' will contains all the matched nodes
-		
+
 		while (itNodes.hasNext()) {
 			nodes.addAll(itNodes.next());
 		}
@@ -590,15 +590,15 @@ public class PathwaysMerge {
 		String id = new String(itNode.next().getIdentifier());
 		String geneID=(String)nodeAtts.getAttribute(id, "GeneID");
 		String systemCode=(String)nodeAtts.getAttribute(id, "SystemCode");
-		
-		
+
+
 		// ids is for later use--set attribute for shared nodes
 		List<String> ids = new ArrayList<String>();
 		ids.add(id);
-		
+
 		List<String> canonicalNames=new ArrayList<String>();
 		canonicalNames.add((String)nodeAtts.getAttribute(id, "canonicalName"));
-		
+
 		String gpmlType = nodeAtts.getAttribute(id, "gpml-type").toString();
 
 		if ((!gpmlType.equals("1")) && (!gpmlType.equals("7"))) {
@@ -636,19 +636,19 @@ public class PathwaysMerge {
 			// Get the node with id or create a new node
 			// for attribute confilict handling, introduce a conflict node here?
 			final Node node = Cytoscape.getCyNode(id, true);
-			
-			
+
+
 			if (nodes.size() > 1){
 				String combinedCName="";
 				Iterator<String> it=canonicalNames.iterator();
 				while(it.hasNext()){
 					combinedCName=combinedCName+it.next()+"_";
 				}
-				
+
 				combinedCName=combinedCName.substring(0, combinedCName.length()-1);
 				nodeAtts.setAttribute(id, "canonicalName",combinedCName);
 			}
-			
+
 			Set<CyNetwork> setOfNets = mapNetNode.keySet();
 			Iterator<CyNetwork> itNets = setOfNets.iterator();
 			String color = null;
@@ -716,10 +716,10 @@ public class PathwaysMerge {
 					// System.out.println(combinedColor);
 					nodeAtts.setAttribute(id, "Source Pathway", sourcePws);
 					nodeAtts.setAttribute(id, "node.fillColor", combinedColor);
-					
+
                     //set other attribute value if they have the same info
 					setAttributeForSharedNodes(nodeAtts, ids, id);
-					
+
 					//set the attribute GeneID and SystemCode
 					nodeAtts.setAttribute(id, "GeneID", geneID);
 					nodeAtts.setAttribute(id, "SystemCode",systemCode );
@@ -772,7 +772,7 @@ public class PathwaysMerge {
 				String id = it.next();
 				attrs.add(nodeAtts.getAttribute(id, tempAttr));
 			}
-			
+
 				for (int j = 0; j < attrs.size() - 1; j++) {
 					if (attrs.get(j) != null && attrs.get(j + 1) != null) {
 						if (!attrs.get(j).equals(attrs.get(j + 1))) {
@@ -782,7 +782,7 @@ public class PathwaysMerge {
 						flag = 0;
 					}
 				}
-			
+
 
 			if (flag == 1 ) {
 				Object attrForAllSharedNodes = nodeAtts.getAttribute(

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.client;
@@ -42,40 +42,40 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class FactorPanel extends StatePanel {
 	String pathway;
-	
+
 	ListBox factorBox;
 	FlexTable conditionPanel;
 	Panel centerPanel;
-	
+
 	Map<String, FactorInfo> factors = new HashMap<String, FactorInfo>();
 	Map<String, Set<String>> selectedFactors = new HashMap<String, Set<String>>();
-	
+
 	State currentState;
-	
+
 	public FactorPanel(AtlasMapper main) {
 		super("Select conditions", main);
 
 		centerPanel = new VerticalPanel();
 		add(centerPanel, CENTER);
-		
+
 		HorizontalPanel factorPanel = new HorizontalPanel();
 		factorPanel.add(new Label("Condition type:"));
-		
+
 		factorBox = new ListBox();
 		factorBox.addChangeListener(new ChangeListener() {
 			public void onChange(Widget sender) {
 				factorChanged();
 			}
 		});
-		
+
 		factorPanel.add(factorBox);
-		
+
 		centerPanel.add(factorPanel);
-		
+
 		conditionPanel = new FlexTable();
 		centerPanel.add(conditionPanel);
 	}
-	
+
 	public State getState(boolean nextPanel) {
 		State state = new State();
 		if(pathway != null) {
@@ -92,7 +92,7 @@ public class FactorPanel extends StatePanel {
 				}
 				if(factorValue.length() > SEP_FACTOR.length()) {
 					state.setValue(
-							State.KEY_FACTOR_VALUES, 
+							State.KEY_FACTOR_VALUES,
 							factorValue.substring(0, factorValue.length() - SEP_FACTOR.length())
 					);
 				}
@@ -105,7 +105,7 @@ public class FactorPanel extends StatePanel {
 		}
 		return state;
 	}
-	
+
 	public void setState(State state) {
 		currentState = state;
 		pathway = state.getValue(State.KEY_PATHWAY);
@@ -126,14 +126,14 @@ public class FactorPanel extends StatePanel {
 			}
 		}
 	}
-	
+
 	void factorChanged() {
 		conditionPanel.clear();
 		String name = factorBox.getItemText(factorBox.getSelectedIndex());
 		Set<String> selected = selectedFactors.get(name);
 		if(name != null && factors.containsKey(name)) {
 			String[] values = factors.get(name).values;
-			
+
 			int row = 0;
 			int col = 0;
 			for(String v : values) {
@@ -152,7 +152,7 @@ public class FactorPanel extends StatePanel {
 			}
 		}
 	}
-	
+
 	void refreshFactors() {
 		factorBox.clear();
 		conditionPanel.clear();
@@ -184,11 +184,11 @@ public class FactorPanel extends StatePanel {
 		}
 		refreshButton();
 	}
-	
+
 	protected boolean hasNext() {
 		return factors != null && factors.size() > 0;
 	}
-	
+
 	void queryFactors() {
 		AsyncCallback<FactorInfo[]> callback = new AsyncCallback<FactorInfo[]>() {
 			public void onFailure(Throwable caught) {
@@ -197,24 +197,24 @@ public class FactorPanel extends StatePanel {
 			}
 			public void onSuccess(FactorInfo[] result) {
 				factors.clear();
-				
+
 				//Create a map of all factors
 				for(FactorInfo fi : result) {
 					factors.put(fi.name, fi);
 				}
-				
+
 				//Find the selected factors
 				selectedFactors.clear();
-				
+
 				if(currentState != null) {
 					String factorType = currentState.getValue(State.KEY_FACTOR_TYPE);
 					String valueString = currentState.getValue(State.KEY_FACTOR_VALUES);
 					FactorInfo factorInfo = factors.get(factorType);
-					
+
 					if(valueString != null && factorInfo != null) {
 						Set<String> existValues = new HashSet<String>();
 						for(String v : factorInfo.values) existValues.add(v);
-						
+
 						String[] values = valueString.split(SEP_FACTOR);
 						Set<String> selected = new HashSet<String>();
 						for(String v : values) {
@@ -225,7 +225,7 @@ public class FactorPanel extends StatePanel {
 						}
 					}
 				}
-				
+
 				refreshFactors();
 				main.stopProgress(FactorPanel.this);
 			}
@@ -233,7 +233,7 @@ public class FactorPanel extends StatePanel {
 		main.startProgress();
 		main.getService().getFactors(pathway, callback);
 	}
-	
+
 	static final int NR_COL = 3;
 	static final String SEP_FACTOR = ";";
 }

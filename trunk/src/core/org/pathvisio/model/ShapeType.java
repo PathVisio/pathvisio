@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -24,8 +24,8 @@ import java.util.Map;
 /**
    Extensible enum
  */
-public class ShapeType 
-{	
+public class ShapeType
+{
 	private static Map<String, ShapeType> mappMappings = new HashMap<String, ShapeType>();
 	private static Map<String, ShapeType> nameMappings = new HashMap<String, ShapeType>();
 	private static List<ShapeType> values = new ArrayList<ShapeType>();
@@ -44,7 +44,7 @@ public class ShapeType
 	public static final ShapeType PENTAGON = new ShapeType ("Pentagon", "Poly"); // poly in MAPP
 	public static final ShapeType HEXAGON = new ShapeType ("Hexagon", "Poly"); // poly in MAPP
 	public static final ShapeType BRACE = new ShapeType ("Brace", "Brace");
-	
+
 	private String name;
 	private String mappName;
 
@@ -52,7 +52,7 @@ public class ShapeType
 	// values array.
 	// Warning: may be removed in the future
 	private int value;
-	
+
 	/**
 	   The constructor is private so we have to use the "create"
 	   method to add new ShapeTypes. In the create method we make sure
@@ -63,7 +63,7 @@ public class ShapeType
 	private ShapeType (String name, String mappName)
 	{
 		if (name == null) { throw new NullPointerException(); }
-		
+
 		this.mappName = mappName;
 		this.name  = name;
 
@@ -76,7 +76,7 @@ public class ShapeType
 		// assign an integer value
 		value = values.size();
 		// and add it to the array list.
-		values.add (this);		
+		values.add (this);
 	}
 
 	/**
@@ -97,8 +97,8 @@ public class ShapeType
 	}
 
 	/*
-	 * Warning when using fromMappName: in case value == Poly, 
-	 * this will return Triangle. The caller needs to check for 
+	 * Warning when using fromMappName: in case value == Poly,
+	 * this will return Triangle. The caller needs to check for
 	 * this special
 	 * case.
 	 */
@@ -152,7 +152,7 @@ public class ShapeType
 	{
 		return values.get (value);
 	}
-	
+
 	/**
 	   Returns the names of all registered Shape types, in such a way that the index
 	   is equal to it's ordinal value.
@@ -162,7 +162,7 @@ public class ShapeType
 	static public String[] getNames()
 	{
 		String[] result = new String[values.size()];
-		
+
 		for (int i = 0; i < values.size(); ++i)
 		{
 			result[i] = values.get(i).getName();

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -23,20 +23,20 @@ import org.pathvisio.Engine;
 import org.pathvisio.model.Pathway;
 
 /** Manages a stack of undo actions */
-public class UndoManager 
+public class UndoManager
 {
 	public static final String CANT_UNDO = "Can't undo";
-	
+
 	private List<UndoAction> undoList = new ArrayList<UndoAction>();
 
 	private Pathway pathway;
-	
+
 	public void setPathway (Pathway pathway) {
 		this.pathway = pathway;
 	}
-	
+
 	private Engine engine;
-	
+
 	/**
 	 * Check if this undo manager is active.
 	 * If there is no instance of Engine available,
@@ -48,7 +48,7 @@ public class UndoManager
 	public boolean isActive() {
 		return engine != null;
 	}
-	
+
 	/**
 	 * Set the engine for this undo manager.
 	 * @param engine
@@ -66,7 +66,7 @@ public class UndoManager
 	protected Engine getEngine() {
 		return engine;
 	}
-	
+
 	static final int MAX_UNDO_SIZE = 25;
 	/**
 	   Insert a new action into the Undo Queue based on an UndoAction
@@ -74,14 +74,14 @@ public class UndoManager
 	   the pathway. This way you can actually record the action after
 	   the pathway has already modified, useful for collapsing
 	   multiple drag events into one action.
-	   
+
 	   @param act: UndoAction containing pre-recorded pathway state
 	   and description of the action.
 	 */
 	public void newAction (UndoAction act)
-	{		
+	{
 		if(!isActive()) return; //Don' record event if inactive
-		
+
 		act.setUndoManager(this);
 		undoList.add (act);
 		if (undoList.size() > MAX_UNDO_SIZE)
@@ -95,14 +95,14 @@ public class UndoManager
 	   Insert a new action into the Undo Queue. This method
 	   will make a copy of the current state of the pathway, so call
 	   this method before the action actually takes place.
-	   
+
 	   @param desc: description of the change, for display in the edit
 	   menu.
 	 */
 	public void newAction (String desc)
 	{
 		if(!isActive()) return; //Don' record event if inactive
-		
+
 		if(pathway != null) {
 			UndoAction x = new UndoAction (desc, (Pathway)pathway.clone());
 			x.setUndoManager(this);
@@ -123,7 +123,7 @@ public class UndoManager
 		}
 		return result;
 	}
-	
+
 	void undo()
 	{
 		if (undoList.size() > 0 && isActive())
@@ -131,7 +131,7 @@ public class UndoManager
 			UndoAction a = undoList.get(undoList.size()-1);
 			a.undo();
 			undoList.remove(a);
-			fireUndoManagerEvent (new UndoManagerEvent (getTopMessage()));			
+			fireUndoManagerEvent (new UndoManagerEvent (getTopMessage()));
 		}
 	}
 
@@ -147,7 +147,7 @@ public class UndoManager
 	   mainly intended for the menu item to update itself.
 	 */
 	void fireUndoManagerEvent (UndoManagerEvent e)
-	{		
+	{
 		//printSummary();
 		for (UndoManagerListener g : listeners)
 		{
@@ -163,7 +163,7 @@ public class UndoManager
 		listeners.clear();
 		disposed = true;
 	}
-	
+
 	/**
 	   debugging helper function
 	 */

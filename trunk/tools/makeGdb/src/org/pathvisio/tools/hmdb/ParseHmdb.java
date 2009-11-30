@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.tools.hmdb;
@@ -24,10 +24,10 @@ import java.util.regex.Pattern;
 /**
  * Parse Metabocards from Hmdb
  */
-public class ParseHmdb 
+public class ParseHmdb
 {
 	/**
-	 * represents some information from 
+	 * represents some information from
 	 * a single HMDB metabocard
 	 */
 	static class Compound
@@ -39,7 +39,7 @@ public class ParseHmdb
 			if (value.equals ("Not Available"))
 			{
 				value = null;
-			}		
+			}
 			if (key.equals("name"))
 			{
 				symbol = value;
@@ -94,11 +94,11 @@ public class ParseHmdb
 		String smiles = null;
 		String[] synonyms = null;
 	}
-	
+
 	/**
 	 * Signals error while parsing a Metabocards-formatted file.
 	 * This exception means that either the file is corrupt,
-	 * not a valid metabocards file, or (possibly) 
+	 * not a valid metabocards file, or (possibly)
 	 * that the metabocards format has changed.
 	 */
 	static class ParseException extends Exception
@@ -113,7 +113,7 @@ public class ParseHmdb
 			super("Parse error: " + message + " at " + lineNo + "\n" + line);
 		}
 	}
-		
+
 	/**
 	 * Reads a single metabocard from a text file.
 	 * returns null if there are no more records to read.
@@ -121,20 +121,20 @@ public class ParseHmdb
 	Compound readNext (LineNumberReader reader) throws IOException, ParseException
 	{
 		Compound result = new Compound();;
-		
+
 		int state = 0;
 		String line;
 		String key = null;
 		String value = null;
-		
+
 		Pattern p1 = Pattern.compile ("#BEGIN_METABOCARD (HMDB\\d+)");
 		Pattern p2 = Pattern.compile ("#END_METABOCARD (HMDB\\d+)");
 		Pattern p3 = Pattern.compile ("# ([a-zA-Z0-9_]+):");
-		
+
 		while ((line = reader.readLine()) != null)
 		{
 			int newState = state;
-			
+
 			switch (state)
 			{
 			// state 0: expect begin
@@ -167,7 +167,7 @@ public class ParseHmdb
 				{
 					// store unless this is the first key
 					if (key != null) result.storeField (key, value);
-					
+
 					key = m3.group(1);
 					value = null;
 					newState = 1;

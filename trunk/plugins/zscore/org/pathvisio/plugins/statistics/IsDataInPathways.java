@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.plugins.statistics;
@@ -49,10 +49,10 @@ import org.xml.sax.helpers.XMLReaderFactory;
 /**
  * Checks which genes from a dataset are not mapped in any pathway
  * Useful for targeted development of new pathways.
- * 
+ *
  * TODO: make a plug-in out of this.
  */
-public class IsDataInPathways 
+public class IsDataInPathways
 {
 
 //	static File fGex = new File ("/home/martijn/uni-wrk/datasets/Starvation/Intestine/only_protemics_genmapp_format.pgex");
@@ -62,17 +62,17 @@ public class IsDataInPathways
 	static File fGex = new File ("/media/KINGSTON/muscle_t12_vs_t0_PathVisio.pgex");
 	static File fGdb = new File ("/home/martijn/PathVisio-Data/gene databases/Mm_Derby_20080102.pgdb");
 	static File pwDir = new File ("/home/martijn/wikipathways/Mus_musculus");
-	
+
 	static File outFile = new File ("/home/martijn/Desktop/isdatainpahtways.txt");
-	
+
 	public static void main(String[] args) throws IDMapperException, ParseException, FileNotFoundException
 	{
 		PreferenceManager.init();
 		GexManager gexManager = new GexManager();
 		gexManager.setCurrentGex("" + fGex, false);
-		
+
 		XMLReader xmlReader;
-		
+
 		try
 		{
 			xmlReader = XMLReaderFactory.createXMLReader();
@@ -82,16 +82,16 @@ public class IsDataInPathways
 			Logger.log.error("Problem while searching pathways", e);
 			return;
 		}
-		
+
 		// read all rows of gex;
 		SimpleGex gex = gexManager.getCurrentGex();
-	
+
 		Map<Xref, Xref> dataRefs = new HashMap<Xref, Xref>();
 		Map<Xref, List<String>> counts = new HashMap<Xref, List<String>>();
-		
+
 		SimpleGdb gdb = SimpleGdbFactory.createInstance("" + fGdb, new DataDerby(), 0);
-		
-		for (int i = 0; i < gex.getNrRow(); ++i) 
+
+		for (int i = 0; i < gex.getNrRow(); ++i)
 		{
 			ReporterData data = gex.getRow(i);
 			Xref src = data.getXref();
@@ -102,11 +102,11 @@ public class IsDataInPathways
 			}
 			dataRefs.put (src, src);
 		}
-		
+
 		for (File f : FileUtils.getFiles(pwDir, "gpml", false))
 		{
 			PathwayParser pp = new PathwayParser (f, xmlReader);
-			
+
 			for (XrefWithSymbol ref : pp.getGenes())
 			{
 				Xref ref2 = new Xref (ref.getId(), ref.getDataSource());
@@ -116,9 +116,9 @@ public class IsDataInPathways
 				}
 			}
 		}
-		
+
 		PrintStream out = new PrintStream(new FileOutputStream(outFile));
-		for (int i = 0; i < gex.getNrRow(); ++i) 
+		for (int i = 0; i < gex.getNrRow(); ++i)
 		{
 			ReporterData data = gex.getRow(i);
 			Xref ref = data.getXref();
@@ -135,11 +135,11 @@ public class IsDataInPathways
 			}
 			List<String> pwyNames = counts.get(ref);
 			out.print (i + "\t" +
-					ref.getId() + "\t" + 
+					ref.getId() + "\t" +
 					ref.getDataSource().getSystemCode()  + "\t" +
-					desc + "\t" + 
+					desc + "\t" +
 					pwyNames.size() + "\t");
-			
+
 			boolean first = true;
 			for (String name : pwyNames)
 			{

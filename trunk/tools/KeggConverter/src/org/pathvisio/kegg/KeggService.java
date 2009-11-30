@@ -2,16 +2,16 @@
 //a tool for data visualization and analysis using Biological Pathways
 //Copyright 2006-2007 BiGCaT Bioinformatics
 
-//Licensed under the Apache License, Version 2.0 (the "License"); 
-//you may not use this file except in compliance with the License. 
-//You may obtain a copy of the License at 
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
 
-//http://www.apache.org/licenses/LICENSE-2.0 
+//http://www.apache.org/licenses/LICENSE-2.0
 
-//Unless required by applicable law or agreed to in writing, software 
-//distributed under the License is distributed on an "AS IS" BASIS, 
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-//See the License for the specific language governing permissions and 
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
 //limitations under the License.
 package org.pathvisio.kegg;
 
@@ -32,24 +32,24 @@ import org.pathvisio.model.ConverterException;
 public class KeggService {
 	private static KEGGLocator keggLocator = new KEGGLocator();
 	private static KEGGPortType keggPortType;
-	
+
 	private static KeggService instance;
-	
+
 	static KeggService getInstance() throws ServiceException {
 		if(instance == null) {
 			instance = new KeggService();
 		}
 		return instance;
 	}
-	
+
 	private KeggService() throws ServiceException {
 		keggPortType = keggLocator.getKEGGPort();
 	}
-	
+
 	/**
 	 * Fetches the organism specific NCBI gene identifiers for the enzyme code
-	 * @throws ConverterException 
-	 * @throws RemoteException 
+	 * @throws ConverterException
+	 * @throws RemoteException
 	 */
 	String[] getGenesForEc(String ec, Organism organism) throws RemoteException, ConverterException {
 		Set<String> genes = new HashSet<String>();
@@ -65,7 +65,7 @@ public class KeggService {
 				}
 			}
 		}
-		return genes.toArray(new String[genes.size()]);  
+		return genes.toArray(new String[genes.size()]);
 	}
 
 	String[] getGenesForKo(String ko, Organism organism) throws RemoteException, ConverterException {

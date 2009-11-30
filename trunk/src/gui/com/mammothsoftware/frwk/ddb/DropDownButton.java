@@ -39,7 +39,7 @@ import javax.swing.border.CompoundBorder;
 
 /**
  * A Drop Down Button.
- * 
+ *
  * @author m. bangham
  * Copyright 2005 Mammoth Software LLC
  */
@@ -58,53 +58,53 @@ public class DropDownButton extends JButton implements ActionListener {
 			}
 		}
 	};
-	
+
 	public DropDownButton(Icon icon) {
 		this();
 		mainButton = new RolloverButton(icon, 25, false);
 		arrowButton = new RolloverButton(new DownArrow(), 11, false);
 		init();
 	}
-	
+
 	public DropDownButton(Icon icon, int size) {
 		this();
 		mainButton = new RolloverButton(icon, size, false);
 		arrowButton = new RolloverButton(new DownArrow(), 11, false);
 		init();
 	}
-	
+
 	public DropDownButton(RolloverButton mainButton, RolloverButton arrowButton) {
 		this();
 		this.mainButton = mainButton;
 		this.arrowButton = arrowButton;
 		init();
 	}
-	
+
 	private DropDownButton() {
 		super();
 		setBorder(null);
 	}
-	
+
 	public void setToolTipText(String text) {
 		mainButton.setToolTipText(text);
 		arrowButton.setToolTipText(text);
 	}
-	
+
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 		mainButton.setEnabled(enabled);
 		arrowButton.setEnabled(enabled);
 	}
-	
+
 	public void updateUI() {
 		super.updateUI();
 		setBorder(null);
 	}
-	
+
 	protected Border getRolloverBorder() {
 		return BorderFactory.createRaisedBevelBorder();
 	}
-	
+
 	private void initRolloverListener() {
 		MouseListener l = new MouseAdapter(){
 			Border mainBorder = null;
@@ -127,19 +127,19 @@ public class DropDownButton extends JButton implements ActionListener {
 		mainButton.addMouseListener(l);
 		arrowButton.addMouseListener(l);
 	}
-	
+
 	private void init() {
 		initRolloverListener();
-		
+
       Icon disDownArrow = new DisabledDownArrow();
       arrowButton.setDisabledIcon(disDownArrow);
       arrowButton.setMaximumSize(new Dimension(11,100));
-      mainButton.addActionListener(this); 
+      mainButton.addActionListener(this);
       arrowButton.addActionListener(this);
-      
+
       setMargin(new Insets(0, 0, 0, 0));
-      
-      
+
+
       // Windows draws border around buttons, but not toolbar buttons
       // Using a toolbar keeps the look consistent.
       tb.setBorder(null);
@@ -148,9 +148,9 @@ public class DropDownButton extends JButton implements ActionListener {
       tb.add(mainButton);
       tb.add(arrowButton);
       add(tb);
-      
+
       setFixedSize(mainButton, arrowButton);
-  
+
 	}
 	/*
 	 * Forces the width of this button to be the sum of the widths of the main
@@ -167,7 +167,7 @@ public class DropDownButton extends JButton implements ActionListener {
       setMinimumSize(new Dimension(width, height));
       setPreferredSize(new Dimension(width, height));
 	}
-   
+
 	/**
 	 * Removes a component from the popup
 	 * @param component
@@ -184,7 +184,7 @@ public class DropDownButton extends JButton implements ActionListener {
 	public Component addComponent(Component component) {
 		return popup.add(component);
 	}
-	
+
 	/**
 	 * Indicates that the first item in the menu should be executed
 	 * when the main button is clicked
@@ -198,18 +198,18 @@ public class DropDownButton extends JButton implements ActionListener {
 		else
 			mainButton.addActionListener(mainButtonListener);
 	}
-	
-   /*------------------------------[ ActionListener ]---------------------------------------------------*/ 
-	 
-   public void actionPerformed(ActionEvent ae){ 
-        JPopupMenu popup = getPopupMenu(); 
-        popup.show(this, 0, this.getHeight()); 
-    } 
-   
+
+   /*------------------------------[ ActionListener ]---------------------------------------------------*/
+
+   public void actionPerformed(ActionEvent ae){
+        JPopupMenu popup = getPopupMenu();
+        popup.show(this, 0, this.getHeight());
+    }
+
    protected JPopupMenu getPopupMenu() { return popup; }
-	
+
    private static class DownArrow implements Icon {
-   	 
+
       Color arrowColor = Color.black;
 
       public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -228,9 +228,9 @@ public class DropDownButton extends JButton implements ActionListener {
       }
 
   }
-   
+
    private static class DisabledDownArrow extends DownArrow {
-   	 
+
       public DisabledDownArrow() {
           arrowColor = new Color(140, 140, 140);
       }
@@ -242,11 +242,11 @@ public class DropDownButton extends JButton implements ActionListener {
           g.drawLine(x+3, y+3, x+5, y+1);
       }
   }
-   
-   private static class ToolBar extends JToolBar 
+
+   private static class ToolBar extends JToolBar
    {
 
-	   public void updateUI() 
+	   public void updateUI()
 	   {
 		   super.updateUI();
 		   setBorder(null);

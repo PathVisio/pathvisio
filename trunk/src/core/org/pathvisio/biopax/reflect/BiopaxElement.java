@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.biopax.reflect;
@@ -28,21 +28,21 @@ import org.jdom.Element;
 import org.pathvisio.model.GpmlFormat;
 
 public class BiopaxElement extends Element {
-	
+
 	private Set<PropertyType> validProperties;
 	private List<BiopaxProperty> properties;
-	
+
 	public BiopaxElement() {
 		setNamespace(GpmlFormat.BIOPAX);
 		validProperties = new HashSet<PropertyType>();
 		properties = new ArrayList<BiopaxProperty>();
 	}
-		
+
 	protected void setValidProperties(PropertyType[] valid) {
 		validProperties = new HashSet<PropertyType>();
 		for(PropertyType pt : valid) validProperties.add(pt);
 	}
-	
+
 	public void addProperty(BiopaxProperty p) {
 		//Check if property is valid
 		PropertyType pt = PropertyType.valueOf(p.getName());
@@ -61,7 +61,7 @@ public class BiopaxElement extends Element {
 		}
 		addContent(p);
 	}
-	
+
 	public void removeProperty(BiopaxProperty p) {
 		BiopaxProperty existing = properties.get(properties.indexOf(p));
 		if(existing != null) {
@@ -69,7 +69,7 @@ public class BiopaxElement extends Element {
 			removeContent(p);
 		}
 	}
-	
+
 	private int getFirstPropertyIndex(String name) {
 		int i = 0;
 		for(BiopaxProperty p : properties) {
@@ -78,7 +78,7 @@ public class BiopaxElement extends Element {
 		}
 		return i;
 	}
-	
+
 	/**
 	 * Gets all the property objects by name
 	 * @param name
@@ -93,7 +93,7 @@ public class BiopaxElement extends Element {
 		}
 		return props;
 	}
-	
+
 	/**
 	 * Returns the first property with the given name
 	 * @param name
@@ -107,7 +107,7 @@ public class BiopaxElement extends Element {
 		}
 		return null;
 	}
-	
+
 	public String getId() {
 		return getAttributeValue("id", Namespaces.RDF);
 	}
@@ -115,14 +115,14 @@ public class BiopaxElement extends Element {
 	public void setId(String id) {
 		setAttribute("id", id, Namespaces.RDF);
 	}
-	
+
 	public static BiopaxElement fromXML(Element xml) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		Class<?> c = Class.forName("org.pathvisio.biopax.reflect." + xml.getName());
 		BiopaxElement elm = (BiopaxElement)c.newInstance();
 		elm.loadXML(xml);
 		return elm;
 	}
-	
+
 	void loadXML(Element xml) {
 		setName(xml.getName());
 		setNamespace(xml.getNamespace());
@@ -133,7 +133,7 @@ public class BiopaxElement extends Element {
 			}
 		}
 	}
-	
+
 	public void removeFromDocument(Document d) {
 		if(d == null) return;
 		d.getRootElement().removeContent(this);
@@ -147,7 +147,7 @@ public class BiopaxElement extends Element {
 	public boolean propertyEquals(BiopaxElement e) {
 		return propertyEquals(e, null);
 	}
-	
+
 	/**
 	 * Check if this element equals the given element by comparing the properties.
 	 * Properties that are in the ignore collection are not taken into account.
@@ -159,7 +159,7 @@ public class BiopaxElement extends Element {
 		for(PropertyType p : PropertyType.values()) {
 			//Continue if property is in ignore list
 			if(ignore != null && ignore.contains(p)) continue;
-			
+
 			//Get the properties for this property type
 			List<BiopaxProperty> pv1 = getProperties(p.name());
 			List<BiopaxProperty> pv2 = e.getProperties(p.name());

@@ -1,12 +1,12 @@
 /*
  * Copyright Neil Cochrane 2006
  * @author neilcochrane
- * 
- * Feel free to use the code without restriction 
- * in open source projects. 
- * There is no cost or warranty attached and the code is 
- * provided as is. 
- * 
+ *
+ * Feel free to use the code without restriction
+ * in open source projects.
+ * There is no cost or warranty attached and the code is
+ * provided as is.
+ *
  * http://www.jroller.com/swinguistuff/entry/text_completion
  */
 package com.jroller.completer;
@@ -26,7 +26,7 @@ public class CompleterTextField extends JTextField
 	{
 		super();
 		_filter = getFilter();
-		
+
 		_init();
 	}
 
@@ -40,7 +40,7 @@ public class CompleterTextField extends JTextField
 	/**
 	 * useWindow - true will popup the completer window to help with matches,
 	 * false will just complete in the textfield with no window.
-	 */ 
+	 */
 	public CompleterTextField(Object[] completeMatches, boolean useWindow)
 	{
 		super();
@@ -55,14 +55,14 @@ public class CompleterTextField extends JTextField
 		PlainDocument pd = new PlainDocument();
 		pd.setDocumentFilter(getFilter());
 		setDocument(pd);
-	}  
+	}
 
 	@Override
 	/**
 	 * Warning: Calling setDocument on a completerTextField will remove the completion
 	 * mecanhism for this text field if the document is not derived from AbstractDocument.
-	 * 
-	 *  Only AbstractDocuments support the required DocumentFilter API for completion. 
+	 *
+	 *  Only AbstractDocuments support the required DocumentFilter API for completion.
 	 */
 	public void setDocument(Document doc)
 	{
@@ -89,10 +89,10 @@ public class CompleterTextField extends JTextField
 
 	/**
 	 * Will change the user entered part of the string to match the case of the matched item.
-	 * 
+	 *
 	 * e.g.
 	 * "europe/lONdon" would be corrected to "Europe/London"
-	 * 
+	 *
 	 * This option only makes sense if case sensitive is turned off
 	 */
 	public void setCorrectCase(boolean correctCase)
@@ -115,7 +115,7 @@ public class CompleterTextField extends JTextField
 		super.setText(t);
 		_filter.setPerformCompletion(true);
 	}
-	
+
 	private CompleterFilter _filter;
 
 }

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.cytoscape;
@@ -41,9 +41,9 @@ import org.pathvisio.model.Pathway;
 public class GpmlReader extends AbstractGraphReader {
 	GpmlConverter converter;
 	GpmlHandler gpmlHandler;
-	
+
 	URLConnection urlCon;
-	
+
 	public GpmlReader(String fileName, GpmlHandler gpmlHandler) {
 		super(fileName);
 		this.gpmlHandler = gpmlHandler;
@@ -54,7 +54,7 @@ public class GpmlReader extends AbstractGraphReader {
 		urlCon = con;
 		this.gpmlHandler = gpmlHandler;
 	}
-	
+
 	public void read() throws IOException {
 		try {
 			Pathway pathway = new Pathway();
@@ -69,7 +69,7 @@ public class GpmlReader extends AbstractGraphReader {
 			throw new IOException(ex.getMessage());
 		}
 	}
-	
+
 	public CyLayoutAlgorithm getLayoutAlgorithm() {
 		return new LayoutAdapter() {
 			public void doLayout(CyNetworkView networkView, TaskMonitor monitor) {
@@ -77,15 +77,15 @@ public class GpmlReader extends AbstractGraphReader {
 			}
 		};
 	}
-	
+
 	public int[] getEdgeIndicesArray() {
 		return converter.getEdgeIndicesArray();
 	}
-	
+
 	public int[] getNodeIndicesArray() {
 		return converter.getNodeIndicesArray();
 	}
-		
+
 	public String getNetworkName() {
 		String pwName = converter.getPathway().getMappInfo().getMapInfoName();
 		return pwName == null ? super.getNetworkName() : pwName;

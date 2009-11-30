@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.indexer;
@@ -38,22 +38,22 @@ import org.pathvisio.preferences.PreferenceManager;
 public class Search extends TestCase {
 	static final File pathwayDir = new File("tools/lucene-indexer/test-data");
 	static final File indexDir = new File("tools/lucene-indexer/test-index");
-	
+
 	public void testCreateIndex() {
 		try {
 			//Start with fresh index
 			for(File f : indexDir.listFiles()) {
 				f.delete();
 			}
-			
+
 			//Connect to any GDB in the preferences
 			PreferenceManager.init();
 			GdbManager gdbmgr = new GdbManager();
 			gdbmgr.initPreferred();
-			
+
 			GdbProvider gdbs = new GdbProvider();
 			gdbs.addGlobalGdb(gdbmgr.getCurrentGdb());
-			
+
 			GpmlIndexer indexer = new GpmlIndexer(indexDir, pathwayDir, gdbs);
 			indexer.update();
 			indexer.close();
@@ -62,12 +62,12 @@ public class Search extends TestCase {
 			fail("Exception during indexing: " + e.getMessage());
 		}
 	}
-	
+
 	public void testRemovePathway() {
 		File firstFile = null;
 		File renamedFile = null;
 		int nrHits = -1;
-		
+
 		for(File f : pathwayDir.listFiles()) {
 			if(f.getName().endsWith(".gpml")) {
 				firstFile = new File(f.getAbsolutePath());
@@ -76,16 +76,16 @@ public class Search extends TestCase {
 				break;
 			}
 		}
-		
+
 		Logger.log.info("Removing " + firstFile.getAbsolutePath() + " from index");
-		
+
 		try {
 			//Update the index
 			GdbProvider gdbs = new GdbProvider();
 			GpmlIndexer indexer = new GpmlIndexer(indexDir, pathwayDir, gdbs);
 			indexer.update(firstFile);
 			indexer.close();
-			
+
 			//Try to find the pathway by it's source attribute
 			Hits hits = query(
 					new TermQuery(
@@ -93,11 +93,11 @@ public class Search extends TestCase {
 					)
 			);
 			nrHits = hits.length();
-			
+
 			Logger.log.info("FirstFile: " + firstFile);
 			Logger.log.info("RenamedFile: " + renamedFile);
 			renamedFile.renameTo(firstFile);
-			
+
 			//Update the index
 			indexer = new GpmlIndexer(indexDir, pathwayDir, gdbs);
 			indexer.update(firstFile);
@@ -106,20 +106,20 @@ public class Search extends TestCase {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-		
+
 		assertEquals(0, nrHits);
 	}
-	
+
 	public void testTitleSearch() {
 		Hits hits = query("name:oxidative");
 		assertTrue("nr of hits should be 1, is: " + hits.length(), hits.length() == 1);
 	}
-	
+
 	public void testOrganismSearch() {
 		Hits hits = query("organism:\"Homo sapiens\"");
 		assertTrue("nr of hits should be > 0, is: " + hits.length(), hits.length() > 0);
 	}
-	
+
 	public void testDataNodeSearch() throws CorruptIndexException, IOException {
 		Query query = new TermQuery(new Term(DataNodeIndexer.FIELD_ID, "8643"));
 		Hits hits = query(query);
@@ -135,7 +135,7 @@ public class Search extends TestCase {
 		}
 		assertTrue(found);
 	}
-	
+
 	public void testCrossRefSearch() throws CorruptIndexException, IOException {
 		Query q1 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID, "32786_at"));
 		Query q2 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID, "GO:0003700"));
@@ -144,20 +144,20 @@ public class Search extends TestCase {
 		hits = query(q2);
 		assertTrue("Hits length: " + hits.length(), hits.length() > 0);
 	}
-	
+
 	public void testCrossRefByCode() {
 		//Search for 5157 L -> should get pathway 5157-L.gpml
 		Query q1 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID_CODE, "5157:L"));
 		Hits hits = query(q1);
 		assertTrue("Hits length: " + hits.length(), hits.length() == 1);
-		
+
 		//Search for 5157 H -> should get pathway 5157-H.gpml
 		Query q2 = new TermQuery(new Term(DataNodeIndexer.FIELD_XID_CODE, "5157:H"));
 		hits = query(q1);
 		assertTrue("Hits length: " + hits.length(), hits.length() == 1);
-		
+
 	}
-	
+
 	boolean xrefInPathway(Hits hits, String pwName) throws CorruptIndexException, IOException {
 		for(int i = 0; i < hits.length(); i++) {
 			Document doc = hits.doc(i);
@@ -169,26 +169,26 @@ public class Search extends TestCase {
 		}
 		return false;
 	}
-	
+
 	public void testSimpleRelation() throws CorruptIndexException, IOException {
 		String q1 = RelationshipIndexer.FIELD_LEFT + ":A"; //Right should be D
 		Hits hits = query(q1);
 		assertTrue(hits.length() > 0);
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_RIGHT, "D"));
-		
+
 		String q2 = RelationshipIndexer.FIELD_RIGHT + ":A"; //Left should be B, C and E
 		hits = query(q2);
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "B"));
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "C"));
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_LEFT, "E"));
 	}
-	
+
 	public void testCaseInsensitive() throws CorruptIndexException, IOException {
 		String q1 = RelationshipIndexer.FIELD_LEFT + ":a"; //Stored as A
 		Hits hits = query(q1);
 		assertTrue(hits.length() > 0);
 	}
-	
+
 	public void testMetabolicReaction() throws CorruptIndexException, IOException {
 		//Substrate1 should yield product1 and product2
 		String q1 = RelationshipIndexer.FIELD_LEFT + ":substrate1";
@@ -196,14 +196,14 @@ public class Search extends TestCase {
 		assertTrue(hits.length() == 1); //Only one relation, but with two 'right' fields
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_RIGHT, "product1"));
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_RIGHT, "product2"));
-		
+
 		String q2 = RelationshipIndexer.FIELD_MEDIATOR + ":inhibitor";
 		hits = query(q2);
 		assertTrue(hits.length() == 1); //Only one relation, but with two 'mediator' fields
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_MEDIATOR, "inhibitor"));
 		assertTrue(searchHits(hits, RelationshipIndexer.FIELD_MEDIATOR, "catalyst"));
 	}
-	
+
 	public void testLiterature() {
 		Query q1 = new TermQuery(new Term(LiteratureIndexer.FIELD_ID, "1234"));
 		Hits hits = query(q1);
@@ -212,7 +212,7 @@ public class Search extends TestCase {
 		hits = query(q2);
 		assertTrue(hits.length() >= 1);
 	}
-	
+
 	boolean searchHits(Hits hits, String field, String result) throws CorruptIndexException, IOException {
 		boolean found = false;
 		Logger.log.info("Searching hits for: " + result + " in " + field);
@@ -225,11 +225,11 @@ public class Search extends TestCase {
 					found = true;
 				}
 			}
-			
+
 		}
 		return found;
 	}
-	
+
 	public Hits query(Query q) {
 		try {
 			IndexSearcher is = new IndexSearcher(indexDir.getAbsolutePath());
@@ -241,7 +241,7 @@ public class Search extends TestCase {
 		}
 		return null;
 	}
-	
+
 	public Hits query(String q)  {
 		try {
 			Logger.log.info("Query: '" + q + "'");

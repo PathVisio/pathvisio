@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -43,20 +43,20 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 * This class is the model for pathway data. It is responsible for
 * storing all information necessary for maintaining, loading and saving
 * pathway data.
-* 
+*
 * Pathway contains multiple PathwayElements. Pathway is guaranteed
 * to always have exactly one object of the type MAPPINFO and exactly
 * one object of the type INFOBOX.
 */
 public class Pathway
-{		
+{
 	private boolean changed = true;
 	/**
 	   The "changed" flag tracks if the Pathway has been changed since
 	   the file was opened or last saved. New pathways start changed.
 	 */
 	public boolean hasChanged() { return changed; }
-	
+
 	/**
 	   clearChangedFlag should be called after when the current
 	   pathway is known to be the same as the one on disk. This
@@ -69,9 +69,9 @@ public class Pathway
 			changed = false;
 			fireStatusFlagEvent (new StatusFlagEvent (changed));
 			//System.out.println ("Changed flag is cleared");
-		}		
+		}
 	}
-	
+
 	/**
 	   To be called after each edit operation
 	*/
@@ -84,31 +84,31 @@ public class Pathway
 			//System.out.println ("Changed flag is set");
 		}
 	}
-	
+
 	/**
 	 * factor to convert screen cordinates used in GenMAPP to pixel cordinates
 	 * NOTE: maybe it is better to adapt gpml to store cordinates as pixels and
 	 * divide the GenMAPP cordinates by this factor on conversion
-	 * 
+	 *
 	 * @deprecated
 	 */
 	final public static int OLD_GMMLZOOM = 15;
-		
+
 	/**
 	 * List of contained dataObjects
 	 */
 	private List<PathwayElement> dataObjects = new ArrayList<PathwayElement>();
-	
+
 	/**
 	 * Getter for dataobjects contained. There is no setter, you
 	 * have to add dataobjects individually
 	 * @return List of dataObjects contained in this pathway
 	 */
-	public List<PathwayElement> getDataObjects() 
+	public List<PathwayElement> getDataObjects()
 	{
 		return dataObjects;
 	}
-	
+
 	/**
 	 * Get a pathway element by it's GraphId
 	 * @param graphId The graphId of the element
@@ -125,11 +125,11 @@ public class Pathway
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Takes the Xref of all DataNodes in this pathway
 	 * and returns them as a List.
-	 * 
+	 *
 	 * returns an empty arraylist if there are no datanodes in
 	 * this pathway.
 	 */
@@ -145,25 +145,25 @@ public class Pathway
 		}
 		return result;
 	}
-	
+
 	private PathwayElement mappInfo = null;
 	private PathwayElement infoBox = null;
 	private PathwayElement biopax = null;
 	private PathwayElement legend = null;
-	
+
 	/**
 	 * get the one and only MappInfo object.
-	 * 
+	 *
 	 * @return a PathwayElement with ObjectType set to mappinfo.
 	 */
 	public PathwayElement getMappInfo()
 	{
 		return mappInfo;
 	}
-	
+
 	/**
 	 * get the one and only InfoBox object.
-	 * 
+	 *
 	 * @return a PathwayElement with ObjectType set to mappinfo.
 	 */
 	public PathwayElement getInfoBox()
@@ -178,7 +178,7 @@ public class Pathway
 	{
 		return biopax;
 	}
-	
+
 	public void createBiopax()
 	{
 		PathwayElement biopax = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
@@ -186,7 +186,7 @@ public class Pathway
 	}
 
 	private BiopaxElementManager bpElmMgr;
-	
+
 	public BiopaxElementManager getBiopaxElementManager() {
 		if(bpElmMgr == null) {
 			bpElmMgr = new BiopaxElementManager(this);
@@ -194,14 +194,14 @@ public class Pathway
 		bpElmMgr.refresh();
 		return bpElmMgr;
 	}
-	
+
 	/**
 	 * Add a PathwayElement to this Pathway.
 	 * takes care of setting parent and removing from possible previous
-	 * parent. 
-	 * 
+	 * parent.
+	 *
 	 * fires PathwayEvent.ADDED event <i>after</i> addition of the object
-	 * 
+	 *
 	 * @param o The object to add
 	 */
 	public void add (PathwayElement o)
@@ -250,23 +250,23 @@ public class Pathway
 		if (o.getParent() == this) return; // trying to re-add the same object
 		forceAddObject(o);
 	}
-	
+
 	private void forceAddObject(PathwayElement o) {
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
 		o.setParent(this);
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
-	
+
 	/**
 	 * get the highest z-order of all objects
 	 */
-	public int getMaxZOrder() 
+	public int getMaxZOrder()
 	{
 		if (dataObjects.size() == 0) return 0;
-		
+
 		int zmax = dataObjects.get(0).getZOrder();
-		for(PathwayElement e : dataObjects) 
+		for(PathwayElement e : dataObjects)
 		{
 			if(e.getZOrder() > zmax) zmax = e.getZOrder();
 		}
@@ -276,25 +276,25 @@ public class Pathway
 	/**
 	 * get the lowest z-order of all objects
 	 */
-	public int getMinZOrder() 
+	public int getMinZOrder()
 	{
 		if (dataObjects.size() == 0) return 0;
 
 		int zmin = dataObjects.get(0).getZOrder();
-		for(PathwayElement e : dataObjects) 
+		for(PathwayElement e : dataObjects)
 		{
 			if(e.getZOrder() < zmin) zmin = e.getZOrder();
 		}
 		return zmin;
 	}
 
-	/** only used by children of this Pathway to 
+	/** only used by children of this Pathway to
 	 * notify the parent of modifications */
 	void childModified (PathwayEvent e)
 	{
 		markChanged();
 	}
-	
+
 	/**
 	   called for biopax, infobox and mappInfo upon addition.
 	 */
@@ -305,14 +305,14 @@ public class Pathway
 		assert (newElt.getParent() == null);
 		assert (oldElt != newElt);
 		forceRemove(oldElt);
-		forceAddObject(newElt);	
+		forceAddObject(newElt);
 	}
-	
+
 	/**
 	 * removes object
 	 * sets parent of object to null
 	 * fires PathwayEvent.DELETED event <i>before</i> removal of the object
-	 *  
+	 *
 	 * @param o the object to remove
 	 */
 	public void remove (PathwayElement o)
@@ -329,7 +329,7 @@ public class Pathway
 	 * removes object, regardless whether the object may be removed or not
 	 * sets parent of object to null
 	 * fires PathwayEvent.DELETED event <i>before</i> removal of the object
-	 *  
+	 *
 	 * @param o the object to remove
 	 */
 	private void forceRemove(PathwayElement o) {
@@ -341,23 +341,23 @@ public class Pathway
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.DELETED));
 		o.setParent(null);
 	}
-	
+
 	public void mergeBiopax(PathwayElement bpnew) {
 		if(bpnew == null) return;
-		
+
 		Document dNew = bpnew.getBiopax();
 		Document dOld = biopax == null ? null : biopax.getBiopax();
-		
+
 		if(dNew == null) {
 			return; //Nothing to merge
 		}
-		
+
 		if(dOld == null) {
 			createBiopax();
 			biopax.setBiopax(dNew);
 			return;
 		}
-		
+
 		//Create a map of existing biopax elements with an id
 		Map<String, Element> bpelements = new HashMap<String, Element>();
 		for(Object o : dOld.getRootElement().getContent()) {
@@ -367,7 +367,7 @@ public class Pathway
 				if(id != null) bpelements.put(id, e);
 			}
 		}
-		
+
 		//Replace existing elements with the new one, or add if none exist yet
 		for(Object o : dNew.getRootElement().getContent()) {
 			if(o instanceof Element) {
@@ -381,7 +381,7 @@ public class Pathway
 			}
 		}
 	}
-	
+
 	/**
 	 * Stores references of graph ids to other GraphRefContainers
 	 */
@@ -391,13 +391,13 @@ public class Pathway
 	public Set<String> getGraphIds() {
 		return graphIds.keySet();
 	}
-	
+
 	public GraphIdContainer getGraphIdContainer(String id) {
 		return graphIds.get(id);
 	}
-	
+
 	/**
-	 * Returns all GraphRefContainers that refer to an object with a 
+	 * Returns all GraphRefContainers that refer to an object with a
 	 * particular graphId.
 	 */
 	public List<GraphRefContainer> getReferringObjects (String id)
@@ -410,7 +410,7 @@ public class Pathway
 		}
 		return refs;
 	}
-	
+
 	/**
 	 * Register a link from a graph id to a graph ref
 	 * @param id The graph id
@@ -426,25 +426,25 @@ public class Pathway
 		else
 		{
 			List<GraphRefContainer> l = new ArrayList<GraphRefContainer>();
-			l.add(target);		
+			l.add(target);
 			graphRefs.put(id, l);
 		}
 	}
-	
+
 	/**
-	 * Remove a reference to another Id. 
+	 * Remove a reference to another Id.
 	 * @param id
 	 * @param target
 	 */
 	public void removeGraphRef (String id, GraphRefContainer target)
 	{
 		if (!graphRefs.containsKey(id)) throw new IllegalArgumentException();
-		
+
 		graphRefs.get(id).remove(target);
 		if (graphRefs.get(id).size() == 0)
 			graphRefs.remove(id);
 	}
-	
+
 	/**
 	 * Registers an id that can subsequently be used for
 	 * referral. It is tested for uniqueness.
@@ -462,19 +462,19 @@ public class Pathway
 		}
 		graphIds.put(id, idc);
 	}
-	
+
 	public void removeId (String id)
 	{
 		graphIds.remove(id);
 	}
-	
+
 	private Map<String, PathwayElement> groupIds = new HashMap<String, PathwayElement>();
 	private Map<String, Set<PathwayElement>> groupRefs = new HashMap<String, Set<PathwayElement>>();
-	
+
 	public Set<String> getGroupIds() {
 		return groupIds.keySet();
 	}
-	
+
 	public void addGroupId(String id, PathwayElement group) {
 		if (id == null)
 		{
@@ -486,15 +486,15 @@ public class Pathway
 		}
 		groupIds.put(id, group);
 	}
-	
+
 	public void removeGroupId(String id) {
 		groupIds.remove(id);
 	}
-	
+
 	public PathwayElement getGroupById(String id) {
 		return groupIds.get(id);
 	}
-	
+
 	public void addGroupRef (String ref, PathwayElement child)
 	{
 		if (groupRefs.containsKey(ref))
@@ -505,19 +505,19 @@ public class Pathway
 		else
 		{
 			Set<PathwayElement> s = new HashSet<PathwayElement>();
-			s.add(child);		
+			s.add(child);
 			groupRefs.put(ref, s);
-			
+
 		}
 	}
-	
+
 	public void removeGroupRef (String id, PathwayElement child)
 	{
 		if (!groupRefs.containsKey(id)) throw new IllegalArgumentException();
-		
+
 		groupRefs.get(id).remove(child);
-		
-		
+
+
 		if (groupRefs.get(id).size() == 0)
 		{
 			groupRefs.remove(id);
@@ -529,7 +529,7 @@ public class Pathway
 
 		}
 	}
-	
+
 	/**
 	 * Get the pathway elements that are part of the given group
 	 * @param id The id of the group
@@ -540,15 +540,15 @@ public class Pathway
 		//Return an empty set if the group is empty
 		return result == null ? new HashSet<PathwayElement>() : result;
 	}
-	
+
 	public String getUniqueGraphId() {
 		return getUniqueId(graphIds.keySet());
 	}
-	
+
 	public String getUniqueGroupId() {
 		return getUniqueId(groupIds.keySet());
 	}
-	
+
 	/**
 	 * Generate random ids, based on strings of hex digits (0..9 or a..f)
 	 * Ids are unique across both graphIds and groupIds per pathway
@@ -562,25 +562,25 @@ public class Pathway
 		int mod = 0x60000; // 3 hex letters
 		int min = 0xa0000; // has to start with a letter
 		// in case this map is getting big, do more hex letters
-		if ((ids.size()) > 0x10000) 
+		if ((ids.size()) > 0x10000)
 		{
 			mod = 0x60000000;
 			min = 0xa0000000;
 		}
-				
+
 		do
 		{
 			result = Integer.toHexString(Math.abs(rn.nextInt()) % mod + min);
 		}
 		while (ids.contains(result));
-		
+
 		return result;
 	}
-	
+
 	protected double[] calculateMBoardSize() {
 		double mw = 0;
 		double mh = 0;
-		
+
 		for(PathwayElement e : dataObjects) {
 			switch(e.getObjectType()) {
 			case LINE:
@@ -593,12 +593,12 @@ public class Pathway
 				break;
 			}
 		}
-		
+
 		return new double[] { mw + 0.1 * mw, mh + 0.1 * mh };
 	}
-	
+
 	private File sourceFile = null;
-	
+
 	/**
 	 * Gets the xml file containing the Gpml/mapp pathway currently displayed
 	 * @return current xml file
@@ -609,20 +609,20 @@ public class Pathway
 	/**
 	 * Contructor for this class, creates a new gpml document
 	 */
-	public Pathway() 
+	public Pathway()
 	{
 		mappInfo = PathwayElement.createPathwayElement(ObjectType.MAPPINFO);
 		this.add (mappInfo);
 		infoBox = PathwayElement.createPathwayElement(ObjectType.INFOBOX);
 		this.add (infoBox);
 	}
-	
+
 	static final double M_INITIAL_BOARD_WIDTH = 18000;
 	static final double M_INITIAL_BOARD_HEIGHT = 12000;
-	
+
 	/*
 	 * Call when making a new mapp.
-	 */	
+	 */
 	public void initMappInfo()
 	{
 		//Will be calculated
@@ -634,14 +634,14 @@ public class Pathway
 		mappInfo.setVersion(dateString);
 		mappInfo.setMapInfoName("New Pathway");
 	}
-		
+
 	/**
 	 * Writes the JDOM document to the file specified
 	 * @param file	the file to which the JDOM document should be saved
-	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error, 
-	 * 		or the xsd is not in the classpath, an exception will be thrown. 
+	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error,
+	 * 		or the xsd is not in the classpath, an exception will be thrown.
 	 */
-	public void writeToXml(File file, boolean validate) throws ConverterException 
+	public void writeToXml(File file, boolean validate) throws ConverterException
 	{
 		GpmlFormat.writeToXml (this, file, validate);
 		setSourceFile (file);
@@ -665,12 +665,12 @@ public class Pathway
 
 	public void readFromXml(File file, boolean validate) throws ConverterException
 	{
-		Logger.log.info("Start reading the XML file: " + file);	  
+		Logger.log.info("Start reading the XML file: " + file);
 		GpmlFormat.readFromXml (this, file, validate);
 		setSourceFile (file);
 		clearChangedFlag();
 	}
-	
+
 	public void writeToMapp (File file) throws ConverterException
 	{
 		new MappFormat().doExport(file, this);
@@ -686,11 +686,11 @@ public class Pathway
 	/**
 	 * Implement this interface if you want to be notified when the "changed" status changes.
 	 * This happens e.g. when the user makes a change to an unchanged pathway,
-	 * or when a changed pathway is saved. 
+	 * or when a changed pathway is saved.
 	 */
 	public interface StatusFlagListener extends EventListener
-	{	
-		public void statusFlagChanged (StatusFlagEvent e);	
+	{
+		public void statusFlagChanged (StatusFlagEvent e);
 	}
 
 	/**
@@ -722,9 +722,9 @@ public class Pathway
 	{
 		statusFlagListeners.remove(v);
 	}
-	
+
 	//TODO: make private
-	public void fireStatusFlagEvent(StatusFlagEvent e) 
+	public void fireStatusFlagEvent(StatusFlagEvent e)
 	{
 		for (StatusFlagListener g : statusFlagListeners)
 		{
@@ -735,25 +735,25 @@ public class Pathway
 	private List<PathwayListener> listeners = new ArrayList<PathwayListener>();
 
 	public void addListener(PathwayListener v)
-	{ 
-		if(!listeners.contains(v)) listeners.add(v); 
+	{
+		if(!listeners.contains(v)) listeners.add(v);
 	}
-	
+
 	public void removeListener(PathwayListener v) { listeners.remove(v); }
-	
+
     /**
 	   Firing the ObjectModifiedEvent has the side effect of
 	   marking the Pathway as changed.
 	 */
-	public void fireObjectModifiedEvent(PathwayEvent e) 
+	public void fireObjectModifiedEvent(PathwayEvent e)
 	{
 		markChanged();
 		for (PathwayListener g : listeners)
 		{
 			g.pathwayModified(e);
 		}
-	}	
-	
+	}
+
 	public Pathway clone()
 	{
 		Pathway result = new Pathway();
@@ -784,17 +784,17 @@ public class Pathway
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Check for any dangling references, and fix them if found
 	 * This is called just before writing out a pathway.
-	 * 
+	 *
 	 * This is a fallback solution for problems elsewhere in the
 	 * reference handling code. Theoretically, if the rest of
 	 * the code is bug free, this should always return 0.
-	 * 
-	 * @return number of references fixed. Should be 0 under normal 
-	 * circumstances. 
+	 *
+	 * @return number of references fixed. Should be 0 under normal
+	 * circumstances.
 	 */
 	public int fixReferences()
 	{
@@ -826,7 +826,7 @@ public class Pathway
 					pe.setStartGraphRef(null);
 					result++;
 				}
-				
+
 				ref = pe.getEndGraphRef();
 				if (ref != null && !graphIds.contains(ref))
 				{
@@ -841,10 +841,10 @@ public class Pathway
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Transfer statusflag listeners from one pathway to another.
-	 * This is used needed when copies of the pathway are created / returned 
+	 * This is used needed when copies of the pathway are created / returned
 	 * by UndoManager. The status flag listeners are only interested in status flag
 	 * events of the active copy.
 	 */

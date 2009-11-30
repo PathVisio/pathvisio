@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing.dialogs;
@@ -42,7 +42,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 
 	public static final String TAB_COMMENTS = "Comments";
 	public static final String TAB_LITERATURE = "Literature";
-	
+
 	/**
 	 * Create a dialog for the given pathway element.
 	 * @param e The pathway element
@@ -62,16 +62,16 @@ public class PathwayElementDialog extends OkCancelDialog {
 			return new PathwayElementDialog(swingEngine, e, readonly, frame, "Element properties", locationComp);
 		}
 	}
-	
+
 	PathwayElement input;
 	private JTabbedPane dialogPane;
 	private Map<String, PathwayElementPanel> panels;
 	private Map<PropertyType, Object> state = new HashMap<PropertyType, Object>();
 	private Pathway originalPathway; //Used for undo event
-		
+
 	protected boolean readonly;
 	protected SwingEngine swingEngine;
-	
+
 	protected PathwayElementDialog(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, String title, Component locationComp) {
 		super(frame, title, locationComp, true);
 		this.readonly = readonly;
@@ -87,14 +87,14 @@ public class PathwayElementDialog extends OkCancelDialog {
 		dialogPane = new JTabbedPane();
 		return dialogPane;
 	}
-	
+
 	/**
 	 * Get the pathway element for this dialog
 	 */
 	protected PathwayElement getInput() {
 		return input;
 	}
-	
+
 	/**
 	 * Set the pathway element for this dialog
 	 */
@@ -103,11 +103,11 @@ public class PathwayElementDialog extends OkCancelDialog {
 		storeState();
 		refresh();
 	}
-	
+
 	/**
 	 * Refresh the GUI components to reflect the current pathway element's properties. This
 	 * method automatically refreshes all registered PathwayElementPanels.
-	 * Subclasses may override this to update their own GUI components that are not added 
+	 * Subclasses may override this to update their own GUI components that are not added
 	 * as PathwayElementPanel.
 	 */
 	protected void refresh() {
@@ -115,7 +115,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 			p.setInput(input);
 		}
 	}
-	
+
 	/**
 	 * Store the current state of the pathway element. This is used to cancel
 	 * the modifications made in the dialog.
@@ -127,7 +127,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 			state.put(t, e.getStaticProperty(t));
 		}
 	}
-	
+
 	/**
 	 * Restore the original state of the pathway element. This is called when the
 	 * cancel button is pressed.
@@ -138,15 +138,15 @@ public class PathwayElementDialog extends OkCancelDialog {
 			e.setStaticProperty(t, state.get(t));
 		}
 	}
-	
+
 	private void createTabs() {
 		addPathwayElementPanel(TAB_COMMENTS, new CommentPanel());
 		addPathwayElementPanel(TAB_LITERATURE, new LitReferencePanel(swingEngine));
 		addCustomTabs(dialogPane);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param tabLabel
 	 * @param p
 	 */
@@ -155,7 +155,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 		dialogPane.add(tabLabel, p);
 		panels.put(tabLabel, p);
 	}
-	
+
 	protected void removePathwayElementPanel(String tabLabel) {
 		PathwayElementPanel panel = panels.get(tabLabel);
 		if(panel != null) {
@@ -163,16 +163,16 @@ public class PathwayElementDialog extends OkCancelDialog {
 			panels.remove(panel);
 		}
 	}
-	
+
 	public void selectPathwayElementPanel(String tabLabel) {
 		PathwayElementPanel panel = panels.get(tabLabel);
 		if(panel != null) {
 			dialogPane.setSelectedComponent(panel);
 		}
 	}
-	
+
 	/**
-	 * Override in subclass and use 
+	 * Override in subclass and use
 	 * {@link #addPathwayElementPanel(String, PathwayElementPanel)} to add a PathwayElementPanel, or
 	 * use {@link JTabbedPane#add(Component)}.
 	 * @param parent
@@ -180,7 +180,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	protected void addCustomTabs(JTabbedPane parent) {
 		//To be implemented by subclasses
 	}
-	
+
 	/**
 	 * Called when the OK button is pressed. Will close the dialog amd register an undo event.
 	 */
@@ -192,7 +192,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 		if(p != null) p.redraw();
 		setVisible(false);
 	}
-	
+
 	/**
 	 * Called when the Cancel button is pressed. Will close the dialog and revert the
 	 * pathway element to it's original state.

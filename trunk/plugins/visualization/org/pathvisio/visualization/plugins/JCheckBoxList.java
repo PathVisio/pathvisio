@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.plugins;
@@ -30,8 +30,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
- 
-/** 
+
+/**
  * A list where each item has a checkbox in front of it.
  * Useful for selecting a subset from a list such as a list of available Samples.
  */
@@ -48,16 +48,16 @@ public class JCheckBoxList extends JList
     }
     /**
      * Create a list containing a checkbox for each item
-     * @param checkOnSelect If true, the checkbox is checked/unchecked when the 
+     * @param checkOnSelect If true, the checkbox is checked/unchecked when the
      * user clicks on any point within a row. If false, the checkbox is only
      * checked/unchecked when the user clicks excactly on the checkbox.
      */
     public JCheckBoxList(final boolean checkOnSelect)
     {
         setCellRenderer(new CheckBoxCellRenderer());
- 
+
         checkIcon = UIManager.getIcon("CheckBox.icon");
-        
+
         addMouseListener(new MouseAdapter()
         {
             public void mousePressed(MouseEvent e)
@@ -74,7 +74,7 @@ public class JCheckBoxList extends JList
                 }
             }
         });
- 
+
         addKeyListener(new KeyAdapter()
         {
             public void keyPressed(KeyEvent e)
@@ -91,10 +91,10 @@ public class JCheckBoxList extends JList
                 }
             }
         });
- 
+
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
- 
+
     /** list cell renderer that draws item + checkbox in front of it */
     protected class CheckBoxCellRenderer implements ListCellRenderer
     {
@@ -104,14 +104,14 @@ public class JCheckBoxList extends JList
             JCheckBox checkbox = (JCheckBox) value;
             checkbox.setBackground(isSelected ? getSelectionBackground() : getBackground());
             checkbox.setForeground(isSelected ? getSelectionForeground() : getForeground());
- 
+
             checkbox.setEnabled(isEnabled());
             checkbox.setFont(getFont());
             checkbox.setFocusPainted(false);
- 
+
             checkbox.setBorderPainted(true);
             checkbox.setBorder(isSelected ? UIManager.getBorder("List.focusCellHighlightBorder") : noFocusBorder);
- 
+
             return checkbox;
         }
     }

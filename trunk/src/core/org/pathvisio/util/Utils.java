@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.util;
@@ -29,19 +29,19 @@ import java.util.Set;
  * Various utility functions
  */
 public class Utils {
-	
+
 	public static final int OS_UNSUPPORTED = -1;
 	public static final int OS_WINDOWS = 0;
 	public static final int OS_LINUX = 1;
 	public static final int OS_MAC = 2;
-	
+
 	/**
 	 * Get the OS
 	 */
 	public static int getOS() {
 		String os = System.getProperty("os.name");
 		if			(os.startsWith("Win"))
-			return OS_WINDOWS;			
+			return OS_WINDOWS;
 		else if		(os.startsWith("Lin"))
 			return OS_LINUX;
 		else if		(os.startsWith("Mac"))
@@ -49,7 +49,7 @@ public class Utils {
 		else
 			return OS_UNSUPPORTED;
 	}
-	
+
 	/**
 	 * Converts a list to a string
 	 * @param list The list to convert to a string
@@ -64,10 +64,10 @@ public class Utils {
 		}
 		int last = strb.lastIndexOf(String.valueOf(sep));
 		if(last >= 0) strb.delete(last, strb.length());
-		
+
 		return strb.toString();
 	}
-	
+
 	public static InputStream stringToInputStream(String str){
 		if(str==null) return null;
 		InputStream in = null;
@@ -77,7 +77,7 @@ public class Utils {
 		}
 		return in;
 	}
-	
+
 	/**
 	 * Encodes a font to a string that can be converted back
 	 * into a font object using Font.decode(String)
@@ -90,13 +90,13 @@ public class Utils {
 		String fs = f.getName() + "-" + style + "-" + f.getSize();
 		return fs;
 	}
-	
+
 	/**
 	 * Helper function to print the contents of maps or collections,
 	 * or maps of maps, collections of maps, collections of collections etc.
 	 * Useful for debugging.
-	 * Similar in idea to the perl Data::Dumper module 
-	 * @param indent is for recursive use, e.g. to prefix each line with "\t" 
+	 * Similar in idea to the perl Data::Dumper module
+	 * @param indent is for recursive use, e.g. to prefix each line with "\t"
 	 */
 	public static void printx (PrintStream out, String indent, Object o)
 	{
@@ -108,9 +108,9 @@ public class Utils {
 				printx (out, indent, key);
 				out.println (indent + "=>");
 				Object value = map.get (key);
-				printx (out, indent + "\t", value); 
+				printx (out, indent + "\t", value);
 			}
-		} 
+		}
 		else if (o instanceof Collection)
 		{
 			Collection<?> col = (Collection<?>)o;
@@ -126,7 +126,7 @@ public class Utils {
 			out.println (indent + o.toString());
 		}
 	}
-	
+
 	/**
 	 * Useful if you want to use one item from a set, and you don't care which one.
 	 * @param set a set that you want one element out of
@@ -143,7 +143,7 @@ public class Utils {
 			return set.iterator().next();
 		}
 	}
-	
+
 	/**
 	 * Create a new Set of the given value(s)
 	 */

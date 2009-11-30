@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.data;
@@ -32,21 +32,21 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * Just instantiate this class with a given pubmed id (pmid),
  * and run execute() (this method may block, so don't call it from the UI thread)
  * The result can then be obtained with getResult()
- * TODO: move DefaultHandler methods to private subclass, they don't need to be exposed. 
+ * TODO: move DefaultHandler methods to private subclass, they don't need to be exposed.
  */
 public class PubMedQuery extends DefaultHandler {
 	static final String URL_BASE = "http://www.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi";
-	
+
 	String id;
 	PubMedResult result;
-	
+
 	/**
 	 * Prepares a new pubmed query for the given pmid, e.g. "17588266".
 	 */
 	public PubMedQuery(String id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * Execute a query. Don't call this from the UI thread, because
 	 * this method blocks.
@@ -55,28 +55,28 @@ public class PubMedQuery extends DefaultHandler {
 		//TODO: assert not being in UI thread
 		String urlString = URL_BASE;
 		urlString += "?db=pubmed&id=" + id;
-		
+
 		URL url = new URL(urlString);
 		InputStream is = url.openStream();
-				
+
 		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 		xmlReader.setContentHandler(this);
 		xmlReader.setEntityResolver(this);
-		
+
 		result = new PubMedResult();
 		result.setId(id);
 		xmlReader.parse(new InputSource(is));
-		
+
 		is.close();
 	}
-	
+
 	/**
 	 * get the result, after execute() has finished.
 	 */
 	public PubMedResult getResult() {
 		return result;
 	}
-	
+
 	String parsingId;
 	String parsingName;
 	String parsingElement;
@@ -87,12 +87,12 @@ public class PubMedQuery extends DefaultHandler {
 		parsingName = attributes.getValue(NAME);
 		parsingValue = "";
 	}
-	
-	public void characters(char[] ch, int start, int length) throws SAXException {		
+
+	public void characters(char[] ch, int start, int length) throws SAXException {
 		parsingValue += new String(ch, start, length).trim();
 //		System.out.println("characters: " + new String(ch, start, length).trim());
 	}
-	
+
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 //		System.out.println("End element: " + localName);
 		if(parsingElement == ID) {
@@ -118,7 +118,7 @@ public class PubMedQuery extends DefaultHandler {
 		parsingElement = "";
 		parsingName = "";
 	}
-	
+
 	static final String ITEM = "Item";
 	static final String ID = "Id";
 	static final String NAME = "Name";
@@ -127,7 +127,7 @@ public class PubMedQuery extends DefaultHandler {
 	static final String SOURCE = "Source";
 	static final String AUTHOR_LIST = "AuthorList";
 	static final String AUTHOR = "Author";
-	
+
 	/*
 <DocSum>
 	<Id>17588266</Id>

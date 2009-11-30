@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -61,7 +61,7 @@ import org.xml.sax.SAXException;
  */
 public class GpmlFormatImpl1
 {
-	
+
 	public static final GpmlFormatImpl1 GPML_2007 = new GpmlFormatImpl1 (
 			"GPML2007.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2007")
 		);
@@ -74,16 +74,16 @@ public class GpmlFormatImpl1
 		this.xsdFile = xsdFile;
 		this.nsGPML = nsGPML;
 	}
-	
+
 	private Namespace nsGPML;
 	private String xsdFile;
-	
+
 	public Namespace getGpmlNamespace () { return nsGPML; }
 	/**
 	 * The factor that is used to convert pixel coordinates
 	 * to the GPML model coordinates. E.g. if you want to convert the
 	 * width from pixels to GPML model coordinates you use:
-	 * 
+	 *
 	 * double mWidth = width * PIXEL_TO_MODEL;
 	 */
 	public static final double PIXEL_TO_MODEL = 15;
@@ -91,7 +91,7 @@ public class GpmlFormatImpl1
 	/**
 	 * name of resource containing the gpml schema definition
 	 */
-	
+
 	private static class AttributeInfo
 	{
 		/**
@@ -100,17 +100,17 @@ public class GpmlFormatImpl1
 		 * base type.
 		 */
 		public String schemaType;
-		
+
 		/**
 		 * default value for the attribute
 		 */
 		public String def; // default
-		
+
 		/**
 		 * use of the attribute: can be "required" or "optional"
 		 */
 		public String use;
-		
+
 		AttributeInfo (String aSchemaType, String aDef, String aUse)
 		{
 			schemaType = aSchemaType;
@@ -120,11 +120,11 @@ public class GpmlFormatImpl1
 	}
 
 	private static final Map<String, AttributeInfo> ATTRIBUTE_INFO = initAttributeInfo();
-	
+
 	private static Map<String, AttributeInfo> initAttributeInfo()
 	{
 		Map<String, AttributeInfo> result = new HashMap<String, AttributeInfo>();
-		// IMPORTANT: this array has been generated from the xsd with 
+		// IMPORTANT: this array has been generated from the xsd with
 		// an automated perl script. Don't edit this directly, use the perl script instead.
 		/* START OF AUTO-GENERATED CONTENT */
 		result.put("Comment@Source", new AttributeInfo ("xsd:string", null, "optional"));
@@ -246,15 +246,15 @@ public class GpmlFormatImpl1
 
 		return result;
 	};
-	
+
 	/**
-	 * Sets a certain attribute value, 
+	 * Sets a certain attribute value,
 	 * Does a basic check for some types,
 	 * throws an exception when you're trying to set an invalid value
 	 * If you're trying to set a default value, or an optional value to null,
 	 * the attribute is omitted,
-	 * leading to a leaner xml output. 
-	 * 
+	 * leading to a leaner xml output.
+	 *
 	 * @param tag used for lookup in the defaults table
 	 * @param name used for lookup in the defaults table
 	 * @param el jdom element where this attribute belongs in
@@ -296,13 +296,13 @@ public class GpmlFormatImpl1
 	/**
 	 * Gets a certain attribute value,
 	 * replaces it with a suitable default under certain conditions.
-	 * 
+	 *
 	 * @param tag used for lookup in the defaults table
 	 * @param name used for lookup in the defaults table
 	 * @param el jdom element to get the attribute from
 	 * @throws ConverterException
 	 */
-	private  String getAttribute(String tag, String name, Element el) throws ConverterException 
+	private  String getAttribute(String tag, String name, Element el) throws ConverterException
 	{
 		String key = tag + "@" + name;
 		if (!ATTRIBUTE_INFO.containsKey(key))
@@ -311,11 +311,11 @@ public class GpmlFormatImpl1
 		String result = ((el == null) ? aInfo.def : el.getAttributeValue(name, aInfo.def));
 		return result;
 	}
-	
+
 	/**
 	 * The GPML xsd implies a certain ordering for children of the pathway element.
 	 * (e.g. DataNode always comes before LineShape, etc.)
-	 * 
+	 *
 	 * This Comparator can sort jdom Elements so that they are in the correct order
 	 * for the xsd.
 	 */
@@ -323,14 +323,14 @@ public class GpmlFormatImpl1
 	{
 		// hashmap for quick lookups during sorting
 		private Map<String, Integer> elementOrdering;
-				
+
 		// correctly ordered list of tag names, which are loaded into the hashmap in
 		// the constructor.
 		private final String[] elements = new String[] {
 				"Comment", "BiopaxRef", "Graphics", "DataNode", "State", "Line", "Label",
 				"Shape", "Group", "InfoBox", "Legend", "Biopax"
 			};
-		
+
 		/*
 		 * Constructor
 		 */
@@ -340,23 +340,23 @@ public class GpmlFormatImpl1
 			for (int i = 0; i < elements.length; ++i)
 			{
 				elementOrdering.put (elements[i], new Integer(i));
-			}			
+			}
 		}
-		
+
 		/*
-		 * As a comparison measure, returns difference of index of element names of a and b 
+		 * As a comparison measure, returns difference of index of element names of a and b
 		 * in elements array. E.g:
 		 * Comment -> index 1 in elements array
 		 * Graphics -> index 2 in elements array.
 		 * If a.getName() is Comment and b.getName() is Graphics, returns 1-2 -> -1
 		 */
 		public int compare(Element a, Element b) {
-			return ((Integer)elementOrdering.get(a.getName())).intValue() - 
+			return ((Integer)elementOrdering.get(a.getName())).intValue() -
 				((Integer)elementOrdering.get(b.getName())).intValue();
 		}
-		
+
 	}
-	
+
 	public Document createJdom(Pathway data) throws ConverterException
 	{
 		Document doc = new Document();
@@ -367,7 +367,7 @@ public class GpmlFormatImpl1
 		doc.setRootElement(root);
 
 		List<Element> elementList = new ArrayList<Element>();
-    	
+
 		List<PathwayElement> pathwayElements = data.getDataObjects();
 		Collections.sort(pathwayElements);
 		for (PathwayElement o : pathwayElements)
@@ -387,15 +387,15 @@ public class GpmlFormatImpl1
 				updateComments(o, root);
 				updateBiopaxRef(o, root);
 				updateAttributes(o, root);
-				
+
 				Element graphics = new Element("Graphics", ns);
 				root.addContent(graphics);
-				
+
 				double[] size = o.getMBoardSize();
 				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" +size[0]);
 				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + size[1]);
 				setAttribute("Pathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth());
-				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());				
+				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());
 			}
 			else
 			{
@@ -404,14 +404,14 @@ public class GpmlFormatImpl1
 					elementList.add(e);
 			}
 		}
-		
+
     	// now sort the generated elements in the order defined by the xsd
 		Collections.sort(elementList, new ByElementName());
 		for (Element e : elementList)
-		{			
+		{
 			root.addContent(e);
 		}
-		
+
 		return doc;
 	}
 
@@ -419,7 +419,7 @@ public class GpmlFormatImpl1
 	{
 		return mapElement (e, null);
 	}
-	
+
 	/**
 	   Create a single PathwayElement based on a piece of Jdom tree. Used also by Patch utility
 	   Pathway p may be null
@@ -435,7 +435,7 @@ public class GpmlFormatImpl1
 			// as subtags of <pathway>
 			return null;
 		}
-		
+
 		PathwayElement o = PathwayElement.createPathwayElement(ot);
 		if (p != null)
 		{
@@ -529,33 +529,33 @@ public class GpmlFormatImpl1
     	}
 
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	
+
     	o.setRelX(Double.parseDouble(getAttribute("State.Graphics", "relX", graphics)));
     	o.setRelY(Double.parseDouble(getAttribute("State.Graphics", "relY", graphics)));
-		o.setMWidth (Double.parseDouble(getAttribute("State.Graphics", "Width", graphics))); 
+		o.setMWidth (Double.parseDouble(getAttribute("State.Graphics", "Width", graphics)));
 		o.setMHeight (Double.parseDouble(getAttribute("State.Graphics", "Height", graphics)));
-    		
+
 		//TODO
 		//StateType
 		// ShapeType???
 		// Line style???
 		// Xref???
 	}
-	
+
 	private static void updateStateData(PathwayElement o, Element e) throws ConverterException
 	{
 		//TODO
 	}
-	
+
 	private void mapLineData(PathwayElement o, Element e) throws ConverterException
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	
+
     	List<MPoint> mPoints = new ArrayList<MPoint>();
-    	
+
     	String startType = null;
     	String endType = null;
-    	
+
     	List<Element> pointElements = graphics.getChildren("Point", e.getNamespace());
     	for(int i = 0; i < pointElements.size(); i++) {
     		Element pe = pointElements.get(i);
@@ -573,10 +573,10 @@ public class GpmlFormatImpl1
         			mp.setRelativePosition(Double.parseDouble(srx), Double.parseDouble(sry));
         		}
         	}
-        	
+
         	if(i == 0) {
-        		startType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);		
-        		endType = getAttribute("Line.Graphics.Point", "Head", pe);		
+        		startType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
+        		endType = getAttribute("Line.Graphics.Point", "Head", pe);
         	} else if(i == pointElements.size() - 1) {
         		/**
      		   	read deprecated Head attribute for backwards compatibility.
@@ -589,7 +589,7 @@ public class GpmlFormatImpl1
         		}
         	}
     	}
-    	
+
     	o.setMPoints(mPoints);
 
     	String style = getAttribute("Line", "Style", e);
@@ -597,14 +597,14 @@ public class GpmlFormatImpl1
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
 		o.setStartLineType (LineType.fromName(startType));
     	o.setEndLineType (LineType.fromName(endType));
-    	
+
     	String connType = getAttribute("Line.Graphics", "ConnectorType", graphics);
     	o.setConnectorType(ConnectorType.fromName(connType));
 
     	String zorder = graphics.getAttributeValue("ZOrder");
 		if (zorder != null)
 			o.setZOrder(Integer.parseInt(zorder));
-    	
+
     	//Map anchors
     	List<Element> anchors = graphics.getChildren("Anchor", e.getNamespace());
     	for(Element ae : anchors) {
@@ -617,15 +617,15 @@ public class GpmlFormatImpl1
     		}
     	}
 	}
-	
+
 	private void updateLineData(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) {
 			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
-			
+
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 			List<MPoint> mPoints = o.getMPoints();
-			
+
 			for(int i = 0; i < mPoints.size(); i++) {
 				MPoint mp = mPoints.get(i);
 				Element pe = new Element("Point", e.getNamespace());
@@ -644,7 +644,7 @@ public class GpmlFormatImpl1
 					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getEndLineType().getName());
 				}
 			}
-			
+
 			for(MAnchor anchor : o.getMAnchors()) {
 				Element ae = new Element("Anchor", e.getNamespace());
 				setAttribute("Line.Graphics.Anchor", "position", ae, Double.toString(anchor.getPosition()));
@@ -652,13 +652,13 @@ public class GpmlFormatImpl1
 				updateGraphId(anchor, ae);
 				jdomGraphics.addContent(ae);
 			}
-			
+
 			ConnectorType ctype = o.getConnectorType();
 			setAttribute("Line.Graphics", "ConnectorType", jdomGraphics, ctype.getName());
 			setAttribute("Line.Graphics", "ZOrder", jdomGraphics, "" + o.getZOrder());
 		}
 	}
-	
+
 	private void mapColor(PathwayElement o, Element e) throws ConverterException
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
@@ -680,28 +680,28 @@ public class GpmlFormatImpl1
 
 	private void updateColor(PathwayElement o, Element e) throws ConverterException
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			if(jdomGraphics != null) 
+			if(jdomGraphics != null)
 			{
 				setAttribute(e.getName() + ".Graphics", "Color", jdomGraphics, color2HexBin(o.getColor()));
 			}
 		}
 	}
-		
+
 	private void updateShapeColor(PathwayElement o, Element e)
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			if(jdomGraphics != null) 
+			if(jdomGraphics != null)
 			{
 				if (o.isTransparent())
 					jdomGraphics.setAttribute("FillColor", "Transparent");
 				else
-					jdomGraphics.setAttribute("FillColor", color2HexBin(o.getFillColor()));		
-			}			
+					jdomGraphics.setAttribute("FillColor", color2HexBin(o.getFillColor()));
+			}
 		}
 	}
 
@@ -710,12 +710,12 @@ public class GpmlFormatImpl1
 		for (Object f : e.getChildren("Comment", e.getNamespace()))
 		{
 			o.addComment(((Element)f).getText(), getAttribute("Comment", "Source", (Element)f));
-		}    	
+		}
 	}
-	
+
 	private void updateComments(PathwayElement o, Element e) throws ConverterException
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			for (PathwayElement.Comment c : o.getComments())
 			{
@@ -732,20 +732,20 @@ public class GpmlFormatImpl1
 		for (Object f : e.getChildren("Attribute", e.getNamespace()))
 		{
 			o.setDynamicProperty(
-					getAttribute("Attribute", "Key", (Element)f), 
+					getAttribute("Attribute", "Key", (Element)f),
 					getAttribute("Attribute", "Value", (Element)f));
-		}    	
+		}
 	}
-	
+
 	private void updateAttributes(PathwayElement o, Element e) throws ConverterException
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			for (String key : o.getDynamicPropertyKeys())
 			{
 				Element a = new Element ("Attribute", e.getNamespace());
-				setAttribute ("Attribute", "Key", a, key);				
-				setAttribute ("Attribute", "Value", a, o.getDynamicProperty(key));	
+				setAttribute ("Attribute", "Key", a, key);
+				setAttribute ("Attribute", "Value", a, o.getDynamicProperty(key));
 				e.addContent (a);
 			}
 		}
@@ -762,7 +762,7 @@ public class GpmlFormatImpl1
 			o.setGraphId (id);
 		}
 	}
-	
+
 	private void updateGraphId (GraphIdContainer o, Element e)
 	{
 		String id = o.getGraphId();
@@ -770,38 +770,38 @@ public class GpmlFormatImpl1
 		if (id != null && !id.equals(""))
 		{
 			e.setAttribute("GraphId", o.getGraphId());
-		} 
+		}
 	}
-		
-	private void mapGroupRef (PathwayElement o, Element e) 
+
+	private void mapGroupRef (PathwayElement o, Element e)
 	{
 		String id = e.getAttributeValue("GroupRef");
 		if(id != null && !id.equals("")) {
 			o.setGroupRef (id);
 		}
-		
+
 	}
 
-	private void updateGroupRef (PathwayElement o, Element e) 
+	private void updateGroupRef (PathwayElement o, Element e)
 	{
 		String id = o.getGroupRef();
 		if (id != null && !id.equals(""))
 		{
 			e.setAttribute("GroupRef", o.getGroupRef());
-		} 
+		}
 	}
-	
+
 	private void mapGroup (PathwayElement o, Element e) throws ConverterException
 	{
 		//ID
 		String id = e.getAttributeValue("GroupId");
-		if((id == null || id.equals("")) && o.getParent() != null) 
+		if((id == null || id.equals("")) && o.getParent() != null)
 			{id = o.getParent().getUniqueGroupId();}
 		o.setGroupId (id);
-		
+
 		//GraphId
 		mapGraphId(o, e);
-		
+
 		//Style
 		o.setGroupStyle(GroupStyle.fromName(getAttribute("Group", "Style", e)));
 		//Label
@@ -810,23 +810,23 @@ public class GpmlFormatImpl1
 			o.setTextLabel (textLabel);
 		}
 	}
-	
+
 	private void updateGroup (PathwayElement o, Element e) throws ConverterException
 	{
 		//ID
 		String id = o.createGroupId();
 		if (id != null && !id.equals(""))
 			{e.setAttribute("GroupId", o.createGroupId());}
-		
+
 		//GraphId
 		updateGraphId(o, e);
-		
+
 		//Style
 		setAttribute("Group", "Style", e, o.getGroupStyle().getName());
 		//Label
 		setAttribute ("Group", "TextLabel", e, o.getTextLabel());
 	}
-	
+
 	private void mapDataNode(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel    (getAttribute("DataNode", "TextLabel", e));
@@ -854,37 +854,37 @@ public class GpmlFormatImpl1
 
 	private void mapSimpleCenter(PathwayElement o, Element e)
 	{
-		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX"))); 
-		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")));	
+		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX")));
+		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")));
 	}
-	
+
 	private void updateSimpleCenter(PathwayElement o, Element e)
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			e.setAttribute("CenterX", Double.toString(o.getMCenterX()));
-			e.setAttribute("CenterY", Double.toString(o.getMCenterY()));			
-		}		
+			e.setAttribute("CenterY", Double.toString(o.getMCenterY()));
+		}
 	}
 
 	private void mapShapeData(PathwayElement o, Element e, String base) throws ConverterException
 	{
 		Element graphics = e.getChild("Graphics", e.getNamespace());
-    	o.setMCenterX (Double.parseDouble(getAttribute(base + ".Graphics", "CenterX", graphics))); 
-    	o.setMCenterY (Double.parseDouble(getAttribute(base + ".Graphics", "CenterY", graphics)));	
-		o.setMWidth (Double.parseDouble(getAttribute(base + ".Graphics", "Width", graphics))); 
+    	o.setMCenterX (Double.parseDouble(getAttribute(base + ".Graphics", "CenterX", graphics)));
+    	o.setMCenterY (Double.parseDouble(getAttribute(base + ".Graphics", "CenterY", graphics)));
+		o.setMWidth (Double.parseDouble(getAttribute(base + ".Graphics", "Width", graphics)));
 		o.setMHeight (Double.parseDouble(getAttribute(base + ".Graphics", "Height", graphics)));
 		String zorder = graphics.getAttributeValue("ZOrder");
 		if (zorder != null)
 			o.setZOrder(Integer.parseInt(zorder));
 	}
-	
+
 	private void updateShapeData(PathwayElement o, Element e, String base) throws ConverterException
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			Element graphics = e.getChild("Graphics", e.getNamespace());
-			if(graphics !=null) 
+			if(graphics !=null)
 			{
 				setAttribute(base + ".Graphics", "CenterX", graphics, "" + o.getMCenterX());
 				setAttribute(base + ".Graphics", "CenterY", graphics, "" + o.getMCenterY());
@@ -894,14 +894,14 @@ public class GpmlFormatImpl1
 			}
 		}
 	}
-	
+
 	private void mapShapeType(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setShapeType (ShapeType.fromGpmlName(getAttribute("Shape", "Type", e)));
 		String style = getAttribute ("Shape", "Style", e);
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	
+
     	String rotation = getAttribute("Shape.Graphics", "Rotation", graphics);
     	double result;
     	if (rotation.equals("Top"))
@@ -924,62 +924,62 @@ public class GpmlFormatImpl1
     	{
     		result = Double.parseDouble(rotation);
     	}
-    	o.setRotation (result); 
+    	o.setRotation (result);
 	}
-	
+
 	private void updateShapeType(PathwayElement o, Element e) throws ConverterException
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			e.setAttribute("Type", o.getShapeType().getName());
 			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
 
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			if(jdomGraphics !=null) 
+			if(jdomGraphics !=null)
 			{
 				jdomGraphics.setAttribute("Rotation", Double.toString(o.getRotation()));
 			}
 		}
 	}
-	
+
 	private void mapLabelData(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel (getAttribute("Label", "TextLabel", e));
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	
+
     	String fontSizeString = getAttribute("Label.Graphics", "FontSize", graphics);
     	o.setMFontSize (Integer.parseInt(fontSizeString));
-    	
+
     	String fontWeight = getAttribute("Label.Graphics", "FontWeight", graphics);
     	String fontStyle = getAttribute("Label.Graphics", "FontStyle", graphics);
     	String fontDecoration = getAttribute("Label.Graphics", "FontDecoration", graphics);
     	String fontStrikethru = getAttribute("Label.Graphics", "FontStrikethru", graphics);
-    	
-    	o.setBold (fontWeight != null && fontWeight.equals("Bold"));   	
-    	o.setItalic (fontStyle != null && fontStyle.equals("Italic"));    	
-    	o.setUnderline (fontDecoration != null && fontDecoration.equals("Underline"));    	
+
+    	o.setBold (fontWeight != null && fontWeight.equals("Bold"));
+    	o.setItalic (fontStyle != null && fontStyle.equals("Italic"));
+    	o.setUnderline (fontDecoration != null && fontDecoration.equals("Underline"));
     	o.setStrikethru (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
-    	
+
     	o.setFontName (getAttribute("Label.Graphics", "FontName", graphics));
-    	
+
     	String xref = getAttribute("Label", "Xref", e);
     	if (xref == null) xref = "";
     	o.setGenMappXref(xref);
     	String outline = getAttribute("Label", "Outline", e);
 		o.setOutline (OutlineType.fromTag (outline));
 	}
-	
+
 	private void updateLabelData(PathwayElement o, Element e) throws ConverterException
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			setAttribute("Label", "TextLabel", e, o.getTextLabel());
 			setAttribute("Label", "Xref", e, o.getGenMappXref() == null ? "" : o.getGenMappXref());
 			setAttribute("Label", "Outline", e, o.getOutline().getTag());
 			Element graphics = e.getChild("Graphics", e.getNamespace());
-			if(graphics !=null) 
+			if(graphics !=null)
 			{
-				setAttribute("Label.Graphics", "FontName", graphics, o.getFontName() == null ? "" : o.getFontName());			
+				setAttribute("Label.Graphics", "FontName", graphics, o.getFontName() == null ? "" : o.getFontName());
 				setAttribute("Label.Graphics", "FontWeight", graphics, o.isBold() ? "Bold" : "Normal");
 				setAttribute("Label.Graphics", "FontStyle", graphics, o.isItalic() ? "Italic" : "Normal");
 				setAttribute("Label.Graphics", "FontDecoration", graphics, o.isUnderline() ? "Underline" : "Normal");
@@ -988,11 +988,11 @@ public class GpmlFormatImpl1
 			}
 		}
 	}
-	
+
 	private void mapMappInfoData(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setMapInfoName (getAttribute("Pathway", "Name", e));
-		o.setOrganism (getAttribute("Pathway", "Organism", e));	
+		o.setOrganism (getAttribute("Pathway", "Organism", e));
 		o.setMapInfoDataSource (getAttribute("Pathway", "Data-Source", e));
 		o.setVersion (getAttribute("Pathway", "Version", e));
 		o.setAuthor (getAttribute("Pathway", "Author", e));
@@ -1000,19 +1000,19 @@ public class GpmlFormatImpl1
 		o.setEmail (getAttribute("Pathway", "Email", e));
 		o.setLastModified (getAttribute("Pathway", "Last-Modified", e));
 		o.setCopyright (getAttribute("Pathway", "Copyright", e));
-		
+
 		Element g = e.getChild("Graphics", e.getNamespace());
-		
+
 		//Board size will be calculated
 //		o.setMBoardWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardWidth", g)));
 //		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
 		o.setWindowWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowWidth", g)));
-		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));	
+		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));
 	}
-		
+
 	private void mapBiopax(PathwayElement o, Element e) throws ConverterException
 	{
-		//this method clones all content, 
+		//this method clones all content,
 		//getContent will leave them attached to the parent, which we don't want
 		//We can safely remove them, since the JDOM element isn't used anymore after this method
 		Element root = new Element("RDF", GpmlFormat.RDF);
@@ -1027,13 +1027,13 @@ public class GpmlFormatImpl1
 		//imp.setAttribute(new Attribute("resource", BIOPAX.getURI(), RDF));
 		//owl.addContent(imp);
 		//root.addContent(owl);
-		
+
 		root.addContent(e.cloneContent());
 		Document bp = new Document(root);
-				
+
 		o.setBiopax(bp);
 	}
-	
+
 	private void updateBiopax(PathwayElement o, Element e) throws ConverterException
 	{
 		Document bp = o.getBiopax();
@@ -1057,18 +1057,18 @@ public class GpmlFormatImpl1
 			}
 		}
 	}
-	
+
 	private void mapBiopaxRef(PathwayElement o, Element e) throws ConverterException
 	{
 		for (Object f : e.getChildren("BiopaxRef", e.getNamespace()))
 		{
 			o.addBiopaxRef(((Element)f).getText());
-		}  
+		}
 	}
-	
+
 	private void updateBiopaxRef(PathwayElement o, Element e) throws ConverterException
 	{
-		if(e != null) 
+		if(e != null)
 		{
 			for (String ref : o.getBiopaxRefs())
 			{
@@ -1078,9 +1078,9 @@ public class GpmlFormatImpl1
 			}
 		}
 	}
-	
-	public Element createJdomElement(PathwayElement o, Namespace ns) throws ConverterException 
-	{		
+
+	public Element createJdomElement(PathwayElement o, Namespace ns) throws ConverterException
+	{
 		Element e = null;
 		switch (o.getObjectType())
 		{
@@ -1089,12 +1089,12 @@ public class GpmlFormatImpl1
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", ns));			
-				e.addContent(new Element("Xref", ns));			
+				e.addContent(new Element("Graphics", ns));
+				e.addContent(new Element("Xref", ns));
 				updateDataNode(o, e);
 				updateColor(o, e);
 				updateShapeData(o, e, "DataNode");
-				updateGraphId(o, e);				
+				updateGraphId(o, e);
 				updateGroupRef(o, e);
 				break;
 			case STATE:
@@ -1107,7 +1107,7 @@ public class GpmlFormatImpl1
 				updateStateData(o, e);
 				updateColor(o, e);
 				updateShapeColor(o, e);
-				updateGraphId(o, e);				
+				updateGraphId(o, e);
 				break;
 			case SHAPE:
 				e = new Element ("Shape", ns);
@@ -1127,7 +1127,7 @@ public class GpmlFormatImpl1
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", ns));				
+				e.addContent(new Element("Graphics", ns));
 				updateLineData(o, e);
 				updateGraphId(o, e);
 				updateColor(o, e);
@@ -1135,10 +1135,10 @@ public class GpmlFormatImpl1
 				break;
 			case LABEL:
 				e = new Element("Label", ns);
-				updateComments(o, e);			
+				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", ns));					
+				e.addContent(new Element("Graphics", ns));
 				updateLabelData(o, e);
 				updateColor(o, e);
 				updateShapeData(o, e, "Label");
@@ -1203,7 +1203,7 @@ public class GpmlFormatImpl1
     	}
     	return new Color(0,0,0);
     }
-    
+
 	/**
 	 * Converts an {@link Color} object to a hexbinary string
 	 * @param color
@@ -1216,7 +1216,7 @@ public class GpmlFormatImpl1
 		String hexBinary = Integer.toHexString(Integer.valueOf(red + green + blue, 2));
 		return padding(hexBinary, 6, '0');
 	}
-	
+
     /**
      * Prepends character c x-times to the input string to make it length n
      * @param s	String to pad
@@ -1232,9 +1232,9 @@ public class GpmlFormatImpl1
     	}
     	return s;
     }
-    
+
 	public static final List<double[]> RGB_MAPPINGS = Arrays.asList(new double[][] {
-			{0, 1, 1},		// aqua 
+			{0, 1, 1},		// aqua
 			{0, 0, 0},	 	// black
 			{0, 0, 1}, 		// blue
 			{1, 0, 1},		// fuchsia
@@ -1252,20 +1252,20 @@ public class GpmlFormatImpl1
 			{1, 1, 0},		// yellow
 			{0, 0, 0}		// transparent (actually irrelevant)
 		});
-	
+
 	public static final List<String> COLOR_MAPPINGS = Arrays.asList(new String[]{
 			"Aqua", "Black", "Blue", "Fuchsia", "Gray", "Green", "Lime",
 			"Maroon", "Navy", "Olive", "Purple", "Red", "Silver", "Teal",
 			"White", "Yellow", "Transparent"
 		});
-	
+
 	/**
 	 * Writes the JDOM document to the file specified
 	 * @param file	the file to which the JDOM document should be saved
-	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error, 
-	 * 		or the xsd is not in the classpath, an exception will be thrown. 
+	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error,
+	 * 		or the xsd is not in the classpath, an exception will be thrown.
 	 */
-	public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException 
+	public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException
 	{
 		OutputStream out;
 		try
@@ -1276,19 +1276,19 @@ public class GpmlFormatImpl1
 		{
 			throw new ConverterException (ex);
 		}
-		writeToXml (pwy, out, validate);		
+		writeToXml (pwy, out, validate);
 	}
-	
+
 	/**
 	 * Writes the JDOM document to the outputstream specified
 	 * @param out	the outputstream to which the JDOM document should be writed
-	 * @param validate if true, validate the dom structure before writing. If there is a validation error, 
-	 * 		or the xsd is not in the classpath, an exception will be thrown. 
-	 * @throws ConverterException 
+	 * @param validate if true, validate the dom structure before writing. If there is a validation error,
+	 * 		or the xsd is not in the classpath, an exception will be thrown.
+	 * @throws ConverterException
 	 */
 	public void writeToXml(Pathway pwy, OutputStream out, boolean validate) throws ConverterException {
 		Document doc = createJdom(pwy);
-		
+
 		//Validate the JDOM document
 		if (validate) validateDocument(doc);
 		//			Get the XML code
@@ -1308,21 +1308,21 @@ public class GpmlFormatImpl1
 			throw new ConverterException(ie);
 		}
 	}
-	
+
 	public void readFromRoot(Element root, Pathway pwy) throws ConverterException
 	{
 		mapElement(root, pwy); // MappInfo
-		
+
 		// Iterate over direct children of the root element
 		for (Object e : root.getChildren())
 		{
 			mapElement((Element)e, pwy);
-		}			
+		}
 		Logger.log.trace ("End copying map elements");
-		
+
 		//Add graphIds for objects that don't have one
 		addGraphIds(pwy);
-		
+
 		//Convert absolute point coordinates of linked points to
 		//relative coordinates
 		convertPointCoordinates(pwy);
@@ -1331,7 +1331,7 @@ public class GpmlFormatImpl1
 	private static void addGraphIds(Pathway pathway) throws ConverterException {
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			String id = pe.getGraphId();
-			if(id == null || "".equals(id)) 
+			if(id == null || "".equals(id))
 			{
 				if (pe.getObjectType() == ObjectType.LINE)
 				{
@@ -1339,7 +1339,7 @@ public class GpmlFormatImpl1
 					// generate a graphId based on hash of coordinates
 					// so that pathways with branching history still have the same id.
 					// This part may be removed for future versions of GPML (2010+)
-					
+
 					StringBuilder builder = new StringBuilder();
 					builder.append(pe.getMStartX());
 					builder.append(pe.getMStartY());
@@ -1347,7 +1347,7 @@ public class GpmlFormatImpl1
 					builder.append(pe.getMEndY());
 					builder.append(pe.getStartLineType());
 					builder.append(pe.getEndLineType());
-					
+
 					String newId;
 					int i = 1;
 					do
@@ -1361,7 +1361,7 @@ public class GpmlFormatImpl1
 			}
 		}
 	}
-	
+
 	private static void convertPointCoordinates(Pathway pathway) throws ConverterException
 	{
 		for(PathwayElement pe : pathway.getDataObjects()) {
@@ -1392,16 +1392,16 @@ public class GpmlFormatImpl1
 			}
 		}
 	}
-	
+
 	/**
 	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
 	 * @param doc the document to validate
 	 */
 	public void validateDocument(Document doc) throws ConverterException
-	{	
+	{
 		ClassLoader cl = Pathway.class.getClassLoader();
 		InputStream is = cl.getResourceAsStream(xsdFile);
-		if(is != null) {	
+		if(is != null) {
 			Schema schema;
 			try {
 				SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
@@ -1411,23 +1411,23 @@ public class GpmlFormatImpl1
 				SAXOutputter so = new SAXOutputter(vh);
 				so.output(doc);
 				// If no errors occur, the file is valid according to the gpml xml schema definition
-				Logger.log.info("Document is valid according to the xml schema definition '" + 
+				Logger.log.info("Document is valid according to the xml schema definition '" +
 						xsdFile.toString() + "'");
 			} catch (SAXException se) {
 				Logger.log.error("Could not parse the xml-schema definition", se);
 				throw new ConverterException (se);
 			} catch (JDOMException je) {
-				Logger.log.error("Document is invalid according to the xml-schema definition!: " + 
+				Logger.log.error("Document is invalid according to the xml-schema definition!: " +
 						je.getMessage(), je);
 				XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
-				
+
 				Logger.log.error("The invalid XML code:\n" + xmlcode.outputString(doc));
 				throw new ConverterException (je);
 			}
 		} else {
-			Logger.log.error("Document is not validated because the xml schema definition '" + 
+			Logger.log.error("Document is not validated because the xml schema definition '" +
 					xsdFile + "' could not be found in classpath");
-			throw new ConverterException ("Document is not validated because the xml schema definition '" + 
+			throw new ConverterException ("Document is not validated because the xml schema definition '" +
 					xsdFile + "' could not be found in classpath");
 		}
 	}

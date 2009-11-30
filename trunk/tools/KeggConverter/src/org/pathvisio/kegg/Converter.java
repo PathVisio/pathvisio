@@ -2,16 +2,16 @@
 //a tool for data visualization and analysis using Biological Pathways
 //Copyright 2006-2007 BiGCaT Bioinformatics
 
-//Licensed under the Apache License, Version 2.0 (the "License"); 
-//you may not use this file except in compliance with the License. 
-//You may obtain a copy of the License at 
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
 
-//http://www.apache.org/licenses/LICENSE-2.0 
+//http://www.apache.org/licenses/LICENSE-2.0
 
-//Unless required by applicable law or agreed to in writing, software 
-//distributed under the License is distributed on an "AS IS" BASIS, 
-//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-//See the License for the specific language governing permissions and 
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
 //limitations under the License.
 package org.pathvisio.kegg;
 
@@ -42,47 +42,47 @@ import org.xml.sax.SAXException;
 import dtd.kegg.Pathway;
 
 public class Converter {
-	private static final Pattern KGML_PATTERN = 
-		Pattern.compile("[a-z]{3}([0-9]{5}).(xml|kgml)$", Pattern.CASE_INSENSITIVE); 
-	
+	private static final Pattern KGML_PATTERN =
+		Pattern.compile("[a-z]{3}([0-9]{5}).(xml|kgml)$", Pattern.CASE_INSENSITIVE);
+
 	@Option(name = "-useMap", required = false, usage = "Use the reference 'map' pathways to improve conversion" +
 			" of the species specific pathways.")
 	private boolean useMap;
-	
+
 	@Option(name = "-kgml", required = true, usage = "The path that contains the KGML files")
 	private File keggPath;
-	
+
 	@Option(name = "-out", required = false, usage = "The output path to convert the files to")
 	private File outPath;
-	
+
 	@Option(name = "-species", required = true, usage = "The species of the pathways (e.g. 'Homo sapiens')")
 	private String species;
-	
+
 	@Option(name = "-overwrite", required = false, usage = "Overwrite existing files")
 	private boolean overwrite;
-	
+
 	@Option(name = "-offline", required = false, usage = "Don't use the web service")
 	private boolean offline;
-	
+
 	@Option(name = "-spacing", required = false, usage = "Multiplier for the coordinates to get more spacing between the elements (default = 2).")
 	private double spacing = 2;
-	
+
 	public static void main(String[] args) {
 		PreferenceManager.init();
 		Logger.log.setLogLevel(true, true, true, true, true, true);
-		
+
 		Converter converter = new Converter();
 		CmdLineParser parser = new CmdLineParser(converter);
 		try {
 			parser.parseArgument(args);
 			if(converter.outPath == null) converter.outPath = converter.keggPath;
-			
+
 		} catch(CmdLineException e) {
 			e.printStackTrace();
 			parser.printUsage(System.err);
 			System.exit(-1);
 		}
-		
+
 		try {
 			converter.recursiveConversion();
 		} catch(Exception e) {
@@ -90,10 +90,10 @@ public class Converter {
 			System.exit(-2);
 		}
 	}
-	
+
 	public Converter() {
 	}
-	
+
 	private Organism getOrganism() {
 		Organism organism = Organism.fromLatinName(species);
 		if(organism == null) {
@@ -110,11 +110,11 @@ public class Converter {
 		}
 		return organism;
 	}
-	
+
 	private void recursiveConversion() throws FileNotFoundException, RemoteException, JAXBException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
 		recursiveConversion(keggPath);
 	}
-	
+
 	private void recursiveConversion(File dir) throws FileNotFoundException, JAXBException, RemoteException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
 		if(dir.isDirectory()) {
 			for(File f : dir.listFiles()) {
@@ -127,28 +127,28 @@ public class Converter {
 			}
 		}
 	}
-	
+
 	private void convert(File file) throws JAXBException, FileNotFoundException, RemoteException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
 		//Check for overwrite
 		Logger.log.trace("Processing " + file);
-		
+
 		//Check for overwrite
 		String fileAdd = useMap ? "_map" : "";
 		File gpmlFile = new File(outPath, file.getName() + fileAdd + ".gpml");
-		
+
 		if(!overwrite && gpmlFile.exists()) {
-			Logger.log.trace("Skipping " + file + ", " + 
+			Logger.log.trace("Skipping " + file + ", " +
 					gpmlFile + "already exists (use -overwrite to overwrite)."
 			);
 			return;
 		}
 		Logger.log.trace("Converting to " + gpmlFile.getAbsolutePath());
 
-		Pathway pathway = (Pathway)Util.unmarshal(Pathway.class, 
+		Pathway pathway = (Pathway)Util.unmarshal(Pathway.class,
 				new BufferedInputStream(new FileInputStream(file)));
-	    
+
 		org.pathvisio.model.Pathway gpmlPathway = null;
-		
+
 		if(useMap && !file.getName().startsWith("map")) {
 			//Try to find the corresponding map file
 			Matcher m = KGML_PATTERN.matcher(file.getName());
@@ -161,8 +161,8 @@ public class Converter {
 							"\nExpected " + mapFile.getName());
 				}
 				Logger.log.trace("Using map " + mapFile);
-				
-				Pathway map = (Pathway)Util.unmarshal(Pathway.class, 
+
+				Pathway map = (Pathway)Util.unmarshal(Pathway.class,
 						new BufferedInputStream(new FileInputStream(mapFile)));
 				gpmlPathway = convert(map, pathway);
 			} else {
@@ -174,7 +174,7 @@ public class Converter {
 			Logger.log.trace("Skipping " + file);
 			return;
 		}
-		
+
 		try {
 			GpmlFormat.writeToXml(gpmlPathway, gpmlFile, true);
 			ImageExporter imageExporter = new RasterImageExporter(ImageExporter.TYPE_PNG);
@@ -183,14 +183,14 @@ public class Converter {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private org.pathvisio.model.Pathway convert(Pathway pathway) throws RemoteException, ConverterException, ServiceException {
 		KeggFormat kf = new KeggFormat(pathway, getOrganism());
 		kf.setUseWebservice(!offline);
 		kf.setSpacing(spacing);
 		return kf.convert();
 	}
-	
+
 	private org.pathvisio.model.Pathway convert(Pathway map, Pathway ko) throws RemoteException, ConverterException, ServiceException {
 		KeggFormat kf = new KeggFormat(map, ko, getOrganism());
 		kf.setUseWebservice(!offline);

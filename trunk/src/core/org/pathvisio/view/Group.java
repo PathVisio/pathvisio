@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -36,16 +36,16 @@ import org.pathvisio.model.PathwayElement.MPoint;
 /**
  * This represents the view of a PathwayElement with ObjectType.GROUP.
  * This can be drawn as a shaded area, or the group can be invisible.
- * 
+ *
  * Also contains the getGroupGraphics method to quickly access all Graphics' that
- * are in this group.  
+ * are in this group.
  */
 public class Group extends Graphics implements LinkProvider, VElementMouseListener
 {
 	public static final int FLAG_SELECTED = 1 << 0;
 	public static final int FLAG_MOUSEOVER = 1 << 1;
 	public static final int FLAG_ANCHORSVISIBLE = 1 << 2;
-	
+
 	public Group(VPathway canvas, PathwayElement pe)
 	{
 		super(canvas, pe);
@@ -54,7 +54,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 
 	/**
 	 * Generates current id-ref pairs from all current groups
-	 * 
+	 *
 	 * @return HashMap<String, String>
 	 */
 	protected Map<String, String> getIdRefPairs()
@@ -80,7 +80,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 
 	/**
 	 * Generates list of group references nested under this group
-	 * 
+	 *
 	 * @return ArrayList<String>
 	 */
 	protected List<String> getRefList()
@@ -115,7 +115,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 //	/**
 //	 * Determines whether any member of the highest-level group object related
 //	 * to the current group object contains the point specified
-//	 * 
+//	 *
 //	 * @param point -
 //	 *            the point to check
 //	 * @return True if the object contains the point, false otherwise
@@ -147,11 +147,11 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 
 	/**
 	 * Determines whether the area defined by the grouped elements
-	 * contains the point specified. The elements themselves are 
+	 * contains the point specified. The elements themselves are
 	 * excluded to support individual selection within a group. The
 	 * ultimate effect is then selection of group by clicking the area
 	 * and not the members of the group.
-	 * 
+	 *
 	 * @param point -
 	 *            the point to check
 	 * @return True if the object contains the point, false otherwise
@@ -165,7 +165,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 					&& vpe.vContains(point))
 			{
 				return false;
-			
+
 			}
 		}
 		// return true if point within bounds of grouped objects
@@ -173,7 +173,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		{
 			return true;
 		}
-		else 
+		else
 		{
 			return false;
 		}
@@ -181,7 +181,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 
 //	@Override
 //	protected boolean vIntersects(Rectangle2D r)
-//	{ 
+//	{
 //		ArrayList<String> refList = this.getRefList();
 //
 //		// return true if group object is referenced by selection
@@ -204,7 +204,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 
 	/**
 	 * Returns graphics for members of a group, including nested members
-	 * 
+	 *
 	 * @return ArrayList<Graphics>
 	 */
 	public List<Graphics> getGroupGraphics()
@@ -245,7 +245,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		}
 		super.deselect();
 	}
-	
+
 	@Override
 	protected void vMoveBy(double dx, double dy)
 	{
@@ -262,7 +262,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 			}
 		}
 		for(VPoint p : toMove) p.vMoveBy(dx, dy);
-		
+
 		// update group outline
 		markDirty();
 	}
@@ -275,11 +275,11 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		if(isSelected()) flags += FLAG_SELECTED;
 		if(mouseover) flags += FLAG_MOUSEOVER;
 		if(showLinkAnchors) flags += FLAG_ANCHORSVISIBLE;
-				
+
 		//Draw the group style appearance
 		GroupPainter p = GroupPainterRegistry.getPainter(gdata.getGroupStyle().toString());
 		p.drawGroup(g2d, this, flags);
-		
+
 		//anchors
 		if(showLinkAnchors) {
 			for(LinkAnchor la : getLinkAnchors()) {
@@ -289,7 +289,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	}
 
 	boolean mouseover = false;
-	
+
 	public void vElementMouseEvent(VElementMouseEvent e) {
 		if(e.getElement() == this) {
 			boolean old = mouseover;
@@ -304,7 +304,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 			}
 		}
 	}
-	
+
 	public void highlight(Color c) {
 		super.highlight(c);
 		//Highlight the children
@@ -312,7 +312,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 			g.highlight();
 		}
 	}
-	
+
 	protected Shape calculateVOutline() {
 		//Include rotation and stroke
 		Area a = new Area(getVShape(true));
@@ -324,7 +324,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		}
 		return a;
 	}
-	
+
 	protected Shape getVShape(boolean rotate)
 	{
 		Rectangle2D mb = null;
@@ -343,11 +343,11 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	}
 
 	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
-	
+
 	private static final int MIN_SIZE_LA = 15 * 25;
 	private int numLinkanchorsH = -1;
 	private int numLinkanchorsV = -1;
-	
+
 	public List<LinkAnchor> getLinkAnchors() {
 		//Number of link anchors depends on the size of the object
 		//If the width/height is large enough, there will be three link anchors per side,
@@ -359,7 +359,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		}
 		return linkAnchors;
 	}
-	
+
 	private void createLinkAnchors(int numH, int numV) {
 		linkAnchors.clear();
 		double deltaH = 2.0/(numH + 1);
@@ -375,23 +375,23 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		numLinkanchorsH = numH;
 		numLinkanchorsV = numV;
 	}
-	
+
 	boolean showLinkAnchors = false;
-	
+
 	public void showLinkAnchors() {
 		if(!showLinkAnchors) {
 			showLinkAnchors = true;
 			markDirty();
 		}
 	}
-	
+
 	public void hideLinkAnchors() {
 		if(showLinkAnchors) {
 			showLinkAnchors = false;
 			markDirty();
 		}
 	}
-	
+
 	public LinkAnchor getLinkAnchorAt(Point2D p) {
 		for(LinkAnchor la : getLinkAnchors()) {
 			if(la.getMatchArea().contains(p)) {

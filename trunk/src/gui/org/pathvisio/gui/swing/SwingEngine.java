@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing;
@@ -55,23 +55,23 @@ import org.pathvisio.view.swing.VPathwaySwing;
 /**
  * SwingEngine ties together a number of global objects needed both in the
  * WikiPathways applet and in the Standalone App, but not in command-line tools.
- * 
+ *
  * It keeps the main panel, the main frame and has
  * helper functions for opening, closing, importing and exporting Pathways.
  */
-public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlagListener {	
+public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlagListener {
 	private MainPanel mainPanel;
-	
+
 	private CommonActions actions;
 	private JFrame frame; // may be null (for applet...)
-	
+
 	private Engine engine;
 	private GdbManager gdbManager = null;
 	private final Compat compat;
-	
+
 	public Engine getEngine() { return engine; }
-	
-	public SwingEngine(Engine engine) 
+
+	public SwingEngine(Engine engine)
 	{
 		this.engine = engine;
 		gdbManager = new GdbManager();
@@ -80,27 +80,27 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		compat = new Compat(this);
 		engine.addApplicationEventListener(compat);
 	}
-	
+
 	public GdbManager getGdbManager()
 	{
 		return gdbManager;
 	}
-	
+
 	public CommonActions getActions() {
 		return actions;
 	}
-	
+
 	public MainPanel getApplicationPanel() {
 		return getApplicationPanel(false);
 	}
-	
+
 	public MainPanel getApplicationPanel(boolean forceNew) {
 		if(forceNew || !hasApplicationPanel()) {
 			mainPanel = new MainPanel(this);
 		}
 		return mainPanel;
 	}
-	
+
 	public void setApplicationPanel(MainPanel mp) {
 		if(mainPanel != null) {
 			Container parent = mainPanel.getParent();
@@ -108,13 +108,13 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		}
 		mainPanel = mp;
 	}
-	
+
 	public boolean hasApplicationPanel() {
 		return mainPanel != null;
-	}	
-	
+	}
+
 	public void handleConverterException(String message, Component c, Throwable e) {
-		if (e.getMessage() != null && 
+		if (e.getMessage() != null &&
 				e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
 		{
 			JOptionPane.showMessageDialog(c,
@@ -134,11 +134,11 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			Logger.log.error("Converter exception", e);
 		}
 	}
-		
+
 	public VPathwayWrapper createWrapper() {
 		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
 	}
-	
+
 	//TODO: deprecate
 	public boolean processTask(ProgressKeeper pk, ProgressDialog d, SwingWorker<Boolean, Boolean> sw) {
 		sw.execute();
@@ -154,12 +154,12 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			return false;
 		}
 	}
-	
-	public boolean openPathway(final URL url) {		
+
+	public boolean openPathway(final URL url) {
 		final ProgressKeeper pk = new ProgressKeeper();
-		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()),
 				"", pk, false, true);
-				
+
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
 			protected Boolean doInBackground() {
 				pk.setTaskName("Opening pathway");
@@ -175,16 +175,16 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				}
 			}
 		};
-		
+
 		return processTask(pk, d, sw);
 	}
 
-	public boolean openPathway(final File f) 
-	{		
+	public boolean openPathway(final File f)
+	{
 		final ProgressKeeper pk = new ProgressKeeper();
-		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()),
 				"", pk, false, true);
-				
+
 		engine.setWrapper (createWrapper());
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
 			protected Boolean doInBackground() {
@@ -200,15 +200,15 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				}
 			}
 		};
-		
+
 		return processTask(pk, d, sw);
 	}
-	
+
 	public boolean importPathway(final File f) {
 		final ProgressKeeper pk = new ProgressKeeper();
-		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()),
 				"", pk, false, true);
-				
+
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean,Boolean>() {
 			protected Boolean doInBackground() {
 				pk.setTaskName("Importing pathway");
@@ -226,11 +226,11 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				}
 			}
 		};
-		
+
 	return processTask(pk, d, sw);
 
 	}
-	
+
 	public void newPathway() {
 		engine.setWrapper (createWrapper());
 		engine.newPathway();
@@ -252,7 +252,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				}
 		);
 		exporters.addAll(engine.getPathwayExporters().values());
-		
+
 		FileFilter selectedFilter = null;
 		for(PathwayExporter exp : exporters) {
 			FileFilter ff = new ImporterExporterFileFilter(exp);
@@ -264,7 +264,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		if(selectedFilter != null) jfc.setFileFilter(selectedFilter);
 
 		int status = jfc.showDialog(getApplicationPanel(), "Export");
-		if(status == JFileChooser.APPROVE_OPTION) {	
+		if(status == JFileChooser.APPROVE_OPTION) {
 			File f = jfc.getSelectedFile();
 			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_EXPORT,
 					jfc.getCurrentDirectory());
@@ -278,16 +278,16 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		}
 		return false;
 	}
-	
+
 	public boolean exportPathway(final File f) {
 		if(mayOverwrite(f)) {
 			final ProgressKeeper pk = new ProgressKeeper();
-			final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()), 
+			final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()),
 					"", pk, false, true);
 
 			// create a clone so we can safely act on it in a worker thread.
 			final Pathway clone = engine.getActivePathway().clone();
-			
+
 			SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
 				protected Boolean doInBackground() {
 					try {
@@ -335,7 +335,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		if(selectedFilter != null) jfc.setFileFilter(selectedFilter);
 
 		int status = jfc.showDialog(getApplicationPanel(), "Import");
-		if(status == JFileChooser.APPROVE_OPTION) {	
+		if(status == JFileChooser.APPROVE_OPTION) {
 			File f = jfc.getSelectedFile();
 			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_IMPORT,
 					jfc.getCurrentDirectory());
@@ -351,10 +351,10 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 
 	/**
 	 * Opens a file chooser dialog, and opens the chosen pathway.
-	 * @return true if a pathway was openend, false if the operation was 
+	 * @return true if a pathway was openend, false if the operation was
 	 * cancelled
 	 */
-	public boolean openPathway() 
+	public boolean openPathway()
 	{
 		//Open file dialog
 		JFileChooser jfc = new JFileChooser();
@@ -375,16 +375,16 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			public String getDescription() {
 				return "GPML files (*.gpml, *.xml)";
 			}
-			
+
 		});
 
 		//TODO: use constants for extensions
 		int status = jfc.showDialog(getApplicationPanel(), "Open pathway");
-		if(status == JFileChooser.APPROVE_OPTION) {	
+		if(status == JFileChooser.APPROVE_OPTION) {
 			File f = jfc.getSelectedFile();
 			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_OPEN,
 				jfc.getCurrentDirectory());
-			if(!(f.toString().toUpperCase().endsWith("GPML") || f.toString().toUpperCase().endsWith("XML"))) 
+			if(!(f.toString().toUpperCase().endsWith("GPML") || f.toString().toUpperCase().endsWith("XML")))
 			{
 				f = new File(f.toString() + ".gpml");
 			}
@@ -396,7 +396,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public boolean mayOverwrite(File f) {
 		boolean allow = true;
 		if(f.exists()) {
-			int status = JOptionPane.showConfirmDialog(frame, "File " + f.getName() + " already exists, overwrite?", 
+			int status = JOptionPane.showConfirmDialog(frame, "File " + f.getName() + " already exists, overwrite?",
 					"File already exists", JOptionPane.YES_NO_OPTION);
 			allow = status == JOptionPane.YES_OPTION;
 		}
@@ -422,7 +422,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			public String getDescription() {
 				return "GPML files (*.gpml, *.xml)";
 			}
-			
+
 		});
 		int status = jfc.showDialog(frame, "Save");
 		if(status == JFileChooser.APPROVE_OPTION) {
@@ -444,13 +444,13 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		}
 		return false;
 	}
-	
+
 	public boolean savePathway()
 	{
 		Pathway pathway = engine.getActivePathway();
-		
-		boolean result = true;	
-		
+
+		boolean result = true;
+
         // Overwrite the existing xml file.
 		// If the target file is read-only, let the user select a new pathway
 		if (pathway.getSourceFile() != null && pathway.getSourceFile().canWrite())
@@ -467,25 +467,25 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 
 		return result;
 	}
-	
+
 	/**
 	 * Call this when the user is about to perform an
 	 * action that could lead to discarding the current pathway.
 	 * (For example when creating a new pathway)
-	 * 
+	 *
 	 * Checks if there are any unsaved changes, and
 	 * asks the user if they want to save those changes.
-	 * 
+	 *
 	 * @return true if the user allows discarding the pathway, possibly after saving.
 	 */
 	public boolean canDiscardPathway()
 	{
 		Pathway pathway = engine.getActivePathway();
         // checking not necessary if there is no pathway or if pathway is not changed.
-		
+
 		if (pathway == null || !pathway.hasChanged()) return true;
 		int result = JOptionPane.showConfirmDialog
-			(frame, "Save changes?", 
+			(frame, "Save changes?",
 					"Your pathway has changed. Do you want to save?",
 					JOptionPane.YES_NO_CANCEL_OPTION,
 					JOptionPane.QUESTION_MESSAGE);
@@ -502,9 +502,9 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return true;
 	}
 
-	public void applicationEvent(ApplicationEvent e) 
+	public void applicationEvent(ApplicationEvent e)
 	{
-		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) 
+		if(e.getType() == ApplicationEvent.PATHWAY_OPENED)
 		{
 			updateTitle();
 			engine.getActivePathway().addStatusFlagListener(SwingEngine.this);
@@ -538,7 +538,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		}
 	}
 
-	public void statusFlagChanged(StatusFlagEvent e) 
+	public void statusFlagChanged(StatusFlagEvent e)
 	{
 		updateTitle();
 	}
@@ -547,14 +547,14 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		this.frame = frame;
 	}
-	
+
 	public JFrame getFrame()
 	{
 		return frame;
 	}
-	
+
 	private Browser browser = null;
-	
+
 	/**
 	 * Set the browser launcher that will be used to open urls in the
 	 * system's default web browser.
@@ -562,7 +562,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public void setUrlBrowser(Browser b) {
 		this.browser = b;
 	}
-	
+
 	/**
 	 * Opens an URL in the system's default browser if a browser is set
 	 * @see #setUrlBrowser
@@ -571,7 +571,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public void openUrl(URL url) throws UnsupportedOperationException {
 		if(browser != null) browser.openUrl(url);
 	}
-	
+
 	/**
 	 * Simple interface to allow different browser launcher implementations.
 	 * Note: Java 1.6 provides an easy method to open an url in the default system browser
@@ -581,10 +581,10 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public interface Browser {
 		public void openUrl(URL url);
 	}
-	
+
 	private boolean disposed = false;
 	/**
-	 * free all resources (such as listeners) held by this class. 
+	 * free all resources (such as listeners) held by this class.
 	 * Owners of this class must explicitly dispose of it to clean up.
 	 */
 	public void dispose()
@@ -594,14 +594,14 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		engine.removeApplicationEventListener(compat);
 		disposed = true;
 	}
-	
-	/** 
+
+	/**
 	 * Returns the organism set in the active pathway.
-	 * May return null if there is no current organism set 
+	 * May return null if there is no current organism set
 	 */
 	public Organism getCurrentOrganism()
 	{
 		String organism = getEngine().getActivePathway().getMappInfo().getOrganism();
-		return Organism.fromLatinName(organism); 
+		return Organism.fromLatinName(organism);
 	}
 }

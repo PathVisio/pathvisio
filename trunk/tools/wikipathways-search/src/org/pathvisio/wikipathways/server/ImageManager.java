@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.server;
@@ -62,16 +62,16 @@ public class ImageManager {
 	 * The image format of the preview images
 	 */
 	public static final String IMG_TYPE = "png";
-	
+
 	private static ImageManager imageManager;
-	
+
 	/**
 	 * Check if the image manager is already initialized.
 	 */
 	public static boolean isInit() {
 		return imageManager != null;
 	}
-	
+
 	/**
 	 * Initialize the image manager
 	 * @param basePath The base path for storing the cache files.
@@ -80,7 +80,7 @@ public class ImageManager {
 	public static void init(String basePath, WikiPathwaysClient client) {
 		imageManager = new ImageManager(basePath, client);
 	}
-	
+
 	/**
 	 * Get the image manager.
 	 * @return The image manager, or null if it has not been
@@ -91,27 +91,27 @@ public class ImageManager {
 	public static ImageManager getInstance() {
 		return imageManager;
 	}
-	
+
 	static final int SLEEP_INTERVAL = 250;
 	static final String GPML_PATH = "cache/gpml/";
 	static final String IMG_PATH = "cache/images/";
-	
+
 	private WikiPathwaysClient client;
-	
+
 	//Manages the download threads
 	BlockingQueue<Runnable> workqueue = new LinkedBlockingQueue<Runnable>();
 	ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 3, 60, TimeUnit.SECONDS, workqueue);
 	private volatile Set<String> activeDownloads = new HashSet<String>();
-	
+
 	private String srvBasePath = "";
-	
+
 	private ImageManager(String basePath, WikiPathwaysClient client) {
 		srvBasePath = basePath;
 		new File(srvBasePath + "/" + GPML_PATH).mkdirs();
 		new File(srvBasePath + "/" + IMG_PATH).mkdirs();
 		this.client = client;
 	}
-	
+
 	/**
 	 * Block until the cached image is available. This method returns only when the cache
 	 * file is available.
@@ -138,7 +138,7 @@ public class ImageManager {
 			throw new TimeoutException();
 		}
 	}
-	
+
 	/**
 	 * Get the data for the preview image, identified with id.
 	 * This method assumes that the cached image is already available.
@@ -149,7 +149,7 @@ public class ImageManager {
 		System.err.println("Getting bytes from file " + resized.getAbsolutePath());
 		return getBytesFromFile(resized);
 	}
-	
+
 	/**
 	 * Read the given file into a byte array.
 	 */
@@ -172,7 +172,7 @@ public class ImageManager {
         is.close();
         return bytes;
     }
-    
+
     /**
      * Get the pathway. This method updates cache if necessary.
      * @param wsr The search result
@@ -185,7 +185,7 @@ public class ImageManager {
     	);
     	return pathway;
     }
-    
+
     /**
      * Start updating the pathway and image cache. This method will
      * download and convert the necessary files unless a cached version
@@ -209,11 +209,11 @@ public class ImageManager {
 			});
 		}
 	}
-	
+
 	private void writeImageCache(WSSearchResult wsr) throws ConverterException {
 		writeImageCache(wsr.getId(), wsr.getRevision());
 	}
-	
+
 	private void writeImageCache(String id, String revision) throws ConverterException {
 		String gid = getGpmlId(id, revision);
 		File cacheImg = getImageFile(gid);
@@ -222,20 +222,20 @@ public class ImageManager {
 		File cacheGpml = getGpmlFile(getGpmlId(id, revision));
 
 		cacheImg.getParentFile().mkdirs();
-		
+
 		Pathway pathway = new Pathway();
 		pathway.readFromXml(cacheGpml, true);
-		
+
 		BatikImageExporter exp = new BatikImageExporter(BatikImageExporter.TYPE_PNG);
 		TranscodingHints hints = new TranscodingHints();
 		hints.put(PNGTranscoder.KEY_WIDTH, (float)IMG_SIZE);
 		hints.put(PNGTranscoder.KEY_HEIGHT, (float)IMG_SIZE);
-		
+
 		//Uncomment this to enable highlighting of the
 		//found genes. This will generate a lot more cache files
 		//(~one for each search query).
 //		Set<String> highlightIds = new HashSet<String>();
-//		
+//
 //		WSIndexField[] fields = wsr.getFields();
 //		if(fields != null) {
 //			for(WSIndexField f : wsr.getFields()) {
@@ -246,11 +246,11 @@ public class ImageManager {
 //				}
 //			}
 //		}
-		
+
 		PreferenceManager.init();
 		VPathway vpathway = new VPathway(new VPathwayWrapperBase());
 		vpathway.fromModel(pathway);
-		
+
 		//Uncomment this to enable highlighting of the
 		//found genes. This will generate a lot more cache files
 		//(~one for each search query).
@@ -270,11 +270,11 @@ public class ImageManager {
 //		}
 		exp.doExport(cacheImg, vpathway, hints);
 	}
-	
+
 	private void downloadGpml(WSSearchResult wsr) {
 		writeGpmlCache(wsr.getId(), wsr.getRevision());
 	}
-	
+
 	/**
 	 * Downloads the gpml cache to create images from.
 	 * @param wsr The search result to get the gpml for
@@ -292,23 +292,23 @@ public class ImageManager {
 			}
 		}
 	}
-	
+
 	private File getGpmlFile(String gpmlId) {
 		return new File(srvBasePath + "/" + GPML_PATH + gpmlId);
 	}
-	
+
 	private File getImageFile(String id) {
 		return new File(srvBasePath + "/" + getImagePath(id));
 	}
-	
+
 	private String getImagePath(String id) {
 		return IMG_PATH + id;
 	}
-	
+
 	public static String getGpmlId(String id, String revision) {
 		return id + "@" + revision;
 	}
-	
+
 	public void updateAllCache() {
 		try {
 			WSPathwayInfo[] pathways = client.listPathways();

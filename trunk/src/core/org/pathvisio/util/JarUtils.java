@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.util;
@@ -39,33 +39,33 @@ import org.pathvisio.debug.Logger;
 public class JarUtils
 {
 	static final String PREFIX_TMP = "PVJAR";
-	
+
 	public static File resourceToTempFile(String name) throws FileNotFoundException, IOException {
 		File tmp = File.createTempFile(PREFIX_TMP, null, null);
 		resourceToFile(name, tmp);
 		return tmp;
 	}
-	
-	public static File resourceToNamedTempFile(String name, String fileName) 
+
+	public static File resourceToNamedTempFile(String name, String fileName)
 											throws FileNotFoundException, IOException {
 		return resourceToNamedTempFile(name, fileName, true);
 	}
-	
-	public static File resourceToNamedTempFile(String name, String fileName, boolean overwrite) 
+
+	public static File resourceToNamedTempFile(String name, String fileName, boolean overwrite)
 											throws FileNotFoundException, IOException {
 		File tmp = new File(System.getProperty("java.io.tmpdir"), fileName);
-		
+
 		if(!overwrite && tmp.exists()) return tmp;
-		
+
 		tmp.deleteOnExit();
 		resourceToFile(name, tmp);
 		return tmp;
 	}
-	
+
 	public static void resourceToFile(String name, File f) throws IOException {
 		InputStream in = getResourceInputStream(name);
 		if(in == null) throw new IOException("Unable to load resource '" + name + "'");
-		
+
 		OutputStream out = new FileOutputStream(f);
 		byte[] buf = new byte[1024];
 		int len;
@@ -75,7 +75,7 @@ public class JarUtils
 		in.close();
 		out.close();
 	}
-	
+
 	public static List<String> listResources(String path) throws IOException {
 		List<String> resNames = new ArrayList<String>();
 
@@ -94,7 +94,7 @@ public class JarUtils
 		}
 		return resNames;
 	}
-	
+
 	/**
 	 * Get the {@link URL} for the resource stored in a jar file in the classpath
 	 * @param name	the filename of the resource
@@ -105,7 +105,7 @@ public class JarUtils
 		if(url == null) Logger.log.error("Couldn't load resource '" + name + "'");
 		return url;
 	}
-	
+
 	/**
 	 * Get the {@link InputStream} for the resource stored in a jar file in the classpath
 	 * @param name	the filename of the resource

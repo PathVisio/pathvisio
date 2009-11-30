@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gex;
@@ -30,7 +30,7 @@ import org.pathvisio.model.PathwayElement;
 public class BackpageExpression implements BackpageHook
 {
 	private final GexManager gexManager;
-	
+
 	public BackpageExpression (GexManager gexManager)
 	{
 		this.gexManager = gexManager;
@@ -47,18 +47,18 @@ public class BackpageExpression implements BackpageHook
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
-		
+
 		String colNames = "<TR><TH>Sample name";
 		if(!gex.isConnected()) return noDataFound;
-		
+
 		List<ReporterData> pwData = gex.syncGet(idc);
-		
+
 		if(pwData == null) return noDataFound;
-		
+
 		for(ReporterData d : pwData){
 			colNames += "<TH>" + d.getXref().getId();
 		}
-		
+
 		String dataString = "";
 		for(Sample s : gex.getOrderedSamples())
 		{
@@ -68,15 +68,15 @@ public class BackpageExpression implements BackpageHook
 				dataString += "<TH>" + d.getSampleData(s);
 			}
 		}
-		
+
 		return exprInfo + colNames + dataString + "</TABLE>";
 	}
 
-	public String getHtml(PathwayElement e) 
+	public String getHtml(PathwayElement e)
 	{
 		return getHtml(e, gexManager.getCachedData());
 	}
-	
+
 	public static String getHtml(PathwayElement e, CachedData gex) {
 		String text = "";
 		try
@@ -85,11 +85,11 @@ public class BackpageExpression implements BackpageHook
 			if(gex != null) {
 				text += "<H1>Expression data</H1>";
 				text += getDataString(e.getXref(), gex);
-			}				
+			}
 		}
 		catch (IDMapperException ex)
 		{
-			text += "Exception occured while getting cross-references</br>" 
+			text += "Exception occured while getting cross-references</br>"
 				+ ex.getMessage();
 		}
 		return text;

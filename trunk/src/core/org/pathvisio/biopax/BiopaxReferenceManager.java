@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.biopax;
@@ -33,7 +33,7 @@ import org.pathvisio.model.PathwayElement;
  */
 public class BiopaxReferenceManager {
 	private PathwayElement pwElement;
-	
+
 	/**
 	 * Constructor for this class
 	 * @param mgr	The BiopaxElementManager that manages the biopax elements
@@ -43,11 +43,11 @@ public class BiopaxReferenceManager {
 	public BiopaxReferenceManager(PathwayElement e) {
 		pwElement = e;
 	}
-	
+
 	public BiopaxElementManager getBiopaxElementManager() {
 		return pwElement.getParent().getBiopaxElementManager();
 	}
-	
+
 	/**
 	 * Get all biopax elements that the pathway element has
 	 * a reference to
@@ -67,7 +67,7 @@ public class BiopaxReferenceManager {
 		}
 		return bpElements;
 	}
-	
+
 	/**
 	 * Get all publications that the pathway element has a reference to
 	 * @return A List with all referred publications, or an empty list
@@ -86,7 +86,7 @@ public class BiopaxReferenceManager {
 		});
 		return xrefs;
 	}
-	
+
 	/**
 	 * Add a reference to the given biopax element for the pathway
 	 * element this class manages.
@@ -95,13 +95,13 @@ public class BiopaxReferenceManager {
 	public void addElementReference(BiopaxElement e) {
 		//Will be added to the BioPAX document if not already in there
 		getBiopaxElementManager().addElement(e);
-		
+
 		//Add a reference to the biopax element
 		pwElement.addBiopaxRef(e.getId());
-		
+
 		fireBiopaxEvent(new BiopaxEvent(this));
 	}
-	
+
 	/**
 	 * Remove the reference to the given biopax element from the
 	 * pathway element this class manages.
@@ -110,32 +110,32 @@ public class BiopaxReferenceManager {
 	public void removeElementReference(BiopaxElement e) {
 		//Remove the reference to the element
 		pwElement.removeBiopaxRef(e.getId());
-		
+
 		//Remove element from the biopax GPML element
 		//Only if there are no references to this element
 		if(!getBiopaxElementManager().hasReferences(e)) {
 			getBiopaxElementManager().removeElement(e);
 		}
-		
+
 		fireBiopaxEvent(new BiopaxEvent(this));
 	}
-	
+
 	private void fireBiopaxEvent(BiopaxEvent e) {
 		for(BiopaxListener l : listeners) {
 			l.biopaxEvent(e);
 		}
 	}
-	
+
 	List<BiopaxListener> listeners = new ArrayList<BiopaxListener>();
-	
+
 	public void addBiopaxListener(BiopaxListener l) {
 		if(!listeners.contains(l)) listeners.add(l);
 	}
-	
+
 	public void removeBiopaxListener(BiopaxListener l) {
 		listeners.remove(l);
 	}
-	
+
 	public void copyBiopaxListeners(BiopaxReferenceManager refMgr) {
 		for(BiopaxListener l : refMgr.listeners) {
 			addBiopaxListener(l);

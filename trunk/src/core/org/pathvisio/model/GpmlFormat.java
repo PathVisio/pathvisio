@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -47,23 +47,23 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	 * The factor that is used to convert pixel coordinates
 	 * to the GPML model coordinates. E.g. if you want to convert the
 	 * width from pixels to GPML model coordinates you use:
-	 * 
+	 *
 	 * double mWidth = width * pixel2model;
 	 */
 	public static final double PIXEL_TO_MODEL = 15;
 
 	static private final GpmlFormatImpl1 CURRENT = GpmlFormatImpl1.GPML_2008A;
-	
+
 	public static final Namespace GPML = CURRENT.getGpmlNamespace();
 	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	public static final Namespace BIOPAX = Namespace.getNamespace("bp", "http://www.biopax.org/release/biopax-level2.owl#");
 	public static final Namespace OWL = Namespace.getNamespace("owl", "http://www.w3.org/2002/07/owl#");
-							
+
 	static {
 		BioDataSource.init();
 	}
-	
+
 	public Pathway doImport(File file) throws ConverterException
 	{
 		Pathway pathway = new Pathway();
@@ -75,7 +75,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	{
 		writeToXml(pathway, file, true);
 	}
-	
+
 	public String[] getExtensions() {
 		return new String[] { "gpml", "xml" };
 	}
@@ -83,7 +83,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	public String getName() {
 		return "GPML file";
 	}
-	
+
 	public static Document createJdom(Pathway data) throws ConverterException
 	{
 		return CURRENT.createJdom(data);
@@ -93,37 +93,37 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	{
 		return CURRENT.createJdomElement(o, ns);
 	}
-	
+
 	public static PathwayElement mapElement(Element e, Pathway p) throws ConverterException
 	{
 		return CURRENT.mapElement(e, p);
-	}	
-	
+	}
+
 	public static PathwayElement mapElement(Element e) throws ConverterException
 	{
 		return CURRENT.mapElement(e);
 	}
-	
+
 	/**
 	 * Writes the JDOM document to the file specified
 	 * @param file	the file to which the JDOM document should be saved
-	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error, 
-	 * 		or the xsd is not in the classpath, an exception will be thrown. 
+	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error,
+	 * 		or the xsd is not in the classpath, an exception will be thrown.
 	 */
-	static public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException 
+	static public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException
 	{
 		CURRENT.writeToXml(pwy, file, validate);
 	}
-	
-	static public void writeToXml(Pathway pwy, OutputStream out, boolean validate) throws ConverterException 
+
+	static public void writeToXml(Pathway pwy, OutputStream out, boolean validate) throws ConverterException
 	{
 		CURRENT.writeToXml(pwy, out, validate);
 	}
-	
+
 	static public void readFromXml(Pathway pwy, File file, boolean validate) throws ConverterException
 	{
 		InputStream inf;
-		try	
+		try
 		{
 			inf = new FileInputStream (file);
 		}
@@ -147,7 +147,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	private static void readFromXmlImpl(Pathway pwy, InputSource in, boolean validate) throws ConverterException
 	{
 		// Start XML processing
-		
+
 		SAXBuilder builder  = new SAXBuilder(false); // no validation when reading the xml file
 		// try to read the file; if an error occurs, catch the exception and print feedback
 		try
@@ -162,7 +162,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			{
 				throw new ConverterException ("Not a Pathway file");
 			}
-			
+
 			Namespace ns = root.getNamespace();
 			GpmlFormatImpl1[] formats = new GpmlFormatImpl1[] { GpmlFormatImpl1.GPML_2007, GpmlFormatImpl1.GPML_2008A };
 			boolean recognized = false;
@@ -171,11 +171,11 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 				if (ns.equals(format.getGpmlNamespace()))
 				{
 					Logger.log.info ("Recognized format " + ns);
-					
+
 					Logger.log.trace ("Start Validation");
 					if (validate) format.validateDocument(doc);
 					Logger.log.trace ("Copy map elements");
-					
+
 					format.readFromRoot (root, pwy);
 					recognized = true;
 					break;
@@ -187,7 +187,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 						"but the namespace " + ns + " was not recognized. This application might be out of date.");
 			}
 		}
-		catch(JDOMParseException pe) 
+		catch(JDOMParseException pe)
 		{
 			 throw new ConverterException (pe);
 		}
@@ -210,7 +210,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			throw new ConverterException (e);
 		}
 	}
-	
+
 	/**
 	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
 	 * @param doc the document to validate

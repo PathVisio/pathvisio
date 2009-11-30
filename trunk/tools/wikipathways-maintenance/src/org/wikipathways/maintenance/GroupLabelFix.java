@@ -13,7 +13,7 @@ import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 /**
- * Removes the "New group" labels that occur on many 
+ * Removes the "New group" labels that occur on many
  * pathways on wikipathways, but add no useful information on the group.
  * @author thomas
  */
@@ -22,22 +22,22 @@ public class GroupLabelFix {
 		String url = args[0];
 		String user = args[1];
 		String pass = args[2];
-		
+
 		try {
 			Logger.log.setLogLevel(true, true, true, true, true, true);
 			WikiPathwaysClient client = new WikiPathwaysClient(new URL(url));
-			
+
 			client.login(user, pass);
-			
+
 			Pattern pat = Pattern.compile("(Group object)|(new group)");
-			
+
 			WSPathwayInfo[] pathways = client.listPathways();
 			int i = 1;
 			for(WSPathwayInfo pwi : pathways) {
 				Logger.log.trace("Processing pathway " + i++ + " out of " + pathways.length);
-				
+
 				WSPathway wsp = client.getPathway(pwi.getId());
-				
+
 				Pathway p = WikiPathwaysClient.toPathway(wsp);
 
 				boolean modified = false;

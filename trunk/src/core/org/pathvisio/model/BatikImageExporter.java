@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -38,7 +38,7 @@ import org.w3c.dom.Document;
 
 /**
  * Export Pathway image through Batik, which can handle a number of file formats
- * including SVG, PNG, PDF and TIFF 
+ * including SVG, PNG, PDF and TIFF
  */
 public class BatikImageExporter extends ImageExporter {
 
@@ -49,11 +49,11 @@ public class BatikImageExporter extends ImageExporter {
 	public void doExport(File file, VPathway vPathway) throws ConverterException {
 		doExport(file, vPathway, null);
 	}
-	
+
 	public void doExport(File file, VPathway vPathway, TranscodingHints hints) throws ConverterException {
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);
-		
+
 		SVGGraphics2D svgG2d = new SVGGraphics2D(svg);
 		vPathway.draw(svgG2d);
 
@@ -61,11 +61,11 @@ public class BatikImageExporter extends ImageExporter {
 		//to be calculated correctly
 		Dimension size = vPathway.calculateVSize();
 		svgG2d.setSVGCanvasSize(size);
-				
+
 		Transcoder t = null;
 		if			(getType().equals(TYPE_SVG)) {
 			try {
-				Writer out = new FileWriter(file);			
+				Writer out = new FileWriter(file);
 				svgG2d.stream(out, true);
 				out.flush();
 				out.close();
@@ -103,7 +103,7 @@ public class BatikImageExporter extends ImageExporter {
 
 			// Save the image.
 			t.transcode(input, output);
-			
+
 		    // Flush and close the stream.
 	        ostream.flush();
 	        ostream.close();
@@ -111,12 +111,12 @@ public class BatikImageExporter extends ImageExporter {
 			throw new ConverterException(e);
 		}
 	}
-	
+
 	public void doExport(File file, Pathway pathway) throws ConverterException
 	{
 		VPathway vPathway = new VPathway(null);
 		vPathway.fromModel(pathway);
-		
+
 		doExport(file, vPathway);
 		vPathway.dispose();
 	}

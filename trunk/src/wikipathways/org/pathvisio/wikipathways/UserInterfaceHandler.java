@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways;
@@ -31,19 +31,19 @@ import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.wikipathways.PathwayPageApplet;
 import org.pathvisio.util.ProgressKeeper;
 
-public class UserInterfaceHandler {		
+public class UserInterfaceHandler {
 	public static final int Q_CANCEL = -1;
 	public static final int Q_TRUE = 0;
 	public static final int Q_FALSE = 1;
-	
+
 	Component parent;
-	
+
 	private abstract class RunnableValue <T> implements Runnable {
 		T value;
 		public T get() { return value; }
 		public void set(T value) { this.value = value; }
 	}
-	
+
 	private void invoke(Runnable r) {
 		try {
 			if(SwingUtilities.isEventDispatchThread()) {
@@ -58,7 +58,7 @@ public class UserInterfaceHandler {
 	public int askCancellableQuestion(final String title, final String message) {
 		RunnableValue<Integer> r = new RunnableValue<Integer>() {
 			public void run() {
-				int status = JOptionPane.showConfirmDialog(getParent(), message, title, 
+				int status = JOptionPane.showConfirmDialog(getParent(), message, title,
 						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				set(status);
 			}
@@ -97,11 +97,11 @@ public class UserInterfaceHandler {
 	public void showInfo(String title, String message) {
 		JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
 	public <T> void runWithProgress(final RunnableWithProgress<T> runnable, String title, boolean canCancel, boolean modal) {
 		ProgressKeeper pk = runnable.getProgressKeeper();
 		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getParent()), title, pk, canCancel, modal);
-				
+
 		runnable.setProgressKeeper(pk);
 		SwingWorker<T, Void> sw = new SwingWorker<T, Void>() {
 			protected T doInBackground() throws Exception {
@@ -110,26 +110,26 @@ public class UserInterfaceHandler {
 				return runnable.get();
 			}
 		};
-		
+
 		sw.execute();
-		
+
 		d.setVisible(true); //If dialog is modal, method will return when progresskeeper is finished
 	}
-	
+
 	PathwayPageApplet applet;
-	
-	public UserInterfaceHandler(PathwayPageApplet applet) 
+
+	public UserInterfaceHandler(PathwayPageApplet applet)
 	{
 		this.parent = JOptionPane.getFrameForComponent(applet);
 		this.applet = applet;
 	}
-	
+
 	public Component getParent() {
 		parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
 		parent = SwingUtilities.getRoot(parent);
 		return parent;
 	}
-	
+
 	public void showExitMessage(String msg) {
 		if(applet.isFullScreen()) {
 			applet.toEmbedded();

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.gui;
@@ -41,27 +41,27 @@ import org.pathvisio.visualization.VisualizationMethod;
 /**
  * Main component of the {@link VisualizationDialog}. Has capabilities to
  * add / remove / rename visualizations,
- * and has a subpanel for all available Visualization Methods 
+ * and has a subpanel for all available Visualization Methods
  */
-public class VisualizationPanel extends JPanel implements ActionListener 
+public class VisualizationPanel extends JPanel implements ActionListener
 {
 	static final String ACTION_NEW = "New";
 	static final String ACTION_REMOVE = "Remove";
 	static final String ACTION_RENAME = "Rename";
 	static final String ACTION_COMBO = "Combo";
-	
+
 	VisualizationManager visMgr;
-	
+
 	JComboBox visCombo;
 	JPanel methods;
-	
+
 	public VisualizationPanel() {
 		FormLayout layout = new FormLayout(
 				"pref, 4dlu, 100dlu:grow, 4dlu, left:pref",
 				"pref, 4dlu, fill:max(250dlu;pref):grow"
 		);
 		setLayout(layout);
-		
+
 		visCombo = new JComboBox();
 		visCombo.setActionCommand(ACTION_COMBO);
 		visCombo.addActionListener(this);
@@ -80,7 +80,7 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		visButton.addComponent(mNew);
 		visButton.addComponent(mRemove);
 		visButton.addComponent(mRename);
-		
+
 		methods = new JPanel();
 		CellConstraints cc = new CellConstraints();
 		add(new JLabel("Visualization"), cc.xy(1, 1));
@@ -101,7 +101,7 @@ public class VisualizationPanel extends JPanel implements ActionListener
 			visMgr.addVisualization(v);
 			visMgr.setActiveVisualization(v);
 			refresh();
-			
+
 		} else if (ACTION_REMOVE.equals(action)) {
 			Visualization v = visMgr.getActiveVisualization();
 			if(v != null) {
@@ -127,27 +127,27 @@ public class VisualizationPanel extends JPanel implements ActionListener
 			refresh();
 		}
 	}
-	
+
 	public void setVisualizationManager(VisualizationManager mgr) {
 		this.visMgr = mgr;
 		refresh();
 	}
-	
+
 	private void refresh() {
 		methods.removeAll();
 		if(visMgr != null) {
 			Visualization v = visMgr.getActiveVisualization();
-			
+
 			visCombo.setModel(new DefaultComboBoxModel(
 					visMgr.getVisualizations().toArray()
 			));
-			
+
 			visCombo.setSelectedItem(v);
-			
+
 			//Refresh methods panel
 			if(v != null) {
 				FormLayout layout = new FormLayout("fill:pref:grow");
-				DefaultFormBuilder builder = 
+				DefaultFormBuilder builder =
 					new DefaultFormBuilder(layout, methods);
 				for(VisualizationMethod m : v.getMethods()) {
 					MethodPanel mp = new MethodPanel(m);

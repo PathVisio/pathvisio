@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.wikipathways;
@@ -44,18 +44,18 @@ import org.pathvisio.wikipathways.WikiPathways;
 public class DescriptionApplet extends PathwayPageApplet {
 	Comment description;
 	boolean noupdate = false;
-	
+
 	protected void createGui() {
 		Pathway pathway = wiki.getPathway();
 		findDescription(pathway);
 		PathwayElement mappInfo = pathway.getMappInfo();
-		
+
 		if(description == null) {
 			mappInfo.addComment("", WikiPathways.COMMENT_DESCRIPTION);
 			findDescription(pathway);   //A bit silly, we have to search again, because we
 										//can't create an add a Comment object directly!
 		}
-		
+
 		final JTextArea text = new JTextArea(description.getComment());
 		text.setLineWrap(true);
 		text.setBorder(BorderFactory.createTitledBorder("Description"));
@@ -70,7 +70,7 @@ public class DescriptionApplet extends PathwayPageApplet {
 				descriptionChanged(text.getText());
 			}
 		});
-		
+
 		mappInfo.addListener(new PathwayElementListener() {
 			public void gmmlObjectModified(PathwayEvent e) {
 				if(noupdate) {
@@ -82,7 +82,7 @@ public class DescriptionApplet extends PathwayPageApplet {
 				}
 			}
 		});
-		
+
 		//Add an undo manager
 		final UndoManager undo = new UndoManager();
 		Document doc = text.getDocument();
@@ -129,12 +129,12 @@ public class DescriptionApplet extends PathwayPageApplet {
 		Container content = getContentPane();
 		content.add(new JScrollPane(text), BorderLayout.CENTER);
 	}
-	
+
 	private void descriptionChanged(String newText) {
 		noupdate = true;
 		description.setComment(newText);
 	}
-		
+
 	private void findDescription(Pathway pathway) {
 		for(Comment c : pathway.getMappInfo().getComments()) {
 			if(WikiPathways.COMMENT_DESCRIPTION.equals(c.getSource())) {
@@ -142,7 +142,7 @@ public class DescriptionApplet extends PathwayPageApplet {
 			}
 		}
 	}
-	
+
 	protected String getDefaultDescription() {
 		return "Modified description";
 	}

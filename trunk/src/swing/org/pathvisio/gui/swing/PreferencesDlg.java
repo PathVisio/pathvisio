@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing;
@@ -58,20 +58,20 @@ import org.pathvisio.util.ColorConverter;
 /**
  * Global dialog for setting the user preferences.
  */
-public class PreferencesDlg 
+public class PreferencesDlg
 {
 	private DefaultMutableTreeNode createNodes()
 	{
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode("Preferences");
-		
+
 		List<String> panelTitles = new ArrayList<String>();
 		panelTitles.addAll (panels.keySet());
-		
+
 		Collections.sort (panelTitles);
 
 		DefaultMutableTreeNode prevNode = null;
 		String prevTitle = null;
-		
+
 		for (String title : panelTitles)
 		{
 			if (prevTitle != null && title.startsWith(prevTitle + "."))
@@ -85,27 +85,27 @@ public class PreferencesDlg
 				top.add (prevNode);
 			}
 		}
-		
+
 		return top;
 	}
-	
+
 	private Map <String, PreferencePanel> panels = new HashMap <String, PreferencePanel>();
-	
+
 	/**
 	 * @param title The title of this panel, that will be visible in the JTree on the left
-	 *  side of the dialog. You can use a dot (.) to group panels in the tree: for 
+	 *  side of the dialog. You can use a dot (.) to group panels in the tree: for
 	 * 	example title "Display.Colors" will be arranged under "Display" in the tree (but "Display"
-	 *  needs to exist). Grouping goes only one level deep. 
-	 * @param panel use @link{PreferencePanel.builder()} to construct an @link{PreferencePanel}. 
+	 *  needs to exist). Grouping goes only one level deep.
+	 * @param panel use @link{PreferencePanel.builder()} to construct an @link{PreferencePanel}.
 	 */
 	public void addPanel (String title, PreferencePanel panel)
 	{
 		panels.put (title, panel);
 	}
-	
+
 	public PreferencePanel.Builder builder()
-	{ 
-		return new PreferencePanel.Builder(PreferenceManager.getCurrent()); 
+	{
+		return new PreferencePanel.Builder(PreferenceManager.getCurrent());
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class PreferencesDlg
 		private JPanel panel;
 		private PreferenceManager prefs;
 		private List<FieldEditor> editors = new ArrayList<FieldEditor>();
-		
+
 		public void apply()
 		{
 			for (FieldEditor editor : editors)
@@ -136,7 +136,7 @@ public class PreferencesDlg
 				editor.restoreDefault();
 			}
 		}
-		
+
 		public void reset()
 		{
 			for (FieldEditor editor : editors)
@@ -149,67 +149,67 @@ public class PreferencesDlg
 		{
 			protected Preference p;
 			FieldEditor (Preference p) { this.p = p; }
-			
+
 			/**
 			 * Should copy the value of the editing component to
 			 * the preference
 			 */
 			abstract void apply();
-			
-			/** 
+
+			/**
 			 * restoreDefault should set the editing component to
 			 * the default, but not apply it to the preference yet,
-			 * so that the user still has the chance to cancel. 
+			 * so that the user still has the chance to cancel.
 			 */
 			abstract void restoreDefault();
-			
+
 			/**
-			 * Should copy the value of the preference 
+			 * Should copy the value of the preference
 			 * to the editing component.
 			 * Is called just before PreferenceDlg is shown.
 			 */
 			abstract void reset();
 		}
-		
+
 		private class BooleanFieldEditor extends FieldEditor
 		{
 			private JCheckBox cb;
-			
+
 			BooleanFieldEditor(Preference p, JCheckBox cb)
 			{
 				super(p);
 				this.cb = cb;
 			}
 
-			@Override void apply() 
+			@Override void apply()
 			{
-				prefs.setBoolean(p, cb.isSelected());				
+				prefs.setBoolean(p, cb.isSelected());
 			}
 
-			@Override void restoreDefault() 
+			@Override void restoreDefault()
 			{
-				cb.setSelected(p.getDefault().equals ("" + true));				
+				cb.setSelected(p.getDefault().equals ("" + true));
 			}
 
-			@Override void reset() 
+			@Override void reset()
 			{
-				cb.setSelected (prefs.getBoolean (p));				
+				cb.setSelected (prefs.getBoolean (p));
 			}
 		}
-		
+
 		private class ColorFieldEditor extends FieldEditor implements ActionListener
 		{
 			private JLabel colorLabel;
-			
+
 			ColorFieldEditor (Preference p, JLabel colorLabel)
 			{
 				super(p);
 				this.colorLabel = colorLabel;
 				colorLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.RAISED));
-				colorLabel.setOpaque(true);				
+				colorLabel.setOpaque(true);
 			}
 
-			public void actionPerformed (ActionEvent ae) 
+			public void actionPerformed (ActionEvent ae)
 			{
 				Color newColor = JColorChooser.showDialog(null, "Choose a color", prefs.getColor(p));
 				if (newColor != null)
@@ -220,18 +220,18 @@ public class PreferencesDlg
 
 			@Override
 			void apply() {
-				prefs.setColor(p, colorLabel.getBackground());				
+				prefs.setColor(p, colorLabel.getBackground());
 			}
 
 			@Override
-			void restoreDefault() 
+			void restoreDefault()
 			{
 				Color c = ColorConverter.parseColorString(p.getDefault());
 				colorLabel.setForeground(c);
 				colorLabel.setBackground(c);
 			}
 
-			@Override void reset() 
+			@Override void reset()
 			{
 				Color c = prefs.getColor (p);
 				colorLabel.setForeground(c);
@@ -241,14 +241,14 @@ public class PreferencesDlg
 		private class IntegerFieldEditor extends FieldEditor
 		{
 			private JTextField txt;
-			
+
 			IntegerFieldEditor (Preference p, JTextField txt)
 			{
 				super(p);
 				this.txt = txt;
 			}
 
-			@Override void apply() 
+			@Override void apply()
 			{
 				try
 				{
@@ -257,7 +257,7 @@ public class PreferencesDlg
 				catch (NumberFormatException e)
 				{
 					// ignore, we just leave the old value
-				}				
+				}
 			}
 
 			@Override
@@ -265,7 +265,7 @@ public class PreferencesDlg
 				txt.setText (p.getDefault());
 			}
 
-			@Override void reset() 
+			@Override void reset()
 			{
 				txt.setText(prefs.get(p));
 			}
@@ -273,23 +273,23 @@ public class PreferencesDlg
 		private class StringFieldEditor extends FieldEditor
 		{
 			private JTextField txt;
-			
+
 			StringFieldEditor (Preference p, JTextField txt)
 			{
 				super(p);
 				this.txt = txt;
 			}
 
-			@Override void apply() 
+			@Override void apply()
 			{
-				prefs.set (p, txt.getText());				
+				prefs.set (p, txt.getText());
 			}
 
 			@Override void restoreDefault() {
 				txt.setText (p.getDefault());
 			}
 
-			@Override void reset() 
+			@Override void reset()
 			{
 				txt.setText (prefs.get(p));
 			}
@@ -297,14 +297,14 @@ public class PreferencesDlg
 		private class FileFieldEditor extends FieldEditor implements ActionListener
 		{
 			private JTextField txt;
-			
+
 			FileFieldEditor (Preference p, JTextField txt)
 			{
 				super(p);
 				this.txt = txt;
 			}
 
-			public void actionPerformed(ActionEvent ae) 
+			public void actionPerformed(ActionEvent ae)
 			{
 				JFileChooser jfc = new JFileChooser();
 				if (jfc.showDialog(null, "Choose") == JFileChooser.APPROVE_OPTION)
@@ -317,28 +317,28 @@ public class PreferencesDlg
 
 			@Override
 			void apply() {
-				prefs.set (p, txt.getText());				
+				prefs.set (p, txt.getText());
 			}
 
 			@Override
-			void restoreDefault() 
+			void restoreDefault()
 			{
 				txt.setText (p.getDefault());
 			}
-			
-			@Override void reset() 
+
+			@Override void reset()
 			{
 				txt.setText (prefs.get(p));
 			}
-		}		
+		}
 
 		public void actionPerformed(ActionEvent ae)
 		{
 			restoreDefault();
 		}
-		
+
 		/** Helper class to build preference panel, based on a list of preferences and their types.
-		 * Builds a panel and adds a textfield for a string, checkbox for a boolean, etc. 
+		 * Builds a panel and adds a textfield for a string, checkbox for a boolean, etc.
 		 * <p>
 		 * You can't instantiate directly. Use dlg.createBuilder
 		 * */
@@ -347,32 +347,32 @@ public class PreferencesDlg
 			private PreferencePanel result = new PreferencePanel();
 			private DefaultFormBuilder builder;
 			private FormLayout layout;
-				
+
 			/** Can't instantiate directly. Use dlg.createBuilder */
 			private Builder(PreferenceManager prefs)
 			{
-				layout = new FormLayout("left:pref, 6dlu, 50dlu:grow, 4dlu, default"); 
+				layout = new FormLayout("left:pref, 6dlu, 50dlu:grow, 4dlu, default");
 				builder = new DefaultFormBuilder(layout);
 				result.prefs = prefs;
 			}
-			
+
 			public PreferencePanel build()
 			{
 				JButton btnRestore = new JButton();
 				btnRestore.setText ("Restore Defaults");
 				btnRestore.addActionListener(result);
-				
+
 				// add button to the bottom-right of the panel
 				CellConstraints cc = new CellConstraints();
 				builder.appendRow(RowSpec.decode("fill:pref:grow"));
-				builder.add (btnRestore, 
+				builder.add (btnRestore,
 						cc.xyw(builder.getColumn(), builder.getRow(), 5, "right, bottom"));
-				
+
 
 				result.panel = builder.getPanel();
 				return result;
 			}
-			
+
 			public Builder booleanField (Preference p, String desc)
 			{
 				JCheckBox cb = new JCheckBox (desc);
@@ -382,7 +382,7 @@ public class PreferencesDlg
 				result.editors.add(editor);
 				return this;
 			}
-			
+
 			public Builder colorField (Preference p, String desc)
 			{
 				JButton btnColor = new JButton("Change...");
@@ -396,38 +396,38 @@ public class PreferencesDlg
 				result.editors.add(editor);
 				return this;
 			}
-			
-			
+
+
 			public Builder integerField (Preference p, String desc, int min, int max)
 			{
 				//TODO: handle min / max
 				JTextField txt = new JTextField(8);
-				IntegerFieldEditor editor = result.new IntegerFieldEditor (p, txt); 
+				IntegerFieldEditor editor = result.new IntegerFieldEditor (p, txt);
 				builder.append (new JLabel (desc));
 				builder.append (txt);
 				builder.nextLine();
 				result.editors.add(editor);
 				return this;
 			}
-			
+
 			public Builder stringField (Preference p, String desc)
 			{
 				JTextField txt = new JTextField(40);
-				StringFieldEditor editor = result.new StringFieldEditor (p, txt); 
+				StringFieldEditor editor = result.new StringFieldEditor (p, txt);
 				builder.append (new JLabel (desc));
 				builder.append (txt);
 				builder.nextLine();
 				result.editors.add(editor);
 				return this;
 			}
-			
-			
+
+
 			public Builder fileField (Preference p, String desc, boolean isDir)
 			{
 				//TODO: do something with isDir
 				JTextField txt = new JTextField(40);
 				JButton btnBrowse = new JButton("Browse");
-				FileFieldEditor editor = result.new FileFieldEditor (p, txt); 
+				FileFieldEditor editor = result.new FileFieldEditor (p, txt);
 				btnBrowse.addActionListener(editor);
 				builder.append (new JLabel (desc));
 				builder.append (txt);
@@ -436,18 +436,18 @@ public class PreferencesDlg
 				result.editors.add(editor);
 				return this;
 			}
-			
+
 		}
 	}
-	
-	
+
+
 	PreferenceManager prefs;
-	
+
 	public PreferencesDlg (PreferenceManager prefs)
 	{
 		this.prefs = prefs;
 	}
-	
+
 	/**
 	 * call this to open the dialog
 	 */
@@ -455,11 +455,11 @@ public class PreferencesDlg
 	{
 		final JDialog dlg = new JDialog(swingEngine.getFrame(), "Preferences", true);
 		dlg.setLayout (new BorderLayout());
-		
+
 		DefaultMutableTreeNode top = createNodes();
-		
+
 		JPanel pnlButtons = new JPanel();
-		JTree trCategories = new JTree(top) 
+		JTree trCategories = new JTree(top)
 		{
 			// custom drawing of titles: only display part after . for subnodes.
 			@Override public String convertValueToText(Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus)
@@ -471,10 +471,10 @@ public class PreferencesDlg
 			}
 		};
 		final JPanel pnlSettings = new JPanel();
-				
+
 		JButton btnOk = new JButton();
 		btnOk.setText ("OK");
-		
+
 		btnOk.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae)
 			{
@@ -487,7 +487,7 @@ public class PreferencesDlg
 			}
 		}
 		);
-		
+
 		JButton btnCancel = new JButton();
 		btnCancel.setText ("Cancel");
 		btnCancel.addActionListener(new ActionListener()
@@ -499,7 +499,7 @@ public class PreferencesDlg
 			}
 		}
 		);
-		
+
 		final CardLayout cards = new CardLayout();
 		pnlSettings.setLayout (cards);
 		for (String title : panels.keySet())
@@ -511,21 +511,21 @@ public class PreferencesDlg
 
 		trCategories.addTreeSelectionListener(new TreeSelectionListener()
 		{
-			public void valueChanged(TreeSelectionEvent e) 
+			public void valueChanged(TreeSelectionEvent e)
 			{
 				TreePath tp = e.getPath();
 				String title = ((TreeNode)tp.getLastPathComponent()).toString();
 				cards.show(pnlSettings, title);
 			}
 		});
-		
+
 		pnlButtons.add (btnOk);
 		pnlButtons.add (btnCancel);
-		
+
 		dlg.add (new JScrollPane (pnlSettings), BorderLayout.CENTER);
 		dlg.add (new JScrollPane (trCategories), BorderLayout.WEST);
 		dlg.add (pnlButtons, BorderLayout.SOUTH);
-		
+
 		dlg.pack();
 		dlg.setLocationRelativeTo(swingEngine.getFrame());
 		dlg.setVisible (true);

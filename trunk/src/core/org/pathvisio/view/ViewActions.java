@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -45,13 +45,13 @@ import org.pathvisio.view.SelectionBox.SelectionListener;
  * A collection of {@link Action}s related to the pathway view. An instance of this class contains
  * actions bound to one instance of a {@link VPathway} (non-static fields). The static inner classes are not bound to a particular {@link VPathway},
  * but act on the currently active pathway by calling {@link Engine#getActiveVPathway()}.
- * 
+ *
  * Instances of actions may be registered to one or more groups, which changes the action's property on
  * certain events (see GROUP* constants). The {@link Action} instances that are fields of this class are
  * already registered to the proper groups.
- * 
- * An instance of this class belonging to a {@link VPathway} can be obtained using {@link VPathway#getViewActions()}. 
- * 
+ *
+ * An instance of this class belonging to a {@link VPathway} can be obtained using {@link VPathway#getViewActions()}.
+ *
  * @author thomas
  */
 public class ViewActions implements VPathwayListener, SelectionListener {
@@ -60,19 +60,19 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	private static final URL IMG_UNDO = Resources.getResourceURL("undo.gif");
 
 	/**
-	 * The group of actions that will be enabled when the VPathway is in edit mode and 
+	 * The group of actions that will be enabled when the VPathway is in edit mode and
 	 * disabled when not
 	 */
 	public static final String GROUP_ENABLE_EDITMODE = "editmode";
 
 	/**
-	 * The group of actions that will be enabled when a VPathway is loaded and 
+	 * The group of actions that will be enabled when a VPathway is loaded and
 	 * disabled when not
 	 */
 	public static final String GROUP_ENABLE_VPATHWAY_LOADED = "vpathway";
 
 	/**
-	 * The group of actions that will be enabled when the selection isn't empty 
+	 * The group of actions that will be enabled when the selection isn't empty
 	 */
 	public static final String GROUP_ENABLE_WHEN_SELECTION = "selection";
 
@@ -97,9 +97,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final OrderUpAction orderUp;
 	public final OrderDownAction orderDown;
 	public final ShowUnlinkedConnectors showUnlinked;
-	
+
 	private final Engine engine;
-	
+
 	ViewActions(Engine engine, VPathway vp) {
 		this.engine = engine;
 		vPathway = vp;
@@ -186,7 +186,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 
 	/**
 	 * Resets the group state for the registered actions to the VPathway's state
-	 * e.g. all actions in GROUP_ENABLE_EDITMODE will be enabled when the pathway is in 
+	 * e.g. all actions in GROUP_ENABLE_EDITMODE will be enabled when the pathway is in
 	 * edit mode, and disabled when not.
 	 */
 	public void resetGroupStates() {
@@ -194,10 +194,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 
 	Map<String, Boolean> groupState = new HashMap<String, Boolean>();
-	
+
 	/**
 	 * Resets the group state for the registered actions to the given VPathway's state
-	 * e.g. all actions in GROUP_ENABLE_EDITMODE will be enabled when the pathway is in 
+	 * e.g. all actions in GROUP_ENABLE_EDITMODE will be enabled when the pathway is in
 	 * edit mode, and disabled when not.
 	 * @param v The VPathway of which the state will be determined
 	 */
@@ -255,10 +255,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 //	}
 //	}
 
-	/** "Copy" command in the menu / toolbar, copies selected pathway elements to the clipboard */ 
-	public static class CopyAction extends AbstractAction {	
+	/** "Copy" command in the menu / toolbar, copies selected pathway elements to the clipboard */
+	public static class CopyAction extends AbstractAction {
 		Engine engine;
-		
+
 		public CopyAction(Engine engine) {
 			super();
 			this.engine = engine;
@@ -267,20 +267,20 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			String descr = "Copy selected pathway objects to clipboard";
 			putValue(Action.SHORT_DESCRIPTION, descr);
 			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, 
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C,
 							Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) vp.copyToClipboard();
-		}		
+		}
 	}
 
-	/** "Paste" command in the menu / toolbar, pastes from clipboard */ 
+	/** "Paste" command in the menu / toolbar, pastes from clipboard */
 	public static class PasteAction extends AbstractAction {
 		Engine engine;
-		
+
 		public PasteAction(Engine engine) {
 			super();
 			this.engine = engine;
@@ -289,7 +289,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			String descr = "Paste pathway objects from clipboard";
 			putValue(Action.SHORT_DESCRIPTION, descr);
 			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V, 
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 
@@ -306,7 +306,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 
 		public KeyMoveAction(Engine engine, KeyStroke key) {
 			this.engine = engine;
-			this.key = key; 
+			this.key = key;
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -339,7 +339,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 
 		public SelectAllAction() {
 			super("Select all");
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, 
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 		public void actionPerformed(ActionEvent e) {
@@ -353,7 +353,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			vPathway.addSelectionListener(this);
 			putValue(NAME, "Add anchor");
 			putValue(SHORT_DESCRIPTION, "Add an anchor point to the selected line");
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, 
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			setEnabled(false);
 		}
@@ -392,21 +392,21 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				"Create complex", "Break complex",
 				"Create a complex from selected elements",
 				"Break selected complex",
-				GroupStyle.COMPLEX, 
-				KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, 
+				GroupStyle.COMPLEX,
+				KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P,
 						Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
 				);
 		}
 	}
-	
+
 	private class GroupAction extends GroupActionBase {
 		public GroupAction() {
 			super(
 				"Group", "Ungroup",
 				"Group selected elements",
 				"Ungroup selected group",
-				GroupStyle.GROUP, 
-				KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, 
+				GroupStyle.GROUP,
+				KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G,
 						Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
 			);
 		}
@@ -414,8 +414,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	private class GroupActionBase extends AbstractAction implements SelectionListener {
 		private String groupLbl, ungroupLbl, groupTt, ungroupTt;
 		private GroupStyle groupStyle;
-		
-		public GroupActionBase(String groupLbl, String ungroupLbl, 
+
+		public GroupActionBase(String groupLbl, String ungroupLbl,
 				String groupTt, String ungroupTt,
 				GroupStyle style, KeyStroke keyStroke) {
 			super();
@@ -464,7 +464,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				putValue(Action.NAME, ungroupLbl);
 				putValue(SHORT_DESCRIPTION, ungroupTt);
 			}
-		}		
+		}
 	}
 
 	private class DeleteAction extends AbstractAction {
@@ -493,17 +493,17 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 	}
 
-	/** "Undo" command in the menu / toolbar */ 
+	/** "Undo" command in the menu / toolbar */
 	public static class UndoAction extends AbstractAction implements UndoManagerListener, ApplicationEventListener {
 		Engine engine;
-		
+
 		public UndoAction(Engine engine) {
 			super();
 			this.engine = engine;
 			putValue(NAME, "Undo");
 			putValue(SHORT_DESCRIPTION, "Undo last action");
 			putValue(SMALL_ICON, new ImageIcon(IMG_UNDO));
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z, 
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z,
 							Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
 					);
 			engine.addApplicationEventListener(this);
@@ -515,7 +515,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			if (vp != null)
 			{
 				vp.undo();
-			}		
+			}
 		}
 
 		public void undoManagerEvent(UndoManagerEvent e) {
@@ -531,26 +531,26 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			if(e.getType() == ApplicationEvent.VPATHWAY_DISPOSED) {
 				((VPathway)e.getSource()).getUndoManager().removeListener(this);
 			}
-		}		
+		}
 	}
 
 	/**
 	 * Action to change the order of the selected object
 	 */
-	public static class OrderTopAction extends AbstractAction 
+	public static class OrderTopAction extends AbstractAction
 	{
 		Engine engine;
-		
-		public OrderTopAction(Engine engine) 
+
+		public OrderTopAction(Engine engine)
 		{
 			this.engine = engine;
 			putValue(NAME, "Bring to front");
 			putValue(SHORT_DESCRIPTION, "Bring the element in front of all other elements");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_CLOSE_BRACKET, 
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_CLOSE_BRACKET,
 					InputEvent.SHIFT_DOWN_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
-		
-		public void actionPerformed(ActionEvent e) 
+
+		public void actionPerformed(ActionEvent e)
 		{
 			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) {
@@ -563,23 +563,23 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	/**
 	 * Action to change the order of the selected object
 	 */
-	public static class OrderBottomAction extends AbstractAction 
+	public static class OrderBottomAction extends AbstractAction
 	{
 		Engine engine;
-		
-		public OrderBottomAction(Engine engine) 
+
+		public OrderBottomAction(Engine engine)
 		{
 			this.engine = engine;
 			putValue(NAME, "Send to Back");
 			putValue(SHORT_DESCRIPTION, "Send the element behind all other elements");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_OPEN_BRACKET, 
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_OPEN_BRACKET,
 					InputEvent.SHIFT_DOWN_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
-		
-		public void actionPerformed(ActionEvent e) 
+
+		public void actionPerformed(ActionEvent e)
 		{
 			VPathway vp = engine.getActiveVPathway();
-			if(vp != null) 
+			if(vp != null)
 			{
 				vp.moveGraphicsBottom(vp.getSelectedGraphics());
 				vp.redraw();
@@ -590,18 +590,18 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	/**
 	 * Action to change the order of the selected object
 	 */
-	public static class OrderUpAction extends AbstractAction 
+	public static class OrderUpAction extends AbstractAction
 	{
 		Engine engine;
-		public OrderUpAction(Engine engine) 
+		public OrderUpAction(Engine engine)
 		{
 			this.engine = engine;
 			putValue(NAME, "Bring Forward");
 			putValue(SHORT_DESCRIPTION, "Bring Forward");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_CLOSE_BRACKET, 
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_CLOSE_BRACKET,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) {
@@ -614,19 +614,19 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	/**
 	 * Action to change the order of the selected object
 	 */
-	public static class OrderDownAction extends AbstractAction 
+	public static class OrderDownAction extends AbstractAction
 	{
 		Engine engine;
-		
-		public OrderDownAction(Engine engine) 
+
+		public OrderDownAction(Engine engine)
 		{
 			this.engine = engine;
 			putValue(NAME, "Send Backward");
 			putValue(SHORT_DESCRIPTION, "Send Backward");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_OPEN_BRACKET, 
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_OPEN_BRACKET,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = engine.getActiveVPathway();
 			if(vp != null) {
@@ -644,10 +644,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public ShowUnlinkedConnectors() {
 			putValue(NAME, "Highlight unlinked lines");
 			putValue(SHORT_DESCRIPTION, "Highlight all lines that are not linked");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, 
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			vPathway.resetHighlight();
 				for(PathwayElement pe : vPathway.getPathwayModel().getDataObjects()) {

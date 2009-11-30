@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.util;
@@ -42,8 +42,8 @@ import org.pathvisio.view.MIMShapes;
 /**
  * @author Thomas Kelder (t.a.j.kelder@student.tue.nl)
  */
-public class Converter {  
-    
+public class Converter {
+
 	public static void printUsage()
 	{
 		System.out.println ("GPML Converter\n" +
@@ -63,12 +63,12 @@ public class Converter {
 				"\t-2: Conversion error\n"
 			);
 	}
-	
+
 	/**
      * Command line arguments:
      *
-     */ 
-    public static void main(String[] args) 
+     */
+    public static void main(String[] args)
     {
 		PreferenceManager.init();
     	Engine engine = new Engine();
@@ -82,25 +82,25 @@ public class Converter {
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
 		engine.addPathwayExporter(new EUGeneExporter());
 		engine.addPathwayExporter(new DataNodeListExporter());
-    	
+
 		//Enable MiM support (for export to graphics formats)
 		PreferenceManager.getCurrent().setBoolean(GlobalPreference.MIM_SUPPORT, true);
 		MIMShapes.registerShapes();
-		
+
         File inputFile = null;
         File outputFile = null;
-        
+
         // Handle command line arguments
         // Check for custom output path
-        Logger.log.setStream (System.err);		
+        Logger.log.setStream (System.err);
 						//debug, trace, info, warn, error, fatal
         Logger.log.setLogLevel (false, false, true, true, true, true);
-		
+
 		boolean error = false;
 		if (args.length == 0)
 		{
 			Logger.log.error ("Need at least one command line argument");
-			error = true;			
+			error = true;
 		}
 		else if (args.length > 2)
 		{
@@ -115,8 +115,8 @@ public class Converter {
 				Logger.log.error("Unable to read inputfile: " + inputFile);
 				error = true;
 			}
-		}		
-		
+		}
+
 		if (!error)
 		{
 			try {

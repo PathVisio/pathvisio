@@ -1,12 +1,12 @@
 /*
  * Copyright Neil Cochrane 2006
  * @author neilcochrane
- * 
- * Feel free to use the code without restriction 
- * in open source projects. 
- * There is no cost or warranty attached and the code is 
- * provided as is. 
- * 
+ *
+ * Feel free to use the code without restriction
+ * in open source projects.
+ * There is no cost or warranty attached and the code is
+ * provided as is.
+ *
  * http://www.jroller.com/swinguistuff/entry/text_completion
  */
 package com.jroller.completer;
@@ -69,7 +69,7 @@ public class CompleterFilterWithWindow extends CompleterFilter
 			super.replace(filterBypass, offset, length, string, attributeSet);
 			return;
 		}
-		
+
 		if (_isAdjusting)
 		{
 			filterBypass.replace(offset, length, string, attributeSet);
@@ -227,7 +227,7 @@ public class CompleterFilterWithWindow extends CompleterFilter
 			setFilterWindowVisible(false);
 		}
 
-		public void focusLost(FocusEvent e) 
+		public void focusLost(FocusEvent e)
 		{
 			if (e.getOppositeComponent() != _win)
 				setFilterWindowVisible(false);
@@ -270,7 +270,7 @@ public class CompleterFilterWithWindow extends CompleterFilter
 
 				if (_lm.getSize() > 0)
 					setFilterWindowVisible(true);
-				else  
+				else
 					return;
 			}
 

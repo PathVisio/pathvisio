@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.colorset;
@@ -38,7 +38,7 @@ public class ColorGradient extends ColorSetObject {
 	public static final String XML_ELEMENT_NAME = "ColorGradient";
 
 	private List<ColorValuePair> colorValuePairs;
-	
+
 	/**
 	 * Constructor for this class
 	 * @param parent 		colorset this gradient belongs to
@@ -50,7 +50,7 @@ public class ColorGradient extends ColorSetObject {
 		super(parent, "gradient");
 		colorValuePairs = new ArrayList<ColorValuePair>();
 	}
-	
+
 	public static List<ColorGradient> createDefaultGradients() {
 		List<ColorGradient> gradients = new ArrayList<ColorGradient>();
 		ColorGradient g = new ColorGradient(null);
@@ -78,21 +78,21 @@ public class ColorGradient extends ColorSetObject {
 		gradients.add(g);
 		return gradients;
 	}
-		
-	public ColorGradient(ColorSet parent, Element xml) 
+
+	public ColorGradient(ColorSet parent, Element xml)
 	{
 		super(parent, xml);
 	}
-	
+
 	/**
 	 * Get the the colors and corresponding values used in this gradient as {@link ColorValuePair}
 	 * @return ArrayList containing the ColorValuePairs
 	 */
-	public List<ColorValuePair> getColorValuePairs() 
+	public List<ColorValuePair> getColorValuePairs()
 	{
 		return colorValuePairs;
 	}
-	
+
 	/**
 	 * Add a {@link ColorValuePair} to this gradient
 	 */
@@ -101,7 +101,7 @@ public class ColorGradient extends ColorSetObject {
 		colorValuePairs.add(cvp);
 		fireModifiedEvent();
 	}
-	
+
 	/**
 	 * Remove a {@link ColorValuePair} from this gradient
 	 */
@@ -111,11 +111,11 @@ public class ColorGradient extends ColorSetObject {
 		colorValuePairs.remove(cvp);
 		fireModifiedEvent();
 	}
-	
+
 	public void paintPreview(Graphics2D g, Rectangle bounds) {
 		paintPreview(g, bounds, false);
 	}
-	
+
 	public void paintPreview(Graphics2D g, Rectangle bounds, boolean text) {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		double[] mm = getMinMax();
@@ -124,7 +124,7 @@ public class ColorGradient extends ColorSetObject {
 			g.setColor(c);
 			g.fillRect(bounds.x + i, bounds.y, 1, bounds.height);
 		}
-		
+
 		if(text) {
 			g.setColor(Color.BLACK);
 			int margin = 30; //Border spacing
@@ -134,15 +134,15 @@ public class ColorGradient extends ColorSetObject {
 				String value = "" + colorValuePairs.get(i).getValue();
 				Rectangle2D fb = g.getFontMetrics().getStringBounds(value, g);
 				g.drawString(
-						value, 
-						x - (int)(fb.getWidth() / 2), 
+						value,
+						x - (int)(fb.getWidth() / 2),
 						bounds.y + bounds.height / 2 + (int)(fb.getHeight() / 2)
 				);
 				x += w / (colorValuePairs.size() - 1);
 			}
 		}
 	}
-	
+
 	/**
 	 * get the color of the gradient for this value
 	 * @param value
@@ -160,7 +160,7 @@ public class ColorGradient extends ColorSetObject {
 		//If value is larger/smaller than max/min then set the value to max/min
 		//TODO: make this optional
 		if(value < minmax[0]) value = minmax[0]; else if(value > minmax[1]) value = minmax[1];
-		
+
 		//Find what colors the value is in between
 		for(int i = 0; i < colorValuePairs.size() - 1; i++)
 		{
@@ -181,18 +181,18 @@ public class ColorGradient extends ColorSetObject {
 		double green = colorStart.getGreen() + alpha*(colorEnd.getGreen() - colorStart.getGreen());
 		double blue = colorStart.getBlue() + alpha*(colorEnd.getBlue() - colorStart.getBlue());
 		Color rgb = null;
-		
+
 		//Try to create an RGB, if the color values are not valid (outside 0 to 255)
 		//This method returns null
 		try {
 			rgb = new Color((int)red, (int)green, (int)blue);
-		} catch (Exception e) { 
-			Logger.log.error("GmmlColorGradient:getColor: " + 
+		} catch (Exception e) {
+			Logger.log.error("GmmlColorGradient:getColor: " +
 					red + "," + green + "," +blue + ", for value " + value, e);
 		}
 		return rgb;
 	}
-	
+
 	@Override public Color getColor(ReporterData data, Sample key)
 	{
 		Object o = data.getSampleData(key);
@@ -201,7 +201,7 @@ public class ColorGradient extends ColorSetObject {
 		else value = Double.NaN;
 		return getColor(value);
 	}
-	
+
 	/**
 	 * Compares two color gradients by the order of the colors.
 	 * @return True if they have the same colors in the same order.
@@ -221,21 +221,21 @@ public class ColorGradient extends ColorSetObject {
 	String getXmlElementName() {
 		return XML_ELEMENT_NAME;
 	}
-	
+
 	public Element toXML() {
 		Element elm = super.toXML();
 		for(ColorValuePair cvp : colorValuePairs)
 			elm.addContent(cvp.toXML());
 		return elm;
 	}
-	
+
 	protected void loadXML(Element xml) {
 		super.loadXML(xml);
 		colorValuePairs = new ArrayList<ColorValuePair>();
 		for(Object o : xml.getChildren(ColorValuePair.XML_ELEMENT))
 			colorValuePairs.add(new ColorValuePair((Element) o));
 	}
-	
+
 	/**
 	 * Find the minimum and maximum values used in this gradient
 	 * @return a double[] of length 2 with respecively the minimum and maximum values
@@ -250,52 +250,52 @@ public class ColorGradient extends ColorSetObject {
 		}
 		return minmax;
 	}
-	
+
 	/**
 	 * This class contains a color and its corresponding value used for the {@link ColorGradient}
 	 */
-	public class ColorValuePair implements Comparable<ColorValuePair> 
+	public class ColorValuePair implements Comparable<ColorValuePair>
 	{
 		static final String XML_ELEMENT = "color-value";
 		static final String XML_ATTR_VALUE = "value";
 		static final String XML_ELM_COLOR = "color";
 		private Color color;
 		private double value;
-		
+
 		public ColorValuePair(Color color, double value)
 		{
 			this.color = color;
 			this.value = value;
 		}
-		
+
 		public ColorValuePair(Element xml) {
 			Object o = xml.getChildren(XML_ELM_COLOR).get(0);
 			color = ColorConverter.parseColorElement((Element)o);
 			value = Double.parseDouble(xml.getAttributeValue(XML_ATTR_VALUE));
 		}
-		
+
 		public Color getColor() { return color; }
 		public void setColor(Color rgb) {
 			color = rgb;
 			fireModifiedEvent();
 		}
-		
+
 		public double getValue() { return value; }
 		public void setValue(double v) {
 			value = v;
 			fireModifiedEvent();
 		}
-		
+
 		public int compareTo(ColorValuePair o)
 		{
 			return (int)(value - o.value);
 		}
-		
+
 		public Element toXML() {
 			Element elm = new Element(XML_ELEMENT);
 			elm.setAttribute(XML_ATTR_VALUE, Double.toString(value));
 			elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR, color));
 			return elm;
 		}
-	}	
+	}
 }

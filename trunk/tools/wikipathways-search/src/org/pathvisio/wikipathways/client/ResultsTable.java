@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.client;
@@ -43,13 +43,13 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class ResultsTable extends DockPanel {
 	int row; //The current row
-	
+
 	FlexTable table;
 	HorizontalPanel filterPanel;
-	
+
 	List<String> organisms = new ArrayList<String>();
 	ListBox orgList;
-	
+
 	HashMap<Result, Integer> resultRows = new HashMap<Result, Integer>();
 
 	/**
@@ -60,7 +60,7 @@ public class ResultsTable extends DockPanel {
 	public ResultsTable() {
 		table = new FlexTable();
 		add(table, CENTER);
-		
+
 		//Create a panel that displays controls to filter the results
 		filterPanel = new HorizontalPanel();
 		orgList = new ListBox();
@@ -72,10 +72,10 @@ public class ResultsTable extends DockPanel {
 				));
 			}
 		});
-		
+
 		//Populate organism list
 		SearchServiceAsync searchSrv = GWT.create(SearchService.class);
-		
+
 		AsyncCallback<String[]> callback = new AsyncCallback<String[]>() {
 			public void onFailure(Throwable caught) {
 				System.err.println("Unable to get available organisms");
@@ -86,7 +86,7 @@ public class ResultsTable extends DockPanel {
 				//Add an entry for all organisms
 				orgList.addItem(ALL_ORGANISMS);
 				organisms.add(ALL_ORGANISMS);
-				
+
 				for(String org : result) {
 					orgList.addItem(org);
 					organisms.add(org);
@@ -94,7 +94,7 @@ public class ResultsTable extends DockPanel {
 			}
 		};
 		searchSrv.getOrganismNames(callback);
-		
+
 		filterPanel.add(new Label("Results for organism: "));
 		filterPanel.add(orgList);
 		filterPanel.setVisible(false);
@@ -103,7 +103,7 @@ public class ResultsTable extends DockPanel {
 		add(filterPanel, NORTH);
 		setCellHorizontalAlignment(filterPanel, ALIGN_LEFT);
 	}
-	
+
 	/**
 	 * Set the current organism to filter on. All results from other
 	 * organisms will be hidden. Use {@link #ALL_ORGANISMS} to display
@@ -113,12 +113,12 @@ public class ResultsTable extends DockPanel {
 		orgList.setSelectedIndex(organisms.indexOf(organism));
 		for(Result r : resultRows.keySet()) {
 			int row = resultRows.get(r);
-			boolean visible = ALL_ORGANISMS.equals(organism) || 
+			boolean visible = ALL_ORGANISMS.equals(organism) ||
 								r.getOrganism().equals(organism);
 			table.getRowFormatter().setVisible(row, visible);
 		}
 	}
-	
+
 	/**
 	 * Add the given results to the table
 	 */
@@ -132,11 +132,11 @@ public class ResultsTable extends DockPanel {
 		if(row > 0) {
 			filterPanel.setVisible(true);
 			setOrganismFilter(
-				orgList.getItemText(orgList.getSelectedIndex())	
+				orgList.getItemText(orgList.getSelectedIndex())
 			);
 		}
 	}
-	
+
 	/**
 	 * Clear the contents of the table
 	 */
@@ -146,14 +146,14 @@ public class ResultsTable extends DockPanel {
 		table.clear();
 		row = 0;
 	}
-	
+
 	/**
 	 * Add the label for the given result
 	 */
 	private void addLabel(Result result) {
 		Panel labelPanel = new VerticalPanel();
 		labelPanel.setStylePrimaryName(STYLE_LABEL);
-		
+
 		HTML title = new HTML(
 			"<A href='" + result.getUrl() + "'>" +
 			result.getTitle() + "</A>"
@@ -163,10 +163,10 @@ public class ResultsTable extends DockPanel {
 		HTML descr = new HTML(result.getDescription());
 		descr.setStylePrimaryName(STYLE_DESCRIPTION);
 		labelPanel.add(descr);
-		
+
 		table.setWidget(row, 1, labelPanel);
 	}
-	
+
 	/**
 	 * Add the preview image for the given result
 	 */
@@ -174,7 +174,7 @@ public class ResultsTable extends DockPanel {
 		Image image = new Image(IMG_LOADER);
 		image.setStylePrimaryName(STYLE_IMAGE);
 		image.setTitle("Please wait...loading image");
-		
+
 		ImageLink imageLink = new ImageLink(image, result.getUrl());
 		imageLink.setStylePrimaryName(STYLE_IMG_CONTAINER);
 		table.setWidget(row, 0, imageLink);
@@ -183,7 +183,7 @@ public class ResultsTable extends DockPanel {
 		);
 		loadImage(result, image);
 	}
-	
+
 	/**
 	 * Load the image for the result. Will wait for the image
 	 * to be generated on the server and set the url of the image widget.
@@ -196,7 +196,7 @@ public class ResultsTable extends DockPanel {
 				image.setTitle(caught.getMessage());
 			}
 			public void onSuccess(Void v) {
-				String url = "./getImage?" + GET_ID + 
+				String url = "./getImage?" + GET_ID +
 				"=" + result.getImageId();
 				image.setUrl(url);
 				image.setTitle(url);
@@ -204,18 +204,18 @@ public class ResultsTable extends DockPanel {
 		};
 		srv.waitForImage(result.getImageId(), callback);
 	}
-	
+
 	private static final String ALL_ORGANISMS = "All";
-	
+
 	public static final String STYLE_FILTER = "result-filter";
 	public static final String STYLE_DESCRIPTION = "result-description";
 	public static final String STYLE_TITLE = "result-title";
 	public static final String STYLE_LABEL = "result-label";
 	public static final String STYLE_IMAGE = "result-image";
 	public static final String STYLE_IMG_CONTAINER = "result-image-container";
-	
+
 	public static final String GET_ID = "id";
-	
+
 	static final String IMG_LOADER = GWT.getHostPageBaseURL() + "loader.gif";
 	static final String IMG_ERROR = GWT.getHostPageBaseURL() + "error.gif";
 }

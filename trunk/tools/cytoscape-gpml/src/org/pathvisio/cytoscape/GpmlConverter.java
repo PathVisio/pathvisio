@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.cytoscape;
@@ -48,47 +48,47 @@ import org.pathvisio.model.PathwayElement.MAnchor;
  */
 public class GpmlConverter {
 	public static final String PROP_LABEL_AS_NODE = "gpml.label.as.node";
-	
+
 	List<CyEdge> edges = new ArrayList<CyEdge>();
-	
+
 	Map<GraphIdContainer, CyNode> nodeMap = new HashMap<GraphIdContainer, CyNode>();
 	Map<PathwayElement, String[]> edgeMap = new HashMap<PathwayElement, String[]>();
 
 	GpmlHandler gpmlHandler;
 	Pathway pathway;
-		
+
 	private GpmlConverter(GpmlHandler h) {
 		gpmlHandler = h;
 	}
-	
+
 	public GpmlConverter(GpmlHandler gpmlHandler, Pathway p) {
 		this(gpmlHandler);
 		pathway = p;
 		convert();
 	}
-		
+
 	public GpmlConverter(GpmlHandler gpmlHandler, String gpml) throws ConverterException {
 		this(gpmlHandler);
 		pathway = new Pathway();
 		GpmlFormat.readFromXml(pathway, new StringReader(gpml), true);
 		convert();
 	}
-	
+
 	private void convert() {
 		edgeMap.clear();
 		edges.clear();
 		nodeMap.clear();
-		
+
 		findNodes();
 		findEdges();
 	}
-	
+
 	public Pathway getPathway() {
 		return pathway;
 	}
-	
+
 	Map<GraphIdContainer, String> nodeIds = new HashMap<GraphIdContainer, String>();
-	
+
 	private String generateNodeId(GraphIdContainer o, String preferred) {
 		String id = preferred;
 		if(id != null) {
@@ -109,18 +109,18 @@ public class GpmlConverter {
 		nodeIds.put(o, id);
 		return id;
 	}
-	
+
 	private String getNodeId(GraphIdContainer o) {
 		return nodeIds.get(o);
 	}
-	
+
 	private void findNodes() {
 		for(PathwayElement o : pathway.getDataObjects()) {
 			ObjectType type = o.getObjectType();
 			if(
 					type == ObjectType.BIOPAX ||
-					type == ObjectType.LEGEND || 
-					type == ObjectType.INFOBOX || 
+					type == ObjectType.LEGEND ||
+					type == ObjectType.INFOBOX ||
 					type == ObjectType.MAPPINFO
 				) {
 				continue;
@@ -147,29 +147,29 @@ public class GpmlConverter {
 				Logger.log.trace("Creating node: " + id + " for " + o.getGraphId() + "@" + o.getObjectType());
 				n = Cytoscape.getCyNode(id, true);
 			}
-			
+
 			gpmlHandler.addNode(n, o);
 			nodeMap.put(o, n);
 		}
 		processGroups();
 	}
-	
+
 	private boolean isEdge(PathwayElement e) {
 		GraphIdContainer start = pathway.getGraphIdContainer(e.getMStart().getGraphRef());
 		GraphIdContainer end = pathway.getGraphIdContainer(e.getMEnd().getGraphRef());
-		Logger.log.trace("Checking if edge " + e.getGraphId() + ": " + 
+		Logger.log.trace("Checking if edge " + e.getGraphId() + ": " +
 				isNode(start) + ", " + isNode(end)
 		);
 		return isNode(start) && isNode(end);
 	}
-	
+
 	private boolean isNode(GraphIdContainer idc) {
 		if(idc instanceof MAnchor) {
 			//only valid if the parent line is an edge
 			return isEdge(((MAnchor)idc).getParent());
 		} else if(idc instanceof PathwayElement) {
 			ObjectType ot = ((PathwayElement)idc).getObjectType();
-			return 
+			return
 				ot == ObjectType.DATANODE ||
 				ot == ObjectType.GROUP ||
 				(labelAsNode() && ot == ObjectType.LABEL);
@@ -177,7 +177,7 @@ public class GpmlConverter {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Should labels be treated as nodes or as annotations?
 	 * This can be controlled by the Cytoscape property named
@@ -189,10 +189,10 @@ public class GpmlConverter {
 		String value = (String)p.get(PROP_LABEL_AS_NODE);
 		return Boolean.parseBoolean(value); //Defaults to false
 	}
-	
+
 	private void findEdges() {
 		Logger.log.trace("Start finding edges");
-		
+
 		//First find edges that contain anchors
 		//Add an AnchorNode for that line
 		for(PathwayElement pe : pathway.getDataObjects()) {
@@ -216,11 +216,11 @@ public class GpmlConverter {
 					if(pe.getMAnchors().size() == 0) {
 						String source = getNodeId(pathway.getGraphIdContainer(pe.getMStart().getGraphRef()));
 						String target = getNodeId(pathway.getGraphIdContainer(pe.getMEnd().getGraphRef()));
-						
-						Logger.log.trace("Line without anchors ( " + pe.getGraphId() + " ) to edge: " + 
+
+						Logger.log.trace("Line without anchors ( " + pe.getGraphId() + " ) to edge: " +
 								source + ", " + target
 						);
-						
+
 						String type = pe.getStartLineType() + ", " + pe.getEndLineType();
 						CyEdge e = Cytoscape.getCyEdge(
 								source,
@@ -238,11 +238,11 @@ public class GpmlConverter {
 						String eId = nodeMap.get(
 								pathway.getGraphIdContainer(pe.getMEnd().getGraphRef())
 						).getIdentifier();
-						
-						Logger.log.trace("Line with anchors ( " + pe.getGraphId() + " ) to edges: " + 
+
+						Logger.log.trace("Line with anchors ( " + pe.getGraphId() + " ) to edges: " +
 								sId + ", " + eId
 						);
-						
+
 						CyEdge es = Cytoscape.getCyEdge(
 								sId,
 								pe.getGraphId() + "_start",
@@ -274,7 +274,7 @@ public class GpmlConverter {
 			}
 		}
 	}
-	
+
 	public int[] getNodeIndicesArray() {
 		int[] inodes = new int[nodeMap.size()];
 		int i = 0;
@@ -283,13 +283,13 @@ public class GpmlConverter {
 		}
 		return inodes;
 	}
-	
+
 	public int[] getEdgeIndicesArray() {
 		int[] iedges = new int[edges.size()];
 		for(int i = 0; i< edges.size(); i++) iedges[i] = edges.get(i).getRootGraphIndex();
 		return iedges;
 	}
-	
+
 	//Add a group node
 	private CyNode addGroup(PathwayElement group) {
 		CyGroup cyGroup = CyGroupManager.findGroup(group.getGroupId());
@@ -301,22 +301,22 @@ public class GpmlConverter {
 		nodeIds.put(group, gn.getIdentifier());
 		return gn;
 	}
-	
+
 	//Add all nodes to the group
 	private void processGroups() {
 		for(PathwayElement pwElm : pathway.getDataObjects()) {
 			if(pwElm.getObjectType() == ObjectType.GROUP) {
-				
+
 				GpmlNode gpmlNode = gpmlHandler.getNode(getNodeId(pwElm));
 				CyGroup cyGroup = CyGroupManager.getCyGroup(gpmlNode.getParent());
 				if(cyGroup == null) {
 					Logger.log.warn("Couldn't create group: CyGroupManager returned null");
 					return;
 				}
-				
+
 				//The interaction name
 				String interaction = GpmlHandler.GROUP_EDGE_TYPE;
-				
+
 				PathwayElement[] groupElements = pathway.getGroupElements(
 						pwElm.getGroupId()
 					).toArray(new PathwayElement[0]);
@@ -329,18 +329,18 @@ public class GpmlConverter {
 					if(neI instanceof GpmlNode) {
 						cyGroup.addNode(((GpmlNode)neI).getParent());
 						edges.add(Cytoscape.getCyEdge(
-								cyGroup.getGroupNode().getIdentifier(), 
+								cyGroup.getGroupNode().getIdentifier(),
 								"inGroup: " + cyGroup.getGroupName(),
 								neI.getParentIdentifier(), interaction)
 						);
-						
+
 //						//Add links between all elements of the group
 //						for(int j = i + 1; j < groupElements.length; j++) {
 //							PathwayElement pe_j = groupElements[j];
 //							GpmlNetworkElement<?> ne_j = gpmlHandler.getNetworkElement(pe_j.getGraphId());
 //							if(ne_j instanceof GpmlNode) {
 //								edges.add(Cytoscape.getCyEdge(
-//										ne_i.getParentIdentifier(), 
+//										ne_i.getParentIdentifier(),
 //										"inGroup: " + cyGroup.getGroupName(),
 //										ne_j.getParentIdentifier(), interaction)
 //								);
@@ -351,7 +351,7 @@ public class GpmlConverter {
 			}
 		}
 	}
-	
+
 	private void setGroupViewer(CyNetworkView view, String groupViewer) {
 		for(GpmlNode gn : gpmlHandler.getNodes()) {
 			if(gn.getPathwayElement().getObjectType() == ObjectType.GROUP) {
@@ -360,7 +360,7 @@ public class GpmlConverter {
 			}
 		}
 	}
-	
+
 	public void layout(GraphView view) {
 //		String viewerName = "metaNode";
 //		Logger.log.trace(CyGroupManager.getGroupViewers() + "");

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 
@@ -55,33 +55,33 @@ public class FontChooser extends OkCancelDialog {
 		if(font == null) {
 			font = UIManager.getFont("Label.font");
 		}
-		
+
 		fontCombo = new JComboBox(
 				GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()
 		);
 		fontCombo.setRenderer(new FontNameRenderer());
 		fontCombo.setSelectedItem(font.getFamily());
-		
+
 		sizeCombo = new JComboBox(
-				new Integer[] { 
-						4, 6, 7, 8, 10, 11, 12, 
-						14, 16, 18, 20, 24,36,48 
+				new Integer[] {
+						4, 6, 7, 8, 10, 11, 12,
+						14, 16, 18, 20, 24,36,48
 				}
 		);
 		sizeCombo.setEditable(true);
-		
+
 		((JTextField)sizeCombo.getEditor().getEditorComponent()).setDocument(
 				new IntegerDocument()
 		);
 		sizeCombo.setSelectedItem(font.getSize() + "");
-		
+
 		boldCheck = new JCheckBox();
 		boldCheck.setSelected(font.isBold());
 		italicCheck = new JCheckBox();
 		italicCheck.setSelected(font.isItalic());
 
 		DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout(
-				"pref, 8dlu, pref:grow", ""	
+				"pref, 8dlu, pref:grow", ""
 		));
 		builder.setDefaultDialogBorder();
 		builder.append("Font:", fontCombo);
@@ -112,7 +112,7 @@ public class FontChooser extends OkCancelDialog {
 			style |= Font.ITALIC;
 		}
 		font = new Font(name, style, size);
-		
+
 		super.okPressed();
 	}
 
@@ -140,7 +140,7 @@ public class FontChooser extends OkCancelDialog {
 					newValue = string;
 				} else {
 					String currentContent = getText(0, length);
-					StringBuffer currentBuffer = 
+					StringBuffer currentBuffer =
 						new StringBuffer(currentContent);
 					currentBuffer.insert(offset, string);
 					newValue = currentBuffer.toString();

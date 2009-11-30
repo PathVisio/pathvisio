@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.wikipathways;
@@ -43,7 +43,7 @@ import org.pathvisio.wikipathways.WikiPathways;
  * A collection of actions related to WikiPathways
  * @author thomas
  */
-public class Actions 
+public class Actions
 {
 	/**
 	 * Base class for Actions on the applet - so that they are all initialized
@@ -73,7 +73,7 @@ public class Actions
 			putValue(Action.LONG_DESCRIPTION, "Import a pathway from various file formats on your computer");;
 		}
 
-		public void actionPerformed(ActionEvent e) 
+		public void actionPerformed(ActionEvent e)
 		{
 			wiki.getSwingEngine().importPathway();
 		}
@@ -103,13 +103,13 @@ public class Actions
 	public static class SaveToServerAction extends WikiAction implements StatusFlagListener {
 		String description;
 		SwingEngine swingEngine;
-		
+
 		public SaveToServerAction(UserInterfaceHandler h, WikiPathways w, String description) {
 			super(h, w, "Save to ", new ImageIcon(Resources.getResourceURL("savetoweb.gif")));
 			this.description = description;
 			this.swingEngine = wiki.getSwingEngine();
 			putValue(Action.SHORT_DESCRIPTION, "Save the pathway to " + Globals.SERVER_NAME);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W, 
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_W,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			wiki.addStatusFlagListener(this);
 			setEnabled(wiki.hasChanged());
@@ -123,20 +123,20 @@ public class Actions
 				JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		
+
 		public void statusFlagChanged(StatusFlagEvent e) {
 			setEnabled(e.getNewStatus());
 		}
-		
+
 		public void applicationEvent(ApplicationEvent e) {
 			if(e.getType() == ApplicationEvent.PATHWAY_NEW ||
-					e.getType() == ApplicationEvent.PATHWAY_OPENED) 
+					e.getType() == ApplicationEvent.PATHWAY_OPENED)
 			{
 				Pathway p = swingEngine.getEngine().getActivePathway();
 				p.addStatusFlagListener(this);
 				setEnabled(p.hasChanged());
 			}
-		}	
+		}
 	}
 
 		/**
@@ -174,13 +174,13 @@ public class Actions
 			 */
 			private void toFrame() {
 				applet.toFullScreen();
-				
+
 				putValue(WikiAction.SMALL_ICON, imgRestore);
 				putValue(WikiAction.SHORT_DESCRIPTION, TOOLTIP_RESTORE);
 
 				resetDividerLocation();
 			}
-			
+
 			private void resetDividerLocation() {
 				int spPercent = PreferenceManager.getCurrent().getInt(GlobalPreference.GUI_SIDEPANEL_SIZE);
 				wiki.getMainPanel().getSplitPane().setDividerLocation((100 - spPercent) / 100.0);
@@ -192,7 +192,7 @@ public class Actions
 			 */
 			private void toApplet() {
 				applet.toEmbedded();
-				
+
 				putValue(WikiAction.SMALL_ICON, imgFull);
 				putValue(WikiAction.SHORT_DESCRIPTION, TOOLTIP_FULL);
 

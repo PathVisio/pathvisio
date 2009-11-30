@@ -1,12 +1,12 @@
 /*
  * Copyright Neil Cochrane 2006
  * @author neilcochrane
- * 
- * Feel free to use the code without restriction 
- * in open source projects. 
- * There is no cost or warranty attached and the code is 
- * provided as is. 
- * 
+ *
+ * Feel free to use the code without restriction
+ * in open source projects.
+ * There is no cost or warranty attached and the code is
+ * provided as is.
+ *
  * http://www.jroller.com/swinguistuff/entry/text_completion
  */
 package com.jroller.completer;
@@ -39,12 +39,12 @@ public class FilterListModel extends AbstractListModel
   {
     return _filteredList.get(index);
   }
-  
+
   public String getFilter()
   {
     return _filter;
   }
-  
+
   public void setFilter(String filter)
   {
     _filteredList.clear();
@@ -52,7 +52,7 @@ public class FilterListModel extends AbstractListModel
     {
       if (obj.toString().length() < filter.length())
         continue;
-      
+
       if (_caseSensitive)
       {
         if (obj.toString().startsWith(filter))
@@ -62,17 +62,17 @@ public class FilterListModel extends AbstractListModel
       {
         if (obj.toString().substring(0, filter.length()).compareToIgnoreCase(filter) == 0)
           _filteredList.add(obj);
-      }      
+      }
     }
     fireContentsChanged(this, 0, _filteredList.size());
   }
-  
+
   public void clearFilter()
   {
     _filter = null;
     _filteredList = new ArrayList<Object>(Arrays.asList(_fullList));
   }
-  
+
   public boolean getCaseSensitive()
   {
     return _caseSensitive;
@@ -83,7 +83,7 @@ public class FilterListModel extends AbstractListModel
     _caseSensitive = caseSensitive;
     clearFilter();
   }
-  
+
   public void setCompleterMatches(Object[] objectsToMatch)
   {
     _fullList = objectsToMatch;

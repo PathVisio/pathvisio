@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing;
@@ -45,7 +45,7 @@ import com.mammothsoftware.frwk.ddb.DropDownButton;
 /**
  * the mainPanel for the standalone (non-applet) version of PathVisio.
  */
-public class MainPanelStandalone extends MainPanel 
+public class MainPanelStandalone extends MainPanel
 {
 	protected JMenuBar menuBar;
 
@@ -58,14 +58,14 @@ public class MainPanelStandalone extends MainPanel
     	GlobalPreference.MOST_RECENT_7, GlobalPreference.MOST_RECENT_8,
     	GlobalPreference.MOST_RECENT_9, GlobalPreference.MOST_RECENT_10,
     };
-	
+
 	@Override
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu fileMenu = new JMenu("File");
-		
+
 		addToMenu(standaloneActions.newAction, fileMenu);
 		addToMenu(standaloneActions.openAction, fileMenu);
-		
+
 		recentPathwaysMenu = new JMenu("Open Recent");
 		initRecentPathwayList();
 		fileMenu.add (recentPathwaysMenu);
@@ -76,7 +76,7 @@ public class MainPanelStandalone extends MainPanel
 		addToMenu(actions.exportAction, fileMenu);
 		fileMenu.addSeparator();
 		addToMenu(actions.exitAction, fileMenu);
-		
+
 		JMenu editMenu = new JMenu("Edit");
 		addToMenu(actions.undoAction, editMenu);
 		addToMenu(actions.copyAction, editMenu);
@@ -84,10 +84,10 @@ public class MainPanelStandalone extends MainPanel
 		addToMenu(standaloneActions.searchAction, editMenu);
 		editMenu.addSeparator();
 		addToMenu(standaloneActions.preferencesAction, editMenu);
-		
+
 		JMenu selectionMenu = new JMenu("Selection");
 		for(Action a : actions.layoutActions) addToMenu(a, selectionMenu);
-		
+
 		editMenu.add (selectionMenu);
 
 		JMenu dataMenu = new JMenu("Data");
@@ -103,31 +103,31 @@ public class MainPanelStandalone extends MainPanel
 		helpMenu.add(actions.aboutAction);
 		helpMenu.add(standaloneActions.pluginManagerAction);
 		helpMenu.add(standaloneActions.helpAction);
-		
+
 		mb.add(fileMenu);
 		mb.add(editMenu);
 		mb.add(dataMenu);
 		mb.add(viewMenu);
 		mb.add(helpMenu);
 	}
-	
+
 	private final PvDesktop desktop;
-	
+
 	public MainPanelStandalone(PvDesktop desktop)
 	{
 		super(desktop.getSwingEngine(), null);
 		this.desktop = desktop;
-		
+
 		standaloneActions = new StandaloneActions(desktop);
 	}
-	
+
 	@Override
 	public void createAndShowGUI()
 	{
 		super.createAndShowGUI();
 
 		SearchPane searchPane = new SearchPane(swingEngine);
-		sidebarTabbedPane.addTab ("Search", searchPane); 
+		sidebarTabbedPane.addTab ("Search", searchPane);
 
 		// backpage hook for showing expression data.
 		bpt.addBackpageHook(new BackpageExpression(desktop.getGexManager()));
@@ -145,17 +145,17 @@ public class MainPanelStandalone extends MainPanel
 			refreshRecentPathwaysMenu();
 		}
 	}
-	
+
 	JMenu recentPathwaysMenu;
-	
-	private void refreshRecentPathwaysMenu() 
+
+	private void refreshRecentPathwaysMenu()
 	{
 		PreferenceManager prefs = PreferenceManager.getCurrent();
-		
+
 		recentPathwaysMenu.removeAll();
 		int added = 0;
 		recentPathwaysMenu.setMnemonic(KeyEvent.VK_R);
-		for (int i = 0; i < 10; i++) 
+		for (int i = 0; i < 10; i++)
 		{
 			if (!prefs.get(mostRecentArray[i]).equals ("" + null))
 			{
@@ -163,9 +163,9 @@ public class MainPanelStandalone extends MainPanel
 				JMenuItem menuItem = new JMenuItem(file.getName(), KeyEvent.VK_0 + i);
 				menuItem.setAccelerator(KeyStroke.getKeyStroke(menuItem.getMnemonic(), InputEvent.CTRL_DOWN_MASK));
 				menuItem.setToolTipText(file.getAbsolutePath());
-				menuItem.addActionListener(new ActionListener() 
+				menuItem.addActionListener(new ActionListener()
 				{
-					public void actionPerformed(ActionEvent e) 
+					public void actionPerformed(ActionEvent e)
 					{
 						if (swingEngine.canDiscardPathway())
 						{
@@ -179,10 +179,10 @@ public class MainPanelStandalone extends MainPanel
 		}
 		recentPathwaysMenu.setEnabled (added != 0);
 	}
-	
+
 	@Override
-	protected void addToolBarActions(final SwingEngine swingEngine, JToolBar tb) 
-	{		
+	protected void addToolBarActions(final SwingEngine swingEngine, JToolBar tb)
+	{
 		tb.setLayout(new WrapLayout(1, 1));
 
 		addToToolbar(standaloneActions.newAction);
@@ -191,11 +191,11 @@ public class MainPanelStandalone extends MainPanel
 		tb.addSeparator();
 		addToToolbar(actions.copyAction);
 		addToToolbar(actions.pasteAction);
-		
+
 		tb.addSeparator();
 
 		addToToolbar(actions.undoAction);
-		
+
 		tb.addSeparator();
 
 		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));
@@ -209,14 +209,14 @@ public class MainPanelStandalone extends MainPanel
 		tb.addSeparator();
 
 		String submenu = "line";
-		
+
 		for(Action[] aa : actions.newElementActions) {
 			if(aa.length == 1) {
 				addToToolbar(aa[0]);
 			} else { //This is the line/receptor sub-menu
 				String icon = "newlinemenu.gif";
-				String tooltip = "Select a line to draw"; 
-				
+				String tooltip = "Select a line to draw";
+
 				if(submenu.equals("receptors")) { //Next one is receptors
 					icon = "newlineshapemenu.gif";
 					tooltip = "Select a receptor/ligand to draw";
@@ -232,22 +232,22 @@ public class MainPanelStandalone extends MainPanel
 				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
 			}
 		}
-				
+
 		tb.addSeparator();
-		
+
 		addToToolbar(actions.layoutActions);
 	}
 
 	public void putInRecentPathwayList(File pwf)
-	{ 
+	{
 		PreferenceManager prefs = PreferenceManager.getCurrent();
         recent.remove(pwf);
 		recent.add(0,pwf);
 		if(recent.size() > 10) recent.remove(recent.size()-1);
-		
+
 	    for (int i = 0; i < recent.size(); ++i)
 	    {
-	    	
+
 	    	prefs.setFile(mostRecentArray[i], recent.get(i));
 	    }
 	}

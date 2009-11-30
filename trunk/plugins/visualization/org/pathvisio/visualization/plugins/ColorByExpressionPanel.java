@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.plugins;
@@ -81,28 +81,28 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 	static final String ACTION_BASIC = "Basic";
 	static final String ACTION_SAMPLE = "sample";
 	static final String ACTION_COMBO = "colorset";
-	
+
 	static final ImageIcon COLOR_PICK_ICON = new ImageIcon(Resources.getResourceURL("colorpicker.gif"));
 	static final Cursor COLOR_PICK_CURS = Toolkit.getDefaultToolkit().createCustomCursor(
 			COLOR_PICK_ICON.getImage(),
 			new Point(4, 19),
 			"Color picker"
 	);
-	
+
 	ColorByExpression method;
 	Basic basic;
 	Advanced advanced;
 	CardLayout cardLayout;
 	JPanel settings;
-	
+
 	public ColorByExpressionPanel(ColorByExpression method) {
 		this.method = method;
-		
+
 		setLayout(new FormLayout(
 				"4dlu, pref, 4dlu, pref, fill:pref:grow, 4dlu",
 				"4dlu, pref, 4dlu, fill:pref:grow, 4dlu"
 		));
-		
+
 		ButtonGroup buttons = new ButtonGroup();
 		JRadioButton rbBasic = new JRadioButton(ACTION_BASIC);
 		rbBasic.setActionCommand(ACTION_BASIC);
@@ -112,23 +112,23 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		rbAdvanced.setActionCommand(ACTION_ADVANCED);
 		rbAdvanced.addActionListener(this);
 		buttons.add(rbAdvanced);
-		
+
 		CellConstraints cc = new CellConstraints();
 		add(rbBasic, cc.xy(2, 2));
 		add(rbAdvanced, cc.xy(4, 2));
-		
+
 		settings = new JPanel();
 		settings.setBorder(BorderFactory.createEtchedBorder());
 		cardLayout = new CardLayout();
 		settings.setLayout(cardLayout);
-		
+
 		basic = new Basic();
 		advanced = new Advanced();
 		settings.add(basic, ACTION_BASIC);
 		settings.add(advanced, ACTION_ADVANCED);
-		
+
 		add(settings, cc.xyw(2, 4, 4));
-		
+
 		if(method.isAdvanced()) {
 			rbAdvanced.doClick();
 		} else {
@@ -150,21 +150,21 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
-	
+
 	/** Panel for editing colorByExpression in "basic" mode */
 	class Basic extends JPanel implements ActionListener, ListDataListener {
 		private static final long serialVersionUID = 1L;
-		
+
 		private SortSampleCheckList sampleList;
-		
-		ColorSetCombo colorSetCombo; 
-		
+
+		ColorSetCombo colorSetCombo;
+
 		public Basic() {
 			setLayout(new FormLayout(
 					"4dlu, pref, 2dlu, fill:pref:grow, 4dlu",
 					"4dlu, pref:grow, 4dlu, pref, 4dlu"
 			));
-			
+
 			List<Sample> selected = method.getSelectedSamples();
 			for (Sample s : selected) if (s == null) throw new NullPointerException();
 			sampleList = new SortSampleCheckList(
@@ -179,12 +179,12 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			colorSetCombo = csChooser.getColorSetCombo();
 			colorSetCombo.setActionCommand(ACTION_COMBO);
 			colorSetCombo.addActionListener(this);
-			
+
 			CellConstraints cc = new CellConstraints();
 			add(sampleList, cc.xyw(2, 2, 3));
 			add(new JLabel("Color set:"), cc.xy(2, 4));
 			add(csChooser, cc.xy(4, 4));
-			
+
 			refresh();
 
 		}
@@ -199,23 +199,23 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			}
 			sampleList.getList().setSelectedSamples(method.getSelectedSamples());
 		}
-		
+
 		private void refreshSamples() {
 			List<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
 			for(Sample s : sampleList.getList().getSelectedSamplesInOrder()) {
 				ConfiguredSample cs = method.new ConfiguredSample(s);
-				
+
 				cs.setColorSet(colorSetCombo.getSelectedColorSet());
 				csamples.add(cs);
 			}
 			method.setUseSamples(csamples);
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
 			if(ACTION_SAMPLE.equals(action)) {
 				refreshSamples();
-			} else if(ACTION_COMBO.equals(action)) 
+			} else if(ACTION_COMBO.equals(action))
 			{
 				if (colorSetCombo.getSelectedItem() != null)
 				{
@@ -233,7 +233,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		}
 
 		public void intervalRemoved(ListDataEvent e) {
-			refreshSamples();			
+			refreshSamples();
 		}
 	}
 
@@ -243,13 +243,13 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 		SortSampleCheckList sampleList;
 		ColorSetCombo colorSetCombo;
 		SamplePanel samplePanel;
-		
+
 		public Advanced() {
 			setLayout(new FormLayout(
 					"4dlu, fill:pref:grow(0.5), 4dlu, fill:pref:grow(0.5), 4dlu",
 					"4dlu, fill:pref:grow, 4dlu"
 			));
-			
+
 			sampleList = new SortSampleCheckList(
 					method.getSelectedSamples(), method.getGexManager()
 			);
@@ -258,7 +258,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			sampleList.getList().getModel().addListDataListener(this);
 			sampleList.getList().addListSelectionListener(this);
 			samplePanel = new SamplePanel(null);
-			
+
 			refresh();
 			CellConstraints cc = new CellConstraints();
 			add(sampleList, cc.xy(2, 2));
@@ -271,7 +271,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 					sampleList.getList().getSelectedSample()
 			));
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
 			if(ACTION_SAMPLE.equals(action)) {
@@ -302,17 +302,17 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			}
 			method.setUseSamples(csamples);
 		}
-		
+
 		public void contentsChanged(ListDataEvent e) {
 			refreshSamples();
 		}
 
 		public void intervalAdded(ListDataEvent e) {
-			refreshSamples();			
+			refreshSamples();
 		}
 
 		public void intervalRemoved(ListDataEvent e) {
-			refreshSamples();			
+			refreshSamples();
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -323,22 +323,22 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			);
 		}
 	}
-	
+
 	/** subPanel of the Advanced panel */
 	class SamplePanel extends JPanel implements ActionListener {
 		static final String ACTION_IMG = "Use image";
-		
+
 		ConfiguredSample cs;
 		ColorSetCombo colorSetCombo;
 		JCheckBox imageCheck;
 		JPanel imagePanel;
 		JComboBox imageCombo;
 		JLabel previewLabel;
-		
+
 		public SamplePanel(ConfiguredSample cs) {
 			setInput(cs);
 		}
-		
+
 		void setInput(ConfiguredSample cs) {
 			this.cs = cs;
 			removeAll();
@@ -358,13 +358,13 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			}
 			revalidate();
 		}
-		
+
 		void setContents() {
 			DefaultFormBuilder builder = new DefaultFormBuilder(
 					new FormLayout("pref, 4dlu, fill:pref:grow"),
 					this
 			);
-			
+
 			ColorSetManager csm = method.getVisualization()
 			.getManager().getColorSetManager();
 			ColorSetChooser csChooser = new ColorSetChooser(csm, method.getGexManager());
@@ -372,31 +372,31 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			colorSetCombo.setActionCommand(ACTION_COMBO);
 			colorSetCombo.addActionListener(this);
 			colorSetCombo.getModel().setSelectedItem(cs.getColorSet());
-			
+
 			imageCheck = new JCheckBox(ACTION_IMG);
 			imageCheck.setActionCommand(ACTION_IMG);
 			imageCheck.addActionListener(this);
 			imageCheck.setSelected(cs.getURL() != null);
-			
+
 			imagePanel = new JPanel();
 			imagePanel.setBorder(BorderFactory.createTitledBorder(
 					BorderFactory.createEtchedBorder(), "Image settings"
 			));
-			
+
 			builder.setDefaultDialogBorder();
 			builder.append("Color set:", csChooser);
 			builder.nextLine();
 			builder.append(imageCheck, 3);
 			builder.nextLine();
 			builder.append(imagePanel, 3);
-			
+
 			refreshImagePanel();
 		}
 
 		void refreshImagePanel() {
 			imagePanel.setEnabled(imageCheck.isSelected());
 			imagePanel.removeAll();
-			
+
 			if(imagePanel.isEnabled()) {
 				imageCombo = new JComboBox(cs.getMethod().getImageURLs().toArray());
 				imageCombo.setSelectedItem(cs.getURL());
@@ -417,23 +417,23 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 						refreshPreview();
 					}
 				});
-				
+
 				JButton addImg = new JButton("Load image");
 				addImg.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						chooseImage();
 					}
 				});
-				
+
 				previewLabel = new JLabel();
 				previewLabel.setOpaque(true);
 				previewLabel.setPreferredSize(new Dimension(75, 75));
-				
+
 				final JPanel colorPanel= new JPanel();
 				colorPanel.setOpaque(true);
 				colorPanel.setBackground(cs.getReplaceColor());
 				colorPanel.setPreferredSize(new Dimension(15, 15));
-				
+
 				final JButton pick = new JButton("Change");
 				pick.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -460,7 +460,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 //									SwingUtilities.getWindowAncestor(pick).setCursor(Cursor.getDefaultCursor());
 //								}
 //					});
-//					
+//
 //					pick.addMouseMotionListener(
 //							new MouseMotionAdapter() {
 //								public void mouseDragged(MouseEvent me) {
@@ -487,9 +487,9 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 						refreshPreview();
 					}
 				});
-				
+
 				imagePanel.setLayout(new FormLayout(
-						"4dlu, fill:pref:grow, 4dlu, pref, 4dlu, fill:10dlu, 4dlu, pref, 4dlu", 
+						"4dlu, fill:pref:grow, 4dlu, pref, 4dlu, fill:10dlu, 4dlu, pref, 4dlu",
 						"4dlu, pref, 4dlu, pref:grow, 4dlu, pref, 4dlu"
 				));
 				CellConstraints cc = new CellConstraints();
@@ -501,14 +501,14 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 				imagePanel.add(pick, cc.xy(8, 4));
 				imagePanel.add(new JLabel("Tolerance:"), cc.xy(4, 6));
 				imagePanel.add(tolerance, cc.xyw(6, 6, 3));
-				
+
 				imagePanel.setVisible(true);
 				refreshPreview();
 			} else {
 				imagePanel.setVisible(false);
 			}
 		}
-		
+
 		void refreshPreview() {
 			Dimension size = previewLabel.getSize();
 			if(size.width <= 0 && size.height <= 0) {
@@ -522,14 +522,14 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			}
 			previewLabel.repaint();
 		}
-		
+
 		void chooseColor() {
 			Color c = JColorChooser.showDialog(this, "Choose color", cs.getReplaceColor());
 			if(c != null) {
 				cs.setReplaceColor(c);
 			}
 		}
-		
+
 		void chooseImage() {
 			JFileChooser fc = new JFileChooser();
 			fc.addChoosableFileFilter(new SimpleFileFilter(
@@ -554,7 +554,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 				imageCombo.setSelectedItem(cs.getURL());
 			}
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
 			if(ACTION_COMBO.equals(action)) {

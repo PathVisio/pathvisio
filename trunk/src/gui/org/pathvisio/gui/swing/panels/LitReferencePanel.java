@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing.panels;
@@ -54,18 +54,18 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	private static final String EDIT = "Edit";
 	private static final URL IMG_EDIT= Resources.getResourceURL("edit.gif");
 	private static final URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
-	
+
 	BiopaxReferenceManager refMgr;
 	BiopaxElementManager elmMgr;
-	
+
 	List<PublicationXRef> xrefs;
 
 	JScrollPane refPanel;
 	JButton addBtn;
-	
+
 	final private SwingEngine swingEngine;
-	
-	public LitReferencePanel(SwingEngine swingEngine) 
+
+	public LitReferencePanel(SwingEngine swingEngine)
 	{
 		this.swingEngine = swingEngine;
 		setLayout(new BorderLayout(5, 5));
@@ -79,7 +79,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	}
 
 	boolean readonly = false;
-	
+
 	public void setReadOnly(boolean readonly) {
 		super.setReadOnly(readonly);
 		this.readonly = readonly;
@@ -94,11 +94,11 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		super.setInput(e);
 	}
 
-	
+
 	private class XRefPanel extends JPanel implements HyperlinkListener, ActionListener {
 		PublicationXRef xref;
 		JPanel btnPanel;
-		
+
 		public XRefPanel(PublicationXRef xref) {
 			this.xref = xref;
 			setBackground(Color.WHITE);
@@ -108,14 +108,14 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			JTextPane txt = new JTextPane();
 			txt.setContentType("text/html");
 			txt.setEditable(false);
-			txt.setText("<html>" + "<B>" + 
-					elmMgr.getOrdinal(xref) + ":</B> " + 
+			txt.setText("<html>" + "<B>" +
+					elmMgr.getOrdinal(xref) + ":</B> " +
 					xref.toHTML() + "</html>"
 			);
 			txt.addHyperlinkListener(this);
 			CellConstraints cc = new CellConstraints();
 			add(txt, cc.xy(2, 2));
-			
+
 			btnPanel = new JPanel(new FormLayout("pref", "pref, pref"));
 			JButton btnEdit = new JButton();
 			btnEdit.setActionCommand(EDIT);
@@ -124,7 +124,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			btnEdit.setBackground(Color.WHITE);
 			btnEdit.setBorder(null);
 			btnEdit.setToolTipText("Edit literature reference");
-			
+
 			JButton btnRemove = new JButton();
 			btnRemove.setActionCommand(REMOVE);
 			btnRemove.addActionListener(this);
@@ -132,7 +132,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			btnRemove.setBackground(Color.WHITE);
 			btnRemove.setBorder(null);
 			btnRemove.setToolTipText("Remove literature reference");
-			
+
 			MouseAdapter maHighlight = new MouseAdapter() {
 				public void mouseEntered(MouseEvent e) {
 					e.getComponent().setBackground(new Color(200, 200, 255));
@@ -143,13 +143,13 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			};
 			btnEdit.addMouseListener(maHighlight);
 			btnRemove.addMouseListener(maHighlight);
-			
+
 			btnPanel.add(btnEdit, cc.xy(1, 1));
 			btnPanel.add(btnRemove, cc.xy(1, 2));
-			
+
 			add(btnPanel, cc.xy(4, 2));
 			btnPanel.setVisible(false);
-			
+
 			MouseAdapter maHide = new MouseAdapter() {
 				public void mouseEntered(MouseEvent e) {
 					if(!readonly) btnPanel.setVisible(true);
@@ -163,13 +163,13 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			addMouseListener(maHide);
 			txt.addMouseListener(maHide);
 		}
-		
+
 		public void hyperlinkUpdate(HyperlinkEvent e) {
 			if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
 				swingEngine.openUrl(e.getURL());
 			}
 		}
-		
+
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
 			if(EDIT.equals(action)) {
@@ -179,12 +179,12 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 			}
 		}
 	}
-	
+
 	public void refresh() {
 		if(refPanel != null) remove(refPanel);
-		
+
 		xrefs = refMgr.getPublicationXRefs();
-		
+
 		DefaultFormBuilder b = new DefaultFormBuilder(
 				new FormLayout("fill:pref:grow")
 		);
@@ -222,7 +222,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		PublicationXRef xref = new PublicationXRef();
 
 		final PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this);
-		if(!SwingUtilities.isEventDispatchThread()) {	
+		if(!SwingUtilities.isEventDispatchThread()) {
 			try {
 				SwingUtilities.invokeAndWait(new Runnable() {
 					public void run() {

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -60,7 +60,7 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 	public Graphics getParent() {
 		return parent;
 	}
-	
+
 	public void vElementMouseEvent(VElementMouseEvent e) {
 		if(e.getElement() == parent) {
 			if(e.getType() == VElementMouseEvent.TYPE_MOUSEENTER) {
@@ -86,7 +86,7 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 		double vx = Double.isNaN(vp.getX()) ? 0 : vp.getX();
 		double vy = Double.isNaN(vp.getY()) ? 0 : vp.getY();
 		vp.setLocation(vx, vy);
-		
+
 		double pd = vFromM(M_PADDING);
 		String xrefStr = getXRefText();
 
@@ -95,9 +95,9 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 		} else if(g != null) {
 			tb = g.getFontMetrics(getVFont()).getStringBounds(getXRefText(), g);
 			tb.setRect(
-					vp.getX() + tb.getX() - tb.getWidth() / 2 - pd, 
-					vp.getY() + tb.getY() - tb.getHeight() / 2 - pd, 
-					tb.getWidth() + 2*pd, 
+					vp.getX() + tb.getX() - tb.getWidth() / 2 - pd,
+					vp.getY() + tb.getY() - tb.getHeight() / 2 - pd,
+					tb.getWidth() + 2*pd,
 					tb.getHeight() + 2*pd
 			);
 		} else { //No graphics context, we can only guess...
@@ -125,12 +125,12 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 		}
 		int maxNr = PreferenceManager.getCurrent().getInt(GlobalPreference.MAX_NR_CITATIONS);
 		if(maxNr == 0) return ""; //Show nothing if limit is set to 0
-		
+
 		String xrefStr = "";
 		int lastOrdinal = -2;
 		int sequence = 0;
 		int nrShowed = 0; //Counter to check maximum citation numbers
-		
+
 		List<PublicationXRef> xrefs = getRefMgr().getPublicationXRefs();
 		for(int i = 0; i < xrefs.size(); i++) {
 			if(nrShowed > 0 && nrShowed >= maxNr) {
@@ -191,7 +191,7 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 
 	protected void doDraw(Graphics2D g2d) {
 		Graphics2D g = (Graphics2D)g2d.create();
-		
+
 		if(this.g2d == null) resetShapeCache();
 		this.g2d = g;
 
@@ -212,7 +212,7 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 		g.setColor(FONT_COLOR);
 		int pd = (int)vFromM(M_PADDING);
 		g.drawString(xrefStr, (int)bounds.getX() + pd, (int)bounds.getMaxY() - pd);
-		
+
 	}
 
 	protected int getZOrder() {
@@ -228,7 +228,7 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 //		refresh();
 //		canvas.redrawDirtyRect();
 //	}
-	
+
 	@Override protected void destroy()
 	{
 		super.destroy();

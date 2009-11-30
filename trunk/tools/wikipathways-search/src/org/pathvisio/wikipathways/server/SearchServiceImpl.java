@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.server;
@@ -57,11 +57,11 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  */
 public class SearchServiceImpl extends RemoteServiceServlet implements SearchService {
 	WikiPathwaysClient client;
-	
+
 	public SearchServiceImpl() throws ServiceException {
 		BioDataSource.init();
 	}
-	
+
 	protected static URL getClientUrl(ServletContext servlet) {
 		URL url = null;
 		try {
@@ -81,7 +81,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		}
 		return url;
 	}
-	
+
 	private WikiPathwaysClient getClient() {
 		if(client == null) {
 			try {
@@ -92,14 +92,14 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		}
 		return client;
 	}
-	
+
 	private ImageManager getImageManager() {
 		if(!ImageManager.isInit()) {
 			ImageManager.init(getServletContext().getRealPath(""), getClient());
 		}
 		return ImageManager.getInstance();
 	}
-	
+
 	public Result[] search(Query query) throws SearchException {
 		try {
 			if(Query.TYPE_ID.equals(query.getType())) { //System code specified, use id search
@@ -141,11 +141,11 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 					iddescr = idlist + "</ul>";
 				}
 			}
-			
+
 		} catch(ConverterException e) {
 			e.printStackTrace();
 		}
-		
+
 		String descr = "<table class='" + ResultsTable.STYLE_DESCRIPTION + "'>";
 		descr += "<tr><td><i>Title:</i> " + wsr.getName();
 		descr += "<tr><td><i>Organism:</i> " + wsr.getSpecies();
@@ -153,7 +153,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 		if(iddescr != null) descr += "<tr><td><i>" +
 				"IDs mapping to " + id + ":</i> " + iddescr;
 		descr += "</table>";
-		
+
 		Result r = new Result(
 				wsr.getId(),
 				wsr.getName() + " (" + wsr.getSpecies() + ")",
@@ -168,7 +168,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 			}
 		}
 		r.setImageId("" + ImageManager.getGpmlId(wsr.getId(), wsr.getRevision()));
-		
+
 		getImageManager().startDownload(wsr); //Start downloading image that will be requested by client later
 		return r;
 	}
@@ -207,7 +207,7 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 
 	private Result[] searchIdentifier(Query query) throws RemoteException {
 		WSSearchResult[] wsResults = new WSSearchResult[0];
-		
+
 		String id = query.getText();
 		String system = query.getField(Query.FIELD_SYSTEM);
 		if(IdSearchPanel.SYSTEM_ALL.equals(system) || system == null) {
@@ -216,17 +216,16 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 			DataSource ds = DataSource.getByFullName(system);
 			Xref xref = new Xref(id, ds);
 			wsResults = getClient().findPathwaysByXref(xref);
-		}
-		
+		}		
 		wsResults = mergeResults(wsResults);
-		
+
 		Result[] results = new Result[wsResults.length];
 		for(int i = 0; i < wsResults.length; i++) {
 			results[i] = createPathwayResult(wsResults[i], id);
 		}
 		return results;
 	}
-	
+
 	public void waitForImage(String id) {
 		try {
 			getImageManager().waitForImage(id);
@@ -234,13 +233,13 @@ public class SearchServiceImpl extends RemoteServiceServlet implements SearchSer
 			throw new SearchException(e);
 		}
 	}
-	
+
 	public String[] getSystemNames() {
 		String[] names = DataSource.getFullNames().toArray(new String[0]);
 		Arrays.sort(names);
 		return names;
 	}
-	
+
 	public String[] getOrganismNames() {
 		String[] orgs;
 		try {

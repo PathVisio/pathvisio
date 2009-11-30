@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 import java.util.regex.*;
@@ -19,10 +19,10 @@ import java.util.regex.*;
 class Tokenizer
 {
 	private String original;
-	private String s; 
+	private String s;
 	private String newS; // new string after token is eaten
 	Token nextToken;
-			
+
 	public Tokenizer (String _s) throws PathParseException
 	{
 		s = _s;
@@ -48,14 +48,14 @@ class Tokenizer
 	{
 		return nextToken;
 	}
-			
+
 	/**
 	   returns the upcoming token, while setting newS to the string after the token.
 	*/
 	private Token tokenize () throws PathParseException
 	{
 		String VALID_COMMANDS = "MmZzLlHhVvCcSsQqTtAa";
-				
+
 		Pattern comma_wsp = Pattern.compile ("\\s*,\\s*");
 		Pattern wsp = Pattern.compile ("\\s+");
 		Pattern float_with_exponent = Pattern.compile ("[+-]?(\\.\\d+|\\d+\\.?\\d*)([eE][+-]?\\d+)");
@@ -67,7 +67,7 @@ class Tokenizer
 		{
 			return new Token (Token.F_END);
 		}
-			
+
 		Matcher m = comma_wsp.matcher (s);
 		if (m.lookingAt())
 		{
@@ -89,7 +89,7 @@ class Tokenizer
 				Double.parseDouble(m.group())
 				);
 		}
-			
+
 		m.usePattern (float_with_exponent);
 		if (m.lookingAt())
 		{
@@ -120,5 +120,5 @@ class Tokenizer
 
 		throw new PathParseException ("Parse error: unknown Token");
 	}
-			
+
 }

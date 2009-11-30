@@ -9,14 +9,14 @@ import java.awt.event.*;
  * the buttons as necessary.
  */
 public class WizardController implements ActionListener {
-    
+
     private Wizard wizard;
-    
+
     /**
      * This constructor accepts a reference to the Wizard component that created it,
      * which it uses to update the button components and access the WizardModel.
      * @param w A callback to the Wizard component that created this controller.
-     */    
+     */
     public WizardController(Wizard w) {
         wizard = w;
     }
@@ -26,80 +26,80 @@ public class WizardController implements ActionListener {
      * performed by the buttons in the Wizard class, and calls methods below to determine
      * the correct course of action.
      * @param evt The ActionEvent that occurred.
-     */    
+     */
     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        
+
         if (evt.getActionCommand().equals(Wizard.CANCEL_BUTTON_ACTION_COMMAND))
             cancelButtonPressed();
         else if (evt.getActionCommand().equals(Wizard.BACK_BUTTON_ACTION_COMMAND))
             backButtonPressed();
         else if (evt.getActionCommand().equals(Wizard.NEXT_BUTTON_ACTION_COMMAND))
             nextButtonPressed();
-        
+
     }
-    
-    
-    
-    private void cancelButtonPressed() 
-    {    
+
+
+
+    private void cancelButtonPressed()
+    {
         WizardModel model = wizard.getModel();
         WizardPanelDescriptor descriptor = model.getCurrentPanelDescriptor();
-        
+
         descriptor.aboutToCancel ();
         wizard.close(Wizard.CANCEL_RETURN_CODE);
     }
 
     private void nextButtonPressed() {
- 
+
         WizardModel model = wizard.getModel();
         WizardPanelDescriptor descriptor = model.getCurrentPanelDescriptor();
-        
+
         //  If it is a finishable panel, close down the dialog. Otherwise,
         //  get the ID that the current panel identifies as the next panel,
         //  and display it.
-        
+
         Object nextPanelDescriptor = descriptor.getNextPanelDescriptor();
-        
+
         if (nextPanelDescriptor instanceof WizardPanelDescriptor.FinishIdentifier) {
             wizard.close(Wizard.FINISH_RETURN_CODE);
-        } else {        
+        } else {
             wizard.setCurrentPanel(nextPanelDescriptor);
         }
-        
+
     }
 
     private void backButtonPressed() {
- 
+
         WizardModel model = wizard.getModel();
         WizardPanelDescriptor descriptor = model.getCurrentPanelDescriptor();
- 
+
         //  Get the descriptor that the current panel identifies as the previous
         //  panel, and display it.
-        
-        Object backPanelDescriptor = descriptor.getBackPanelDescriptor();        
+
+        Object backPanelDescriptor = descriptor.getBackPanelDescriptor();
         wizard.setCurrentPanel(backPanelDescriptor);
-        
+
     }
 
-    
+
     void resetButtonsToPanelRules() {
-    
+
         //  Reset the buttons to support the original panel rules,
         //  including whether the next or back buttons are enabled or
         //  disabled, or if the panel is finishable.
-        
+
         WizardModel model = wizard.getModel();
         WizardPanelDescriptor descriptor = model.getCurrentPanelDescriptor();
-        
+
         model.setCancelButtonText(Wizard.CANCEL_TEXT);
         model.setCancelButtonIcon(Wizard.CANCEL_ICON);
-        
+
         //  If the panel in question has another panel behind it, enable
         //  the back button. Otherwise, disable it.
-        
+
         model.setBackButtonText(Wizard.BACK_TEXT);
         model.setBackButtonIcon(Wizard.BACK_ICON);
-        
+
         if (descriptor.getBackPanelDescriptor() != null)
             model.setBackButtonEnabled(Boolean.TRUE);
         else
@@ -107,15 +107,15 @@ public class WizardController implements ActionListener {
 
         //  If the panel in question has one or more panels in front of it,
         //  enable the next button. Otherwise, disable it.
- 
+
         if (descriptor.getNextPanelDescriptor() != null)
             model.setNextFinishButtonEnabled(Boolean.TRUE);
         else
             model.setNextFinishButtonEnabled(Boolean.FALSE);
- 
+
         //  If the panel in question is the last panel in the series, change
         //  the Next button to Finish. Otherwise, set the text back to Next.
-        
+
         if (descriptor.getNextPanelDescriptor() instanceof WizardPanelDescriptor.FinishIdentifier) {
             model.setNextFinishButtonText(Wizard.FINISH_TEXT);
             model.setNextFinishButtonIcon(Wizard.FINISH_ICON);
@@ -123,8 +123,8 @@ public class WizardController implements ActionListener {
             model.setNextFinishButtonText(Wizard.NEXT_TEXT);
             model.setNextFinishButtonIcon(Wizard.NEXT_ICON);
         }
-        
+
     }
-    
-    
+
+
 }

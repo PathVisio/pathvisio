@@ -26,7 +26,7 @@ public class WikiPathwaysSearcher {
 	public WikiPathwaysSearcher(IndexSearcher searcher) {
 		this.searcher = searcher;
 	}
-	
+
 	public List<SearchResult> query(Query query, int limit) throws IOException {
 		TopDocs hits = searcher.search(query, null, limit);
 		List<SearchResult> results = new ArrayList<SearchResult>();
@@ -35,7 +35,7 @@ public class WikiPathwaysSearcher {
 		}
 		return results;
 	}
-	
+
 	public List<SearchResult> queryByXrefs(Collection<Xref> xrefs, int limit) throws IOException {
 		BooleanQuery query = new BooleanQuery();
 		for(Xref x : xrefs) {
@@ -43,7 +43,7 @@ public class WikiPathwaysSearcher {
 			if(x.getDataSource() == null) {
 				tq = new TermQuery(new Term(DataNodeIndexer.FIELD_XID, x.getId()));
 			} else {
-				tq = new TermQuery(new Term(DataNodeIndexer.FIELD_XID_CODE, 
+				tq = new TermQuery(new Term(DataNodeIndexer.FIELD_XID_CODE,
 						x.getId() + ":" + x.getDataSource().getSystemCode()));
 			}
 			query.add(tq, Occur.SHOULD);
@@ -57,7 +57,7 @@ public class WikiPathwaysSearcher {
 				idcodes.add(x.getId() + ":" + x.getDataSource().getSystemCode());
 			}
 		}
-		
+
 		FieldFilter filter = new FieldFilter() {
 			public boolean include(String name, String value) {
 				//Only include x.id, x.id.database when they are part of the query
@@ -70,7 +70,7 @@ public class WikiPathwaysSearcher {
 				return true;
 			}
 		};
-		
+
 		List<SearchResult> results = new ArrayList<SearchResult>();
 		TopDocs hits = searcher.search(query, null, limit);
 		for(ScoreDoc sd : hits.scoreDocs) {
@@ -78,7 +78,7 @@ public class WikiPathwaysSearcher {
 		}
 		return results;
 	}
-	
+
 	public Set<String> listXrefs(String pathwaySource, String sysCode) throws IOException {
 		Set<String> xrefs = new TreeSet<String>();
 

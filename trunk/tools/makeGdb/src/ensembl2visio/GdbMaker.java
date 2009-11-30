@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package ensembl2visio;
@@ -27,11 +27,11 @@ import org.pathvisio.debug.Logger;
    implementation.
  */
 public abstract class GdbMaker
-{   	
+{
 
 
     protected Connection con;
-      
+
     String dbName;
 
     public GdbMaker(String dbName) {
@@ -40,14 +40,14 @@ public abstract class GdbMaker
     }
 
 
-      
+
 	/**
 	   connect to a gene database
 	   if create == true, any pre-existing database will be overwritten.
 	   if create == false, opens pre-existing database for appending.
 	 */
     public abstract void connect(boolean create) throws ClassNotFoundException, SQLException;
-    
+
     public void close() {
     	try {
     		if(con != null) con.close();
@@ -56,13 +56,13 @@ public abstract class GdbMaker
     	}
 
     }
-    
+
     String getDbName() {
     	return dbName;
     }
-    
-    public void compact() throws SQLException { 
-    	
+
+    public void compact() throws SQLException {
+
     }
 
 	/**
@@ -71,7 +71,7 @@ public abstract class GdbMaker
 	   cleanup operation after closing the database
 	 */
 	public void postInsert() {}
-	
+
 
 
 	/**
@@ -110,7 +110,7 @@ public abstract class GdbMaker
 				" ON attribute(attrname)"
 		);
 	}
-	
+
 
 
 

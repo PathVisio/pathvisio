@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.util;
@@ -45,28 +45,28 @@ public class FileUtils {
 	 */
 	public static List<File> getFiles(File directory, boolean recursive) {
 		List<File> fileList = new ArrayList<File>();
-		
+
 		if(!directory.isDirectory()) { //File is not a directory, return file itself (if has correct extension)
 			fileList.add(directory);
 			return fileList;
 		}
-		
+
 		//Get all files in this directory
 		File[] files = directory.listFiles();
 
 		//Recursively add the files
-		for(File f : files) 
+		for(File f : files)
 		{
-			if(f.isDirectory()) 
+			if(f.isDirectory())
 			{
 				if (recursive) fileList.addAll(getFiles(f, true));
-			}			
+			}
 			else fileList.add(f);
 		}
-		
+
 		return fileList;
 	}
-	
+
 	/**
 	 * Get all files in a directory
 	 * @param directory	The directory to get the files from
@@ -76,12 +76,12 @@ public class FileUtils {
 	 */
 	public static List<File> getFiles(File directory, final String extension, boolean recursive) {
 		List<File> fileList = new ArrayList<File>();
-		
+
 		if(!directory.isDirectory()) { //File is not a directory, return file itself (if has correct extension)
 			if(directory.getName().endsWith("." + extension)) fileList.add(directory);
 			return fileList;
 		}
-		
+
 		//Get all files in this directory
 		File[] files = directory.listFiles(new FileFilter() {
 			public boolean accept(File f) {
@@ -90,18 +90,18 @@ public class FileUtils {
 		});
 
 		//Recursively add the files
-		for(File f : files) 
+		for(File f : files)
 		{
-			if(f.isDirectory()) 
+			if(f.isDirectory())
 			{
 				if (recursive) fileList.addAll(getFiles(f, extension, true));
-			}			
+			}
 			else fileList.add(f);
 		}
-		
+
 		return fileList;
 	}
-	
+
 	/**
 	 * Think "deltree" or "rm -r"
 	 */
@@ -112,7 +112,7 @@ public class FileUtils {
 		boolean deleted = file.delete();
 		Logger.log.trace((deleted ? "Deleted " : "Unable to delete ") + "file " + file);
 	}
-	
+
 	/**
 	 * Determine the number of lines in the given file.
 	 * @param fileName	The file to get the number of lines from
@@ -138,7 +138,7 @@ public class FileUtils {
 		}
 		return nrLines;
 	}
-	
+
 	/**
 	 * Removes the file extension (everything from the last occurence of '.')
 	 */
@@ -147,7 +147,7 @@ public class FileUtils {
 		if(dot > 0) fname = fname.substring(0, dot);
 		return fname;
 	}
-	
+
 	/**
 	 * Downloads a remote file given by an URL to the given local file
 	 * @param url The URL that specifies the location of the file to download
@@ -182,25 +182,25 @@ public class FileUtils {
 	/**
 	 * Maps a file from one point in the directory tree to another point.
 	 * For example, with this function you can map from
-	 * 
+	 *
 	 * /home/username/input/pathways/human/metabolomic/pathway.gpml
 	 * to
 	 * /tmp/output/pathways/human/metabolomic/pathway.gpml
-	 * 
+	 *
 	 */
 	public static File mapFileTree (File f, File srcDir, File destDir)
 	{
 		List<String> components = new ArrayList<String>();
 		File dest = destDir;
 		File src = f;
-		
+
 		// unwind source
 		while (!src.equals(srcDir) && src != null)
 		{
 			components.add(f.getName());
 			src = src.getParentFile();
 		}
-		
+
 		// rewind dest
 		for (String s : components)
 		{

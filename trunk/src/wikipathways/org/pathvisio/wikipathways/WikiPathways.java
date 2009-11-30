@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways;
@@ -77,13 +77,13 @@ import org.xml.sax.SAXException;
  * @author thomas
  *
  */
-public class WikiPathways implements StatusFlagListener, ApplicationEventListener {		
+public class WikiPathways implements StatusFlagListener, ApplicationEventListener {
 	public static final String COMMENT_DESCRIPTION = "WikiPathways-description";
 	public static final String COMMENT_CATEGORY = "WikiPathways-category";
 	static final String APPLICATION_NAME = "WikiPathways pathway editor";
-	
+
 	private boolean disposed;
-	
+
 	private Parameter parameters = new Parameter();
 
 	UserInterfaceHandler uiHandler;
@@ -105,10 +105,10 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 	 */
 	boolean firstSave = true;
 	boolean isUseGdb = false;
-	
+
 	MainPanel mainPanel;
 
-	public WikiPathways(UserInterfaceHandler uiHandler, SwingEngine swingEngine) 
+	public WikiPathways(UserInterfaceHandler uiHandler, SwingEngine swingEngine)
 	{
 		this.uiHandler = uiHandler;
 		cookie = new HashMap<String, String>();
@@ -120,7 +120,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 			}
 		});
 	}
-	
+
 	/**
 	 * Set this parameter to true if a connection
 	 * to the synonym databases is needed.
@@ -128,11 +128,11 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 	public void setUseGdb(boolean use) {
 		isUseGdb = use;
 	}
-	
+
 	public boolean isUseGdb() {
 		return isUseGdb;
 	}
-	
+
 	/**
 	 * Get the parameters container, that contains the
 	 * input parameters
@@ -163,12 +163,12 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 	public SwingEngine getSwingEngine() {
 		return swingEngine;
 	}
-	
+
 	public Engine getEngine()
 	{
 		return swingEngine.getEngine();
 	}
-	
+
 	public void setUiHandler(UserInterfaceHandler uih) {
 		uiHandler = uih;
 	}
@@ -186,9 +186,9 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		for(String name : parameters.getNames()) {
 			//Check for required
 			if(parameters.isRequired(name)) {
-				assert parameters.getValue(name) != null : 
+				assert parameters.getValue(name) != null :
 					"Missing required argument '" + name + "'";
-			}	
+			}
 		}
 
 		progress.report("Loading pathway...");
@@ -211,7 +211,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		initVPathway();
 
 		if(isReadOnly()) {
-			uiHandler.showInfo("Read-only", 
+			uiHandler.showInfo("Read-only",
 					"You are not logged in to " + Globals.SERVER_NAME +
 			" so the pathway will be opened in read-only mode");
 		}
@@ -239,7 +239,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		mainPanel = null;
 		disposed = true;
 	}
-	
+
 	public void startSaveReminder() {
 		SaveReminder.startSaveReminder(this, 10);
 	}
@@ -250,8 +250,8 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 			fireStatusFlagEvent(new StatusFlagEvent(changed));
 		}
 	}
-	
-	public void initVPathway() 
+
+	public void initVPathway()
 	{
 		VPathway active = getPathwayView();
 		if(active != null) { //Can be null incase of description/category applet
@@ -292,7 +292,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 	public String getPwId() {
 		return parameters.getValue(Parameter.PW_ID);
 	}
-	
+
 	public String getPwName() {
 		return parameters.getValue(Parameter.PW_NAME);
 	}
@@ -308,7 +308,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 	public String getSiteURL() {
 		return parameters.getValue(Parameter.SITE_URL);
 	}
-	
+
 	public String getRpcURL() {
 		return parameters.getValue(Parameter.RPC_URL);
 	}
@@ -368,7 +368,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		return getUser() == null;
 	}
 
-	protected File getLocalFile() { 
+	protected File getLocalFile() {
 		if(localFile == null) {
 			try {
 				localFile = File.createTempFile("tmp", ".gpml");
@@ -394,10 +394,10 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 			if(!getPwSpecies().equals(info.getOrganism())) {
 				uiHandler.showInfo("Species mismatch",
 						"The species of the current pathway doesn't match the " +
-						"species of the pathway on " + Globals.SERVER_NAME + 
+						"species of the pathway on " + Globals.SERVER_NAME +
 						"\n\nCurrent species:\t  " + info.getOrganism() +
 						"\n" + Globals.SERVER_NAME + " species:\t  " + getPwSpecies() +
-						"\n\nThe species of the current pathway will be set to " + getPwSpecies() + 
+						"\n\nThe species of the current pathway will be set to " + getPwSpecies() +
 				" before saving.");
 				info.setOrganism(getPwSpecies());
 			}
@@ -419,10 +419,10 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 							return true;
 						} catch (Exception e) {
 							Logger.log.error("Unable to save pathway", e);
-							String msg =  e.getClass() + 
+							String msg =  e.getClass() +
 							"\n See error log (" + PreferenceManager.getCurrent().get(GlobalPreference.WP_FILE_LOG) + ") for details";
 							if(e.getMessage().startsWith("Revision out of date")) {
-								msg = 
+								msg =
 									"Revision out of date.\n" +
 									"This could mean somebody else modified the pathway since you downloaded it.\n" +
 									"Please save your changes locally and copy your changes over to\n" +
@@ -430,7 +430,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 								if(isNew()) { //If this is a new pathway, give the option to save under different name
 									String newName = getPwName();
 									while(newName != null && getPwName().equals(newName)) {
-										newName = uiHandler.askInput(getPwName() + "-1", 
+										newName = uiHandler.askInput(getPwName() + "-1",
 												"Somebody else already created a pathway under the same name.\n" +
 										"Please specify a new name for this pathway.");
 									}
@@ -488,7 +488,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 			JOptionPane.showMessageDialog(null, "Unable to save pathway:\n" + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		if(mayExit()) {	
+		if(mayExit()) {
 			Logger.log.trace("MayExit: " + mayExit());
 			uiHandler.showExitMessage("Please wait...the page will be reloaded");
 			try {
@@ -530,7 +530,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 			GpmlFormat.writeToXml(getPathway(), out, true);
 
 			byte[] data = out.toByteArray();
-		
+
 			if(isNew()) {
 				Logger.log.error("IS PRIVATE: " + isPrivate());
 				Object[] params = new Object[]{ description, data, isPrivate() };
@@ -685,14 +685,14 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 			l.statusFlagChanged(e);
 		}
 	}
-	
+
 	public void applicationEvent(ApplicationEvent e) {
 		if(e.getType() == ApplicationEvent.PATHWAY_NEW ||
-				e.getType() == ApplicationEvent.PATHWAY_OPENED) 
+				e.getType() == ApplicationEvent.PATHWAY_OPENED)
 		{
 			Pathway p = swingEngine.getEngine().getActivePathway();
 			p.addStatusFlagListener(this);
-			//Copy initial state of statusFlagListener 
+			//Copy initial state of statusFlagListener
 			//(could have been changed by earlier ApplicationEventListener)
 			setRemoteChanged (p.hasChanged());
 		}

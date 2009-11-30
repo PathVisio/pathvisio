@@ -115,7 +115,7 @@ public class AtlasStatistics {
 			out.writeObject(atlasGenes);
 			out.close();
 		}
-		
+
 		System.out.println(organism.latinName() + ": " + atlasGenes.getGenes().size() + " genes");
 		System.out.println(organism.latinName() + ": " + atlasGenes.getFactors().size() + " factors");
 		Set<String> experiments = new HashSet<String>();

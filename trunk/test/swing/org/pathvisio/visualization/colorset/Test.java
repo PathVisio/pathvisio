@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.colorset;
@@ -27,7 +27,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
-public class Test extends TestCase 
+public class Test extends TestCase
 {
 	public void testColorSet()
 	{
@@ -35,8 +35,8 @@ public class Test extends TestCase
 		ColorSet cs = new ColorSet("Default");
 		assertEquals (cs.getName(), "Default");
 	}
-	
-	
+
+
 	public void testGradient()
 	{
 		PreferenceManager.init();
@@ -54,9 +54,9 @@ public class Test extends TestCase
 		assertEquals (cg.getColorValuePairs().size(), 2);
 		assertEquals (cg.getColor(0.0), new Color (127,0,127));
 	}
-	
+
 	Map<String, Object> symbols = new HashMap<String, Object>();
-	
+
 	boolean evalExpr(String expr) throws Criterion.CriterionException
 	{
 		Criterion crit = new Criterion();
@@ -90,12 +90,12 @@ public class Test extends TestCase
 		Logger.log.setStream(System.err);
 		Logger.log.setLogLevel(true, true, true, true, true, true);
 	}
-	
+
 	public void testExpressions() throws Criterion.CriterionException
 	{
 		symbols.put ("x", 5.0);
 		symbols.put ("y", -1.0);
-	
+
 		assertFalse (checkSyntax ("5 = 5 = 5"));
 		assertFalse (checkSyntax ("5 < 6 > 5"));
 		assertFalse (checkSyntax ("abcd"));
@@ -104,7 +104,7 @@ public class Test extends TestCase
 		assertFalse (checkSyntax ("([x] < -0.5"));
 		assertTrue  (checkSyntax ("([x] < -0.5)"));
 		assertFalse (checkSyntax ("x = 5.0.0"));
-		
+
 		assertFalse (evalExpr ("[x] < -0.5"));
 		assertTrue  (evalExpr ("5.0 > [y]"));
 		assertTrue  (evalExpr ("[x] = 5.0"));
@@ -116,7 +116,7 @@ public class Test extends TestCase
 		assertTrue  (evalExpr ("[x] = 0 AND [y] = 0 OR [x] = 5.0 AND [y] = -1.0"));
 		assertTrue  (evalExpr ("([x] = 0 AND [y] = 0) OR ([x] = 5.0 AND [y] = -1.0)"));
 		assertFalse (evalExpr ("[x] = 0 AND ([y] = 0 OR [x] = -5.0) AND [y] = -1.0"));
-		
+
 		symbols.clear();
 		symbols.put ("jouw waarde", 5.0);
 		symbols.put ("mijn waarde", -1.0);
@@ -126,26 +126,26 @@ public class Test extends TestCase
 		assertTrue  (evalExpr ("[jouw waarde] > 0 OR [mijn waarde] > 0"));
 	}
 
-	/* added for bug 952 
+	/* added for bug 952
 	 * test correct dealing of NA values */
 	public void testExprWithNA() throws Criterion.CriterionException
 	{
 		symbols.put ("var1", "NA");
 		symbols.put ("var2", 1.0);
-		
+
 		assertTrue  (evalExpr ("([var1] > 0) OR ([var2] > 0)")); // NA OR true
-		assertTrue  (evalExpr ("([var2] > 0) OR ([var1] > 0)")); // true OR NA				
-		
-		assertFalse (evalExpr ("([var2] < 0) OR ([var1] < 0)")); // false OR NA 
+		assertTrue  (evalExpr ("([var2] > 0) OR ([var1] > 0)")); // true OR NA
+
+		assertFalse (evalExpr ("([var2] < 0) OR ([var1] < 0)")); // false OR NA
 		assertFalse  (evalExpr ("([var1] < 0) OR ([var2] < 0)")); // NA OR false
-		
+
 		assertFalse (evalExpr ("([var2] < 0) AND ([var1] < 0)")); // false AND NA
 		assertFalse  (evalExpr ("([var1] < 0) AND ([var2] < 0)")); // NA AND false
-		
-		assertFalse (evalExpr ("([var2] > 0) AND ([var1] > 0)")); // true AND NA	
+
+		assertFalse (evalExpr ("([var2] > 0) AND ([var1] > 0)")); // true AND NA
 		assertFalse  (evalExpr ("([var1] > 0) AND ([var2] > 0)")); // NA AND true
 	}
-	
+
 	public void testStringLiteral () throws Criterion.CriterionException
 	{
 		symbols.put ("color", "red");
@@ -160,7 +160,7 @@ public class Test extends TestCase
 		assertTrue  (evalExpr ("\"green\" <> \"red\""));
 		assertTrue  (evalExpr ("\"green\" = \"green\""));
 	}
-	
+
 	public void testCalc() throws Criterion.CriterionException
 	{
 		assertEquals (0.0, evalDouble ("-1.0 - -1.0"), 0.01);
@@ -176,7 +176,7 @@ public class Test extends TestCase
 		assertFalse (evalExpr ("2 >= 2 + 0.01 "));
 
 	}
-	
+
 	public void testNot() throws Criterion.CriterionException
 	{
 		assertTrue  (evalExpr ("2 > 1"));
@@ -184,11 +184,11 @@ public class Test extends TestCase
 		// precedence: NOT before AND
 		assertFalse (evalExpr ("NOT (2 > 1) AND (1 > 2)"));
 	}
-	
+
 	public void assertFail(String expr)
-	{		
+	{
 		// type error:
-		try { 
+		try {
 			eval(expr);
 			fail("CriterionException expected");
 		}
@@ -197,7 +197,7 @@ public class Test extends TestCase
 			// success
 		}
 	}
-	
+
 	public void testFuncFail() throws CriterionException
 	{
 		// type errors
@@ -207,18 +207,18 @@ public class Test extends TestCase
 		assertFail ("SUM(\"a\", \"b\")");
 		assertFail ("TTEST (1,1,1,1)");
 		assertFail ("RIGHT(1 < 2)");
-		
+
 		// too few arguments
 		assertFail ("IF()");
 		assertFail ("RIGHT()");
 		assertFail ("LEN()");
 		assertFail ("LOG(1)");
 		assertFail ("LOG10()");
-		
+
 		// non-existing function
 		assertFail ("NONSENSE()");
 	}
-	
+
 	public void testStatFunc() throws CriterionException
 	{
 		assertEquals (2, evalDouble("AVERAGE(LOG(2, 2), LOG10(100, 0), SQRT(9))"), 0.01);
@@ -235,7 +235,7 @@ public class Test extends TestCase
 		assertEquals (0.0, evalDouble("VAR(1, 1, 1)"), 0.01);
 		assertEquals (25.0, evalDouble("VAR(6, 8, -3, 10, 4)"), 0.01);
 		assertEquals (4.0, evalDouble("VAR(1, 3, 5)"), 0.01);
-		
+
 		assertEquals(0.2319, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),1,1)"), 0.01);
 		assertEquals(0.2706, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),1,2)"), 0.01);
 		assertEquals(0.2767, evalDouble("TTEST(ARRAY(1,4,3,4),ARRAY(1,2,5,9),1,3)"), 0.01);

@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.model;
@@ -34,11 +34,11 @@ import org.pathvisio.debug.Logger;
  * pathway statistics program.
  * This format is basically a list of genes in a flat text file
  * preceded by 3 header lines.
- * 
+ *
  * EuGene supports several id systems but has its own naming
  * for them, this exporter also handles the translation.
  */
-public class EUGeneExporter implements PathwayExporter 
+public class EUGeneExporter implements PathwayExporter
 {
 	public String[] getExtensions() {
 		return new String[] { "pwf" };
@@ -105,7 +105,7 @@ public class EUGeneExporter implements PathwayExporter
 			out.close();
 		}
 
-		void read() { 
+		void read() {
 			refs = new ArrayList<Xref>();
 			Map<DataSource, Integer> codeCount = new HashMap<DataSource, Integer>();
 
@@ -115,23 +115,23 @@ public class EUGeneExporter implements PathwayExporter
 				}
 				Xref ref = elm.getXref();
 				DataSource ds = ref.getDataSource();
-				if(ref == null || ref.getId().equals("") || ref.getDataSource() == null) 
-				{ 
+				if(ref == null || ref.getId().equals("") || ref.getDataSource() == null)
+				{
 					continue; //Skip datanodes with incomplete annotation
 				}
 				refs.add (ref);
 
 				//Increase code count for this code
-				if(codeCount.containsKey(ref.getDataSource())) 
+				if(codeCount.containsKey(ref.getDataSource()))
 					codeCount.put(ds, codeCount.get(ds) + 1);
 				else codeCount.put(ds, 1);
 			}
 
 			//Get most occuring systemcode
 			DataSource maxCode = null;
-			for(DataSource ds : codeCount.keySet()) 
+			for(DataSource ds : codeCount.keySet())
 			{
-				if(maxCode == null || codeCount.get(ds) > codeCount.get(maxCode)) 
+				if(maxCode == null || codeCount.get(ds) > codeCount.get(maxCode))
 				{
 					maxCode = ds;
 				}
@@ -141,7 +141,7 @@ public class EUGeneExporter implements PathwayExporter
 			if(system == null) { //May occur when no identifiers available
 				system = BioDataSource.ENSEMBL;
 			}
-			
+
 			if(codeCount.keySet().size() > 1) {
 				log.warn("\tThis pathway contains genes with different SystemCodes; '" +
 						maxCode + "' has the highest occurence and is therefore chosen as PATHWAY_MARKER" +
@@ -152,11 +152,11 @@ public class EUGeneExporter implements PathwayExporter
 		}
 
 		String getEUGeneSystem() {
-			if(systemMappings.containsKey(system)) 
+			if(systemMappings.containsKey(system))
 			{
 				return systemMappings.get(system);
-			} 
-			else 
+			}
+			else
 			{
 				return system.getFullName();
 			}
@@ -167,14 +167,14 @@ public class EUGeneExporter implements PathwayExporter
 	private static final String[] EU_GENE_SYSTEMS = new String[]
 	                                           {
 		"ENSEMBL_GENE_ID",
-		"UNIPROT", 
-		"ENTREZ", 
-		"UNIGENE", 
-		"AFFYMETRIX", 
+		"UNIPROT",
+		"ENTREZ",
+		"UNIGENE",
+		"AFFYMETRIX",
 		"AGILENT",
 		"HGNC",
-		"PDB_ID", 
-		"SGD_ID" 
+		"PDB_ID",
+		"SGD_ID"
 	                                           };
 	private static final DataSource[] GENMAPP_SYSTEMS = new DataSource[]
 	                                            {
@@ -188,11 +188,11 @@ public class EUGeneExporter implements PathwayExporter
 		BioDataSource.PDB,
 		BioDataSource.SGD
 	                                            };
-	
+
 	static
 	{
 		systemMappings = new HashMap<DataSource, String>();
-		for(int i = 0; i < EU_GENE_SYSTEMS.length; i++) 
+		for(int i = 0; i < EU_GENE_SYSTEMS.length; i++)
 		{
 			systemMappings.put(GENMAPP_SYSTEMS[i], EU_GENE_SYSTEMS[i]);
 		}

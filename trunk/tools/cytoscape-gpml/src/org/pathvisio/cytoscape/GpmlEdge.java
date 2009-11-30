@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.cytoscape;
@@ -37,21 +37,21 @@ import org.pathvisio.view.LinAlg.Point;
 public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 	GpmlNode source;
 	GpmlNode target;
-	
+
 	/**
 	 * Constructor for this class. Creates a new GpmlEdge, based on the given
 	 * edge and PathwayElement
 	 * @param parent
 	 * @param pwElm
 	 */
-	public GpmlEdge(CyEdge parent, PathwayElement pwElm, GpmlNode source, 
+	public GpmlEdge(CyEdge parent, PathwayElement pwElm, GpmlNode source,
 			GpmlNode target, AttributeMapper attributeMapper) {
 		super(parent, pwElm);
 		this.source = source;
 		this.target = target;
 		updateFromGpml(attributeMapper);
 	}
-		
+
 	/**
 	 * Creates a new GpmlEdge based on the given node view. A GPML representation
 	 * (PathwayElement of type Line) will automatically created based on the edge view.
@@ -64,12 +64,12 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 
 		pwElmOrig.setStartGraphRef(source.getGraphIdContainer().getGraphId());
 		pwElmOrig.setEndGraphRef(target.getGraphIdContainer().getGraphId());
-	
+
 		pwElmOrig.setMStartX(psource.getMCenterX());
 		pwElmOrig.setMStartY(psource.getMCenterY());
 		pwElmOrig.setMEndX(ptarget.getMCenterX());
 		pwElmOrig.setMEndY(ptarget.getMCenterY());
-		
+
 		setPwElmCy(pwElmOrig.copy());
 		//TODO: map line style and arrowheads
 	}
@@ -84,16 +84,16 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 
 	public void updateFromCytoscape(GraphView view, AttributeMapper attributeMapper) {
 		super.updateFromCytoscape(view, attributeMapper);
-		
+
 		PathwayElement psource = source.getPathwayElement(view, attributeMapper);
 		PathwayElement ptarget = target.getPathwayElement(view, attributeMapper);
 
 		getPwElmCy().setStartGraphRef(source.getGraphIdContainer().getGraphId());
 		getPwElmCy().setEndGraphRef(target.getGraphIdContainer().getGraphId());
-				
+
 		fixCoordinates(getPwElmCy(), psource, ptarget);
 	}
-	
+
 	/**
 	 * Find the border to connect to. Returns a point containing
 	 * the relative coordinates.
@@ -106,7 +106,7 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 		/*    da < |a| < da + pi/2
 		       \   /
 		        \ /
-|a| > da + pi/2	 \  |a| < da 
+|a| > da + pi/2	 \  |a| < da
 		        / \
 		       /   \
 		         da < |a| < da + pi/2
@@ -127,11 +127,11 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 
 		return bp;
 	}
-	
+
 	private Point[] findBorders(PathwayElement start, PathwayElement end) {
 		Point psource = new Point(start.getMCenterX(), start.getMCenterY());
 		Point ptarget = new Point(end.getMCenterX(), end.getMCenterY());
-		
+
 		double angle = LinAlg.angle(ptarget.subtract(psource), new Point(1, 0));
 		double astart = angle;
 		double aend = angle;
@@ -147,7 +147,7 @@ public class GpmlEdge extends GpmlNetworkElement<CyEdge> {
 		Point pend = findBorder(end, aend);
 		return new Point[] { pstart, pend };
 	}
-	
+
 	private void fixCoordinates(PathwayElement toSet, PathwayElement source, PathwayElement target) {
 		Point[] borders = findBorders(source, target);
 		Point sp = borders[0];

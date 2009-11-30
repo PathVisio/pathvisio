@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.wikipathways.server;
@@ -35,21 +35,21 @@ public class CacheManager {
 	static final String PROPS_FILE = "cache.props";
 	static final String PROP_RETENTION_TIME = "retention-time";
 	static final String PROP_CACHE_DIR = "base-directory";
-	
+
 	private PathwayCache pathwayCache;
 	private GdbProvider gdbs;
 	private AtlasCache atlasCache;
 	private WikiPathwaysClient client;
 	private ImageCache imageCache;
 	private File propsPath;
-	
+
 	private Properties props;
 	private long retention_time; //in milliseconds
-	
+
 	public CacheManager(File propsPath, WikiPathwaysClient client) {
 		this.client = client;
 		this.propsPath = propsPath;
-		
+
 		props = new Properties();
 
 		//Read properties
@@ -67,7 +67,7 @@ public class CacheManager {
 			retention_time = retention_time * 1000L * 60L * 60L * 24L; //days to milliseconds
 		}
 	}
-	
+
 	public CacheManager(ServletContext servlet, WikiPathwaysClient client) {
 		this(new File(servlet.getRealPath("")), client);
 	}
@@ -79,11 +79,11 @@ public class CacheManager {
 	public File getCacheDir() {
 		return new File(props.getProperty(PROP_CACHE_DIR, propsPath.toString()));
 	}
-	
+
 	public long getRetentionTime() {
 		return retention_time;
 	}
-	
+
 	public ImageCache getImageCache() throws ServiceException, IOException, IDMapperException {
 		if(imageCache == null) {
 			imageCache = new ImageCache(
@@ -96,7 +96,7 @@ public class CacheManager {
 		}
 		return imageCache;
 	}
-	
+
 	public AtlasCache getAtlasCache() throws ServiceException, IOException, IDMapperException {
 		if(atlasCache == null) {
 			atlasCache = new AtlasCache(
@@ -108,7 +108,7 @@ public class CacheManager {
 		}
 		return atlasCache;
 	}
-	
+
 	public PathwayCache getPathwayCache() throws ServiceException {
 		if(pathwayCache == null) {
 			pathwayCache = new PathwayCache(
@@ -118,16 +118,16 @@ public class CacheManager {
 		}
 		return pathwayCache;
 	}
-	
+
 	public GdbProvider getGdbProvider() throws IOException, IDMapperException {
 		if(gdbs == null) {
 			gdbs = GdbProvider.fromConfigFile(
 					new File(propsPath, "gdb.config")
 			);
 		}
-		return gdbs;	
+		return gdbs;
 	}
-	
+
 	/**
 	 * Check if this cache file is out of date, and delete it if so.
 	 * @return true if the cache file is still valid, false if not

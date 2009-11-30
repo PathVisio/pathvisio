@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.view;
@@ -44,29 +44,29 @@ import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
- 
+
 /**
  * This class represents a Line on the pathway, or rather
  * a series of line segments that are joined together.
- *  
+ *
  * It has two VPoints with a Handle. It may have zero or more anchors, each with their own Handle.
  * It has one or more segments, any segment in excess of two will get a Segment Handle.
- * 
+ *
  * The actual implementation of the path is done by implementations
  * of the {@link ConnectorShape} interface.
  * @see ConnectorShape
  * @see org.pathvisio.model.ConnectorShapeFactory
  */
 public class Line extends Graphics implements Adjustable
-{	
+{
 	private List<VPoint> points;
-	
+
 	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();
-	
+
 	List<Handle> segmentHandles = new ArrayList<Handle>();
 
 	ConnectorShape shape;
-	
+
 	/**
 	 * Constructor for this class
 	 * @param canvas - the VPathway this line will be part of
@@ -74,7 +74,7 @@ public class Line extends Graphics implements Adjustable
 	public Line(VPathway canvas, PathwayElement o)
 	{
 		super(canvas, o);
-		
+
 		points = new ArrayList<VPoint>();
 		addPoint(o.getMStart());
 		addPoint(o.getMEnd());
@@ -83,21 +83,21 @@ public class Line extends Graphics implements Adjustable
 //		updateSegmentHandles();
 		updateCitationPosition();
 	}
-	
+
 	private void addPoint(MPoint mp) {
 		VPoint vp = canvas.newPoint(mp, this);
 		points.add(vp);
 		setHandleLocation(vp);
 	}
-	
+
 	private MLine getMLine() {
 		return (MLine)gdata;
 	}
-	
+
 	public void createHandles()
 	{
 		createSegmentHandles();
-		
+
 		for (VPoint vp : points)
 		{
 			vp.handle = new Handle(Handle.Freedom.FREE, this, vp);
@@ -105,19 +105,19 @@ public class Line extends Graphics implements Adjustable
 			setHandleLocation(vp);
 		}
 	}
-	
+
 	/**
 	 * Create new segment handles
 	 */
-	private void createSegmentHandles() 
+	private void createSegmentHandles()
 	{
 		ConnectorShape cs = getConnectorShape();
 		WayPoint[] waypoints = cs.getWayPoints();
-		
+
 		//Destroy the old handles, just to be sure
 		for(Handle h : segmentHandles) h.destroy();
 		segmentHandles.clear();
-			
+
 		//Create the new handles
 		for(int i = 0; i < waypoints.length; i++) {
 			Handle h = new Handle(Handle.Freedom.FREE, this, this);
@@ -134,16 +134,16 @@ public class Line extends Graphics implements Adjustable
 
 	/**
 	 * Update the segment handles, if the ConnectorShape has changed so much that
-	 * the number of segment handles doesn't match the number of segments anymore, 
+	 * the number of segment handles doesn't match the number of segments anymore,
 	 * number of segments, they will be destroyed and recreated.
 	 */
 	private void updateSegmentHandles() {
 		ConnectorShape cs = getConnectorShape();
 		WayPoint[] waypoints = cs.getWayPoints();
-		
+
 		//Destroy and recreate the handles if the number
 		//doesn't match the waypoints number
-		if(waypoints.length != segmentHandles.size()) 
+		if(waypoints.length != segmentHandles.size())
 		{
 			// clear and create from scratch
 			createSegmentHandles();
@@ -185,38 +185,38 @@ public class Line extends Graphics implements Adjustable
 	private List<Handle> getSegmentHandles() {
 		return segmentHandles;
 	}
-	
+
 	private ConnectorShape getConnectorShape() {
 		return getMLine().getConnectorShape();
 	}
-	
+
 	/**
 	 * Get the connector shape translated to view coordinates
 	 * allowing for Line Ending
-	 * This allows the line to be drawn only upto 
+	 * This allows the line to be drawn only upto
 	 * the point where the line ending starts
 	 */
 	private Shape getVConnectorAdjusted() {
-		
+
 		//call to getLineEndingWidth
 		double startGap = getGap(gdata.getStartLineType());
 		double endGap = getGap(gdata.getEndLineType());
-		
-		//From the segments 
+
+		//From the segments
 		Shape s = getConnectorShape().calculateAdjustedShape(startGap, endGap);
-		
+
 		AffineTransform t = new AffineTransform();
 		double scale = vFromM(1);
 		t.setToScale(scale, scale);
 		return t.createTransformedShape(s);
 	}
-	
+
 	/**
 	 * returns the gap that goes with the specified LineType
 	 * If no line ending, the method returns 0
 	 */
 	private double getGap(LineType type) {
-	    
+
 		double gap = 0;
 		if (type == null)
 		{
@@ -227,24 +227,24 @@ public class Line extends Graphics implements Adjustable
 			gap = 0;
 		}
 		else
-		{			
+		{
 			gap = ShapeRegistry.getArrow (type.getName()).getGap();
 		}
 		return gap;
-		
+
 	}
-	
-	
+
+
 	public void doDraw(Graphics2D g) {
 		Color c;
-		
+
 		if(isSelected())
 		{
 			c = selectColor;
 		}
 		else
 		{
-			c = gdata.getColor(); 
+			c = gdata.getColor();
 		}
 		g.setColor(c);
 
@@ -253,13 +253,13 @@ public class Line extends Graphics implements Adjustable
 			g.setStroke(new BasicStroke());
 		}
 		else if (ls == LineStyle.DASHED)
-		{ 
+		{
 			g.setStroke	(new BasicStroke (
-				  1, 
+				  1,
 				  BasicStroke.CAP_SQUARE,
-				  BasicStroke.JOIN_MITER, 
+				  BasicStroke.JOIN_MITER,
 				  10, new float[] {4, 4}, 0));
-		}			
+		}
 
 		Shape l = getVConnectorAdjusted();
 
@@ -279,8 +279,8 @@ public class Line extends Graphics implements Adjustable
 			if (he != null) g.draw(he.getShape());
 			if (hs != null) g.draw(hs.getShape());
 		}
-		
-		// highlight unlinked points, after pressing Ctrl+L 
+
+		// highlight unlinked points, after pressing Ctrl+L
 		for (VPoint vp : points)
 		{
 			if(vp.isHighlighted()) {
@@ -288,8 +288,8 @@ public class Line extends Graphics implements Adjustable
 				g.setColor(PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_HIGHLIGHTED));
 				g.fill(new Rectangle2D.Double(
 						vp.getVX() - size / 2,
-						vp.getVY() - size / 2, 
-						size, 
+						vp.getVY() - size / 2,
+						size,
 						size)
 				);
 			}
@@ -302,14 +302,14 @@ public class Line extends Graphics implements Adjustable
 		super.unhighlight();
 		for (VPoint vp : points) vp.unhighlight();
 	}
-	
+
 	/**
 	 * Be careful to prevent infinite recursion when
 	 * Line.getVOutline triggers recalculation of a connector.
-	 * 
+	 *
 	 * For now, only check crossing of geneproducts and shapes.
 	 */
-	public Shape mayCross(Point2D point) 
+	public Shape mayCross(Point2D point)
 	{
 		Shape shape = null;
 		for (VPathwayElement o : canvas.getDrawingObjects())
@@ -336,16 +336,16 @@ public class Line extends Graphics implements Adjustable
 	protected Shape calculateVOutline() {
 		return new BasicStroke(5).createStrokedShape(getVShape(true));
 	}
-	
+
 	/**
 	 * Returns the properly sized and rotated arrowheads
 	 * @return An array with two arrowheads, for the start and end respectively
 	 */
 	protected ArrowShape[] getVHeads() {
 		Segment[] segments = getConnectorShape().getSegments();
-		
+
 		ArrowShape he = getVHead(
-				segments[segments.length - 1].getMStart(), 
+				segments[segments.length - 1].getMStart(),
 				segments[segments.length - 1].getMEnd(),
 				gdata.getEndLineType()
 		);
@@ -356,8 +356,8 @@ public class Line extends Graphics implements Adjustable
 		);
 		return new ArrowShape[] { hs, he };
 	}
-	
-	
+
+
 	/**
 	 * Returns the properly sized and rotated arrowheads which have been adjusted
 	 * for Line ending thickness
@@ -365,7 +365,7 @@ public class Line extends Graphics implements Adjustable
 	 */
 	protected ArrowShape[] getVHeadsAdjusted() {
 		Segment[] segments = getConnectorShape().getSegments();
-		
+
 		//last segment in the Connector Shape
 		double lineEndingWidth = getGap(gdata.getEndLineType());
 		Point2D adjustedSegmentEnd = segments[segments.length - 1].calculateNewEndPoint(lineEndingWidth);
@@ -374,7 +374,7 @@ public class Line extends Graphics implements Adjustable
 				adjustedSegmentEnd,
 				gdata.getEndLineType()
 		);
-		
+
 		//first segment in the connector shape
 		double lineStartingWidth = getGap(gdata.getStartLineType());
 		Point2D adjustedSegmentStart = segments[0].calculateNewStartPoint(lineStartingWidth);
@@ -385,14 +385,14 @@ public class Line extends Graphics implements Adjustable
 		);
 		return new ArrowShape[] { hs, he };
 	}
-	
+
 	protected Shape getVShape(boolean rotate) {
 		Shape l = getVConnectorAdjusted();
 
 		ArrowShape[] heads = getVHeadsAdjusted();
 		ArrowShape hs = heads[0];
 		ArrowShape he = heads[1];
-		
+
 		Area total = new Area(new BasicStroke(1).createStrokedShape(l));
 		if(hs != null) {
 			total.add(new Area(hs.getShape()));
@@ -402,7 +402,7 @@ public class Line extends Graphics implements Adjustable
 		}
 		return total;
 	}
-	
+
 	private void setAnchors() {
 		//Check for new anchors
 		List<MAnchor> manchors = gdata.getMAnchors();
@@ -418,30 +418,30 @@ public class Line extends Graphics implements Adjustable
 			}
 		}
 	}
-	
+
 	protected Collection<VAnchor> getVAnchors() {
 		return anchors.values();
 	}
-	
+
 	public void markDirty() {
 		super.markDirty();
 		for(VAnchor va : anchors.values()) {
 			va.markDirty();
 		}
 	}
-	
+
 	void removeVAnchor(VAnchor va) {
 		anchors.remove(va.getMAnchor());
 		gdata.removeMAnchor(va.getMAnchor());
 	}
-	
+
 	private void updateAnchorPositions() {
 		for(VAnchor va : anchors.values()) {
 			va.updatePosition();
 		}
 	}
-	
-	private void updateCitationPosition() 
+
+	private void updateCitationPosition()
 	{
 		if (getCitation() == null) return;
 		Point2D p = getConnectorShape().fromLineCoordinate(0.7);
@@ -449,8 +449,8 @@ public class Line extends Graphics implements Adjustable
 		Point2D r = gdata.toRelativeCoordinate(p);
 		getCitation().setRPosition(r);
 	}
-	
-	protected void swapPoint(VPoint pOld, VPoint pNew) 
+
+	protected void swapPoint(VPoint pOld, VPoint pNew)
 	{
 		int i = points.indexOf(pOld);
 		if(i > -1) {
@@ -458,7 +458,7 @@ public class Line extends Graphics implements Adjustable
 			points.add(i, pNew);
 		}
 	}
-	
+
 	protected void drawHead(Graphics2D g, ArrowShape head, Color c)
 	{
 		if(head != null)
@@ -468,13 +468,13 @@ public class Line extends Graphics implements Adjustable
 			{
 			case OPEN:
 				g.setPaint (Color.WHITE);
-				g.fill (head.getShape());				
+				g.fill (head.getShape());
 				g.setColor (c);
 				g.draw (head.getShape());
 				break;
 			case CLOSED:
 				g.setPaint (c);
-				g.fill (head.getShape());				
+				g.fill (head.getShape());
 				break;
 			case WIRE:
 				g.setColor (c);
@@ -510,27 +510,27 @@ public class Line extends Graphics implements Adjustable
 			h = null;
 		}
 		else
-		{			
+		{
 			h = ShapeRegistry.getArrow (type.getName());
 		}
-		
+
 		if(h != null)
 		{
 			AffineTransform f = new AffineTransform();
 			double scaleFactor = vFromM (1.0);
 			f.rotate(Math.atan2 (ye - ys, xe - xs), xe, ye);
 			f.translate (xe, ye);
-			f.scale (scaleFactor, scaleFactor);		   
+			f.scale (scaleFactor, scaleFactor);
 			Shape sh = f.createTransformedShape(h.getShape());
 			h = new ArrowShape (sh, h.getFillType());
 		}
 		return h;
 	}
-	
+
 	/**
 	 * Sets the line start and end to the coordinates specified
 	 * <DL><B>Parameters</B>
-	 * <DD>Double x1	- new startx 
+	 * <DD>Double x1	- new startx
 	 * <DD>Double y1	- new starty
 	 * <DD>Double x2	- new endx
 	 * <DD>Double y2	- new endy
@@ -540,51 +540,51 @@ public class Line extends Graphics implements Adjustable
 		getStart().setVLocation(vx1, vy1);
 		getEnd().setVLocation(vx2, vy2);
 	}
-		
+
 	protected void setVScaleRectangle(Rectangle2D r) {
 		setVLine(r.getX(), r.getY(), r.getX() + r.getWidth(), r.getY() + r.getHeight());
 	}
-		
+
 	public List<VPoint> getPoints() { return points; }
-	
+
 	public VPoint getStart() {
 		return points.get(0);
 	}
-	
+
 	public VPoint getEnd() {
 		return points.get(points.size() - 1);
 	}
-	
+
 	public double getVCenterX()
 	{
 		return vFromM(gdata.getMCenterX());
 	}
-	
+
 	public double getVCenterY()
 	{
 		return vFromM(gdata.getMCenterY());
 	}
-	
+
 	public double getVLeft()
 	{
 		return vFromM(gdata.getMLeft());
 	}
-	
+
 	public double getVWidth()
 	{
 		return vFromM(gdata.getMWidth());
 	}
-	
+
 	public double getVHeight()
 	{
 		return vFromM(gdata.getMHeight());
-	}	
-	
+	}
+
 	public double getVTop()
 	{
 		return vFromM(gdata.getMTop());
 	}
-	
+
 	protected void vMoveWayPointsBy(double vdx, double vdy) {
 		List<MPoint> mps = gdata.getMPoints();
 		for(int i = 1; i < mps.size() - 1; i++) {
@@ -592,7 +592,7 @@ public class Line extends Graphics implements Adjustable
 		}
 	}
 
-    protected void vRecalculatePoints(double vdx, double vdy) 
+    protected void vRecalculatePoints(double vdx, double vdy)
     {
         for(VPoint p : points) {
             p.setVLocation(p.getVX() + canvas.mFromV(vdx), p.getVY() + canvas.mFromV(vdy));
@@ -603,7 +603,7 @@ public class Line extends Graphics implements Adjustable
 	{
 		// move MPoints directly, not every MPoint is represented
 		// by a VPoint but we want to move them all.
-		for(MPoint p : gdata.getMPoints()) 
+		for(MPoint p : gdata.getMPoints())
 		{
 			p.moveBy(canvas.mFromV(vdx), canvas.mFromV(vdy));
 		}
@@ -617,14 +617,14 @@ public class Line extends Graphics implements Adjustable
 			}
 		}
 	}
-	
+
 	private void setHandleLocation(VPoint vp)
 	{
 		if (vp.handle == null) return;
 		MPoint mp = vp.getMPoint();
 		vp.handle.setMLocation(mp.getX(), mp.getY());
 	}
-	
+
 	public void recalculateConnector() {
 		getConnectorShape().recalculateShape(getMLine());
 		updateAnchorPositions();
@@ -632,10 +632,10 @@ public class Line extends Graphics implements Adjustable
 		for (VPoint vp : points) setHandleLocation(vp);
 		markDirty();
 	}
-	
+
 	public void gmmlObjectModified(PathwayEvent e) {
 		getConnectorShape().recalculateShape(getMLine());
-		
+
 		WayPoint[] wps = getConnectorShape().getWayPoints();
 		List<MPoint> mps = gdata.getMPoints();
 		if(wps.length == mps.size() - 2 && getConnectorShape().hasValidWaypoints(getMLine())) {
@@ -655,10 +655,10 @@ public class Line extends Graphics implements Adjustable
 		updateAnchorPositions();
 		updateCitationPosition();
 	}
-	
-	protected void destroyHandles() { 
+
+	protected void destroyHandles() {
 		//Point handles will be destroyed by VPoints
-		
+
 		for(Handle h : getSegmentHandles()) {
 			h.destroy();
 		}
@@ -667,10 +667,10 @@ public class Line extends Graphics implements Adjustable
 				p.handle.destroy();
 		}
 	}
-	
+
 	protected void destroy() {
 		super.destroy();
-		
+
 		for(MPoint p : gdata.getMPoints()) {
 			canvas.pointsMtoV.remove(p);
 		}
@@ -679,28 +679,28 @@ public class Line extends Graphics implements Adjustable
 			a.destroy();
 		}
 	}
-	
+
 	/**
 	 * Returns the x-coordinate of the start point of this line, adjusted to the
 	 * current zoom factor
 	 * @return
 	 */
 	protected double getVStartX() { return (int)(vFromM(gdata.getMStartX())); }
-	
+
 	/**
 	 * Returns the y-coordinate of the start point of this line, adjusted to the
 	 * current zoom factor
 	 * @return
 	 */
 	protected double getVStartY() { return (int)(vFromM(gdata.getMStartY())); }
-	
+
 	/**
 	 * Returns the x-coordinate of the end point of this line, adjusted to the
 	 * current zoom factor
 	 * @return
 	 */
 	protected double getVEndX() { return (int)(vFromM(gdata.getMEndX())); }
-	
+
 	/**
 	 * Returns the y-coordinate of the end point of this line, adjusted to the
 	 * current zoom factor
@@ -717,7 +717,7 @@ public class Line extends Graphics implements Adjustable
 		Point2D m = getConnectorShape().fromLineCoordinate(l);
 		return new Point2D.Double(vFromM(m.getX()), vFromM(m.getY()));
 	}
-	
+
 	/**
 	 * Translate a view coordinate (2-dimensional) to
 	 * a line coordinate (1-dimensional)
@@ -726,7 +726,7 @@ public class Line extends Graphics implements Adjustable
 		Point2D m = new Point2D.Double(mFromV(v.getX()), mFromV(v.getY()));
 		return getConnectorShape().toLineCoordinate(m);
 	}
-	
+
 	/**
 	 * Get the segment on which the given line coordinate
 	 * lies

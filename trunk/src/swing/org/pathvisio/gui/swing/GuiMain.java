@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.gui.swing;
@@ -74,18 +74,18 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	private GuiMain()
 	{
 	}
-	
+
 	private MainPanelStandalone mainPanel;
-	
+
 	private PvDesktop pvDesktop;
 	private SwingEngine swingEngine;
-	
+
 	private static void initLog(Engine engine)
 	{
 		String logDest = PreferenceManager.getCurrent().get(GlobalPreference.FILE_LOG);
-		Logger.log.setDest (logDest);		
+		Logger.log.setDest (logDest);
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
-		Logger.log.info("Application name: " + engine.getApplicationName() + 
+		Logger.log.info("Application name: " + engine.getApplicationName() +
 				" revision: " + Revision.REVISION);
 		Logger.log.info("os.name: " + System.getProperty("os.name") +
 					" os.version: " + System.getProperty("os.version") +
@@ -95,24 +95,24 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 
 	// plugin files specified at command line
 	private List<String> pluginLocations = new ArrayList<String>();
-	
+
 	// pathway specified at command line
 	private URL pathwayUrl = null;
 	private File pathwayFile = null;
 	private String pgexFile = null;
 
 	public void parseArgs(String [] args)
-	{	
-		for(int i = 0; i < args.length; i++) 
+	{
+		for(int i = 0; i < args.length; i++)
 		{
-			if("-p".equals(args[i])) 
+			if("-p".equals(args[i]))
 			{
 				i++;
-				if (i < args.length) 
+				if (i < args.length)
 					pluginLocations.add(args[i]);
 				else
 				{
-					System.out.println ("Missing plugin location after -p option"); 
+					System.out.println ("Missing plugin location after -p option");
 					printHelp();
 					System.exit(-1);
 				}
@@ -120,24 +120,24 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			else if ("-d".equals(args[i]))
 			{
 				i++;
-				if (i < args.length) 
+				if (i < args.length)
 				{
 					pgexFile = args[i];
 					if (!new File(pgexFile).exists())
 					{
-						System.out.println ("Data file '" + pgexFile + "' not found"); 
+						System.out.println ("Data file '" + pgexFile + "' not found");
 						printHelp();
 						System.exit(-1);
 					}
 				}
 				else
 				{
-					System.out.println ("Missing data file location after -d option"); 
+					System.out.println ("Missing data file location after -d option");
 					printHelp();
 					System.exit(-1);
 				}
 			}
-			else if ("-o".equals(args[i])) 
+			else if ("-o".equals(args[i]))
 			{
 				// ignore, -o option is deprecated
 			}
@@ -146,25 +146,25 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 				String pws = args[i];
 				File f = new File(pws);
 				//Assume the argument is a file
-				if(f.exists()) 
+				if(f.exists())
 				{
 					pathwayFile = f;
-				} 
+				}
 				else //If it doesn't exist, assume it's an url
 				{
 					try {
 						pathwayUrl = new URL(pws);
-					} catch(MalformedURLException e) 
+					} catch(MalformedURLException e)
 					{
-						System.out.println ("Pathway '" + args[i] + "' not a valid file or URL"); 
+						System.out.println ("Pathway '" + args[i] + "' not a valid file or URL");
 						printHelp();
 						System.exit(-1);
-					}							
+					}
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Act upon the command line arguments
 	 */
@@ -174,8 +174,8 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		if(pluginLocations.size() > 0) {
 			pvDesktop.initPlugins(pluginLocations);
 		}
-		
-		
+
+
 		if (pathwayFile != null)
 		{
 			swingEngine.openPathway (pathwayFile);
@@ -183,12 +183,12 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		else if(pathwayUrl != null) {
 			swingEngine.openPathway(pathwayUrl);
 		}
-	
+
 		if (pgexFile != null)
 		{
 			try
 			{
-				
+
 				pvDesktop.getGexManager().setCurrentGex(pgexFile, false);
 				pvDesktop.loadGexCache();
 				Logger.log.info ("Loaded pgex " + pgexFile);
@@ -199,11 +199,11 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			}
 		}
 	}
-	
+
 	private String shortenString(String s) {
 		return shortenString(s, 20);
 	}
-	
+
 	private String shortenString(String s, int maxLength) {
 		if(s.length() > maxLength) {
 			String prefix = "...";
@@ -212,7 +212,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		}
 		return s;
 	}
-	
+
 	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel) {
 		PreferenceManager prf = PreferenceManager.getCurrent();
 		String gdb = prf.get(GlobalPreference.DB_CONNECTSTRING_GDB);
@@ -222,17 +222,17 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		gdbLabel.setToolTipText(gdb != null ? gdb : "");
 		mdbLabel.setToolTipText(mdb != null ? mdb : "");
 	}
-	
+
 	public void gdbEvent(GdbEvent e) {
 		if(e.getType() == GdbEvent.Type.ADDED) {
 			setGdbStatus(gdbLabel, mdbLabel);
 		}
 	}
-	
-	public void gexManagerEvent(GexManagerEvent e) 
+
+	public void gexManagerEvent(GexManagerEvent e)
 	{
 		if(e.getType() == GexManagerEvent.CONNECTION_OPENED ||
-				e.getType() == GexManagerEvent.CONNECTION_CLOSED) 
+				e.getType() == GexManagerEvent.CONNECTION_CLOSED)
 		{
 			SimpleGex gex = pvDesktop.getGexManager().getCurrentGex();
 			if(gex != null && gex.isConnected()) {
@@ -253,19 +253,19 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	 * Creates and shows the GUI. Creates and shows the Frame, sets the size, title and menubar.
 	 * @param mainPanel The main panel to show in the frame
 	 */
-	protected JFrame createAndShowGUI(final MainPanelStandalone mainPanel, final SwingEngine swingEngine) 
+	protected JFrame createAndShowGUI(final MainPanelStandalone mainPanel, final SwingEngine swingEngine)
 	{
 		//Create and set up the window.
 		final JFrame frame = new JFrame(Globals.APPLICATION_NAME);
 		// dispose on close, otherwise windowClosed event is not called.
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		
+
 		frame.add(mainPanel, BorderLayout.CENTER);
-		
+
 		JPanel statusBar = new JPanel();
 		statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
 		frame.add(statusBar, BorderLayout.SOUTH);
-		
+
 		gdbLabel = new JLabel();
 		mdbLabel = new JLabel();
 		gexLabel = new JLabel();
@@ -274,23 +274,23 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		statusBar.add(mdbLabel);
 		statusBar.add(gexLabel);
 		setGdbStatus(gdbLabel, mdbLabel);
-		
+
 		swingEngine.getGdbManager().addGdbEventListener(this);
-		
+
 		pvDesktop.getGexManager().addListener(this);
-		
+
 		frame.setJMenuBar(mainPanel.getMenuBar());
 		frame.pack();
 		PreferenceManager preferences = PreferenceManager.getCurrent();
 		frame.setSize(preferences.getInt(GlobalPreference.WIN_W), preferences.getInt(GlobalPreference.WIN_H));
 		frame.setLocation(preferences.getInt(GlobalPreference.WIN_X), preferences.getInt(GlobalPreference.WIN_Y));
-		
-		frame.addWindowListener(new WindowAdapter() 
+
+		frame.addWindowListener(new WindowAdapter()
 		{
 			@Override
 			public void windowClosing(WindowEvent we)
 			{
-				
+
 				PreferenceManager prefs = PreferenceManager.getCurrent();
 				JFrame frame = swingEngine.getFrame();
 				Dimension size = frame.getSize();
@@ -299,34 +299,34 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 				prefs.setInt(GlobalPreference.WIN_H, size.height);
 				prefs.setInt(GlobalPreference.WIN_X, p.x);
 				prefs.setInt(GlobalPreference.WIN_Y, p.y);
-	
+
 				if(swingEngine.canDiscardPathway()) {
 					frame.dispose();
 				}
 			}
-			
+
 			@Override
 			public void windowClosed(WindowEvent we)
 			{
 				GuiMain.this.shutdown(swingEngine);
 			}
 		});
-		
+
 		//Display the window.
 		frame.setVisible(true);
 
 		int spPercent = PreferenceManager.getCurrent().getInt (GlobalPreference.GUI_SIDEPANEL_SIZE);
 		double spSize = (100 - spPercent) / 100.0;
 		mainPanel.getSplitPane().setDividerLocation(spSize);
-		
+
 		return frame;
 	}
 
-	private void shutdown(SwingEngine swingEngine) 
+	private void shutdown(SwingEngine swingEngine)
 	{
 		PreferenceManager prefs = PreferenceManager.getCurrent();
 		prefs.store();
-		
+
 		//explicit clean shutdown of gdb prevents file from being left open
 		if (swingEngine.getGdbManager().isConnected())
 		{
@@ -347,10 +347,10 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		swingEngine.dispose();
 		Logger.log.info ("PathVisio was shut down cleanly");
 	}
-	
+
 	public MainPanel getMainPanel() { return mainPanel; }
-	
-	
+
+
 	static void printHelp() {
 		System.out.println(
 				"pathvisio [options] [pathway file]\n" +
@@ -359,7 +359,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 				"-d: A pgex data file to load\n"
 		);
 	}
-	
+
 	private void init()
 	{
 		PreferenceManager.init();
@@ -389,7 +389,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		});
 		pvDesktop = new PvDesktop (swingEngine);
 		swingEngine.getGdbManager().initPreferred();
-		
+
 		mainPanel = new MainPanelStandalone(pvDesktop);
 		mainPanel.createAndShowGUI();
 
@@ -399,44 +399,44 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		MIMShapes.registerShapes();
 		swingEngine.setFrame(frame);
 		swingEngine.setApplicationPanel(mainPanel);
-		
+
 		// load plugins from the default plugin dir
 		pluginLocations.add("" + new File (GlobalPreference.getApplicationDir(), "plugins"));
-		processOptions();		
+		processOptions();
 	}
-	
+
 	public static void main(String[] args) {
 		final GuiMain gui = new GuiMain();
 		gui.parseArgs (args);
-		
-		javax.swing.SwingUtilities.invokeLater(new Runnable() 
-		{		
-			public void run() 
+
+		javax.swing.SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
 			{
 				gui.init();
 			}
 		});
 	}
-	
-	private void initImporters(Engine engine) 
+
+	private void initImporters(Engine engine)
 	{
 		engine.addPathwayImporter(new MappFormat());
 		engine.addPathwayImporter(new GpmlFormat());
 	}
-	
-	private void initExporters(Engine engine, GdbManager gdbManager) 
+
+	private void initExporters(Engine engine, GdbManager gdbManager)
 	{
 		engine.addPathwayExporter(new MappFormat());
 		engine.addPathwayExporter(new GpmlFormat());
-		
+
 		GexManager gex = pvDesktop.getGexManager();
 		VisualizationManager vis = pvDesktop.getVisualizationManager();
 		engine.addPathwayExporter(new RasterImageWithDataExporter(ImageExporter.TYPE_PNG, gex, vis));
 		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_SVG, gex, vis));
 		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_TIFF, gex, vis));
-		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PDF, gex, vis));	
+		engine.addPathwayExporter(new BatikImageWithDataExporter(ImageExporter.TYPE_PDF, gex, vis));
 		engine.addPathwayExporter(new DataNodeListExporter(gdbManager));
 		engine.addPathwayExporter(new EUGeneExporter());
 	}
-	
+
 }

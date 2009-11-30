@@ -13,7 +13,7 @@ public class SearchResult {
 	float score;
 	Document doc;
 	FieldFilter fieldFilter;
-	
+
 	public SearchResult(Document doc, float score, FieldFilter fieldFilter) {
 		this.doc = doc;
 		this.score = score;
@@ -23,13 +23,13 @@ public class SearchResult {
 	public SearchResult(Document doc, float score) {
 		this(doc, score, null);
 	}
-	
+
 	private Element asXml(org.w3c.dom.Document xmlDoc) {
 		Element result = xmlDoc.createElement(ELM_RESULT);
 		result.setAttribute(ATTR_SCORE, "" + score);
-		
+
 		Set<String> addedFields = new HashSet<String>();
-		
+
 		List<Field> fields = (List<Field>)doc.getFields();
 		for(Field f : fields) {
 			if(fieldFilter != null) {
@@ -46,10 +46,10 @@ public class SearchResult {
 				addedFields.add(fid);
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Adds the search results as xml to the given DOM document.
 	 */
@@ -60,7 +60,7 @@ public class SearchResult {
 		}
 		xmlDoc.appendChild(root);
 	}
-	
+
 	static final String ELM_RESULT = "SearchResult";
 	static final String ELM_ROOT = "Results";
 	static final String ATTR_SCORE = "Score";

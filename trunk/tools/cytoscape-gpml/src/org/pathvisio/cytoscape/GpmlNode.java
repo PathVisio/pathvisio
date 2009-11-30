@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.cytoscape;
@@ -42,7 +42,7 @@ import org.pathvisio.model.PathwayElement;
  */
 public class GpmlNode extends GpmlNetworkElement<CyNode> {
 	Map<GraphView, Annotation> annotations = new HashMap<GraphView, Annotation>();
-	
+
 	/**
 	 * Constructor for this class. Creates a new GpmlNode, based on the given
 	 * node and PathwayElement
@@ -56,7 +56,7 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 			id = Integer.toHexString(parent.getRootGraphIndex());
 		}
 	}
-	
+
 	/**
 	 * Creates a new GpmlNode based on the given node view. A GPML representation
 	 * (PathwayElement of type DataNode) will automatically created based on the node view.
@@ -64,7 +64,7 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 	 */
 	public GpmlNode(NodeView view, AttributeMapper attributeMapper) {
 		super((CyNode)view.getNode(), PathwayElement.createPathwayElement(
-				CyGroupManager.isaGroup((CyNode)view.getNode()) ? 
+				CyGroupManager.isaGroup((CyNode)view.getNode()) ?
 						ObjectType.GROUP : ObjectType.DATANODE));
 		pwElmOrig.setTextLabel(parent.getIdentifier());
 		pwElmOrig.setInitialSize();
@@ -73,7 +73,7 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 		pwElmOrig.setGraphId(id);
 		setPwElmCy(pwElmOrig.copy());
 	}
-	
+
 	/**
 	 * Show this node's annotations on the given view
 	 * @param view
@@ -85,22 +85,22 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 			a.setVisible(visible);
 		}
 	}
-	
+
 	public boolean isAnnotation(GraphView view) {
 		return annotations.containsKey(view);
 	}
-	
+
 	public void addAnnotation(GraphView view) {
 		if(annotations.containsKey(view)) return; //Annotation already added
-		
+
 		Logger.log.trace("Adding annotation for " + this);
-		
+
 		NodeView nv = view.getNodeView(parent);
 		DGraphView dview = (DGraphView) view;
 		DingCanvas aLayer = dview.getCanvas(DGraphView.Canvas.FOREGROUND_CANVAS);
-		
+
 		Annotation a = null;
-		
+
 		switch(pwElmOrig.getObjectType()) {
 		case SHAPE:
 			a = new Shape(pwElmOrig, dview);
@@ -128,12 +128,12 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 			annotations.put(view, a);
 		}
 	}
-	
+
 	public void updateFromGpml(AttributeMapper attributeMapper, GraphView view) {
 		super.updateFromGpml(attributeMapper, view);
 		resetPosition(view);
 	}
-	
+
 	protected void resetPosition(GraphView view) {
 		NodeView nv = view.getNodeView(parent);
 		if(nv == null) {
@@ -143,7 +143,7 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 		nv.setXPosition(GpmlPlugin.mToV(pwElmOrig.getMCenterX()), false);
 		nv.setYPosition(GpmlPlugin.mToV(pwElmOrig.getMCenterY()), false);
 	}
-	
+
 	protected void savePosition(GraphView view) {
 		NodeView nv = (NodeView)view.getNodeView(parent);
 		if(nv != null) { //View could be null, in case of hidden node
@@ -159,7 +159,7 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 	public String getParentIdentifier() {
 		return getParent().getIdentifier();
 	}
-	
+
 	public GraphIdContainer getGraphIdContainer() {
 		return getPathwayElement();
 	}

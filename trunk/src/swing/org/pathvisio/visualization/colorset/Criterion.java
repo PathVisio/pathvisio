@@ -2,16 +2,16 @@
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
 //
-// Licensed under the Apache License, Version 2.0 (the "License"); 
-// you may not use this file except in compliance with the License. 
-// You may obtain a copy of the License at 
-// 
-// http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software 
-// distributed under the License is distributed on an "AS IS" BASIS, 
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
-// See the License for the specific language governing permissions and 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
 // limitations under the License.
 //
 package org.pathvisio.visualization.colorset;
@@ -26,15 +26,15 @@ import java.util.Set;
 import org.pathvisio.debug.Logger;
 
 /**
- * A criterion is a simple boolean expression that can 
+ * A criterion is a simple boolean expression that can
  * be applied to a row in an expression dataset, and is used
  * for example in overrepresentation analysis to divide the data in two sets
- * (meets the criterion yes/no), or in color rules to decide whether a color 
+ * (meets the criterion yes/no), or in color rules to decide whether a color
  * applies or not.
- * 
- * This class handles tokenizing, parsing and evaluating 
+ *
+ * This class handles tokenizing, parsing and evaluating
  */
-public class Criterion 
+public class Criterion
 {
 	/**
 	 * Exception thrown e.g. when there is a syntax error in the criterion
@@ -42,36 +42,36 @@ public class Criterion
 	public static class CriterionException extends Throwable
 	{
 		CriterionException (String msg) { super (msg); }
-		
+
 	}
-	
+
 	/** Some of the operators that can be used in a Criterion */
 	public static final String[] TOKENS = {"AND", "OR", "=", "<", ">", "<=", ">=", "<>"};
-	/* Note that we exclude some for brevity: 
-	 * 			"+", "-", "/", "*"  
+	/* Note that we exclude some for brevity:
+	 * 			"+", "-", "/", "*"
 	 */
-	
+
 	private Map<String, Object> symTab = new HashMap<String, Object>();
 
 	private String expression = "";
 	private Token parsed = null;
-		
+
 	/**
 	 * Get the current expression, an empty string by default.
 	 */
-	public String getExpression() 
-	{  
-		return expression; 
+	public String getExpression()
+	{
+		return expression;
 	}
 
 	/**
 	 * set and expression and available symbols.
 	 * The symbols do not need to be mapped to values at this point.
 	 * The expression will be parsed and checked for syntax errors
-	 * 
+	 *
 	 * Returns an error String, or null if there was no error.
 	 */
-	public String setExpression(String expression, List<String> symbols) 
+	public String setExpression(String expression, List<String> symbols)
 	{
 		if (expression == null) throw new NullPointerException();
 		this.expression = expression;
@@ -83,12 +83,12 @@ public class Criterion
 			parsed = parse();
 			evaluate();
 			return null;
-		} catch(CriterionException e) { 
+		} catch(CriterionException e) {
 			return e.getMessage();
 		}
 	}
-	
-	/** 
+
+	/**
 	 * Set symbol values.
 	 * <p>
 	 * You have to set all symbol values together. Any previously set
@@ -99,25 +99,25 @@ public class Criterion
 	private void setSampleData(Map<String, Object> data)
 	{
 		symTab.clear();
-		for(String key : data.keySet()) 
+		for(String key : data.keySet())
 		{
 			Object value = data.get(key);
 			symTab.put (key, value);
 		}
 	}
-	
+
 	public boolean evaluate(Map<String, Object> data) throws CriterionException {
 		setSampleData(data);
 		return evaluate();
 	}
-	
+
 	public Object evaluateAsObject(Map<String, Object> data) throws CriterionException
 	{
 		setSampleData(data);
 		Token e = parse();
 		return e.evaluate();
 	}
-	
+
 	//Boolean expression parser by Martijn
 	String input;
 	int charNr;
@@ -126,7 +126,7 @@ public class Criterion
 		if (parsed == null) throw new IllegalStateException("must call parse before evaluate");
 		Object value = parsed.evaluate();
 		if (value instanceof Boolean) return (Boolean)value;
-		else 		
+		else
 		{
 			throw new CriterionException ("Expected Boolean expression");
 		}
@@ -146,7 +146,7 @@ public class Criterion
 		}
 		return e;
 	}
-	
+
 	private char eatChar()
 	{
 		if (input.length() == 0)
@@ -189,10 +189,10 @@ public class Criterion
 	{
 		abstract Object call(List<Object> params);
 	}
-	
+
 	// note: token is taken away from input!
 	private Token getToken() throws CriterionException
-	{      
+	{
 		Set<String> functionNames = new HashSet<String>();
 		for (Functions f : Functions.values()) functionNames.add (f.name());
 
@@ -217,7 +217,7 @@ public class Criterion
 		{
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9':
-		case '.': 
+		case '.':
 		{
 			String value = "" + ch;
 			ch = eatChar();
@@ -236,12 +236,12 @@ public class Criterion
 				// most likely caused by typing a single "-"
 				throw new CriterionException ("Invalid number '" + value + "'");
 			}
-		}                            
+		}
 		break;
 		case '<':
 			ch = eatChar();
 			if (ch == '=')
-				token = new Token(TokenType.LE);	
+				token = new Token(TokenType.LE);
 			else if (ch == '>')
 			{
 				token = new Token(TokenType.NE);
@@ -255,20 +255,20 @@ public class Criterion
 		case '>':
 			ch = eatChar();
 			if (ch == '=')
-				token = new Token(TokenType.GE);	
+				token = new Token(TokenType.GE);
 			else
 			{
 				token = new Token(TokenType.GT);
 				putBack (ch);
 			}
 			break;
-		case '=': 
+		case '=':
 			token = new Token(TokenType.EQ);
 			break;
-		case '(': 
+		case '(':
 			token = new Token(TokenType.LPAREN);
 			break;
-		case ')': 
+		case ')':
 			token = new Token(TokenType.RPAREN);
 			break;
 		case '[': {
@@ -279,7 +279,7 @@ public class Criterion
 				value += ch;
 				ch = eatChar();
 			}
-			token = new Token(TokenType.ID, value);                 
+			token = new Token(TokenType.ID, value);
 		} break;
 		case '"': {
 			ch = eatChar();
@@ -289,7 +289,7 @@ public class Criterion
 				value += ch;
 				ch = eatChar();
 			}
-			token = new Token(TokenType.STRING_LITERAL, value);                 
+			token = new Token(TokenType.STRING_LITERAL, value);
 		} break;
 		case '-':
 			token = new Token(TokenType.SUB);
@@ -380,12 +380,12 @@ public class Criterion
 		{
 			getToken();
 			result = boolexpression();
-			t = getToken();			
+			t = getToken();
 			if (t.type != TokenType.RPAREN)
 			{
 				nextToken = null;
 				throw new CriterionException("Number of opening and closing brackets does not match");
-			}			
+			}
 		}
 		else if (t.type == TokenType.FUNC)
 		{
@@ -438,7 +438,7 @@ public class Criterion
 		}
 		return result;
 	}
-	
+
 	/*
 	 eats a numeric expression
 		forms:
@@ -446,13 +446,13 @@ public class Criterion
 		moreboolfactors -> "<=|=|>=|>|<" boolfactor
 					| empty
 	*/
-	
+
 	private Token term() throws CriterionException
 	{
 		Token result;
 		result = factor();
 		Token t = getLookAhead();
-		if (t.type == TokenType.MUL || 
+		if (t.type == TokenType.MUL ||
 			t.type == TokenType.DIV)
 		{
 			getToken();
@@ -462,13 +462,13 @@ public class Criterion
 		}
 		return result;
 	}
-	
+
 	private Token expression() throws CriterionException
 	{
 		Token result;
 		result = term();
 		Token t = getLookAhead();
-		if (t.type == TokenType.SUB || 
+		if (t.type == TokenType.SUB ||
 			t.type == TokenType.ADD)
 		{
 			getToken();
@@ -478,7 +478,7 @@ public class Criterion
 		}
 		return result;
 	}
-	
+
 	/*
 		eats a subboolterm
 			forms:
@@ -540,7 +540,7 @@ public class Criterion
 		if (t.type == TokenType.OR)
 		{
 			getToken();
-			t.left = result;			
+			t.left = result;
 			t.right = boolexpression();
 			result = t;
 		}
@@ -580,7 +580,7 @@ public class Criterion
 			("Expected type Boolean, got " + arg.getClass().getCanonicalName());
 		return arg == null ? false : (Boolean)arg;
 	}
-	
+
 	/**
 	 * This class represents a single token of an expression
 	 */
@@ -628,7 +628,7 @@ public class Criterion
 			}
 		}
 
-		/** 
+		/**
 		 * Helper function. Check that both parameters are instances of Double,
 		 * and both are non-null.
 		 */
@@ -638,7 +638,7 @@ public class Criterion
 					rval != null && rval instanceof Double);
 		}
 
-		/** 
+		/**
 		 * Helper function. Check that both parameters are instances of Double,
 		 * and both are non-null.
 		 */
@@ -646,7 +646,7 @@ public class Criterion
 		{
 			return (lval != null && lval instanceof Double);
 		}
-		
+
 		/**
 		 * May return null, meaning "NA"
 		 */
@@ -661,11 +661,11 @@ public class Criterion
 			{
 			case AND:
 				return Boolean.valueOf(
-						trueNotNull(lval) && 
+						trueNotNull(lval) &&
 						trueNotNull(rval));
 			case OR:
 				return Boolean.valueOf(
-						trueNotNull(lval) || 
+						trueNotNull(lval) ||
 						trueNotNull(rval));
 			case NOT:
 				return !trueNotNull(lval);
@@ -738,8 +738,8 @@ public class Criterion
 
 		Token (TokenType aType) { type = aType; literalValue = 0; symbolValue = ""; }
 		Token (TokenType aType, String aValue)
-		{ 
-			type = aType; 
+		{
+			type = aType;
 			if (aType == TokenType.ID || aType == TokenType.FUNC)
 			{
 				literalValue = null; symbolValue = (String)aValue;

@@ -30,7 +30,7 @@ import org.bridgedb.Xref;
  *
  * Setters are package private, external classes are not supposed to modify this data.
  */
-public class ReporterData
+public class ReporterData implements Comparable<ReporterData>
 {
 	Xref idc;
 	int group;
@@ -173,6 +173,12 @@ public class ReporterData
 		}
 		int end = sb.lastIndexOf(", ");
 		return end < 0 ? "" : sb.substring(0, end).toString();
+	}
+
+	@Override
+	public int compareTo(ReporterData o) 
+	{		
+		return idc.compareTo(o.idc);
 	}
 
 }

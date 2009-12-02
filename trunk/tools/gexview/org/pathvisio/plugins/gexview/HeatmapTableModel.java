@@ -18,7 +18,9 @@ package org.pathvisio.plugins.gexview;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.pathvisio.data.SimpleGex;
+import org.bridgedb.IDMapperException;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.SimpleGex;
 
 public class HeatmapTableModel extends AbstractTableModel
 {
@@ -46,7 +48,14 @@ public class HeatmapTableModel extends AbstractTableModel
 		}
 		else
 		{
-			return input.getSample(column - 1).getName();
+			try {
+				return input.getSample(column - 1).getName();
+			} 
+			catch (IDMapperException e) 
+			{
+				Logger.log.error ("Could not set error name", e);
+				return "###";
+			}
 		}
 	}
 

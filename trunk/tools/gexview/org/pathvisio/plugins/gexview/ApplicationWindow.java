@@ -17,13 +17,22 @@
 package org.pathvisio.plugins.gexview;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.swing.*;
 
+import org.bridgedb.IDMapperException;
+import org.bridgedb.rdb.DataDerby;
 import org.pathvisio.Revision;
-import org.pathvisio.data.*;
-import org.pathvisio.gui.swing.StandaloneActions;
+import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.util.Resources;
 import org.pathvisio.util.swing.SimpleFileFilter;
 
 public class ApplicationWindow
@@ -46,7 +55,7 @@ public class ApplicationWindow
 		{
 			gex = new SimpleGex(f.toString(), false, new DataDerby());
 		}
-		catch (DataException e)
+		catch (IDMapperException e)
 		{
 			gex = null;
 			gexFile = null;
@@ -56,13 +65,11 @@ public class ApplicationWindow
 
 	private class OpenAction extends AbstractAction
 	{
-		private static final long serialVersionUID = 1L;
-
 		public OpenAction()
 		{
 			super();
 			putValue(NAME, "Open");
-			putValue(SMALL_ICON, new ImageIcon (StandaloneActions.IMG_OPEN));
+			putValue(SMALL_ICON, new ImageIcon (Resources.getResourceURL("open.gif")));
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke("ctrl O"));
 		}
 
@@ -78,6 +85,20 @@ public class ApplicationWindow
 		}
 	}
 
+	private class ExitAction extends AbstractAction
+	{
+		public ExitAction()
+		{
+			super();
+			putValue(NAME, "Exit");
+		}
+		
+		public void actionPerformed(ActionEvent e) 
+		{
+			frame.setVisible(false);
+		}
+	}
+
 	private OpenAction openAction = new OpenAction();
 
 	public JMenuBar createMenu()
@@ -88,36 +109,74 @@ public class ApplicationWindow
 		JMenu help = new JMenu("Help");
 
 		file.add(openAction);
-
+		file.add (new ExitAction());
+		
 		result.add (file);
 		result.add (help);
 
 		return result;
 	}
+	
+	private File propsFile = new File (System.getProperty("user.home"), ".gexview.properties"); 
+	private Properties props = new Properties();
+	
+	private void init()
+	{
+		try {
+			props.load(new FileReader (propsFile));
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+			// safe to ignore, continue with default props
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			// safe to ignore, continue with default props
+		}
+	}
+
+	private void shutDown()
+	{
+		try {
+			props.store(new FileWriter (propsFile), "");
+		} catch (IOException e) {
+			e.printStackTrace();
+			// safe to ignore, unfortunately we didn't save props
+		}
+		System.out.println ("Clean shutdown");
+	}
 
 	public void createAndShowGUI()
 	{
+		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setTitle("Gex Viewer r" + Revision.REVISION);
 		frame.setJMenuBar(createMenu());
 
-		gexFile = new File ("/home/martijn/prg/pathvisio-trunk/example-data/sample_data_1.pgex");
+		gexFile = new File ("example-data/sample_data_1.pgex");
 		try
 		{
 			gex = new SimpleGex (gexFile + "",
 					false, new DataDerby());
 		}
-		catch (DataException e)
+		catch (IDMapperException e)
 		{
 			e.printStackTrace();
 		}
 		tblHeatmap = new JTable(new HeatmapTableModel(gex));
 		//tblHeatmap.set
 		frame.add (new JScrollPane (tblHeatmap));
-
+		
+		frame.addWindowListener(new WindowAdapter()
+		{
+			public void windowClosed(WindowEvent arg0) 
+			{
+				shutDown();
+			}
+		});
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.pack();
 		frame.setVisible(true);
 	}
+	
 
 }

@@ -176,7 +176,6 @@ public class ReporterData implements Comparable<ReporterData>
 		return end < 0 ? "" : sb.substring(0, end).toString();
 	}
 
-	@Override
 	public int compareTo(ReporterData o)
 	{
 		return group - o.group;

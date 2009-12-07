@@ -275,7 +275,8 @@ print LOGFILE1 "\t$emptynodes\t$updatecount\t$metupdatecount\n";
 #Upload file to WikiPathways and save to local file
 my $description = SOAP::Data->name(description => "Automatic update of empty xrefs");
 my $newgpml = $pathway->to_string();
-my $gpmlcode = SOAP::Data->name(gpml => $newgpml);
+$newgpml = "<![CDATA[$newgpml]]>"; #Encapsulate in CDATA tag instead of base64 encoding
+my $gpmlcode = SOAP::Data->name(gpml => $newgpml)->type("xsd:string");
 my $baserevision = SOAP::Data->name(revision => $revision);
 				
 if ($updatecount > 0 || $metupdatecount > 0)

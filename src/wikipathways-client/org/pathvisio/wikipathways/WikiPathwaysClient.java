@@ -30,9 +30,9 @@ import java.util.TimeZone;
 
 import javax.xml.rpc.ServiceException;
 
+import org.apache.axis.EngineConfiguration;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
@@ -60,10 +60,31 @@ public class WikiPathwaysClient {
 
 	private WSAuth auth;
 
+	/**
+	 * Create an instance of this class with the default settings.
+	 * @throws ServiceException
+	 */
 	public WikiPathwaysClient() throws ServiceException {
 		this(null);
 	}
 
+	/**
+	 * Create an instance of this class.
+	 * @param config The axis configuration. Allows you to set custom implementations of
+	 * transport protocols (see {@link EngineConfiguration} for details).
+	 * @param portAddress The url that points to the WikiPathways webservice.
+	 * @throws ServiceException
+	 */
+	public WikiPathwaysClient(EngineConfiguration config, URL portAddress) throws ServiceException {
+		port = new WikiPathwaysLocator(config).getWikiPathwaysSOAPPort_Http(portAddress);
+		MIMShapes.registerShapes();
+	}
+	
+	/**
+	 * Create an instance of this class.
+	 * @param portAddress The url that points to the WikiPathways webservice.
+	 * @throws ServiceException
+	 */
 	public WikiPathwaysClient(URL portAddress) throws ServiceException {
 		if(portAddress != null) {
 			port = new WikiPathwaysLocator().getWikiPathwaysSOAPPort_Http(portAddress);

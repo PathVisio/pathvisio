@@ -12,14 +12,20 @@ use Cwd;
 
 #
 # Script to fill in missing xrefs in pathways, based on xref label and Entrez gene tables.
+# Also changes metabolites that are labeled as GeneProduct to Metabolite, based on Xref
 # Pathway files are collected from WP. 
+#
+# Note that script contains code for running on both test and live site, with the live site
+# commented out.
+#
 # Necessary input files: 
-# Entrez gene table with ID and symbol info
-# Flatfile listing all pathways at WP (http://www.wikipathways.org/wpi/pathway_content_flatfile.php?output=tab)
+# Species-specific Entrez gene table with ID and symbol info (in 2nd and 3rd column, respectively)
+# File should be namedas follows: lower case two-letter species code followed by -Entrez, extension .txt
+# Example: hs-Entrez.txt
+#
 # Output:
-# Uploads improved pathways to WP
-# Saves local copy of converted pathway
-# Saves log file for conversion
+# Uploads updated pathways to WP
+# Saves local log file
 
 #####################
 
@@ -37,14 +43,6 @@ my %ensemblname = ();
 for my $key (sort keys %speciesTable){
 	$ensemblname{$speciesTable{$key}[2]} = $key;
 }
-
-my $day = (localtime(time))[3];
-my $month = 1+(localtime(time))[4];
-my $year = 1900+(localtime(time))[5];
-my $date = "$month/$day/$year";
-my $cutoff = "20070522222100";
-my $maintbot = "MaintBot";
-my $fnGPML = "GPML.xsd";
 
 #Ask user for species
 my $refcode = "";
@@ -77,15 +75,6 @@ unless ( open(LOGFILE1, ">$outfilename1") )
          exit;
  	}
 print LOGFILE1 "Species\tPathway\tAdded xrefs\tEmpty nodes\tNumber of updated nodes\tNumber of updated metabolites\n";
-
-#Keepp track of bad labels that are scrubbed
-my $outfilename2 = $TWOLETTERCODE."-Labels.txt";	
-unless ( open(LOGFILE2, ">$outfilename2") )
-       {
-         print "could not open file $outfilename2\n";
-         exit;
- 	}
-print LOGFILE2 "Pathway\tLabels\n";
 
 ###########
 
@@ -135,8 +124,10 @@ while (my $line = <ENTREZ>)
 
 ######################
 
+my $maintbot = "MaintBot";
+
 #Create service interface with fault handler and login
-#TODO: change from test server to main wp server
+
 my $wp_soap_TEST = SOAP::Lite
         ->proxy('http://137.120.14.24/wikipathways-test/wpi/webservice/webservice.php')
         ->uri('http://www.wikipathways.org/webservice')
@@ -171,15 +162,11 @@ my $auth_TEST = SOAP::Data->name('auth' => \SOAP::Data->value(SOAP::Data->name('
 
 ######################
 
-my $newdir = "New/".$refcode;
-mkdir($newdir);
-
 # Get list of all pathways for relevant species
-
 print "Getting list of $REFORGANISM pathways from WikiPathways\n";
 my $species = SOAP::Data->name(organism => $REFORGANISM);
-#my @pathways = $wp_soap_LIVE->listPathways($species)->paramsout;
-#unshift(@pathways, $wp_soap_LIVE->listPathways($species)->result);
+#my @pathwaylist = $wp_soap_LIVE->listPathways($species)->paramsout;
+#unshift(@pathwaylist, $wp_soap_LIVE->listPathways($species)->result);
 my @pathwaylist = $wp_soap_TEST->listPathways($species)->paramsout;
 unshift(@pathwaylist, $wp_soap_TEST->listPathways($species)->result);
 
@@ -195,13 +182,14 @@ foreach my $pw (keys %pathways)
 	{
 	print "Requesting pathway $pw: $pathways{$pw}\n";
 	print LOGFILE1 "$REFORGANISM\t$pathways{$pw}\t";	
-	print LOGFILE2 "$pathways{$pw}\t";
 
 	#Collect pathway from WP
 	my $refId = SOAP::Data->name(pwId => $pw);
 	my $rev = SOAP::Data->name(revision => '0');
 	my @pathwayResults = $wp_soap_TEST->getPathway($refId, $rev)->paramsout;	
 	unshift(@pathwayResults, $wp_soap_TEST->getPathway($refId, $rev)->result);
+#	my @pathwayResults = $wp_soap_LIVE->getPathway($refId, $rev)->paramsout;	
+#	unshift(@pathwayResults, $wp_soap_LIVE->getPathway($refId, $rev)->result);
 	my $pathway = new PathwayTools::Pathway();
 	my $gpml = ();
 	my $revision = ();
@@ -218,14 +206,9 @@ foreach my $pw (keys %pathways)
 	#Process gpml: Update empty IDs using entrez information, rename file
 	$pathway->from_string($gpml);
 	my $root = $pathway->{document}->getDocumentElement();
-	my $pwname = $root->getAttribute("Name");
-	my $newname = correctNames($pwname);	
-	#my $createfilename = "$newdir/$newname.gpml";
 	my $updatecount = 0; # Keep track of if nodes are updated
 	my $emptynodes = 0; #Keep track of number of empty nodes per pathway
 	my $metupdatecount = 0; #Keep track of mislabeled metabolites that need to be updated
-		
-	#$root->setAttribute("Name", $newname);
 	$root->setAttribute("Last-Modified", $date);
 	
 	if ($root->getChildrenByTagName("DataNode"))
@@ -269,7 +252,6 @@ foreach my $pw (keys %pathways)
 		}# close foreach datanode
 	}
 		
-print LOGFILE2 "\n";
 print LOGFILE1 "\t$emptynodes\t$updatecount\t$metupdatecount\n";
 
 #Upload file to WikiPathways and save to local file
@@ -278,42 +260,21 @@ my $newgpml = $pathway->to_string();
 $newgpml = "<![CDATA[$newgpml]]>"; #Encapsulate in CDATA tag instead of base64 encoding
 my $gpmlcode = SOAP::Data->name(gpml => $newgpml)->type("xsd:string");
 my $baserevision = SOAP::Data->name(revision => $revision);
-				
+
+#Upload only those files with modifications to WP			
 if ($updatecount > 0 || $metupdatecount > 0)
 	{
-	#Print converted pathway to local file and upload to WP
 	print "$pathways{$pw} updated at WP\n";
-	#print "$newgpml\n\n";
 	my $uploadId = SOAP::Data->name(pwId => $pw);
 	$wp_soap_TEST->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth_TEST);
-	#$pathway->to_file($createfilename);
+	#$wp_soap_LIVE->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth_LIVE);
 	}
 	
 } #close foreach pathway
       
 print "\n\nDone.\n";	
 close LOGFILE1;
-close LOGFILE2;
 close FLATFILE;
-
-#subroutine that removes whitespaces, parenthesis, slashes and references to human
-sub correctNames 
-{
-my $name = shift;
-#Remove any references to reference species and parenthesis from pathway name. 
-my $speciesname = lc($REFORGANISM);
-my $commonname = lc($ensemblname{$refcode});
-$name =~ s/$speciesname//i; 
-$name =~ s/$commonname//i; 
-
-#Remove whitespace etc.
-$name =~ s/\(\)//;
-$name =~s/\s+$//;
-$name =~ s/^\s+//;
-$name =~ s/\-&gt;/-/; 
-
-return $name;
-}
 
 sub in_array
  {
@@ -321,15 +282,3 @@ sub in_array
      my %items = map {$_ => 1} @$arr; # create a hash out of the array values
      return (exists($items{$search_for}))?1:0;
  }
- 
-#subroutine that removes special characters. Currently not used
-sub remCharacter 
-{
-my $text = shift;
-
-$text =~ s/&#xfffd;/ /g;
-$text =~ s/&#x3ba;/ /g;
-$text =~ s/&#x3b1;/ /g;
-
-return $text;
-}

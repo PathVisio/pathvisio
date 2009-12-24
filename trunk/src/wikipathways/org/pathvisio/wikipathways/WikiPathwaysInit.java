@@ -23,7 +23,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 import org.pathvisio.model.RasterImageExporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -44,17 +44,17 @@ public class WikiPathwaysInit
 
 		MIMShapes.registerShapes();
 
-		PropertyType.CENTERX.setHidden(true);
-		PropertyType.CENTERY.setHidden(true);
-		PropertyType.ENDX.setHidden(true);
-		PropertyType.ENDY.setHidden(true);
-		PropertyType.HEIGHT.setHidden(true);
-		PropertyType.LAST_MODIFIED.setHidden(true);
-		PropertyType.ORGANISM.setHidden(true);
-		PropertyType.ROTATION.setHidden(true);
-		PropertyType.STARTX.setHidden(true);
-		PropertyType.STARTY.setHidden(true);
-		PropertyType.WIDTH.setHidden(true);
+		StaticProperty.CENTERX.setHidden(true);
+		StaticProperty.CENTERY.setHidden(true);
+		StaticProperty.ENDX.setHidden(true);
+		StaticProperty.ENDY.setHidden(true);
+		StaticProperty.HEIGHT.setHidden(true);
+		StaticProperty.LAST_MODIFIED.setHidden(true);
+		StaticProperty.ORGANISM.setHidden(true);
+		StaticProperty.ROTATION.setHidden(true);
+		StaticProperty.STARTX.setHidden(true);
+		StaticProperty.STARTY.setHidden(true);
+		StaticProperty.WIDTH.setHidden(true);
 
 		engine.addPathwayExporter(new GpmlFormat());
 		engine.addPathwayImporter(new GpmlFormat());

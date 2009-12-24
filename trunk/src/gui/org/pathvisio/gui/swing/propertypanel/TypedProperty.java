@@ -60,7 +60,7 @@ import org.pathvisio.model.LineType;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.view.VPathway;
 
@@ -76,13 +76,13 @@ public class TypedProperty implements Comparable<TypedProperty> {
 
 	/**
 	 * @param aType is either String for a dynamic property,
-	 * or PropertyType for a static property;
+	 * or StaticProperty for a static property;
 	 * @param aVPathway is used to register undo actions when setting a value
 	 * to this property. May be null, in which case no undo actions are registered.
 	 */
 	public TypedProperty(VPathway aVPathway, Object aType) {
 		type = aType;
-		if (!(type instanceof String || type instanceof PropertyType))
+		if (!(type instanceof String || type instanceof StaticProperty))
 		{
 			throw new IllegalArgumentException();
 		}
@@ -134,9 +134,9 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	 */
 	public String getDesc()
 	{
-		if (type instanceof PropertyType)
+		if (type instanceof StaticProperty)
 		{
-			return ((PropertyType)type).desc();
+			return ((StaticProperty)type).desc();
 		}
 		else
 		{
@@ -172,7 +172,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 
 	/**
 	 * The type of the property being edited. This is a String
-	 * if the property is dynamic, or a PropertyType is the property
+	 * if the property is dynamic, or a StaticProperty is the property
 	 * is static. (See PathwayElement for an explanation of static / dynamic)
 	 */
 	public Object getType() {
@@ -193,9 +193,9 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	public TableCellRenderer getCellRenderer()
 	{
 		if(hasDifferentValues()) return differentRenderer;
-		if (type instanceof PropertyType)
+		if (type instanceof StaticProperty)
 		{
-			switch(((PropertyType)type).type())
+			switch(((StaticProperty)type).type())
 			{
 				case COLOR:
 					return colorRenderer;
@@ -249,9 +249,9 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	 * @param swingEngine: the comments editor requires a connection to swingEngine, so you need to pass it here.
 	 */
 	public TableCellEditor getCellEditor(SwingEngine swingEngine) {
-		if (type instanceof PropertyType)
+		if (type instanceof StaticProperty)
 		{
-			switch(((PropertyType)type).type())
+			switch(((StaticProperty)type).type())
 			{
 				case BOOLEAN:
 					return checkboxEditor;
@@ -705,13 +705,13 @@ public class TypedProperty implements Comparable<TypedProperty> {
 
 		if (type.getClass() != arg0.type.getClass())
 		{
-			return type instanceof PropertyType ? 1 : -1;
+			return type instanceof StaticProperty ? 1 : -1;
 		}
 		else
 		{
-			if (type instanceof PropertyType)
+			if (type instanceof StaticProperty)
 			{
-				return ((PropertyType)type).getOrder() - ((PropertyType)arg0.type).getOrder();
+				return ((StaticProperty)type).getOrder() - ((StaticProperty)arg0.type).getOrder();
 			}
 			else
 			{

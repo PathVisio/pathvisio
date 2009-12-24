@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 
@@ -58,18 +58,18 @@ public class VisibleProperties
 			// filter out advanced properties
 			result.removeAll (
 					Arrays.asList(new Object[] {
-							PropertyType.BOARDWIDTH,
-							PropertyType.BOARDHEIGHT,
-							PropertyType.WINDOWWIDTH,
-							PropertyType.WINDOWHEIGHT,
-							PropertyType.GRAPHID,
-							PropertyType.BIOPAXREF,
-							PropertyType.GRAPHREF,
-							PropertyType.GROUPID,
-							PropertyType.GROUPREF,
-							PropertyType.STARTGRAPHREF,
-							PropertyType.ENDGRAPHREF,
-							PropertyType.ZORDER,
+							StaticProperty.BOARDWIDTH,
+							StaticProperty.BOARDHEIGHT,
+							StaticProperty.WINDOWWIDTH,
+							StaticProperty.WINDOWHEIGHT,
+							StaticProperty.GRAPHID,
+							StaticProperty.BIOPAXREF,
+							StaticProperty.GRAPHREF,
+							StaticProperty.GROUPID,
+							StaticProperty.GROUPREF,
+							StaticProperty.STARTGRAPHREF,
+							StaticProperty.ENDGRAPHREF,
+							StaticProperty.ZORDER,
 					}));
 		}
 

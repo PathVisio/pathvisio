@@ -18,10 +18,10 @@
 package org.pathvisio.model;
 
 /**
- * The properties in {@link PropertyType} define properties of different classes,
+ * The properties in {@link StaticProperty} define properties of different classes,
  * all the possible classes are defined here.
  */
-public enum PropertyClass
+public enum StaticPropertyType
 {
 	BOOLEAN,
 	DOUBLE,

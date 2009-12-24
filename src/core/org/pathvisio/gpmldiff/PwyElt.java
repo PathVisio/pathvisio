@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 
 /**
    Utility class for pathway element methods related to gpmldiff.
@@ -32,35 +32,35 @@ class PwyElt
 	{
 		if (elt == null) return "null"; // TODO, why is this necessary?
 		String result = "[" + elt.getObjectType().getTag();
-		Set<PropertyType> props = elt.getStaticPropertyKeys();
-		if (props.contains(PropertyType.TEXTLABEL))
-			result += ",lbl=" + elt.getStaticProperty(PropertyType.TEXTLABEL);
-		if (props.contains(PropertyType.WIDTH))
-			result += ",w=" + elt.getStaticProperty(PropertyType.WIDTH);
-		if (props.contains(PropertyType.HEIGHT))
-			result += ",h=" + elt.getStaticProperty(PropertyType.HEIGHT);
-		if (props.contains(PropertyType.CENTERX))
-			result += ",cx=" + elt.getStaticProperty(PropertyType.CENTERX);
-		if (props.contains(PropertyType.CENTERY))
-			result += ",cy=" + elt.getStaticProperty(PropertyType.CENTERY);
-		if (props.contains(PropertyType.STARTX))
-			result += ",x1=" + elt.getStaticProperty(PropertyType.STARTX);
-		if (props.contains(PropertyType.STARTY))
-			result += ",y1=" + elt.getStaticProperty(PropertyType.STARTY);
-		if (props.contains(PropertyType.ENDX))
-			result += ",x2=" + elt.getStaticProperty(PropertyType.ENDX);
-		if (props.contains(PropertyType.ENDY))
-			result += ",y2=" + elt.getStaticProperty(PropertyType.ENDY);
-		if (props.contains(PropertyType.GRAPHID))
-			result += ",id=" + elt.getStaticProperty(PropertyType.GRAPHID);
-		if (props.contains(PropertyType.STARTGRAPHREF))
-			result += ",startref=" + elt.getStaticProperty(PropertyType.STARTGRAPHREF);
-		if (props.contains(PropertyType.ENDGRAPHREF))
-			result += ",endref=" + elt.getStaticProperty(PropertyType.ENDGRAPHREF);
-		if (props.contains(PropertyType.MAPINFONAME))
-			result += ",title=" + elt.getStaticProperty(PropertyType.MAPINFONAME);
-		if (props.contains(PropertyType.AUTHOR))
-			result += ",author=" + elt.getStaticProperty(PropertyType.AUTHOR);
+		Set<StaticProperty> props = elt.getStaticPropertyKeys();
+		if (props.contains(StaticProperty.TEXTLABEL))
+			result += ",lbl=" + elt.getStaticProperty(StaticProperty.TEXTLABEL);
+		if (props.contains(StaticProperty.WIDTH))
+			result += ",w=" + elt.getStaticProperty(StaticProperty.WIDTH);
+		if (props.contains(StaticProperty.HEIGHT))
+			result += ",h=" + elt.getStaticProperty(StaticProperty.HEIGHT);
+		if (props.contains(StaticProperty.CENTERX))
+			result += ",cx=" + elt.getStaticProperty(StaticProperty.CENTERX);
+		if (props.contains(StaticProperty.CENTERY))
+			result += ",cy=" + elt.getStaticProperty(StaticProperty.CENTERY);
+		if (props.contains(StaticProperty.STARTX))
+			result += ",x1=" + elt.getStaticProperty(StaticProperty.STARTX);
+		if (props.contains(StaticProperty.STARTY))
+			result += ",y1=" + elt.getStaticProperty(StaticProperty.STARTY);
+		if (props.contains(StaticProperty.ENDX))
+			result += ",x2=" + elt.getStaticProperty(StaticProperty.ENDX);
+		if (props.contains(StaticProperty.ENDY))
+			result += ",y2=" + elt.getStaticProperty(StaticProperty.ENDY);
+		if (props.contains(StaticProperty.GRAPHID))
+			result += ",id=" + elt.getStaticProperty(StaticProperty.GRAPHID);
+		if (props.contains(StaticProperty.STARTGRAPHREF))
+			result += ",startref=" + elt.getStaticProperty(StaticProperty.STARTGRAPHREF);
+		if (props.contains(StaticProperty.ENDGRAPHREF))
+			result += ",endref=" + elt.getStaticProperty(StaticProperty.ENDGRAPHREF);
+		if (props.contains(StaticProperty.MAPINFONAME))
+			result += ",title=" + elt.getStaticProperty(StaticProperty.MAPINFONAME);
+		if (props.contains(StaticProperty.AUTHOR))
+			result += ",author=" + elt.getStaticProperty(StaticProperty.AUTHOR);
 		result += "]";
 		return result;
 	}
@@ -69,7 +69,7 @@ class PwyElt
 	{
 		Map<String, String> result = new HashMap<String, String>();
 
-		for (PropertyType prop : elt.getStaticPropertyKeys())
+		for (StaticProperty prop : elt.getStaticPropertyKeys())
 		{
 			String attr = prop.tag();
 			String val = "" + elt.getStaticProperty (prop);

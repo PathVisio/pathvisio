@@ -36,7 +36,7 @@ import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -126,9 +126,9 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	{
 		for(Object o : VisibleProperties.getVisiblePropertyKeys(e))
 		{
-			if (o instanceof PropertyType)
+			if (o instanceof StaticProperty)
 			{
-				PropertyType p = (PropertyType)o;
+				StaticProperty p = (StaticProperty)o;
 				if(p.isHidden()) continue;
 			}
 

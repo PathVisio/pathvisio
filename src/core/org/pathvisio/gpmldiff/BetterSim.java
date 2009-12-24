@@ -20,7 +20,7 @@ import java.util.Set;
 
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 
 /**
  * An implementation of the SimilarityFunction that compares elements,
@@ -36,8 +36,8 @@ class BetterSim extends SimilarityFunction
 	{
 		ObjectType oldOt = oldE.getObjectType();
 		ObjectType newOt = newE.getObjectType();
-		Set<PropertyType> oldProps = oldE.getStaticPropertyKeys();
-		Set<PropertyType> newProps = newE.getStaticPropertyKeys();
+		Set<StaticProperty> oldProps = oldE.getStaticPropertyKeys();
+		Set<StaticProperty> newProps = newE.getStaticPropertyKeys();
 
 		int oldN = oldProps.size();
 		//int newN = newProps.size();
@@ -65,7 +65,7 @@ class BetterSim extends SimilarityFunction
 			actualScore += score;
 		}
 
-		for (PropertyType newProp : newProps)
+		for (StaticProperty newProp : newProps)
 		{
 			if (oldProps.contains(newProp))
 			{

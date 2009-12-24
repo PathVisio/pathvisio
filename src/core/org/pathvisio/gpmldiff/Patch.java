@@ -32,7 +32,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 import org.pathvisio.model.ShapeType;
 
 /**
@@ -61,7 +61,7 @@ class Patch
 			PathwayElement result = oldElt.copy();
 			for (Change ch : changes)
 			{
-				PropertyType pt = PropertyType.getByTag(ch.attr);
+				StaticProperty pt = StaticProperty.getByTag(ch.attr);
 				switch (pt.type())
 				{
 				case STRING:

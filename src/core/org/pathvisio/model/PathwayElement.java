@@ -61,9 +61,9 @@ import org.pathvisio.util.Utils;
  * stored in an <Attribute key="" value=""/> tag.
  * Internally, dynamic properties are stored in a Map<String, String>
  * <p>
- * Static properties must have a key from the PropertyType enum
+ * Static properties must have a key from the StaticProperty enum
  * Their value can be various types which can be
- * obtained from PropertyType.type(). Static properties can
+ * obtained from StaticProperty.type(). Static properties can
  * be queried with getStaticProperty (key) and
  * setStaticProperty(key, value), but also specific accessors
  * such as e.g. getTextLabel() and setTextLabel()
@@ -78,7 +78,7 @@ import org.pathvisio.util.Utils;
  * to access both dynamic and static properties
  * from the same function. If key instanceof String then it's
  * assumed the caller wants a dynamic
- * property, if key instanceof PropertyType then the static property
+ * property, if key instanceof StaticProperty then the static property
  * is used.
  * <p>
  * most static properties cannot be set to null. Notable exceptions are graphId,
@@ -762,9 +762,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * get all attributes, also the advanced ones
 	 * @deprecated use getStaticPropertyKeys or preferably rewrite to use getPropertyKeys
 	 */
-	public List<PropertyType> getAttributes()
+	public List<StaticProperty> getAttributes()
 	{
-		List<PropertyType> result = new ArrayList<PropertyType>();
+		List<StaticProperty> result = new ArrayList<StaticProperty>();
 		result.addAll (getStaticPropertyKeys());
 		return result;
 	}
@@ -773,152 +773,152 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * @deprecated PathwayElement doesn't distinguish between advanced / not advanced attributes anymore,
 	 * that distinction is made at the UI level.
 	 */
-	public List<PropertyType> getAttributes(boolean fAdvanced)
+	public List<StaticProperty> getAttributes(boolean fAdvanced)
 	{
-		List<PropertyType> result = new ArrayList<PropertyType>();
+		List<StaticProperty> result = new ArrayList<StaticProperty>();
 		result.addAll (getStaticPropertyKeys());
 		return result;
 	}
 
-	private static final Map<ObjectType, Set<PropertyType>> ALLOWED_PROPS;
+	private static final Map<ObjectType, Set<StaticProperty>> ALLOWED_PROPS;
 
 	static {
-		Set<PropertyType> propsCommon = EnumSet.of(
-				PropertyType.COMMENTS,
-				PropertyType.GRAPHID,
-				PropertyType.GROUPREF,
-				PropertyType.BIOPAXREF,
-				PropertyType.ZORDER
+		Set<StaticProperty> propsCommon = EnumSet.of(
+				StaticProperty.COMMENTS,
+				StaticProperty.GRAPHID,
+				StaticProperty.GROUPREF,
+				StaticProperty.BIOPAXREF,
+				StaticProperty.ZORDER
 			);
-		Set<PropertyType> propsCommonShape = EnumSet.of(
-				PropertyType.CENTERX,
-				PropertyType.CENTERY,
-				PropertyType.WIDTH,
-				PropertyType.HEIGHT,
-				PropertyType.COLOR
+		Set<StaticProperty> propsCommonShape = EnumSet.of(
+				StaticProperty.CENTERX,
+				StaticProperty.CENTERY,
+				StaticProperty.WIDTH,
+				StaticProperty.HEIGHT,
+				StaticProperty.COLOR
 			);
-		ALLOWED_PROPS = new EnumMap<ObjectType, Set<PropertyType>>(ObjectType.class);
+		ALLOWED_PROPS = new EnumMap<ObjectType, Set<StaticProperty>>(ObjectType.class);
 		{
-			Set<PropertyType> propsMappinfo = EnumSet.of (
-					PropertyType.COMMENTS,
-					PropertyType.MAPINFONAME,
-					PropertyType.ORGANISM,
-					PropertyType.MAPINFO_DATASOURCE,
-					PropertyType.VERSION,
-					PropertyType.AUTHOR,
-					PropertyType.MAINTAINED_BY,
-					PropertyType.EMAIL,
-					PropertyType.LAST_MODIFIED,
-					PropertyType.AVAILABILITY,
-					PropertyType.BOARDWIDTH,
-					PropertyType.BOARDHEIGHT,
-					PropertyType.WINDOWWIDTH,
-					PropertyType.WINDOWHEIGHT
+			Set<StaticProperty> propsMappinfo = EnumSet.of (
+					StaticProperty.COMMENTS,
+					StaticProperty.MAPINFONAME,
+					StaticProperty.ORGANISM,
+					StaticProperty.MAPINFO_DATASOURCE,
+					StaticProperty.VERSION,
+					StaticProperty.AUTHOR,
+					StaticProperty.MAINTAINED_BY,
+					StaticProperty.EMAIL,
+					StaticProperty.LAST_MODIFIED,
+					StaticProperty.AVAILABILITY,
+					StaticProperty.BOARDWIDTH,
+					StaticProperty.BOARDHEIGHT,
+					StaticProperty.WINDOWWIDTH,
+					StaticProperty.WINDOWHEIGHT
 				);
 			ALLOWED_PROPS.put (ObjectType.MAPPINFO, propsMappinfo);
 		}
 		{
-			Set<PropertyType> propsState = EnumSet.of(
-					PropertyType.RELX,
-					PropertyType.RELY,
-					PropertyType.WIDTH,
-					PropertyType.HEIGHT,
-					PropertyType.COLOR,
-					PropertyType.FILLCOLOR,
-					PropertyType.TRANSPARENT,
-					PropertyType.TEXTLABEL,
-					PropertyType.MODIFICATIONTYPE,
-					PropertyType.LINESTYLE,
-					PropertyType.GRAPHREF
+			Set<StaticProperty> propsState = EnumSet.of(
+					StaticProperty.RELX,
+					StaticProperty.RELY,
+					StaticProperty.WIDTH,
+					StaticProperty.HEIGHT,
+					StaticProperty.COLOR,
+					StaticProperty.FILLCOLOR,
+					StaticProperty.TRANSPARENT,
+					StaticProperty.TEXTLABEL,
+					StaticProperty.MODIFICATIONTYPE,
+					StaticProperty.LINESTYLE,
+					StaticProperty.GRAPHREF
 				);
 			propsState.addAll (propsCommon);
 			ALLOWED_PROPS.put (ObjectType.STATE, propsState);
 		}
 		{
-			Set<PropertyType> propsShape = EnumSet.of(
-					PropertyType.FILLCOLOR,
-					PropertyType.SHAPETYPE,
-					PropertyType.ROTATION,
-					PropertyType.TRANSPARENT,
-					PropertyType.LINESTYLE
+			Set<StaticProperty> propsShape = EnumSet.of(
+					StaticProperty.FILLCOLOR,
+					StaticProperty.SHAPETYPE,
+					StaticProperty.ROTATION,
+					StaticProperty.TRANSPARENT,
+					StaticProperty.LINESTYLE
 				);
 			propsShape.addAll (propsCommon);
 			propsShape.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.SHAPE, propsShape);
 		}
 		{
-			Set<PropertyType> propsDatanode = EnumSet.of (
-					PropertyType.GENEID,
-					PropertyType.DATASOURCE,
-					PropertyType.TEXTLABEL,
-					// PropertyType.XREF,
-					PropertyType.BACKPAGEHEAD,
-					PropertyType.TYPE
+			Set<StaticProperty> propsDatanode = EnumSet.of (
+					StaticProperty.GENEID,
+					StaticProperty.DATASOURCE,
+					StaticProperty.TEXTLABEL,
+					// StaticProperty.XREF,
+					StaticProperty.BACKPAGEHEAD,
+					StaticProperty.TYPE
 				);
 			propsDatanode.addAll (propsCommon);
 			propsDatanode.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.DATANODE, propsDatanode);
 		}
 		{
-			Set<PropertyType> propsLine = EnumSet.of(
-					PropertyType.COLOR,
-					PropertyType.STARTX,
-					PropertyType.STARTY,
-					PropertyType.ENDX,
-					PropertyType.ENDY,
-					PropertyType.STARTLINETYPE,
-					PropertyType.ENDLINETYPE,
-					PropertyType.LINESTYLE,
-					PropertyType.STARTGRAPHREF,
-					PropertyType.ENDGRAPHREF
+			Set<StaticProperty> propsLine = EnumSet.of(
+					StaticProperty.COLOR,
+					StaticProperty.STARTX,
+					StaticProperty.STARTY,
+					StaticProperty.ENDX,
+					StaticProperty.ENDY,
+					StaticProperty.STARTLINETYPE,
+					StaticProperty.ENDLINETYPE,
+					StaticProperty.LINESTYLE,
+					StaticProperty.STARTGRAPHREF,
+					StaticProperty.ENDGRAPHREF
 				);
 			propsLine.addAll (propsCommon);
 			ALLOWED_PROPS.put (ObjectType.LINE, propsLine);
 		}
 		{
-			Set<PropertyType> propsLabel = EnumSet.of(
-					PropertyType.GENMAPP_XREF,
-					PropertyType.TEXTLABEL,
-					PropertyType.FONTNAME,
-					PropertyType.FONTWEIGHT,
-					PropertyType.FONTSTYLE,
-					PropertyType.FONTSIZE,
-					PropertyType.OUTLINE
+			Set<StaticProperty> propsLabel = EnumSet.of(
+					StaticProperty.GENMAPP_XREF,
+					StaticProperty.TEXTLABEL,
+					StaticProperty.FONTNAME,
+					StaticProperty.FONTWEIGHT,
+					StaticProperty.FONTSTYLE,
+					StaticProperty.FONTSIZE,
+					StaticProperty.OUTLINE
 				);
 			propsLabel.addAll (propsCommon);
 			propsLabel.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.LABEL, propsLabel);
 		}
 		{
-			Set<PropertyType> propsGroup = EnumSet.of(
-					PropertyType.GROUPID,
-					PropertyType.GROUPREF,
-					PropertyType.BIOPAXREF,
-					PropertyType.GROUPSTYLE,
-					PropertyType.TEXTLABEL,
-					PropertyType.COMMENTS,
-					PropertyType.ZORDER
+			Set<StaticProperty> propsGroup = EnumSet.of(
+					StaticProperty.GROUPID,
+					StaticProperty.GROUPREF,
+					StaticProperty.BIOPAXREF,
+					StaticProperty.GROUPSTYLE,
+					StaticProperty.TEXTLABEL,
+					StaticProperty.COMMENTS,
+					StaticProperty.ZORDER
 				);
 			ALLOWED_PROPS.put (ObjectType.GROUP, propsGroup);
 		}
 		{
-			Set<PropertyType> propsInfobox = EnumSet.of(
-					PropertyType.CENTERX,
-					PropertyType.CENTERY,
-					PropertyType.ZORDER
+			Set<StaticProperty> propsInfobox = EnumSet.of(
+					StaticProperty.CENTERX,
+					StaticProperty.CENTERY,
+					StaticProperty.ZORDER
 				);
 			ALLOWED_PROPS.put (ObjectType.INFOBOX, propsInfobox);
 		}
 		{
-			Set<PropertyType> propsLegend = EnumSet.of(
-					PropertyType.CENTERX,
-					PropertyType.CENTERY,
-					PropertyType.ZORDER
+			Set<StaticProperty> propsLegend = EnumSet.of(
+					StaticProperty.CENTERX,
+					StaticProperty.CENTERY,
+					StaticProperty.ZORDER
 				);
 			ALLOWED_PROPS.put (ObjectType.LEGEND, propsLegend);
 		}
 		{
-			Set<PropertyType> propsBiopax = EnumSet.noneOf(PropertyType.class);
+			Set<StaticProperty> propsBiopax = EnumSet.noneOf(StaticProperty.class);
 			ALLOWED_PROPS.put(ObjectType.BIOPAX, propsBiopax);
 		}
 	};
@@ -928,7 +928,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * get all attributes that are stored as static members.
 	 */
-	public Set<PropertyType> getStaticPropertyKeys()
+	public Set<StaticProperty> getStaticPropertyKeys()
 	{
 		return ALLOWED_PROPS.get (getObjectType());
 	}
@@ -939,9 +939,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public void setPropertyEx (Object key, Object value)
 	{
-		if (key instanceof PropertyType)
+		if (key instanceof StaticProperty)
 		{
-			setStaticProperty((PropertyType)key, value);
+			setStaticProperty((StaticProperty)key, value);
 		}
 		else if (key instanceof String)
 		{
@@ -955,9 +955,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public Object getPropertyEx (Object key)
 	{
-		if (key instanceof PropertyType)
+		if (key instanceof StaticProperty)
 		{
-			return getStaticProperty((PropertyType)key);
+			return getStaticProperty((StaticProperty)key);
 		}
 		else if (key instanceof String)
 		{
@@ -972,7 +972,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * @deprecated use setStaticProperty
 	 */
-	public void setProperty(PropertyType key, Object value)
+	public void setProperty(StaticProperty key, Object value)
 	{
 	}
 
@@ -985,7 +985,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * @param key
 	 * @param value
 	 */
-	public void setStaticProperty(PropertyType key, Object value)
+	public void setStaticProperty(StaticProperty key, Object value)
 	{
 		if (!getStaticPropertyKeys().contains(key))
 			throw new IllegalArgumentException("Property " + key.name() + " is not allowed for objects of type " + getObjectType());
@@ -1181,12 +1181,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * @deprecated use getStaticProperty
 	 */
-	public Object getProperty(PropertyType x)
+	public Object getProperty(StaticProperty x)
 	{
 		return getStaticProperty(x);
 	}
 
-	public Object getStaticProperty(PropertyType key)
+	public Object getStaticProperty(StaticProperty key)
 	{
 		if (!getStaticPropertyKeys().contains(key))
 			throw new IllegalArgumentException("Property " + key.name() + " is not allowed for objects of type " + getObjectType());

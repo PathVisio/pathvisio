@@ -60,11 +60,11 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 		assertEquals ("test set/get CenterX", 1.0, o.getMCenterX(), 0.0001);
 
 		assertEquals ("Setting CenterX should generate single event", received.size(), 1);
-		assertEquals ("test getProperty()", 1.0, (Double)o.getStaticProperty(PropertyType.CENTERX), 0.0001);
+		assertEquals ("test getProperty()", 1.0, (Double)o.getStaticProperty(StaticProperty.CENTERX), 0.0001);
 
 		try
 		{
-			o.setStaticProperty(PropertyType.CENTERX, null);
+			o.setStaticProperty(StaticProperty.CENTERX, null);
 			fail("Setting centerx property to null should generate exception");
 		}
 		catch (Exception e) {}
@@ -118,11 +118,11 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 		}
 		catch (NullPointerException e) {}
 
-		// check setting non string / PropertyType property
+		// check setting non string / StaticProperty property
 		try
 		{
 			o.setPropertyEx(new Object(), new Object());
-			fail("Using key that is not String or PropertyType should generate exception");
+			fail("Using key that is not String or StaticProperty should generate exception");
 		}
 		catch (IllegalArgumentException e) {}
 

@@ -65,10 +65,10 @@ import org.pathvisio.model.ShapeType;
 import org.pathvisio.view.VPathway;
 
 /**
- * TypedProperty ties together functionality to view / edit a property
+ * PropertyView ties together functionality to view / edit a property
  * on one or more PathwayElements at the same time
  */
-public class TypedProperty implements Comparable<TypedProperty> {
+public class PropertyView implements Comparable<PropertyView> {
 	Collection<PathwayElement> elements;
 	Object value;
 	Object type;
@@ -80,7 +80,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 	 * @param aVPathway is used to register undo actions when setting a value
 	 * to this property. May be null, in which case no undo actions are registered.
 	 */
-	public TypedProperty(VPathway aVPathway, Object aType) {
+	public PropertyView(VPathway aVPathway, Object aType) {
 		type = aType;
 		if (!(type instanceof String || type instanceof StaticProperty))
 		{
@@ -108,7 +108,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 
 	/**
 	 * Refresh the viewer / editor value by checking all PathwayElements
-	 * This notifies the TypedProperty that one of the PathwayElements has changed
+	 * This notifies the PropertyView that one of the PathwayElements has changed
 	 * or that the PathwayElement list has been changed, and a new value should be cached.
 	 */
 	public void refreshValue() {
@@ -457,7 +457,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		static final String BUTTON_LABEL = "View/edit comments";
 		JButton button;
 		PathwayElement currentElement;
-		TypedProperty property;
+		PropertyView property;
 
 		protected static final String EDIT = "edit";
 
@@ -471,7 +471,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 			button.addActionListener(this);
 		}
 
-		public void setInput(TypedProperty p) {
+		public void setInput(PropertyView p) {
 			property = p;
 			button.setText("");
 			if(!mayEdit()) fireEditingCanceled();
@@ -699,7 +699,7 @@ public class TypedProperty implements Comparable<TypedProperty> {
 		}
 	}
 
-	public int compareTo(TypedProperty arg0)
+	public int compareTo(PropertyView arg0)
 	{
 		if (arg0 == null) throw new NullPointerException();
 

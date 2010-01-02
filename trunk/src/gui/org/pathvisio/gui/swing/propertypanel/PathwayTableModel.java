@@ -57,15 +57,15 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 
 	private JTable table;
 	final private Collection<PathwayElement> input;
-	final private Map<Object, TypedProperty> propertyValues;
-	final private List<TypedProperty> shownProperties;
+	final private Map<Object, PropertyView> propertyValues;
+	final private List<PropertyView> shownProperties;
 
 	private SwingEngine swingEngine;
 
 	public PathwayTableModel(SwingEngine swingEngine) {
 		input = new HashSet<PathwayElement>();
-		propertyValues = new HashMap<Object, TypedProperty>();
-		shownProperties = new ArrayList<TypedProperty>();
+		propertyValues = new HashMap<Object, PropertyView>();
+		shownProperties = new ArrayList<PropertyView>();
 		this.swingEngine = swingEngine;
 		swingEngine.getEngine().addApplicationEventListener(this);
 		VPathway vp = swingEngine.getEngine().getActiveVPathway();
@@ -132,9 +132,9 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 				if(p.isHidden()) continue;
 			}
 
-			TypedProperty tp = propertyValues.get(o);
+			PropertyView tp = propertyValues.get(o);
 			if(tp == null) {
-				propertyValues.put(o, tp = new TypedProperty(swingEngine.getEngine().getActiveVPathway(), o));
+				propertyValues.put(o, tp = new PropertyView(swingEngine.getEngine().getActiveVPathway(), o));
 			}
 			if(remove) {
 				tp.removeElement(e);
@@ -145,7 +145,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 
 	protected void updateShownProperties() {
-		for(TypedProperty tp : propertyValues.values()) {
+		for(PropertyView tp : propertyValues.values()) {
 			boolean shown = shownProperties.contains(tp);
 			if(tp.elementCount() == input.size()) {
 				//System.err.println("\tadding " + tp + " from shown");
@@ -159,7 +159,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 
 	protected void refreshPropertyValues() {
-		for(TypedProperty p : shownProperties) {
+		for(PropertyView p : shownProperties) {
 			p.refreshValue();
 		}
 	}
@@ -172,19 +172,19 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		return shownProperties.size();
 	}
 
-	public TypedProperty getPropertyAt(int row) {
+	public PropertyView getPropertyAt(int row) {
 		return shownProperties.get(row);
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		TypedProperty p = getPropertyAt(rowIndex);
+		PropertyView p = getPropertyAt(rowIndex);
 		if(columnIndex == 0) return p.getDesc();
 		else return p.getValue();
 	}
 
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		if(columnIndex != 0) {
-			TypedProperty p = getPropertyAt(rowIndex);
+			PropertyView p = getPropertyAt(rowIndex);
 			p.setValue(aValue);
 		}
 		swingEngine.getEngine().getActiveVPathway().redrawDirtyRect();
@@ -222,7 +222,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 
 	public TableCellRenderer getCellRenderer(int row, int column) {
 		if(column != 0) {
-			TypedProperty tp = getPropertyAt(row);
+			PropertyView tp = getPropertyAt(row);
 			if(tp != null) return tp.getCellRenderer();
 		}
 		return null;
@@ -230,7 +230,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 
 	public TableCellEditor getCellEditor(int row, int column) {
 		if(column != 0) {
-			TypedProperty tp = getPropertyAt(row);
+			PropertyView tp = getPropertyAt(row);
 			if(tp != null) return tp.getCellEditor(swingEngine);
 		}
 		return null;

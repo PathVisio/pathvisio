@@ -13,49 +13,39 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-
 package org.pathvisio.model;
 
 /**
- * The properties in {@link StaticProperty} define properties of different types,
- * all the possible types are defined here.
+ * This interface defines a typed property.
+ *
+ * @author Mark Woon
  */
-public enum StaticPropertyType implements PropertyType
-{
-	BOOLEAN,
-	DOUBLE,
-	INTEGER,
-	DATASOURCE,
-	LINESTYLE,
-	COLOR,
-	STRING,
-	ORIENTATION,
-	SHAPETYPE,
-	LINETYPE,
-	OUTLINETYPE,
-	GENETYPE,
-	FONT,
-	ANGLE,
-	ORGANISM,
-	DB_ID,
-	DB_SYMBOL,
-	BIOPAXREF,
-	COMMENTS,
-	GROUPSTYLETYPE;
+public interface Property {
+
+	/**
+	 * Gets the Id for this property.  Ids must be unique.
+	 */
+	String getId();
+
+	/**
+	 * Gets the name of this property.
+	 */
+	String getName();
+
+	/**
+	 * Gets the description of this property.
+	 */
+	String getDescription();
 
 
-
-	private String id;
-
-
-	private StaticPropertyType() {
-		id = "core." + name();
-		PropertyManager.registerPropertyType(this);
-	}
+	/**
+	 * Gets the type for this property.
+	 */
+	PropertyType getType();
 
 
-	public String getId() {
-		return id;
-	}
+	/**
+	 * Gets whether this property has accepts values.
+	 */
+	boolean isCollection();
 }

@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Types for Static properties on {@link PathwayElement}
+ * Static properties for ObjectTypes, linked in {@link PathwayElement}.
  */
-public enum StaticProperty
+public enum StaticProperty implements Property
 {
 	// all
 	COMMENTS ("Comments", "Comments", StaticPropertyType.COMMENTS, 101),
@@ -122,6 +122,7 @@ public enum StaticProperty
 		desc = aDesc;
 		hidden = isHidden;
 		order = anOrder;
+		PropertyManager.registerProperty(this);
 	}
 
 	private StaticProperty (String aTag, String aDesc, StaticPropertyType aType, int anOrder)
@@ -190,4 +191,26 @@ public enum StaticProperty
 		return result;
 	}
 
+
+	//-- Property methods --//
+
+	public String getId() {
+		return "core." + tag;
+	}
+
+	public String getName() {
+		return desc;
+	}
+
+	public String getDescription() {
+		return null;
+	}
+
+	public PropertyType getType() {
+		return type;
+	}
+
+	public boolean isCollection() {
+		return false;
+	}
 }

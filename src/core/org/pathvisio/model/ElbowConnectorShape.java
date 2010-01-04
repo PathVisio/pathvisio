@@ -33,7 +33,8 @@ public class ElbowConnectorShape extends AbstractConnector {
 	private final static double SEGMENT_OFFSET = 20 * 15;
 
 	public void recalculateShape(ConnectorRestrictions restrictions) {
-		WayPoint[] wps = calculateWayPoints(restrictions);
+
+        WayPoint[] wps = calculateWayPoints(restrictions);
 		setSegments(calculateSegments(restrictions, wps));
 		setWayPoints(wayPointsToCenter(wps, getSegments()));
 		setShape(calculateShape());
@@ -41,7 +42,7 @@ public class ElbowConnectorShape extends AbstractConnector {
 
 	public boolean hasValidWaypoints(ConnectorRestrictions restrictions) {
 		//Only check if number of waypoints matches number of segments
-		return restrictions.getWayPointPreferences().length == getNrSegments(restrictions) - 2;
+        return restrictions.getWayPointPreferences().length == getNrSegments(restrictions) - 2;
 	}
 
 	protected WayPoint[] wayPointsToCenter(WayPoint[] waypoints, Segment[] segments) {
@@ -87,7 +88,6 @@ public class ElbowConnectorShape extends AbstractConnector {
 		int startSide = restrictions.getStartSide();
 		int startAxis = getSegmentAxis(startSide);
 		int startDirection = getSegmentDirection(startSide);
-
 		int endSide = restrictions.getEndSide();
 		int endAxis = getSegmentAxis(endSide);
 		int endDirection = getSegmentDirection(endSide);
@@ -296,7 +296,8 @@ TLW		2	3	2	1
 	}
 
 	protected int getNrSegments(ConnectorRestrictions restrictions) {
-		Point2D start = restrictions.getStartPoint();
+
+        Point2D start = restrictions.getStartPoint();
 		Point2D end = restrictions.getEndPoint();
 
 		boolean leftToRight = getDirectionX(start, end) > 0;
@@ -362,10 +363,89 @@ TLW		2	3	2	1
 
 	public double toLineCoordinate(Point2D v) {
 		Segment[] segments = getSegments();
-		return LinAlg.toLineCoordinates(
+        Segment seg = findSegment(segments, v);
+        if (seg == null) {
+            return LinAlg.toLineCoordinates(
 				new Point(segments[0].getMStart()),
-				new Point(segments[segments.length - 1].getMEnd()),
+				new Point(segments[segments.length-1].getMEnd()),
 				new Point(v)
-		);
+		    );
+        }
+        return locateOnElbow(seg, v);
 	}
+
+    private double getTotalLength() {
+        double totLength = 0.0;
+        for (Segment seg:getSegments()) {
+            totLength = seg.getMLength() + totLength;
+        }
+        return totLength;
+    }
+
+    /* *
+    * Segments are either horizontal or vertical so if x values are different y values should be the same and vice versa.
+    *      the cursor position may not always be exactly on the segment so need to make best guess.
+    */
+   private Segment findSegment(Segment[] segments, Point2D v) {
+        Segment foundSeg = null;
+        double closestFit = Double.MAX_VALUE;
+        double currFit;
+        for (Segment seg:segments) {
+            if (seg.getMStart().getX() == seg.getMEnd().getX()) {
+                if (isPointOnSegment(seg.getMStart().getY(), seg.getMEnd().getY(), v.getY())) {
+                    currFit = Math.abs(seg.getMStart().getX() - v.getX());
+                    if (currFit < closestFit) {
+                        closestFit = currFit;
+                        foundSeg = seg;
+                    }
+                }
+            } else if (seg.getMStart().getY() == seg.getMEnd().getY()) {
+                if (isPointOnSegment(seg.getMStart().getX(), seg.getMEnd().getX(), v.getX())) {
+                    currFit = Math.abs(seg.getMStart().getY() - v.getY());
+                    if (currFit < closestFit) {
+                        closestFit = currFit;
+                        foundSeg = seg;
+                    }
+                }
+            }
+        }
+        return foundSeg;
+    }
+
+    /* *
+    *   Find how this segment fits in with the whole elbow and return
+    *      the cursor position may not always be exactly on the segment so need to make best guess.
+    */
+   private double locateOnElbow(Segment segment, Point2D v) {
+        double segPercentOfTot = 0.0;
+        double currSegPercentOfTot;
+        double totLength = getTotalLength();
+        for (Segment seg:getSegments()) {
+            currSegPercentOfTot = seg.getMLength() / totLength;
+            if (seg.equals(segment)) {
+                currSegPercentOfTot = currSegPercentOfTot * locateOnSegment(seg, v);
+                segPercentOfTot = currSegPercentOfTot + segPercentOfTot;
+                break;
+            }
+            segPercentOfTot = currSegPercentOfTot + segPercentOfTot;
+        }
+        return segPercentOfTot;
+    }
+
+    private double locateOnSegment(Segment seg, Point2D v) {
+        return LinAlg.toLineCoordinates(
+				new Point(seg.getMStart()),
+				new Point(seg.getMEnd()),
+				new Point(v));
+    }
+
+    private boolean isPointOnSegment(Double p1, Double p2, Double point) {
+        double offset = 50.0;
+        if (p1 < p2 && (p1 - offset) < point && (point < (p2 + offset))) {
+            return true;
+        } else if (p2 < p1 && (p2 - offset) < point && (point < (p1 + offset))) {
+            return true;
+        }
+        return false;
+    }
 }

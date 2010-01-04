@@ -285,21 +285,21 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 			}
 
 			//Add the interactions for each interaction type
-			for(String name : left) {
+			if(left != null) for(String name : left) {
 				if(attrValue.equals(name)) {
 					addedNodes.addAll(
 							addInteractions(query, r, right, RIGHT)
 					);
 				}
 			}
-			for(String name : right) {
+			if(right != null) for(String name : right) {
 				if(attrValue.equals(name)) {
 					addedNodes.addAll(
 							addInteractions(query, r, left, LEFT)
 					);
 				}
 			}
-			for(String name : mediator) {
+			if(mediator != null) for(String name : mediator) {
 				if(attrValue.equals(name)) {
 					addedNodes.addAll(
 							addInteractions(query, r, left, MEDIATOR)

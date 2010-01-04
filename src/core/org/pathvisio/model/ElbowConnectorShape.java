@@ -390,23 +390,29 @@ TLW		2	3	2	1
         Segment foundSeg = null;
         double closestFit = Double.MAX_VALUE;
         double currFit;
-        for (Segment seg:segments) {
-            if (seg.getMStart().getX() == seg.getMEnd().getX()) {
-                if (isPointOnSegment(seg.getMStart().getY(), seg.getMEnd().getY(), v.getY())) {
-                    currFit = Math.abs(seg.getMStart().getX() - v.getX());
-                    if (currFit < closestFit) {
-                        closestFit = currFit;
-                        foundSeg = seg;
-                    }
-                }
-            } else if (seg.getMStart().getY() == seg.getMEnd().getY()) {
-                if (isPointOnSegment(seg.getMStart().getX(), seg.getMEnd().getX(), v.getX())) {
-                    currFit = Math.abs(seg.getMStart().getY() - v.getY());
-                    if (currFit < closestFit) {
-                        closestFit = currFit;
-                        foundSeg = seg;
-                    }
-                }
+        for (Segment seg:segments) 
+        {
+        	// projection of v on the segment 
+        	// TODO: probably could be merged with LinAlg.project.
+        	// Couldn't do that right away because I need the intermediate u value.
+        	Point base = new Point(seg.getMStart());
+        	Point direction = new Point(seg.getMEnd()).subtract(new Point(seg.getMStart()));
+        	Point vrelative = new Point(v).subtract(new Point(seg.getMStart()));
+
+        	double u = ((vrelative.x)*(direction.x) + (vrelative.y) * (direction.y)) 
+        		/ ((direction.x) * (direction.x) + (direction.y) * (direction.y));
+        	
+        	Point projection = new Point(base.x + u * direction.x, base.y + u * (direction.y));
+        	
+        	// special case: if u is smaller than 0 or larger than 1
+        	// then closest lies outside the segment.
+        	if (u < 0) currFit = LinAlg.distance(new Point(v), new Point(seg.getMStart()));
+        	else if (u > 1) currFit = LinAlg.distance(new Point(v), new Point(seg.getMEnd()));
+        	else currFit = LinAlg.distance (projection, new Point(v));
+
+        	if (currFit < closestFit) {
+                closestFit = currFit;
+                foundSeg = seg;
             }
         }
         return foundSeg;

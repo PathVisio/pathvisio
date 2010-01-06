@@ -24,14 +24,17 @@ import com.jgoodies.forms.layout.RowSpec;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -42,9 +45,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -60,9 +65,22 @@ import org.pathvisio.util.ColorConverter;
  */
 public class PreferencesDlg
 {
+	public static final String UPDATE_COMMAND = "prefDlg.updated";
+	private Set<ActionListener> actionListeners = new HashSet<ActionListener>();
+
 	private DefaultMutableTreeNode createNodes()
 	{
 		DefaultMutableTreeNode top = new DefaultMutableTreeNode("Preferences");
+		panels.put("Preferences", new PreferencePanel() {
+			private JPanel panel = new JPanel();
+			public JPanel getPanel() {
+				return panel;
+			}
+			public void apply() {
+			}
+			public void reset() {
+			}
+		});
 
 		List<String> panelTitles = new ArrayList<String>();
 		panelTitles.addAll (panels.keySet());
@@ -103,9 +121,22 @@ public class PreferencesDlg
 		panels.put (title, panel);
 	}
 
-	public PreferencePanel.Builder builder()
+	public void removePanel(PreferencePanel panel) {
+		String key = null;
+		for (Map.Entry<String, PreferencePanel> e : panels.entrySet()) {
+			if (panel == e.getValue()) {
+				key = e.getKey();
+				break;
+			}
+		}
+		if (key != null) {
+			panels.remove(key);
+		}
+	}
+
+	public DefaultPreferencePanel.Builder builder()
 	{
-		return new PreferencePanel.Builder(PreferenceManager.getCurrent());
+		return new DefaultPreferencePanel.Builder(PreferenceManager.getCurrent());
 	}
 
 	/**
@@ -115,11 +146,16 @@ public class PreferencesDlg
 	 * You can use the chained .xxxField() methods to add the preferences that you want to edit,
 	 * with a description.
 	 */
-	public static class PreferencePanel implements ActionListener
+	public static class DefaultPreferencePanel implements PreferencePanel, ActionListener
 	{
 		private JPanel panel;
 		private PreferenceManager prefs;
 		private List<FieldEditor> editors = new ArrayList<FieldEditor>();
+
+
+		public JPanel getPanel() {
+			return panel;
+		}
 
 		public void apply()
 		{
@@ -344,7 +380,7 @@ public class PreferencesDlg
 		 * */
 		public static class Builder
 		{
-			private PreferencePanel result = new PreferencePanel();
+			private DefaultPreferencePanel result = new DefaultPreferencePanel();
 			private DefaultFormBuilder builder;
 			private FormLayout layout;
 
@@ -484,6 +520,7 @@ public class PreferencesDlg
 				}
 				dlg.setVisible (false);
 				dlg.dispose();
+				fireUpdateAction();
 			}
 		}
 		);
@@ -506,7 +543,7 @@ public class PreferencesDlg
 		{
 			PreferencePanel pp = panels.get(title);
 			pp.reset();
-			pnlSettings.add (pp.panel, title);
+			pnlSettings.add (pp.getPanel(), title);
 		}
 
 		trCategories.addTreeSelectionListener(new TreeSelectionListener()
@@ -519,16 +556,40 @@ public class PreferencesDlg
 			}
 		});
 
+		// set initial selection to root node
+		trCategories.setSelectionPath(new TreePath(trCategories.getModel().getRoot()));
+
 		pnlButtons.add (btnOk);
 		pnlButtons.add (btnCancel);
 
-		dlg.add (new JScrollPane (pnlSettings), BorderLayout.CENTER);
-		dlg.add (new JScrollPane (trCategories), BorderLayout.WEST);
+
+		Border padBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+		trCategories.setBorder(padBorder);
+		pnlSettings.setBorder(padBorder);
+		JScrollPane trScroll = new JScrollPane(trCategories);
+		trScroll.setMinimumSize(new Dimension(100, 200));
+		JScrollPane pnlScroll = new JScrollPane(pnlSettings);
+		pnlScroll.setMinimumSize(new Dimension(350, 200));
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, trScroll, pnlScroll);
+		dlg.add (splitPane);
 		dlg.add (pnlButtons, BorderLayout.SOUTH);
 
 		dlg.pack();
 		dlg.setLocationRelativeTo(swingEngine.getFrame());
 		dlg.setVisible (true);
+	}
+
+
+	public void addActionListener(ActionListener listener) {
+		actionListeners.add(listener);
+	}
+
+	private void fireUpdateAction() {
+
+		ActionEvent evt = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, UPDATE_COMMAND);
+		for (ActionListener listener : actionListeners) {
+			listener.actionPerformed(evt);
+		}
 	}
 }
 

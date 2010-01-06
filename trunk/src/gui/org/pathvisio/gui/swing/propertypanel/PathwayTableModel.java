@@ -178,7 +178,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		PropertyView p = getPropertyAt(rowIndex);
-		if(columnIndex == 0) return p.getDesc();
+		if(columnIndex == 0) return p.getName();
 		else return p.getValue();
 	}
 

@@ -110,16 +110,16 @@ public enum StaticProperty implements Property
 	BIOPAXREF( "BiopaxRef", "BiopaxRef", StaticPropertyType.BIOPAXREF, 153),
 	ZORDER ( "Z order", "ZOrder", StaticPropertyType.INTEGER, 154);
 
-	private String tag, desc;
+	private String tag, name;
 	private StaticPropertyType type;
 	private boolean hidden;
 	private int order;
 
-	private StaticProperty (String aTag, String aDesc, StaticPropertyType aType, int anOrder, boolean isHidden)
+	private StaticProperty (String aTag, String aName, StaticPropertyType aType, int anOrder, boolean isHidden)
 	{
 		tag = aTag;
 		type = aType;
-		desc = aDesc;
+		name = aName;
 		hidden = isHidden;
 		order = anOrder;
 		PropertyManager.registerProperty(this);
@@ -139,15 +139,16 @@ public enum StaticProperty implements Property
 	}
 
 	/**
-	 * @return Description used e.g. in property table
+	 * @deprecated use getDescription() instead.
 	 */
 	public String desc()
 	{
-		return desc;
+		return name;
 	}
 
 	/**
 	 * @return Data type of this property
+	 * @deprecated use getType() instead.
 	 */
 	public StaticPropertyType type()
 	{
@@ -198,10 +199,12 @@ public enum StaticProperty implements Property
 		return "core." + tag;
 	}
 
+	/** @{inheritDoc} */
 	public String getName() {
-		return desc;
+		return name;
 	}
-
+	
+	/** @{inheritDoc} */
 	public String getDescription() {
 		return null;
 	}

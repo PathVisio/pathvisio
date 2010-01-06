@@ -27,28 +27,28 @@ import java.util.Set;
 import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 
 /**
  * Default for mapping cytoscape attributes to GPML properties.
  */
 public class DefaultAttributeMapper implements AttributeMapper {
 	public static final String CY_COMMENT_SOURCE = "cytoscape-attribute: ";
-	private Map<PropertyType, Object> defaultValues;
-	private Map<PropertyType, String> prop2attr;
-	private Map<String, PropertyType> attr2prop;
+	private Map<StaticProperty, Object> defaultValues;
+	private Map<StaticProperty, String> prop2attr;
+	private Map<String, StaticProperty> attr2prop;
 
-	private Set<PropertyType> protectedProps;
+	private Set<StaticProperty> protectedProps;
 
 	public DefaultAttributeMapper() {
-		prop2attr = new HashMap<PropertyType, String>();
-		attr2prop = new HashMap<String, PropertyType>();
-		defaultValues = new HashMap<PropertyType, Object>();
+		prop2attr = new HashMap<StaticProperty, String>();
+		attr2prop = new HashMap<String, StaticProperty>();
+		defaultValues = new HashMap<StaticProperty, Object>();
 
 		setInitialMappings();
 	}
 
-	public String getMapping(PropertyType prop) {
+	public String getMapping(StaticProperty prop) {
 		//First check if a mapping is explicitely set
 		String name = prop2attr.get(prop);
 		if(name == null && prop != null) { //If not, use the property tag name
@@ -57,24 +57,24 @@ public class DefaultAttributeMapper implements AttributeMapper {
 		return name;
 	}
 
-	public PropertyType getMapping(String attr) {
-		PropertyType prop = attr2prop.get(attr);
+	public StaticProperty getMapping(String attr) {
+		StaticProperty prop = attr2prop.get(attr);
 		if(prop == null) { //If not, find out if it's a GPML attribute
-			prop = PropertyType.getByTag(attr);
+			prop = StaticProperty.getByTag(attr);
 		}
 		return prop;
 	}
 
-	public void setMapping(String attr, PropertyType prop) {
+	public void setMapping(String attr, StaticProperty prop) {
 		setAttributeToPropertyMapping(attr, prop);
 		setPropertyToAttributeMapping(prop, attr);
 	}
 
-	public void setDefaultValue(PropertyType prop, Object value) {
+	public void setDefaultValue(StaticProperty prop, Object value) {
 		defaultValues.put(prop, value);
 	}
 
-	public Object getDefaultValue(PropertyType prop) {
+	public Object getDefaultValue(StaticProperty prop) {
 		return defaultValues.get(prop);
 	}
 
@@ -83,7 +83,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	 * @param attr
 	 * @param prop
 	 */
-	public void setAttributeToPropertyMapping(String attr, PropertyType prop) {
+	public void setAttributeToPropertyMapping(String attr, StaticProperty prop) {
 		attr2prop.put(attr, prop);
 	}
 
@@ -92,45 +92,45 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	 * @param prop
 	 * @param attr
 	 */
-	public void setPropertyToAttributeMapping(PropertyType prop, String attr) {
+	public void setPropertyToAttributeMapping(StaticProperty prop, String attr) {
 		prop2attr.put(prop, attr);
 	}
 
-	protected Set<PropertyType> getProtectedProps() {
+	protected Set<StaticProperty> getProtectedProps() {
 		if(protectedProps == null) {
-			protectedProps = new HashSet<PropertyType>();
-			protectedProps.add(PropertyType.CENTERX);
-			protectedProps.add(PropertyType.CENTERY);
-			protectedProps.add(PropertyType.STARTX);
-			protectedProps.add(PropertyType.STARTY);
-			protectedProps.add(PropertyType.ENDX);
-			protectedProps.add(PropertyType.ENDY);
-			protectedProps.add(PropertyType.COMMENTS);
-			protectedProps.add(PropertyType.GRAPHID);
+			protectedProps = new HashSet<StaticProperty>();
+			protectedProps.add(StaticProperty.CENTERX);
+			protectedProps.add(StaticProperty.CENTERY);
+			protectedProps.add(StaticProperty.STARTX);
+			protectedProps.add(StaticProperty.STARTY);
+			protectedProps.add(StaticProperty.ENDX);
+			protectedProps.add(StaticProperty.ENDY);
+			protectedProps.add(StaticProperty.COMMENTS);
+			protectedProps.add(StaticProperty.GRAPHID);
 		}
 		return protectedProps;
 	}
 
 	protected void setInitialMappings() {
-		setMapping("canonicalName", PropertyType.TEXTLABEL);
-		setDefaultValue(PropertyType.DATASOURCE, BioDataSource.UNIPROT);
+		setMapping("canonicalName", StaticProperty.TEXTLABEL);
+		setDefaultValue(StaticProperty.DATASOURCE, BioDataSource.UNIPROT);
 	}
 
-	public boolean isProtected(PropertyType prop) {
+	public boolean isProtected(StaticProperty prop) {
 		return getProtectedProps().contains(prop);
 	}
 
-	public void protect(PropertyType prop) {
+	public void protect(StaticProperty prop) {
 		getProtectedProps().add(prop);
 	}
 
-	public void unprotect(PropertyType prop) {
+	public void unprotect(StaticProperty prop) {
 		getProtectedProps().remove(prop);
 	}
 
 	public void attributesToProperties(String id, PathwayElement elm, CyAttributes attr) {
 		//Process defaults
-		for(PropertyType prop : defaultValues.keySet()) {
+		for(StaticProperty prop : defaultValues.keySet()) {
 			if(elm.getStaticPropertyKeys().contains(prop)) {
 				elm.setStaticProperty(prop, defaultValues.get(prop));
 			}
@@ -138,7 +138,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 
 		//Process mappings
 		for(String aname : attr.getAttributeNames()) {
-			PropertyType prop = getProperty(aname);
+			StaticProperty prop = getProperty(aname);
 
 			//Protected property, don't set from attributes
 			if(isProtected(prop)) {
@@ -226,17 +226,17 @@ public class DefaultAttributeMapper implements AttributeMapper {
 		}
 	}
 
-	private PropertyType getProperty(String attributeName) {
+	private StaticProperty getProperty(String attributeName) {
 		return getMapping(attributeName);
 	}
 
-	private String getAttributeName(PropertyType property) {
+	private String getAttributeName(StaticProperty property) {
 		return getMapping(property);
 	}
 
 	public void propertiesToAttributes(String id, PathwayElement elm,
 			CyAttributes attr) {
-		for(PropertyType prop : elm.getStaticPropertyKeys()) {
+		for(StaticProperty prop : elm.getStaticPropertyKeys()) {
 			Object value = elm.getStaticProperty(prop);
 			if(value != null) {
 				String aname = getAttributeName(prop);

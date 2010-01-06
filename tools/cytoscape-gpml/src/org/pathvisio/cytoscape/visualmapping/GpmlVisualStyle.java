@@ -39,7 +39,7 @@ import org.pathvisio.cytoscape.GpmlNetworkElement;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 
 /**
  * Defines a @link VisualStyle that renders a GPML network
@@ -121,7 +121,7 @@ public class GpmlVisualStyle extends VisualStyle {
 	void setLineTypeMapping() {
 		DiscreteMapping styleMapping = new DiscreteMapping(
 				nac.getDefaultAppearance().get(VisualPropertyType.EDGE_LINE_STYLE),
-				attrMapper.getMapping(PropertyType.LINESTYLE),
+				attrMapper.getMapping(StaticProperty.LINESTYLE),
 				ObjectMapping.EDGE_MAPPING
 		);
 		styleMapping.putMapValue("" + LineStyle.SOLID, cytoscape.visual.LineStyle.SOLID);
@@ -134,7 +134,7 @@ public class GpmlVisualStyle extends VisualStyle {
 	void setArrowMapping() {
 		DiscreteMapping srcMapping = new DiscreteMapping(
 				nac.getDefaultAppearance().get(VisualPropertyType.EDGE_SRCARROW_SHAPE),
-				attrMapper.getMapping(PropertyType.STARTLINETYPE),
+				attrMapper.getMapping(StaticProperty.STARTLINETYPE),
 				ObjectMapping.EDGE_MAPPING
 		);
 		setArrowMappings(srcMapping);
@@ -144,7 +144,7 @@ public class GpmlVisualStyle extends VisualStyle {
 
 		DiscreteMapping tgtMapping = new DiscreteMapping(
 				nac.getDefaultAppearance().get(VisualPropertyType.EDGE_TGTARROW_SHAPE),
-				attrMapper.getMapping(PropertyType.ENDLINETYPE),
+				attrMapper.getMapping(StaticProperty.ENDLINETYPE),
 				ObjectMapping.EDGE_MAPPING
 		);
 		setArrowMappings(tgtMapping);
@@ -152,7 +152,7 @@ public class GpmlVisualStyle extends VisualStyle {
 				new BasicCalculator("GPML edge target shape", tgtMapping, VisualPropertyType.EDGE_TGTARROW_SHAPE)
 		);
 
-		String colAttr = attrMapper.getMapping(PropertyType.COLOR);
+		String colAttr = attrMapper.getMapping(StaticProperty.COLOR);
 		eac.setCalculator(
 				new BasicCalculator(
 						"GPML edge source color",
@@ -250,7 +250,7 @@ public class GpmlVisualStyle extends VisualStyle {
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_FILL_COLOR, Color.WHITE);
 		nac.getDefaultAppearance().set(VisualPropertyType.NODE_OPACITY, 220);
 
-		String colAttr = attrMapper.getMapping(PropertyType.COLOR);
+		String colAttr = attrMapper.getMapping(StaticProperty.COLOR);
 		nac.setCalculator(
 				new BasicCalculator(
 						"GPML node border color",

@@ -33,7 +33,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 
 /**
  * Panel to configure attribute to GPML property mappings
@@ -45,7 +45,7 @@ public class AttributeMapperPanel extends JPanel {
 	String[] columnNames = new String[] { "Attribute", "Property" };
 	AttributeMapper mapper;
 
-	Map<String, PropertyType> desc2prop = new HashMap<String, PropertyType>();
+	Map<String, StaticProperty> desc2prop = new HashMap<String, StaticProperty>();
 
 	JTable table;
 	AttributeMapperTableModel tableModel;
@@ -61,7 +61,7 @@ public class AttributeMapperPanel extends JPanel {
 		table = new JTable(tableModel);
 
 		List<String> propNames = new ArrayList<String>();
-		for(PropertyType prop : PropertyType.values()) {
+		for(StaticProperty prop : StaticProperty.values()) {
 			if(!mapper.isProtected(prop)) {
 				desc2prop.put(prop.desc(), prop);
 				propNames.add(prop.desc());
@@ -98,7 +98,7 @@ public class AttributeMapperPanel extends JPanel {
 			if(columnIndex == 0) {
 				return attributeNames[rowIndex];
 			} else {
-				PropertyType prop = mapper.getMapping(attributeNames[rowIndex]);
+				StaticProperty prop = mapper.getMapping(attributeNames[rowIndex]);
 				if(prop != null) {
 					return prop.desc();
 				} else {

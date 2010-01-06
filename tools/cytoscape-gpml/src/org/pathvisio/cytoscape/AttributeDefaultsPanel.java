@@ -28,10 +28,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.gui.swing.propertypanel.TypedProperty;
+import org.pathvisio.gui.swing.propertypanel.PropertyView;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 
 /**
  * Panel to configure attribute to GPML property mappings
@@ -44,7 +44,7 @@ public class AttributeDefaultsPanel extends JPanel {
 	JTable table;
 	AttributeMapperTableModel tableModel;
 
-	List<TypedProperty> properties = new ArrayList<TypedProperty>();
+	List<PropertyView> properties = new ArrayList<PropertyView>();
 
 	public AttributeDefaultsPanel(AttributeMapper mapper) {
 		setLayout(new BorderLayout());
@@ -54,9 +54,9 @@ public class AttributeDefaultsPanel extends JPanel {
 
 		//Get the property list
 		PathwayElement dummyElement = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-		for(PropertyType p : dummyElement.getStaticPropertyKeys()) {
+		for(StaticProperty p : dummyElement.getStaticPropertyKeys()) {
 			if(!mapper.isProtected(p)) {
-				TypedProperty tp = new TypedProperty(null, p);
+				PropertyView tp = new PropertyView(null, p);
 				Object value = mapper.getDefaultValue(p);
 				if(value == null) {
 					value = dummyElement.getStaticProperty(p);
@@ -116,7 +116,7 @@ public class AttributeDefaultsPanel extends JPanel {
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			TypedProperty tp = properties.get(rowIndex);
+			PropertyView tp = properties.get(rowIndex);
 
 			if(columnIndex == 0) {
 				return tp.getDesc();
@@ -126,15 +126,15 @@ public class AttributeDefaultsPanel extends JPanel {
 		}
 
 		public void setValueAt(Object value, int rowIndex, int columnIndex) {
-			TypedProperty tp = properties.get(rowIndex);
+			PropertyView tp = properties.get(rowIndex);
 			tp.setValue(value);
-			//TODO: casting to PropertyType not good solution
-			mapper.setDefaultValue((PropertyType)tp.getType(), value);
+			//TODO: casting to StaticProperty not good solution
+			mapper.setDefaultValue((StaticProperty)tp.getType(), value);
 		}
 
 		public TableCellRenderer getCellRenderer(int row, int column) {
 			if(column != 0) {
-				TypedProperty tp = properties.get(row);
+				PropertyView tp = properties.get(row);
 				if(tp != null) return tp.getCellRenderer();
 			}
 			return null;
@@ -142,7 +142,7 @@ public class AttributeDefaultsPanel extends JPanel {
 
 		public TableCellEditor getCellEditor(int row, int column) {
 			if(column != 0) {
-				TypedProperty tp = properties.get(row);
+				PropertyView tp = properties.get(row);
 				if(tp != null) return tp.getCellEditor(null);
 			}
 			return null;

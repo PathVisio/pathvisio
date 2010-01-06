@@ -28,18 +28,20 @@ public interface Property {
 	String getId();
 
 	/**
-	 * Gets the name of this property.
+	 * @returns Name of property, used e.g. as row header in the properties table.
 	 */
 	String getName();
 
 	/**
-	 * Gets the description of this property.
+	 * Description of property, used e.g. as tooltip text when mousing over
+	 * the properties table. Descriptions are optional.
+	 * @returns description. May return null.
 	 */
 	String getDescription();
 
 
 	/**
-	 * Gets the type for this property.
+	 * Gets the data type for this property.
 	 */
 	PropertyType getType();
 

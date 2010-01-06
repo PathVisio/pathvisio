@@ -132,11 +132,11 @@ public class PropertyView implements Comparable<PropertyView> {
 	/**
 	 * Get a description for the property being edited.
 	 */
-	public String getDesc()
+	public String getName()
 	{
 		if (type instanceof StaticProperty)
 		{
-			return ((StaticProperty)type).desc();
+			return ((StaticProperty)type).getName();
 		}
 		else
 		{

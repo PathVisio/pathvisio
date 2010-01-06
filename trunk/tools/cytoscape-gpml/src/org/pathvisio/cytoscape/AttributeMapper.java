@@ -19,7 +19,7 @@ package org.pathvisio.cytoscape;
 import cytoscape.data.CyAttributes;
 
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.StaticProperty;
 
 /**
  * Interface for classes that keep track of mapping from
@@ -29,9 +29,9 @@ public interface AttributeMapper {
 	/**
 	 * Set a default value that will be used when no mapping is available
 	 */
-	public void setDefaultValue(PropertyType prop, Object value);
+	public void setDefaultValue(StaticProperty prop, Object value);
 
-	public Object getDefaultValue(PropertyType prop);
+	public Object getDefaultValue(StaticProperty prop);
 
 	/**
 	 * Sets a two-way mapping, should be equivalent to:<br>
@@ -40,17 +40,17 @@ public interface AttributeMapper {
 	 * setPropertyToAttributeMapping(prop, attr);
 	 * </code>
 	 */
-	public void setMapping(String attr, PropertyType prop);
+	public void setMapping(String attr, StaticProperty prop);
 	/**
 	 * Set a one-way mapping, from attribute to property
 	 */
-	public void setAttributeToPropertyMapping(String attr, PropertyType prop);
+	public void setAttributeToPropertyMapping(String attr, StaticProperty prop);
 	/**
 	 * Set a one-way mapping, from property to attribute
 	 */
-	public void setPropertyToAttributeMapping(PropertyType prop, String attr);
-	public PropertyType getMapping(String attr);
-	public String getMapping(PropertyType prop);
+	public void setPropertyToAttributeMapping(StaticProperty prop, String attr);
+	public StaticProperty getMapping(String attr);
+	public String getMapping(StaticProperty prop);
 	public void attributesToProperties(String id, PathwayElement elm, CyAttributes attr);
 	public void propertiesToAttributes(String id, PathwayElement elm, CyAttributes attr);
 
@@ -58,16 +58,16 @@ public interface AttributeMapper {
 	 * Check whether a property is protected. If a property is protected, no attributes should
 	 * be mapped to and from this property.
 	 */
-	public boolean isProtected(PropertyType prop);
+	public boolean isProtected(StaticProperty prop);
 	/**
 	 * Protect a property. If a property is protected, no attributes should
 	 * be mapped to and from this property.
 	 */
-	public void protect(PropertyType prop);
+	public void protect(StaticProperty prop);
 
 	/**
 	 * Unprotect a property. If a property is unprotected, the attributemapper
 	 * will map attribute value from and to this property
 	 */
-	public void unprotect(PropertyType prop);
+	public void unprotect(StaticProperty prop);
 }

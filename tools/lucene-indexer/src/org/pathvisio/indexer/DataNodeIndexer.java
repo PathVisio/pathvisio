@@ -19,7 +19,6 @@ package org.pathvisio.indexer;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -32,10 +31,10 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -107,7 +106,7 @@ public class DataNodeIndexer extends IndexerBase {
 		//Add cross references if connected
 		Organism organism = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
 		if(gdbs != null) {
-			for(IDMapperRdb gdb : gdbs.getGdbs(organism)) {
+			for(IDMapper gdb : gdbs.getGdbs(organism)) {
 				if(gdb != null && gdb.isConnected()) {
 					try {
 						Set<Xref> crossRefs = gdb.mapID(xref);

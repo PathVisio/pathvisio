@@ -157,7 +157,7 @@ public class GpmlVisualStyle extends VisualStyle {
 				new BasicCalculator(
 						"GPML edge source color",
 						new GpmlColorMapper(
-								eac.getDefaultAppearance().getColor(), colAttr
+								(Color)eac.getDefaultAppearance().get(VisualPropertyType.EDGE_SRCARROW_COLOR), colAttr
 						),
 						VisualPropertyType.EDGE_SRCARROW_COLOR
 				)
@@ -166,7 +166,7 @@ public class GpmlVisualStyle extends VisualStyle {
 				new BasicCalculator(
 						"GPML edge target color",
 						new GpmlColorMapper(
-								eac.getDefaultAppearance().getColor(), colAttr
+								(Color)eac.getDefaultAppearance().get(VisualPropertyType.EDGE_TGTARROW_COLOR), colAttr
 						),
 						VisualPropertyType.EDGE_TGTARROW_COLOR
 				)
@@ -255,7 +255,7 @@ public class GpmlVisualStyle extends VisualStyle {
 				new BasicCalculator(
 						"GPML node border color",
 						new GpmlColorMapper(
-								nac.getDefaultAppearance().getFillColor(), colAttr
+								(Color)nac.getDefaultAppearance().get(VisualPropertyType.NODE_BORDER_COLOR), colAttr
 						),
 						VisualPropertyType.NODE_BORDER_COLOR
 				)
@@ -264,7 +264,7 @@ public class GpmlVisualStyle extends VisualStyle {
 				new BasicCalculator(
 						"GPML edge color",
 						new GpmlColorMapper(
-								eac.getDefaultAppearance().getColor(), colAttr
+								(Color)eac.getDefaultAppearance().get(VisualPropertyType.EDGE_COLOR), colAttr
 						),
 						VisualPropertyType.EDGE_COLOR
 				)

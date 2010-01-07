@@ -45,6 +45,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.bridgedb.AttributeMapper;
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
@@ -126,13 +127,10 @@ public class DataNodeDialog extends PathwayElementDialog {
 			    //The result set
 				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
 
-		    	for (Xref x : gdb.freeSearch( text, QUERY_LIMIT ))
+		    	for (Map.Entry<Xref, String> i :
+		    		gdb.freeAttributeSearch( text, AttributeMapper.MATCH_ID, QUERY_LIMIT).entrySet())
 		    	{
-		    		for (String s : gdb.getAttributes (x, "Symbol"))
-		    		{
-		    			result.add (new XrefWithSymbol (x, s));
-			    		break; // only put the first symbol found
-		    		}
+		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
 		    	}
 		    	for (Map.Entry<Xref, String> i :
 		    		gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT).entrySet())

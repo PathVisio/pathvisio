@@ -119,7 +119,7 @@ public class AttributeDefaultsPanel extends JPanel {
 			PropertyView tp = properties.get(rowIndex);
 
 			if(columnIndex == 0) {
-				return tp.getDesc();
+				return tp.getName();
 			} else {
 				return tp.getValue();
 			}

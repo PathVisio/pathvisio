@@ -62,7 +62,6 @@
 		<include name="bridgedb-bio.jar"/>
 		<include name="swing-worker-1.1.jar"/>
 	    <include name="resources.jar"/>
-	    <include name="derbyclient.jar"/>	
 	  </fileset>	
 	</path>
 

@@ -621,7 +621,7 @@ public class CommonActions implements ApplicationEventListener {
 			this.swingEngine = swingEngine;
 			putValue(NAME, "Exit");
 			putValue(SHORT_DESCRIPTION, "Exit pathvisio");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_N,
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_X,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 

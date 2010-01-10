@@ -221,9 +221,13 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 	}
 
 	public TableCellRenderer getCellRenderer(int row, int column) {
-		if(column != 0) {
-			PropertyView tp = getPropertyAt(row);
-			if(tp != null) return tp.getCellRenderer();
+		PropertyView propHandler = getPropertyAt(row);
+		if (propHandler != null) {
+			if (column == 0) {
+				return propHandler.getLabelRenderer();
+			} else {
+				return propHandler.getCellRenderer();
+			}
 		}
 		return null;
 	}

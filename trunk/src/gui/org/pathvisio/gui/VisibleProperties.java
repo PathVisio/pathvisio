@@ -22,8 +22,10 @@ import java.util.Set;
 
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.StaticProperty;
+import org.pathvisio.model.Property;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.gui.swing.propertypanel.PropertyDisplayManager;
 
 /**
  * The Properties side-panel shows a list of properties of the current PathwayElement,
@@ -48,11 +50,13 @@ public class VisibleProperties
 	public static Set<Object> getVisiblePropertyKeys (PathwayElement e)
 	{
 		Set<Object> result = new HashSet<Object>();
+		for (Property p : e.getStaticPropertyKeys()) {
+			if (PropertyDisplayManager.isVisible(p)) {
+				result.add(p);
+			}
+		}
 
 		boolean advanced = PreferenceManager.getCurrent().getBoolean(GlobalPreference.SHOW_ADVANCED_PROPERTIES);
-
-		result.addAll (e.getStaticPropertyKeys());
-
 		if (!advanced)
 		{
 			// filter out advanced properties

@@ -65,7 +65,8 @@ public class AboutDlg
 				"<h3>Contributors</h3>\n" +
 				"<p>R.M.H. Besseling, S.P.M.Crijns, I. Kaashoek<br>\n" +
 				"M.M. Palm, E.D. Pelgrim, E. Neuteboom,<br>\n" +
-				"E.J. Creusen, P. Moeskops, Adem Bilican<br>\n" +
+				"E.J. Creusen, P. Moeskops, Adem Bilican,<br>\n" +
+				"Margot Sunshine, Mark Woon<br>\n" +
 				"<h3>Visit our website</h3>" +
 				"<p>http://www.pathvisio.org" +
 				"</html>");

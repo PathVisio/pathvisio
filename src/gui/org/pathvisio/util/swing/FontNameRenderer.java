@@ -46,15 +46,16 @@ public class FontNameRenderer extends DefaultListCellRenderer{
 			setText(valueFont.getFontName());
 		} else if (value instanceof String) {
 			String fontName = (String)value;
-			Font defaultFont = (Font)UIManager.get("Label.font");
-			Font newFont = new Font(
-					fontName,
-					defaultFont.getStyle(),
-					defaultFont.getSize()
-			);
-			setFont(newFont);
+			setFont(buildFont(fontName));
 			setText(fontName);
 		}
 		return this;
+	}
+
+
+	public static Font buildFont(String fontName) {
+
+		Font defaultFont = (Font)UIManager.get("Label.font");
+		return new Font(fontName, defaultFont.getStyle(), defaultFont.getSize());
 	}
 }

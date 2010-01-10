@@ -66,30 +66,21 @@ import org.pathvisio.util.ColorConverter;
 public class PreferencesDlg
 {
 	public static final String UPDATE_COMMAND = "prefDlg.updated";
+	private static final String ROOT_NODE_TITLE = "Preferences";
+	private Map <String, PreferencePanel> panels = new HashMap <String, PreferencePanel>();
 	private Set<ActionListener> actionListeners = new HashSet<ActionListener>();
 
 	private DefaultMutableTreeNode createNodes()
 	{
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode("Preferences");
-		panels.put("Preferences", new PreferencePanel() {
-			private JPanel panel = new JPanel();
-			public JPanel getPanel() {
-				return panel;
-			}
-			public void apply() {
-			}
-			public void reset() {
-			}
-		});
+		DefaultMutableTreeNode top = new DefaultMutableTreeNode(ROOT_NODE_TITLE);
 
+		// sort child panels by name
 		List<String> panelTitles = new ArrayList<String>();
 		panelTitles.addAll (panels.keySet());
-
 		Collections.sort (panelTitles);
-
+		// organize child nodes
 		DefaultMutableTreeNode prevNode = null;
 		String prevTitle = null;
-
 		for (String title : panelTitles)
 		{
 			if (prevTitle != null && title.startsWith(prevTitle + "."))
@@ -104,10 +95,20 @@ public class PreferencesDlg
 			}
 		}
 
+		// add root node's preference panel last so that it's not treated as a child above
+		panels.put(ROOT_NODE_TITLE, new PreferencePanel() {
+			private JPanel panel = new JPanel();
+			public JPanel getPanel() {
+				return panel;
+			}
+			public void apply() {
+			}
+			public void reset() {
+			}
+		});
+
 		return top;
 	}
-
-	private Map <String, PreferencePanel> panels = new HashMap <String, PreferencePanel>();
 
 	/**
 	 * @param title The title of this panel, that will be visible in the JTree on the left
@@ -115,9 +116,13 @@ public class PreferencesDlg
 	 * 	example title "Display.Colors" will be arranged under "Display" in the tree (but "Display"
 	 *  needs to exist). Grouping goes only one level deep.
 	 * @param panel use @link{PreferencePanel.builder()} to construct an @link{PreferencePanel}.
+	 * @throws IllegalArgumentException if title has already been claimed by another PreferencePanel
 	 */
 	public void addPanel (String title, PreferencePanel panel)
 	{
+		if (panels.containsKey(title) || ROOT_NODE_TITLE.equals(title)) {
+			throw new IllegalArgumentException("Another panel has already been registered with the title '" + title + "'");
+		}
 		panels.put (title, panel);
 	}
 
@@ -489,7 +494,7 @@ public class PreferencesDlg
 	 */
 	public void createAndShowGUI(SwingEngine swingEngine)
 	{
-		final JDialog dlg = new JDialog(swingEngine.getFrame(), "Preferences", true);
+		final JDialog dlg = new JDialog(swingEngine.getFrame(), ROOT_NODE_TITLE, true);
 		dlg.setLayout (new BorderLayout());
 
 		DefaultMutableTreeNode top = createNodes();

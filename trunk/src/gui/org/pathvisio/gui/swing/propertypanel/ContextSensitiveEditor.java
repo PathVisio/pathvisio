@@ -19,15 +19,20 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.gui.swing.SwingEngine;
 
 /**
- * This interface indicates that the TableCellEditor is context sensitive and needs to have additional information
- * before it's used.
+ * This interface indicates that the {@link TypeHandler}'s editor is context sensitive and needs to have additional
+ * information before its {@link TypeHandler#getValueEditor()} is called.
+ * <p>
+ * For example, the {@link DataSourceHandler} will filter the list of available data sources depending on the organism
+ * the pathway is for.  This information is dynamic, and TypeHandlers that implement this method will have
+ * {@link #updateEditor} called immediately before {@link TypeHandler#getValueEditor()} is called so that it can be
+ * prepared for use appropriately.
  *
  * @author Mark Woon
  */
 public interface ContextSensitiveEditor {
 
 	/**
-	 * Update the editor.
+	 * Update the editor in preparation for use.
 	 *
 	 * @param pathway the current pathway
 	 * @param propHandler the PropertyHandler containing the elements whose properties are being edited

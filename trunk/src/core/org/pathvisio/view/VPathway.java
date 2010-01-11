@@ -528,17 +528,16 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			dragUndoState = DRAG_UNDO_CHANGED;
 		}
 		hideLinkAnchors();
-
+        VPoint p = (VPoint) g.getAdjustable();
+        Line l = p.getLine();
+        PathwayElement pe = l.getPathwayElement();
 		List<LinkProvider> objects = getLinkProvidersAt(p2d);
-
 		//Fix for preventing grouped line to link to its own group
 		//Remove the group from the list of linkproviders
 		//Also remove the line anchors to prevent linking a line
 		//to it's own anchors
 		if(g.getAdjustable() instanceof VPoint) {
-			Line l = ((VPoint)g.getAdjustable()).getLine();
-			PathwayElement pe = l.getPathwayElement();
-			if(pe.getGroupRef() != null) {
+            if(pe.getGroupRef() != null) {
 				PathwayElement group = getPathwayModel().getGroupById(pe.getGroupRef());
 				objects.remove(getPathwayElementView(group));
 			}
@@ -547,7 +546,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 		}
 
-		VPoint p = (VPoint) g.getAdjustable();
 		GraphIdContainer idc = null;
 		for (LinkProvider lp : objects)
 		{
@@ -565,15 +563,41 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				break;
 			}
 		}
-		if(idc == null) {
-			p.getMPoint().unlink();
-			if(currentLinkAnchor != null) {
-				currentLinkAnchor.unhighlight();
+
+		if(idc == null && p.getMPoint().isLinked()) {
+            String graphRef = p.getMPoint().getGraphRef();
+            p.getMPoint().unlink();
+            if(currentLinkAnchor != null) {
+                if (pe instanceof MLine && isAnotherLineLinked(graphRef, (MLine)pe)) {
+
+                } else if (currentLinkAnchor.getGraphIdContainer() instanceof MAnchor &&
+                    currentLinkAnchor.getGraphIdContainer().getGraphId().equals(graphRef)) {
+                    currentLinkAnchor.getGraphIdContainer().setGraphId(null);
+                }
+                currentLinkAnchor.unhighlight();
 			}
-		}
+        }
 	}
 
-	private void hideLinkAnchors() {
+    private boolean isAnotherLineLinked(String graphRef, MLine currLine) {
+        for (PathwayElement element : getPathwayModel().getDataObjects()) {
+             if (element instanceof MLine) {
+                 if (element.equals(currLine)) {
+                     continue;
+                 }
+                 for (MPoint point:element.getMPoints()) {
+                      if (point.getGraphRef() == null) {
+                          // skip point
+                      } else if (graphRef != null && point.getGraphRef().equals(graphRef)) {
+                          return true;
+                      }
+                 }
+             }
+        }
+        return false;
+    }
+
+    private void hideLinkAnchors() {
 		for(VPathwayElement pe : getDrawingObjects()) {
 			if(pe instanceof LinkProvider) {
 				((LinkProvider)pe).hideLinkAnchors();
@@ -604,7 +628,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public void mouseMove(MouseEvent ve)
 	{
 		snapToAngle = ve.isKeyDown(MouseEvent.M_SHIFT);
-
 		// If draggin, drag the pressed object
 		// And only when the right button isn't clicked
 		if (pressedObject != null && isDragging && !ve.isKeyDown(java.awt.event.MouseEvent.BUTTON3_DOWN_MASK))
@@ -1585,7 +1608,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			Graphics deleted = getPathwayElementView(e.getAffectedData());
 			if (deleted != null)
 			{
-				deleted.markDirty();
+                if (deleted.getPathwayElement() instanceof MLine) {
+                    removeRefFromConnectingAnchors(deleted.getPathwayElement().getMStart().getGraphRef(), deleted.getPathwayElement().getMEnd().getGraphRef());
+                }
+                deleted.markDirty();
 				removeDrawingObject(deleted, false);
 			}
 			break;
@@ -1609,7 +1635,44 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		redrawDirtyRect();
 	}
 
-	/**
+    /*
+    * when line deleted need to:
+    *   see if other lines contain same graphIds (this means that 2 different lines are attached to the same anchor)
+    *      if so - ignore graphId
+    *      otherwise - loop through pathway and find any lines with anchors that contain GraphIds for the deleted line and remove.
+    */
+    private void removeRefFromConnectingAnchors(String graphId1, String graphId2) {
+        if (graphId1 == null && (graphId2 == null)) {
+            return;
+        }
+        for (PathwayElement element : getPathwayModel().getDataObjects()) {
+             if (element instanceof MLine) {
+                 for (MPoint point:element.getMPoints()) {
+                      if (point.getGraphRef() == null) {
+                          // skip point
+                      } else if (graphId1 != null && point.getGraphRef().equals(graphId1)) {
+                          graphId1 = null;
+                      } else if (graphId2 != null && point.getGraphRef().equals(graphId2)) {
+                          graphId2 = null;
+                      }
+                 }
+             }
+        }
+        if (graphId1 == null && (graphId2 == null)) {
+            return;
+        }
+        for (PathwayElement element : getPathwayModel().getDataObjects()) {
+             if (element instanceof MLine) {
+                 for (MAnchor anchor:element.getMAnchors()) {
+                      if (anchor.getGraphId().equals(graphId1) || anchor.getGraphId().equals(graphId2)) {
+                          anchor.setGraphId(null);
+                      }
+                 }
+             }
+        }
+    }
+
+    /**
 	 * Calculate the board size. Calls {@link VPathwayElement#getVBounds()} for every
 	 * element and adds all results together to obtain the board size
 	 */

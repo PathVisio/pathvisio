@@ -29,6 +29,7 @@ import java.awt.geom.Point2D;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.AnchorType;
 
 /**
  * VAnchor is the view representation of {@link MAnchor}.
@@ -140,7 +141,10 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 	}
 
 	protected void doDraw(Graphics2D g) {
-		Color c;
+        if (getMAnchor().getShape().equals(AnchorType.NONE) && getMAnchor().getGraphId() != null) {
+            return;
+        }
+        Color c;
 
 		if(isSelected()) {
 			c = selectColor;

@@ -47,7 +47,7 @@ public abstract class GraphLink
 		 * return the parent Gmmldata Object,
 		 * needed for maintaining a consistent list of graphId's
 		 */
-		Pathway getGmmlData();
+		Pathway getPathway();
 
 		/**
 		 * Convert a point to shape coordinates (relative
@@ -79,10 +79,10 @@ public abstract class GraphLink
 		void moveBy(double dx, double dy);
 
 		/**
-		 * return the parent Gmmldata Object,
+		 * return the parent Pathway object,
 		 * needed for maintaining a consistent list of graphId's
 		 */
-		Pathway getGmmlData();
+		Pathway getPathway();
 	}
 
 	/**

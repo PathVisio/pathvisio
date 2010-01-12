@@ -87,7 +87,7 @@ public class Util {
 		//so set one explicitly...
 		String id = gc.getGraphId();
 		if(id == null) {
-			gc.setGraphId(id = gc.getGmmlData().getUniqueGraphId());
+			gc.setGraphId(id = gc.getPathway().getUniqueGraphId());
 		}
 		return id;
 	}

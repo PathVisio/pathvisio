@@ -93,12 +93,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	private Map<String, String> attributes = new TreeMap<String, String>();
 
 	/**
-	 * Get a map of arbitrary key / value pairs
-	 * @deprecated should be private
-	 */
-	public Map<String, String> getAttributeMap() { return attributes; }
-
-	/**
 	 * get a set of all dynamic property keys
 	 */
 	public Set<String> getDynamicPropertyKeys()
@@ -758,28 +752,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return keys;
 	}
 
-	/**
-	 * get all attributes, also the advanced ones
-	 * @deprecated use getStaticPropertyKeys or preferably rewrite to use getPropertyKeys
-	 */
-	public List<StaticProperty> getAttributes()
-	{
-		List<StaticProperty> result = new ArrayList<StaticProperty>();
-		result.addAll (getStaticPropertyKeys());
-		return result;
-	}
-
-	/**
-	 * @deprecated PathwayElement doesn't distinguish between advanced / not advanced attributes anymore,
-	 * that distinction is made at the UI level.
-	 */
-	public List<StaticProperty> getAttributes(boolean fAdvanced)
-	{
-		List<StaticProperty> result = new ArrayList<StaticProperty>();
-		result.addAll (getStaticPropertyKeys());
-		return result;
-	}
-
 	private static final Map<ObjectType, Set<StaticProperty>> ALLOWED_PROPS;
 
 	static {
@@ -967,13 +939,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			throw new IllegalArgumentException();
 		}
-	}
-
-	/**
-	 * @deprecated use setStaticProperty
-	 */
-	public void setProperty(StaticProperty key, Object value)
-	{
 	}
 
 	/**
@@ -1176,14 +1141,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				setGroupStyle(GroupStyle.fromName((String)value));
 			}
 		}
-	}
-
-	/**
-	 * @deprecated use getStaticProperty
-	 */
-	public Object getProperty(StaticProperty x)
-	{
-		return getStaticProperty(x);
 	}
 
 	public Object getStaticProperty(StaticProperty key)
@@ -1760,28 +1717,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return null;
 	}
 
-	/** @deprecated */
-	protected String comment = "";
-
-	/** @deprecated */
-	public String getComment()
-	{
-		return comment;
-	}
-
-	/** @deprecated */
-	public void setComment(String v)
-	{
-		if (v == null)
-			throw new IllegalArgumentException();
-		if (!Utils.stringEquals(comment, v))
-		{
-			comment = v;
-			fireObjectModifiedEvent(new PathwayEvent(this,
-					PathwayEvent.MODIFIED_GENERAL));
-		}
-	}
-
 	protected String genmappxref = null;
 
 	/**
@@ -1900,20 +1835,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		//TODO: Store Xref by default, derive setGeneID and dataSource from it.
 		return new Xref (setGeneID, dataSource);
-	}
-
-	/**
-	 * SystemCode is a one- or two-letter abbreviation of datasource, used in
-	 * the MappFormat but also in databases.
-	 * @deprecated Use getDataSource().getSystemCode() instead.
-	 */
-	public String getSystemCode()
-	{
-		if (dataSource == null)
-		{
-			return null;
-		}
-		return dataSource.getSystemCode();
 	}
 
 	protected double mCenterx = 0;

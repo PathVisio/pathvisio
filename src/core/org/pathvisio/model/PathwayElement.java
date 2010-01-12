@@ -264,14 +264,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			return parent;
 		}
 
-		/**
-		 * @deprecated use {@link #getPathway()} instead
-		 */
-		public Pathway getGmmlData()
-		{
-			return parent;
-		}
-
 		public PathwayElement getParent()
 		{
 			return PathwayElement.this;
@@ -666,6 +658,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return parent;
 	}
 
+	/**
+	 * Get the parent pathway. Same as {@link #getParent()}, but necessary to
+	 * comply to the {@link GraphIdContainer} interface.
+	 */
+	public Pathway getPathway() {
+		return parent;
+	}
+	
 	/**
 	 * Set parent. Do not use this method directly! parent is set automatically
 	 * when using Pathway.add/remove
@@ -2781,14 +2781,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public Set<GraphRefContainer> getReferences()
 	{
 		return GraphLink.getReferences(this, parent);
-	}
-
-	/**
-	   @deprecated Use getParent() instead
-	 */
-	public Pathway getGmmlData()
-	{
-		return parent;
 	}
 
 	public int compareTo(PathwayElement o) {

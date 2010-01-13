@@ -27,8 +27,8 @@ import org.pathvisio.biopax.BiopaxEvent;
 import org.pathvisio.biopax.BiopaxListener;
 import org.pathvisio.biopax.reflect.PublicationXRef;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.PathwayElementListener;
-import org.pathvisio.model.PathwayEvent;
 
 /**
  * This class is a parent class for all graphics
@@ -101,7 +101,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	}
 
 	boolean listen = true;
-	public void gmmlObjectModified(PathwayEvent e) {
+	public void gmmlObjectModified(PathwayElementEvent e) {
 		if(listen)
 		{
 			markDirty(); // mark everything dirty

@@ -34,8 +34,8 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.gui.VisibleProperties;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.PathwayElementListener;
+import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.StaticProperty;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
@@ -240,7 +240,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		return null;
 	}
 
-	public void gmmlObjectModified(PathwayElementEvent e) {
+	public void gmmlObjectModified(PathwayEvent e) {
 		refresh();
 	}
 

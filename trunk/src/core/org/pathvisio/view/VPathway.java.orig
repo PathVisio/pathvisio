@@ -55,7 +55,6 @@ import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
-import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
@@ -660,7 +659,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 			if (pressedObject instanceof Graphics)
 			{ //notify parents of any moving children!
-				((Graphics) pressedObject).getPathwayElement().notifyParentGroupOfChildMovementOrResize();
+				((Graphics) pressedObject).getPathwayElement().notifyParentGroup();
 			}
 			redrawDirtyRect();
 		} else {
@@ -1595,32 +1594,44 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 	public void pathwayModified(PathwayEvent e)
 	{
-		switch (e.getType())
-		{
-			case PathwayEvent.DELETED:
-				Graphics deleted = getPathwayElementView(e.getAffectedData());
-				if (deleted != null)
-				{
-					if (deleted.getPathwayElement() instanceof MLine) {
-						removeRefFromConnectingAnchors(deleted.getPathwayElement().getMStart().getGraphRef(), deleted.getPathwayElement().getMEnd().getGraphRef());
-					}
-					deleted.markDirty();
-					removeDrawingObject(deleted, false);
-				}
-				break;
-			case PathwayEvent.ADDED:
-				lastAdded = fromModelElement(e.getAffectedData());
-				if (lastAdded != null) {
-					lastAdded.markDirty();
-				}
-				break;
-		}
-		redrawDirtyRect();
+		gmmlObjectModified (e);
 	}
 
-	public void gmmlObjectModified(PathwayElementEvent e)
+	public void gmmlObjectModified(PathwayEvent e)
 	{
-		checkBoardSize(e.getModifiedPathwayElement());
+		switch (e.getType())
+		{
+		case PathwayEvent.MODIFIED_GENERAL:
+			checkBoardSize(e.getAffectedData());
+			break;
+		case PathwayEvent.DELETED:
+			Graphics deleted = getPathwayElementView(e.getAffectedData());
+			if (deleted != null)
+			{
+                if (deleted.getPathwayElement() instanceof MLine) {
+                    removeRefFromConnectingAnchors(deleted.getPathwayElement().getMStart().getGraphRef(), deleted.getPathwayElement().getMEnd().getGraphRef());
+                }
+                deleted.markDirty();
+				removeDrawingObject(deleted, false);
+			}
+			break;
+		case PathwayEvent.ADDED:
+			lastAdded = fromModelElement(e.getAffectedData());
+			if (lastAdded != null) {
+				lastAdded.markDirty();
+			}
+			break;
+		case PathwayEvent.WINDOW:
+			int width = (int) vFromM(infoBox.getPathwayElement()
+					.getMBoardWidth());
+			int height = (int) vFromM(infoBox.getPathwayElement()
+					.getMBoardHeight());
+			if (parent != null)
+			{
+				parent.setVSize(width, height);
+			}
+			break;
+		}
 		redrawDirtyRect();
 	}
 
@@ -1796,7 +1807,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				break;
 			}
 			// notify parents of any moving children!
-			g.getPathwayElement().notifyParentGroupOfChildMovementOrResize();
+			g.getPathwayElement().notifyParentGroup();
 		}
 	}
 
@@ -1906,7 +1917,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				break;
 			}
 			// notify parents of any moving children!
-			eCurr.getPathwayElement().notifyParentGroupOfChildMovementOrResize();
+			eCurr.getPathwayElement().notifyParentGroup();
 		}
 	}
 
@@ -1946,7 +1957,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				g.vMoveBy((oldWidth - maxW) / 2, 0);
 			}
 			// notify parents of any moving children!
-			g.getPathwayElement().notifyParentGroupOfChildMovementOrResize();
+			g.getPathwayElement().notifyParentGroup();
 		}
 	}
 
@@ -1986,7 +1997,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				g.vMoveBy(0, (oldHeight - maxH) / 2);
 			}
 			// notify parents of any moving children!
-			g.getPathwayElement().notifyParentGroupOfChildMovementOrResize();
+			g.getPathwayElement().notifyParentGroup();
 		}
 	}
 

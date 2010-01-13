@@ -26,10 +26,6 @@ package org.pathvisio.model;
  */
 public class PathwayEvent
 {
-	//TODO: make enum
-	public static final int MODIFIED_GENERAL = 0;
-	public static final int MODIFIED_SHAPE = 1;
-
 	/**
 	 * Sent to listeners of Pathway when an object was deleted
 	 */
@@ -39,9 +35,6 @@ public class PathwayEvent
 	 * Sent to listeners of Pathway when a new object was added
 	 */
 	public static final int ADDED = 3;
-
-	public static final int PROPERTY = 4; // e.g. name change
-	public static final int WINDOW = 5;
 
 	private PathwayElement affectedData;
 	public PathwayElement getAffectedData () { return affectedData; }

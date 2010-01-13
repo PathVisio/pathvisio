@@ -26,6 +26,5 @@ import java.util.EventListener;
  */
 public interface PathwayElementListener extends EventListener
 {
-	//TODO: PathwayListener and PathwayElementListener share PathwayEvent
-	public void gmmlObjectModified(PathwayEvent e);
+	public void gmmlObjectModified(PathwayElementEvent e);
 }

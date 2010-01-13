@@ -41,7 +41,7 @@ import org.pathvisio.model.MLine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 
@@ -633,7 +633,7 @@ public class Line extends Graphics implements Adjustable
 		markDirty();
 	}
 
-	public void gmmlObjectModified(PathwayEvent e) {
+	public void gmmlObjectModified(PathwayElementEvent e) {
 		getConnectorShape().recalculateShape(getMLine());
 
 		WayPoint[] wps = getConnectorShape().getWayPoints();

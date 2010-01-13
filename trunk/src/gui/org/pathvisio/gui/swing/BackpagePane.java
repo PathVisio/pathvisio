@@ -30,8 +30,9 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.PathwayElementListener;
-import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.StaticProperty;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -158,9 +159,9 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 
 	Xref currRef;
 
-	public void gmmlObjectModified(PathwayEvent e) {
-		PathwayElement pe = e.getAffectedData();
-		if(input != null) {
+	public void gmmlObjectModified(PathwayElementEvent e) {
+		PathwayElement pe = e.getModifiedPathwayElement();
+		if(input != null && e.affectsProperty(StaticProperty.GENEID)) {
 			Xref nref = new Xref (pe.getGeneID(), input.getDataSource());
 			if(!nref.equals(currRef))
 			{

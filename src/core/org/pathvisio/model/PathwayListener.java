@@ -30,6 +30,5 @@ import java.util.EventListener;
  */
 public interface PathwayListener extends EventListener
 {
-	//TODO: PathwayListener and PathwayElementListener share PathwayEvent
 	public void pathwayModified(PathwayEvent e);
 }

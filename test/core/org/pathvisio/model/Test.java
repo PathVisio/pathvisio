@@ -37,6 +37,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	Pathway data;
 	PathwayElement o;
 	List<PathwayEvent> received;
+	List<PathwayElementEvent> receivedElementEvents;
 	PathwayElement l;
 
 	public void setUp()
@@ -46,11 +47,13 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 		data.addListener(this);
 		o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		received = new ArrayList<PathwayEvent>();
+		receivedElementEvents = new ArrayList<PathwayElementEvent>();
 		o.addListener(this);
 		data.add (o);
 		l = PathwayElement.createPathwayElement(ObjectType.LINE);
 		data.add(l);
 		received.clear();
+		receivedElementEvents.clear();
 	}
 
 	public void testFields ()
@@ -59,7 +62,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 
 		assertEquals ("test set/get CenterX", 1.0, o.getMCenterX(), 0.0001);
 
-		assertEquals ("Setting CenterX should generate single event", received.size(), 1);
+		assertEquals ("Setting CenterX should generate single event", receivedElementEvents.size(), 1);
 		assertEquals ("test getProperty()", 1.0, (Double)o.getStaticProperty(StaticProperty.CENTERX), 0.0001);
 
 		try
@@ -616,6 +619,10 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 		received.add(e);
 	}
 
+	public void gmmlObjectModified(PathwayElementEvent e) {
+		receivedElementEvents.add(e);
+	}
+	
 	public void pathwayModified(PathwayEvent e)
 	{
 		gmmlObjectModified (e);

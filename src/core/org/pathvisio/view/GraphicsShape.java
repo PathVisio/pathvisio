@@ -29,7 +29,7 @@ import java.util.List;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.model.PathwayEvent;
+import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.LinAlg.Point;
@@ -372,7 +372,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		return s;
 	}
 
-	public void gmmlObjectModified(PathwayEvent e)
+	public void gmmlObjectModified(PathwayElementEvent e)
 	{
 		markDirty(); // mark everything dirty
 		if (handles.length > 0) setHandleLocation();

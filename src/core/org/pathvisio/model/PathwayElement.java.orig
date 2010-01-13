@@ -110,7 +110,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			attributes.remove(key);
 		else
 			attributes.put (key, value);
-		fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, key));
+		fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
+				PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	/**
@@ -160,7 +161,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 
 		private void changed() {
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(PathwayElement.this, StaticProperty.COMMENTS));
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this, PathwayEvent.MODIFIED_GENERAL));
 		}
 
 		public String toString() {
@@ -205,19 +206,22 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			for(int i = 0; i < coordinates.length; i++) {
 				coordinates[i] += delta[i];
 			}
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(PathwayElement.this));
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 
 		protected void moveTo(double[] coordinates)
 		{
 			this.coordinates = coordinates;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(PathwayElement.this));
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 
 		protected void moveTo(GenericPoint p)
 		{
 			coordinates = p.coordinates;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(PathwayElement.this));;
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 
 		protected double getCoordinate(int i) {
@@ -239,7 +243,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			GraphLink.setGraphId(v, this, PathwayElement.this.parent);
 			graphId = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(PathwayElement.this, StaticProperty.GRAPHID));
+			fireObjectModifiedEvent(new PathwayEvent(PathwayElement.this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 
 		public Object clone() throws CloneNotSupportedException
@@ -412,7 +417,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					}
 				}
 				graphRef = v;
-				//fireObjectModifiedEvent(new PathwayElementEvent(PathwayElement.this, StaticProperty.GRAPHREF));
+				// fireObjectModifiedEvent(new PathwayEvent
+				// (PathwayElement.this, PathwayEvent.MODIFIED_GENERAL));
 			}
 		}
 
@@ -498,7 +504,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		public void setShape(AnchorType type) {
 			if(!this.shape.equals(type) && type != null) {
 				this.shape = type;
-				fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(PathwayElement.this, StaticProperty.LINESTYLE));
+				fireObjectModifiedEvent(new PathwayEvent(
+						PathwayElement.this, PathwayEvent.MODIFIED_GENERAL));
 			}
 		}
 
@@ -636,7 +643,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public void setZOrder(int z) {
 		if(z != zOrder) {
 			zOrder = z;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.ZORDER));
+			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -658,7 +665,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public Pathway getPathway() {
 		return parent;
 	}
-
+	
 	/**
 	 * Set parent. Do not use this method directly! parent is set automatically
 	 * when using Pathway.add/remove
@@ -1327,10 +1334,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		fillColor = src.fillColor;
 		dataSource = src.dataSource;
 		email = src.email;
-		fontName = src.fontName;
-		mFontSize = src.mFontSize;
 		fBold = src.fBold;
 		fItalic = src.fItalic;
+		fontName = src.fontName;
+		mFontSize = src.mFontSize;
 		fStrikethru = src.fStrikethru;
 		fUnderline = src.fUnderline;
 		setGeneID = src.setGeneID;
@@ -1383,7 +1390,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if(src.biopax != null) {
 			biopax = (Document)src.biopax.clone();
 		}
-		fireObjectModifiedEvent(PathwayElementEvent.createAllPropertiesEvent(this));
+		fireObjectModifiedEvent(new PathwayEvent(this,
+				PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	/**
@@ -1416,7 +1424,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				throw new IllegalArgumentException("Points array should at least have two elements");
 			}
 			mPoints = points;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1497,7 +1505,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (lineStyle != value)
 		{
 			lineStyle = value;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINESTYLE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1519,7 +1528,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (startLineType != value)
 		{
 			startLineType = value;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.STARTLINETYPE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1528,7 +1538,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (endLineType != value)
 		{
 			endLineType = value;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.ENDLINETYPE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1541,8 +1552,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!connectorType.equals(type))
 		{
 			connectorType = type;
-			//TODO: create a static property for connector type, linestyle is not the correct mapping
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINESTYLE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1573,8 +1584,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 		MAnchor anchor = new MAnchor(position);
 		anchors.add(anchor);
-		//No property for anchor, use LINESTYLE as dummy property to force redraw on line
-		fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINESTYLE));
+		fireObjectModifiedEvent(new PathwayEvent(
+				this, PathwayEvent.MODIFIED_GENERAL));
 		return anchor;
 	}
 
@@ -1582,10 +1593,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * Remove the given anchor
 	 */
 	public void removeMAnchor(MAnchor anchor) {
-		if (anchors.remove(anchor)) {
-			//No property for anchor, use LINESTYLE as dummy property to force redraw on line
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINESTYLE));
-		}
+		anchors.remove(anchor);
+		fireObjectModifiedEvent(new PathwayEvent(
+				this, PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	protected Color color = new Color(0, 0, 0);
@@ -1602,7 +1612,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (color != v)
 		{
 			color = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.COLOR));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1621,7 +1632,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (fillColor != v)
 		{
 			fillColor = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.FILLCOLOR));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1651,7 +1663,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					fillColor.getBlue(),
 					alpha);
 
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.TRANSPARENT));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1668,7 +1681,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (comments != value)
 		{
 			comments = value;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.COMMENTS));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1679,12 +1693,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void addComment(Comment comment) {
 		comments.add(comment);
-		fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.COMMENTS));
+		fireObjectModifiedEvent(new PathwayEvent(this,
+				PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	public void removeComment(Comment comment) {
 		comments.remove(comment);
-		fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.COMMENTS));
+		fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	/**
@@ -1722,7 +1737,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(genmappxref, v))
 		{
 			genmappxref = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GENMAPP_XREF));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1740,7 +1756,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(setGeneID, v))
 		{
 			setGeneID = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GENEID));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1756,7 +1773,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(backpageHead, v))
 		{
 			backpageHead = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.BACKPAGEHEAD));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1778,7 +1796,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(dataNodeType, v))
 		{
 			dataNodeType = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.TYPE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1797,7 +1816,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (dataSource != v)
 		{
 			dataSource = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.DATASOURCE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1829,7 +1849,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (mCenterx != v)
 		{
 			mCenterx = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1845,7 +1866,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (mCentery != v)
 		{
 			mCentery = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1864,7 +1886,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (mWidth != v)
 		{
 			mWidth = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1883,7 +1906,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (mHeight != v)
 		{
 			mHeight = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1896,7 +1920,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public void setMTop(double v)
 	{
 		mCentery = v + mHeight / 2;
-		fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+		fireObjectModifiedEvent(new PathwayEvent(this,
+				PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	// startx for shapes
@@ -1908,7 +1933,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public void setMLeft(double v)
 	{
 		mCenterx = v + mWidth / 2;
-		fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+		fireObjectModifiedEvent(new PathwayEvent(this,
+				PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	protected ShapeType shapeType = ShapeType.RECTANGLE;
@@ -1923,7 +1949,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (shapeType != v)
 		{
 			shapeType = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.SHAPETYPE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -1972,7 +1999,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (rotation != v)
 		{
 			rotation = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 
 	}
@@ -2010,7 +2038,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (fBold != v)
 		{
 			fBold = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.FONTWEIGHT));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2026,7 +2055,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (fStrikethru != v)
 		{
 			fStrikethru = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.FONTSTYLE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2042,7 +2072,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (fUnderline != v)
 		{
 			fUnderline = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.FONTSTYLE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2058,7 +2089,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (fItalic != v)
 		{
 			fItalic = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.FONTSTYLE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2076,7 +2108,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(fontName, v))
 		{
 			fontName = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.FONTNAME));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2094,7 +2127,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(textLabel, v))
 		{
 			textLabel = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.TEXTLABEL));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2110,7 +2144,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (mFontSize != v)
 		{
 			mFontSize = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.FONTSIZE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2142,7 +2177,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			{
 				mapInfoName = v;
 			}
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.MAPINFONAME));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2158,7 +2194,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(organism, v))
 		{
 			organism = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.ORGANISM));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2174,7 +2211,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(mapInfoDataSource, v))
 		{
 			mapInfoDataSource = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.MAPINFO_DATASOURCE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2184,7 +2222,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (outline != v)
 		{
 			outline = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.OUTLINE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 	public OutlineType getOutline()
@@ -2204,7 +2243,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(version, v))
 		{
 			version = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.VERSION));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2220,7 +2260,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(author, v))
 		{
 			author = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.AUTHOR));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2236,7 +2277,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(maintainer, v))
 		{
 			maintainer = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.MAINTAINED_BY));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2252,7 +2294,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(email, v))
 		{
 			email = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.EMAIL));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2268,7 +2311,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(copyright, v))
 		{
 			copyright = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.AVAILABILITY));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2284,7 +2328,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(lastModified, v))
 		{
 			lastModified = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LAST_MODIFIED));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2327,7 +2372,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (windowWidth != v)
 		{
 			windowWidth = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.WINDOWWIDTH));
+			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.WINDOW));
 		}
 	}
 
@@ -2351,7 +2396,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (windowHeight != v)
 		{
 			windowHeight = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.WINDOWHEIGHT));
+			fireObjectModifiedEvent(new PathwayEvent(this, PathwayEvent.WINDOW));
 		}
 	}
 
@@ -2391,7 +2436,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				}
 			}
 			groupRef = s;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GROUPREF));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2413,7 +2459,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		if(groupStyle != gs) {
 			groupStyle = gs;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GROUPSTYLE));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2447,22 +2494,23 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				}
 			}
 			groupId = w;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GROUPID));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 
 	}
 
 	/**
-	 * Notifies the parent group of a movement or resize change in a child element via groupId.
+	 * Identifies the parent group of a child element via groupId and calls isChanged()
+	 *
 	 */
-	public void notifyParentGroupOfChildMovementOrResize()
+	public void notifyParentGroup()
 	{
 		String ref = this.getGroupRef();
 		if (ref != null)
 		{ //identify group object and notify model change to trigger view update
 			if ((this.getParent().getGroupById(ref)) != null){
-				MGroup group = (MGroup)this.getParent().getGroupById(ref);
-				group.fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(group));
+			((MGroup) this.getParent().getGroupById(ref)).isChanged();
 			}
 		}
 	}
@@ -2485,7 +2533,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!(graphRef == null ? value == null : graphRef.equals(value)))
 		{
 			graphRef = value;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GRAPHREF));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2509,7 +2558,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (relX != value)
 		{
 			relX = value;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2533,7 +2583,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (relY != value)
 		{
 			relY = value;
-			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2552,7 +2603,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		GraphLink.setGraphId(v, this, parent);
 		graphId = v;
-		fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GRAPHID));
+		fireObjectModifiedEvent(new PathwayEvent(this,
+				PathwayEvent.MODIFIED_GENERAL));
 	}
 
 	public String setGeneratedGraphId()
@@ -2615,7 +2667,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public void setBiopaxRefs(List<String> refs) {
 		if(refs != null && !biopaxRefs.equals(refs)) {
 			biopaxRefs = refs;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.BIOPAXREF));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2624,7 +2677,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (ref != null && !biopaxRefs.contains(ref))
 		{
 			biopaxRefs.add(ref);
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.BIOPAXREF));
+			fireObjectModifiedEvent(new PathwayEvent(this,
+					PathwayEvent.MODIFIED_GENERAL));
 		}
 	}
 
@@ -2633,7 +2687,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if(ref != null) {
 			boolean changed = biopaxRefs.remove(ref);
 			if(changed) {
-				fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.BIOPAXREF));
+				fireObjectModifiedEvent(new PathwayEvent(this,
+						PathwayEvent.MODIFIED_GENERAL));
 			}
 		}
 	}
@@ -2676,7 +2731,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		listeners.remove(v);
 	}
 
-	public void fireObjectModifiedEvent(PathwayElementEvent e)
+	public void fireObjectModifiedEvent(PathwayEvent e)
 	{
 		if (noFire > 0)
 		{

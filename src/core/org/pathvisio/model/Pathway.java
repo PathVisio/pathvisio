@@ -290,7 +290,7 @@ public class Pathway
 
 	/** only used by children of this Pathway to
 	 * notify the parent of modifications */
-	void childModified (PathwayEvent e)
+	void childModified (PathwayElementEvent e)
 	{
 		markChanged();
 	}
@@ -523,10 +523,10 @@ public class Pathway
 			groupRefs.remove(id);
 		} else {
 			// redraw group outline
-			if (((MGroup) getGroupById(id)) !=null ){
-			((MGroup) getGroupById(id)).isChanged();
+			if (getGroupById(id) !=null ){
+				MGroup group = (MGroup)getGroupById(id);
+				group.fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(group, StaticProperty.GROUPREF));
 			}
-
 		}
 	}
 

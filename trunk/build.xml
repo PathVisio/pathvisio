@@ -537,11 +537,17 @@ public class Revision
 					includes="**"
 					destdir="${build.swing.dir}"
 					source="1.5">
-					<classpath refid="project.swing.class.path"/>
+					<classpath> 
+						<path refid="project.swing.class.path"/>
+						<pathelement location="lib-build/measure.jar"/>
+					</classpath>
 		</javac>
 		<junit printsummary="on" haltonfailure="true" fork="true">
 			<formatter type="brief" usefile="false"/>
-			<classpath refid="project.swing.class.path"/>
+			<classpath> 
+				<path refid="project.swing.class.path"/>
+				<pathelement location="lib-build/measure.jar"/>
+			</classpath>
 			<batchtest>
 				<fileset dir="test/swing">
 					<include name="**/*Test*.java"/>

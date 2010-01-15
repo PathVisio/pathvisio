@@ -15,24 +15,24 @@
 // limitations under the License.
 package org.pathvisio.gui.swing.propertypanel;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
-import org.pathvisio.model.PropertyType;
-import org.pathvisio.model.StaticPropertyType;
+import org.bridgedb.bio.Organism;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.OutlineType;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.Property;
+import org.pathvisio.model.PropertyType;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.StaticProperty;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.model.StaticPropertyType;
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
-import org.bridgedb.bio.Organism;
 
 /**
  * This class manages how properties should be displayed.  It keeps track of TypeHandlers, which properties should be
@@ -45,6 +45,7 @@ import org.bridgedb.bio.Organism;
 public class PropertyDisplayManager {
 	private static final Map<PropertyType, TypeHandler> TYPE_HANDLERS = new HashMap<PropertyType, TypeHandler>();
 	private static final Map<Property, PropPreference> PROPERTY_PREFERENCES = new HashMap<Property, PropPreference>();
+	private static final Map<String, Property> DYNAMIC_PROPERTIES = new HashMap<String, Property>();
 	private static boolean STORE_PREFERENCES = false;
 
 	static {
@@ -108,7 +109,16 @@ public class PropertyDisplayManager {
 	 * All properties should be registered here.
 	 */
 	public static void registerProperty(Property prop) {
+
+		if (!(prop instanceof StaticProperty)) {
+			DYNAMIC_PROPERTIES.put(prop.getId(), prop);
+		}
 		loadPreference(prop);
+	}
+
+
+	public static Property getDynamicProperty(String key) {
+		return DYNAMIC_PROPERTIES.get(key);
 	}
 
 
@@ -181,7 +191,7 @@ public class PropertyDisplayManager {
 
 
 	/**
-	 * Preference for property display information.  Knows how to handle StaticProperty propertyl.
+	 * Preference for property display information.  Knows how to handle StaticProperty property.
 	 */
 	public static class PropPreference implements Preference {
 		private static final Integer DEFAULT_ORDER = Integer.MAX_VALUE - 100;
@@ -193,10 +203,13 @@ public class PropertyDisplayManager {
 		public PropPreference(Property aProp) {
 			prop = aProp;
 			if (prop instanceof StaticProperty) {
-				order = ((StaticProperty)prop).getOrder();
+				StaticProperty sp = (StaticProperty)prop;
+				order = sp.getOrder();
+				if (sp.isHidden()) {
+					isVisible = false;
+				}
 			}
 		}
-
 
 
 		public void store() {

@@ -105,7 +105,29 @@ public class PropertyView implements Comparable<PropertyView> {
 		}
 		else
 		{
+			Property prop = PropertyDisplayManager.getDynamicProperty((String)type);
+			if (prop != null) {
+				return prop.getName();
+			}
 			return type.toString();
+		}
+	}
+
+	/**
+	 * Get a description for the property being edited.
+	 */
+	public String getDescription()
+	{
+		if (type instanceof Property) {
+			return ((Property)type).getDescription();
+		}
+		else
+		{
+			Property prop = PropertyDisplayManager.getDynamicProperty((String)type);
+			if (prop != null) {
+				return prop.getDescription();
+			}
+			return null;
 		}
 	}
 
@@ -147,8 +169,13 @@ public class PropertyView implements Comparable<PropertyView> {
 	private TypeHandler getTypeHandler() {
 		if (type instanceof Property) {
 			return PropertyDisplayManager.getTypeHandler(((Property)type).getType());
+		} else {
+			Property prop = PropertyDisplayManager.getDynamicProperty((String)type);
+			if (prop != null) {
+				return PropertyDisplayManager.getTypeHandler(prop.getType());
+			}
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -167,7 +194,8 @@ public class PropertyView implements Comparable<PropertyView> {
 		if (handler != null) {
 			renderer = handler.getLabelRenderer();
 		}
-		if (renderer == null && type instanceof Property) {
+		if (renderer == null &&
+				(type instanceof Property || PropertyDisplayManager.getDynamicProperty((String)type) != null)) {
 			return propertyLabelRenderer;
 		}
 		return renderer;

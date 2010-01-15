@@ -81,7 +81,11 @@ public class BooleanHandler extends DefaultCellEditor implements TableCellRender
 			renderer.setForeground(table.getForeground());
 			renderer.setBackground(table.getBackground());
 		}
-		renderer.setSelected((Boolean)value);
+		if (value instanceof Boolean) {
+			renderer.setSelected((Boolean)value);
+		} else {
+			renderer.setSelected(Boolean.parseBoolean((String)value));
+		}
 		return renderer;
 	}
 }

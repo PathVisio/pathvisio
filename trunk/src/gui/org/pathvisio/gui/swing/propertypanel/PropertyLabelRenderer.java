@@ -20,8 +20,6 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import org.pathvisio.model.Property;
-
 /**
  * The default label renderer for a Property, which will display a tooltip if that information is available.
  *
@@ -33,10 +31,10 @@ public class PropertyLabelRenderer extends DefaultTableCellRenderer {
 			int rowIndex, int vColIndex) {
 
 		PropertyView pv = ((PathwayTableModel)table.getModel()).getPropertyAt(rowIndex);
-		String tooltip = ((Property)pv.getType()).getDescription();
+		String tooltip = pv.getDescription();
 		if (tooltip != null) {
 			setToolTipText(tooltip);
 		}
-		return super.getTableCellRendererComponent(table, value, isSelected, hasFocus,  rowIndex, vColIndex);
+		return super.getTableCellRendererComponent(table, pv.getName(), isSelected, hasFocus,  rowIndex, vColIndex);
 	}
 }

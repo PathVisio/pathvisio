@@ -1,0 +1,16 @@
+src/core/org/pathvisio/Revision.java
+*.orig
+*.rej
+bin/
+build/
+lib/resources.jar
+pathvisio.jar
+pathvisio_core.jar
+src-axis-wpclient/
+tools/cytoscape-gpml/build/
+tools/cytoscape-gpml/class
+tools/cytoscape-gpml/gpml.jar
+.classpath
+.project
+ant.properties
+*~

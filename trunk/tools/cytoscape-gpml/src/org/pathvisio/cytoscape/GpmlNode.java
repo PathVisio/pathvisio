@@ -18,6 +18,7 @@ package org.pathvisio.cytoscape;
 
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
+import cytoscape.CytoscapeInit;
 import cytoscape.data.CyAttributes;
 import cytoscape.groups.CyGroupManager;
 import ding.view.DGraphView;
@@ -28,6 +29,7 @@ import giny.view.NodeView;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
@@ -41,6 +43,8 @@ import org.pathvisio.model.PathwayElement;
  *
  */
 public class GpmlNode extends GpmlNetworkElement<CyNode> {
+	public static final String PROPERTY_ANNOTATION_CANVAS = "gpml.annotation.canvas";
+	
 	Map<GraphView, Annotation> annotations = new HashMap<GraphView, Annotation>();
 
 	/**
@@ -97,7 +101,16 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 
 		NodeView nv = view.getNodeView(parent);
 		DGraphView dview = (DGraphView) view;
-		DingCanvas aLayer = dview.getCanvas(DGraphView.Canvas.FOREGROUND_CANVAS);
+		DGraphView.Canvas canvas = DGraphView.Canvas.BACKGROUND_CANVAS;
+		//Check for preferences to see if we need to draw annotations on foreground or background
+		Properties p = CytoscapeInit.getProperties();
+		String canvasName = p.getProperty(PROPERTY_ANNOTATION_CANVAS);
+		if(canvasName != null) {
+			DGraphView.Canvas canvasPref = DGraphView.Canvas.valueOf(canvasName);
+			if(canvasPref != null) canvas = canvasPref;
+		}
+		
+		DingCanvas aLayer = dview.getCanvas(canvas);
 
 		Annotation a = null;
 

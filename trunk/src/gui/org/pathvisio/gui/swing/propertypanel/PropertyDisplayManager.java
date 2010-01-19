@@ -16,7 +16,9 @@
 package org.pathvisio.gui.swing.propertypanel;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
@@ -26,11 +28,13 @@ import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.OutlineType;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Property;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.StaticProperty;
 import org.pathvisio.model.StaticPropertyType;
+import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
 
@@ -38,7 +42,8 @@ import org.pathvisio.preferences.PreferenceManager;
  * This class manages how properties should be displayed.  It keeps track of TypeHandlers, which properties should be
  * visible, and the order in which properties should be displayed.
  * <p>
- * Plugins with custom Properties or PropertyTypes should register them here.
+ * The main entry point for plugins are {@link #registerProperty(Property)} and
+ * {@link #registerTypeHandler(TypeHandler)}. 
  *
  * @author Mark Woon
  */
@@ -77,6 +82,29 @@ public class PropertyDisplayManager {
 	 * Private constructor - not meant to be instantiated.
 	 */
 	private PropertyDisplayManager() {
+	}
+
+
+	/**
+	 * Gets the visible property keys for the given PathwayElement.
+	 */
+	public static Set<Object> getVisiblePropertyKeys (PathwayElement e) {
+
+		Set<Object> result = new HashSet<Object>();
+		// add static properties
+		for (Property p : e.getStaticPropertyKeys()) {
+			if (isVisible(p)) {
+				result.add(p);
+			}
+		}
+		// add dynamic properties
+		for (String key : e.getDynamicPropertyKeys()) {
+			Property p = getDynamicProperty(key);
+			if (p == null || isVisible(p)) {
+				result.add(p);
+			}
+		}
+		return result;
 	}
 
 
@@ -205,7 +233,8 @@ public class PropertyDisplayManager {
 			if (prop instanceof StaticProperty) {
 				StaticProperty sp = (StaticProperty)prop;
 				order = sp.getOrder();
-				if (sp.isHidden()) {
+				if (sp.isHidden() ||
+						(sp.isAdvanced() && !PreferenceManager.getCurrent().getBoolean(GlobalPreference.SHOW_ADVANCED_PROPERTIES))) {
 					isVisible = false;
 				}
 			}

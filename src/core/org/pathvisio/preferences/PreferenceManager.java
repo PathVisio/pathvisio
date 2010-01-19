@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.Properties;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.util.ColorConverter;
@@ -34,8 +36,20 @@ public class PreferenceManager
 {
 	private Properties properties;
 	private File propFile = null;
+	private Set<PreferenceListener> listeners = new HashSet<PreferenceListener>();
+	private boolean dirty;
 
-	boolean dirty;
+
+	public void addListener(PreferenceListener listener) {
+		listeners.add(listener);
+	}
+
+	private void fireEvent(Preference modifiedPref) {
+		PreferenceEvent event = new PreferenceEvent(modifiedPref);
+		for (PreferenceListener l : listeners) {
+			l.preferenceModified(event);
+		}
+	}
 
 	/**
 	 * Stores preferences back to preference file, if necessary.
@@ -120,6 +134,7 @@ public class PreferenceManager
 		else
 		{
 			properties.setProperty(p.name(), newVal);
+			fireEvent(p);
 			dirty = true;
 		}
 	}

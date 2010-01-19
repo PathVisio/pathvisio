@@ -15,6 +15,8 @@
 // limitations under the License.
 package org.pathvisio.gui.swing.propertypanel;
 
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,6 +28,7 @@ import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
+import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;
@@ -51,6 +54,7 @@ public class PropertyDisplayManager {
 	private static final Map<PropertyType, TypeHandler> TYPE_HANDLERS = new HashMap<PropertyType, TypeHandler>();
 	private static final Map<Property, PropPreference> PROPERTY_PREFERENCES = new HashMap<Property, PropPreference>();
 	private static final Map<String, Property> DYNAMIC_PROPERTIES = new HashMap<String, Property>();
+	private static final Map<Property, EnumSet<ObjectType>> PROPERTY_SCOPE = new HashMap<Property, EnumSet<ObjectType>>();
 	private static boolean STORE_PREFERENCES = false;
 
 	static {
@@ -100,9 +104,13 @@ public class PropertyDisplayManager {
 		// add dynamic properties
 		for (String key : e.getDynamicPropertyKeys()) {
 			Property p = getDynamicProperty(key);
-			if (p == null || isVisible(p)) {
-				result.add(p);
+			if (p != null && isVisible(p)) {
+				result.add(p.getId());
 			}
+		}
+		// add registered dynamic properties
+		for(Property p : getDynamicProperties(e)) {
+			if(isVisible(p)) result.add(p.getId());
 		}
 		return result;
 	}
@@ -134,7 +142,10 @@ public class PropertyDisplayManager {
 
 
 	/**
-	 * All properties should be registered here.
+	 * Register a property here. For dynamic properties, registering the property
+	 * to the display manager will make it editable from the property panel (for all
+	 * object types by default, see {@link #setPropertyScope(Property, EnumSet)} to
+	 * customize this behavior).
 	 */
 	public static void registerProperty(Property prop) {
 
@@ -144,11 +155,56 @@ public class PropertyDisplayManager {
 		loadPreference(prop);
 	}
 
+	/**
+	 * Get all registered dynamic properties that fall within the scope of the
+	 * given pathway element.
+	 * 
+	 * @see #setPropertyScope(EnumSet) for info on how to configure the property
+	 *      scope.
+	 */
+	private static Collection<Property> getDynamicProperties(PathwayElement e) {
+		Set<Property> props = new HashSet<Property>();
+
+		ObjectType type = e.getObjectType();
+		for (Property p : DYNAMIC_PROPERTIES.values()) {
+			EnumSet<ObjectType> scope = PROPERTY_SCOPE.get(p);
+			if (scope == null || scope.contains(type))
+				props.add(p);
+		}
+		return props;
+	}
+
+	/**
+	 * Set the scope of a dynamic property (on which object types it applies).
+	 * The property panel will only display the property editor for the given
+	 * object types.
+	 * 
+	 * @param prop
+	 *            The property this scope applies to.
+	 * @param types
+	 *            The object types that define the scope of this property. If
+	 *            null is supplied as value, the property will be displayed on
+	 *            all object types (default behavior).
+	 */
+	public static void setPropertyScope(Property prop, EnumSet<ObjectType> types) {
+		PROPERTY_SCOPE.put(prop, types);
+	}
+
+	/**
+	 * Get the scope of a property (defines on which object types it should
+	 * apply).
+	 * 
+	 * @return The set of object types that this property applies to or null if
+	 *         the property has no specific scope (and should apply to all
+	 *         object types).
+	 */
+	public static EnumSet<ObjectType> getPropertyScope(Property prop) {
+		return PROPERTY_SCOPE.get(prop);
+	}
 
 	public static Property getDynamicProperty(String key) {
 		return DYNAMIC_PROPERTIES.get(key);
 	}
-
 
 	/**
 	 * Gets the order of the given Property.  If not is found, {@link Integer#MAX_VALUE} is returned.

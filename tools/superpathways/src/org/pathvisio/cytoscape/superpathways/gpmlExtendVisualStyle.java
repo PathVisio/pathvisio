@@ -40,6 +40,7 @@ import cytoscape.visual.GlobalAppearanceCalculator;
 import cytoscape.visual.NodeAppearance;
 import cytoscape.visual.NodeAppearanceCalculator;
 import cytoscape.visual.NodeShape;
+import cytoscape.visual.VisualMappingManager;
 import cytoscape.visual.VisualPropertyType;
 import cytoscape.visual.VisualStyle;
 import cytoscape.visual.calculators.BasicCalculator;
@@ -84,14 +85,16 @@ public class gpmlExtendVisualStyle extends VisualStyle {
 		
 		nac = getNodeAppearanceCalculator();
 		eac = getEdgeAppearanceCalculator();
-	
+
+		VisualMappingManager vm = Cytoscape.getVisualMappingManager();
+		VisualStyle currentStyle = vm.getVisualStyle();
 		
 		if(nac == null) {
-			nac = new NodeAppearanceCalculator();
+			nac = new NodeAppearanceCalculator(currentStyle.getNodeAppearanceCalculator());
 			setNodeAppearanceCalculator(nac);
 		}
 		if(eac == null) {
-			eac = new EdgeAppearanceCalculator();
+			eac = new EdgeAppearanceCalculator(currentStyle.getEdgeAppearanceCalculator());
 			setEdgeAppearanceCalculator(eac);
 		}
 		

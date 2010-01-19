@@ -85,9 +85,11 @@ public class superpathwaysVisualStyle {
 	}
 
 	VisualStyle createVisualStyle(CyNetwork network, Map<String, Color> pwNameToColor, String StyleName) {
-		
-		NodeAppearanceCalculator nodeAppCalc = new NodeAppearanceCalculator();
-		EdgeAppearanceCalculator edgeAppCalc = new EdgeAppearanceCalculator();
+	
+		VisualMappingManager vm = Cytoscape.getVisualMappingManager();
+		VisualStyle currentStyle = vm.getVisualStyle();		
+		NodeAppearanceCalculator nodeAppCalc = new NodeAppearanceCalculator(currentStyle.getNodeAppearanceCalculator());
+		EdgeAppearanceCalculator edgeAppCalc = new EdgeAppearanceCalculator(currentStyle.getEdgeAppearanceCalculator());
 		GlobalAppearanceCalculator globalAppCalc = new GlobalAppearanceCalculator();
 
 		//set default value for the following property

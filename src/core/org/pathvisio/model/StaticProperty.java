@@ -31,17 +31,17 @@ public enum StaticProperty implements Property
 	// line, shape, datanode, label
 	COLOR ("Color", "Color", StaticPropertyType.COLOR, 202),
 	// shape, datanode, label
-	CENTERX ("CenterX", "Center X", StaticPropertyType.DOUBLE, 103),
-	CENTERY ("CenterY", "Center Y", StaticPropertyType.DOUBLE, 104),
+	CENTERX ("CenterX", "Center X", StaticPropertyType.DOUBLE, 103, true, false, false),
+	CENTERY ("CenterY", "Center Y", StaticPropertyType.DOUBLE, 104, true, false, false),
 
 	// shape, datanode, label, modification
-	WIDTH ("Width", "Width", StaticPropertyType.DOUBLE, 105),
-	HEIGHT ("Height", "Height", StaticPropertyType.DOUBLE, 106),
+	WIDTH ("Width", "Width", StaticPropertyType.DOUBLE, 105, true, false, false),
+	HEIGHT ("Height", "Height", StaticPropertyType.DOUBLE, 106, true, false, false),
 
 	// modification
-	RELX ("relX", "Relative X", StaticPropertyType.DOUBLE, 107),
-	RELY ("relY", "Relative Y", StaticPropertyType.DOUBLE, 108),
-	GRAPHREF ("GraphRef", "GraphRef", StaticPropertyType.STRING, 109),
+	RELX ("relX", "Relative X", StaticPropertyType.DOUBLE, 107, true, false, false),
+	RELY ("relY", "Relative Y", StaticPropertyType.DOUBLE, 108, true, false, false),
+	GRAPHREF ("GraphRef", "GraphRef", StaticPropertyType.STRING, 109, false, true, false),
 
 	// shape, modification
 	TRANSPARENT ("Transparent", "Transparent", StaticPropertyType.BOOLEAN, 210),
@@ -49,13 +49,13 @@ public enum StaticProperty implements Property
 	SHAPETYPE ("ShapeType", "Shape Type", StaticPropertyType.SHAPETYPE, 112),
 
 	// shape
-	ROTATION ("Rotation", "Rotation", StaticPropertyType.ANGLE, 113),
+	ROTATION ("Rotation", "Rotation", StaticPropertyType.ANGLE, 113, true, false, false),
 
 	// line
-	STARTX ("StartX", "Start X", StaticPropertyType.DOUBLE, 114),
-	STARTY ("StartY", "Start Y", StaticPropertyType.DOUBLE, 115),
-	ENDX ("EndX", "End X", StaticPropertyType.DOUBLE, 116),
-	ENDY ("EndY", "End Y", StaticPropertyType.DOUBLE, 117),
+	STARTX ("StartX", "Start X", StaticPropertyType.DOUBLE, 114, true, false, false),
+	STARTY ("StartY", "Start Y", StaticPropertyType.DOUBLE, 115, true, false, false),
+	ENDX ("EndX", "End X", StaticPropertyType.DOUBLE, 116, true, false, false),
+	ENDY ("EndY", "End Y", StaticPropertyType.DOUBLE, 117, true, false, false),
 
 	STARTLINETYPE ("StartLineType", "Start Line Type", StaticPropertyType.LINETYPE, 118),
 	ENDLINETYPE ("EndLineType", "End Line Type", StaticPropertyType.LINETYPE, 119),
@@ -95,31 +95,36 @@ public enum StaticProperty implements Property
 	EMAIL ("Email", "Email", StaticPropertyType.STRING, 140),
 	LAST_MODIFIED ("Last-Modified", "Last Modified", StaticPropertyType.STRING, 141),
 	AVAILABILITY ("Availability", "Availability", StaticPropertyType.STRING, 142),
-	BOARDWIDTH ("BoardWidth", "Board Width", StaticPropertyType.DOUBLE, 143),
-	BOARDHEIGHT ("BoardHeight", "Board Height", StaticPropertyType.DOUBLE, 144),
-	WINDOWWIDTH ("WindowWidth", "Window Width", StaticPropertyType.DOUBLE, 145, true),
-	WINDOWHEIGHT ("WindowHeight", "Window Height", StaticPropertyType.DOUBLE, 146, true),
+	BOARDWIDTH ("BoardWidth", "Board Width", StaticPropertyType.DOUBLE, 143, true, true, false),
+	BOARDHEIGHT ("BoardHeight", "Board Height", StaticPropertyType.DOUBLE, 144, true, true, false),
+	WINDOWWIDTH ("WindowWidth", "Window Width", StaticPropertyType.DOUBLE, 145, true, true, true),
+	WINDOWHEIGHT ("WindowHeight", "Window Height", StaticPropertyType.DOUBLE, 146, true, true, true),
 
 	// other
-	GRAPHID ("GraphId", "GraphId", StaticPropertyType.STRING, 147),
-	STARTGRAPHREF ("StartGraphRef", "StartGraphRef", StaticPropertyType.STRING, 148),
-	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", StaticPropertyType.STRING, 149),
-	GROUPID ("GroupId", "GroupId", StaticPropertyType.STRING, 150),
-	GROUPREF ("GroupRef", "GroupRef", StaticPropertyType.STRING, 151),
+	GRAPHID ("GraphId", "GraphId", StaticPropertyType.STRING, 147, false, true, false),
+	STARTGRAPHREF ("StartGraphRef", "StartGraphRef", StaticPropertyType.STRING, 148, false, true, false),
+	ENDGRAPHREF ("EndGraphRef", "EndGraphRef", StaticPropertyType.STRING, 149, false, true, false),
+	GROUPID ("GroupId", "GroupId", StaticPropertyType.STRING, 150, false, true, false),
+	GROUPREF ("GroupRef", "GroupRef", StaticPropertyType.STRING, 151, false, true, false),
 	GROUPSTYLE ("GroupStyle", "Group style", StaticPropertyType.GROUPSTYLETYPE, 152),
-	BIOPAXREF( "BiopaxRef", "BiopaxRef", StaticPropertyType.BIOPAXREF, 153),
-	ZORDER ( "Z order", "ZOrder", StaticPropertyType.INTEGER, 154);
+	BIOPAXREF( "BiopaxRef", "BiopaxRef", StaticPropertyType.BIOPAXREF, 153, false, true, false),
+	ZORDER ( "Z order", "ZOrder", StaticPropertyType.INTEGER, 154, false, true, false);
 
 	private String tag, name;
 	private StaticPropertyType type;
+	private boolean isCoordinate;
+	private boolean isAdvanced;
 	private boolean hidden;
 	private int order;
 
-	private StaticProperty (String aTag, String aName, StaticPropertyType aType, int anOrder, boolean isHidden)
+	private StaticProperty (String aTag, String aName, StaticPropertyType aType, int anOrder, boolean aIsCoordinate,
+			boolean aIsAdvanced, boolean isHidden)
 	{
 		tag = aTag;
 		type = aType;
 		name = aName;
+		isCoordinate = aIsCoordinate;
+		isAdvanced = aIsAdvanced;
 		hidden = isHidden;
 		order = anOrder;
 		PropertyManager.registerProperty(this);
@@ -127,7 +132,7 @@ public enum StaticProperty implements Property
 
 	private StaticProperty (String aTag, String aDesc, StaticPropertyType aType, int anOrder)
 	{
-		this(aTag, aDesc, aType, anOrder, false);
+		this(aTag, aDesc, aType, anOrder, false, false, false);
 	}
 
 	/**
@@ -153,6 +158,20 @@ public enum StaticProperty implements Property
 	public StaticPropertyType type()
 	{
 		return type;
+	}
+
+	/**
+	 * @return true if this property causes coordinate changes.
+	 */
+	public boolean isCoordinateChange() {
+		return isCoordinate;
+	}
+
+	/**
+	 * @return true if this attribute should be hidden unless the "Show advanced properties" preference is set to true
+	 */
+	public boolean isAdvanced() {
+		return isAdvanced;
 	}
 
 	/**
@@ -203,7 +222,7 @@ public enum StaticProperty implements Property
 	public String getName() {
 		return name;
 	}
-	
+
 	/** @{inheritDoc} */
 	public String getDescription() {
 		return null;

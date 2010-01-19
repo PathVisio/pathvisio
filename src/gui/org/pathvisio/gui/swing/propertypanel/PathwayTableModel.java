@@ -31,12 +31,10 @@ import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.gui.VisibleProperties;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.PathwayElementListener;
-import org.pathvisio.model.StaticProperty;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -124,14 +122,8 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 
 	protected void updatePropertyCounts(PathwayElement e, boolean remove)
 	{
-		for(Object o : VisibleProperties.getVisiblePropertyKeys(e))
+		for(Object o : PropertyDisplayManager.getVisiblePropertyKeys(e))
 		{
-			if (o instanceof StaticProperty)
-			{
-				StaticProperty p = (StaticProperty)o;
-				if(p.isHidden()) continue;
-			}
-
 			PropertyView tp = propertyValues.get(o);
 			if(tp == null) {
 				propertyValues.put(o, tp = new PropertyView(swingEngine.getEngine().getActiveVPathway(), o));

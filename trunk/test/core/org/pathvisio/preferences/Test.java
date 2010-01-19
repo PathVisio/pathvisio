@@ -44,7 +44,9 @@ public class Test extends TestCase implements PreferenceListener {
 		assertTrue(lastEvent.isModified(GlobalPreference.DATANODES_ROUNDED));
 		
 		//Setting the same as current value should NOT trigger an event!
-		PreferenceManager.getCurrent().setColor(GlobalPreference.COLOR_HIGHLIGHTED, Color.GREEN);
+		PreferenceManager.getCurrent().setColor(
+				GlobalPreference.COLOR_HIGHLIGHTED, 
+				PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_HIGHLIGHTED));
 		assertFalse(lastEvent.isModified(GlobalPreference.COLOR_HIGHLIGHTED));
 		
 		//Setting a different value should trigger an event

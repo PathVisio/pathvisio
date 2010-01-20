@@ -64,14 +64,11 @@ public class GdbManager extends AbstractListModel
 	}
 
 	/**
-	 * Returns true if there is currently a non-null
-	 * gdb and it isConnected()
+	 * Returns true if the current Gdb isConnected()
 	 */
 	public boolean isConnected()
 	{
-		return
-			currentGdb != null &&
-			currentGdb.isConnected();
+		return currentGdb.isConnected();
 	}
 
 	/**
@@ -89,7 +86,7 @@ public class GdbManager extends AbstractListModel
 		metabolites = null;
 		if (connectString != null)
 		{
-			metabolites = currentGdb.addIDMapper(connectString);
+			metabolites = addMapper(connectString);
 			if (metabolites != null)
 			{
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_METADB, (connectString));
@@ -163,7 +160,7 @@ public class GdbManager extends AbstractListModel
 		genes = null;
 		if (connectString != null)
 		{
-			genes = currentGdb.addIDMapper(connectString);
+			genes = addMapper(connectString);
 			if (genes != null)
 			{
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_GDB, (connectString));

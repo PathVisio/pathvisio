@@ -83,8 +83,12 @@ public class PreferenceManager
 
 		try
 		{
-			properties.load(new FileInputStream(propFile));
-			compatUpdate();
+			if(propFile.exists()) {
+				properties.load(new FileInputStream(propFile));
+				compatUpdate();
+			} else {
+				Logger.log.info("Preferences file " + propFile + " doesn't exist, using defaults");
+			}
 		}
 		catch (IOException e)
 		{
@@ -125,7 +129,7 @@ public class PreferenceManager
 
 	public void set (Preference p, String newVal)
 	{
-		String oldVal = properties.getProperty(p.name());
+		String oldVal = get(p);
 
 		if (oldVal == null ? newVal == null : oldVal.equals (newVal))
 		{

@@ -46,7 +46,7 @@ import org.pathvisio.preferences.PreferenceManager;
  * visible, and the order in which properties should be displayed.
  * <p>
  * The main entry point for plugins are {@link #registerProperty(Property)} and
- * {@link #registerTypeHandler(TypeHandler)}. 
+ * {@link #registerTypeHandler(TypeHandler)}.
  *
  * @author Mark Woon
  */
@@ -54,6 +54,7 @@ public class PropertyDisplayManager {
 	private static final Map<PropertyType, TypeHandler> TYPE_HANDLERS = new HashMap<PropertyType, TypeHandler>();
 	private static final Map<Property, PropPreference> PROPERTY_PREFERENCES = new HashMap<Property, PropPreference>();
 	private static final Map<String, Property> DYNAMIC_PROPERTIES = new HashMap<String, Property>();
+	private static final Set<Property> MANAGED_DYNAMIC_PROPERTIES = new HashSet<Property>();
 	private static final Map<Property, EnumSet<ObjectType>> PROPERTY_SCOPE = new HashMap<Property, EnumSet<ObjectType>>();
 	private static boolean STORE_PREFERENCES = false;
 
@@ -104,12 +105,14 @@ public class PropertyDisplayManager {
 		// add dynamic properties
 		for (String key : e.getDynamicPropertyKeys()) {
 			Property p = getDynamicProperty(key);
-			if (p != null && isVisible(p)) {
-				result.add(p.getId());
+			if (p == null || isVisible(p)) {
+				// is visible if it's not associated with a property
+				// or is associated with a property whose visibility preference is set 
+				result.add(key);
 			}
 		}
-		// add registered dynamic properties
-		for(Property p : getDynamicProperties(e)) {
+		// add managed dynamic properties
+		for(Property p : getManagedDynamicProperties(e)) {
 			if(isVisible(p)) result.add(p.getId());
 		}
 		return result;
@@ -142,31 +145,52 @@ public class PropertyDisplayManager {
 
 
 	/**
-	 * Register a property here. For dynamic properties, registering the property
-	 * to the display manager will make it editable from the property panel (for all
-	 * object types by default, see {@link #setPropertyScope(Property, EnumSet)} to
-	 * customize this behavior).
+	 * Register a property here.
+	 * <p>
+	 * Dynamic properties will automatically be managed by the display manager, which means that the property
+	 * will be editable from the property panel (for all object types by default, see
+	 * {@link #setPropertyScope(Property, EnumSet)} to customize this behavior).  Note that the property is not saved to
+	 * GPML unless the property is modified.
 	 */
 	public static void registerProperty(Property prop) {
+		registerProperty(prop, true);
+	}
+
+	/**
+	 * Register a property here.
+	 * <p>
+	 * Dynamic properties will only be managed by the display manager if <code>manage</code> is set to true.  When the
+	 * display manager manages a property, it means that the property will be editable from the property panel (for
+	 * all object types by default, see {@link #setPropertyScope(Property, EnumSet)} to customize this behavior).
+	 * Note that the property is not saved to GPML unless the property is modified.
+	 *
+	 * @param prop the Property being registered
+	 * @param manage true if the display manager should manage this property, false if not
+	 */
+	public static void registerProperty(Property prop, boolean manage) {
 
 		if (!(prop instanceof StaticProperty)) {
 			DYNAMIC_PROPERTIES.put(prop.getId(), prop);
+			if (manage) {
+				MANAGED_DYNAMIC_PROPERTIES.add(prop);
+			}
 		}
 		loadPreference(prop);
 	}
 
+
 	/**
-	 * Get all registered dynamic properties that fall within the scope of the
+	 * Get all managed dynamic properties that fall within the scope of the
 	 * given pathway element.
-	 * 
-	 * @see #setPropertyScope(EnumSet) for info on how to configure the property
+	 *
+	 * @see #setPropertyScope(Property, EnumSet) for info on how to configure the property
 	 *      scope.
 	 */
-	private static Collection<Property> getDynamicProperties(PathwayElement e) {
+	private static Collection<Property> getManagedDynamicProperties(PathwayElement e) {
 		Set<Property> props = new HashSet<Property>();
 
 		ObjectType type = e.getObjectType();
-		for (Property p : DYNAMIC_PROPERTIES.values()) {
+		for (Property p : MANAGED_DYNAMIC_PROPERTIES) {
 			EnumSet<ObjectType> scope = PROPERTY_SCOPE.get(p);
 			if (scope == null || scope.contains(type))
 				props.add(p);
@@ -178,7 +202,7 @@ public class PropertyDisplayManager {
 	 * Set the scope of a dynamic property (on which object types it applies).
 	 * The property panel will only display the property editor for the given
 	 * object types.
-	 * 
+	 *
 	 * @param prop
 	 *            The property this scope applies to.
 	 * @param types
@@ -193,7 +217,7 @@ public class PropertyDisplayManager {
 	/**
 	 * Get the scope of a property (defines on which object types it should
 	 * apply).
-	 * 
+	 *
 	 * @return The set of object types that this property applies to or null if
 	 *         the property has no specific scope (and should apply to all
 	 *         object types).

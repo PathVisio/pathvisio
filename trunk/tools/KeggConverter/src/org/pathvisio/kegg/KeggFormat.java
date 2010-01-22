@@ -38,7 +38,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
-import org.pathvisio.model.GpmlFormatImpl1;
+import org.pathvisio.model.GpmlFormatAbstract;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MLine;
@@ -700,7 +700,7 @@ public class KeggFormat {
 		String colorStringGPML = graphics.getFgcolor();
 		Color colorGPML;
 		if (colorStringGPML != null) {
-			colorGPML = GpmlFormatImpl1.gmmlString2Color(colorStringGPML.substring(1));
+			colorGPML = GpmlFormatAbstract.gmmlString2Color(colorStringGPML.substring(1));
 		} else {
 			colorGPML = Color.BLACK;
 		}
@@ -756,7 +756,7 @@ public class KeggFormat {
 	}
 
 	private double coordinateToGpml(double c) {
-		return c * GpmlFormatImpl1.PIXEL_TO_MODEL;
+		return c * GpmlFormatAbstract.PIXEL_TO_MODEL;
 	}
 
 	private double coordinateSpacing(double c) {

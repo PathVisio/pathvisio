@@ -5,20 +5,13 @@ import java.util.Map;
 
 import org.jdom.Namespace;
 
-/**
- * GpmlFormat reader / writer for version 2007 and 2008A.
- * Code shared with other versions is in GpmlFormatAbstract.`
- */
-class GpmlFormat200X extends GpmlFormatAbstract
+class GpmlFormat2010a extends GpmlFormatAbstract 
 {
-	public static final GpmlFormatAbstract GPML_2007 = new GpmlFormat200X (
-		"GPML2007.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2007")
-	);
-	public static final GpmlFormatAbstract GPML_2008A = new GpmlFormat200X (
-		"GPML2008a.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2008a")
-	);
+	public static final GpmlFormat2010a GPML_2010A = new GpmlFormat2010a (
+			"GPML.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2010a")
+		);
 
-	public GpmlFormat200X(String xsdFile, Namespace ns) {
+	public GpmlFormat2010a(String xsdFile, Namespace ns) {
 		super (xsdFile, ns);
 	}
 
@@ -156,4 +149,5 @@ class GpmlFormat200X extends GpmlFormatAbstract
 		return ATTRIBUTE_INFO;
 	};
 
+	
 }

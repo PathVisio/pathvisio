@@ -1,6 +1,6 @@
-<xsd:schema targetNamespace="http://genmapp.org/GPML/2010a"
+<xsd:schema targetNamespace="http://genmapp.org/GPML/2008a"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:gpml="http://genmapp.org/GPML/2010a"
+	xmlns:gpml="http://genmapp.org/GPML/2008a"
 	elementFormDefault="qualified"
 	>
 

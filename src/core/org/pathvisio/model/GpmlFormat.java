@@ -54,7 +54,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 
 	static private final GpmlFormatImpl1 CURRENT = GpmlFormatImpl1.GPML_2008A;
 
-	public static final Namespace GPML = CURRENT.getGpmlNamespace();
 	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	public static final Namespace BIOPAX = Namespace.getNamespace("bp", "http://www.biopax.org/release/biopax-level2.owl#");
@@ -89,14 +88,9 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		return CURRENT.createJdom(data);
 	}
 
-	static public Element createJdomElement(PathwayElement o, Namespace ns) throws ConverterException
+	static public Element createJdomElement(PathwayElement o) throws ConverterException
 	{
-		return CURRENT.createJdomElement(o, ns);
-	}
-
-	public static PathwayElement mapElement(Element e, Pathway p) throws ConverterException
-	{
-		return CURRENT.mapElement(e, p);
+		return CURRENT.createJdomElement(o);
 	}
 
 	public static PathwayElement mapElement(Element e) throws ConverterException
@@ -209,15 +203,6 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		catch(Exception e) { //Make all types of exceptions a ConverterException
 			throw new ConverterException (e);
 		}
-	}
-
-	/**
-	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
-	 * @param doc the document to validate
-	 */
-	public static void validateDocument(Document doc) throws ConverterException
-	{
-		CURRENT.validateDocument(doc);
 	}
 
 }

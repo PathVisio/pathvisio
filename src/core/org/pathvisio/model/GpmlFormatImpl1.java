@@ -399,7 +399,7 @@ public class GpmlFormatImpl1
 			}
 			else
 			{
-				Element e = createJdomElement(o, ns);
+				Element e = createJdomElement(o);
 				if (e != null)
 					elementList.add(e);
 			}
@@ -1079,18 +1079,18 @@ public class GpmlFormatImpl1
 		}
 	}
 
-	public Element createJdomElement(PathwayElement o, Namespace ns) throws ConverterException
+	public Element createJdomElement(PathwayElement o) throws ConverterException
 	{
 		Element e = null;
 		switch (o.getObjectType())
 		{
 			case DATANODE:
-				e = new Element("DataNode", ns);
+				e = new Element("DataNode", nsGPML);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", ns));
-				e.addContent(new Element("Xref", ns));
+				e.addContent(new Element("Graphics", nsGPML));
+				e.addContent(new Element("Xref", nsGPML));
 				updateDataNode(o, e);
 				updateColor(o, e);
 				updateShapeData(o, e, "DataNode");
@@ -1098,11 +1098,11 @@ public class GpmlFormatImpl1
 				updateGroupRef(o, e);
 				break;
 			case STATE:
-				e = new Element("State", ns);
+				e = new Element("State", nsGPML);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", ns));
+				e.addContent(new Element("Graphics", nsGPML));
 				//TODO: Xref?
 				updateStateData(o, e);
 				updateColor(o, e);
@@ -1110,11 +1110,11 @@ public class GpmlFormatImpl1
 				updateGraphId(o, e);
 				break;
 			case SHAPE:
-				e = new Element ("Shape", ns);
+				e = new Element ("Shape", nsGPML);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", ns));
+				e.addContent(new Element("Graphics", nsGPML));
 				updateShapeColor(o, e);
 				updateColor(o, e);
 				updateShapeData(o, e, "Shape");
@@ -1123,22 +1123,22 @@ public class GpmlFormatImpl1
 				updateGroupRef(o, e);
 				break;
 			case LINE:
-				e = new Element("Line", ns);
+				e = new Element("Line", nsGPML);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", ns));
+				e.addContent(new Element("Graphics", nsGPML));
 				updateLineData(o, e);
 				updateGraphId(o, e);
 				updateColor(o, e);
 				updateGroupRef(o, e);
 				break;
 			case LABEL:
-				e = new Element("Label", ns);
+				e = new Element("Label", nsGPML);
 				updateComments(o, e);
 				updateBiopaxRef(o, e);
 				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", ns));
+				e.addContent(new Element("Graphics", nsGPML));
 				updateLabelData(o, e);
 				updateColor(o, e);
 				updateShapeData(o, e, "Label");
@@ -1146,15 +1146,15 @@ public class GpmlFormatImpl1
 				updateGroupRef(o, e);
 				break;
 			case LEGEND:
-				e = new Element ("Legend", ns);
+				e = new Element ("Legend", nsGPML);
 				updateSimpleCenter (o, e);
 				break;
 			case INFOBOX:
-				e = new Element ("InfoBox", ns);
+				e = new Element ("InfoBox", nsGPML);
 				updateSimpleCenter (o, e);
 				break;
 			case GROUP:
-				e = new Element ("Group", ns);
+				e = new Element ("Group", nsGPML);
 				updateGroup (o, e);
 				updateGroupRef(o, e);
 				updateComments(o, e);
@@ -1162,7 +1162,7 @@ public class GpmlFormatImpl1
 				updateAttributes(o, e);
 				break;
 			case BIOPAX:
-				e = new Element ("Biopax", ns);
+				e = new Element ("Biopax", nsGPML);
 				updateBiopax(o, e);
 				break;
 		}

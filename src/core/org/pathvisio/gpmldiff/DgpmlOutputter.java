@@ -72,7 +72,7 @@ class DgpmlOutputter extends DiffOutputter
 		Element e = (new Element("Insert"));
 		try
 		{
-			Element f = GpmlFormat.createJdomElement(newElt, GpmlFormat.GPML);
+			Element f = GpmlFormat.createJdomElement(newElt);
 			e.addContent (f);
 		}
 		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }
@@ -84,7 +84,7 @@ class DgpmlOutputter extends DiffOutputter
 		Element e = (new Element("Delete"));
 		try
 		{
-			Element f = GpmlFormat.createJdomElement(oldElt, GpmlFormat.GPML);
+			Element f = GpmlFormat.createJdomElement(oldElt);
 			e.addContent (f);
 		}
 		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }
@@ -103,7 +103,7 @@ class DgpmlOutputter extends DiffOutputter
 		curModifyElement = (new Element("Modify"));
 		try
 		{
-			Element f = GpmlFormat.createJdomElement(curOldElt, GpmlFormat.GPML);
+			Element f = GpmlFormat.createJdomElement(curOldElt);
 			curModifyElement.addContent (f);
 		}
 		catch (ConverterException ex) { Logger.log.error ("Converter exception", ex); }

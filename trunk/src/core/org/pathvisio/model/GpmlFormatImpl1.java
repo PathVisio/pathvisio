@@ -59,7 +59,7 @@ import org.xml.sax.SAXException;
  * and should be the only class (apart from svgFormat)
  * that needs to import jdom
  */
-public class GpmlFormatImpl1
+public class GpmlFormatImpl1 implements GpmlFormatVersion
 {
 
 	public static final GpmlFormatImpl1 GPML_2007 = new GpmlFormatImpl1 (

@@ -251,8 +251,7 @@ public class Revision
 	<target name="resources-jar" depends="prepare" description="Generates lib/resources.jar containing resource files">
 		<jar jarfile="lib/resources.jar">
 			<fileset dir="resources" includes="**"/>
-			<fileset dir="." includes="GPML.xsd"/>
-			<fileset dir="." includes="GPML2007.xsd"/>
+			<fileset dir="." includes="GPML*.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
 		</jar>
 	</target>

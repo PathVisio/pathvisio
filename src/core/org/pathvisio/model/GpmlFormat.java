@@ -158,7 +158,10 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			}
 
 			Namespace ns = root.getNamespace();
-			GpmlFormatAbstract[] formats = new GpmlFormatAbstract[] { GpmlFormat200X.GPML_2007, GpmlFormat200X.GPML_2008A };
+			GpmlFormatAbstract[] formats = new GpmlFormatAbstract[]
+			{ 
+					GpmlFormat200X.GPML_2007, GpmlFormat200X.GPML_2008A, GpmlFormat2010a.GPML_2010A 
+			};
 			boolean recognized = false;
 			for (GpmlFormatAbstract format : formats)
 			{

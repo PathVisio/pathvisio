@@ -46,7 +46,6 @@ import org.pathvisio.data.GdbManager.GdbEventListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager.GexManagerEvent;
 import org.pathvisio.gex.GexManager.GexManagerListener;
-import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.SwingEngine.Browser;
@@ -64,7 +63,7 @@ import org.pathvisio.visualization.VisualizationManager;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
- * Subclasses may override {@link #createAndShowGUI(MainPanel)} to perform custom
+ * Subclasses may override {@link #createAndShowGUI(MainPanelStandalone, SwingEngine)} to perform custom
  * actions before showing the GUI.
  * @author thomas
  *
@@ -140,6 +139,15 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			else if ("-o".equals(args[i]))
 			{
 				// ignore, -o option is deprecated
+			}
+			else if ("-v".equals(args[i]))
+			{
+				System.out.println("PathVisio v" + Revision.VERSION + ", build " + Revision.REVISION);
+				System.exit(0);
+			}
+			else if ("-h".equals(args[i])) {
+				printHelp();
+				System.exit(0);
 			}
 			else
 			{
@@ -356,7 +364,9 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 				"pathvisio [options] [pathway file]\n" +
 				"Valid options are:\n" +
 				"-p: A plugin file/directory to load\n" +
-				"-d: A pgex data file to load\n"
+				"-d: A pgex data file to load\n" +
+				"-v: displays PathVisio version\n" +
+				"-h: displays this help message"
 		);
 	}
 
@@ -365,7 +375,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		PreferenceManager.init();
 		Engine engine = new Engine();
 		initLog(engine);
-		engine.setApplicationName("PathVisio 2.0.2");
+		engine.setApplicationName("PathVisio " + Revision.VERSION);
 		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
 		{
 			try {

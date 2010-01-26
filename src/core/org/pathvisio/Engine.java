@@ -206,6 +206,7 @@ public class Engine
 		// make sure there are no problems with references.
 		p.fixReferences();
 		p.writeToXml(toFile, true);
+		fireApplicationEvent(new ApplicationEvent(p, ApplicationEvent.PATHWAY_SAVE));
 	}
 
 	/**

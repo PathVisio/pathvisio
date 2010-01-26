@@ -402,6 +402,7 @@ public class CommonActions implements ApplicationEventListener {
 			putValue(LONG_DESCRIPTION, "Export the pathway to various file formats on your computer");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			setEnabled(false);
 		}
 
 		public void actionPerformed(ActionEvent e) {

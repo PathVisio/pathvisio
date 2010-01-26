@@ -62,7 +62,7 @@
 		<include name="bridgedb-bio.jar"/>
 		<include name="swing-worker-1.1.jar"/>
 	    <include name="resources.jar"/>
-	  </fileset>	
+	  </fileset>
 	</path>
 
 	<!-- libraries used by wikipathways.jar !-->
@@ -149,7 +149,8 @@ package org.pathvisio;
 public class Revision
 {
 	public static final String REVISION = "${subversion_revision}";
-};
+	public static final String VERSION = "${pathvisio.version}";
+}
 	  </echo>
 	</target>
 

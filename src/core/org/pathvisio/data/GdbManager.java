@@ -21,10 +21,10 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 
+import org.bridgedb.BridgeDb;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
-import org.bridgedb.rdb.DBConnector;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -86,22 +86,22 @@ public class GdbManager extends AbstractListModel
 		metabolites = null;
 		if (connectString != null)
 		{
-			metabolites = addMapper(connectString);
+			metabolites = BridgeDb.connect(connectString);
 			if (metabolites != null)
 			{
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_METADB, (connectString));
+				addMapper(metabolites);
 			}
 		}
 	}
 
-	public IDMapper addMapper(String connectString) throws IDMapperException
+	public void addMapper(IDMapper mapper) throws IDMapperException
 	{
-		if (connectString == null) throw new NullPointerException();
-		IDMapper result = currentGdb.addIDMapper(connectString);
-		GdbEvent e = new GdbEvent (this, GdbEvent.Type.ADDED, connectString);
+		if (mapper == null) throw new NullPointerException();
+		currentGdb.addIDMapper(mapper);
+		GdbEvent e = new GdbEvent (this, GdbEvent.Type.ADDED, mapper.toString());
 		fireGdbEvent (e);
-		Logger.log.trace("Added extra database: " + connectString);
-		return result;
+		Logger.log.trace("Added database: " + mapper.toString());
 	}
 
 	public void removeMapper(IDMapper mapper) throws IDMapperException
@@ -160,10 +160,11 @@ public class GdbManager extends AbstractListModel
 		genes = null;
 		if (connectString != null)
 		{
-			genes = addMapper(connectString);
+			genes = BridgeDb.connect(connectString); 
 			if (genes != null)
 			{
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_GDB, (connectString));
+				addMapper(genes);
 			}
 		}
 	}
@@ -217,4 +218,7 @@ public class GdbManager extends AbstractListModel
 	{
 		return currentGdb.getSize();
 	}
+
+	public IDMapper getGeneDb() { return genes; }
+	public IDMapper getMetaboliteDb() { return metabolites; }
 }

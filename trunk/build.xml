@@ -557,7 +557,7 @@ public class Revision
 	</target>
 
 	<taskdef resource="checkstyletask.properties"
-			 classpath="lib-build/checkstyle-all-5.0-beta01.jar"/>
+			 classpath="lib-build/checkstyle-all-5.0.jar"/>
 
 	<target name="checkstyle">
 		<checkstyle config="tools/dailybuild/pv_checks.xml">

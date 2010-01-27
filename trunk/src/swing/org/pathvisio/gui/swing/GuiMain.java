@@ -222,9 +222,8 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	}
 
 	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel) {
-		PreferenceManager prf = PreferenceManager.getCurrent();
-		String gdb = prf.get(GlobalPreference.DB_CONNECTSTRING_GDB);
-		String mdb = prf.get(GlobalPreference.DB_CONNECTSTRING_METADB);
+		String gdb = "" + swingEngine.getGdbManager().getGeneDb();
+		String mdb = "" + swingEngine.getGdbManager().getMetaboliteDb();
 		gdbLabel.setText(gdb != null ? (" | Gene database: " + shortenString(gdb)) : "");
 		mdbLabel.setText(mdb != null ? (" | Metabolite database: " + shortenString(mdb)) : "");
 		gdbLabel.setToolTipText(gdb != null ? gdb : "");
@@ -232,9 +231,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	}
 
 	public void gdbEvent(GdbEvent e) {
-		if(e.getType() == GdbEvent.Type.ADDED) {
-			setGdbStatus(gdbLabel, mdbLabel);
-		}
+		setGdbStatus(gdbLabel, mdbLabel);
 	}
 
 	public void gexManagerEvent(GexManagerEvent e)

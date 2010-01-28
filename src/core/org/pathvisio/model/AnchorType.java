@@ -27,16 +27,22 @@ import java.util.TreeSet;
 public class AnchorType implements Comparable<AnchorType> {
 	private static Map<String, AnchorType> nameMappings = new HashMap<String, AnchorType>();
 	private static Set<AnchorType> values = new TreeSet<AnchorType>();
-
+	
 	public static final AnchorType NONE = new AnchorType("None");
 	public static final AnchorType CIRCLE = new AnchorType("Circle");
-
+	
 	private String name;
+    private boolean disallowLinks;
 
-	private AnchorType (String name)
+    private AnchorType (String name)
+	{
+		this(name, false);
+	}
+
+    private AnchorType (String name, final boolean disallowLinks)
 	{
 		if (name == null) { throw new NullPointerException(); }
-
+		this.disallowLinks = disallowLinks;
 		this.name  = name;
 		values.add(this);
 		nameMappings.put (name, this);
@@ -49,10 +55,22 @@ public class AnchorType implements Comparable<AnchorType> {
 	 */
 	public static AnchorType create (String name)
 	{
-		return new AnchorType(name);
+		return new AnchorType(name, false);
 	}
 
-	/**
+    /**
+     * Create an object and add it to the list
+     * @param name - identifier for anchor type
+     * @param disallowLinks - boolean if set to true nothing will be able to attach to this anchor
+     * @return a new AnchorType object
+     */
+    public static AnchorType create (String name, final boolean disallowLinks)
+    {
+        return new AnchorType(name, disallowLinks);
+    }
+
+
+    /**
 	   looks up the AnchorType corresponding to that name.
 	 */
 	public static AnchorType fromName (String value)
@@ -78,7 +96,11 @@ public class AnchorType implements Comparable<AnchorType> {
 		return name;
 	}
 
-	public int compareTo(AnchorType o) {
+    public boolean isDisallowLinks() {
+        return disallowLinks;
+    }
+
+    public int compareTo(AnchorType o) {
 		return toString().compareTo(o.toString());
 	}
 }

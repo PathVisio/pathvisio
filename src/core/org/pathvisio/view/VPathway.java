@@ -550,6 +550,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		GraphIdContainer idc = null;
 		for (LinkProvider lp : objects)
 		{
+			if (lp instanceof VAnchor && ((VAnchor)lp).getMAnchor().getShape().isDisallowLinks()) {
+             	   break;
+            	}
 			lp.showLinkAnchors();
 			LinkAnchor la = lp.getLinkAnchorAt(p2d);
 			if(la != null) {

@@ -55,6 +55,24 @@
 		</xsd:attribute>
 		<xsd:attribute name="FontSize" type="xsd:nonNegativeInteger"
 			default="12"/>
+		<xsd:attribute name="Align" default="Center">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Left"/>
+					<xsd:enumeration value="Center"/>
+					<xsd:enumeration value="Right"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="Valign" default="Top">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Top"/>
+					<xsd:enumeration value="Middle"/>
+					<xsd:enumeration value="Bottom"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
 	</xsd:attributeGroup>
 
 	<xsd:attributeGroup name="RectAttributes">
@@ -323,6 +341,7 @@
 						<xsd:attribute name="Color" type="gpml:ColorType"/>
 						<xsd:attribute name="ZOrder"
 							type="xsd:integer" use="optional"/>
+						<xsd:attributeGroup ref="gpml:FontAttributes"/>
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element name="Xref" minOccurs="1" maxOccurs="1">
@@ -557,6 +576,7 @@
 						<xsd:attribute name="Color" type="gpml:ColorType" default="Black" />
 						<xsd:attribute name="Rotation" type="gpml:RotationType" default="Top" />
 						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
+						<xsd:attributeGroup ref="gpml:FontAttributes" />
 						<xsd:attribute name="ZOrder"
 							type="xsd:integer" use="optional"/>
 					</xsd:complexType>
@@ -595,6 +615,7 @@
 			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
 			<xsd:attribute name="Style" type="gpml:StyleType" default="Solid"/>
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 
 		</xsd:complexType>
 

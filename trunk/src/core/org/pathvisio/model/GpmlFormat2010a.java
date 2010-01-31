@@ -19,6 +19,7 @@ package org.pathvisio.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jdom.Element;
 import org.jdom.Namespace;
 
 class GpmlFormat2010a extends GpmlFormatAbstract 
@@ -46,8 +47,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("Attribute@Value", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("Pathway.Graphics@BoardWidth", new AttributeInfo ("gpml:Dimension", null, "required"));
 		result.put("Pathway.Graphics@BoardHeight", new AttributeInfo ("gpml:Dimension", null, "required"));
-		result.put("Pathway.Graphics@WindowWidth", new AttributeInfo ("gpml:Dimension", "18000", "optional"));
-		result.put("Pathway.Graphics@WindowHeight", new AttributeInfo ("gpml:Dimension", "12000", "optional"));
 		result.put("Pathway@Name", new AttributeInfo ("gpml:NameType", null, "required"));
 		result.put("Pathway@Organism", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Pathway@Data-Source", new AttributeInfo ("xsd:string", null, "optional"));
@@ -56,7 +55,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("Pathway@Maintainer", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Pathway@Email", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Pathway@License", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Pathway@Copyright", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Pathway@Last-Modified", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Pathway@BiopaxRef", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("DataNode.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
@@ -72,8 +70,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("DataNode@GroupRef", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("DataNode@ObjectType", new AttributeInfo ("gpml:ObjectType", "Annotation", "optional"));
 		result.put("DataNode@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
-		result.put("DataNode@BackpageHead", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("DataNode@GenMAPP-Xref", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("DataNode@Type", new AttributeInfo ("gpml:DataNodeType", "Unknown", "optional"));
 		result.put("State.Graphics@relX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("State.Graphics@relY", new AttributeInfo ("xsd:float", null, "required"));
@@ -97,7 +93,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("Line.Graphics.Point@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
 		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics.Point@ArrowHead", new AttributeInfo ("xsd:string", "Line", "optional"));
-		result.put("Line.Graphics.Point@Head", new AttributeInfo ("xsd:string", "Line", "optional"));
 		result.put("Line.Graphics.Anchor@position", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Line.Graphics.Anchor@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics.Anchor@Shape", new AttributeInfo ("xsd:string", "ReceptorRound", "optional"));
@@ -129,7 +124,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("Label@Outline", new AttributeInfo ("xsd:string", "None", "optional"));
 		result.put("Label@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("Label@Xref", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Label@GenMAPP-Xref", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Shape.Graphics@CenterX", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Shape.Graphics@CenterY", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Shape.Graphics@Width", new AttributeInfo ("gpml:Dimension", null, "required"));
@@ -163,6 +157,42 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 	protected Map<String, AttributeInfo> getAttributeInfo() 
 	{
 		return ATTRIBUTE_INFO;
+	}
+
+	@Override
+	protected void mapDataNodeVariable(PathwayElement o, Element e)
+			throws ConverterException {
+		// nothing to do.
+	}
+
+	@Override
+	protected void mapLabelDataVariable(PathwayElement o, Element e)
+			throws ConverterException {
+		// nothing to do.
+	}
+
+	@Override
+	protected void mapMappInfoDataVariable(PathwayElement o, Element e)
+			throws ConverterException {
+		// nothing to do.
+	}
+
+	@Override
+	protected void updateDataNodeVariable(PathwayElement o, Element e)
+			throws ConverterException {
+		// nothing to do.
+	}
+
+	@Override
+	protected void updateLabelDataVariable(PathwayElement o, Element e)
+			throws ConverterException {
+		// nothing to do.
+	}
+
+	@Override
+	protected void updateMappInfoVariable(Element root, PathwayElement o)
+			throws ConverterException {
+		// nothing to do.
 	};
 
 	

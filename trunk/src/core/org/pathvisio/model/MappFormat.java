@@ -320,8 +320,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		double[] size = mi.getMBoardSize();
 		mappInfo[ICOL_BOARDWIDTH] = "" + size[0];
 		mappInfo[ICOL_BOARDHEIGHT] = "" + size[1];
-		mappInfo[ICOL_WINDOWWIDTH] = "" + mi.getWindowWidth();
-		mappInfo[ICOL_WINDOWHEIGHT] = "" + mi.getWindowHeight();
+		mappInfo[ICOL_WINDOWWIDTH] = getSafeDynamicProperty(mi, "org.pathvisio.model.WindowWidth");
+		mappInfo[ICOL_WINDOWHEIGHT] = getSafeDynamicProperty(mi, "org.pathvisio.model.WindowHeight");
 
 		return mappInfo;
 	}
@@ -366,8 +366,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 //		o.setMBoardWidth(Double.parseDouble(row[icolBoardWidth]));
 //		o.setMBoardHeight(Double.parseDouble(row[icolBoardHeight]));
 
-		o.setWindowWidth(Double.parseDouble(row[ICOL_WINDOWWIDTH]));
-		o.setWindowHeight(Double.parseDouble(row[ICOL_WINDOWHEIGHT]));
+		o.setDynamicProperty("org.pathvisio.model.WindowWidth", row[ICOL_WINDOWWIDTH]);
+		o.setDynamicProperty("org.pathvisio.model.WindowHeight", row[ICOL_WINDOWHEIGHT]);
 
 		// guess organism based on first two characters of filename
 		String shortCode = new File (filename).getName().substring(0, 2);
@@ -711,14 +711,20 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         return o;
     }
 
+    private static String getSafeDynamicProperty(PathwayElement o, String key)
+    {
+    	String val = o.getDynamicProperty(key);
+    	if (val == null) return ""; else return val;
+    }
+    
     private static void unmapGeneProductType (PathwayElement o, String[] mappObject) throws ConverterException
     {
     	mappObject[COL_TYPE] = "Gene";
     	mappObject[COL_SYSTEMCODE] = o.getDataSource().getSystemCode();
-		mappObject[COL_HEAD] = o.getBackpageHead();
+		mappObject[COL_HEAD] = getSafeDynamicProperty (o, "org.pathvisio.model.BackpageHead");
 		mappObject[COL_ID] = o.getGeneID();
 		mappObject[COL_LABEL] = o.getTextLabel();
-		mappObject[COL_LINKS] = o.getGenMappXref();
+		mappObject[COL_LINKS] = getSafeDynamicProperty (o, "org.pathvisio.model.GenMAPP-Xref");
 		unmapShape(o, mappObject);
     }
 
@@ -732,7 +738,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
         o.setDataSource(DataSource.getBySystemCode(syscode));
 
-        o.setBackpageHead(mappObject[COL_HEAD]);
+        o.setDynamicProperty ("org.pathvisio.model.BackpageHead", mappObject[COL_HEAD]);
         if (mappObject[COL_ID] == null)
         {
         	o.setGeneID("");
@@ -746,7 +752,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         o.setDataNodeType("GeneProduct");
         String xrefv = mappObject[COL_LINKS];
         if (xrefv == null) { xrefv = ""; }
-        o.setGenMappXref(xrefv);
+        o.setDynamicProperty("org.pathvisio.model.GenMAPP-Xref", xrefv);
 
         mapShape(o, mappObject);
         return o;
@@ -820,7 +826,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
         String xrefv = mappObject[COL_LINKS];
         if (xrefv == null) { xrefv = ""; }
-        o.setGenMappXref(xrefv);
+        o.setDynamicProperty("org.pathvisio.model.GenMAPP-Xref", xrefv);
         return o;
     }
 
@@ -851,7 +857,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	stylechars[0] = (char)style;
 
     	mappObject[COL_SYSTEMCODE] = new String (stylechars);
-		mappObject[COL_LINKS] = o.getGenMappXref();
+		mappObject[COL_LINKS] = getSafeDynamicProperty(o, "org.pathvisio.model.GenMAPP-Xref");
     }
 
 	private static PathwayElement mapShapeType(String[] mappObject)

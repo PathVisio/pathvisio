@@ -19,7 +19,9 @@ package org.pathvisio.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jdom.Element;
 import org.jdom.Namespace;
+import org.pathvisio.model.GpmlFormatAbstract.AttributeInfo;
 
 /**
  * GpmlFormat reader / writer for version 2007 and 2008A.
@@ -172,4 +174,48 @@ class GpmlFormat200X extends GpmlFormatAbstract
 		return ATTRIBUTE_INFO;
 	};
 
+
+	private void mapDeprecatedAttribute(PathwayElement o, Element el, String key, String tag, String name) 
+		throws ConverterException
+	{
+		String infoKey = tag + "@" + name;
+		if (!getAttributeInfo().containsKey(infoKey))
+				throw new ConverterException("Trying to get invalid attribute " + infoKey);
+		String result = ((el == null) ? null : el.getAttributeValue(name));
+		if (result != null) o.setDynamicProperty(key, result);
+	}
+	
+	private void updateDeprecatedAttribute(PathwayElement o, Element e, 
+			String key, String tag, String name) throws ConverterException
+	{
+		String val = o.getDynamicProperty(key);
+		if (val != null) setAttribute (tag, name, e, val);
+	}
+	
+	protected void updateDataNodeVariable(PathwayElement o, Element e) throws ConverterException
+	{
+		updateDeprecatedAttribute(o, e, "org.pathvisio.model.BackpageHead", "DataNode", "BackpageHead");
+	}
+	
+	protected void mapDataNodeVariable(PathwayElement o, Element e) throws ConverterException
+	{
+		mapDeprecatedAttribute(o, e, "org.pathvisio.model.BackpageHead", "DataNode", "BackpageHead");
+	}
+
+	protected void updateMappInfoVariable(Element root, PathwayElement o) throws ConverterException
+	{
+	}
+
+	protected void mapMappInfoDataVariable (PathwayElement o, Element e) throws ConverterException
+	{
+	}
+
+	protected void updateLabelDataVariable(PathwayElement o, Element e) throws ConverterException
+	{
+	}
+
+	protected void mapLabelDataVariable (PathwayElement o, Element e) throws ConverterException
+	{
+	}
+	
 }

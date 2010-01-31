@@ -84,12 +84,6 @@ public class BackpageTextProvider
 
 			// type will be displayed in the header, make either "Metabolite" or "Gene";
 			text += "<H1>" + type + " information</H1><P>";
-
-			String bpHead = (e == null ? "" : e.getBackpageHead());
-			if (bpHead == null) bpHead = "";
-
-			text += bpHead.equals("") ? bpHead : "<H2>" + bpHead + "</H2><P>";
-
 			if (!type.equals("Metabolite"))
 			{
 				type = "Gene";

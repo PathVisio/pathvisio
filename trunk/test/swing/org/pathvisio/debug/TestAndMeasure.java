@@ -49,7 +49,7 @@ import org.pathvisio.view.swing.VPathwaySwing;
  */
 public class TestAndMeasure extends TestCase
 {
-	private static final File TEST_PATHWAY = new File ("testData/WP248.gpml");
+	private static final File TEST_PATHWAY = new File ("testData/WP248_2008a.gpml");
 
 	private Measure measure;
 	

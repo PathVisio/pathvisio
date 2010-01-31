@@ -16,11 +16,14 @@
 //
 package org.pathvisio.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.pathvisio.model.PathwayElement.MPoint;
 
 class GpmlFormat2010a extends GpmlFormatAbstract 
 {
@@ -174,7 +177,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 	@Override
 	protected void mapMappInfoDataVariable(PathwayElement o, Element e)
 			throws ConverterException {
-		// nothing to do.
+		o.setCopyright (getAttribute("Pathway", "License", e));
 	}
 
 	@Override
@@ -192,8 +195,48 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 	@Override
 	protected void updateMappInfoVariable(Element root, PathwayElement o)
 			throws ConverterException {
-		// nothing to do.
-	};
+		setAttribute("Pathway", "License", root, o.getCopyright());
+	}
+
+	protected void mapLineDataVariable(PathwayElement o, Element e) throws ConverterException
+	{
+    	Element graphics = e.getChild("Graphics", e.getNamespace());
+
+    	List<MPoint> mPoints = new ArrayList<MPoint>();
+
+    	String startType = null;
+    	String endType = null;
+
+    	List<Element> pointElements = graphics.getChildren("Point", e.getNamespace());
+    	for(int i = 0; i < pointElements.size(); i++) {
+    		Element pe = pointElements.get(i);
+    		MPoint mp = o.new MPoint(
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "x", pe)),
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "y", pe))
+    		);
+    		mPoints.add(mp);
+        	String ref = getAttribute("Line.Graphics.Point", "GraphRef", pe);
+        	if (ref != null) {
+        		mp.setGraphRef(ref);
+        		String srx = pe.getAttributeValue("relX");
+        		String sry = pe.getAttributeValue("relY");
+        		if(srx != null && sry != null) {
+        			mp.setRelativePosition(Double.parseDouble(srx), Double.parseDouble(sry));
+        		}
+        	}
+
+        	if(i == 0) {
+        		startType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
+        	} else if(i == pointElements.size() - 1) {
+    			endType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
+        	}
+    	}
+
+    	o.setMPoints(mPoints);
+		o.setStartLineType (LineType.fromName(startType));
+    	o.setEndLineType (LineType.fromName(endType));
+
+	}
 
 	
 }

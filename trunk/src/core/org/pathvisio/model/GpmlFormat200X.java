@@ -16,12 +16,15 @@
 //
 package org.pathvisio.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.pathvisio.model.GpmlFormatAbstract.AttributeInfo;
+import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
  * GpmlFormat reader / writer for version 2007 and 2008A.
@@ -204,10 +207,12 @@ class GpmlFormat200X extends GpmlFormatAbstract
 
 	protected void updateMappInfoVariable(Element root, PathwayElement o) throws ConverterException
 	{
+		setAttribute("Pathway", "Copyright", root, o.getCopyright());
 	}
 
 	protected void mapMappInfoDataVariable (PathwayElement o, Element e) throws ConverterException
 	{
+		o.setCopyright (getAttribute("Pathway", "Copyright", e));
 	}
 
 	protected void updateLabelDataVariable(PathwayElement o, Element e) throws ConverterException
@@ -216,6 +221,55 @@ class GpmlFormat200X extends GpmlFormatAbstract
 
 	protected void mapLabelDataVariable (PathwayElement o, Element e) throws ConverterException
 	{
+	}
+
+	protected void mapLineDataVariable(PathwayElement o, Element e) throws ConverterException
+	{
+    	Element graphics = e.getChild("Graphics", e.getNamespace());
+
+    	List<MPoint> mPoints = new ArrayList<MPoint>();
+
+    	String startType = null;
+    	String endType = null;
+
+    	List<Element> pointElements = graphics.getChildren("Point", e.getNamespace());
+    	for(int i = 0; i < pointElements.size(); i++) {
+    		Element pe = pointElements.get(i);
+    		MPoint mp = o.new MPoint(
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "x", pe)),
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "y", pe))
+    		);
+    		mPoints.add(mp);
+        	String ref = getAttribute("Line.Graphics.Point", "GraphRef", pe);
+        	if (ref != null) {
+        		mp.setGraphRef(ref);
+        		String srx = pe.getAttributeValue("relX");
+        		String sry = pe.getAttributeValue("relY");
+        		if(srx != null && sry != null) {
+        			mp.setRelativePosition(Double.parseDouble(srx), Double.parseDouble(sry));
+        		}
+        	}
+
+        	if(i == 0) {
+        		startType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
+        		endType = getAttribute("Line.Graphics.Point", "Head", pe);
+        	} else if(i == pointElements.size() - 1) {
+        		/**
+     		   	read deprecated Head attribute for backwards compatibility.
+     		   	If an arrowhead attribute is present on the other point,
+     		   	it overrides this one.
+        		 */
+        		if (pe.getAttributeValue("ArrowHead") != null)
+        		{
+        			endType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
+        		}
+        	}
+    	}
+
+    	o.setMPoints(mPoints);
+		o.setStartLineType (LineType.fromName(startType));
+    	o.setEndLineType (LineType.fromName(endType));
+
 	}
 	
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2008a" Name="Deprecation test" Version="20100122" Copyright="Apache 2.0 License">
+  <Graphics BoardWidth="1699.5" BoardHeight="1567.5" WindowWidth="18000.0" WindowHeight="12000.0" />
+  <DataNode TextLabel="GeneProduct" Type="GeneProduct" BackpageHead="This is a backpage head" 
+	GenMAPP-Xref="Another Xref" GraphId="e4fa1">
+    <Graphics Color="000000" CenterX="945.0" CenterY="795.0" Width="1200.0" Height="300.0" ZOrder="32768" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <Label TextLabel="Label" GraphId="ee490" Xref="Xref?" GenMAPP-Xref="GenMAPP-Xref?">
+    <Graphics FontSize="150" Color="000000" CenterX="915.0" CenterY="1275.0" Width="1200.0" Height="300.0" ZOrder="28672" />
+  </Label>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

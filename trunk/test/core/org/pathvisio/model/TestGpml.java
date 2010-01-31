@@ -37,4 +37,18 @@ public class TestGpml extends TestCase
 		GpmlFormat200X.GPML_2008A.writeToXml(pwy, tmp, true);		
 	}
 	
+	private static final File FILE1 = 
+		new File ("testData/2008a-deprecation-test.gpml");
+	
+	public void testDeprecatedFields() throws ConverterException
+	{
+		assertTrue (FILE1.exists());
+		
+		Pathway pwy = new Pathway();
+		GpmlFormat.readFromXml(pwy, FILE1, true);
+		
+		PathwayElement dn = pwy.getElementById("e4fa1");
+		assertEquals ("This is a backpage head", dn.getDynamicProperty("org.pathvisio.model.BackpageHead"));
+	}
+	
 }

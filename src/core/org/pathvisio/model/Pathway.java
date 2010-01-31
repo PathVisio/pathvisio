@@ -617,19 +617,11 @@ public class Pathway
 		this.add (infoBox);
 	}
 
-	static final double M_INITIAL_BOARD_WIDTH = 18000;
-	static final double M_INITIAL_BOARD_HEIGHT = 12000;
-
 	/*
 	 * Call when making a new mapp.
 	 */
 	public void initMappInfo()
 	{
-		//Will be calculated
-//		mappInfo.setMBoardWidth(M_INITIAL_BOARD_WIDTH);
-//		mappInfo.setMBoardHeight(M_INITIAL_BOARD_HEIGHT);
-		mappInfo.setWindowWidth(M_INITIAL_BOARD_WIDTH);
-		mappInfo.setWindowHeight(M_INITIAL_BOARD_HEIGHT);
 		String dateString = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		mappInfo.setVersion(dateString);
 		mappInfo.setMapInfoName("New Pathway");

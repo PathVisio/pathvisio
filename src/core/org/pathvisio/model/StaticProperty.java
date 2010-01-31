@@ -69,8 +69,6 @@ public enum StaticProperty implements Property
 	// datanode
 	GENEID ("GeneID", "Database Identifier", StaticPropertyType.DB_ID, 122),
 	DATASOURCE ("SystemCode", "Database Name", StaticPropertyType.DATASOURCE, 123),
-	GENMAPP_XREF ("Xref", "Xref", StaticPropertyType.STRING, 124), // deprecated, maintained for backward compatibility with GenMAPP.
-	BACKPAGEHEAD ("BackpageHead", "Backpage head", StaticPropertyType.STRING, 125),
 	TYPE ("Type", "Type", StaticPropertyType.GENETYPE, 126),
 
 	MODIFICATIONTYPE ("ModificationType", "ModificationType", StaticPropertyType.STRING, 127),
@@ -94,11 +92,9 @@ public enum StaticProperty implements Property
 	MAINTAINED_BY ("Maintained-By", "Maintainer", StaticPropertyType.STRING, 139),
 	EMAIL ("Email", "Email", StaticPropertyType.STRING, 140),
 	LAST_MODIFIED ("Last-Modified", "Last Modified", StaticPropertyType.STRING, 141),
-	AVAILABILITY ("Availability", "Availability", StaticPropertyType.STRING, 142),
+	LICENSE ("License", "License", StaticPropertyType.STRING, 142),
 	BOARDWIDTH ("BoardWidth", "Board Width", StaticPropertyType.DOUBLE, 143, true, true, false),
 	BOARDHEIGHT ("BoardHeight", "Board Height", StaticPropertyType.DOUBLE, 144, true, true, false),
-	WINDOWWIDTH ("WindowWidth", "Window Width", StaticPropertyType.DOUBLE, 145, true, true, true),
-	WINDOWHEIGHT ("WindowHeight", "Window Height", StaticPropertyType.DOUBLE, 146, true, true, true),
 
 	// other
 	GRAPHID ("GraphId", "GraphId", StaticPropertyType.STRING, 147, false, true, false),

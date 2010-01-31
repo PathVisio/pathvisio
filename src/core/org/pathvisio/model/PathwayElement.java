@@ -774,11 +774,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.MAINTAINED_BY,
 					StaticProperty.EMAIL,
 					StaticProperty.LAST_MODIFIED,
-					StaticProperty.AVAILABILITY,
+					StaticProperty.LICENSE,
 					StaticProperty.BOARDWIDTH,
-					StaticProperty.BOARDHEIGHT,
-					StaticProperty.WINDOWWIDTH,
-					StaticProperty.WINDOWHEIGHT
+					StaticProperty.BOARDHEIGHT
 				);
 			ALLOWED_PROPS.put (ObjectType.MAPPINFO, propsMappinfo);
 		}
@@ -816,8 +814,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.GENEID,
 					StaticProperty.DATASOURCE,
 					StaticProperty.TEXTLABEL,
-					// StaticProperty.XREF,
-					StaticProperty.BACKPAGEHEAD,
 					StaticProperty.TYPE
 				);
 			propsDatanode.addAll (propsCommon);
@@ -842,7 +838,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 		{
 			Set<StaticProperty> propsLabel = EnumSet.of(
-					StaticProperty.GENMAPP_XREF,
 					StaticProperty.TEXTLABEL,
 					StaticProperty.FONTNAME,
 					StaticProperty.FONTWEIGHT,
@@ -1037,12 +1032,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				setDataSource(DataSource.getByFullName((String)value));
 			}
 			break;
-		case GENMAPP_XREF:
-			setGenMappXref((String) value);
-			break;
-		case BACKPAGEHEAD:
-			setBackpageHead((String) value);
-			break;
 		case TYPE:
 			setDataNodeType((String) value);
 			break;
@@ -1086,7 +1075,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case LAST_MODIFIED:
 			setLastModified((String) value);
 			break;
-		case AVAILABILITY:
+		case LICENSE:
 			setCopyright((String) value);
 			break;
 		case BOARDWIDTH:
@@ -1095,13 +1084,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case BOARDHEIGHT:
 			//ignore, board width is calculated automatically
 			break;
-		case WINDOWWIDTH:
-			setWindowWidth((Double) value);
-			break;
-		case WINDOWHEIGHT:
-			setWindowHeight((Double) value);
-			break;
-
 		case GRAPHID:
 			setGraphId((String) value);
 			break;
@@ -1208,12 +1190,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case DATASOURCE:
 			result = getDataSource();
 			break;
-		case GENMAPP_XREF:
-			result = getGenMappXref();
-			break;
-		case BACKPAGEHEAD:
-			result = getBackpageHead();
-			break;
 		case TYPE:
 			result = getDataNodeType();
 			break;
@@ -1258,7 +1234,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case LAST_MODIFIED:
 			result = getLastModified();
 			break;
-		case AVAILABILITY:
+		case LICENSE:
 			result = getCopyright();
 			break;
 		case BOARDWIDTH:
@@ -1267,13 +1243,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case BOARDHEIGHT:
 			result = getMBoardSize()[1];
 			break;
-		case WINDOWWIDTH:
-			result = getWindowWidth();
-			break;
-		case WINDOWHEIGHT:
-			result = getWindowHeight();
-			break;
-
 		case GRAPHID:
 			result = getGraphId();
 			break;
@@ -1319,7 +1288,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		attributes = new TreeMap<String, String>(src.attributes); // create copy
 		author = src.author;
 		copyright = src.copyright;
-		backpageHead = src.backpageHead;
 		mCenterx = src.mCenterx;
 		mCentery = src.mCentery;
 		zOrder =  src.zOrder;
@@ -1371,9 +1339,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 		version = src.version;
 		mWidth = src.mWidth;
-		windowHeight = src.windowHeight;
-		windowWidth = src.windowWidth;
-		genmappxref = src.genmappxref;
 		graphId = src.graphId;
 		groupId = src.groupId;
 		groupRef = src.groupRef;
@@ -1702,30 +1667,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return null;
 	}
 
-	protected String genmappxref = null;
-
-	/**
-	   access to the Label/Xref and DataNode/GenMAPPXref attributes
-	   For backwards compatibility with GenMAPP only.
-	 */
-	public String getGenMappXref()
-	{
-		return genmappxref;
-	}
-
-	/**
-	   access to the Label/Xref and DataNode/GenMAPPXref attributes
-	   For backwards compatibility with GenMAPP only.
-	 */
-	public void setGenMappXref(String v)
-	{
-		if (!Utils.stringEquals(genmappxref, v))
-		{
-			genmappxref = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GENMAPP_XREF));
-		}
-	}
-
 	protected String setGeneID = "";
 
 	public String getGeneID()
@@ -1741,22 +1682,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			setGeneID = v;
 			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GENEID));
-		}
-	}
-
-	protected String backpageHead = null;
-
-	public String getBackpageHead()
-	{
-		return backpageHead;
-	}
-
-	public void setBackpageHead(String v)
-	{
-		if (!Utils.stringEquals(backpageHead, v))
-		{
-			backpageHead = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.BACKPAGEHEAD));
 		}
 	}
 
@@ -2268,7 +2193,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(copyright, v))
 		{
 			copyright = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.AVAILABILITY));
+			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LICENSE));
 		}
 	}
 
@@ -2305,54 +2230,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public double getMBoardHeight()
 	{
 		return getMBoardSize()[1];
-	}
-
-	protected double windowWidth;
-
-	/**
-	 * GenMAPP Legacy attribute maintained only for reverse compatibility
-	 * reasons, no longer used by PathVisio
-	 */
-	public double getWindowWidth()
-	{
-		return windowWidth;
-	}
-
-	/**
-	 * GenMAPP Legacy attribute maintained only for reverse compatibility
-	 * reasons, no longer used by PathVisio
-	 */
-	public void setWindowWidth(double v)
-	{
-		if (windowWidth != v)
-		{
-			windowWidth = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.WINDOWWIDTH));
-		}
-	}
-
-	protected double windowHeight;
-
-	/**
-	 * GenMAPP Legacy attribute maintained only for reverse compatibility
-	 * reasons, no longer used by PathVisio
-	 */
-	public double getWindowHeight()
-	{
-		return windowHeight;
-	}
-
-	/**
-	 * GenMAPP Legacy attribute maintained only for reverse compatibility
-	 * reasons, no longer used by PathVisio
-	 */
-	public void setWindowHeight(double v)
-	{
-		if (windowHeight != v)
-		{
-			windowHeight = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.WINDOWHEIGHT));
-		}
 	}
 
 	/* AP20070508 */

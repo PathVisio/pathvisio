@@ -126,7 +126,7 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 	 * @param el jdom element where this attribute belongs in
 	 * @param value value you wan't to check and set
 	 */
-	private  void setAttribute(String tag, String name, Element el,
+	protected void setAttribute(String tag, String name, Element el,
 			String value) throws ConverterException {
 		String key = tag + "@" + name;
 		if (!getAttributeInfo().containsKey(key))
@@ -168,7 +168,7 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 	 * @param el jdom element to get the attribute from
 	 * @throws ConverterException
 	 */
-	private  String getAttribute(String tag, String name, Element el) throws ConverterException
+	protected String getAttribute(String tag, String name, Element el) throws ConverterException
 	{
 		String key = tag + "@" + name;
 		if (!getAttributeInfo().containsKey(key))
@@ -222,14 +222,40 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		}
 
 	}
+	
+	protected abstract void updateMappInfoVariable(Element root, PathwayElement o) throws ConverterException;
+	
+	private void updateMappInfo(Element root, PathwayElement o) throws ConverterException
+	{
+		setAttribute("Pathway", "Name", root, o.getMapInfoName());
+		setAttribute("Pathway", "Data-Source", root, o.getMapInfoDataSource());
+		setAttribute("Pathway", "Version", root, o.getVersion());
+		setAttribute("Pathway", "Author", root, o.getAuthor());
+		setAttribute("Pathway", "Maintainer", root, o.getMaintainer());
+		setAttribute("Pathway", "Email", root, o.getEmail());
+		setAttribute("Pathway", "Copyright", root, o.getCopyright());
+		setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
+		setAttribute("Pathway", "Organism", root, o.getOrganism());
+
+		updateComments(o, root);
+		updateBiopaxRef(o, root);
+		updateAttributes(o, root);
+
+		Element graphics = new Element("Graphics", nsGPML);
+		root.addContent(graphics);
+
+		double[] size = o.getMBoardSize();
+		setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" +size[0]);
+		setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + size[1]);
+		
+		updateMappInfoVariable (root, o);
+	}
 
 	public Document createJdom(Pathway data) throws ConverterException
 	{
 		Document doc = new Document();
 
-		Namespace ns = nsGPML;
-
-		Element root = new Element("Pathway", ns);
+		Element root = new Element("Pathway", nsGPML);
 		doc.setRootElement(root);
 
 		List<Element> elementList = new ArrayList<Element>();
@@ -240,28 +266,7 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		{
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 			{
-				setAttribute("Pathway", "Name", root, o.getMapInfoName());
-				setAttribute("Pathway", "Data-Source", root, o.getMapInfoDataSource());
-				setAttribute("Pathway", "Version", root, o.getVersion());
-				setAttribute("Pathway", "Author", root, o.getAuthor());
-				setAttribute("Pathway", "Maintainer", root, o.getMaintainer());
-				setAttribute("Pathway", "Email", root, o.getEmail());
-				setAttribute("Pathway", "Copyright", root, o.getCopyright());
-				setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
-				setAttribute("Pathway", "Organism", root, o.getOrganism());
-
-				updateComments(o, root);
-				updateBiopaxRef(o, root);
-				updateAttributes(o, root);
-
-				Element graphics = new Element("Graphics", ns);
-				root.addContent(graphics);
-
-				double[] size = o.getMBoardSize();
-				setAttribute("Pathway.Graphics", "BoardWidth", graphics, "" +size[0]);
-				setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + size[1]);
-				setAttribute("Pathway.Graphics", "WindowWidth", graphics, "" + o.getWindowWidth());
-				setAttribute("Pathway.Graphics", "WindowHeight", graphics, "" + o.getWindowHeight());
+				updateMappInfo(root, o);
 			}
 			else
 			{
@@ -693,29 +698,31 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		setAttribute ("Group", "TextLabel", e, o.getTextLabel());
 	}
 
+	protected abstract void mapDataNodeVariable(PathwayElement o, Element e) throws ConverterException;
+
 	private void mapDataNode(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel    (getAttribute("DataNode", "TextLabel", e));
-		o.setGenMappXref         (getAttribute("DataNode", "GenMAPP-Xref", e));
+        mapDataNodeVariable (o, e);
 		o.setDataNodeType (getAttribute("DataNode", "Type", e));
-		o.setBackpageHead (getAttribute("DataNode", "BackpageHead", e));
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setGeneID (getAttribute("DataNode.Xref", "ID", xref));
 		o.setDataSource (DataSource.getByFullName (getAttribute("DataNode.Xref", "Database", xref)));
 	}
 
+	protected abstract void updateDataNodeVariable(PathwayElement o, Element e) throws ConverterException;
+	
 	private void updateDataNode(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null) {
+			updateDataNodeVariable(o, e);
 			setAttribute ("DataNode", "TextLabel", e, o.getTextLabel());
-			setAttribute ("DataNode", "GenMAPP-Xref", e, o.getGenMappXref());
 			setAttribute ("DataNode", "Type", e, o.getDataNodeType());
-			setAttribute ("DataNode", "BackpageHead", e, o.getBackpageHead());
 			Element xref = e.getChild("Xref", e.getNamespace());
 			String database = o.getDataSource() == null ? "" : o.getDataSource().getFullName();
 			setAttribute ("DataNode.Xref", "Database", xref, database == null ? "" : database);
 			setAttribute ("DataNode.Xref", "ID", xref, o.getGeneID());
-		}
+        }
 	}
 
 	private void mapSimpleCenter(PathwayElement o, Element e)
@@ -808,6 +815,8 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		}
 	}
 
+	protected abstract void mapLabelDataVariable (PathwayElement o, Element e) throws ConverterException;
+	
 	private void mapLabelData(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel (getAttribute("Label", "TextLabel", e));
@@ -825,22 +834,22 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
     	o.setItalic (fontStyle != null && fontStyle.equals("Italic"));
     	o.setUnderline (fontDecoration != null && fontDecoration.equals("Underline"));
     	o.setStrikethru (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
+    	
+    	mapLabelDataVariable (o, e);
 
     	o.setFontName (getAttribute("Label.Graphics", "FontName", graphics));
 
-    	String xref = getAttribute("Label", "Xref", e);
-    	if (xref == null) xref = "";
-    	o.setGenMappXref(xref);
     	String outline = getAttribute("Label", "Outline", e);
 		o.setOutline (OutlineType.fromTag (outline));
 	}
-
+	
+	protected abstract void updateLabelDataVariable (PathwayElement o, Element e) throws ConverterException;
+	
 	private void updateLabelData(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null)
 		{
 			setAttribute("Label", "TextLabel", e, o.getTextLabel());
-			setAttribute("Label", "Xref", e, o.getGenMappXref() == null ? "" : o.getGenMappXref());
 			setAttribute("Label", "Outline", e, o.getOutline().getTag());
 			Element graphics = e.getChild("Graphics", e.getNamespace());
 			if(graphics !=null)
@@ -852,9 +861,12 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 				setAttribute("Label.Graphics", "FontStrikethru", graphics, o.isStrikethru() ? "Strikethru" : "Normal");
 				setAttribute("Label.Graphics", "FontSize", graphics, Integer.toString((int)o.getMFontSize()));
 			}
+			updateLabelDataVariable(o, e);
 		}
 	}
 
+	protected abstract void mapMappInfoDataVariable (PathwayElement o, Element e) throws ConverterException;
+	
 	private void mapMappInfoData(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setMapInfoName (getAttribute("Pathway", "Name", e));
@@ -867,13 +879,7 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		o.setLastModified (getAttribute("Pathway", "Last-Modified", e));
 		o.setCopyright (getAttribute("Pathway", "Copyright", e));
 
-		Element g = e.getChild("Graphics", e.getNamespace());
-
-		//Board size will be calculated
-//		o.setMBoardWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardWidth", g)));
-//		o.setMBoardHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "BoardHeight", g)));
-		o.setWindowWidth (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowWidth", g)));
-		o.setWindowHeight (Double.parseDouble(getAttribute("Pathway.Graphics", "WindowHeight", g)));
+		mapMappInfoDataVariable(o, e);
 	}
 
 	private void mapBiopax(PathwayElement o, Element e) throws ConverterException
@@ -1254,7 +1260,7 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 					);
 					pe.getMEnd().setRelativePosition(relative.getX(), relative.getY());
 				}
-				((MLine)pe).getConnectorShape().recalculateShape(((MLine)pe));
+                ((MLine)pe).getConnectorShape().recalculateShape(((MLine)pe));
 			}
 		}
 	}

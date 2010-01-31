@@ -45,6 +45,7 @@
 		<xsd:attribute name="FontSize" type="xsd:nonNegativeInteger"
 			default="12"/>
 		<xsd:attribute name="Align" default="Center">
+			<!-- Horizontal alignment -->
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
 					<xsd:enumeration value="Left"/>
@@ -54,6 +55,7 @@
 			</xsd:simpleType>
 		</xsd:attribute>
 		<xsd:attribute name="Valign" default="Top">
+			<!-- Vertical alignment -->
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
 					<xsd:enumeration value="Top"/>
@@ -70,7 +72,15 @@
 		<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
 		<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
 	</xsd:attributeGroup>
-	
+
+	<xsd:attributeGroup name="ShapeStyleAttributes">
+		<xsd:attribute name="Color" type="gpml:ColorType" default="Black"/>
+		<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
+		<xsd:attribute name="LineStyle" type="gpml:StyleType" default="Solid" />
+		<xsd:attribute name="LineThickness" type="xsd:float" default="1.0" />
+		<xsd:attribute name="ShapeType" type="xsd:string" use="required"/>
+	</xsd:attributeGroup>
+
 	<!-- a rotation is either a float value or a string for each of the four right angles !-->
 	<xsd:simpleType name="RotationType">
 		<xsd:union>
@@ -129,14 +139,6 @@
 	<xsd:simpleType name="Dimension">
 		<xsd:restriction base="xsd:float">
 			<xsd:minInclusive value="0" />
-		</xsd:restriction>
-	</xsd:simpleType>
-
-	<xsd:simpleType name="ObjectType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="Node"/>
-			<xsd:enumeration value="Edge"/>
-			<xsd:enumeration value="Annotation"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -264,10 +266,9 @@
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
 						<xsd:attributeGroup ref="gpml:RectAttributes"/>
-						<xsd:attribute name="Color" type="gpml:ColorType"/>
-						<xsd:attribute name="ZOrder"
-							type="xsd:integer" use="optional"/>
 						<xsd:attributeGroup ref="gpml:FontAttributes"/>
+						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes"/>
+						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element name="Xref" minOccurs="1" maxOccurs="1">
@@ -281,8 +282,7 @@
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
             <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
             <xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
-			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
-			
+
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 		
 			<xsd:attribute name="Type" type="xsd:string" default="Unknown">
@@ -307,8 +307,8 @@
 						<xsd:attribute name="relY" type="xsd:float" use="required"/>
 						<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
 						<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
-						<xsd:attribute name="Color" type="gpml:ColorType"/>
-						<xsd:attribute name="FillColor" type="gpml:ColorType"/>
+						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes"/>
+						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
 					</xsd:complexType>
 				</xsd:element>
 				<xsd:element name="Xref" minOccurs="0" maxOccurs="1">
@@ -322,14 +322,11 @@
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
             <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 			<xsd:attribute name="GraphRef" type="xsd:IDREF" use="optional" />
-			<xsd:attribute name="Style" type="gpml:StyleType" default="Solid" />
 			
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 		
 			<xsd:attribute name="StateType" type="xsd:string" default="Unknown"/>
 			<!-- Biological modification type. suggested values: Phosphorylated, Glycosylated, Activated, ... !-->
-
-			<xsd:attribute name="ShapeType" type="xsd:string" use="required"/>
 
 		</xsd:complexType>
 
@@ -390,6 +387,9 @@
 						</xsd:sequence>
 						<xsd:attribute name="Color"
 							type="gpml:ColorType" default="Black" />
+						<xsd:attribute name="LineThickness" type="xsd:float"/>
+						<xsd:attribute name="LineStyle" type="gpml:StyleType"
+							default="Solid" />
 						<xsd:attribute name="ConnectorType"
 							type="xsd:string" use="optional" default="Straight"/>
 						<xsd:attribute name="ZOrder"
@@ -398,9 +398,6 @@
 				</xsd:element>
 
 			</xsd:sequence>
-
-			<xsd:attribute name="Style" type="gpml:StyleType"
-				default="Solid" />
 
 			<xsd:attribute name="GroupRef" type="xsd:string"
 				use="optional" />
@@ -427,11 +424,9 @@
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
 						<xsd:attributeGroup ref="gpml:RectAttributes"/>
-						<xsd:attribute name="Color" use="optional"
-							type="gpml:ColorType"/>
 						<xsd:attributeGroup ref="gpml:FontAttributes" />
-						<xsd:attribute name="ZOrder"
-							type="xsd:integer" use="optional"/>
+						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes" />
+						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
 					</xsd:complexType>
 				</xsd:element>
 
@@ -445,17 +440,6 @@
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
-			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
-
-			<xsd:attribute name="Outline" default="None">
-			    <xsd:simpleType>
-				    <xsd:restriction base="xsd:string">
-					    <xsd:enumeration value="None"/>
-						<xsd:enumeration value="Rectangle"/>
-						<xsd:enumeration value="RoundedRectangle"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
 
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>			
 		</xsd:complexType>
@@ -475,48 +459,19 @@
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
 						<xsd:attributeGroup ref="gpml:RectAttributes"/>
-						<xsd:attribute name="Color" type="gpml:ColorType" default="Black" />
-						<xsd:attribute name="Rotation" type="gpml:RotationType" default="Top" />
-						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
 						<xsd:attributeGroup ref="gpml:FontAttributes" />
-						<xsd:attribute name="ZOrder"
-							type="xsd:integer" use="optional"/>
+						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes" />
+						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
+						<xsd:attribute name="Rotation" type="gpml:RotationType" default="Top" />
 					</xsd:complexType>
 				</xsd:element>
 
 			</xsd:sequence>
 
-			<xsd:attribute name="Type" use="required" type="xsd:string">
-			<!--
-				Shape Type is no longer restricted.
-				However, if you care about compatibility with GenMAPP
-				you should only use the shapes below
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="Rectangle"/>
-						<xsd:enumeration value="Arc"/>
-						<xsd:enumeration value="Oval"/>
-						<xsd:enumeration value="Brace"/>
-						<xsd:enumeration value="Hexagon"/>
-						<xsd:enumeration value="Pentagon"/>
-						<xsd:enumeration value="Triangle"/>
-						<xsd:enumeration value="Vesicle"/>
-						<xsd:enumeration value="ProteinComplex"/>
-						<xsd:enumeration value="OrganA"/>
-						<xsd:enumeration value="OrganB"/>
-						<xsd:enumeration value="OrganC"/>
-						<xsd:enumeration value="Ribosome"/>
-						<xsd:enumeration value="CellA"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-				!-->
-			</xsd:attribute>
-			
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
 			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
-			<xsd:attribute name="ObjectType" type="gpml:ObjectType" default="Annotation" />
-			<xsd:attribute name="Style" type="gpml:StyleType" default="Solid"/>
+
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 
 		</xsd:complexType>
@@ -569,7 +524,7 @@
 	<xsd:element name="Biopax">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:any namespace="http://www.biopax.org/release/biopax-level2.owl#"
+				<xsd:any namespace="http://www.biopax.org/release/biopax-level3.owl#"
 					processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 		</xsd:complexType>

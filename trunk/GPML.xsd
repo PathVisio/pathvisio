@@ -4,20 +4,9 @@
 	elementFormDefault="qualified"
 	>
 
-	<xsd:annotation>
-		<xsd:documentation xml:lang="en">GenMAPP version 2.0 Pathway Schema
-			version 1.0   All graphics measurements are in
-			centimeters.</xsd:documentation>
-	</xsd:annotation>
+	<!-- GenMAPP Pathway Markup Language version 2010a -->
 
-
-	<!-- Type Definitions -->
-	<xsd:simpleType name="NameType">
-		<xsd:restriction base="xsd:string">
-			<xsd:maxLength value="50" fixed="true"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	
+	<!-- Type Definitions -->	
 	<xsd:attributeGroup name="FontAttributes">
 		<xsd:attribute name="FontName" default="Arial"
 			type="xsd:string"/>
@@ -143,36 +132,6 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 
-	<xsd:simpleType name="DatabaseType">
-		<xsd:union>
-			<xsd:simpleType>
-				<xsd:restriction base="xsd:string">
-					<xsd:maxLength value="20"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-			<xsd:simpleType>
-				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="FlyBase"/>
-					<xsd:enumeration value="GenBank"/>
-					<xsd:enumeration value="GeneOntology"/>
-					<xsd:enumeration value="InterPro"/>
-					<xsd:enumeration value="LocusLink"/>
-					<xsd:enumeration value="MGI"/>
-					<xsd:enumeration value="RefSeq"/>
-					<xsd:enumeration value="RGD"/>
-					<xsd:enumeration value="SGD"/>
-					<xsd:enumeration value="SwissProt"/>
-					<xsd:enumeration value="TAIR"/>
-					<xsd:enumeration value="UniGene"/>
-					<xsd:enumeration value="UniProt"/>
-					<xsd:enumeration value="WormBase"/>
-					<xsd:enumeration value="Affy"/>
-					<xsd:enumeration value="ZFIN"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-		</xsd:union>
-	</xsd:simpleType>
-
 	<xsd:simpleType name="ObjectType">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="Node"/>
@@ -181,19 +140,7 @@
 		</xsd:restriction>
 	</xsd:simpleType>
 
-	<xsd:simpleType name="DataNodeType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="Protein"/>
-			<xsd:enumeration value="Rna"/>
-			<xsd:enumeration value="Complex"/>
-			<xsd:enumeration value="GeneProduct"/>
-			<xsd:enumeration value="Metabolite"/>
-			<xsd:enumeration value="Unknown"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-
 	<!-- One or more comments - bundles GenMAPP notes and GenMAPP remarks together !-->
-	<!-- plus one or more publications !-->
 	<xsd:group name="CommentGroup">
 		<xsd:sequence>
 			<xsd:element name="Comment" minOccurs="0"
@@ -234,11 +181,6 @@
 				
 				<xsd:element name="Graphics" minOccurs="0" maxOccurs="1">
 					<xsd:complexType>
-						<xsd:annotation>
-							<xsd:documentation xml:lang="en">Pathway graphics describe
-								the coordinates of the GenMAPP drawing board, and Map
-								Information Area.</xsd:documentation>
-						</xsd:annotation>
 						<xsd:attribute name="BoardWidth" type="gpml:Dimension"
 							use="required"/>
 						<xsd:attribute name="BoardHeight" type="gpml:Dimension"
@@ -266,36 +208,27 @@
 			</xsd:sequence>
 
 			<xsd:attribute name="Name" type="gpml:NameType" use="required">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP Pathway
-						Title</xsd:documentation>
-				</xsd:annotation>
+				<!--  GenMAPP Pathway Title -->
 			</xsd:attribute>
 
 			<xsd:attribute name="Organism" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">Organism is not a field in the
+				<!-- Organism is not a field in the
 						GenMAPP database at this time, but we want to preserve this
 						information when importing maps, and also when exporting maps.
 						GenMAPP maps have the organism implied from the
-						filename.</xsd:documentation>
-				</xsd:annotation>
+						filename. -->
 			</xsd:attribute>
 
 			<xsd:attribute name="Data-Source" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">On import to GenMAPP,
+				<!-- On import to GenMAPP,
 						Data-Source value could be 'KEGG', 'Cytoscape', etc.  On export
 						from GenMAPP, value should be 'GenMAPP' with version
-						number.</xsd:documentation>
-				</xsd:annotation>
+						number. -->
 			</xsd:attribute>
 
 			<xsd:attribute name="Version" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP version, use for export
-						of maps from GenMAPP only.</xsd:documentation>
-				</xsd:annotation>
+				<!-- GenMAPP version, use for export
+					of maps from GenMAPP only. -->
 			</xsd:attribute>
 
 			<xsd:attribute name="Author" type="xsd:string" use="optional"/>
@@ -307,11 +240,7 @@
 			<xsd:attribute name="License" type="xsd:string" use="optional"/>
 
 			<xsd:attribute name="Last-Modified" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">Last modification date by
-						GenMAPP.  Use only when exporting GenMAPP
-						maps.</xsd:documentation>
-				</xsd:annotation>
+				<!-- Last modification date, in the form of YYYYMMDD -->
 			</xsd:attribute>
 
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
@@ -324,11 +253,8 @@
 <!-- Data Node -->
 	<xsd:element name="DataNode">
 
-		<xsd:annotation>
-			<xsd:documentation xml:lang="en">DataNode is the old GeneProduct, a gene in GenMAPP
-				terminology.</xsd:documentation>
-		</xsd:annotation>
-
+		<!-- DataNode is the old GeneProduct, a gene in GenMAPP
+				terminology. -->
 		<xsd:complexType>
 
 			<xsd:sequence>
@@ -346,8 +272,8 @@
 				</xsd:element>
 				<xsd:element name="Xref" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
-						<xsd:attribute name="Database" type="gpml:DatabaseType" use="required"/>
-						<xsd:attribute name="ID" type="gpml:NameType" use="required"/>						
+						<xsd:attribute name="Database" type="xsd:string" use="required"/>
+						<xsd:attribute name="ID" type="xsd:string" use="required"/>						
 					</xsd:complexType>
 				</xsd:element>
 			</xsd:sequence>
@@ -359,12 +285,10 @@
 			
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 		
-			<xsd:attribute name="Type" type="gpml:DataNodeType" default="Unknown">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">There is not a correlary
-					field in GenMAPP mapp files which contains this information,
-					and ther is no clear determiner.</xsd:documentation>
-				</xsd:annotation>
+			<xsd:attribute name="Type" type="xsd:string" default="Unknown">
+			<!-- Old versions of GPML only allowed these values for Type:
+				"Protein", "Rna", "Complex", "GeneProduct", "Metabolite" and "Unknown". 
+				It's recommended that you use these values as often as possible. -->
 			</xsd:attribute>
 
 		</xsd:complexType>
@@ -446,27 +370,11 @@
 										type="xsd:IDREF" use="optional" />
 									<xsd:attribute name="GraphId"
 										type="xsd:ID" use="optional" />
-									<!-- Note: technically points in the middle can have a head,
-										but this will be ignored for most types.
+									<!-- 
+									Note: only the ArrowHead attribute on first and last points are used, the rest is ignored.
 										!-->
 									<xsd:attribute name="ArrowHead"
 										default="Line" type="xsd:string" />
-									<!--
-										ArrowHead Type is no longer restricted.
-										However, if you care about compatibility with GenMAPP
-										you should only use the shapes below
-										
-										<xsd:restriction base="xsd:string">
-										<xsd:enumeration value="Line"/>
-										<xsd:enumeration value="Arrow"/>
-										<xsd:enumeration value="Receptor"/>
-										<xsd:enumeration value="ReceptorRound"/>
-										<xsd:enumeration value="ReceptorSquare"/>
-										<xsd:enumeration value="LigandRound"/>
-										<xsd:enumeration value="LigandSquare"/>
-										<xsd:enumeration value="TBar"/>
-										</xsd:restriction>
-										!-->
 								</xsd:complexType>
 							</xsd:element>
 							<xsd:element name="Anchor" minOccurs="0" maxOccurs="unbounded">
@@ -509,10 +417,8 @@
 	<xsd:element name="Label">
 
 		<xsd:complexType>
-			<xsd:annotation>
-				<xsd:documentation xml:lang="en">This is text on a GenMAPP map that
-					can have associated comments.</xsd:documentation>
-			</xsd:annotation>
+			<!--  This is text on a GenMAPP map that
+				can have associated comments. -->
 
 			<xsd:sequence>
 
@@ -561,14 +467,10 @@
 	<xsd:element name="Shape">
 
 		<xsd:complexType>
-			<xsd:annotation>
-				<xsd:documentation xml:lang="en">FIXME: No comments for
-					now</xsd:documentation>
-			</xsd:annotation>
 
 			<xsd:sequence>
 
-				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:group ref="gpml:CommentGroup" />
 
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
@@ -643,12 +545,9 @@
 
 <!-- InfoBox -->
 	<xsd:element name="InfoBox">
-
-		<xsd:annotation>
-			<xsd:documentation xml:lang="en">InfoBox element holds the
+		<!-- InfoBox element holds the
 			coordinates on the GenMAPP layout where the Information kept in the
-			Info table will be displayed in the mapp.</xsd:documentation>
-		</xsd:annotation>
+			Info table will be displayed in the mapp. -->
 	
 		<xsd:complexType>
 			<xsd:attribute name="CenterX" type="xsd:float" use="required"/>

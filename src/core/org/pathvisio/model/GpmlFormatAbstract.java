@@ -233,7 +233,6 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		setAttribute("Pathway", "Author", root, o.getAuthor());
 		setAttribute("Pathway", "Maintainer", root, o.getMaintainer());
 		setAttribute("Pathway", "Email", root, o.getEmail());
-		setAttribute("Pathway", "Copyright", root, o.getCopyright());
 		setAttribute("Pathway", "Last-Modified", root, o.getLastModified());
 		setAttribute("Pathway", "Organism", root, o.getOrganism());
 
@@ -417,57 +416,18 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 	{
 		//TODO
 	}
-
+	
+	protected abstract void mapLineDataVariable(PathwayElement o, Element e) throws ConverterException;	
+	
 	private void mapLineData(PathwayElement o, Element e) throws ConverterException
 	{
+    	mapLineDataVariable(o, e);
+    	
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-
-    	List<MPoint> mPoints = new ArrayList<MPoint>();
-
-    	String startType = null;
-    	String endType = null;
-
-    	List<Element> pointElements = graphics.getChildren("Point", e.getNamespace());
-    	for(int i = 0; i < pointElements.size(); i++) {
-    		Element pe = pointElements.get(i);
-    		MPoint mp = o.new MPoint(
-    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "x", pe)),
-    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "y", pe))
-    		);
-    		mPoints.add(mp);
-        	String ref = getAttribute("Line.Graphics.Point", "GraphRef", pe);
-        	if (ref != null) {
-        		mp.setGraphRef(ref);
-        		String srx = pe.getAttributeValue("relX");
-        		String sry = pe.getAttributeValue("relY");
-        		if(srx != null && sry != null) {
-        			mp.setRelativePosition(Double.parseDouble(srx), Double.parseDouble(sry));
-        		}
-        	}
-
-        	if(i == 0) {
-        		startType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
-        		endType = getAttribute("Line.Graphics.Point", "Head", pe);
-        	} else if(i == pointElements.size() - 1) {
-        		/**
-     		   	read deprecated Head attribute for backwards compatibility.
-     		   	If an arrowhead attribute is present on the other point,
-     		   	it overrides this one.
-        		 */
-        		if (pe.getAttributeValue("ArrowHead") != null)
-        		{
-        			endType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
-        		}
-        	}
-    	}
-
-    	o.setMPoints(mPoints);
 
     	String style = getAttribute("Line", "Style", e);
 
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
-		o.setStartLineType (LineType.fromName(startType));
-    	o.setEndLineType (LineType.fromName(endType));
 
     	String connType = getAttribute("Line.Graphics", "ConnectorType", graphics);
     	o.setConnectorType(ConnectorType.fromName(connType));
@@ -877,7 +837,6 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		o.setMaintainer (getAttribute("Pathway", "Maintainer", e));
 		o.setEmail (getAttribute("Pathway", "Email", e));
 		o.setLastModified (getAttribute("Pathway", "Last-Modified", e));
-		o.setCopyright (getAttribute("Pathway", "Copyright", e));
 
 		mapMappInfoDataVariable(o, e);
 	}

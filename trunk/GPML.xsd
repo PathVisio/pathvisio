@@ -225,13 +225,6 @@
 							use="required"/>
 						<xsd:attribute name="BoardHeight" type="gpml:Dimension"
 							use="required"/>
-						<!-- windowwidth and windowheight are only
-						for compatibilty with GenMAPP, not used by Pathvisio !-->
-						<xsd:attribute name="WindowWidth" type="gpml:Dimension"
-							use="optional" default="18000"/>
-						<xsd:attribute name="WindowHeight" type="gpml:Dimension"
-							use="optional" default="12000"/>
-						<!-- TODO: I suspect these below aren't used for anything -->
 					</xsd:complexType>
 				</xsd:element>
 
@@ -295,13 +288,6 @@
 
 			<xsd:attribute name="License" type="xsd:string" use="optional"/>
 
-			<xsd:attribute name="Copyright" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">Copyright
-						Information</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-
 			<xsd:attribute name="Last-Modified" type="xsd:string" use="optional">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">Last modification date by
@@ -354,22 +340,6 @@
 			
 			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
 		
-			<xsd:attribute name="BackpageHead" type="xsd:string"
-				use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP Backpage
-						Header</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-
-			<!-- corresponds to xref column in genmapp. depracated !-->
-			<xsd:attribute name="GenMAPP-Xref" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP
-						Links</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-
 			<xsd:attribute name="Type" type="gpml:DataNodeType" default="Unknown">
 				<xsd:annotation>
 					<xsd:documentation xml:lang="en">There is not a correlary
@@ -462,21 +432,8 @@
 										!-->
 									<xsd:attribute name="ArrowHead"
 										default="Line" type="xsd:string" />
-
-									<!-- the "Head" attribute is
-										deprecated! Use the ArrowHead
-										attribute instead.  Due to a
-										stupid bug in PathVisio, the head
-										attribute was stored on the wrong
-										point.  To remain backwards
-										compatible, a head attribute read
-										from the first point is stored on
-										the second point.  !-->
-
-									<xsd:attribute name="Head"
-										default="Line" type="xsd:string" />
 									<!--
-										Head Type is no longer restricted.
+										ArrowHead Type is no longer restricted.
 										However, if you care about compatibility with GenMAPP
 										you should only use the shapes below
 										
@@ -575,23 +532,7 @@
 				</xsd:simpleType>
 			</xsd:attribute>
 
-			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
-			<!-- Xref is deprecated, to avoid confusion with the Xref tag. Use GenMapp-Xref for pathways converted from GenMAPP -->
-			<!-- Left in here for backwards compatibility -->
-			<xsd:attribute name="Xref" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP
-						Links</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			
-			<xsd:attribute name="GenMAPP-Xref" type="xsd:string" use="optional">
-				<xsd:annotation>
-					<xsd:documentation xml:lang="en">GenMAPP
-						Links</xsd:documentation>
-				</xsd:annotation>
-			</xsd:attribute>
-			
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>			
 		</xsd:complexType>
 
 	</xsd:element>

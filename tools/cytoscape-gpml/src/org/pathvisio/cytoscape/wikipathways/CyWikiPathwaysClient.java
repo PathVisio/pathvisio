@@ -550,19 +550,18 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 
 		public void run() {
 			try {
-				WSSearchResult[] result = getStub().findInteractions(query.getAttributeValue());
-				addInteractions(query, result);
-				if(result == null || result.length == 0) {
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							JOptionPane.showMessageDialog(
-									gui, "The search didn't return any results",
-									"No results", JOptionPane.INFORMATION_MESSAGE
-							);
+				final WSSearchResult[] result = getStub().findInteractions(query.getAttributeValue());
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						addInteractions(query, result);
+						if (result == null || result.length == 0) {
+							JOptionPane.showMessageDialog(gui,
+									"The search didn't return any results",
+									"No results",
+									JOptionPane.INFORMATION_MESSAGE);
 						}
-					});
-
-				}
+					}
+				});
 			} catch (final Exception e) {
 				Logger.log.error("Error while searching", e);
 				SwingUtilities.invokeLater(new Runnable() {

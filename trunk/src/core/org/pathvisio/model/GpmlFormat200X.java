@@ -21,9 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bridgedb.DataSource;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.pathvisio.model.GpmlFormatAbstract.AttributeInfo;
+import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
@@ -194,16 +196,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
 		String val = o.getDynamicProperty(key);
 		if (val != null) setAttribute (tag, name, e, val);
 	}
-	
-	protected void updateDataNodeVariable(PathwayElement o, Element e) throws ConverterException
-	{
-		updateDeprecatedAttribute(o, e, "org.pathvisio.model.BackpageHead", "DataNode", "BackpageHead");
-	}
-	
-	protected void mapDataNodeVariable(PathwayElement o, Element e) throws ConverterException
-	{
-		mapDeprecatedAttribute(o, e, "org.pathvisio.model.BackpageHead", "DataNode", "BackpageHead");
-	}
 
 	protected void updateMappInfoVariable(Element root, PathwayElement o) throws ConverterException
 	{
@@ -215,16 +207,373 @@ class GpmlFormat200X extends GpmlFormatAbstract
 		o.setCopyright (getAttribute("Pathway", "Copyright", e));
 	}
 
-	protected void updateLabelDataVariable(PathwayElement o, Element e) throws ConverterException
+	public Element createJdomElement(PathwayElement o) throws ConverterException
 	{
+		Element e = null;
+		switch (o.getObjectType())
+		{
+			case DATANODE:
+				e = new Element("DataNode", getGpmlNamespace());
+				updateComments(o, e);
+				updateBiopaxRef(o, e);
+				updateAttributes(o, e);
+				e.addContent(new Element("Graphics", getGpmlNamespace()));
+				e.addContent(new Element("Xref", getGpmlNamespace()));
+				updateDataNode(o, e);
+				updateColor(o, e);
+				updateShapeData(o, e, "DataNode");
+				updateGraphId(o, e);
+				updateGroupRef(o, e);
+				break;
+			case STATE:
+				e = new Element("State", getGpmlNamespace());
+				updateComments(o, e);
+				updateBiopaxRef(o, e);
+				updateAttributes(o, e);
+				e.addContent(new Element("Graphics", getGpmlNamespace()));
+				//TODO: Xref?
+				updateStateData(o, e);
+				updateColor(o, e);
+				updateShapeColor(o, e);
+				updateGraphId(o, e);
+				break;
+			case SHAPE:
+				e = new Element ("Shape", getGpmlNamespace());
+				updateComments(o, e);
+				updateBiopaxRef(o, e);
+				updateAttributes(o, e);
+				e.addContent(new Element("Graphics", getGpmlNamespace()));
+				updateShapeColor(o, e);
+				updateColor(o, e);
+				updateShapeData(o, e, "Shape");
+				updateShapeType(o, e);
+				updateGraphId(o, e);
+				updateGroupRef(o, e);
+				break;
+			case LINE:
+				e = new Element("Line", getGpmlNamespace());
+				updateComments(o, e);
+				updateBiopaxRef(o, e);
+				updateAttributes(o, e);
+				e.addContent(new Element("Graphics", getGpmlNamespace()));
+				updateLineData(o, e);
+				updateGraphId(o, e);
+				updateColor(o, e);
+				updateGroupRef(o, e);
+				break;
+			case LABEL:
+				e = new Element("Label", getGpmlNamespace());
+				updateComments(o, e);
+				updateBiopaxRef(o, e);
+				updateAttributes(o, e);
+				e.addContent(new Element("Graphics", getGpmlNamespace()));
+				updateLabelData(o, e);
+				updateColor(o, e);
+				updateShapeData(o, e, "Label");
+				updateGraphId(o, e);
+				updateGroupRef(o, e);
+				break;
+			case LEGEND:
+				e = new Element ("Legend", getGpmlNamespace());
+				updateSimpleCenter (o, e);
+				break;
+			case INFOBOX:
+				e = new Element ("InfoBox", getGpmlNamespace());
+				updateSimpleCenter (o, e);
+				break;
+			case GROUP:
+				e = new Element ("Group", getGpmlNamespace());
+				updateGroup (o, e);
+				updateGroupRef(o, e);
+				updateComments(o, e);
+				updateBiopaxRef(o, e);
+				updateAttributes(o, e);
+				break;
+			case BIOPAX:
+				e = new Element ("Biopax", getGpmlNamespace());
+				updateBiopax(o, e);
+				break;
+		}
+		if (e == null)
+		{
+			throw new ConverterException ("Error creating jdom element with objectType " + o.getObjectType());
+		}
+		return e;
 	}
 
-	protected void mapLabelDataVariable (PathwayElement o, Element e) throws ConverterException
+	/**
+	   Create a single PathwayElement based on a piece of Jdom tree. Used also by Patch utility
+	   Pathway p may be null
+	 */
+	public PathwayElement mapElement(Element e, Pathway p) throws ConverterException
 	{
+		String tag = e.getName();
+		ObjectType ot = ObjectType.getTagMapping(tag);
+		if (ot == null)
+		{
+			// do nothing. This could be caused by
+			// tags <comment> or <graphics> that appear
+			// as subtags of <pathway>
+			return null;
+		}
+
+		PathwayElement o = PathwayElement.createPathwayElement(ot);
+		if (p != null)
+		{
+			p.add (o);
+		}
+
+		switch (o.getObjectType())
+		{
+			case DATANODE:
+				mapShapeData(o, e, "DataNode");
+				mapColor(o, e);
+				mapComments(o, e);
+				mapDataNode(o, e);
+				mapGraphId(o, e);
+				mapGroupRef(o, e);
+				mapBiopaxRef(o, e);
+				mapAttributes(o, e);
+				break;
+			case STATE:
+				mapShapeColor(o, e);
+				mapStateData(o, e);
+				mapColor(o, e);
+				mapComments(o, e);
+				mapGraphId(o, e);
+				mapBiopaxRef(o, e);
+				mapAttributes(o, e);
+				break;
+			case LABEL:
+				mapShapeData(o, e, "Label");
+				mapColor(o, e);
+				mapLabelData(o, e);
+				mapComments(o, e);
+				mapGraphId(o, e);
+				mapGroupRef(o, e);
+				mapBiopaxRef(o, e);
+				mapAttributes(o, e);
+				break;
+			case LINE:
+				mapLineData(o, e);
+				mapColor(o, e);
+				mapGraphId(o, e);
+				mapComments(o, e);
+				mapGroupRef(o, e);
+				mapBiopaxRef(o, e);
+				mapAttributes(o, e);
+				break;
+			case MAPPINFO:
+				mapMappInfoData(o, e);
+				mapBiopaxRef(o, e);
+				mapComments(o, e);
+				mapAttributes(o, e);
+				break;
+			case SHAPE:
+				mapShapeData(o, e, "Shape");
+				mapShapeColor (o, e);
+				mapColor(o, e);
+				mapComments(o, e);
+				mapShapeType(o, e);
+				mapGraphId(o, e);
+				mapGroupRef(o, e);
+				mapBiopaxRef(o, e);
+				mapAttributes(o, e);
+				break;
+			case LEGEND:
+				mapSimpleCenter(o, e);
+				break;
+			case INFOBOX:
+				mapSimpleCenter (o, e);
+				break;
+			case GROUP:
+				mapGroupRef(o, e);
+				mapGroup (o, e);
+				mapComments(o, e);
+				mapBiopaxRef(o, e);
+				mapAttributes(o, e);
+				break;
+			case BIOPAX:
+				mapBiopax(o, e);
+				break;
+			default:
+				throw new ConverterException("Invalid ObjectType'" + tag + "'");
+		}
+		return o;
 	}
 
-	protected void mapLineDataVariable(PathwayElement o, Element e) throws ConverterException
+	protected void mapShapeType(PathwayElement o, Element e) throws ConverterException
 	{
+		o.setShapeType (ShapeType.fromGpmlName(getAttribute("Shape", "Type", e)));
+		String style = getAttribute ("Shape", "Style", e);
+    	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
+    	Element graphics = e.getChild("Graphics", e.getNamespace());
+
+    	String rotation = getAttribute("Shape.Graphics", "Rotation", graphics);
+    	double result;
+    	if (rotation.equals("Top"))
+    	{
+    		result = 0.0;
+    	}
+    	else if (rotation.equals("Right"))
+		{
+    		result = 0.5 * Math.PI;
+		}
+    	else if (rotation.equals("Bottom"))
+    	{
+    		result = Math.PI;
+    	}
+    	else if (rotation.equals("Left"))
+    	{
+    		result = 1.5 * Math.PI;
+    	}
+    	else
+    	{
+    		result = Double.parseDouble(rotation);
+    	}
+    	o.setRotation (result);
+	}
+
+	protected void updateShapeType(PathwayElement o, Element e) throws ConverterException
+	{
+		if(e != null)
+		{
+			e.setAttribute("Type", o.getShapeType().getName());
+			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
+
+			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
+			if(jdomGraphics !=null)
+			{
+				jdomGraphics.setAttribute("Rotation", Double.toString(o.getRotation()));
+			}
+		}
+	}
+
+	protected void mapLabelData(PathwayElement o, Element e) throws ConverterException
+	{
+		o.setTextLabel (getAttribute("Label", "TextLabel", e));
+    	Element graphics = e.getChild("Graphics", e.getNamespace());
+
+    	String fontSizeString = getAttribute("Label.Graphics", "FontSize", graphics);
+    	o.setMFontSize (Integer.parseInt(fontSizeString));
+
+    	String fontWeight = getAttribute("Label.Graphics", "FontWeight", graphics);
+    	String fontStyle = getAttribute("Label.Graphics", "FontStyle", graphics);
+    	String fontDecoration = getAttribute("Label.Graphics", "FontDecoration", graphics);
+    	String fontStrikethru = getAttribute("Label.Graphics", "FontStrikethru", graphics);
+
+    	o.setBold (fontWeight != null && fontWeight.equals("Bold"));
+    	o.setItalic (fontStyle != null && fontStyle.equals("Italic"));
+    	o.setUnderline (fontDecoration != null && fontDecoration.equals("Underline"));
+    	o.setStrikethru (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
+    	
+    	String outline = getAttribute("Label", "Outline", e);
+		o.setOutline (OutlineType.fromTag (outline));
+
+    	o.setFontName (getAttribute("Label.Graphics", "FontName", graphics));
+	}
+	
+	protected void updateLabelData(PathwayElement o, Element e) throws ConverterException
+	{
+		if(e != null)
+		{
+			setAttribute("Label", "TextLabel", e, o.getTextLabel());
+			Element graphics = e.getChild("Graphics", e.getNamespace());
+			if(graphics !=null)
+			{
+				setAttribute("Label.Graphics", "FontName", graphics, o.getFontName() == null ? "" : o.getFontName());
+				setAttribute("Label.Graphics", "FontWeight", graphics, o.isBold() ? "Bold" : "Normal");
+				setAttribute("Label.Graphics", "FontStyle", graphics, o.isItalic() ? "Italic" : "Normal");
+				setAttribute("Label.Graphics", "FontDecoration", graphics, o.isUnderline() ? "Underline" : "Normal");
+				setAttribute("Label.Graphics", "FontStrikethru", graphics, o.isStrikethru() ? "Strikethru" : "Normal");
+				setAttribute("Label.Graphics", "FontSize", graphics, Integer.toString((int)o.getMFontSize()));
+			}
+			setAttribute("Label", "Outline", e, o.getOutline().getTag());
+		}
+	}
+	
+	protected void mapShapeData(PathwayElement o, Element e, String base) throws ConverterException
+	{
+		Element graphics = e.getChild("Graphics", e.getNamespace());
+    	o.setMCenterX (Double.parseDouble(getAttribute(base + ".Graphics", "CenterX", graphics)));
+    	o.setMCenterY (Double.parseDouble(getAttribute(base + ".Graphics", "CenterY", graphics)));
+		o.setMWidth (Double.parseDouble(getAttribute(base + ".Graphics", "Width", graphics)));
+		o.setMHeight (Double.parseDouble(getAttribute(base + ".Graphics", "Height", graphics)));
+		String zorder = graphics.getAttributeValue("ZOrder");
+		if (zorder != null)
+			o.setZOrder(Integer.parseInt(zorder));
+	}
+
+	protected void updateShapeData(PathwayElement o, Element e, String base) throws ConverterException
+	{
+		if(e != null)
+		{
+			Element graphics = e.getChild("Graphics", e.getNamespace());
+			if(graphics !=null)
+			{
+				setAttribute(base + ".Graphics", "CenterX", graphics, "" + o.getMCenterX());
+				setAttribute(base + ".Graphics", "CenterY", graphics, "" + o.getMCenterY());
+				setAttribute(base + ".Graphics", "Width", graphics, "" + o.getMWidth());
+				setAttribute(base + ".Graphics", "Height", graphics, "" + o.getMHeight());
+				setAttribute(base + ".Graphics", "ZOrder", graphics, "" + o.getZOrder());
+			}
+		}
+	}
+
+	protected void mapDataNode(PathwayElement o, Element e) throws ConverterException
+	{
+		o.setTextLabel    (getAttribute("DataNode", "TextLabel", e));
+		mapDeprecatedAttribute(o, e, "org.pathvisio.model.BackpageHead", "DataNode", "BackpageHead");
+		o.setDataNodeType (getAttribute("DataNode", "Type", e));
+		Element xref = e.getChild ("Xref", e.getNamespace());
+		o.setGeneID (getAttribute("DataNode.Xref", "ID", xref));
+		o.setDataSource (DataSource.getByFullName (getAttribute("DataNode.Xref", "Database", xref)));
+	}
+
+	protected void updateDataNode(PathwayElement o, Element e) throws ConverterException
+	{
+		if(e != null) {
+			updateDeprecatedAttribute(o, e, "org.pathvisio.model.BackpageHead", "DataNode", "BackpageHead");
+			setAttribute ("DataNode", "TextLabel", e, o.getTextLabel());
+			setAttribute ("DataNode", "Type", e, o.getDataNodeType());
+			Element xref = e.getChild("Xref", e.getNamespace());
+			String database = o.getDataSource() == null ? "" : o.getDataSource().getFullName();
+			setAttribute ("DataNode.Xref", "Database", xref, database == null ? "" : database);
+			setAttribute ("DataNode.Xref", "ID", xref, o.getGeneID());
+        }
+	}
+
+	protected void mapStateData(PathwayElement o, Element e) throws ConverterException
+	{
+    	String ref = getAttribute("State", "GraphRef", e);
+    	if (ref != null) {
+    		o.setGraphRef(ref);
+    	}
+
+    	Element graphics = e.getChild("Graphics", e.getNamespace());
+
+    	o.setRelX(Double.parseDouble(getAttribute("State.Graphics", "relX", graphics)));
+    	o.setRelY(Double.parseDouble(getAttribute("State.Graphics", "relY", graphics)));
+		o.setMWidth (Double.parseDouble(getAttribute("State.Graphics", "Width", graphics)));
+		o.setMHeight (Double.parseDouble(getAttribute("State.Graphics", "Height", graphics)));
+
+		//TODO
+		//StateType
+		// ShapeType???
+		// Line style???
+		// Xref???
+	}
+
+	protected static void updateStateData(PathwayElement o, Element e) throws ConverterException
+	{
+		//TODO
+	}
+	
+	protected void mapLineData(PathwayElement o, Element e) throws ConverterException
+	{
+    	String style = getAttribute("Line", "Style", e);
+    	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
+		
     	Element graphics = e.getChild("Graphics", e.getNamespace());
 
     	List<MPoint> mPoints = new ArrayList<MPoint>();
@@ -269,7 +618,66 @@ class GpmlFormat200X extends GpmlFormatAbstract
     	o.setMPoints(mPoints);
 		o.setStartLineType (LineType.fromName(startType));
     	o.setEndLineType (LineType.fromName(endType));
+    	
+    	String connType = getAttribute("Line.Graphics", "ConnectorType", graphics);
+    	o.setConnectorType(ConnectorType.fromName(connType));
 
+    	String zorder = graphics.getAttributeValue("ZOrder");
+		if (zorder != null)
+			o.setZOrder(Integer.parseInt(zorder));
+
+    	//Map anchors
+    	List<Element> anchors = graphics.getChildren("Anchor", e.getNamespace());
+    	for(Element ae : anchors) {
+    		double position = Double.parseDouble(getAttribute("Line.Graphics.Anchor", "position", ae));
+    		MAnchor anchor = o.addMAnchor(position);
+    		mapGraphId(anchor, ae);
+    		String shape = getAttribute("Line.Graphics.Anchor", "Shape", ae);
+    		if(shape != null) {
+    			anchor.setShape(AnchorType.fromName(shape));
+    		}
+    	}
 	}
-	
+
+	protected void updateLineData(PathwayElement o, Element e) throws ConverterException
+	{
+		if(e != null) {
+			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
+
+			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
+			List<MPoint> mPoints = o.getMPoints();
+
+			for(int i = 0; i < mPoints.size(); i++) {
+				MPoint mp = mPoints.get(i);
+				Element pe = new Element("Point", e.getNamespace());
+				jdomGraphics.addContent(pe);
+				setAttribute("Line.Graphics.Point", "x", pe, Double.toString(mp.getX()));
+				setAttribute("Line.Graphics.Point", "y", pe, Double.toString(mp.getY()));
+				if (mp.getGraphRef() != null && !mp.getGraphRef().equals(""))
+				{
+					setAttribute("Line.Graphics.Point", "GraphRef", pe, mp.getGraphRef());
+					setAttribute("Line.Graphics.Point", "relX", pe, Double.toString(mp.getRelX()));
+					setAttribute("Line.Graphics.Point", "relY", pe, Double.toString(mp.getRelY()));
+				}
+				if(i == 0) {
+					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getStartLineType().getName());
+				} else if(i == mPoints.size() - 1) {
+					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getEndLineType().getName());
+				}
+			}
+
+			for(MAnchor anchor : o.getMAnchors()) {
+				Element ae = new Element("Anchor", e.getNamespace());
+				setAttribute("Line.Graphics.Anchor", "position", ae, Double.toString(anchor.getPosition()));
+				setAttribute("Line.Graphics.Anchor", "Shape", ae, anchor.getShape().getName());
+				updateGraphId(anchor, ae);
+				jdomGraphics.addContent(ae);
+			}
+
+			ConnectorType ctype = o.getConnectorType();
+			setAttribute("Line.Graphics", "ConnectorType", jdomGraphics, ctype.getName());
+			setAttribute("Line.Graphics", "ZOrder", jdomGraphics, "" + o.getZOrder());
+		}
+	}
+
 }

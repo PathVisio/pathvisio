@@ -248,28 +248,37 @@ public class PropertyView implements Comparable<PropertyView> {
 	{
 		if (arg0 == null) throw new NullPointerException();
 
-		// either a Property or a String
-		if (type.getClass() != arg0.type.getClass())
-		{
-			return type instanceof Property ? 1 : -1;
-		}
-		else
-		{
-			if (type instanceof Property)
-			{
-				Property aType = (Property)type;
-				Property bType = (Property)arg0.type;
-				int aOrder = PropertyDisplayManager.getPropertyOrder(aType);
-				int bOrder = PropertyDisplayManager.getPropertyOrder(bType);
-				if (aOrder == bOrder) {
-					return aType.getName().compareTo(bType.getName());
-				}
-				return aOrder - bOrder;
+
+		Object aType = type;
+		int aOrder = -1;
+		Object bType = arg0.getType();
+		int bOrder = -1;
+
+		if (aType instanceof String) {
+			if (PropertyDisplayManager.getDynamicProperty((String)aType) != null) {
+				aType = PropertyDisplayManager.getDynamicProperty((String)aType);
+				aOrder = PropertyDisplayManager.getPropertyOrder((Property)aType);
 			}
-			else
-			{
-				return type.toString().compareTo(arg0.type.toString());
-			}
+		} else {
+			aOrder = PropertyDisplayManager.getPropertyOrder((Property)aType);
 		}
+		if (bType instanceof String) {
+			if (PropertyDisplayManager.getDynamicProperty((String)bType) != null) {
+				bType = PropertyDisplayManager.getDynamicProperty((String)bType);
+				bOrder = PropertyDisplayManager.getPropertyOrder((Property)bType);
+			}
+		} else {
+			bOrder = PropertyDisplayManager.getPropertyOrder((Property)bType);
+		}
+
+		if (aOrder < 0 && bOrder < 0) {
+			return ((String)aType).compareTo((String)bType);
+		}
+		int rez = aOrder - bOrder;
+		if (rez == 0) {
+			// same order, sort by alpha
+			rez = ((Property)aType).getName().compareTo(((Property)bType).getName());
+		}
+		return rez;
 	}
 }

@@ -79,12 +79,22 @@ public final class PathwayElementEvent {
 
 
 	/**
-	 * Check if the given property may have been modified in this event. Note that this method does
+	 * Check if the given static property may have been modified in this event. Note that this method does
 	 * not apply to coordinate properties (position, size), these need to be checked with {@link #isCoordinateChange()}.
 	 * @param prop The property to check.
 	 * @return true if the property may have been modified, false if not.
 	 */
 	public boolean affectsProperty(Property prop) {
+		return property == null || property.equals(prop);
+	}
+
+	/**
+	 * Check if the given dynamic property may have been modified in this event. Note that this method does
+	 * not apply to coordinate properties (position, size), these need to be checked with {@link #isCoordinateChange()}.
+	 * @param prop The property to check.
+	 * @return true if the property may have been modified, false if not.
+	 */
+	public boolean affectsProperty(String prop) {
 		return property == null || property.equals(prop);
 	}
 }

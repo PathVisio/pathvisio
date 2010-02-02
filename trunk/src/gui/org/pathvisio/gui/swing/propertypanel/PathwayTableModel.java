@@ -112,7 +112,7 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 
 	protected void refresh() { refresh(false); }
 
-	protected void refresh(boolean propertyCount) {
+	public void refresh(boolean propertyCount) {
 		if(propertyCount) {
 			updateShownProperties();
 		}
@@ -120,7 +120,14 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		fireTableDataChanged();
 	}
 
-	protected void updatePropertyCounts(PathwayElement e, boolean remove)
+	/**
+	 * Add/remove properties to/from the table model.
+	 *
+	 * @param e the PathwayElement with the properties of interest
+	 * @param remove true if the PathwayElement's visible properties should be removed from the table model,
+	 *  false if it should be added to the table model
+	 */
+	public void updatePropertyCounts(PathwayElement e, boolean remove)
 	{
 		for(Object o : PropertyDisplayManager.getVisiblePropertyKeys(e))
 		{

@@ -388,8 +388,7 @@ public class Revision
 		<copy toDir="${build.wpi.bin}">
 			<fileset dir=".">
 				<include name="pathvisio_core.jar"/>
-				<include name="GPML.xsd"/>
-				<include name="GPML2007.xsd"/>
+				<include name="GPML*.xsd"/>
 			</fileset>
 		</copy>
 		<copy toDir="${build.wpi.bin}/lib">

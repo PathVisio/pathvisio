@@ -318,8 +318,7 @@ public class Revision
 		<!-- different resources.jar, only with minimal data -->
 		<jar jarfile="${build.wpi.applet}/lib/resources.jar" index="true">
 			<fileset dir="resources" excludes="logo-*, *.bmp, *.ai"/>
-			<fileset dir="." includes="GPML.xsd"/>
-			<fileset dir="." includes="GPML2007.xsd"/>
+			<fileset dir="." includes="GPML*.xsd"/>
 			<fileset dir="." includes="MAPPTmpl.gtp"/>
 		</jar>
 	</target>

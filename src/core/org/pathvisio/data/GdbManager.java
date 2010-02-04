@@ -97,6 +97,7 @@ public class GdbManager extends AbstractListModel
 
 	public void addMapper(IDMapper mapper) throws IDMapperException
 	{
+		Logger.log.info ("addMapper called");
 		if (mapper == null) throw new NullPointerException();
 		currentGdb.addIDMapper(mapper);
 		GdbEvent e = new GdbEvent (this, GdbEvent.Type.ADDED, mapper.toString());
@@ -106,6 +107,7 @@ public class GdbManager extends AbstractListModel
 
 	public void removeMapper(IDMapper mapper) throws IDMapperException
 	{
+		Logger.log.info ("removeMapper called");
 		if (mapper == null) return; // ignore
 		currentGdb.removeIDMapper(mapper);
 		if (mapper == metabolites) metabolites = null;
@@ -138,6 +140,7 @@ public class GdbManager extends AbstractListModel
 
 	private void fireGdbEvent (GdbEvent e)
 	{
+		Logger.log.info("Firing Gdb Event: " + e.getType());
 		for(GdbEventListener l : gdbEventListeners) l.gdbEvent(e);
 		// also notify ListModel listeners
 		this.fireContentsChanged(this, 0, currentGdb.getSize());
@@ -156,6 +159,7 @@ public class GdbManager extends AbstractListModel
 	 */
 	public void setGeneDb(String connectString) throws IDMapperException
 	{
+		Logger.log.info ("setGeneDb called");
 		removeMapper(genes);
 		genes = null;
 		if (connectString != null)

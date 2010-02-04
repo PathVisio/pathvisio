@@ -89,11 +89,21 @@ public class BackpageTextProvider
 				type = "Gene";
 			}
 
+			if(e.getXref().getId() == null || "".equals(e.getXref().getId())) {
+				text += "<font color='red'>Invalid annotation: missing identifier.</font>";
+				return text;
+			}
+			
 			try
 			{
 				StringBuilder bpInfo = new StringBuilder("<TABLE border = 1>");
 
-				Map<String, Set<String>> attributes = attributeMapper.getAttributes(e.getXref());
+				Map<String, Set<String>> attributes = null;
+				if(e.getXref().getDataSource() != null) {
+					attributes = attributeMapper.getAttributes(e.getXref());
+				} else {
+					attributes = new HashMap<String, Set<String>>();
+				}
 				String[][] table;
 
 				if (!type.equals ("Metabolite"))
@@ -152,6 +162,12 @@ public class BackpageTextProvider
 		public String getHtml(PathwayElement e) {
 			try
 			{
+				if(		e.getXref().getId() == null || 
+						"".equals(e.getXref().getId()) ||
+						e.getXref().getDataSource() == null	) {
+					return "";
+				}
+				
 				Set<Xref> crfs = gdb.mapID(e.getXref());
 				crfs.add(e.getXref());
 				if(crfs.size() == 0) return "";

@@ -221,9 +221,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		return s;
 	}
 
-	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel) 
-	{
-		Logger.log.info ("Updating Gdb status");
+	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel) {
 		String gdb = "" + swingEngine.getGdbManager().getGeneDb();
 		String mdb = "" + swingEngine.getGdbManager().getMetaboliteDb();
 		gdbLabel.setText(gdb != null ? (" | Gene database: " + shortenString(gdb)) : "");

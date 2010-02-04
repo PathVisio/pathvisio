@@ -303,8 +303,8 @@
 				<xsd:group ref="gpml:CommentGroup"/>
 				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
 					<xsd:complexType>
-						<xsd:attribute name="relX" type="xsd:float" use="required"/>
-						<xsd:attribute name="relY" type="xsd:float" use="required"/>
+						<xsd:attribute name="RelX" type="xsd:float" use="required"/>
+						<xsd:attribute name="RelY" type="xsd:float" use="required"/>
 						<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
 						<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
 						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes"/>
@@ -351,9 +351,9 @@
 							<xsd:element name="Point" minOccurs="2"
 								maxOccurs="unbounded">
 								<xsd:complexType>
-									<xsd:attribute name="x"
+									<xsd:attribute name="X"
 										type="xsd:float" use="required" />
-									<xsd:attribute name="y"
+									<xsd:attribute name="Y"
 										type="xsd:float" use="required" />
 									<!-- relX and relY are the coordinates used when
 									a point is linked to another object (when GraphRef
@@ -361,9 +361,9 @@
 									point relative to the object that it's linked to, where
 									0,0 lies at the center of the object and 1,1 at the bottom-right
 									corner -->
-									<xsd:attribute name="relX"
+									<xsd:attribute name="RelX"
 										type="xsd:float" use="optional" />
-									<xsd:attribute name="relY"
+									<xsd:attribute name="RelY"
 										type="xsd:float" use="optional" />
 									<xsd:attribute name="GraphRef"
 										type="xsd:IDREF" use="optional" />
@@ -378,7 +378,7 @@
 							</xsd:element>
 							<xsd:element name="Anchor" minOccurs="0" maxOccurs="unbounded">
 								<xsd:complexType>
-									<xsd:attribute name="position"
+									<xsd:attribute name="Position"
 										type="xsd:float" use="required" />
 									<xsd:attribute name="GraphId"
 										type="xsd:ID" use="optional" />
@@ -438,8 +438,6 @@
 			
 			<!-- for a reference to a url !-->
 			<xsd:attribute name="Href" use="optional" type="xsd:string" />
-			<!-- for a reference to a Stable pathway ID on wikipathways !-->
-			<xsd:attribute name="PathwayRef" use="optional" type="xsd:string" />
 			
 			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
 			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />

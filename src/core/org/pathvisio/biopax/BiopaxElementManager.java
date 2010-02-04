@@ -193,7 +193,7 @@ public class BiopaxElementManager {
 		//Add this element to the document if it's not already in there
 		for(BiopaxElement e : getElements()) {
 			System.out.println("Comparing: " + e + " with " + elm);
-			if(e.getName().equals(elm.getName())) { //Check for equal element name
+			if(e.getName().equalsIgnoreCase(elm.getName())) { //Check for equal element name
 				//Check for properties
 				if(e instanceof PublicationXRef) {
 					//If both publicationxrefs have a pubmed id, compare only

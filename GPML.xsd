@@ -75,7 +75,6 @@
 
 	<xsd:attributeGroup name="ShapeStyleAttributes">
 		<xsd:attribute name="Color" type="gpml:ColorType" default="Black"/>
-		<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
 		<xsd:attribute name="LineStyle" type="gpml:StyleType" default="Solid" />
 		<xsd:attribute name="LineThickness" type="xsd:float" default="1.0" />
 	</xsd:attributeGroup>
@@ -267,6 +266,7 @@
 						<xsd:attributeGroup ref="gpml:RectAttributes"/>
 						<xsd:attributeGroup ref="gpml:FontAttributes"/>
 						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes"/>
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="White"/>
 						<xsd:attribute name="ShapeType" type="xsd:string" default="Rectangle"/>
 						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
 					</xsd:complexType>
@@ -308,6 +308,7 @@
 						<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
 						<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
 						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes"/>
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="White"/>
 						<xsd:attribute name="ShapeType" type="xsd:string" default="Rectangle"/>
 						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
 					</xsd:complexType>
@@ -427,6 +428,7 @@
 						<xsd:attributeGroup ref="gpml:RectAttributes"/>
 						<xsd:attributeGroup ref="gpml:FontAttributes" />
 						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes" />
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
 						<xsd:attribute name="ShapeType" type="xsd:string" default="None"/>
 						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
 					</xsd:complexType>
@@ -463,6 +465,7 @@
 						<xsd:attributeGroup ref="gpml:RectAttributes"/>
 						<xsd:attributeGroup ref="gpml:FontAttributes" />
 						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes" />
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
 						<xsd:attribute name="ShapeType" type="xsd:string" use="required"/>
 						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
 						<xsd:attribute name="Rotation" type="gpml:RotationType" default="Top" />

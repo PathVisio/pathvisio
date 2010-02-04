@@ -75,9 +75,9 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("DataNode.Graphics@Align", new AttributeInfo ("xsd:string", "Center", "optional"));
 		result.put("DataNode.Graphics@Valign", new AttributeInfo ("xsd:string", "Top", "optional"));
 		result.put("DataNode.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
-		result.put("DataNode.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", "Transparent", "optional"));
 		result.put("DataNode.Graphics@LineStyle", new AttributeInfo ("gpml:StyleType", "Solid", "optional"));
 		result.put("DataNode.Graphics@LineThickness", new AttributeInfo ("xsd:float", "1.0", "optional"));
+		result.put("DataNode.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", "White", "optional"));
 		result.put("DataNode.Graphics@ShapeType", new AttributeInfo ("xsd:string", "Rectangle", "optional"));
 		result.put("DataNode.Graphics@ZOrder", new AttributeInfo ("xsd:integer", null, "optional"));
 		result.put("DataNode.Xref@Database", new AttributeInfo ("xsd:string", null, "required"));
@@ -92,9 +92,9 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("State.Graphics@Width", new AttributeInfo ("gpml:Dimension", null, "required"));
 		result.put("State.Graphics@Height", new AttributeInfo ("gpml:Dimension", null, "required"));
 		result.put("State.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
-		result.put("State.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", "Transparent", "optional"));
 		result.put("State.Graphics@LineStyle", new AttributeInfo ("gpml:StyleType", "Solid", "optional"));
 		result.put("State.Graphics@LineThickness", new AttributeInfo ("xsd:float", "1.0", "optional"));
+		result.put("State.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", "White", "optional"));
 		result.put("State.Graphics@ShapeType", new AttributeInfo ("xsd:string", "Rectangle", "optional"));
 		result.put("State.Graphics@ZOrder", new AttributeInfo ("xsd:integer", null, "optional"));
 		result.put("State.Xref@Database", new AttributeInfo ("xsd:string", null, "required"));
@@ -135,9 +135,9 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("Label.Graphics@Align", new AttributeInfo ("xsd:string", "Center", "optional"));
 		result.put("Label.Graphics@Valign", new AttributeInfo ("xsd:string", "Top", "optional"));
 		result.put("Label.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
-		result.put("Label.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", "Transparent", "optional"));
 		result.put("Label.Graphics@LineStyle", new AttributeInfo ("gpml:StyleType", "Solid", "optional"));
 		result.put("Label.Graphics@LineThickness", new AttributeInfo ("xsd:float", "1.0", "optional"));
+		result.put("Label.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", "Transparent", "optional"));
 		result.put("Label.Graphics@ShapeType", new AttributeInfo ("xsd:string", "None", "optional"));
 		result.put("Label.Graphics@ZOrder", new AttributeInfo ("xsd:integer", null, "optional"));
 		result.put("Label@Href", new AttributeInfo ("xsd:string", null, "optional"));
@@ -159,9 +159,9 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("Shape.Graphics@Align", new AttributeInfo ("xsd:string", "Center", "optional"));
 		result.put("Shape.Graphics@Valign", new AttributeInfo ("xsd:string", "Top", "optional"));
 		result.put("Shape.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
-		result.put("Shape.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", "Transparent", "optional"));
 		result.put("Shape.Graphics@LineStyle", new AttributeInfo ("gpml:StyleType", "Solid", "optional"));
 		result.put("Shape.Graphics@LineThickness", new AttributeInfo ("xsd:float", "1.0", "optional"));
+		result.put("Shape.Graphics@FillColor", new AttributeInfo ("gpml:ColorType", "Transparent", "optional"));
 		result.put("Shape.Graphics@ShapeType", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("Shape.Graphics@ZOrder", new AttributeInfo ("xsd:integer", null, "optional"));
 		result.put("Shape.Graphics@Rotation", new AttributeInfo ("gpml:RotationType", "Top", "optional"));

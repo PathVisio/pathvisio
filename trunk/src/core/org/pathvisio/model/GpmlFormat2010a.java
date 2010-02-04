@@ -87,8 +87,8 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("DataNode@GroupRef", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("DataNode@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("DataNode@Type", new AttributeInfo ("xsd:string", "Unknown", "optional"));
-		result.put("State.Graphics@relX", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("State.Graphics@relY", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("State.Graphics@RelX", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("State.Graphics@RelY", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("State.Graphics@Width", new AttributeInfo ("gpml:Dimension", null, "required"));
 		result.put("State.Graphics@Height", new AttributeInfo ("gpml:Dimension", null, "required"));
 		result.put("State.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
@@ -104,14 +104,14 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("State@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
 		result.put("State@TextLabel", new AttributeInfo ("xsd:string", null, "required"));
 		result.put("State@StateType", new AttributeInfo ("xsd:string", "Unknown", "optional"));
-		result.put("Line.Graphics.Point@x", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("Line.Graphics.Point@y", new AttributeInfo ("xsd:float", null, "required"));
-		result.put("Line.Graphics.Point@relX", new AttributeInfo ("xsd:float", null, "optional"));
-		result.put("Line.Graphics.Point@relY", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Line.Graphics.Point@X", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Line.Graphics.Point@Y", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Line.Graphics.Point@RelX", new AttributeInfo ("xsd:float", null, "optional"));
+		result.put("Line.Graphics.Point@RelY", new AttributeInfo ("xsd:float", null, "optional"));
 		result.put("Line.Graphics.Point@GraphRef", new AttributeInfo ("xsd:IDREF", null, "optional"));
 		result.put("Line.Graphics.Point@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics.Point@ArrowHead", new AttributeInfo ("xsd:string", "Line", "optional"));
-		result.put("Line.Graphics.Anchor@position", new AttributeInfo ("xsd:float", null, "required"));
+		result.put("Line.Graphics.Anchor@Position", new AttributeInfo ("xsd:float", null, "required"));
 		result.put("Line.Graphics.Anchor@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Line.Graphics.Anchor@Shape", new AttributeInfo ("xsd:string", "ReceptorRound", "optional"));
 		result.put("Line.Graphics@Color", new AttributeInfo ("gpml:ColorType", "Black", "optional"));
@@ -141,7 +141,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		result.put("Label.Graphics@ShapeType", new AttributeInfo ("xsd:string", "None", "optional"));
 		result.put("Label.Graphics@ZOrder", new AttributeInfo ("xsd:integer", null, "optional"));
 		result.put("Label@Href", new AttributeInfo ("xsd:string", null, "optional"));
-		result.put("Label@PathwayRef", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Label@BiopaxRef", new AttributeInfo ("xsd:string", null, "optional"));
 		result.put("Label@GraphId", new AttributeInfo ("xsd:ID", null, "optional"));
 		result.put("Label@GroupRef", new AttributeInfo ("xsd:string", null, "optional"));
@@ -548,8 +547,8 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 
     	Element graphics = e.getChild("Graphics", e.getNamespace());
 
-    	o.setRelX(Double.parseDouble(getAttribute("State.Graphics", "relX", graphics)));
-    	o.setRelY(Double.parseDouble(getAttribute("State.Graphics", "relY", graphics)));
+    	o.setRelX(Double.parseDouble(getAttribute("State.Graphics", "RelX", graphics)));
+    	o.setRelY(Double.parseDouble(getAttribute("State.Graphics", "RelY", graphics)));
 		o.setMWidth (Double.parseDouble(getAttribute("State.Graphics", "Width", graphics)));
 		o.setMHeight (Double.parseDouble(getAttribute("State.Graphics", "Height", graphics)));
 
@@ -582,15 +581,15 @@ class GpmlFormat2010a extends GpmlFormatAbstract
     	for(int i = 0; i < pointElements.size(); i++) {
     		Element pe = pointElements.get(i);
     		MPoint mp = o.new MPoint(
-    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "x", pe)),
-    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "y", pe))
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "X", pe)),
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "Y", pe))
     		);
     		mPoints.add(mp);
         	String ref = getAttribute("Line.Graphics.Point", "GraphRef", pe);
         	if (ref != null) {
         		mp.setGraphRef(ref);
-        		String srx = pe.getAttributeValue("relX");
-        		String sry = pe.getAttributeValue("relY");
+        		String srx = pe.getAttributeValue("RelX");
+        		String sry = pe.getAttributeValue("RelY");
         		if(srx != null && sry != null) {
         			mp.setRelativePosition(Double.parseDouble(srx), Double.parseDouble(sry));
         		}
@@ -617,7 +616,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract
     	//Map anchors
     	List<Element> anchors = graphics.getChildren("Anchor", e.getNamespace());
     	for(Element ae : anchors) {
-    		double position = Double.parseDouble(getAttribute("Line.Graphics.Anchor", "position", ae));
+    		double position = Double.parseDouble(getAttribute("Line.Graphics.Anchor", "Position", ae));
     		MAnchor anchor = o.addMAnchor(position);
     		mapGraphId(anchor, ae);
     		String shape = getAttribute("Line.Graphics.Anchor", "Shape", ae);
@@ -640,13 +639,13 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 				MPoint mp = mPoints.get(i);
 				Element pe = new Element("Point", e.getNamespace());
 				jdomGraphics.addContent(pe);
-				setAttribute("Line.Graphics.Point", "x", pe, Double.toString(mp.getX()));
-				setAttribute("Line.Graphics.Point", "y", pe, Double.toString(mp.getY()));
+				setAttribute("Line.Graphics.Point", "X", pe, Double.toString(mp.getX()));
+				setAttribute("Line.Graphics.Point", "Y", pe, Double.toString(mp.getY()));
 				if (mp.getGraphRef() != null && !mp.getGraphRef().equals(""))
 				{
 					setAttribute("Line.Graphics.Point", "GraphRef", pe, mp.getGraphRef());
-					setAttribute("Line.Graphics.Point", "relX", pe, Double.toString(mp.getRelX()));
-					setAttribute("Line.Graphics.Point", "relY", pe, Double.toString(mp.getRelY()));
+					setAttribute("Line.Graphics.Point", "RelX", pe, Double.toString(mp.getRelX()));
+					setAttribute("Line.Graphics.Point", "RelY", pe, Double.toString(mp.getRelY()));
 				}
 				if(i == 0) {
 					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getStartLineType().getName());
@@ -657,7 +656,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 
 			for(MAnchor anchor : o.getMAnchors()) {
 				Element ae = new Element("Anchor", e.getNamespace());
-				setAttribute("Line.Graphics.Anchor", "position", ae, Double.toString(anchor.getPosition()));
+				setAttribute("Line.Graphics.Anchor", "Position", ae, Double.toString(anchor.getPosition()));
 				setAttribute("Line.Graphics.Anchor", "Shape", ae, anchor.getShape().getName());
 				updateGraphId(anchor, ae);
 				jdomGraphics.addContent(ae);

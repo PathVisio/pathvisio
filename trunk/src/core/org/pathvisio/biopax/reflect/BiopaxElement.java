@@ -119,7 +119,11 @@ public class BiopaxElement extends Element {
 	public static BiopaxElement fromXML(Element xml) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		String className = xml.getName();
 		// compatibility hack, see bug #1022
-		if ("PublicationXref".equalsIgnoreCase(className)) className = "PublicationXRef";
+		if ("PublicationXref".equalsIgnoreCase(className)) 
+		{
+			className = "PublicationXref";
+			xml.setName("PublicationXref");
+		}
 		Class<?> c = Class.forName("org.pathvisio.biopax.reflect." + className);
 		BiopaxElement elm = (BiopaxElement)c.newInstance();
 		elm.loadXML(xml);

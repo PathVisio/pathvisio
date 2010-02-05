@@ -43,7 +43,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.data.PubMedQuery;
 import org.pathvisio.data.PubMedResult;
 import org.pathvisio.gui.swing.ProgressDialog;
@@ -62,17 +62,17 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	final static String TITLE = "Title";
 	final static String SOURCE = "Source";
 	final static String YEAR = "Year";
-	final static String AUTHORS = "Authors (separate with " + PublicationXRef.AUTHOR_SEP + ")";
+	final static String AUTHORS = "Authors (separate with " + PublicationXref.AUTHOR_SEP + ")";
 	final static String QUERY = "Query PubMed";
 
-	PublicationXRef input;
+	PublicationXref input;
 	JTextField pmId;
 	JTextField title;
 	JTextField source;
 	JTextField year;
 	JTextPane authors;
 
-	public PublicationXRefDialog(PublicationXRef xref, Frame frame, Component locationComp, boolean cancellable) {
+	public PublicationXRefDialog(PublicationXref xref, Frame frame, Component locationComp, boolean cancellable) {
 		super(frame, "Literature reference properties", locationComp, true, cancellable);
 		input = xref;
 
@@ -82,7 +82,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		setSize(400, 300);
 	}
 
-	public PublicationXRefDialog(PublicationXRef xref, Frame frame, Component locationComp) {
+	public PublicationXRefDialog(PublicationXref xref, Frame frame, Component locationComp) {
 		this(xref, frame, locationComp, true);
 	}
 
@@ -133,7 +133,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 			title.setText(pmr.getTitle());
 			year.setText(pmr.getYear());
 			source.setText(pmr.getSource());
-			authors.setText(PublicationXRef.createAuthorString(pmr.getAuthors()));
+			authors.setText(PublicationXref.createAuthorString(pmr.getAuthors()));
 		}
 	}
 
@@ -171,7 +171,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 				highlight((StyledDocument)fb.getDocument());
 			}
 			String replaceSeparators(String authors) {
-				return authors.replaceAll(PublicationXRef.AUTHOR_SEP, PublicationXRef.AUTHOR_SEP + "\n");
+				return authors.replaceAll(PublicationXref.AUTHOR_SEP, PublicationXref.AUTHOR_SEP + "\n");
 			}
 			void highlight(StyledDocument doc) {
 				SimpleAttributeSet clean = new SimpleAttributeSet();
@@ -181,7 +181,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 				sep.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
 
 				String text = authors.getText();
-				Pattern p = Pattern.compile(PublicationXRef.AUTHOR_SEP);
+				Pattern p = Pattern.compile(PublicationXref.AUTHOR_SEP);
 			    Matcher m = p.matcher(text);
 			    while(m.find()) {
 			    	doc.setCharacterAttributes(m.start(), 1, sep, true);

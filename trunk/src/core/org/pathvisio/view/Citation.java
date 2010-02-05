@@ -25,7 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import org.pathvisio.biopax.BiopaxReferenceManager;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.GlobalPreference;
@@ -131,7 +131,7 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 		int sequence = 0;
 		int nrShowed = 0; //Counter to check maximum citation numbers
 
-		List<PublicationXRef> xrefs = getRefMgr().getPublicationXRefs();
+		List<PublicationXref> xrefs = getRefMgr().getPublicationXRefs();
 		for(int i = 0; i < xrefs.size(); i++) {
 			if(nrShowed > 0 && nrShowed >= maxNr) {
 				xrefStr = xrefStr.substring(0, xrefStr.length() - 2) + "...  ";

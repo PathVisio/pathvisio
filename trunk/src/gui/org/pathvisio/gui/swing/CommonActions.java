@@ -32,7 +32,7 @@ import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.Globals;
 import org.pathvisio.biopax.BiopaxReferenceManager;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.gui.swing.dialogs.AboutDlg;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
@@ -539,7 +539,7 @@ public class CommonActions implements ApplicationEventListener {
 			if(element instanceof Graphics) {
 				PathwayElement pwElm = ((Graphics)element).getPathwayElement();
 				BiopaxReferenceManager m = pwElm.getBiopaxReferenceManager();
-				PublicationXRef xref = new PublicationXRef();
+				PublicationXref xref = new PublicationXref();
 
 				PublicationXRefDialog d = new PublicationXRefDialog(xref, null, parent);
 				d.setVisible(true);

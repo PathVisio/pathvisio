@@ -21,7 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.pathvisio.biopax.reflect.BiopaxElement;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
@@ -69,10 +69,10 @@ public class ExExporter implements Plugin
 					fos.write ("BIBLIOGRAPHY\n");
 					fos.write ("============\n");
 					// check if this is a publication reference
-					if (be instanceof PublicationXRef)
+					if (be instanceof PublicationXref)
 					{
 						// print some information in a very simple text format
-						PublicationXRef pxref = (PublicationXRef)be;
+						PublicationXref pxref = (PublicationXref)be;
 						fos.write ("\n");
 						i++;
 						fos.write ("#" + i + ":\n");

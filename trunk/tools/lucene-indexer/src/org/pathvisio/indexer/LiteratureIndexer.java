@@ -26,7 +26,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 
@@ -70,7 +70,7 @@ public class LiteratureIndexer extends IndexerBase {
 
 	void indexLiterature(PathwayElement pe) throws CorruptIndexException, IOException {
 		BiopaxReferenceManager refMgr = new BiopaxReferenceManager(pe);
-		for(PublicationXRef ref : refMgr.getPublicationXRefs()) {
+		for(PublicationXref ref : refMgr.getPublicationXRefs()) {
 			Document doc = new Document();
 			doc.add(new Field(FIELD_SOURCE, source, Store.YES, Index.NO));
 			if(pe.getGraphId() != null) {

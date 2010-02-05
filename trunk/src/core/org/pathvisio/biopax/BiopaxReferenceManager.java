@@ -22,7 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.pathvisio.biopax.reflect.BiopaxElement;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
 
@@ -73,13 +73,13 @@ public class BiopaxReferenceManager {
 	 * @return A List with all referred publications, or an empty list
 	 * if no elements have been found
 	 */
-	public List<PublicationXRef> getPublicationXRefs() {
-		List<PublicationXRef> xrefs = new ArrayList<PublicationXRef>();
+	public List<PublicationXref> getPublicationXRefs() {
+		List<PublicationXref> xrefs = new ArrayList<PublicationXref>();
 		for(BiopaxElement e : getReferences()) {
-			if(e instanceof PublicationXRef) xrefs.add((PublicationXRef)e);
+			if(e instanceof PublicationXref) xrefs.add((PublicationXref)e);
 		}
-		Collections.sort(xrefs, new Comparator<PublicationXRef>() {
-			public int compare(PublicationXRef o1, PublicationXRef o2) {
+		Collections.sort(xrefs, new Comparator<PublicationXref>() {
+			public int compare(PublicationXref o1, PublicationXref o2) {
 				BiopaxElementManager elmMgr = getBiopaxElementManager();
 				return elmMgr.getOrdinal(o1) - elmMgr.getOrdinal(o2);
 			}

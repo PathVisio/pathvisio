@@ -27,7 +27,7 @@ import org.pathvisio.biopax.reflect.BiopaxElement;
 import org.pathvisio.biopax.reflect.BiopaxProperty;
 import org.pathvisio.biopax.reflect.Namespaces;
 import org.pathvisio.biopax.reflect.PropertyType;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
@@ -195,7 +195,7 @@ public class BiopaxElementManager {
 			System.out.println("Comparing: " + e + " with " + elm);
 			if(e.getName().equalsIgnoreCase(elm.getName())) { //Check for equal element name
 				//Check for properties
-				if(e instanceof PublicationXRef) {
+				if(e instanceof PublicationXref) {
 					//If both publicationxrefs have a pubmed id, compare only
 					//by pubmed id
 					BiopaxProperty bp1 = e.getProperty(PropertyType.ID.name());

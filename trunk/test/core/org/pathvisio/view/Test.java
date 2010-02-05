@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 
 import org.pathvisio.Engine;
 import org.pathvisio.biopax.BiopaxReferenceManager;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -267,7 +267,7 @@ public class Test extends TestCase {
     	assertNull (vDn.getCitation());
 
 		BiopaxReferenceManager m = eltDn.getBiopaxReferenceManager();
-		PublicationXRef cit = new PublicationXRef();
+		PublicationXref cit = new PublicationXref();
 		cit.setPubmedId("18651794"); // Just a dummy value, no query is sent
 		m.addElementReference(cit);
 

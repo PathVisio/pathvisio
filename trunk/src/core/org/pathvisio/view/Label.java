@@ -67,61 +67,6 @@ public class Label extends GraphicsShape
 	}
 
 	String prevText = "";
-//	public void adjustWidthToText() {
-//		if(gdata.getTextLabel().equals(prevText)) return;
-//
-//		prevText = getLabelText();
-//
-//		Point mts = mComputeTextSize();
-//
-//		//Keep center location
-//		double mWidth = mts.x;
-//		double mHeight = mts.y;
-//
-//		listen = false; //Disable listener
-//		gdata.setMLeft(gdata.getMLeft() - (mWidth - gdata.getMWidth())/2);
-//		gdata.setMTop(gdata.getMTop() - (mHeight - gdata.getMHeight())/2);
-//		gdata.setMWidth(mWidth);
-//		gdata.setMHeight(mHeight);
-//		listen = true; //Enable listener
-//
-//		setHandleLocation();
-//	}
-
-//	private Text t;
-//	public void createTextControl()
-//	{
-//		Color background = canvas.getShell().getDisplay()
-//		.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-//
-//		Composite textComposite = new Composite(canvas, SWT.NONE);
-//		textComposite.setLayout(new GridLayout());
-//		textComposite.setLocation(getVCenterX(), getVCenterY() - 10);
-//		textComposite.setBackground(background);
-//
-//		org.eclipse.swt.widgets.Label label = new org.eclipse.swt.widgets.Label(textComposite, SWT.CENTER);
-//		label.setText("Specify label:");
-//		label.setBackground(background);
-//		t = new Text(textComposite, SWT.SINGLE | SWT.BORDER);
-//		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//		t.addSelectionListener(new SelectionAdapter() {
-//			public void widgetDefaultSelected(SelectionEvent e) {
-//				disposeTextControl();
-//			}
-//		});
-//
-//		t.setFocus();
-//
-//		Button b = new Button(textComposite, SWT.PUSH);
-//		b.setText("OK");
-//		b.addSelectionListener(new SelectionAdapter() {
-//			public void widgetSelected(SelectionEvent e) {
-//				disposeTextControl();
-//			}
-//		});
-//
-//		textComposite.pack();
-//	}
 
 	protected Rectangle2D getTextBounds(Graphics2D g) {
 		Rectangle2D tb = null;
@@ -142,39 +87,6 @@ public class Label extends GraphicsShape
 	protected Dimension computeTextSize(Graphics2D g) {
 		Rectangle2D tb = getTextBounds(g);
 		return new Dimension((int)tb.getWidth(), (int)tb.getHeight());
-	}
-
-//	protected void disposeTextControl()
-//	{
-//		gdata.setTextLabel(t.getText());
-//		Composite c = t.getParent();
-//		c.setVisible(false);
-//		c.dispose();
-//	}
-
-	double getVFontSize()
-	{
-		return vFromM(gdata.getMFontSize());
-	}
-
-	Font getVFont() {
-		String name = gdata.getFontName();
-		int style = getVFontStyle();
-		int size = (int)getVFontSize();
-		return new Font(name, style, size);
-	}
-
-	AttributedString getVAttributedString(String text) {
-		AttributedString ats = new AttributedString(text);
-		if(gdata.isStrikethru()) {
-			ats.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
-		}
-		if(gdata.isUnderline()) {
-			ats.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-		}
-
-		ats.addAttribute(TextAttribute.FONT, getVFont());
-		return ats;
 	}
 
 	Graphics2D g2d = null; //last Graphics2D for determining text size
@@ -217,29 +129,8 @@ public class Label extends GraphicsShape
 
 		// don't draw label outside box
 		g.clip (new Rectangle (area.x - 1, area.y - 1, area.width + 1, area.height + 1));
-
-		String label = gdata.getTextLabel();
-		if(label != null && !"".equals(label)) {
-			//Split by newline, to enable multi-line labels
-			String[] lines = label.split("\n");
-			for(int i = 0; i < lines.length; i++) {
-				if(lines[i].equals("")) continue; //Can't have attributed string with 0 length
-				AttributedString ats = getVAttributedString(lines[i]);
-				Rectangle2D tb = g.getFontMetrics().getStringBounds(ats.getIterator(), 0, lines[i].length(), g);
-
-				int yoffset = area.y;
-				int xoffset = area.x + (int)(area.width / 2) - (int)(tb.getWidth() / 2);
-				//Align y-center when only one line, otherwise, align to y-top
-				if(lines.length == 1) {
-					yoffset += (int)(area.height / 2) + (int)(tb.getHeight() / 2);
-				} else {
-					yoffset += (int)tb.getHeight();
-				}
-				g.drawString(ats.getIterator(), xoffset,
-						yoffset + (int)(i * tb.getHeight()));
-			}
-
-		}
+		drawTextLabel(g);
+		
 		if(isHighlighted())
 		{
 			Color hc = getHighlightColor();
@@ -250,13 +141,6 @@ public class Label extends GraphicsShape
 		}
 		super.doDraw(g2d);
 	}
-
-//	public void gmmlObjectModified(PathwayEvent e) {
-//		if(listen) {
-//			super.gmmlObjectModified(e);
-//			adjustWidthToText();
-//		}
-//	}
 
 	/**
 	 * Outline of a label is determined by

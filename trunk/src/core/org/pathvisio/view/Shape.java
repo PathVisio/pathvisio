@@ -92,6 +92,9 @@ public class Shape extends GraphicsShape
 
 		g.draw(shape);
 
+		g.setFont(getVFont());
+		drawTextLabel(g);
+		
 		if (isHighlighted())
 		{
 			Color hc = getHighlightColor();

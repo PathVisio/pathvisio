@@ -32,7 +32,8 @@ public enum DataNodeType {
 	PROTEIN("Protein"),
 	COMPLEX("Complex"),
 	GENEPRODUCT("GeneProduct"),
-	METABOLITE("Metabolite");
+	METABOLITE("Metabolite"),
+	PATHWAY("Pathway");
 
 	private static final Map<String, DataNodeType> NAME_MAP = new HashMap<String, DataNodeType>();
 

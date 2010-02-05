@@ -161,7 +161,7 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 
 	public void gmmlObjectModified(PathwayElementEvent e) {
 		PathwayElement pe = e.getModifiedPathwayElement();
-		if(input != null && e.affectsProperty(StaticProperty.GENEID)) {
+		if(input != null && (e.affectsProperty(StaticProperty.GENEID) || e.affectsProperty(StaticProperty.DATASOURCE))) {
 			Xref nref = new Xref (pe.getGeneID(), input.getDataSource());
 			if(!nref.equals(currRef))
 			{

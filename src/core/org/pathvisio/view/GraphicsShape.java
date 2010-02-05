@@ -16,11 +16,14 @@
 //
 package org.pathvisio.view;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -34,6 +37,7 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.PathwayElementEvent;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.LinAlg.Point;
@@ -353,13 +357,18 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 	}
 
+	public Shape getShape()
+	{
+		return getShape (false, 0);
+	}
+
 	/**
 	 * Returns the shape that should be drawn
 	 * @parameter rotate whether to take into account rotation or not
 	 * @parameter sw the width of the stroke to include
 	 * @return
 	 */
-	protected Shape getShape(boolean rotate, float sw) {
+	protected java.awt.Shape getShape(boolean rotate, float sw) {
 		double x = getVLeft();
 		double y = getVTop();
 		double w = getVWidth();
@@ -367,11 +376,28 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		double cx = getVCenterX();
 		double cy = getVCenterY();
 
-		Shape s = new Rectangle2D.Double(x, y, w + sw, h + sw);
+		java.awt.Shape s = null;
+
+		if (gdata.getShapeType() == null)
+		{
+			s = ShapeRegistry.getShape ("Rectangle", x, y, w, h);
+		}
+		else
+		{
+			s = ShapeRegistry.getShape (
+					gdata.getShapeType().getName(),
+					x, y, w, h);
+		}
+
 		if(rotate) {
 			AffineTransform t = new AffineTransform();
 			t.rotate(gdata.getRotation(), cx, cy);
 			s = t.createTransformedShape(s);
+		}
+
+		if(sw > 0) {
+			Stroke stroke = new BasicStroke(sw);
+			s = stroke.createStrokedShape(s);
 		}
 		return s;
 	}
@@ -509,5 +535,33 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		return vFromM(gdata.getMFontSize());
 	}
 	
+	protected void drawShape(Graphics2D g)
+	{
+		Color fillcolor = gdata.getFillColor();
+
+		if (gdata.getShapeType() == null) return; // nothing to draw.
+
+		java.awt.Shape shape = getShape(true, false);
+
+		if (gdata.getShapeType() == ShapeType.BRACE ||
+			gdata.getShapeType() == ShapeType.ARC)
+		{
+			// don't fill arcs or braces
+			// TODO: this exception should disappear in the future,
+			// when we've made sure all pathways on wikipathways have
+			// transparent arcs and braces
+		}
+		else
+		{
+			// fill the rest
+			if(!gdata.isTransparent())
+			{
+				g.setColor(fillcolor);
+				g.fill(shape);
+			}
+		}
+		g.setColor(getLineColor());
+		g.draw(shape);
+	}
 
 }

@@ -23,9 +23,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 
-import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 
 /**
  * This class represents a GMMLShape, which can be a
@@ -45,58 +43,19 @@ public class Shape extends GraphicsShape
 	{
 		super(canvas, o);
 	}
-
+	
 	public void doDraw(Graphics2D g)
 	{
-		Color fillcolor = gdata.getFillColor();
-		Color linecolor = gdata.getColor();
-		if(isSelected())
-		{
-			linecolor = selectColor;
-		}
-
-		java.awt.Shape shape = getShape(true, false);
-
-		if (gdata.getShapeType() == ShapeType.BRACE ||
-			gdata.getShapeType() == ShapeType.ARC)
-		{
-			// don't fill arcs or braces
-			// TODO: this exception should disappear in the future,
-			// when we've made sure all pathways on wikipathways have
-			// transparent arcs and braces
-		}
-		else
-		{
-			// fill the rest
-			if(!gdata.isTransparent())
-			{
-				g.setColor(fillcolor);
-				g.fill(shape);
-			}
-		}
-
-		g.setColor(linecolor);
-		int ls = gdata.getLineStyle();
-		if (ls == LineStyle.SOLID)
-		{
-			g.setStroke(new BasicStroke());
-		}
-		else if (ls == LineStyle.DASHED)
-		{
-			g.setStroke	(new BasicStroke (
-				  1,
-				  BasicStroke.CAP_SQUARE,
-				  BasicStroke.JOIN_MITER,
-				  10, new float[] {4, 4}, 0));
-		}
-
-		g.draw(shape);
-
+		g.setColor(getLineColor());
+		setLineStyle(g);
+		drawShape(g);
+		
 		g.setFont(getVFont());
 		drawTextLabel(g);
 		
 		if (isHighlighted())
 		{
+			java.awt.Shape shape = getShape(true, false);
 			Color hc = getHighlightColor();
 			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
 			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));

@@ -16,7 +16,10 @@
 //
 package org.pathvisio.view;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
@@ -26,6 +29,7 @@ import java.util.List;
 import org.pathvisio.biopax.BiopaxEvent;
 import org.pathvisio.biopax.BiopaxListener;
 import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.PathwayElementListener;
@@ -241,6 +245,33 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	public void biopaxEvent(BiopaxEvent e)
 	{
 		checkCitation();
+	}
+
+	protected Color getLineColor()
+	{
+		Color linecolor = gdata.getColor();
+		if(isSelected())
+		{
+			linecolor = selectColor;
+		}
+		return linecolor;
+	}
+	
+	protected void setLineStyle(Graphics2D g)
+	{
+		int ls = gdata.getLineStyle();
+		if (ls == LineStyle.SOLID)
+		{
+			g.setStroke(new BasicStroke());
+		}
+		else if (ls == LineStyle.DASHED)
+		{
+			g.setStroke	(new BasicStroke (
+				  1,
+				  BasicStroke.CAP_SQUARE,
+				  BasicStroke.JOIN_MITER,
+				  10, new float[] {4, 4}, 0));
+		}
 	}
 
 }

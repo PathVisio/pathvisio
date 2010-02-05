@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.RoundRectangle2D;
@@ -56,41 +57,34 @@ public class GeneProduct extends GraphicsShape
 	}
 
 	/**
-	 * Get the outline shape for this DataNode
-	 * This is used for drawing the DataNode, but
-	 * it can also be used by Visualization plugins as a clipping area
+	 * {@inheritDoc}
+	 * GeneProduct overrides vContains, because the base implementation only considers a 
+	 * hit with the outline, which makes it hard to grab with the mouse.
 	 */
-	public RectangularShape getShape()
+	@Override
+	protected boolean vContains(Point2D point)
 	{
-		RectangularShape area = new Rectangle2D.Double(
-				getVLeft(), getVTop(), getVWidth(), getVHeight());
-			boolean rounded = PreferenceManager.getCurrent().getBoolean(GlobalPreference.DATANODES_ROUNDED);
-			if(rounded) {
-				double r = Math.max(area.getWidth(), area.getHeight()) * 0.2;
-				area = new RoundRectangle2D.Double(area.getX(), area.getY(),
-						area.getWidth(), area.getHeight(),
-						r, r);
-			}
-		return area;
+		// first use getVBounds as a rough approximation
+		if (getVBounds().contains(point))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
-
+	
+	
 	public void doDraw(Graphics2D g)
 	{
 		java.awt.Shape origClip = g.getClip();
 
-		RectangularShape area = getShape();
-		//White background
-		g.setPaint (Color.WHITE);
-		g.fill(area);
+		RectangularShape area = getShape(false, false).getBounds();
 
-		//Rectangular Outline
-		g.setStroke(new BasicStroke());
-		if(isSelected()) {
-			g.setColor(selectColor);
-		} else {
-			g.setColor(gdata.getColor());
-		}
-		g.draw(area);
+		setLineStyle(g);
+		g.setColor(getLineColor());
+		drawShape(g);
 
 		//Label
 		//Don't draw label outside gene box

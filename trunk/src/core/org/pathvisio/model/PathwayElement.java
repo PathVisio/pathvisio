@@ -762,6 +762,21 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				StaticProperty.HEIGHT,
 				StaticProperty.COLOR
 			);
+		Set<StaticProperty> propsCommonStyle = EnumSet.of(
+				StaticProperty.TEXTLABEL,
+				StaticProperty.FONTNAME,
+				StaticProperty.FONTWEIGHT,
+				StaticProperty.FONTSTYLE,
+				StaticProperty.FONTSIZE,
+				StaticProperty.ALIGN,
+				StaticProperty.VALIGN,
+				StaticProperty.COLOR,
+				StaticProperty.FILLCOLOR,
+				StaticProperty.TRANSPARENT,
+				StaticProperty.SHAPETYPE,
+				StaticProperty.LINETHICKNESS,
+				StaticProperty.LINESTYLE
+			);
 		ALLOWED_PROPS = new EnumMap<ObjectType, Set<StaticProperty>>(ObjectType.class);
 		{
 			Set<StaticProperty> propsMappinfo = EnumSet.of (
@@ -786,15 +801,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.RELY,
 					StaticProperty.WIDTH,
 					StaticProperty.HEIGHT,
-					StaticProperty.COLOR,
-					StaticProperty.FILLCOLOR,
-					StaticProperty.TRANSPARENT,
-					StaticProperty.TEXTLABEL,
 					StaticProperty.MODIFICATIONTYPE,
-					StaticProperty.LINESTYLE,
 					StaticProperty.GRAPHREF
 				);
 			propsState.addAll (propsCommon);
+			propsState.addAll (propsCommonStyle);
 			ALLOWED_PROPS.put (ObjectType.STATE, propsState);
 		}
 		{
@@ -806,6 +817,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.LINESTYLE
 				);
 			propsShape.addAll (propsCommon);
+			propsShape.addAll (propsCommonStyle);
 			propsShape.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.SHAPE, propsShape);
 		}
@@ -817,6 +829,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.TYPE
 				);
 			propsDatanode.addAll (propsCommon);
+			propsDatanode.addAll (propsCommonStyle);
 			propsDatanode.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.DATANODE, propsDatanode);
 		}
@@ -830,6 +843,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.STARTLINETYPE,
 					StaticProperty.ENDLINETYPE,
 					StaticProperty.LINESTYLE,
+					StaticProperty.LINETHICKNESS,
 					StaticProperty.STARTGRAPHREF,
 					StaticProperty.ENDGRAPHREF
 				);
@@ -837,15 +851,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			ALLOWED_PROPS.put (ObjectType.LINE, propsLine);
 		}
 		{
-			Set<StaticProperty> propsLabel = EnumSet.of(
-					StaticProperty.TEXTLABEL,
-					StaticProperty.FONTNAME,
-					StaticProperty.FONTWEIGHT,
-					StaticProperty.FONTSTYLE,
-					StaticProperty.FONTSIZE,
-					StaticProperty.OUTLINE
-				);
+			Set<StaticProperty> propsLabel = EnumSet.noneOf(StaticProperty.class);
 			propsLabel.addAll (propsCommon);
+			propsLabel.addAll (propsCommonStyle);
 			propsLabel.addAll (propsCommonShape);
 			ALLOWED_PROPS.put (ObjectType.LABEL, propsLabel);
 		}
@@ -1005,12 +1013,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			else
 				setStartLineType(LineType.fromOrdinal ((Integer) value));
 			break;
-		case OUTLINE:
-			if(value instanceof OutlineType)
-				setOutline((OutlineType)value);
-			else
-				setOutline(OutlineType.values()[(Integer) value]);
-		    break;
 		case LINESTYLE:
 			setLineStyle((Integer) value);
 			break;
@@ -1115,6 +1117,16 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			} else {
 				setGroupStyle(GroupStyle.fromName((String)value));
 			}
+			break;
+		case ALIGN:
+			setAlign ((AlignType) value);
+			break;
+		case VALIGN:
+			setValign ((ValignType) value);
+			break;
+		case LINETHICKNESS:
+			setLineThickness((Double) value);
+			break;
 		}
 	}
 
@@ -1172,9 +1184,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			break;
 		case STARTLINETYPE:
 			result = getStartLineType();
-			break;
-		case OUTLINE:
-			result = getOutline();
 			break;
 		case LINESTYLE:
 			result = getLineStyle();
@@ -1261,7 +1270,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case TRANSPARENT:
 			result = isTransparent();
 			break;
-
 		case BIOPAXREF:
 			result = getBiopaxRefs();
 			break;
@@ -1271,6 +1279,15 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case GROUPSTYLE:
 			result = getGroupStyle().toString();
 			break;
+		case ALIGN:
+			result = getAlign();
+			break;
+		case VALIGN:
+			result = getValign();
+			break;
+		case LINETHICKNESS:
+			result = getLineThickness();
+			break;		
 		}
 
 		return result;
@@ -1309,13 +1326,15 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		lineStyle = src.lineStyle;
 		startLineType = src.startLineType;
 		endLineType = src.endLineType;
-		outline = src.outline;
 		maintainer = src.maintainer;
 		mapInfoDataSource = src.mapInfoDataSource;
 		mapInfoName = src.mapInfoName;
 		organism = src.organism;
 		rotation = src.rotation;
 		shapeType = src.shapeType;
+		lineThickness = src.lineThickness;
+		align = src.align;
+		valign = src.valign;
 		mPoints = new ArrayList<MPoint>();
 		for (MPoint p : src.mPoints)
 		{
@@ -2023,6 +2042,22 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
+	private double lineThickness = 1.0;
+
+	public double getLineThickness()
+	{
+		return lineThickness;
+	}
+
+	public void setLineThickness(double v)
+	{
+		if (lineThickness != v)
+		{
+			lineThickness = v;
+			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINETHICKNESS));
+		}
+	}
+
 	protected double mFontSize = 10 * 15;
 
 	public double getMFontSize()
@@ -2103,18 +2138,36 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	protected OutlineType outline = OutlineType.NONE;
-	public void setOutline (OutlineType v)
+	protected ValignType valign = ValignType.MIDDLE;
+
+	public void setValign (ValignType v)
 	{
-		if (outline != v)
+		if (valign != v)
 		{
-			outline = v;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.OUTLINE));
+			valign = v;
+			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.VALIGN));
 		}
 	}
-	public OutlineType getOutline()
+	
+	public ValignType getValign()
 	{
-		return outline;
+		return valign;
+	}
+
+	protected AlignType align = AlignType.CENTER;
+
+	public void setAlign (AlignType v)
+	{
+		if (align != v)
+		{
+			align = v;
+			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.ALIGN));
+		}
+	}
+	
+	public AlignType getAlign()
+	{
+		return align;
 	}
 
 	protected String version = null;

@@ -468,7 +468,9 @@ class GpmlFormat200X extends GpmlFormatAbstract
     	o.setStrikethru (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
     	
     	String outline = getAttribute("Label", "Outline", e);
-		o.setOutline (OutlineType.fromTag (outline));
+		if ("None".equals(outline)) o.setShapeType(null);
+		else if ("Rectangle".equals(outline)) o.setShapeType(ShapeType.RECTANGLE);
+		else if ("RoundedRectangle".equals(outline)) o.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 
     	o.setFontName (getAttribute("Label.Graphics", "FontName", graphics));
 	}
@@ -488,7 +490,10 @@ class GpmlFormat200X extends GpmlFormatAbstract
 				setAttribute("Label.Graphics", "FontStrikethru", graphics, o.isStrikethru() ? "Strikethru" : "Normal");
 				setAttribute("Label.Graphics", "FontSize", graphics, Integer.toString((int)o.getMFontSize()));
 			}
-			setAttribute("Label", "Outline", e, o.getOutline().getTag());
+			String outline = "None";
+			if (o.getShapeType() == ShapeType.RECTANGLE) outline = "Rectangle";
+			else if (o.getShapeType() == ShapeType.ROUNDED_RECTANGLE) outline = "RoundedRectangle";
+			setAttribute("Label", "Outline", e, outline);
 		}
 	}
 	

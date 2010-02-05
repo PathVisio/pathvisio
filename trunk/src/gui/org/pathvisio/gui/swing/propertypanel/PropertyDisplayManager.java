@@ -30,7 +30,6 @@ import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.OrientationType;
-import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Property;
 import org.pathvisio.model.PropertyType;
@@ -76,7 +75,6 @@ public class PropertyDisplayManager {
 		registerTypeHandler(new ComboHandler(StaticPropertyType.LINETYPE, LineType.getNames(), LineType.getValues()));
 		registerTypeHandler(new ComboHandler(StaticPropertyType.ORGANISM, Organism.latinNames(), false));
 		registerTypeHandler(new ComboHandler(StaticPropertyType.ORIENTATION, OrientationType.getNames(), true));
-		registerTypeHandler(new ComboHandler(StaticPropertyType.OUTLINETYPE, OutlineType.getTags(), OutlineType.values()));
 		registerTypeHandler(new ComboHandler(StaticPropertyType.SHAPETYPE, ShapeType.getNames(), ShapeType.getValues()));
 		// register core properties
 		for (StaticProperty p : StaticProperty.values()) {

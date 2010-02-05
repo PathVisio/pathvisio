@@ -31,6 +31,7 @@ public class ShapeType
 	private static List<ShapeType> values = new ArrayList<ShapeType>();
 
 	public static final ShapeType RECTANGLE = new ShapeType ("Rectangle", "Rectangle");
+	public static final ShapeType ROUNDED_RECTANGLE = new ShapeType ("RoundedRectangle", "RoundedRectangle");
 	public static final ShapeType OVAL = new ShapeType ("Oval", "Oval");
 	public static final ShapeType ARC = new ShapeType ("Arc", "Arc");
 	public static final ShapeType CELLA = new ShapeType ("CellA", "CellA");

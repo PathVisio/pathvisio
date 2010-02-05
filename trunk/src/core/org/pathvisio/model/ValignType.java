@@ -14,48 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-
 package org.pathvisio.model;
 
-/**
- * The properties in {@link StaticProperty} define properties of different types,
- * all the possible types are defined here.
- */
-public enum StaticPropertyType implements PropertyType
-{
-	BOOLEAN,
-	DOUBLE,
-	INTEGER,
-	DATASOURCE,
-	LINESTYLE,
-	COLOR,
-	STRING,
-	ORIENTATION,
-	SHAPETYPE,
-	LINETYPE,
-	OUTLINETYPE,
-	GENETYPE,
-	FONT,
-	ANGLE,
-	ORGANISM,
-	DB_ID,
-	DB_SYMBOL,
-	BIOPAXREF,
-	COMMENTS,
-	GROUPSTYLETYPE,
-	ALIGNTYPE,
-	VALIGNTYPE;
-
-	private String id;
-
-
-	private StaticPropertyType() {
-		id = "core." + name();
-		PropertyManager.registerPropertyType(this);
-	}
-
-
-	public String getId() {
-		return id;
-	}
-}
+public enum ValignType { TOP, MIDDLE, BOTTOM }

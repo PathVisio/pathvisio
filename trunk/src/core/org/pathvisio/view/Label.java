@@ -30,6 +30,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.text.AttributedString;
 
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 
 /**
  * Represents the view of a PathwayElement with ObjectType.LABEL.
@@ -195,19 +196,19 @@ public class Label extends GraphicsShape
 
 		Shape outline = null;
 		double lw = DEFAULT_STROKE.getLineWidth();
-		switch (gdata.getOutline())
+		if (gdata.getShapeType() == ShapeType.RECTANGLE)
 		{
-		case RECTANGLE:
 			outline = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth() - lw, getVHeight() - lw);
-			break;
-		case ROUNDED_RECTANGLE:
+		}
+		else if (gdata.getShapeType() == ShapeType.ROUNDED_RECTANGLE)
+		{
 			outline = new RoundRectangle2D.Double(
 				getVLeft(), getVTop(), getVWidth() - lw, getVHeight() - lw,
 				vFromM (M_ARCSIZE), vFromM (M_ARCSIZE));
-			break;
-		case NONE:
+		}
+		else
+		{
 			outline = null;
-			break;
 		}
 		if (outline != null)
 		{

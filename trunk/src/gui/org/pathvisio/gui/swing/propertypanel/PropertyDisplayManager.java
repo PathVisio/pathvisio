@@ -59,6 +59,8 @@ public class PropertyDisplayManager {
 	private static boolean STORE_PREFERENCES = false;
 
 	static {
+		PreferenceManager.init();
+		
 		// register core property types
 		registerTypeHandler(new BooleanHandler());
 		registerTypeHandler(NumberHandler.buildHandler(StaticPropertyType.DOUBLE, Double.class));

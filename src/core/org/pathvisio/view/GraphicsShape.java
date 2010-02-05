@@ -17,12 +17,16 @@
 package org.pathvisio.view;
 
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -452,4 +456,58 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			}
 		}
 	}
+
+	protected void drawTextLabel(Graphics2D g)
+	{
+		Rectangle area = getVShape(true).getBounds();
+		String label = gdata.getTextLabel();
+		if(label != null && !"".equals(label)) {
+			//Split by newline, to enable multi-line labels
+			String[] lines = label.split("\n");
+			for(int i = 0; i < lines.length; i++) {
+				if(lines[i].equals("")) continue; //Can't have attributed string with 0 length
+				AttributedString ats = getVAttributedString(lines[i]);
+				Rectangle2D tb = g.getFontMetrics().getStringBounds(ats.getIterator(), 0, lines[i].length(), g);
+
+				int yoffset = area.y;
+				int xoffset = area.x + (int)(area.width / 2) - (int)(tb.getWidth() / 2);
+				//Align y-center when only one line, otherwise, align to y-top
+				if(lines.length == 1) {
+					yoffset += (int)(area.height / 2) + (int)(tb.getHeight() / 2);
+				} else {
+					yoffset += (int)tb.getHeight();
+				}
+				g.drawString(ats.getIterator(), xoffset,
+						yoffset + (int)(i * tb.getHeight()));
+			}
+
+		}
+	}
+
+	AttributedString getVAttributedString(String text) {
+		AttributedString ats = new AttributedString(text);
+		if(gdata.isStrikethru()) {
+			ats.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+		}
+		if(gdata.isUnderline()) {
+			ats.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+		}
+
+		ats.addAttribute(TextAttribute.FONT, getVFont());
+		return ats;
+	}
+
+	Font getVFont() {
+		String name = gdata.getFontName();
+		int style = getVFontStyle();
+		int size = (int)getVFontSize();
+		return new Font(name, style, size);
+	}
+
+	double getVFontSize()
+	{
+		return vFromM(gdata.getMFontSize());
+	}
+	
+
 }

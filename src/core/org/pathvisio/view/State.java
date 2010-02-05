@@ -41,14 +41,6 @@ public class State extends GraphicsShape
 		setHandleLocation();
 	}
 
-	/**
-	 * Calculate the font size adjusted to the canvas zoom factor.
-	 */
-	private int getVFontSize()
-	{
-		return (int)(vFromM (gdata.getMFontSize()));
-	}
-
 	public void doDraw(Graphics2D g)
 	{
 		java.awt.Shape origClip = g.getClip();
@@ -72,15 +64,11 @@ public class State extends GraphicsShape
 		//Don't draw label outside gene box
 		g.clip (new Rectangle2D.Double (area.getX() - 1, area.getY() - 1, area.getWidth() + 1, area.getHeight()+ 1));
 
-		g.setFont(new Font(gdata.getFontName(), getVFontStyle(), getVFontSize()));
+		Font f = getVFont();
+		g.setFont(f);
 
-		String label = gdata.getTextLabel();
-		if(label.length() > 0) {
-			TextLayout tl = new TextLayout(label, g.getFont(), g.getFontRenderContext());
-			Rectangle2D tb = tl.getBounds();
-			tl.draw(g, 	(int)area.getX() + (int)(area.getWidth() / 2) - (int)(tb.getWidth() / 2),
-					(int)area.getY() + (int)(area.getHeight() / 2) + (int)(tb.getHeight() / 2));
-		}
+		drawTextLabel(g);
+
 		g.setClip(origClip); //Reset clipping
 		drawHighlight(g);
 		super.doDraw((Graphics2D)g.create());

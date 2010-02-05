@@ -52,7 +52,7 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 	 */
 	public static final double PIXEL_TO_MODEL = 15;
 
-	static private final GpmlFormatVersion CURRENT = GpmlFormat200X.GPML_2008A;
+	static private final GpmlFormatVersion CURRENT = GpmlFormat2010a.GPML_2010A;
 
 	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");

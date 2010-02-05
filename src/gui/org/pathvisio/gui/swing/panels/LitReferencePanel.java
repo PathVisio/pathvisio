@@ -41,7 +41,7 @@ import javax.swing.event.HyperlinkListener;
 
 import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.biopax.BiopaxReferenceManager;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
@@ -58,7 +58,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	BiopaxReferenceManager refMgr;
 	BiopaxElementManager elmMgr;
 
-	List<PublicationXRef> xrefs;
+	List<PublicationXref> xrefs;
 
 	JScrollPane refPanel;
 	JButton addBtn;
@@ -69,7 +69,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	{
 		this.swingEngine = swingEngine;
 		setLayout(new BorderLayout(5, 5));
-		xrefs = new ArrayList<PublicationXRef>();
+		xrefs = new ArrayList<PublicationXref>();
 		addBtn = new JButton(ADD);
 		addBtn.setActionCommand(ADD);
 		addBtn.addActionListener(this);
@@ -96,10 +96,10 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 
 
 	private class XRefPanel extends JPanel implements HyperlinkListener, ActionListener {
-		PublicationXRef xref;
+		PublicationXref xref;
 		JPanel btnPanel;
 
-		public XRefPanel(PublicationXRef xref) {
+		public XRefPanel(PublicationXref xref) {
 			this.xref = xref;
 			setBackground(Color.WHITE);
 			setLayout(new FormLayout(
@@ -188,7 +188,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		DefaultFormBuilder b = new DefaultFormBuilder(
 				new FormLayout("fill:pref:grow")
 		);
-		for(PublicationXRef xref : xrefs) {
+		for(PublicationXref xref : xrefs) {
 			b.append(new XRefPanel(xref));
 			b.nextLine();
 		}
@@ -205,7 +205,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		}
 	}
 
-	private void edit(PublicationXRef xref) {
+	private void edit(PublicationXref xref) {
 		if(xref != null) {
 				PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this, false);
 				d.setVisible(true);
@@ -213,13 +213,13 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 		refresh();
 	}
 
-	private void remove(PublicationXRef xref) {
+	private void remove(PublicationXref xref) {
 		refMgr.removeElementReference(xref);
 		refresh();
 	}
 
 	private void addPressed() {
-		PublicationXRef xref = new PublicationXRef();
+		PublicationXref xref = new PublicationXref();
 
 		final PublicationXRefDialog d = new PublicationXRefDialog(xref, null, this);
 		if(!SwingUtilities.isEventDispatchThread()) {

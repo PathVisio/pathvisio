@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.pathvisio.biopax.BiopaxEvent;
 import org.pathvisio.biopax.BiopaxListener;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementEvent;
@@ -60,7 +60,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 
 	public final void checkCitation()
 	{
-		List<PublicationXRef> xrefs = gdata.getBiopaxReferenceManager().getPublicationXRefs();
+		List<PublicationXref> xrefs = gdata.getBiopaxReferenceManager().getPublicationXRefs();
 		if (xrefs.size() > 0 && citation == null)
 		{
 			citation = createCitation();

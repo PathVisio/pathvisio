@@ -24,12 +24,12 @@ import java.util.List;
  * In PathVisio, all citations  are stored as a BioPAX element.
  * Can hold information about a.o. authors, title and year.
  */
-public class PublicationXRef extends BiopaxElement {
+public class PublicationXref extends BiopaxElement {
 	static final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
 
-	public PublicationXRef() {
+	public PublicationXref() {
 		super();
-		setName("PublicationXRef");
+		setName("PublicationXref");
 		setValidProperties(new PropertyType[] {
 				PropertyType.AUTHORS,
 				PropertyType.DB,

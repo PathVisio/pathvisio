@@ -46,7 +46,7 @@ public class Test extends TestCase {
 	}
 
 	public void testProperties() {
-		PublicationXRef xref = new PublicationXRef();
+		PublicationXref xref = new PublicationXref();
 
 		//Check cardinality
 		BiopaxProperty p1 = PropertyType.TITLE.getProperty("title 1");
@@ -94,7 +94,7 @@ public class Test extends TestCase {
 		String author2 = "author2";
 
 		//Add to pathway element
-		PublicationXRef xrefObject = new PublicationXRef();
+		PublicationXref xrefObject = new PublicationXref();
 		//Add one title and two authors
 		xrefObject.setTitle(title);
 		xrefObject.addAuthor(author1);
@@ -103,7 +103,7 @@ public class Test extends TestCase {
 		dnRefManager.addElementReference(xrefObject);
 
 		//Add to pathway
-		PublicationXRef xrefPathway = new PublicationXRef();
+		PublicationXref xrefPathway = new PublicationXref();
 		//Add one title and two authors
 		xrefPathway.setTitle(title);
 		xrefPathway.addAuthor(author1);
@@ -113,7 +113,7 @@ public class Test extends TestCase {
 
 		writeRead(data);
 
-		List<PublicationXRef> references = pwRefManager.getPublicationXRefs();
+		List<PublicationXref> references = pwRefManager.getPublicationXRefs();
 		//There has to be one reference
 		assertTrue("Should have one literature reference, has " + references.size(), references.size() == 1);
 		//With two authors
@@ -127,7 +127,7 @@ public class Test extends TestCase {
 		//Test added 30-08, because of bug where biopax was lost after
 		//saving/loading/saving sequence
 		//Add another reference to Pathway
-		xrefPathway = new PublicationXRef();
+		xrefPathway = new PublicationXref();
 		//Add one title and one author
 		xrefPathway.setTitle("title3");
 		xrefPathway.addAuthor("author3");
@@ -140,7 +140,7 @@ public class Test extends TestCase {
 		//There have to be two references now
 		assertTrue("Two literature references, has " + references.size(), references.size() == 2);
 		//Where the one we last added has one author
-		PublicationXRef xref = (PublicationXRef)elementManager.getElement(xrefPathway.getId());
+		PublicationXref xref = (PublicationXref)elementManager.getElement(xrefPathway.getId());
 		assertTrue("One author", xref.getAuthors().size() == 1);
 
 	}

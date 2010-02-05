@@ -71,7 +71,7 @@ import java.util.regex.Pattern;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.cytoscape.actions.AttributeMapperAction;
 import org.pathvisio.cytoscape.actions.CopyAction;
 import org.pathvisio.cytoscape.actions.ExportAction;
@@ -304,7 +304,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			String journal = litInfo.get(0).toString();
 			String year = litInfo.get(4).toString();
 
-			PublicationXRef xref = new PublicationXRef();
+			PublicationXref xref = new PublicationXref();
 			if(pmid != null) xref.setPubmedId(pmid);
 			xref.setSource(journal);
 			xref.setYear(year);

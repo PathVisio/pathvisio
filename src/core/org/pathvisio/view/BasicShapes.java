@@ -23,6 +23,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 
 import org.pathvisio.model.AnchorType;
 
@@ -55,6 +56,8 @@ class BasicShapes
 			"Oval", new Ellipse2D.Double (0, 0, 10, 10));
 		ShapeRegistry.registerShape (
 			"Rectangle", new Rectangle (0, 0, 10, 10));
+		ShapeRegistry.registerShape (
+			"RoundedRectangle", new RoundRectangle2D.Double(0, 0, 10, 10, 3, 5));
 
 		ShapeRegistry.registerArrow ("Arrow", getArrowHead(), ArrowShape.FillType.CLOSED);
 		ShapeRegistry.registerArrow ("TBar", getTBar(), ArrowShape.FillType.OPEN, TBARWIDTH + TBAR_GAP);

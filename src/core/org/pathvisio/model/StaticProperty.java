@@ -43,7 +43,7 @@ public enum StaticProperty implements Property
 	RELY ("relY", "Relative Y", StaticPropertyType.DOUBLE, 108, true, false, false),
 	GRAPHREF ("GraphRef", "GraphRef", StaticPropertyType.STRING, 109, false, true, false),
 
-	// shape, modification
+	// shape, modification, label, datanode
 	TRANSPARENT ("Transparent", "Transparent", StaticPropertyType.BOOLEAN, 210),
 	FILLCOLOR ("FillColor", "Fill Color", StaticPropertyType.COLOR, 211),
 	SHAPETYPE ("ShapeType", "Shape Type", StaticPropertyType.SHAPETYPE, 112),
@@ -62,6 +62,7 @@ public enum StaticProperty implements Property
 
 	// line, shape and modification
 	LINESTYLE ("LineStyle", "Line Style", StaticPropertyType.LINESTYLE, 120),
+	LINETHICKNESS ("LineThickness", "Line Thickness", StaticPropertyType.DOUBLE, 120),
 
 	// brace
 	ORIENTATION ("Orientation", "Orientation", StaticPropertyType.ORIENTATION, 121),
@@ -76,12 +77,13 @@ public enum StaticProperty implements Property
 	// label, modification, datanode
 	TEXTLABEL ("TextLabel", "Text Label", StaticPropertyType.STRING, 128),
 
-	// label
+	// label, shape, datanode
 	FONTNAME ("FontName", "Font Name", StaticPropertyType.FONT, 129),
 	FONTWEIGHT ("FontWeight", "Bold", StaticPropertyType.BOOLEAN, 130),
 	FONTSTYLE ("FontStyle", "Italic", StaticPropertyType.BOOLEAN, 131),
 	FONTSIZE ("FontSize", "Font Size", StaticPropertyType.DOUBLE, 132),
-	OUTLINE ("Outline", "Outline", StaticPropertyType.OUTLINETYPE, 133),
+	VALIGN ("Valign", "Vertical Alignment", StaticPropertyType.VALIGNTYPE, 133),
+	ALIGN ("Align", "Alignment", StaticPropertyType.ALIGNTYPE, 133),
 
 	// mappinfo
 	MAPINFONAME ("MapInfoName", "Title", StaticPropertyType.STRING, 134),

@@ -2042,11 +2042,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	public void setTextLabel(String v)
 	{
-		if (v == null)
-			throw new IllegalArgumentException();
-		if (!Utils.stringEquals(textLabel, v))
+		String input = (v == null) ? "" : v;
+		if (!Utils.stringEquals(textLabel, input))
 		{
-			textLabel = v;
+			textLabel = input;
 			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.TEXTLABEL));
 		}
 	}

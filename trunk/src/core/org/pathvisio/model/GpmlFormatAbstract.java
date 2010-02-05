@@ -109,7 +109,35 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		}
 	}
 
+	private boolean isEqualsString(String def, String value)
+	{
+		return ((def == null && value == null) ||
+				(def != null && def.equals(value)) ||
+				(def == null && value != null && value.equals("")));
+	}
 
+	private boolean isEqualsNumber(String def, String value)
+	{
+		if (def != null && value != null) {
+			Double x = Double.parseDouble(def);
+			Double y = Double.parseDouble(value);
+			if (Math.abs(x - y) < 1e-6)
+				return true;
+		}
+		return false;
+	}
+
+	private boolean isEqualsColor(String def, String value)
+	{
+		if (def != null && value != null)
+		{
+			Color a = gmmlString2Color(def);
+			Color b = gmmlString2Color(value);
+			return (a.equals(b));
+		}
+		return def == null && value == null;
+	}
+	
 	/**
 	 * Sets a certain attribute value,
 	 * Does a basic check for some types,
@@ -137,19 +165,14 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		// altogether
 		if (aInfo.use.equals("optional")) {
 			if (aInfo.schemaType.equals("xsd:string")
-					|| aInfo.schemaType.equals("xsd:ID")) {
-				if ((aInfo.def == null && value == null) ||
-						(aInfo.def != null && aInfo.def.equals(value)) ||
-						(aInfo.def == null && value != null && value.equals("")))
-					isDefault = true;
+					|| aInfo.schemaType.equals("xsd:ID")
+					|| aInfo.schemaType.equals("gpml:StyleType")) {
+				isDefault = isEqualsString(aInfo.def, value);
 			} else if (aInfo.schemaType.equals("xsd:float")
 					|| aInfo.schemaType.equals("Dimension")) {
-				if(aInfo.def != null && value != null) {
-					Double x = Double.parseDouble(aInfo.def);
-					Double y = Double.parseDouble(value);
-					if (Math.abs(x - y) < 1e-6)
-						isDefault = true;
-				}
+				isDefault = isEqualsNumber(aInfo.def, value);
+			} else if (aInfo.schemaType.equals("gpml:ColorType")) {
+				isDefault = isEqualsColor (aInfo.def, value);
 			}
 		}
 		if (!isDefault)
@@ -320,17 +343,15 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		}
 	}
 
-	protected void updateShapeColor(PathwayElement o, Element e)
+	protected void updateShapeColor(PathwayElement o, Element e) throws ConverterException
 	{
 		if(e != null)
 		{
 			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 			if(jdomGraphics != null)
 			{
-				if (o.isTransparent())
-					jdomGraphics.setAttribute("FillColor", "Transparent");
-				else
-					jdomGraphics.setAttribute("FillColor", color2HexBin(o.getFillColor()));
+				String val = o.isTransparent() ? "Transparent" : color2HexBin(o.getFillColor());
+				setAttribute (e.getName() + ".Graphics", "FillColor", jdomGraphics, val);
 			}
 		}
 	}

@@ -23,14 +23,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.font.TextAttribute;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
-import java.text.AttributedString;
 
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 
 /**
  * Represents the view of a PathwayElement with ObjectType.LABEL.
@@ -95,37 +91,15 @@ public class Label extends GraphicsShape
 		if(g2d != null) g2d.dispose();
 		g2d = (Graphics2D)g.create();
 
-		if(isSelected()) {
-			g.setColor(selectColor);
-		} else {
-			g.setColor(gdata.getColor());
-		}
+		g.setColor(getLineColor());
 
 		Font f = getVFont();
 		g.setFont(f);
 
 		Rectangle area = getBoxBounds(true).getBounds();
 
-		Shape outline = null;
-		double lw = DEFAULT_STROKE.getLineWidth();
-		if (gdata.getShapeType() == ShapeType.RECTANGLE)
-		{
-			outline = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth() - lw, getVHeight() - lw);
-		}
-		else if (gdata.getShapeType() == ShapeType.ROUNDED_RECTANGLE)
-		{
-			outline = new RoundRectangle2D.Double(
-				getVLeft(), getVTop(), getVWidth() - lw, getVHeight() - lw,
-				vFromM (M_ARCSIZE), vFromM (M_ARCSIZE));
-		}
-		else
-		{
-			outline = null;
-		}
-		if (outline != null)
-		{
-			g.draw (outline);
-		}
+		setLineStyle(g);
+		drawShape(g);
 
 		// don't draw label outside box
 		g.clip (new Rectangle (area.x - 1, area.y - 1, area.width + 1, area.height + 1));

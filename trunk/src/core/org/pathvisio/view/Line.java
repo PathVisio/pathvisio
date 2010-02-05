@@ -235,31 +235,11 @@ public class Line extends Graphics implements Adjustable
 	}
 
 
-	public void doDraw(Graphics2D g) {
-		Color c;
-
-		if(isSelected())
-		{
-			c = selectColor;
-		}
-		else
-		{
-			c = gdata.getColor();
-		}
+	public void doDraw(Graphics2D g) 
+	{
+		Color c = getLineColor();
 		g.setColor(c);
-
-		int ls = gdata.getLineStyle();
-		if (ls == LineStyle.SOLID) {
-			g.setStroke(new BasicStroke());
-		}
-		else if (ls == LineStyle.DASHED)
-		{
-			g.setStroke	(new BasicStroke (
-				  1,
-				  BasicStroke.CAP_SQUARE,
-				  BasicStroke.JOIN_MITER,
-				  10, new float[] {4, 4}, 0));
-		}
+		setLineStyle(g);
 
 		Shape l = getVConnectorAdjusted();
 

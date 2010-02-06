@@ -16,4 +16,39 @@
 //
 package org.pathvisio.model;
 
-public enum ValignType { TOP, MIDDLE, BOTTOM }
+import java.util.HashMap;
+import java.util.Map;
+
+public enum ValignType 
+{ 
+	TOP("Top"), MIDDLE("Middle"), BOTTOM("Bottom");
+
+	private final String gpmlName;
+	private static Map<String, ValignType> byGpmlName = new HashMap<String, ValignType>();
+	
+	static {
+		for (ValignType t : values()) byGpmlName.put (t.gpmlName, t);
+	}
+	
+	private ValignType(String gpmlName)
+	{
+		this.gpmlName = gpmlName;
+	}
+	
+	public static ValignType fromGpmlName(String value)
+	{
+		return byGpmlName.get(value);
+	}
+	
+	public String getGpmlName()
+	{
+		return gpmlName;
+	}
+
+	public static String[] getNames() 
+	{ 
+		String[] result = new String[values().length];
+		for (int i = 0; i < values().length; ++i) result[i] = values()[i].gpmlName;
+		return result;
+	}
+}

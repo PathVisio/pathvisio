@@ -463,6 +463,9 @@ class GpmlFormat2010a extends GpmlFormatAbstract
     	o.setStrikethru (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
     	
 	    o.setFontName (getAttribute(base + ".Graphics", "FontName", graphics));
+	    
+		o.setValign(ValignType.fromGpmlName(getAttribute(base + ".Graphics", "Valign", graphics)));
+		o.setAlign(AlignType.fromGpmlName(getAttribute(base + ".Graphics", "Align", graphics)));	    
 	}
 	
 	protected void updateFontData(PathwayElement o, Element e) throws ConverterException
@@ -476,6 +479,8 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		setAttribute(base + ".Graphics", "FontDecoration", graphics, o.isUnderline() ? "Underline" : "Normal");
 		setAttribute(base + ".Graphics", "FontStrikethru", graphics, o.isStrikethru() ? "Strikethru" : "Normal");
 		setAttribute(base + ".Graphics", "FontSize", graphics, Integer.toString((int)o.getMFontSize()));
+		setAttribute(base + ".Graphics", "Valign", graphics, o.getValign().getGpmlName());
+		setAttribute(base + ".Graphics", "Align", graphics, o.getAlign().getGpmlName());
 	}
 
 	protected void mapShapePosition(PathwayElement o, Element e) throws ConverterException

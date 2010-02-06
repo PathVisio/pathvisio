@@ -16,4 +16,40 @@
 //
 package org.pathvisio.model;
 
-public enum AlignType { LEFT, CENTER, RIGHT }
+import java.util.HashMap;
+import java.util.Map;
+
+public enum AlignType 
+{ 
+	LEFT("Left"), CENTER("Center"), RIGHT("Right");
+
+	private final String gpmlName;
+	private static Map<String, AlignType> byGpmlName = new HashMap<String, AlignType>();
+	
+	static {
+		for (AlignType t : values()) byGpmlName.put (t.gpmlName, t);
+	}
+	
+	private AlignType(String gpmlName)
+	{
+		this.gpmlName = gpmlName;
+	}
+	
+	public static AlignType fromGpmlName(String value)
+	{
+		return byGpmlName.get(value);
+	}
+	
+	public String getGpmlName()
+	{
+		return gpmlName;
+	}
+	
+	public static String[] getNames() 
+	{ 
+		String[] result = new String[values().length];
+		for (int i = 0; i < values().length; ++i) result[i] = values()[i].gpmlName;
+		return result;
+	}
+
+}

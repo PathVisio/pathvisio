@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.AlignType;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
@@ -36,6 +37,7 @@ import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.StaticProperty;
 import org.pathvisio.model.StaticPropertyType;
+import org.pathvisio.model.ValignType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.Preference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -76,6 +78,9 @@ public class PropertyDisplayManager {
 		registerTypeHandler(new ComboHandler(StaticPropertyType.ORGANISM, Organism.latinNames(), false));
 		registerTypeHandler(new ComboHandler(StaticPropertyType.ORIENTATION, OrientationType.getNames(), true));
 		registerTypeHandler(new ComboHandler(StaticPropertyType.SHAPETYPE, ShapeType.getNames(), ShapeType.getValues()));
+		registerTypeHandler(new ComboHandler(StaticPropertyType.VALIGNTYPE, ValignType.getNames(), ValignType.values()));
+		registerTypeHandler(new ComboHandler(StaticPropertyType.ALIGNTYPE, AlignType.getNames(), AlignType.values()));
+		
 		// register core properties
 		for (StaticProperty p : StaticProperty.values()) {
 			registerProperty(p);

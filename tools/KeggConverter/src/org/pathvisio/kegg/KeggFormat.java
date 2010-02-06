@@ -756,7 +756,7 @@ public class KeggFormat {
 	}
 
 	private double coordinateToGpml(double c) {
-		return c * GpmlFormatAbstract.PIXEL_TO_MODEL;
+		return c;
 	}
 
 	private double coordinateSpacing(double c) {

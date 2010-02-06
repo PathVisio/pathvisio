@@ -531,17 +531,17 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	private static final int M_INITIAL_SHAPE_SIZE = 30 * 15; // initial
+	private static final int M_INITIAL_SHAPE_SIZE = 30; // initial
 																// Radius for
 																// rect and oval
 
-	private static final int M_INITIAL_BRACE_HEIGHT = 15 * 15;
+	private static final int M_INITIAL_BRACE_HEIGHT = 15;
 
-	private static final int M_INITIAL_BRACE_WIDTH = 60 * 15;
+	private static final int M_INITIAL_BRACE_WIDTH = 60;
 
-	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 80 * 15;
+	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 80;
 
-	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20 * 15;
+	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20;
 
 	// groups should be behind other graphics
 	// to allow background colors
@@ -2066,7 +2066,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	protected double mFontSize = 10 * 15;
+	protected double mFontSize = 10;
 
 	public double getMFontSize()
 	{
@@ -2636,7 +2636,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 */
 	public void setInitialSize()
 	{
-
 		switch (objectType)
 		{
 		case SHAPE:

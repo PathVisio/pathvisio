@@ -227,7 +227,7 @@ public abstract class DefaultTemplates {
 	 * Template for an interaction, two datanodes with a connecting line.
 	 */
 	public static class InteractionTemplate implements Template {
-		final static int OFFSET_LINE = 5 * 15;
+		final static int OFFSET_LINE = 5;
 		PathwayElement lastStartNode;
 		PathwayElement lastEndNode;
 		PathwayElement lastLine;
@@ -283,7 +283,7 @@ public abstract class DefaultTemplates {
 	 * pointing to an anchor on that arrow.
 	 */
 	public static class ReactionTemplate extends InteractionTemplate {
-		static final double OFFSET_CATALYST = 50 * 15;
+		static final double OFFSET_CATALYST = 50;
 		PathwayElement lastCatalyst;
 		PathwayElement lastCatLine;
 

@@ -86,15 +86,6 @@ public class Pathway
 	}
 
 	/**
-	 * factor to convert screen cordinates used in GenMAPP to pixel cordinates
-	 * NOTE: maybe it is better to adapt gpml to store cordinates as pixels and
-	 * divide the GenMAPP cordinates by this factor on conversion
-	 *
-	 * @deprecated
-	 */
-	final public static int OLD_GMMLZOOM = 15;
-
-	/**
 	 * List of contained dataObjects
 	 */
 	private List<PathwayElement> dataObjects = new ArrayList<PathwayElement>();

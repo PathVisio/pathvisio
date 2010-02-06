@@ -30,7 +30,7 @@ import org.pathvisio.view.LinAlg.Point;
  *
  */
 public class ElbowConnectorShape extends AbstractConnector {
-	private final static double SEGMENT_OFFSET = 20 * 15;
+	private final static double SEGMENT_OFFSET = 20;
 
 	public void recalculateShape(ConnectorRestrictions restrictions) {
 

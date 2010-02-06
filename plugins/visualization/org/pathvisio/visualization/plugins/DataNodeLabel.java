@@ -286,7 +286,7 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 	Font getFont(boolean adjustZoom) {
 		Font f = font == null ? DEFAULT_FONT : font;
 		if(adjustZoom) {
-			//int fs = (int)Math.ceil(Engine.getCurrent().getActiveVPathway().vFromM(f.getSize()) * 15);
+			//int fs = (int)Math.ceil(Engine.getCurrent().getActiveVPathway().vFromM(f.getSize()));
 			f = new Font(f.getName(), f.getStyle(), f.getSize());
 		}
 		return f;

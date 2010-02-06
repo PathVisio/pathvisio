@@ -34,10 +34,10 @@ import org.pathvisio.model.PathwayElement;
 public class Label extends GraphicsShape
 {
 
-	public static final int M_INITIAL_FONTSIZE = 10 * 15;
-	public static final int M_INITIAL_WIDTH = 80 * 15;
-	public static final int M_INITIAL_HEIGHT = 20 * 15;
-	public static final double M_ARCSIZE = 225;
+	public static final int M_INITIAL_FONTSIZE = 10;
+	public static final int M_INITIAL_WIDTH = 80;
+	public static final int M_INITIAL_HEIGHT = 20;
+	public static final double M_ARCSIZE = 15;
 
 	double getFontSize()
 	{

@@ -225,7 +225,7 @@ public class TextByExpression extends VisualizationMethod
 		if(adjustZoom) {
 			VPathway vp = getVisualization().getManager().getEngine().getActiveVPathway();
 			if(vp != null) {
-				int size = (int)Math.ceil(vp.vFromM(f.getSize()) * 15);
+				int size = (int)Math.ceil(vp.vFromM(f.getSize()));
 				f = new Font(f.getName(), f.getStyle(), size);
 			}
 		}

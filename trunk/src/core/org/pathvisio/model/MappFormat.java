@@ -92,6 +92,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static final String DATABASE_BEFORE =
             "jdbc:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=";
 
+    private static final int PIXELS_TO_MAPP = 15;
+
     //  These constants below define columns in the info table.
     //  they are linked to the order of columns in the sqlInfoSelect
     //  statement above
@@ -318,8 +320,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		mappInfo[ICOL_REMARKS] = mi.findComment("GenMAPP remarks");
 
 		double[] size = mi.getMBoardSize();
-		mappInfo[ICOL_BOARDWIDTH] = "" + size[0];
-		mappInfo[ICOL_BOARDHEIGHT] = "" + size[1];
+		mappInfo[ICOL_BOARDWIDTH] = "" + size[0] * PIXELS_TO_MAPP;
+		mappInfo[ICOL_BOARDHEIGHT] = "" + size[1] * PIXELS_TO_MAPP;
 		mappInfo[ICOL_WINDOWWIDTH] = getSafeDynamicProperty(mi, "org.pathvisio.model.WindowWidth");
 		mappInfo[ICOL_WINDOWHEIGHT] = getSafeDynamicProperty(mi, "org.pathvisio.model.WindowHeight");
 
@@ -598,10 +600,10 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 			style = "Dotted" + style;
 
 		mappObject[COL_TYPE] = style;
-		mappObject[COL_CENTERX] = "" + o.getMStartX();
-    	mappObject[COL_CENTERY] = "" + o.getMStartY();
-    	mappObject[COL_SECONDX] = "" + o.getMEndX();
-    	mappObject[COL_SECONDY] = "" + o.getMEndY();
+		mappObject[COL_CENTERX] = "" + o.getMStartX() * PIXELS_TO_MAPP;
+    	mappObject[COL_CENTERY] = "" + o.getMStartY() * PIXELS_TO_MAPP;
+    	mappObject[COL_SECONDX] = "" + o.getMEndX() * PIXELS_TO_MAPP;
+    	mappObject[COL_SECONDY] = "" + o.getMEndY() * PIXELS_TO_MAPP;
 		mappObject[COL_COLOR] = toMappColor(o.getColor(), false);
     }
 
@@ -634,24 +636,24 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	}
 
     	o.setEndLineType(mappLineTypes.get(type));
-        o.setMStartX(Double.parseDouble(mappObject[COL_CENTERX]));
-        o.setMStartY(Double.parseDouble(mappObject[COL_CENTERY]));
-        o.setMEndX(Double.parseDouble(mappObject[COL_SECONDX]));
-        o.setMEndY(Double.parseDouble(mappObject[COL_SECONDY]));
+        o.setMStartX(Double.parseDouble(mappObject[COL_CENTERX]) / PIXELS_TO_MAPP);
+        o.setMStartY(Double.parseDouble(mappObject[COL_CENTERY]) / PIXELS_TO_MAPP);
+        o.setMEndX(Double.parseDouble(mappObject[COL_SECONDX]) / PIXELS_TO_MAPP);
+        o.setMEndY(Double.parseDouble(mappObject[COL_SECONDY]) / PIXELS_TO_MAPP);
 		o.setColor(fromMappColor(mappObject[COL_COLOR]));
         return o;
 	}
 
 	private static void unmapCenter (PathwayElement o, String[] mappObject)
 	{
-		mappObject[COL_CENTERX] = "" + o.getMCenterX();
-    	mappObject[COL_CENTERY] = "" + o.getMCenterY();
+		mappObject[COL_CENTERX] = "" + o.getMCenterX() * PIXELS_TO_MAPP;
+    	mappObject[COL_CENTERY] = "" + o.getMCenterY() * PIXELS_TO_MAPP;
 	}
 
 	private static void mapCenter (PathwayElement o, String[] mappObject)
 	{
-		o.setMCenterX(Double.parseDouble(mappObject[COL_CENTERX]));
-		o.setMCenterY(Double.parseDouble(mappObject[COL_CENTERY]));
+		o.setMCenterX(Double.parseDouble(mappObject[COL_CENTERX]) / PIXELS_TO_MAPP);
+		o.setMCenterY(Double.parseDouble(mappObject[COL_CENTERY]) / PIXELS_TO_MAPP);
 	}
 
 	private static void unmapRotation (PathwayElement o, String[] mappObject)
@@ -667,29 +669,29 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	private static void unmapShape (PathwayElement o, String[] mappObject)
 	{
     	unmapCenter(o, mappObject);
-    	mappObject[COL_WIDTH] = "" + o.getMWidth();
-    	mappObject[COL_HEIGHT] = "" + o.getMHeight();
+    	mappObject[COL_WIDTH] = "" + o.getMWidth() * PIXELS_TO_MAPP;
+    	mappObject[COL_HEIGHT] = "" + o.getMHeight() * PIXELS_TO_MAPP;
 	}
 
 	private static void mapShape (PathwayElement o, String[] mappObject)
 	{
     	mapCenter(o, mappObject);
-    	o.setMWidth(Double.parseDouble(mappObject[COL_WIDTH]));
-    	o.setMHeight(Double.parseDouble(mappObject[COL_HEIGHT]));
+    	o.setMWidth(Double.parseDouble(mappObject[COL_WIDTH]) / PIXELS_TO_MAPP);
+    	o.setMHeight(Double.parseDouble(mappObject[COL_HEIGHT]) / PIXELS_TO_MAPP);
 	}
 
 	private static void unmapShapeHalf (PathwayElement o, String[] mappObject)
 	{
     	unmapCenter(o, mappObject);
-    	mappObject[COL_WIDTH] = "" + o.getMWidth() / 2;
-    	mappObject[COL_HEIGHT] = "" + o.getMHeight() / 2;
+    	mappObject[COL_WIDTH] = "" + o.getMWidth() / 2 * PIXELS_TO_MAPP;
+    	mappObject[COL_HEIGHT] = "" + o.getMHeight() / 2 * PIXELS_TO_MAPP;
 	}
 
 	private static void mapShapeHalf (PathwayElement o, String[] mappObject)
 	{
     	mapCenter(o, mappObject);
-    	o.setMWidth(Double.parseDouble(mappObject[COL_WIDTH]) * 2);
-    	o.setMHeight(Double.parseDouble(mappObject[COL_HEIGHT]) * 2);
+    	o.setMWidth(Double.parseDouble(mappObject[COL_WIDTH]) * 2 / PIXELS_TO_MAPP);
+    	o.setMHeight(Double.parseDouble(mappObject[COL_HEIGHT]) * 2 / PIXELS_TO_MAPP);
 	}
 
 	private static void unmapBraceType (PathwayElement o, String[] mappObject) throws ConverterException
@@ -813,7 +815,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	}
 
 
-        o.setMFontSize(15.0 * Double.parseDouble(mappObject[COL_SECONDX]));
+        o.setMFontSize(Double.parseDouble(mappObject[COL_SECONDX]));
 
         String styleString = mappObject[COL_SYSTEMCODE];
         int style = styleString == null ? 0 : (int)(styleString.charAt(0));
@@ -843,7 +845,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		mappObject[COL_COLOR] = toMappColor(o.getColor(), false);
 
     	mappObject[COL_ID] = o.getFontName();
-    	mappObject[COL_SECONDX] = "" + (o.getMFontSize() / 15.0);
+    	mappObject[COL_SECONDX] = "" + (o.getMFontSize());
 
     	int style = 16;
     	// note: from VB source I learned that 16 is added to prevent field from becoming 0,
@@ -923,28 +925,28 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         if (o.shapeType == ShapeType.CELLA)
 		{
         	o.setRotation (-1.308997);
-        	o.setMWidth(1500);
-        	o.setMHeight(375);
+        	o.setMWidth(1500 / PIXELS_TO_MAPP);
+        	o.setMHeight(375 / PIXELS_TO_MAPP);
         }
 		else if (o.shapeType == ShapeType.RIBOSOME)
 		{
-        	o.setMWidth (600);
-        	o.setMHeight (600);
+        	o.setMWidth (600 / PIXELS_TO_MAPP);
+        	o.setMHeight (600 / PIXELS_TO_MAPP);
 		}
 		else if (o.shapeType == ShapeType.ORGANA)
 		{
-        	o.setMWidth (500);
-        	o.setMHeight (2000);
+        	o.setMWidth (500 / PIXELS_TO_MAPP);
+        	o.setMHeight (2000 / PIXELS_TO_MAPP);
 		}
 		else if (o.shapeType == ShapeType.ORGANB)
 		{
-        	o.setMWidth (500);
-        	o.setMHeight (2000);
+        	o.setMWidth (500 / PIXELS_TO_MAPP);
+        	o.setMHeight (2000 / PIXELS_TO_MAPP);
 		}
 		else if (o.shapeType == ShapeType.ORGANC)
 		{
-        	o.setMWidth (600);
-        	o.setMHeight (600);
+        	o.setMWidth (600 / PIXELS_TO_MAPP);
+        	o.setMHeight (600 / PIXELS_TO_MAPP);
         }
         return o;
     }
@@ -987,8 +989,8 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
     	mapCenter(o, mappObject);
     	double size = Double.parseDouble(mappObject[COL_WIDTH]);
-    	o.setMWidth(size);
-    	o.setMHeight(size);
+    	o.setMWidth(size / PIXELS_TO_MAPP);
+    	o.setMHeight(size / PIXELS_TO_MAPP);
         mapRotation (o, mappObject);
         return o;
     }

@@ -36,10 +36,10 @@ import org.pathvisio.preferences.PreferenceManager;
  * @author thomas
  */
 public class Citation extends VPathwayElement implements VElementMouseListener {
-	static final int MFONT_SIZE = 8 * 15;
+	static final int MFONT_SIZE = 8;
 	static final String FONT_NAME = "Arial";
 	static final Color FONT_COLOR = new Color(0, 0, 128);
-	static final int M_PADDING = 3 * 15;
+	static final int M_PADDING = 3;
 	private Graphics parent;
 	private Point2D rPosition;
 

@@ -62,7 +62,7 @@ public class MIMShapes
 		ShapeRegistry.registerArrow (MIM_INHIBITION.getName(), getMIMInhibition(),  ArrowShape.FillType.OPEN,TBARWIDTH + TBAR_GAP);
         ShapeRegistry.registerArrow (MIM_COVALENT_BOND.getName(), getMIMCovalentBond(), ArrowShape.FillType.OPEN);
         ShapeRegistry.registerArrow (MIM_TRANSLATION.getName(), getMIMTranslation(), ArrowShape.FillType.WIRE, ARROWWIDTH + ARROWHEIGHT);
-        ShapeRegistry.registerArrow (MIM_GAP.getName(), getMIMGap(), ArrowShape.FillType.OPEN, 150);
+        ShapeRegistry.registerArrow (MIM_GAP.getName(), getMIMGap(), ArrowShape.FillType.OPEN, 10);
 
         ShapeType.create ("mim-phosphorylated", null);
 		ShapeType.create ("mim-degradation", null);
@@ -73,7 +73,7 @@ public class MIMShapes
 	private static final int MIM_DEGRADATION = 1;
 	private static final int MIM_INTERACTION = 2;
 
-    private static final int BOND_SIZE = 125;
+    private static final int BOND_SIZE = 8;
 
     static private java.awt.Shape getMIMCovalentBond ()
     {
@@ -84,14 +84,14 @@ public class MIMShapes
     }
 
 	//Cleavage line ending constants
-	static final int CLEAVAGE_FIRST = 150;
-	static final int CLEAVAGE_SECOND = 300;
+	static final int CLEAVAGE_FIRST = 10;
+	static final int CLEAVAGE_SECOND = 20;
 	static final int CLEAVAGE_GAP = CLEAVAGE_SECOND - CLEAVAGE_FIRST;
 
 	//Branch line ending constants
 	 private static final int LEFT = 0;
 	 private static final int RIGHT = 1;
-	 private static final int BRANCH_LOCATION = 125;
+	 private static final int BRANCH_LOCATION = 8;
 	 private static final int BRANCHTHICKNESS = 1;
 
 	 //method to create the MIM Branch RIGHT and LEFT line endings
@@ -131,9 +131,9 @@ public class MIMShapes
 		return path;
 	}
 
-	static final int CATALYSIS_DIAM = 125;
+	static final int CATALYSIS_DIAM = 8;
 	static final int CATALYSIS_GAP = CATALYSIS_DIAM/4;
-	static final int CATALYSIS_GAP_HEIGHT = 100;
+	static final int CATALYSIS_GAP_HEIGHT = 6;
 	//create the ellipse for catalysis line ending
 	static private java.awt.Shape getMIMCatalysis ()
 	{
@@ -142,9 +142,9 @@ public class MIMShapes
 			CATALYSIS_DIAM, CATALYSIS_DIAM);
 	}
 
-	private static final int ARROWHEIGHT = 65;
-	private static final int ARROWWIDTH = 140;
-	private static final int ARROW_NECESSARY_CROSSBAR = 100;
+	private static final int ARROWHEIGHT = 4;
+	private static final int ARROWWIDTH = 9;
+	private static final int ARROW_NECESSARY_CROSSBAR = 6;
 
 	private static GeneralPath getArrowShapedPath() {
 		GeneralPath path = new GeneralPath();
@@ -258,9 +258,9 @@ public class MIMShapes
 	}
 
 	// copied from BasicShapes for T-Bar
-	private static final int TBARHEIGHT = 225;
+	private static final int TBARHEIGHT = 15;
 	private static final int TBARWIDTH = 1;
-	private static final int TBAR_GAP = 100;
+	private static final int TBAR_GAP = 6;
 
 	// copied from BasicShapes.getTBar()
 	private static Shape getMIMInhibition()

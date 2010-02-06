@@ -62,7 +62,7 @@ public class LabelDialog extends PathwayElementDialog {
 			int style = input.isBold() ? Font.BOLD : Font.PLAIN;
 			style |= input.isItalic() ? Font.ITALIC : Font.PLAIN;
 			Font f = new Font(
-					input.getFontName(), style, (int)(input.getMFontSize() / Pathway.OLD_GMMLZOOM)
+					input.getFontName(), style, (int)(input.getMFontSize())
 			);
 			fontPreview.setFont(f);
 			fontPreview.setText(f.getName());
@@ -96,9 +96,7 @@ public class LabelDialog extends PathwayElementDialog {
 						input.setFontName(f.getFamily());
 						input.setBold(f.isBold());
 						input.setItalic(f.isItalic());
-						input.setMFontSize(
-							f.getSize() * Pathway.OLD_GMMLZOOM
-						);
+						input.setMFontSize(f.getSize());
 						fontPreview.setText(f.getFamily());
 						fontPreview.setFont(f);
 					}

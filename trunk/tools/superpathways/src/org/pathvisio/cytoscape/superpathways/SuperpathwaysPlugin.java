@@ -141,12 +141,11 @@ public class SuperpathwaysPlugin extends CytoscapePlugin {
 	}
 
 	public static double mToV(double m) {
-		return m * 1.0 / 15; // Should be stored in the model somewhere
-								// (pathvisio)
+		return m;
 	}
 
 	public static double vToM(double v) {
-		return v * 15.0;
+		return v;
 	}
 
 	/**

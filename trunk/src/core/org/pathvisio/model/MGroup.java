@@ -114,7 +114,7 @@ public class MGroup extends PathwayElement {
 		}
 	}
 
-	static final double BOUNDS_SPACING = 8 * 15; //Make the bounds slightly
+	static final double BOUNDS_SPACING = 8; //Make the bounds slightly
 											  //larger than the summed bounds
 											  //of the containing elements
 	/**

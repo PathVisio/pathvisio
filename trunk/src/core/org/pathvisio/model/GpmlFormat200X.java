@@ -179,7 +179,8 @@ class GpmlFormat200X extends GpmlFormatAbstract
 		return ATTRIBUTE_INFO;
 	};
 
-
+	private static final int CONVERSION = 15;
+	
 	private void mapDeprecatedAttribute(PathwayElement o, Element el, String key, String tag, String name) 
 		throws ConverterException
 	{
@@ -455,7 +456,7 @@ class GpmlFormat200X extends GpmlFormatAbstract
     	Element graphics = e.getChild("Graphics", e.getNamespace());
 
     	String fontSizeString = getAttribute("Label.Graphics", "FontSize", graphics);
-    	o.setMFontSize (Integer.parseInt(fontSizeString));
+    	o.setMFontSize (Integer.parseInt(fontSizeString) / CONVERSION);
 
     	String fontWeight = getAttribute("Label.Graphics", "FontWeight", graphics);
     	String fontStyle = getAttribute("Label.Graphics", "FontStyle", graphics);
@@ -500,10 +501,10 @@ class GpmlFormat200X extends GpmlFormatAbstract
 	protected void mapShapeData(PathwayElement o, Element e, String base) throws ConverterException
 	{
 		Element graphics = e.getChild("Graphics", e.getNamespace());
-    	o.setMCenterX (Double.parseDouble(getAttribute(base + ".Graphics", "CenterX", graphics)));
-    	o.setMCenterY (Double.parseDouble(getAttribute(base + ".Graphics", "CenterY", graphics)));
-		o.setMWidth (Double.parseDouble(getAttribute(base + ".Graphics", "Width", graphics)));
-		o.setMHeight (Double.parseDouble(getAttribute(base + ".Graphics", "Height", graphics)));
+    	o.setMCenterX (Double.parseDouble(getAttribute(base + ".Graphics", "CenterX", graphics)) / CONVERSION);
+    	o.setMCenterY (Double.parseDouble(getAttribute(base + ".Graphics", "CenterY", graphics)) / CONVERSION);
+		o.setMWidth (Double.parseDouble(getAttribute(base + ".Graphics", "Width", graphics)) / CONVERSION);
+		o.setMHeight (Double.parseDouble(getAttribute(base + ".Graphics", "Height", graphics)) / CONVERSION);
 		String zorder = graphics.getAttributeValue("ZOrder");
 		if (zorder != null)
 			o.setZOrder(Integer.parseInt(zorder));
@@ -516,10 +517,10 @@ class GpmlFormat200X extends GpmlFormatAbstract
 			Element graphics = e.getChild("Graphics", e.getNamespace());
 			if(graphics !=null)
 			{
-				setAttribute(base + ".Graphics", "CenterX", graphics, "" + o.getMCenterX());
-				setAttribute(base + ".Graphics", "CenterY", graphics, "" + o.getMCenterY());
-				setAttribute(base + ".Graphics", "Width", graphics, "" + o.getMWidth());
-				setAttribute(base + ".Graphics", "Height", graphics, "" + o.getMHeight());
+				setAttribute(base + ".Graphics", "CenterX", graphics, "" + o.getMCenterX() * CONVERSION);
+				setAttribute(base + ".Graphics", "CenterY", graphics, "" + o.getMCenterY() * CONVERSION);
+				setAttribute(base + ".Graphics", "Width", graphics, "" + o.getMWidth() * CONVERSION);
+				setAttribute(base + ".Graphics", "Height", graphics, "" + o.getMHeight() * CONVERSION);
 				setAttribute(base + ".Graphics", "ZOrder", graphics, "" + o.getZOrder());
 			}
 		}
@@ -559,8 +560,8 @@ class GpmlFormat200X extends GpmlFormatAbstract
 
     	o.setRelX(Double.parseDouble(getAttribute("State.Graphics", "relX", graphics)));
     	o.setRelY(Double.parseDouble(getAttribute("State.Graphics", "relY", graphics)));
-		o.setMWidth (Double.parseDouble(getAttribute("State.Graphics", "Width", graphics)));
-		o.setMHeight (Double.parseDouble(getAttribute("State.Graphics", "Height", graphics)));
+		o.setMWidth (Double.parseDouble(getAttribute("State.Graphics", "Width", graphics)) / CONVERSION);
+		o.setMHeight (Double.parseDouble(getAttribute("State.Graphics", "Height", graphics)) / CONVERSION);
 
 		//TODO
 		//StateType
@@ -590,8 +591,8 @@ class GpmlFormat200X extends GpmlFormatAbstract
     	for(int i = 0; i < pointElements.size(); i++) {
     		Element pe = pointElements.get(i);
     		MPoint mp = o.new MPoint(
-    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "x", pe)),
-    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "y", pe))
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "x", pe)) / CONVERSION,
+    		    	Double.parseDouble(getAttribute("Line.Graphics.Point", "y", pe)) / CONVERSION
     		);
     		mPoints.add(mp);
         	String ref = getAttribute("Line.Graphics.Point", "GraphRef", pe);
@@ -656,8 +657,8 @@ class GpmlFormat200X extends GpmlFormatAbstract
 				MPoint mp = mPoints.get(i);
 				Element pe = new Element("Point", e.getNamespace());
 				jdomGraphics.addContent(pe);
-				setAttribute("Line.Graphics.Point", "x", pe, Double.toString(mp.getX()));
-				setAttribute("Line.Graphics.Point", "y", pe, Double.toString(mp.getY()));
+				setAttribute("Line.Graphics.Point", "x", pe, Double.toString(mp.getX() * CONVERSION));
+				setAttribute("Line.Graphics.Point", "y", pe, Double.toString(mp.getY() * CONVERSION));
 				if (mp.getGraphRef() != null && !mp.getGraphRef().equals(""))
 				{
 					setAttribute("Line.Graphics.Point", "GraphRef", pe, mp.getGraphRef());

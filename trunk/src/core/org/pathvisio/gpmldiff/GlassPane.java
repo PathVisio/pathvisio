@@ -347,8 +347,8 @@ class GlassPane extends JPanel implements AWTEventListener
 		Point p = view.getLocationOnScreen();
 		Point p2 = getLocationOnScreen();
 		Point p3 = view.getViewPosition();
-		int rx = (int)(p.getX() - p2.getX() - p3.getX() + (x * zoomFactor / 15.0));
-		int ry = (int)(p.getY() - p2.getY() - p3.getY() + (y * zoomFactor / 15.0));
+		int rx = (int)(p.getX() - p2.getX() - p3.getX() + (x * zoomFactor));
+		int ry = (int)(p.getY() - p2.getY() - p3.getY() + (y * zoomFactor));
 		return new Point (rx, ry);
 	}
 

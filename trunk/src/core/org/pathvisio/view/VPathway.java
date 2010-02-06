@@ -74,7 +74,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 {
 	static final int ZORDER_SELECTIONBOX = Integer.MAX_VALUE;
 	static final int ZORDER_HANDLE = Integer.MAX_VALUE - 1;
-	static final double M_PASTE_OFFSET = 10 * 15;
+	static final double M_PASTE_OFFSET = 10;
 
 	private boolean selectionEnabled = true;
 
@@ -437,13 +437,11 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		fireVPathwayEvent(new VPathwayEvent(this, type));
 	}
 
-	private double zoomFactor = 1.0 / 15.0;
+	private double zoomFactor = 1.0;
 
 	/**
-	 * Get the current zoomfactor used. 1/15 means 100%, 15 gpml unit = 1 pixel
-	 * 2/15 means 200%, 7.5 gpml unit = 1 pixel
-	 *
-	 * The 15/1 ratio is there because of the Visual Basic legacy of GenMAPP
+	 * Get the current zoomfactor used. 1 means 100%, 1 gpml unit = 1 pixel
+	 * 2 means 200%, 0.5 gpml unit = 1 pixel
 	 *
 	 * To distinguish between model coordinates and view coordinates, we prefix
 	 * all coordinates with either v or m (or V or M). For example:
@@ -470,7 +468,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 */
 	public double getPctZoom()
 	{
-		return zoomFactor * 100 * 15.0;
+		return zoomFactor * 100;
 	}
 
 	/**
@@ -482,7 +480,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 */
 	public void setPctZoom(double pctZoomFactor)
 	{
-		zoomFactor = pctZoomFactor / 100.0 / 15.0;
+		zoomFactor = pctZoomFactor / 100.0;
 		int width = getVWidth();
 		int height = getVHeight();
 		for(VPathwayElement vpe : drawingObjects) {

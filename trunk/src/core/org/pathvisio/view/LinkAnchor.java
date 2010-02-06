@@ -33,8 +33,8 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
  * the line end "connects" to the Shape or Line.
  */
 public class LinkAnchor {
-	static final double DRAW_RADIUS = 5 * 15;
-	static final double MATCH_RADIUS = DRAW_RADIUS + 5 * 15;
+	static final double DRAW_RADIUS = 5;
+	static final double MATCH_RADIUS = DRAW_RADIUS + 5;
 	static final int HINT_STROKE_SIZE = 10;
 
 	double relX, relY;

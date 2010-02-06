@@ -69,14 +69,6 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 	protected abstract Map<String, AttributeInfo> getAttributeInfo();
 
 	public Namespace getGpmlNamespace () { return nsGPML; }
-	/**
-	 * The factor that is used to convert pixel coordinates
-	 * to the GPML model coordinates. E.g. if you want to convert the
-	 * width from pixels to GPML model coordinates you use:
-	 *
-	 * double mWidth = width * PIXEL_TO_MODEL;
-	 */
-	public static final double PIXEL_TO_MODEL = 15;
 
 	/**
 	 * name of resource containing the gpml schema definition

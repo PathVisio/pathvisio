@@ -344,7 +344,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 
 	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
 
-	private static final int MIN_SIZE_LA = 15 * 25;
+	private static final int MIN_SIZE_LA = 25;
 	private int numLinkanchorsH = -1;
 	private int numLinkanchorsV = -1;
 

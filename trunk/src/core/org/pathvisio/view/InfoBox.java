@@ -41,7 +41,7 @@ public class InfoBox extends Graphics {
 	//Elements not stored in gpml
 	String fontName			= "Times New Roman";
 	String fontWeight		= "regular";
-	static final double M_INITIAL_FONTSIZE	= 10.0 * 15;
+	static final double M_INITIAL_FONTSIZE	= 10.0;
 
 	int sizeX = 1;
 	int sizeY = 1; //Real size is calculated on first call to draw()

@@ -74,20 +74,20 @@ class BasicShapes
 	/**
 	   These are all model coordinates:
 	 */
-	private static final int ARROWHEIGHT = 65;
-	private static final int ARROWWIDTH = 140;
-	private static final int TBARHEIGHT = 225;
+	private static final int ARROWHEIGHT = 4;
+	private static final int ARROWWIDTH = 9;
+	private static final int TBARHEIGHT = 15;
 	private static final int TBARWIDTH = 1;
-	private static final int TBAR_GAP = 100;
-	private static final int LRDIAM = 175;
-	private static final int RRDIAM = LRDIAM + 50;
-	private static final int LIGANDWIDTH = 125;
-	private static final int LIGANDHEIGHT = 175;
-	private static final int RECEPWIDTH = LIGANDWIDTH + 30;
-	private static final int RECEPHEIGHT = LIGANDHEIGHT + 30;
+	private static final int TBAR_GAP = 6;
+	private static final int LRDIAM = 11;
+	private static final int RRDIAM = LRDIAM + 3;
+	private static final int LIGANDWIDTH = 8;
+	private static final int LIGANDHEIGHT = 11;
+	private static final int RECEPWIDTH = LIGANDWIDTH + 2;
+	private static final int RECEPHEIGHT = LIGANDHEIGHT + 2;
 
-	private static final int ANCHOR_DEFAULT_SIZE = 50;
-	private static final int ANCHOR_CIRCLE_SIZE = 125;
+	private static final int ANCHOR_DEFAULT_SIZE = 3;
+	private static final int ANCHOR_CIRCLE_SIZE = 8;
 
 
 	private static Shape getArrowHead()

@@ -49,7 +49,7 @@ import org.pathvisio.view.LinAlg.Point;
  */
 public abstract class GraphicsShape extends Graphics implements LinkProvider, Adjustable {
 
-	private static final double M_ROTATION_HANDLE_POSITION = 20.0 * 15;
+	private static final double M_ROTATION_HANDLE_POSITION = 20.0;
 
 	//Side handles
 	Handle handleN;
@@ -410,7 +410,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 
 	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
 
-	private static final int MIN_SIZE_LA = 15 * 25;
+	private static final int MIN_SIZE_LA = 25;
 	private int numLinkanchorsH = -1;
 	private int numLinkanchorsV = -1;
 

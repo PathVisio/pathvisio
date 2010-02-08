@@ -219,20 +219,20 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 	private void updateShapeCommon(PathwayElement o, Element e) throws ConverterException
 	{
 		updateShapeColor(o, e); // FillColor and Transparent
-		updateColor(o, e); // Color
 		updateFontData(o, e); // TextLabel. FontName, -Weight, -Style, -Decoration, -StrikeThru, -Size.
-		updateGraphId(o, e);
-		updateShapeType(o, e); // LineStyle, ShapeType 
+		updateGraphId(o, e); // GraphId
+		updateShapeType(o, e); // ShapeType
+		updateLineStyle(o, e); // LineStyle, LineThickness, Color
 	}
 
 	// common to Label, Shape, State, DataNode
 	private void mapShapeCommon(PathwayElement o, Element e) throws ConverterException
 	{
 		mapShapeColor(o, e); // FillColor and Transparent
-		mapColor(o, e); // Color
 		mapFontData(o, e); // TextLabel. FontName, -Weight, -Style, -Decoration, -StrikeThru, -Size.
 		mapGraphId(o, e);
-		mapShapeType(o, e); // LineStyle, ShapeType
+		mapShapeType(o, e); // ShapeType
+		mapLineStyle(o, e); // LineStyle
 	}
 
 	public Element createJdomElement(PathwayElement o) throws ConverterException
@@ -271,8 +271,8 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 				updateCommon (o, e);
 				e.addContent(new Element("Graphics", getGpmlNamespace()));
 				updateLineData(o, e);
+				updateLineStyle(o, e);
 				updateGraphId(o, e);
-				updateColor(o, e);
 				updateGroupRef(o, e);
 				break;
 			case LABEL:
@@ -281,7 +281,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 				e.addContent(new Element("Graphics", getGpmlNamespace()));
 				updateShapePosition(o, e);
 				updateShapeCommon(o, e);
-				//TODO: HREF
+				updateHref(o, e);
 				updateGroupRef(o, e);
 				break;
 			case LEGEND:
@@ -351,11 +351,12 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 				mapShapePosition(o, e);
 				mapShapeCommon(o, e);
 				mapGroupRef(o, e);
+				mapHref(o, e);
 				break;
 			case LINE:
 				mapCommon(o, e);
-				mapLineData(o, e);
-				mapColor(o, e);
+				mapLineData(o, e); // Points, ConnectorType, ZOrder
+				mapLineStyle(o, e); // LineStyle, LineThickness, Color
 				mapGraphId(o, e);
 				mapGroupRef(o, e);
 				break;
@@ -423,8 +424,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		String base = e.getName();
     	Element graphics = e.getChild("Graphics", e.getNamespace());
 
-		String style = getAttribute (base + ".Graphics", "LineStyle", graphics);
-    	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
 		o.setShapeType (ShapeType.fromGpmlName(getAttribute(base + ".Graphics", "ShapeType", graphics)));
 	}
 
@@ -440,7 +439,16 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 		String shapeName = o.getShapeType() == null ? "None" : o.getShapeType().getName();
 		setAttribute(base + ".Graphics", "ShapeType", jdomGraphics, shapeName);
-		setAttribute(base + ".Graphics", "LineStyle", jdomGraphics, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
+	}
+	
+	protected void updateHref(PathwayElement o, Element e) throws ConverterException
+	{
+		setAttribute ("Label", "Href", e, o.getHref());
+	}
+	
+	protected void mapHref(PathwayElement o, Element e) throws ConverterException
+	{
+		o.setHref(getAttribute("Label", "Href", e));
 	}
 
 	protected void mapFontData(PathwayElement o, Element e) throws ConverterException
@@ -552,13 +560,23 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		//TODO StateType
 		//TODO Xref
 	}
-	
+
+	protected void mapLineStyle(PathwayElement o, Element e) throws ConverterException
+	{
+    	Element graphics = e.getChild("Graphics", e.getNamespace());
+
+    	String base = e.getName();
+		String style = getAttribute (base + ".Graphics", "LineStyle", graphics);
+    	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
+    	
+    	o.setLineThickness(
+    			Double.parseDouble(getAttribute(base + ".Graphics", "LineThickness", graphics)));
+		mapColor(o, e); // Color
+	}
+
 	protected void mapLineData(PathwayElement o, Element e) throws ConverterException
 	{    	
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-
-    	String style = getAttribute("Line.Graphics", "LineStyle", graphics);
-    	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
 
     	List<MPoint> mPoints = new ArrayList<MPoint>();
 
@@ -613,12 +631,18 @@ class GpmlFormat2010a extends GpmlFormatAbstract
     		}
     	}
 	}
+
+	protected void updateLineStyle(PathwayElement o, Element e) throws ConverterException
+	{
+		String base = e.getName();
+    	Element graphics = e.getChild("Graphics", e.getNamespace());
+		setAttribute(base + ".Graphics", "LineStyle", graphics, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");    	
+		setAttribute (base + ".Graphics", "LineThickness", graphics, "" + o.getLineThickness());
+		updateColor(o, e);
+	}
 	
 	protected void updateLineData(PathwayElement o, Element e) throws ConverterException
 	{
-    	Element graphics = e.getChild("Graphics", e.getNamespace());
-		setAttribute("Line.Graphics", "LineStyle", graphics, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
-
 		Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
 		List<MPoint> mPoints = o.getMPoints();
 

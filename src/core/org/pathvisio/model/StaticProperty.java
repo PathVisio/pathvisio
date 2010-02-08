@@ -60,7 +60,7 @@ public enum StaticProperty implements Property
 	STARTLINETYPE ("StartLineType", "Start Line Type", StaticPropertyType.LINETYPE, 118),
 	ENDLINETYPE ("EndLineType", "End Line Type", StaticPropertyType.LINETYPE, 119),
 
-	// line, shape and modification
+	// line, label, shape, state and datanode
 	LINESTYLE ("LineStyle", "Line Style", StaticPropertyType.LINESTYLE, 120),
 	LINETHICKNESS ("LineThickness", "Line Thickness", StaticPropertyType.DOUBLE, 120),
 
@@ -72,18 +72,20 @@ public enum StaticProperty implements Property
 	DATASOURCE ("SystemCode", "Database Name", StaticPropertyType.DATASOURCE, 123),
 	TYPE ("Type", "Type", StaticPropertyType.GENETYPE, 126),
 
+	// state
 	MODIFICATIONTYPE ("ModificationType", "ModificationType", StaticPropertyType.STRING, 127),
 
-	// label, modification, datanode
+	// label, shape, state and datanode
 	TEXTLABEL ("TextLabel", "Text Label", StaticPropertyType.STRING, 128),
-
-	// label, shape, datanode
 	FONTNAME ("FontName", "Font Name", StaticPropertyType.FONT, 129),
 	FONTWEIGHT ("FontWeight", "Bold", StaticPropertyType.BOOLEAN, 130),
 	FONTSTYLE ("FontStyle", "Italic", StaticPropertyType.BOOLEAN, 131),
 	FONTSIZE ("FontSize", "Font Size", StaticPropertyType.DOUBLE, 132),
 	VALIGN ("Valign", "Vertical Alignment", StaticPropertyType.VALIGNTYPE, 133),
-	ALIGN ("Align", "Alignment", StaticPropertyType.ALIGNTYPE, 133),
+	ALIGN ("Align", "Alignment", StaticPropertyType.ALIGNTYPE, 134),
+
+	// label
+	HREF ("Href", "Link", StaticPropertyType.STRING, 135),
 
 	// mappinfo
 	MAPINFONAME ("MapInfoName", "Title", StaticPropertyType.STRING, 134),

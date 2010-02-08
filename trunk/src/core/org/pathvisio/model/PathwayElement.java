@@ -860,7 +860,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			ALLOWED_PROPS.put (ObjectType.LINE, propsLine);
 		}
 		{
-			Set<StaticProperty> propsLabel = EnumSet.noneOf(StaticProperty.class);
+			Set<StaticProperty> propsLabel = EnumSet.of (
+					StaticProperty.HREF
+				);
 			propsLabel.addAll (propsCommon);
 			propsLabel.addAll (propsCommonStyle);
 			propsLabel.addAll (propsCommonShape);
@@ -1050,6 +1052,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case TEXTLABEL:
 			setTextLabel((String) value);
 			break;
+		case HREF:
+			setHref ((String) value);
+			break;
 		case FONTNAME:
 			setFontName((String) value);
 			break;
@@ -1215,6 +1220,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case TEXTLABEL:
 			result = getTextLabel();
 			break;
+		case HREF:
+			result = getHref();
+			break;
 		case FONTNAME:
 			result = getFontName();
 			break;
@@ -1331,6 +1339,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		dataNodeType = src.dataNodeType;
 		mHeight = src.mHeight;
 		textLabel = src.textLabel;
+		href = src.href;
 		lastModified = src.lastModified;
 		lineStyle = src.lineStyle;
 		startLineType = src.startLineType;
@@ -2047,6 +2056,23 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			textLabel = input;
 			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.TEXTLABEL));
+		}
+	}
+
+	protected String href = "";
+
+	public String getHref()
+	{
+		return href;
+	}
+
+	public void setHref(String v)
+	{
+		String input = (v == null) ? "" : v;
+		if (!Utils.stringEquals(href, input))
+		{
+			href = input;
+			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.HREF));
 		}
 	}
 

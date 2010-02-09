@@ -74,6 +74,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 
 	protected void createHandles()
 	{
+        if (!gdata.getShapeType().isResizeable()) return; // no resizing, no handles
 		handleN	= new Handle(Handle.Freedom.Y, this, this);
 		handleE	= new Handle(Handle.Freedom.X, this, this);
 		handleS	= new Handle(Handle.Freedom.Y, this, this);

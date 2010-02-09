@@ -43,8 +43,8 @@ import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.OutlineType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.ConnectorShape.Segment;
 import org.pathvisio.model.ConnectorShape.WayPoint;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
@@ -538,7 +538,7 @@ public class KeggFormat {
 	private void convertMap(Entry map) {
 		String label = map.getName();
 		PathwayElement link = PathwayElement.createPathwayElement(ObjectType.LABEL);
-		link.setOutline(OutlineType.ROUNDED_RECTANGLE);
+		link.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 		link.addComment(link.new Comment(map.getLink(), COMMENT_SOURCE));
 		Graphics graphics = map.getGraphics();
 		if(graphics != null) {

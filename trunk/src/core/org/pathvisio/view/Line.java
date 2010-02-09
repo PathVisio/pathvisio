@@ -443,7 +443,8 @@ public class Line extends Graphics implements Adjustable
 	{
 		if(head != null)
 		{
-			g.setStroke(new BasicStroke());
+			// reset stroked line to solid, but use given thickness
+			g.setStroke(new BasicStroke((float)gdata.getLineThickness()));
 			switch (head.getFillType())
 			{
 			case OPEN:

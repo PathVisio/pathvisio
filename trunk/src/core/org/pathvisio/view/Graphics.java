@@ -260,18 +260,19 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	protected void setLineStyle(Graphics2D g)
 	{
 		int ls = gdata.getLineStyle();
+		float lt = (float)gdata.getLineThickness();
 		if (ls == LineStyle.SOLID)
 		{
-			g.setStroke(new BasicStroke());
+			g.setStroke(new BasicStroke(lt));
 		}
 		else if (ls == LineStyle.DASHED)
 		{
 			g.setStroke	(new BasicStroke (
-				  1,
+				  lt,
 				  BasicStroke.CAP_SQUARE,
 				  BasicStroke.JOIN_MITER,
 				  10, new float[] {4, 4}, 0));
-		}
+		}		
 	}
 
 }

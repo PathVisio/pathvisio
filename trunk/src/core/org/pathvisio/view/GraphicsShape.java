@@ -20,6 +20,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -485,24 +486,47 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 
 	protected void drawTextLabel(Graphics2D g)
 	{
+		int margin = (int)vFromM(5);
 		Rectangle area = getVShape(true).getBounds();
 		String label = gdata.getTextLabel();
 		if(label != null && !"".equals(label)) {
 			//Split by newline, to enable multi-line labels
 			String[] lines = label.split("\n");
+			
+			FontMetrics fm = g.getFontMetrics();
+			int lh = fm.getHeight();
+			int yoffset = area.y + fm.getAscent();
+			switch (gdata.getValign())
+			{
+			case MIDDLE:
+				yoffset += (area.height - (lines.length * lh)) / 2;
+				break;
+			case TOP:
+				yoffset += margin;
+				break;
+			case BOTTOM:
+				yoffset += area.height - margin - (lines.length * lh);
+			}
+			
 			for(int i = 0; i < lines.length; i++) {
 				if(lines[i].equals("")) continue; //Can't have attributed string with 0 length
 				AttributedString ats = getVAttributedString(lines[i]);
-				Rectangle2D tb = g.getFontMetrics().getStringBounds(ats.getIterator(), 0, lines[i].length(), g);
+				Rectangle2D tb = fm.getStringBounds(ats.getIterator(), 0, lines[i].length(), g);
 
-				int yoffset = area.y;
-				int xoffset = area.x + (int)(area.width / 2) - (int)(tb.getWidth() / 2);
-				//Align y-center when only one line, otherwise, align to y-top
-				if(lines.length == 1) {
-					yoffset += (int)(area.height / 2) + (int)(tb.getHeight() / 2);
-				} else {
-					yoffset += (int)tb.getHeight();
+				int xoffset = area.x;
+				switch (gdata.getAlign())
+				{
+				case CENTER:
+					xoffset += (int)(area.width / 2) - (int)(tb.getWidth() / 2);
+					break;
+				case LEFT:
+					xoffset += margin;
+					break;
+				case RIGHT:
+					xoffset += area.width - margin - tb.getWidth();
+					break;
 				}
+				
 				g.drawString(ats.getIterator(), xoffset,
 						yoffset + (int)(i * tb.getHeight()));
 			}

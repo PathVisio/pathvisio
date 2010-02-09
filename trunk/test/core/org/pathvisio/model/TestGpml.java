@@ -32,9 +32,6 @@ public class TestGpml extends TestCase
 		
 		Pathway pwy = new Pathway();
 		pwy.readFromXml(in, true);
-		
-		File tmp = File.createTempFile("test", "gpml");		
-		GpmlFormat200X.GPML_2008A.writeToXml(pwy, tmp, true);		
 	}
 	
 	private static final File FILE1 = 

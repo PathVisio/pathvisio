@@ -16,17 +16,10 @@
 //
 package org.pathvisio.model;
 
-import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.Namespace;
 
-public interface GpmlFormatVersion 
+public interface GpmlFormatReader extends GpmlFormatVersion 
 {
-	Namespace getGpmlNamespace();
-
-	/**
-	 * validates a JDOM document against the xml-schema definition specified by 'xsdFile'
-	 * @param doc the document to validate
-	 */	
-	void validateDocument(Document doc) throws ConverterException;
+	public PathwayElement mapElement(Element e) throws ConverterException;
+	public void readFromRoot(Element root, Pathway pwy) throws ConverterException;
 }

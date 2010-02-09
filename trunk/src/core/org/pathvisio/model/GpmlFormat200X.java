@@ -24,7 +24,6 @@ import java.util.Map;
 import org.bridgedb.DataSource;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.pathvisio.model.GpmlFormatAbstract.AttributeInfo;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 
@@ -32,12 +31,12 @@ import org.pathvisio.model.PathwayElement.MPoint;
  * GpmlFormat reader / writer for version 2007 and 2008A.
  * Code shared with other versions is in GpmlFormatAbstract.`
  */
-class GpmlFormat200X extends GpmlFormatAbstract
+class GpmlFormat200X extends GpmlFormatAbstract implements GpmlFormatReader
 {
-	public static final GpmlFormatAbstract GPML_2007 = new GpmlFormat200X (
+	public static final GpmlFormatReader GPML_2007 = new GpmlFormat200X (
 		"GPML2007.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2007")
 	);
-	public static final GpmlFormatAbstract GPML_2008A = new GpmlFormat200X (
+	public static final GpmlFormatReader GPML_2008A = new GpmlFormat200X (
 		"GPML2008a.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2008a")
 	);
 
@@ -191,13 +190,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
 		if (result != null) o.setDynamicProperty(key, result);
 	}
 	
-	private void updateDeprecatedAttribute(PathwayElement o, Element e, 
-			String key, String tag, String name) throws ConverterException
-	{
-		String val = o.getDynamicProperty(key);
-		if (val != null) setAttribute (tag, name, e, val);
-	}
-
 	protected void updateMappInfoVariable(Element root, PathwayElement o) throws ConverterException
 	{
 		setAttribute("Pathway", "Copyright", root, o.getCopyright());
@@ -206,100 +198,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
 	protected void mapMappInfoDataVariable (PathwayElement o, Element e) throws ConverterException
 	{
 		o.setCopyright (getAttribute("Pathway", "Copyright", e));
-	}
-
-	public Element createJdomElement(PathwayElement o) throws ConverterException
-	{
-		Element e = null;
-		switch (o.getObjectType())
-		{
-			case DATANODE:
-				e = new Element("DataNode", getGpmlNamespace());
-				updateComments(o, e);
-				updateBiopaxRef(o, e);
-				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", getGpmlNamespace()));
-				e.addContent(new Element("Xref", getGpmlNamespace()));
-				updateDataNode(o, e);
-				updateColor(o, e);
-				updateShapeData(o, e, "DataNode");
-				updateGraphId(o, e);
-				updateGroupRef(o, e);
-				break;
-			case STATE:
-				e = new Element("State", getGpmlNamespace());
-				updateComments(o, e);
-				updateBiopaxRef(o, e);
-				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", getGpmlNamespace()));
-				//TODO: Xref?
-				updateStateData(o, e);
-				updateColor(o, e);
-				updateShapeColor(o, e);
-				updateGraphId(o, e);
-				break;
-			case SHAPE:
-				e = new Element ("Shape", getGpmlNamespace());
-				updateComments(o, e);
-				updateBiopaxRef(o, e);
-				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", getGpmlNamespace()));
-				updateShapeColor(o, e);
-				updateColor(o, e);
-				updateShapeData(o, e, "Shape");
-				updateShapeType(o, e);
-				updateGraphId(o, e);
-				updateGroupRef(o, e);
-				break;
-			case LINE:
-				e = new Element("Line", getGpmlNamespace());
-				updateComments(o, e);
-				updateBiopaxRef(o, e);
-				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", getGpmlNamespace()));
-				updateLineData(o, e);
-				updateGraphId(o, e);
-				updateColor(o, e);
-				updateGroupRef(o, e);
-				break;
-			case LABEL:
-				e = new Element("Label", getGpmlNamespace());
-				updateComments(o, e);
-				updateBiopaxRef(o, e);
-				updateAttributes(o, e);
-				e.addContent(new Element("Graphics", getGpmlNamespace()));
-				updateLabelData(o, e);
-				updateColor(o, e);
-				updateShapeData(o, e, "Label");
-				updateGraphId(o, e);
-				updateGroupRef(o, e);
-				break;
-			case LEGEND:
-				e = new Element ("Legend", getGpmlNamespace());
-				updateSimpleCenter (o, e);
-				break;
-			case INFOBOX:
-				e = new Element ("InfoBox", getGpmlNamespace());
-				updateSimpleCenter (o, e);
-				break;
-			case GROUP:
-				e = new Element ("Group", getGpmlNamespace());
-				updateGroup (o, e);
-				updateGroupRef(o, e);
-				updateComments(o, e);
-				updateBiopaxRef(o, e);
-				updateAttributes(o, e);
-				break;
-			case BIOPAX:
-				e = new Element ("Biopax", getGpmlNamespace());
-				updateBiopax(o, e);
-				break;
-		}
-		if (e == null)
-		{
-			throw new ConverterException ("Error creating jdom element with objectType " + o.getObjectType());
-		}
-		return e;
 	}
 
 	/**
@@ -435,21 +333,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
     	o.setRotation (result);
 	}
 
-	protected void updateShapeType(PathwayElement o, Element e) throws ConverterException
-	{
-		if(e != null)
-		{
-			e.setAttribute("Type", o.getShapeType().getName());
-			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
-
-			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			if(jdomGraphics !=null)
-			{
-				jdomGraphics.setAttribute("Rotation", Double.toString(o.getRotation()));
-			}
-		}
-	}
-
 	protected void mapLabelData(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel (getAttribute("Label", "TextLabel", e));
@@ -476,28 +359,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
     	o.setFontName (getAttribute("Label.Graphics", "FontName", graphics));
 	}
 	
-	protected void updateLabelData(PathwayElement o, Element e) throws ConverterException
-	{
-		if(e != null)
-		{
-			setAttribute("Label", "TextLabel", e, o.getTextLabel());
-			Element graphics = e.getChild("Graphics", e.getNamespace());
-			if(graphics !=null)
-			{
-				setAttribute("Label.Graphics", "FontName", graphics, o.getFontName() == null ? "" : o.getFontName());
-				setAttribute("Label.Graphics", "FontWeight", graphics, o.isBold() ? "Bold" : "Normal");
-				setAttribute("Label.Graphics", "FontStyle", graphics, o.isItalic() ? "Italic" : "Normal");
-				setAttribute("Label.Graphics", "FontDecoration", graphics, o.isUnderline() ? "Underline" : "Normal");
-				setAttribute("Label.Graphics", "FontStrikethru", graphics, o.isStrikethru() ? "Strikethru" : "Normal");
-				setAttribute("Label.Graphics", "FontSize", graphics, Integer.toString((int)o.getMFontSize()));
-			}
-			String outline = "None";
-			if (o.getShapeType() == ShapeType.RECTANGLE) outline = "Rectangle";
-			else if (o.getShapeType() == ShapeType.ROUNDED_RECTANGLE) outline = "RoundedRectangle";
-			setAttribute("Label", "Outline", e, outline);
-		}
-	}
-	
 	protected void mapShapeData(PathwayElement o, Element e, String base) throws ConverterException
 	{
 		Element graphics = e.getChild("Graphics", e.getNamespace());
@@ -510,22 +371,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
 			o.setZOrder(Integer.parseInt(zorder));
 	}
 
-	protected void updateShapeData(PathwayElement o, Element e, String base) throws ConverterException
-	{
-		if(e != null)
-		{
-			Element graphics = e.getChild("Graphics", e.getNamespace());
-			if(graphics !=null)
-			{
-				setAttribute(base + ".Graphics", "CenterX", graphics, "" + o.getMCenterX() * CONVERSION);
-				setAttribute(base + ".Graphics", "CenterY", graphics, "" + o.getMCenterY() * CONVERSION);
-				setAttribute(base + ".Graphics", "Width", graphics, "" + o.getMWidth() * CONVERSION);
-				setAttribute(base + ".Graphics", "Height", graphics, "" + o.getMHeight() * CONVERSION);
-				setAttribute(base + ".Graphics", "ZOrder", graphics, "" + o.getZOrder());
-			}
-		}
-	}
-
 	protected void mapDataNode(PathwayElement o, Element e) throws ConverterException
 	{
 		o.setTextLabel    (getAttribute("DataNode", "TextLabel", e));
@@ -534,19 +379,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setGeneID (getAttribute("DataNode.Xref", "ID", xref));
 		o.setDataSource (DataSource.getByFullName (getAttribute("DataNode.Xref", "Database", xref)));
-	}
-
-	protected void updateDataNode(PathwayElement o, Element e) throws ConverterException
-	{
-		if(e != null) {
-			updateDeprecatedAttribute(o, e, "org.pathvisio.model.BackpageHead", "DataNode", "BackpageHead");
-			setAttribute ("DataNode", "TextLabel", e, o.getTextLabel());
-			setAttribute ("DataNode", "Type", e, o.getDataNodeType());
-			Element xref = e.getChild("Xref", e.getNamespace());
-			String database = o.getDataSource() == null ? "" : o.getDataSource().getFullName();
-			setAttribute ("DataNode.Xref", "Database", xref, database == null ? "" : database);
-			setAttribute ("DataNode.Xref", "ID", xref, o.getGeneID());
-        }
 	}
 
 	protected void mapStateData(PathwayElement o, Element e) throws ConverterException
@@ -570,11 +402,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
 		// Xref???
 	}
 
-	protected static void updateStateData(PathwayElement o, Element e) throws ConverterException
-	{
-		//TODO
-	}
-	
 	protected void mapLineData(PathwayElement o, Element e) throws ConverterException
 	{
     	String style = getAttribute("Line", "Style", e);
@@ -643,47 +470,6 @@ class GpmlFormat200X extends GpmlFormatAbstract
     			anchor.setShape(AnchorType.fromName(shape));
     		}
     	}
-	}
-
-	protected void updateLineData(PathwayElement o, Element e) throws ConverterException
-	{
-		if(e != null) {
-			setAttribute("Line", "Style", e, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");
-
-			Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-			List<MPoint> mPoints = o.getMPoints();
-
-			for(int i = 0; i < mPoints.size(); i++) {
-				MPoint mp = mPoints.get(i);
-				Element pe = new Element("Point", e.getNamespace());
-				jdomGraphics.addContent(pe);
-				setAttribute("Line.Graphics.Point", "x", pe, Double.toString(mp.getX() * CONVERSION));
-				setAttribute("Line.Graphics.Point", "y", pe, Double.toString(mp.getY() * CONVERSION));
-				if (mp.getGraphRef() != null && !mp.getGraphRef().equals(""))
-				{
-					setAttribute("Line.Graphics.Point", "GraphRef", pe, mp.getGraphRef());
-					setAttribute("Line.Graphics.Point", "relX", pe, Double.toString(mp.getRelX()));
-					setAttribute("Line.Graphics.Point", "relY", pe, Double.toString(mp.getRelY()));
-				}
-				if(i == 0) {
-					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getStartLineType().getName());
-				} else if(i == mPoints.size() - 1) {
-					setAttribute("Line.Graphics.Point", "ArrowHead", pe, o.getEndLineType().getName());
-				}
-			}
-
-			for(MAnchor anchor : o.getMAnchors()) {
-				Element ae = new Element("Anchor", e.getNamespace());
-				setAttribute("Line.Graphics.Anchor", "position", ae, Double.toString(anchor.getPosition()));
-				setAttribute("Line.Graphics.Anchor", "Shape", ae, anchor.getShape().getName());
-				updateGraphId(anchor, ae);
-				jdomGraphics.addContent(ae);
-			}
-
-			ConnectorType ctype = o.getConnectorType();
-			setAttribute("Line.Graphics", "ConnectorType", jdomGraphics, ctype.getName());
-			setAttribute("Line.Graphics", "ZOrder", jdomGraphics, "" + o.getZOrder());
-		}
 	}
 
 }

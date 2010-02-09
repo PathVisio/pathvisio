@@ -16,18 +16,27 @@
 //
 package org.pathvisio.model;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bridgedb.DataSource;
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
+import org.pathvisio.model.GpmlFormatAbstract.ByElementName;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
 
-class GpmlFormat2010a extends GpmlFormatAbstract 
+class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, GpmlFormatWriter 
 {
 	public static final GpmlFormat2010a GPML_2010A = new GpmlFormat2010a (
 			"GPML.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2010a")
@@ -569,8 +578,8 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		String style = getAttribute (base + ".Graphics", "LineStyle", graphics);
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
     	
-    	o.setLineThickness(
-    			Double.parseDouble(getAttribute(base + ".Graphics", "LineThickness", graphics)));
+    	String lt = getAttribute(base + ".Graphics", "LineThickness", graphics);
+    	o.setLineThickness(lt == null ? 1.0 : Double.parseDouble(lt));
 		mapColor(o, e); // Color
 	}
 
@@ -678,4 +687,88 @@ class GpmlFormat2010a extends GpmlFormatAbstract
 		setAttribute("Line.Graphics", "ZOrder", jdomGraphics, "" + o.getZOrder());
 	}
 
+	public Document createJdom(Pathway data) throws ConverterException
+	{
+		Document doc = new Document();
+
+		Element root = new Element("Pathway", getGpmlNamespace());
+		doc.setRootElement(root);
+
+		List<Element> elementList = new ArrayList<Element>();
+
+		List<PathwayElement> pathwayElements = data.getDataObjects();
+		Collections.sort(pathwayElements);
+		for (PathwayElement o : pathwayElements)
+		{
+			if (o.getObjectType() == ObjectType.MAPPINFO)
+			{
+				updateMappInfo(root, o);
+			}
+			else
+			{
+				Element e = createJdomElement(o);
+				if (e != null)
+					elementList.add(e);
+			}
+		}
+
+    	// now sort the generated elements in the order defined by the xsd
+		Collections.sort(elementList, new ByElementName());
+		for (Element e : elementList)
+		{
+			root.addContent(e);
+		}
+
+		return doc;
+	}
+
+	/**
+	 * Writes the JDOM document to the outputstream specified
+	 * @param out	the outputstream to which the JDOM document should be writed
+	 * @param validate if true, validate the dom structure before writing. If there is a validation error,
+	 * 		or the xsd is not in the classpath, an exception will be thrown.
+	 * @throws ConverterException
+	 */
+	public void writeToXml(Pathway pwy, OutputStream out, boolean validate) throws ConverterException {
+		Document doc = createJdom(pwy);
+
+		//Validate the JDOM document
+		if (validate) validateDocument(doc);
+		//			Get the XML code
+		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
+		Format f = xmlcode.getFormat();
+		f.setEncoding("UTF-8");
+		f.setTextMode(Format.TextMode.PRESERVE);
+		xmlcode.setFormat(f);
+
+		try
+		{
+			//Send XML code to the outputstream
+			xmlcode.output(doc, out);
+		}
+		catch (IOException ie)
+		{
+			throw new ConverterException(ie);
+		}
+	}
+
+	/**
+	 * Writes the JDOM document to the file specified
+	 * @param file	the file to which the JDOM document should be saved
+	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error,
+	 * 		or the xsd is not in the classpath, an exception will be thrown.
+	 */
+	public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException
+	{
+		OutputStream out;
+		try
+		{
+			out = new FileOutputStream(file);
+		}
+		catch (IOException ex)
+		{
+			throw new ConverterException (ex);
+		}
+		writeToXml (pwy, out, validate);
+	}
 }

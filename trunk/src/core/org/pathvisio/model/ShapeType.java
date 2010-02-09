@@ -48,6 +48,7 @@ public class ShapeType
 
 	private String name;
 	private String mappName;
+    private boolean isResizeable;
 
 	// integer value always equals the index of this item in the
 	// values array.
@@ -61,10 +62,18 @@ public class ShapeType
 
 	   Note that mappName may be null for Shapes that are not supported by GenMAPP.
 	 */
-	private ShapeType (String name, String mappName)
+	private ShapeType(String name, String mappName)
 	{
-		if (name == null) { throw new NullPointerException(); }
+		this(name, mappName, true);
+	}
 
+	private ShapeType(String name, String mappName, boolean isResizeable)
+	{
+		if (name == null)
+		{
+			throw new NullPointerException();
+		}
+		this.isResizeable = isResizeable;
 		this.mappName = mappName;
 		this.name  = name;
 
@@ -93,7 +102,24 @@ public class ShapeType
 		}
 		else
 		{
-			return new ShapeType (name, mappName);
+			return new ShapeType (name, mappName, true);
+		}
+	}
+
+	/**
+	 * Create an object and add it to the list.
+	 * 
+	 * For extending the enum.
+	 */
+	public static ShapeType create(String name, String mappName,
+			boolean isResizeable)
+	{
+		if (nameMappings.containsKey(name))
+		{
+			return nameMappings.get(name);
+		} else
+		{
+			return new ShapeType(name, mappName, isResizeable);
 		}
 	}
 
@@ -180,5 +206,8 @@ public class ShapeType
 	{
 		return name;
 	}
-}
 
+    public boolean isResizeable() {
+        return isResizeable;
+    }
+}

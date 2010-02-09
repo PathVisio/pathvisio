@@ -18,14 +18,8 @@ package org.pathvisio.model;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +49,7 @@ import org.xml.sax.SAXException;
  * Base implementation for different GpmlFormat versions.
  * Code that is shared between multiple versions is located here.
  */
-public abstract class GpmlFormatAbstract implements GpmlFormatVersion
+public abstract class GpmlFormatAbstract
 {
 	protected GpmlFormatAbstract (String xsdFile, Namespace nsGPML)
 	{
@@ -197,7 +191,7 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 	 * This Comparator can sort jdom Elements so that they are in the correct order
 	 * for the xsd.
 	 */
-	private static class ByElementName implements Comparator<Element>
+	protected static class ByElementName implements Comparator<Element>
 	{
 		// hashmap for quick lookups during sorting
 		private Map<String, Integer> elementOrdering;
@@ -237,7 +231,7 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 	
 	protected abstract void updateMappInfoVariable(Element root, PathwayElement o) throws ConverterException;
 	
-	private void updateMappInfo(Element root, PathwayElement o) throws ConverterException
+	protected void updateMappInfo(Element root, PathwayElement o) throws ConverterException
 	{
 		setAttribute("Pathway", "Name", root, o.getMapInfoName());
 		setAttribute("Pathway", "Data-Source", root, o.getMapInfoDataSource());
@@ -260,41 +254,6 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 		setAttribute("Pathway.Graphics", "BoardHeight", graphics, "" + size[1]);
 		
 		updateMappInfoVariable (root, o);
-	}
-
-	public Document createJdom(Pathway data) throws ConverterException
-	{
-		Document doc = new Document();
-
-		Element root = new Element("Pathway", nsGPML);
-		doc.setRootElement(root);
-
-		List<Element> elementList = new ArrayList<Element>();
-
-		List<PathwayElement> pathwayElements = data.getDataObjects();
-		Collections.sort(pathwayElements);
-		for (PathwayElement o : pathwayElements)
-		{
-			if (o.getObjectType() == ObjectType.MAPPINFO)
-			{
-				updateMappInfo(root, o);
-			}
-			else
-			{
-				Element e = createJdomElement(o);
-				if (e != null)
-					elementList.add(e);
-			}
-		}
-
-    	// now sort the generated elements in the order defined by the xsd
-		Collections.sort(elementList, new ByElementName());
-		for (Element e : elementList)
-		{
-			root.addContent(e);
-		}
-
-		return doc;
 	}
 
 	public abstract PathwayElement mapElement(Element e, Pathway p) throws ConverterException;
@@ -655,56 +614,6 @@ public abstract class GpmlFormatAbstract implements GpmlFormatVersion
 			"Maroon", "Navy", "Olive", "Purple", "Red", "Silver", "Teal",
 			"White", "Yellow", "Transparent"
 		});
-
-	/**
-	 * Writes the JDOM document to the file specified
-	 * @param file	the file to which the JDOM document should be saved
-	 * @param validate if true, validate the dom structure before writing to file. If there is a validation error,
-	 * 		or the xsd is not in the classpath, an exception will be thrown.
-	 */
-	public void writeToXml(Pathway pwy, File file, boolean validate) throws ConverterException
-	{
-		OutputStream out;
-		try
-		{
-			out = new FileOutputStream(file);
-		}
-		catch (IOException ex)
-		{
-			throw new ConverterException (ex);
-		}
-		writeToXml (pwy, out, validate);
-	}
-
-	/**
-	 * Writes the JDOM document to the outputstream specified
-	 * @param out	the outputstream to which the JDOM document should be writed
-	 * @param validate if true, validate the dom structure before writing. If there is a validation error,
-	 * 		or the xsd is not in the classpath, an exception will be thrown.
-	 * @throws ConverterException
-	 */
-	public void writeToXml(Pathway pwy, OutputStream out, boolean validate) throws ConverterException {
-		Document doc = createJdom(pwy);
-
-		//Validate the JDOM document
-		if (validate) validateDocument(doc);
-		//			Get the XML code
-		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
-		Format f = xmlcode.getFormat();
-		f.setEncoding("UTF-8");
-		f.setTextMode(Format.TextMode.PRESERVE);
-		xmlcode.setFormat(f);
-
-		try
-		{
-			//Send XML code to the outputstream
-			xmlcode.output(doc, out);
-		}
-		catch (IOException ie)
-		{
-			throw new ConverterException(ie);
-		}
-	}
 
 	public void readFromRoot(Element root, Pathway pwy) throws ConverterException
 	{

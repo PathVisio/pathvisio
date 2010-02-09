@@ -43,7 +43,7 @@ import org.xml.sax.InputSource;
  */
 public class GpmlFormat implements PathwayImporter, PathwayExporter
 {
-	static private final GpmlFormatVersion CURRENT = GpmlFormat2010a.GPML_2010A;
+	static private final GpmlFormat2010a CURRENT = GpmlFormat2010a.GPML_2010A;
 
 	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
@@ -149,12 +149,12 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			}
 
 			Namespace ns = root.getNamespace();
-			GpmlFormatAbstract[] formats = new GpmlFormatAbstract[]
+			GpmlFormatReader[] formats = new GpmlFormatReader[]
 			{ 
 					GpmlFormat200X.GPML_2007, GpmlFormat200X.GPML_2008A, GpmlFormat2010a.GPML_2010A 
 			};
 			boolean recognized = false;
-			for (GpmlFormatAbstract format : formats)
+			for (GpmlFormatReader format : formats)
 			{
 				if (ns.equals(format.getGpmlNamespace()))
 				{

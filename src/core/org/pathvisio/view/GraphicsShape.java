@@ -74,7 +74,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 
 	protected void createHandles()
 	{
-        if (!gdata.getShapeType().isResizeable()) return; // no resizing, no handles
+        if (gdata.getShapeType() != null && !gdata.getShapeType().isResizeable()) return; // no resizing, no handles
 		handleN	= new Handle(Handle.Freedom.Y, this, this);
 		handleE	= new Handle(Handle.Freedom.X, this, this);
 		handleS	= new Handle(Handle.Freedom.Y, this, this);
@@ -493,7 +493,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		if(label != null && !"".equals(label)) {
 			//Split by newline, to enable multi-line labels
 			String[] lines = label.split("\n");
-			
+
 			FontMetrics fm = g.getFontMetrics();
 			int lh = fm.getHeight();
 			int yoffset = area.y + fm.getAscent();
@@ -508,7 +508,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			case BOTTOM:
 				yoffset += area.height - margin - (lines.length * lh);
 			}
-			
+
 			for(int i = 0; i < lines.length; i++) {
 				if(lines[i].equals("")) continue; //Can't have attributed string with 0 length
 				AttributedString ats = getVAttributedString(lines[i]);
@@ -527,7 +527,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 					xoffset += area.width - margin - tb.getWidth();
 					break;
 				}
-				
+
 				g.drawString(ats.getIterator(), xoffset,
 						yoffset + (int)(i * tb.getHeight()));
 			}
@@ -559,7 +559,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	{
 		return vFromM(gdata.getMFontSize());
 	}
-	
+
 	protected void drawShape(Graphics2D g)
 	{
 		Color fillcolor = gdata.getFillColor();

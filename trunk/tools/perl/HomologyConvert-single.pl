@@ -42,30 +42,30 @@ my $maintbot = "MaintBot";
 my $fnGPML = "GPML.xsd";
 
 # Use this flag for testing the script on the TEST site
-my $testing = "false";
+my $testing = 0;
 
 ## Under script control
 ## Usage: ./HomologyConvert-single.pl -t <password> <from WPID> <to WPID> (-t is optional for testing mode)
-my $scriptmode = "false";
+my $scriptmode = 0;
 my $id1 = 0;
 my $id2 = 0;
 my $password = 0;
 
-if ($#ARGV == 3) { # without testing flag
-        $password = $ARGV[0];
-        $id1 = $ARGV[1];
-        $id2 = $ARGV[2];
-
-        #trigger script mode
-        $scriptmode = "true";
-} else if ($#ARGV == 4) { # with testing flag
-	$testing = "true";
+if ($#ARGV == 3) { # with testing flag
+        $testing = 1; # true!
         $password = $ARGV[1];
         $id1 = $ARGV[2];
         $id2 = $ARGV[3];
 
         #trigger script mode
-        $scriptmode = "true";
+        $scriptmode = 1; # true!
+} elsif ($#ARGV == 2) { # without testing flag
+        $password = $ARGV[0];
+        $id1 = $ARGV[1];
+        $id2 = $ARGV[2];
+
+        #trigger script mode
+        $scriptmode = 1; #true!
 }
 
 if (!$scriptmode) {

@@ -41,6 +41,9 @@ my $cutoff = "20070522222100";
 my $maintbot = "MaintBot";
 my $fnGPML = "GPML.xsd";
 
+# Use this flag for testing the script on the TEST site
+my testing = "false";
+
 #Ask user for pathway ID to convert FROM
 print "\nEnter the wikipathways ID of the pathway you want to convert FROM (for example WP56) : ";
 my $id1 = <STDIN>;
@@ -80,7 +83,11 @@ chomp ($password);
 ######################
 
 #Create service interface with fault handler and login
-my $wp_soap_TEST = SOAP::Lite
+my $wp_soap;
+my $auth;
+
+if (testing) {
+$wp_soap = SOAP::Lite
         ->proxy('http://137.120.14.24/wikipathways-test/wpi/webservice/webservice.php')
         ->uri('http://www.wikipathways.org/webservice')
         ->on_fault(sub {
@@ -94,10 +101,10 @@ my $wp_soap_TEST = SOAP::Lite
 
 my $name = SOAP::Data->name(name => "MaintBot"); 
 my $pass = SOAP::Data->name(pass => $password);
-my $wpauth = $wp_soap_TEST->login($name, $pass)->result;
-my $auth_TEST = SOAP::Data->name('auth' => \SOAP::Data->value(SOAP::Data->name('user' => 'MaintBot'), SOAP::Data->name('key', $wpauth)));			
-
-my $wp_soap_LIVE = SOAP::Lite
+my $wpauth = $wp_soap->login($name, $pass)->result;
+$auth = SOAP::Data->name('auth' => \SOAP::Data->value(SOAP::Data->name('user' => 'MaintBot'), SOAP::Data->name('key', $wpauth)));		
+} else {
+$wp_soap = SOAP::Lite
         ->proxy('http://www.wikipathways.org/wpi/webservice/webservice.php')
         ->uri('http://www.wikipathways.org/webservice')
         ->on_fault(sub {
@@ -107,10 +114,11 @@ my $wp_soap_LIVE = SOAP::Lite
                         else {die($res->faultstring);}
                 return new SOAP::SOM;
                                 } );
-my $name2 = SOAP::Data->name(name => "MaintBot");
-my $pass2 = SOAP::Data->name(pass => $password);
-my $wpauth2 = $wp_soap_LIVE->login($name2, $pass2)->result;
-my $auth_LIVE = SOAP::Data->name('auth' => \SOAP::Data->value(SOAP::Data->name('user' => 'MaintBot'), SOAP::Data->name('key', $wpauth2)));
+my $name = SOAP::Data->name(name => "MaintBot");
+my $pass = SOAP::Data->name(pass => $password);
+my $wpauth = $wp_soap->login($name, $pass)->result;
+$auth = SOAP::Data->name('auth' => \SOAP::Data->value(SOAP::Data->name('user' => 'MaintBot'), SOAP::Data->name('key', $wpauth)));
+}
 
 ######################
 
@@ -121,8 +129,8 @@ print LOGFILE1 "$sourceid\t";
 
 my $refId = SOAP::Data->name(pwId => $sourceid);
 my $rev = SOAP::Data->name(revision => '0');
-my @sourceResults = $wp_soap_LIVE->getPathway($refId, $rev)->paramsout;	
-unshift(@sourceResults, $wp_soap_LIVE->getPathway($refId, $rev)->result);
+my @sourceResults = $wp_soap->getPathway($refId, $rev)->paramsout;	
+unshift(@sourceResults, $wp_soap->getPathway($refId, $rev)->result);
 my $pathway = new PathwayTools::Pathway();
 my $gpml = ();
 my $sourcerevision = 0;
@@ -143,8 +151,8 @@ my $NS = $1;
 
 print "Requesting info for target pathway: $targetid\n";
 my $refId2 = SOAP::Data->name(pwId => $targetid);
-my @targetResults = $wp_soap_LIVE->getPathwayInfo($refId2)->paramsout;	
-unshift(@targetResults, $wp_soap_LIVE->getPathwayInfo($refId2)->result);
+my @targetResults = $wp_soap->getPathwayInfo($refId2)->paramsout;	
+unshift(@targetResults, $wp_soap->getPathwayInfo($refId2)->result);
 my $targetspecies = ();
 my $targetname = ();
 my $targetrevision = 0;
@@ -526,7 +534,7 @@ $root->setAttribute("Last-Modified", $date);
 		#if ($convscore >= 50)
 		#	{
 			my $uploadId = SOAP::Data->name(pwId => $targetid);
-			$wp_soap_LIVE->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth_TEST);
+			$wp_soap->updatePathway($uploadId, $description, $gpmlcode, $baserevision, $auth);
 			print "$targetname updated at WikiPathways\n";
 			#}
 
@@ -563,10 +571,10 @@ return $text;
 
 #subroutine that checks if any user other than MaintBot has made changes
 sub checkHistory{
-my ($pw, $wp_soap_TEST) = @_;
+my ($pw, $wp_soap) = @_;
 my $pwId = SOAP::Data->name(pwId => $pw);
 my $timestamp = SOAP::Data->name(timestamp => $cutoff);
-my $pwhistory = $wp_soap_TEST->getPathwayHistory($pwId, $timestamp)->result;
+my $pwhistory = $wp_soap->getPathwayHistory($pwId, $timestamp)->result;
 my $update = "true";
 
 foreach my $key (keys %$pwhistory) 

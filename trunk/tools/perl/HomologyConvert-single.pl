@@ -42,43 +42,70 @@ my $maintbot = "MaintBot";
 my $fnGPML = "GPML.xsd";
 
 # Use this flag for testing the script on the TEST site
-my testing = "false";
+my $testing = "false";
 
-#Ask user for pathway ID to convert FROM
-print "\nEnter the wikipathways ID of the pathway you want to convert FROM (for example WP56) : ";
-my $id1 = <STDIN>;
-chomp ($id1);
+## Under script control
+## Usage: ./HomologyConvert-single.pl -t <password> <from WPID> <to WPID> (-t is optional for testing mode)
+my $scriptmode = "false";
+my $id1 = 0;
+my $id2 = 0;
+my $password = 0;
 
+if ($#ARGV == 3) { # without testing flag
+        $password = $ARGV[0];
+        $id1 = $ARGV[1];
+        $id2 = $ARGV[2];
+
+        #trigger script mode
+        $scriptmode = "true";
+} else if ($#ARGV == 4) { # with testing flag
+	$testing = "true";
+        $password = $ARGV[1];
+        $id1 = $ARGV[2];
+        $id2 = $ARGV[3];
+
+        #trigger script mode
+        $scriptmode = "true";
+}
+
+if (!$scriptmode) {
+	#Ask user for pathway ID to convert FROM
+	print "\nEnter the wikipathways ID of the pathway you want to convert FROM (for example WP56) : ";
+	$id1 = <STDIN>;
+	chomp ($id1);
+
+	#Ask user for pathway ID to convert TO
+	print "\nEnter the wikipathways ID of the pathway you want to convert TO (the pathway will be overwritten) : ";
+	$id2 = <STDIN>;
+	chomp ($id2);
+
+	#Ask user for WP login password
+	print "\nEnter WikiPathways password for user $maintbot: ";
+	$password = <STDIN>;
+	chomp ($password);
+}
+
+# process ids
 my $sourceid = ();
 my $targetid = ();
 
 if ($id1 =~ /^WP/)
-	{
-	$sourceid = $id1;
-	}
+        {
+        $sourceid = $id1;
+        }
 elsif ($id1 =~ /^\d/)
-	{
-	$sourceid = "WP".$id1;
-	}
-
-#Ask user for pathway ID to convert TO
-print "\nEnter the wikipathways ID of the pathway you want to convert TO (the pathway will be overwritten) : ";
-my $id2 = <STDIN>;
-chomp ($id2);
+        {
+        $sourceid = "WP".$id1;
+        }
 
 if ($id2 =~ /^WP/)
-	{
-	$targetid = $id2;
-	}
+        {
+        $targetid = $id2;
+        }
 elsif ($id2 =~ /^\d/)
-	{
-	$targetid = "WP".$id2;
-	}
-	
-#Ask user for WP login password
-print "\nEnter WikiPathways password for user $maintbot: ";
-my $password = <STDIN>;
-chomp ($password);
+        {
+        $targetid = "WP".$id2;
+        }
 
 ######################
 
@@ -86,7 +113,7 @@ chomp ($password);
 my $wp_soap;
 my $auth;
 
-if (testing) {
+if ($testing) {
 $wp_soap = SOAP::Lite
         ->proxy('http://137.120.14.24/wikipathways-test/wpi/webservice/webservice.php')
         ->uri('http://www.wikipathways.org/webservice')

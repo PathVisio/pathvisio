@@ -53,7 +53,7 @@ public class VisualizationPlugin implements Plugin
 
 		//Register the visualization methods
 		VisualizationMethodRegistry reg =
-			aDesktop.getVisualizationMethodRegistry();
+			aDesktop.getVisualizationManager().getVisualizationMethodRegistry();
 
 		reg.registerMethod(
 				ColorByExpression.class.toString(),

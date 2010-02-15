@@ -771,4 +771,20 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		}
 		writeToXml (pwy, out, validate);
 	}
+
+	protected void mapSimpleCenter(PathwayElement o, Element e)
+	{
+		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX")));
+		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")));
+	}
+
+	protected void updateSimpleCenter(PathwayElement o, Element e)
+	{
+		if(e != null)
+		{
+			e.setAttribute("CenterX", Double.toString(o.getMCenterX()));
+			e.setAttribute("CenterY", Double.toString(o.getMCenterY()));
+		}
+	}
+
 }

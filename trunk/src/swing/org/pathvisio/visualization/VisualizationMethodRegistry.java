@@ -62,7 +62,7 @@ public class VisualizationMethodRegistry {
 	public VisualizationMethod createVisualizationMethod(String name, Visualization v) {
 		VisualizationMethodProvider p = methodProviders.get(name);
 		if(p != null) {
-			return p.create(v, name);
+			return p.create(v);
 		}
 		return null;
 	}

@@ -152,7 +152,10 @@ public class GexTxtImporter
 
 			NumberFormat nf = NumberFormat.getInstance(
 					info.digitIsDot() ? Locale.US : Locale.FRANCE);
-
+			
+			info.dataRowsImported = 0;
+			info.rowsMapped = 0;
+			
 			while((line = in.readLine()) != null)
 			{
 				if(p != null && p.isCancelled())
@@ -170,6 +173,8 @@ public class GexTxtImporter
 							errors);
 					continue;
 				}
+				info.dataRowsImported++;
+				
 				if (p != null) p.setTaskName("Importing expression data - processing line " + n + "; " + errors + " exceptions");
 				//Check id and add data
 				String id = data[info.getIdColumn()].trim();
@@ -198,6 +203,7 @@ public class GexTxtImporter
 				} else {
 					errors = reportError(info, error, "Line " + n + ":\t" + ref +
 							"\t", errors - 1); // decrement counter to count only the errors
+					info.rowsMapped++;
 				}
 				// add row anyway
 				{

@@ -39,18 +39,14 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 
 	private boolean isActive;
 
-	private String registeredName; //The name under which this method is registered
-
 	private Visualization visualization;
 
 	/**
 	 * Constructor for this class. Create an instance of this {@link VisualizationMethod}
 	 * @param v The {@link Visualization} the instance is part of
-	 * @param registeredName The name under which this method is registered
 	 */
-	public VisualizationMethod(Visualization v, String registeredName) {
+	public VisualizationMethod(Visualization v) {
 		visualization = v;
-		this.registeredName = registeredName;
 	}
 
 	/**
@@ -121,7 +117,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 */
 	public Element toXML() {
 		Element elm = new Element(XML_ELEMENT);
-		elm.setAttribute(XML_ATTR_NAME, registeredName);
+		elm.setAttribute(XML_ATTR_NAME, getClass().toString());
 		return elm;
 	}
 

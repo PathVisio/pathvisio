@@ -97,8 +97,8 @@ public class ColorByExpression extends VisualizationMethod {
 				Resources.getResourceURL("mRNA_hi.bmp") }));
 	}
 
-	public ColorByExpression(Visualization v, String registeredName, GexManager gexManager) {
-		super(v, registeredName);
+	public ColorByExpression(Visualization v, GexManager gexManager) {
+		super(v);
 		this.gexManager = gexManager;
 		setIsConfigurable(true);
 		setUseProvidedArea(true);

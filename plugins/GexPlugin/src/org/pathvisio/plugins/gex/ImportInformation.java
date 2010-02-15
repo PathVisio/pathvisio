@@ -635,4 +635,16 @@ public class ImportInformation {
 		guessIdColumn = maxCol;
 	}
 
+	int dataRowsImported = 0;
+	int rowsMapped = 0;
+	
+	public int getDataRowsImported()
+	{
+		return dataRowsImported;
+	}
+	
+	public int getRowsMapped()
+	{
+		return rowsMapped;
+	}
 }

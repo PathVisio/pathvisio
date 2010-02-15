@@ -429,21 +429,6 @@ public abstract class GpmlFormatAbstract
 		setAttribute ("Group", "TextLabel", e, o.getTextLabel());
 	}
 
-	protected void mapSimpleCenter(PathwayElement o, Element e)
-	{
-		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX")));
-		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")));
-	}
-
-	protected void updateSimpleCenter(PathwayElement o, Element e)
-	{
-		if(e != null)
-		{
-			e.setAttribute("CenterX", Double.toString(o.getMCenterX()));
-			e.setAttribute("CenterY", Double.toString(o.getMCenterY()));
-		}
-	}
-
 	protected abstract void mapMappInfoDataVariable (PathwayElement o, Element e) throws ConverterException;
 	
 	protected void mapMappInfoData(PathwayElement o, Element e) throws ConverterException

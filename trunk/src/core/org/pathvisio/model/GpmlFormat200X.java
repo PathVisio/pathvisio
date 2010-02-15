@@ -472,4 +472,10 @@ class GpmlFormat200X extends GpmlFormatAbstract implements GpmlFormatReader
     	}
 	}
 
+	protected void mapSimpleCenter(PathwayElement o, Element e)
+	{
+		o.setMCenterX (Double.parseDouble(e.getAttributeValue("CenterX")) / CONVERSION);
+		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")) / CONVERSION);
+	}
+
 }

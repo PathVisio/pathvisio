@@ -69,12 +69,11 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	private final GexManager gexManager;
 	private final VisualizationMethodRegistry methodRegistry;
 
-	public VisualizationManager(VisualizationMethodRegistry methodRegistry,
-			Engine engine, GexManager gexManager) {
+	public VisualizationManager(Engine engine, GexManager gexManager) {
 		colorSetMgr = new ColorSetManager();
 		this.engine = engine;
 		this.gexManager = gexManager;
-		this.methodRegistry = methodRegistry;
+		this.methodRegistry = new VisualizationMethodRegistry();
 		gexManager.addListener(this);
 		engine.addApplicationEventListener(this);
 		VPathway vp = engine.getActiveVPathway();
@@ -86,6 +85,11 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		}
 	}
 
+	public VisualizationMethodRegistry getVisualizationMethodRegistry()
+	{
+		return methodRegistry;
+	}
+	
 	public Engine getEngine() {
 		return engine;
 	}

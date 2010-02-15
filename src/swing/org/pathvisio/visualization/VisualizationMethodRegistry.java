@@ -28,16 +28,6 @@ public class VisualizationMethodRegistry {
 	private Map<String, VisualizationMethodProvider> methodProviders =
 		new HashMap<String, VisualizationMethodProvider>();
 
-	private static VisualizationMethodRegistry current;
-
-	@Deprecated
-	public static VisualizationMethodRegistry getCurrent() {
-		if(current == null) {
-			current = new VisualizationMethodRegistry();
-		}
-		return current;
-	}
-
 	/**
 	 * Register a visualization method for the given name. The
 	 * VisualizationMethodProvider will be used to create instances

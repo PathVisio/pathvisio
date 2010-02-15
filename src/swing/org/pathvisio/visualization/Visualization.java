@@ -57,11 +57,11 @@ public class Visualization
 	 */
 	public Visualization(String name) {
 		this.name = name;
-		loadMethods(VisualizationMethodRegistry.getCurrent());
 	}
 
 	public void setVisualizationMgr(VisualizationManager visMgr) {
 		this.visMgr = visMgr;
+		loadMethods(visMgr.getVisualizationMethodRegistry());
 	}
 
 	void loadMethods(VisualizationMethodRegistry mr) {
@@ -91,6 +91,11 @@ public class Visualization
 
 	public Collection<VisualizationMethod> getMethods() {
 		return methods.values();
+	}
+	
+	public VisualizationMethod getMethod(String name)
+	{
+		return methods.get(name);
 	}
 
 	/**

@@ -45,7 +45,6 @@ import org.pathvisio.util.swing.StandaloneCompat;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationMethodRegistry;
 
 /**
  * PvDesktop ties together several
@@ -79,7 +78,6 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		swingEngine.getGdbManager().addGdbEventListener(this);
 		gexManager = GexManager.getCurrent();
 		visualizationManager = new VisualizationManager(
-				VisualizationMethodRegistry.getCurrent(),
 				swingEngine.getEngine(), gexManager);
 		visualizationManager.addListener(this);
 		compat = new StandaloneCompat(this);
@@ -175,11 +173,6 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	public VisualizationManager getVisualizationManager()
 	{
 		return visualizationManager;
-	}
-
-	public VisualizationMethodRegistry getVisualizationMethodRegistry()
-	{
-		return VisualizationMethodRegistry.getCurrent();
 	}
 
 	/**

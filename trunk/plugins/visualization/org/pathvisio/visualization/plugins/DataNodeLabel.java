@@ -77,7 +77,6 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 	Color fontColor;
 
 	public DataNodeLabel() {
-		super();
 	    setIsConfigurable(true);
 		setUseProvidedArea(false); //Overlay by default
 	}

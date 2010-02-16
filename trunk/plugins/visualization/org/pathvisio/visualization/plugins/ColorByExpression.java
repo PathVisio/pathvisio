@@ -58,6 +58,7 @@ import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.VisualizationManager.VisualizationException;
 import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.visualization.colorset.ColorSetManager;
 
 /**
  * Visualization method for coloring by expression: can color a datanode by one or more
@@ -87,6 +88,7 @@ public class ColorByExpression extends VisualizationMethod {
 	List<URL> imageURLs;
 
 	private final GexManager gexManager;
+	private final ColorSetManager csm;
 	GexManager getGexManager() { return gexManager; }
 
 	private List<URL> defaultURLs() {
@@ -95,9 +97,9 @@ public class ColorByExpression extends VisualizationMethod {
 				Resources.getResourceURL("mRNA_hi.bmp") }));
 	}
 
-	public ColorByExpression(GexManager gexManager) {
-		super();
+	public ColorByExpression(GexManager gexManager, ColorSetManager csm) {
 		this.gexManager = gexManager;
+		this.csm = csm;
 		setIsConfigurable(true);
 		setUseProvidedArea(true);
 	}
@@ -173,7 +175,7 @@ public class ColorByExpression extends VisualizationMethod {
 	}
 
 	public JPanel getConfigurationPanel() {
-		return new ColorByExpressionPanel(this);
+		return new ColorByExpressionPanel(this, csm);
 	}
 
 	public List<ConfiguredSample> getConfiguredSamples() {

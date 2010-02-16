@@ -28,11 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.gex.GexManager;

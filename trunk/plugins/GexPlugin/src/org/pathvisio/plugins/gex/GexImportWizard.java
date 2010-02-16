@@ -23,6 +23,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.nexes.wizard.Wizard;
 import com.nexes.wizard.WizardPanelDescriptor;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,10 +57,13 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.bridgedb.IDMapperException;
 import org.bridgedb.rdb.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gex.GexManager;
+import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.DataSourceModel;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.preferences.GlobalPreference;
@@ -71,6 +75,14 @@ import org.pathvisio.util.ProgressKeeper.ProgressListener;
 import org.pathvisio.util.rowheader.RowNumberHeader;
 import org.pathvisio.util.swing.PermissiveComboBox;
 import org.pathvisio.util.swing.SimpleFileFilter;
+import org.pathvisio.visualization.Visualization;
+import org.pathvisio.visualization.VisualizationManager;
+import org.pathvisio.visualization.colorset.ColorGradient;
+import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
+import org.pathvisio.visualization.plugins.ColorByExpression;
+import org.pathvisio.visualization.plugins.DataNodeLabel;
 
 /**
  * Wizard to guide the user through importing a large dataset from a tab delimited text file
@@ -939,11 +951,14 @@ public class GexImportWizard extends Wizard
 								standaloneEngine.getSwingEngine().getGdbManager().getCurrentGdb(),
 								standaloneEngine.getGexManager()
 						);
-					}
-					catch (Exception e)
+						if (standaloneEngine.getVisualizationManager().getActiveVisualization() == null)
+							createDefaultVisualization(importInformation);
+					} 
+					catch (Exception e) 
 					{
+						Logger.log.error ("During import", e);
 						setProgressValue(0);
-						setProgressText("An Error Has Occurred");
+						setProgressText("An Error Has Occurred: " + e.getMessage() + "\nSee the log for details");
 
 						getWizard().setBackButtonEnabled(true);
 					} finally {
@@ -981,5 +996,44 @@ public class GexImportWizard extends Wizard
 
 	}
 
+	static double makeRoundNumber(double input)
+	{
+		double order = Math.pow(10, Math.round(Math.log10(input))) / 10;
+		return Math.round (input / order) * order;
+	}
+	
+	private void createDefaultVisualization(ImportInformation info) throws IDMapperException
+	{
+		VisualizationManager visMgr = standaloneEngine.getVisualizationManager(); 
+		ColorSetManager csmgr = visMgr.getColorSetManager();
+		ColorSet cs = new ColorSet(csmgr);
+		csmgr.addColorSet(cs);
+		
+		ColorGradient gradient = new ColorGradient(cs);
+		cs.setGradient(gradient);
+		
+		double lowerbound = makeRoundNumber (info.getMinimum() - info.getMinimum() / 10); 
+		double upperbound = makeRoundNumber (info.getMaximum() + info.getMaximum() / 10);
+		gradient.addColorValuePair(gradient.new ColorValuePair(Color.YELLOW, lowerbound));
+		gradient.addColorValuePair(gradient.new ColorValuePair(Color.BLUE, upperbound));
+		
+		Visualization v = new Visualization("auto-generated");
+		
+		ColorByExpression cby = new ColorByExpression(standaloneEngine.getGexManager());
+		SimpleGex gex = standaloneEngine.getGexManager().getCurrentGex();
+		int count = Math.min (5, gex.getSamples().keySet().size());
+		for (int i = 0; i < count; ++i)
+		{
+			//TODO: check that these samples contain numeric data
+			cby.addUseSample(gex.getSample(i));
+		}
+		cby.setSingleColorSet(cs);
+		v.addMethod(cby);
 
+		DataNodeLabel dnl = new DataNodeLabel();
+		v.addMethod(dnl);
+		
+		visMgr.addVisualization(v);
+		visMgr.setActiveVisualization(v);
+	}
 }

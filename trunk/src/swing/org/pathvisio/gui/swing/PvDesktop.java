@@ -315,6 +315,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 
 	public void visualizationEvent(VisualizationEvent e)
 	{
+		loadGexCache();
 		// redraw Pathway
 		VPathway vPwy = swingEngine.getEngine().getActiveVPathway();
 		if (vPwy != null) vPwy.redraw();

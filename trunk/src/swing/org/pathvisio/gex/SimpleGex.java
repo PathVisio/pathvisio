@@ -153,6 +153,15 @@ public class SimpleGex
 	{
 		return getSamples().get(id);
 	}
+	
+	public Sample findSample(String name) throws IDMapperException
+	{
+		for (Sample s : samples.values())
+		{
+			if (s.getName().equals(name)) return s;
+		}
+		return null;
+	}
 
 	/**
 	 * Returns samples as a list, ordered by Id.

@@ -341,10 +341,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		if(xml == null) return;
 
 		for(Object o : xml.getChildren(Visualization.XML_ELEMENT)) {
-			Visualization vis = Visualization.fromXML((Element) o, methodRegistry, this);
-			if(!visualizations.contains(vis)) {
-				addVisualization(vis);
-			}
+			Visualization.fromXML((Element) o, methodRegistry, this);
 		}
 	}
 

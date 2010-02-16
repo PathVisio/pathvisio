@@ -59,7 +59,6 @@ import org.pathvisio.util.swing.FontChooser;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.VPathway;
-import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 
 /**
@@ -82,8 +81,8 @@ public class TextByExpression extends VisualizationMethod
 
 	private final GexManager gexManager;
 
-	public TextByExpression(Visualization v, GexManager gexManager) {
-		super(v);
+	public TextByExpression(GexManager gexManager) {
+		super();
 		this.gexManager = gexManager;
 		setIsConfigurable(true);
 		setUseProvidedArea(false);

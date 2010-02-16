@@ -35,23 +35,15 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	public static final String XML_ATTR_NAME = "name";
 
 	private boolean isConfigurable; //Configurable (if true, override createConfigComposite)
-	private boolean isUseProvidedArea; //Does this plugin use reserved region in GmmlGraphicsObject
-
-	private boolean isActive;
+	private boolean isUseProvidedArea; //Does this plugin use reserved region in o.p.view.Graphics
 
 	private Visualization visualization;
 
+	/** Internal method, should be called by Visualization.add-,removeMethod() only */
+	void setVisualization(Visualization v) { visualization = v; }
+	
 	/**
-	 * Constructor for this class. Create an instance of this {@link VisualizationMethod}
-	 * @param v The {@link Visualization} the instance is part of
-	 */
-	public VisualizationMethod(Visualization v) {
-		visualization = v;
-	}
-
-	/**
-	 * Get the {@link Visualization} this instance belongs to
-	 * @return The {@link Visualization} this plugin belongs to
+	 * @return The {@link Visualization} this plugin belongs to. May be null!
 	 */
 	public final Visualization getVisualization() { return visualization; }
 
@@ -60,7 +52,7 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 * notify the parent visualization of the modification.
 	 */
 	protected final void modified() {
-		visualization.modified();
+		if (visualization != null) visualization.modified();
 	}
 
 	/**
@@ -135,23 +127,6 @@ public abstract class VisualizationMethod implements Comparable <VisualizationMe
 	 */
 	public void loadXML(Element xml) { }
 
-	/**
-	 * Returns whether the current instance of this visualization plugin is activated or not
-	 * @return true if this instance is activated, false otherwise
-	 */
-	public final boolean isActive() { return isActive; }
-
-	/**
-	 * Set the activation state of this instance. If set to active, the visualization methods
-	 * of this plugin will be called from the {@link Visualization} this instance belongs to.
-	 * @param active true to activate this instance, false to de-activate
-	 */
-	public final void setActive(boolean active) {
-		if(isActive != active) {
-			isActive = active;
-			modified();
-		}
-	}
 	/**
 	 * Specify whether the parent {@link Visualization} needs to provide an area on the
 	 * graphics.

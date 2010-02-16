@@ -46,7 +46,6 @@ import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.FontChooser;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
-import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 
 /**
@@ -77,8 +76,8 @@ public class DataNodeLabel extends VisualizationMethod implements ActionListener
 	Font font;
 	Color fontColor;
 
-	public DataNodeLabel(Visualization v) {
-		super(v);
+	public DataNodeLabel() {
+		super();
 	    setIsConfigurable(true);
 		setUseProvidedArea(false); //Overlay by default
 	}

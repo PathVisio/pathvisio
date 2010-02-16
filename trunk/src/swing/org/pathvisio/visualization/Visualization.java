@@ -59,15 +59,28 @@ public class Visualization
 		this.name = name;
 	}
 
-	public void setVisualizationMgr(VisualizationManager visMgr) {
+	/** Internal method. Should only be called by VisualizationManager.addVisualization() 
+	 * and by fromXml() */
+	void setVisualizationMgr(VisualizationManager visMgr) {
 		this.visMgr = visMgr;
-		loadMethods(visMgr.getVisualizationMethodRegistry());
 	}
 
-	void loadMethods(VisualizationMethodRegistry mr) {
-		for(String name : mr.getRegisteredMethods()) {
-			methods.put(name, mr.createVisualizationMethod(name, this));
-		}
+	public void addMethod(VisualizationMethod m)
+	{
+		if (m.getVisualization() != null) { throw new IllegalArgumentException(
+			"Trying to add Method that is already part of a Visualization"); }
+		methods.put(m.getClass().toString(), m);
+		m.setVisualization(this);
+		modified();
+	}
+	
+	public void removeMethod(VisualizationMethod m)
+	{
+		if (m.getVisualization() != this) { throw new IllegalArgumentException(
+				"Trying to remove Method from Visualization that is not its parent"); }
+		methods.remove(m.getClass().toString());
+		m.setVisualization(null);
+		modified();
 	}
 
 	/**
@@ -132,9 +145,7 @@ public class Visualization
 		});
 		for(VisualizationMethod m : methods)
 		{
-			if(m.isActive()) {
-				m.visualizeOnDrawing(g, g2d);
-			}
+			m.visualizeOnDrawing(g, g2d);
 		}
 	}
 
@@ -154,7 +165,7 @@ public class Visualization
 		int nrRes = 0;
 		int index = 0;
 		for(VisualizationMethod vm : getMethods()) {
-			nrRes += (vm.isActive() && vm.isUseProvidedArea()) ? 1 : 0;
+			nrRes += (vm.isUseProvidedArea()) ? 1 : 0;
 		}
 		Area area = g.createVisualizationRegion();
 		//Distribute space over plugins
@@ -187,9 +198,7 @@ public class Visualization
 		Element vis = new Element(XML_ELEMENT);
 		vis.setAttribute(XML_ATTR_NAME, getName());
 		for(VisualizationMethod m : getMethods()) {
-			if(m.isActive()) {
-				vis.addContent(m.toXML());
-			}
+			vis.addContent(m.toXML());
 		}
 		return vis;
 	}
@@ -203,14 +212,13 @@ public class Visualization
 		String name = xml.getAttributeValue(XML_ATTR_NAME);
 
 		Visualization v = new Visualization(name);
-		v.setVisualizationMgr(visMgr);
+		visMgr.addVisualization(v);
 		for(Object o : xml.getChildren(VisualizationMethod.XML_ELEMENT)) {
 			try {
 				String methodName = ((Element)o).getAttributeValue(VisualizationMethod.XML_ATTR_NAME);
-				VisualizationMethod m = methodFactory.createVisualizationMethod(methodName, v);
+				VisualizationMethod m = methodFactory.createVisualizationMethod(methodName);
+				v.addMethod (m);
 				m.loadXML((Element)o);
-				m.setActive(true);
-				v.methods.put(methodName, m);
 			} catch(Throwable e) {
 				Logger.log.error("Unable to load plugin", e);
 			}

@@ -31,14 +31,14 @@ import javax.swing.JPanel;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
+import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorGradient;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.colorset.ColorRule;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.visualization.colorset.ColorSetObject;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 
 /**

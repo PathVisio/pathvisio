@@ -59,7 +59,8 @@ public class VisualizationPlugin implements Plugin
 				ColorByExpression.class.toString(),
 				new VisualizationMethodProvider() {
 					public VisualizationMethod create() {
-						return new ColorByExpression(desktop.getGexManager());
+						return new ColorByExpression(desktop.getGexManager(), 
+								desktop.getVisualizationManager().getColorSetManager());
 					}
 			}
 		);

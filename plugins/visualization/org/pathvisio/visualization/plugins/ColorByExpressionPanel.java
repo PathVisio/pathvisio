@@ -89,14 +89,16 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			"Color picker"
 	);
 
-	ColorByExpression method;
-	Basic basic;
-	Advanced advanced;
-	CardLayout cardLayout;
-	JPanel settings;
+	private ColorByExpression method;
+	private Basic basic;
+	private Advanced advanced;
+	private CardLayout cardLayout;
+	private JPanel settings;
+	private final ColorSetManager csm;
 
-	public ColorByExpressionPanel(ColorByExpression method) {
+	public ColorByExpressionPanel(ColorByExpression method, ColorSetManager csm) {
 		this.method = method;
+		this.csm = csm;
 
 		setLayout(new FormLayout(
 				"4dlu, pref, 4dlu, pref, fill:pref:grow, 4dlu",
@@ -173,8 +175,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			sampleList.getList().addActionListener(this);
 			sampleList.getList().setActionCommand(ACTION_SAMPLE);
 			sampleList.getList().getModel().addListDataListener(this);
-			ColorSetManager csm = method.getVisualization()
-											.getManager().getColorSetManager();
+			
 			ColorSetChooser csChooser = new ColorSetChooser(csm, method.getGexManager());
 			colorSetCombo = csChooser.getColorSetCombo();
 			colorSetCombo.setActionCommand(ACTION_COMBO);

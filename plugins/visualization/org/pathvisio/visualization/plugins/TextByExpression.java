@@ -82,7 +82,6 @@ public class TextByExpression extends VisualizationMethod
 	private final GexManager gexManager;
 
 	public TextByExpression(GexManager gexManager) {
-		super();
 		this.gexManager = gexManager;
 		setIsConfigurable(true);
 		setUseProvidedArea(false);

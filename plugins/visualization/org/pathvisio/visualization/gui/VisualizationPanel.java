@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationMethod;
 
 /**
  * Main component of the {@link VisualizationDialog}. Has capabilities to
@@ -149,8 +148,8 @@ public class VisualizationPanel extends JPanel implements ActionListener
 				FormLayout layout = new FormLayout("fill:pref:grow");
 				DefaultFormBuilder builder =
 					new DefaultFormBuilder(layout, methods);
-				for(VisualizationMethod m : v.getMethods()) {
-					MethodPanel mp = new MethodPanel(m);
+				for(String name :  visMgr.getVisualizationMethodRegistry().getRegisteredMethods()) {
+					MethodPanel mp = new MethodPanel(v, name);
 					builder.append(mp);
 					builder.nextLine();
 				}

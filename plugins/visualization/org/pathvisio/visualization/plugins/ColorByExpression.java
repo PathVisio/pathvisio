@@ -51,14 +51,12 @@ import org.pathvisio.gex.CachedData.Callback;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
-import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.VisualizationManager.VisualizationException;
+import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorSet;
 
 /**
@@ -97,8 +95,8 @@ public class ColorByExpression extends VisualizationMethod {
 				Resources.getResourceURL("mRNA_hi.bmp") }));
 	}
 
-	public ColorByExpression(Visualization v, GexManager gexManager) {
-		super(v);
+	public ColorByExpression(GexManager gexManager) {
+		super();
 		this.gexManager = gexManager;
 		setIsConfigurable(true);
 		setUseProvidedArea(true);

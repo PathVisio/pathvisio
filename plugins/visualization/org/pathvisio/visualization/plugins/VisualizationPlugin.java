@@ -58,24 +58,24 @@ public class VisualizationPlugin implements Plugin
 		reg.registerMethod(
 				ColorByExpression.class.toString(),
 				new VisualizationMethodProvider() {
-					public VisualizationMethod create(Visualization v) {
-						return new ColorByExpression(v, desktop.getGexManager());
+					public VisualizationMethod create() {
+						return new ColorByExpression(desktop.getGexManager());
 					}
 			}
 		);
 		reg.registerMethod(
 				TextByExpression.class.toString(),
 				new VisualizationMethodProvider() {
-					public VisualizationMethod create(Visualization v) {
-						return new TextByExpression(v, desktop.getGexManager());
+					public VisualizationMethod create() {
+						return new TextByExpression(desktop.getGexManager());
 					}
 			}
 		);
 		reg.registerMethod(
 				DataNodeLabel.class.toString(),
 				new VisualizationMethodProvider() {
-					public VisualizationMethod create(Visualization v) {
-						return new DataNodeLabel(v);
+					public VisualizationMethod create() {
+						return new DataNodeLabel();
 					}
 			}
 		);

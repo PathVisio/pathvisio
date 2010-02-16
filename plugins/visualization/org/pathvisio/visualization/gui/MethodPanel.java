@@ -28,18 +28,27 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationMethod;
 
 /**
  * Wraps around the configuration panel of a VisualizationMethod
  */
 public class MethodPanel extends JPanel implements ActionListener {
-	VisualizationMethod method;
-	JPanel configPanel;
-	JCheckBox checkBox;
+	private final VisualizationMethod method;
+	private final Visualization visualization;
+	private final JPanel configPanel;
+	private final JCheckBox checkBox;
 
-	public MethodPanel(VisualizationMethod method) {
-		this.method = method;
+	public MethodPanel(Visualization v, String name) {
+		visualization = v;
+		boolean isActive = true;
+		if (v.getMethod(name) == null) 
+		{
+			method = v.getManager().getVisualizationMethodRegistry().createVisualizationMethod(name);
+			isActive = false;
+		}
+		else method = v.getMethod(name);
 
 		JPanel top = new JPanel();
 		FormLayout layout = new FormLayout(
@@ -75,13 +84,18 @@ public class MethodPanel extends JPanel implements ActionListener {
 		add(bottom, cc.xy(1, 3));
 
 		//Initial values
-		configPanel.setVisible(method.isActive());
-		checkBox.setSelected(method.isActive());
+		configPanel.setVisible(isActive);
+		checkBox.setSelected(isActive);
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == checkBox) {
-			method.setActive(checkBox.isSelected());
+		if(e.getSource() == checkBox) 
+		{
+			if (checkBox.isSelected())
+				visualization.addMethod(method);
+			else
+				visualization.removeMethod(method);
+
 			if(method.isConfigurable()) {
 				configPanel.setVisible(checkBox.isSelected());
 				revalidate();

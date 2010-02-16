@@ -49,10 +49,10 @@ public class VisualizationMethodRegistry {
 	 * by the given name. Returns null if there is no subclass registered for the
 	 * name.
 	 */
-	public VisualizationMethod createVisualizationMethod(String name, Visualization v) {
+	public VisualizationMethod createVisualizationMethod(String name) {
 		VisualizationMethodProvider p = methodProviders.get(name);
 		if(p != null) {
-			return p.create(v);
+			return p.create();
 		}
 		return null;
 	}

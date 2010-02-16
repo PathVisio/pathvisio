@@ -340,9 +340,11 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	public void loadXML(Element xml) {
 		if(xml == null) return;
 
+		Visualization last = null;
 		for(Object o : xml.getChildren(Visualization.XML_ELEMENT)) {
-			Visualization.fromXML((Element) o, methodRegistry, this);
+			last = Visualization.fromXML((Element) o, methodRegistry, this);
 		}
+		if (last != null) this.setActiveVisualization(last);
 	}
 
 	public  void loadXML() {

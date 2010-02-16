@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.pathvisio.biopax.reflect.BiopaxElement;
-import org.pathvisio.biopax.reflect.PublicationXRef;
+import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
@@ -52,7 +52,7 @@ public class LiteratureBot extends Bot {
 
 			boolean hasRef = false;
 			for(BiopaxElement bpe : p.getBiopaxElementManager().getElements()) {
-				if(bpe instanceof PublicationXRef) {
+				if(bpe instanceof PublicationXref) {
 					hasRef = true;
 					break;
 				}

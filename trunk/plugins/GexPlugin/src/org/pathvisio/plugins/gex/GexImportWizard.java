@@ -1019,7 +1019,8 @@ public class GexImportWizard extends Wizard
 		
 		Visualization v = new Visualization("auto-generated");
 		
-		ColorByExpression cby = new ColorByExpression(standaloneEngine.getGexManager());
+		ColorByExpression cby = new ColorByExpression(standaloneEngine.getGexManager(), 
+				standaloneEngine.getVisualizationManager().getColorSetManager());
 		SimpleGex gex = standaloneEngine.getGexManager().getCurrentGex();
 		int count = Math.min (5, gex.getSamples().keySet().size());
 		for (int i = 0; i < count; ++i)

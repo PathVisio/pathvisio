@@ -117,9 +117,11 @@ public abstract class GpmlFormatAbstract
 	{
 		if (def != null && value != null)
 		{
+			boolean aTrans = "Transparent".equals(def);
+			boolean bTrans = "Transparent".equals(value);
 			Color a = gmmlString2Color(def);
 			Color b = gmmlString2Color(value);
-			return (a.equals(b));
+			return (a.equals(b) && aTrans == bTrans);
 		}
 		return def == null && value == null;
 	}

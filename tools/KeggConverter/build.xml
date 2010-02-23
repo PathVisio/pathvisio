@@ -15,12 +15,12 @@
 	  	</fileset>
 		<fileset dir="${pathvisio.dir}">
 			<include name="lib/jdom.jar"/>
-			<include name="lib/bridgedb.jar"/>
+			<include name="lib/org.bridgedb.jar"/>
 			<include name="pathvisio_core.jar"/>
 		</fileset>
 	</path>
 
-	<property name="manifest.class.path" value="lib/jsr173_1.0_api.jar lib/args4j-2.0.10.jar lib/google-collect-snapshot-20090211.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/activation.jar lib/resources.jar lib/jdom.jar lib/axis.jar lib/axis-ant.jar lib/commons-discovery-0.2.jar lib/commons-logging-1.0.4.jar lib/jaxrpc.jar lib/keggapi.jar lib/log4j-1.2.8.jar lib/pathvisio_core.jar lib/saaj.jar lib/wsdl4j-1.5.1.jar lib/bridgedb.jar"/>
+	<property name="manifest.class.path" value="lib/jsr173_1.0_api.jar lib/args4j-2.0.10.jar lib/google-collect-snapshot-20090211.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/activation.jar lib/resources.jar lib/jdom.jar lib/axis.jar lib/axis-ant.jar lib/commons-discovery-0.2.jar lib/commons-logging-1.0.4.jar lib/jaxrpc.jar lib/keggapi.jar lib/log4j-1.2.8.jar lib/pathvisio_core.jar lib/saaj.jar lib/wsdl4j-1.5.1.jar lib/org.bridgedb.jar"/>
 
 	<path id="class.path">
       	<pathelement location="${build.dir}"/>
@@ -84,7 +84,7 @@
 		<copy file="${jar.name}" toDir="${dist.dir}"/>
 		<copy file="${pathvisio.dir}/lib/resources.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/jdom.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/bridgedb.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/lib/org.bridgedb.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/pathvisio_core.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${lib.dir}/axis.jar" toDir="${dist.dir}/lib"/>
 		<copy file="KGML_v0.6.1_.dtd" toDir="${dist.dir}"/>

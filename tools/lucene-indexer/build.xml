@@ -20,8 +20,8 @@
 			<include name="lib/resources.jar"/>
 			<include name="wikipathways.jar"/>
 			<include name="lib/jdom.jar"/>
-			<include name="lib/bridgedb-bio.jar"/>
-			<include name="lib/bridgedb.jar"/>
+			<include name="lib/org.bridgedb.bio.jar"/>
+			<include name="lib/org.bridgedb.jar"/>
 			<include name="lib/derby.jar"/>
 			<include name="lib/apache/*.jar"/>
 		</fileset>
@@ -84,8 +84,8 @@
 		<copy file="${pathvisio.dir}/pathvisio.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/wikipathways.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/wikipathways-client.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/bridgedb.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/bridgedb-bio.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/lib/org.bridgedb.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/lib/org.bridgedb.bio.jar" toDir="${dist.dir}/lib"/>
 		<copy file="bridge.config" toDir="${dist.dir}"/>
 		<copy file="indexer.config" toDir="${dist.dir}"/>
 		<copy toDir="${dist.dir}/lib">

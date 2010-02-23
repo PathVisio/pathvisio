@@ -36,8 +36,9 @@
 	  <fileset dir="lib">
 		<include name="batik/*.jar"/>
 		<include name="jdom.jar"/>
-		<include name="bridgedb.jar"/>
-		<include name="bridgedb-bio.jar"/>
+		<include name="org.bridgedb.jar"/>
+		<include name="org.bridgedb.bio.jar"/>
+		<include name="org.bridgedb.rdb.jar"/>
 	    <include name="resources.jar"/> <!-- TODO: this is not necessary, only GPML.xsd !-->
 	  </fileset>
 	</path>
@@ -58,8 +59,9 @@
 	<path id="diffview.libs">
 	  <fileset dir="lib">
 		<include name="jdom.jar"/>
-		<include name="bridgedb.jar"/>
-		<include name="bridgedb-bio.jar"/>
+		<include name="org.bridgedb.jar"/>
+		<include name="org.bridgedb.bio.jar"/>
+		<include name="org.bridgedb.webservice.jar"/>
 		<include name="swing-worker-1.1.jar"/>
 	    <include name="resources.jar"/>
 	  </fileset>
@@ -490,8 +492,10 @@ public class Revision
 				<include name="lib/derby.jar"/>
 				<include name="lib/forms-1.2.0.jar"/>
 				<include name="lib/jdom.jar"/>
-				<include name="lib/bridgedb.jar"/>
-				<include name="lib/bridgedb-bio.jar"/>
+				<include name="lib/org.bridgedb.jar"/>
+				<include name="lib/org.bridgedb.rdb.jar"/>
+				<include name="lib/org.bridgedb.webservice.bridgerest.jar"/>
+				<include name="lib/org.bridgedb.bio.jar"/>
 				<include name="lib/commons-math-2.0.jar"/>
 <!--				<include name="lib/paxtools/*.jar"/> -->
 				<include name="lib/resources.jar"/>
@@ -643,8 +647,10 @@ public class Revision
 				<include name="lib/resources.jar"/>
 				<include name="resources/botresult.css" />
 				<include name="resources/sorttable.js" />
-				<include name="lib/bridgedb.jar"/>
-				<include name="lib/bridgedb-bio.jar"/>
+				<include name="lib/org.bridgedb.jar"/>
+				<include name="lib/org.bridgedb.bio.jar"/>
+				<include name="lib/org.bridgedb.webservice.bridgerest.jar"/>
+				<include name="lib/org.bridgedb.rdb.jar"/>
 			</zipfileset>
 		</zip>
 		<tar destfile="${release.dir}/${binbase2}.tar.gz" compression="gzip">

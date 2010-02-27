@@ -47,6 +47,7 @@
 	<path id="standalone.libs">
 	  <path refid="core.libs"/>
 	  <fileset dir="lib">
+		<include name="org.bridgedb.rdb.construct.jar"/>
 	    <include name="derby.jar"/>
 		<include name="forms-1.2.0.jar"/>
 		<include name="swing-worker-1.1.jar"/>
@@ -98,6 +99,7 @@
 		<path refid="project.gui.class.path"/>
 		<pathelement location="${build.swing.dir}"/>
 		<fileset dir="lib">
+			<include name="org.bridgedb.rdb.construct.jar"/>
 			<include name="BrowserLauncher.jar"/>
 			<include name="commons-math-2.0.jar"/>
 		</fileset>

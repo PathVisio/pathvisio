@@ -22,26 +22,22 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.bridgedb.BridgeDb;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
-import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
-import org.bridgedb.rdb.DBConnector;
-import org.bridgedb.rdb.DataDerby;
-import org.bridgedb.rdb.DataDerbyDirectory;
-import org.bridgedb.rdb.IDMapperRdb;
-import org.bridgedb.rdb.SimpleGdb;
-import org.bridgedb.rdb.SimpleGdbFactory;
+import org.bridgedb.rdb.construct.DBConnector;
+import org.bridgedb.rdb.construct.DataDerby;
+import org.bridgedb.rdb.construct.DataDerbyDirectory;
 import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
 import org.pathvisio.gex.SimpleGex;
-import org.pathvisio.plugins.gex.GexTxtImporter;
-import org.pathvisio.plugins.gex.ImportInformation;
 import org.pathvisio.preferences.PreferenceManager;
-
-import junit.framework.TestCase;
 
 public class Test extends TestCase
 {
@@ -55,9 +51,10 @@ public class Test extends TestCase
 
 	GexManager gexManager = null;
 
-	public void setUp()
+	public void setUp() throws ClassNotFoundException
 	{
 		gexManager = GexManager.getCurrent();
+		Class.forName ("org.bridgedb.rdb.IDMapperRdb");
 	}
 
 	public void testImportInformation()
@@ -87,7 +84,7 @@ public class Test extends TestCase
 		info.setTxtFile(f);
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setGexName(dbFileName);
-		SimpleGdb gdb = SimpleGdbFactory.createInstance(GDB_HUMAN, new DataDerby(), 0);
+		IDMapper gdb = BridgeDb.connect("idmapper-pgdb:" + GDB_HUMAN);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 
 		// no errors if all genes could be looked up.
@@ -133,7 +130,7 @@ public class Test extends TestCase
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info2.setGexName(dbFileName);
 
-		IDMapperRdb gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
+		IDMapper gdb = BridgeDb.connect("idmapper-pgdb:" + GDB_HUMAN);
 		GexTxtImporter.importFromTxt(info2, null, gdb, gexManager);
 
 		// 91 errors expected if no genes can be looked up.
@@ -157,7 +154,7 @@ public class Test extends TestCase
 		info.setGexName(dbFileName);
 		info.setSyscodeFixed(true);
 		info.setDataSource(BioDataSource.AFFY);
-		SimpleGdb gdb = SimpleGdbFactory.createInstance (GDB_RAT, new DataDerby(), 0);
+		IDMapper gdb = BridgeDb.connect("idmapper-pgdb:" + GDB_RAT);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 
 		// just 6 errors if all goes well
@@ -184,7 +181,7 @@ public class Test extends TestCase
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info.setGexName(dbFileName);
 
-		SimpleGdb gdb = SimpleGdbFactory.createInstance(GDB_HUMAN, new DataDerby(), 0);
+		IDMapper gdb = BridgeDb.connect("idmapper-pgdb:" + GDB_HUMAN);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 
 		// 0 errors if all goes well
@@ -210,7 +207,7 @@ public class Test extends TestCase
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex5";
 		info.setGexName(dbFileName);
 
-		SimpleGdb gdb = SimpleGdbFactory.createInstance(GDB_HUMAN, new DataDerby(), 0);
+		IDMapper gdb = BridgeDb.connect("idmapper-pgdb:" + GDB_HUMAN);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 
 		// 0 errors if all goes well
@@ -238,7 +235,7 @@ public class Test extends TestCase
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex4";
 		info.setGexName(dbFileName);
 
-		SimpleGdb gdb = SimpleGdbFactory.createInstance(GDB_HUMAN, new DataDerby(), 0);
+		IDMapper gdb = BridgeDb.connect("idmapper-pgdb:" + GDB_HUMAN);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 
 		// 0 errors if all goes well

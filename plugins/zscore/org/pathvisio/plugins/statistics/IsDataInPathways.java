@@ -27,11 +27,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bridgedb.AttributeMapper;
+import org.bridgedb.BridgeDb;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.rdb.DataDerby;
 import org.bridgedb.rdb.SimpleGdb;
 import org.bridgedb.rdb.SimpleGdbFactory;
+import org.bridgedb.rdb.construct.DataDerby;
 import org.pathvisio.data.XrefWithSymbol;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
@@ -89,7 +92,7 @@ public class IsDataInPathways
 		Map<Xref, Xref> dataRefs = new HashMap<Xref, Xref>();
 		Map<Xref, List<String>> counts = new HashMap<Xref, List<String>>();
 
-		SimpleGdb gdb = SimpleGdbFactory.createInstance("" + fGdb, new DataDerby(), 0);
+		IDMapper gdb = BridgeDb.connect("idmapper-pgdb:" + fGdb);
 
 		for (int i = 0; i < gex.getNrRow(); ++i)
 		{
@@ -122,7 +125,7 @@ public class IsDataInPathways
 		{
 			ReporterData data = gex.getRow(i);
 			Xref ref = data.getXref();
-			String bpText = Utils.oneOf (gdb.getAttributes(ref, "Backpage"));
+			String bpText = Utils.oneOf (((AttributeMapper)gdb).getAttributes(ref, "Backpage"));
 			String desc = "";
 			if (bpText != null)
 			{

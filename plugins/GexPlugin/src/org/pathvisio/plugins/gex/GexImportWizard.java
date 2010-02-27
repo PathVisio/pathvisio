@@ -58,7 +58,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.rdb.DBConnector;
+import org.bridgedb.rdb.construct.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;

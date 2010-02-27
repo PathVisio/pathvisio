@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.rdb.DBConnector;
+import org.bridgedb.rdb.construct.DBConnector;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;

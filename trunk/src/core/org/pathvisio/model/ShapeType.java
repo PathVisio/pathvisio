@@ -30,6 +30,7 @@ public class ShapeType
 	private static Map<String, ShapeType> nameMappings = new HashMap<String, ShapeType>();
 	private static List<ShapeType> values = new ArrayList<ShapeType>();
 
+	public static final ShapeType NONE = new ShapeType ("None", "None");
 	public static final ShapeType RECTANGLE = new ShapeType ("Rectangle", "Rectangle");
 	public static final ShapeType ROUNDED_RECTANGLE = new ShapeType ("RoundedRectangle", "RoundedRectangle");
 	public static final ShapeType OVAL = new ShapeType ("Oval", "Oval");

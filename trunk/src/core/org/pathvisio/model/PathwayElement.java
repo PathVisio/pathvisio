@@ -625,7 +625,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		/* set default value for shapeType */
 		if (ot == ObjectType.LABEL)
 		{
-			shapeType = null;
+			shapeType = ShapeType.NONE;
 		}
 		else
 		{

@@ -352,7 +352,7 @@ class GpmlFormat200X extends GpmlFormatAbstract implements GpmlFormatReader
     	o.setStrikethru (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
     	
     	String outline = getAttribute("Label", "Outline", e);
-		if ("None".equals(outline)) o.setShapeType(null);
+		if ("None".equals(outline)) o.setShapeType(ShapeType.NONE);
 		else if ("Rectangle".equals(outline)) o.setShapeType(ShapeType.RECTANGLE);
 		else if ("RoundedRectangle".equals(outline)) o.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 

@@ -564,7 +564,8 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	{
 		Color fillcolor = gdata.getFillColor();
 
-		if (gdata.getShapeType() == null) return; // nothing to draw.
+		if (gdata.getShapeType() == null ||
+			gdata.getShapeType() == ShapeType.NONE) return; // nothing to draw.
 
 		java.awt.Shape shape = getShape(true, false);
 

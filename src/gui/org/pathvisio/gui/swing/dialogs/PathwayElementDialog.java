@@ -53,6 +53,7 @@ public class PathwayElementDialog extends OkCancelDialog {
 	public static PathwayElementDialog getInstance(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		switch(e.getObjectType()) {
 		case LABEL:
+		case SHAPE:
 			return new LabelDialog(swingEngine, e, readonly, frame, locationComp);
 		case DATANODE:
 			return new DataNodeDialog(swingEngine, e, readonly, frame, locationComp);

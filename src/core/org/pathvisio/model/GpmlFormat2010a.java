@@ -446,7 +446,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 	{
 		String base = e.getName();
 		Element jdomGraphics = e.getChild("Graphics", e.getNamespace());
-		String shapeName = o.getShapeType() == null ? "None" : o.getShapeType().getName();
+		String shapeName = o.getShapeType().getName();
 		setAttribute(base + ".Graphics", "ShapeType", jdomGraphics, shapeName);
 	}
 	

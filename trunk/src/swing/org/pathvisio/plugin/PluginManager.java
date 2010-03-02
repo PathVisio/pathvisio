@@ -108,6 +108,7 @@ public class PluginManager {
 				}
 				return;
 			}
+			// see if it is a jar file.
 			if(file.getName().endsWith(".jar"))
 			{
 				Logger.log.info("Detected plugin argument as jar " + param);
@@ -115,7 +116,8 @@ public class PluginManager {
 				return;
 			}
 		}
-		//Otherwise, try to load the class directly
+		//It's not a directory or a jar file. 
+		//Try to load the class directly
 		Logger.log.info("No jar or dir found, assuming plugin argument is a class " + param);
 		PluginInfo inf = new PluginInfo();
 		inf.param = param;
@@ -205,7 +207,7 @@ public class PluginManager {
 				Logger.log.trace("\tLoaded plugin: " + c);
 			}
 		} catch(Throwable ex) {
-			Logger.log.error("\tUnable to load plugin", ex);
+			Logger.log.error("\tUnable to load plugin '" + className + "'", ex);
 			inf.error = ex;
 			info.add(inf);
 		}

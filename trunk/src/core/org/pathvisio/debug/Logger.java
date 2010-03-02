@@ -52,27 +52,28 @@ public class Logger
 	 */
 	public void setDest(String dest)
 	{
-		if (dest.equals ("STDERR"))
-		{
-			s = System.err;
-		}
-		else if (dest.equals("STDOUT"))
-		{
-			s = System.out;
-		}
-		else
-		{
-			try
-			{
-				s = new PrintStream (new File (dest));
-			}
-			catch (FileNotFoundException e)
+		if (dest != null) {
+			if (dest.equals ("STDERR"))
 			{
 				s = System.err;
-				error ("Could not open log file " + dest + " for writing", e);
+			}
+			else if (dest.equals("STDOUT"))
+			{
+				s = System.out;
+			}
+			else
+			{
+				try
+				{
+					s = new PrintStream (new File (dest));
+				}
+				catch (FileNotFoundException e)
+				{
+					s = System.err;
+					error ("Could not open log file " + dest + " for writing", e);
+				}
 			}
 		}
-
 	}
 
 	StopWatch logTimer;

@@ -129,6 +129,22 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		readFromXmlImpl (pwy, new InputSource(in), validate);
 	}
 
+	public static GpmlFormatReader getReaderForNamespace (Namespace ns)
+	{
+		GpmlFormatReader[] formats = new GpmlFormatReader[]
+		{ 
+				GpmlFormat200X.GPML_2007, GpmlFormat200X.GPML_2008A, GpmlFormat2010a.GPML_2010A 
+		};
+		for (GpmlFormatReader format : formats)
+		{
+			if (ns.equals(format.getGpmlNamespace()))
+			{
+				return format;
+			}
+		}
+		return null;
+	}
+
 	private static void readFromXmlImpl(Pathway pwy, InputSource in, boolean validate) throws ConverterException
 	{
 		// Start XML processing
@@ -149,31 +165,19 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 			}
 
 			Namespace ns = root.getNamespace();
-			GpmlFormatReader[] formats = new GpmlFormatReader[]
-			{ 
-					GpmlFormat200X.GPML_2007, GpmlFormat200X.GPML_2008A, GpmlFormat2010a.GPML_2010A 
-			};
-			boolean recognized = false;
-			for (GpmlFormatReader format : formats)
-			{
-				if (ns.equals(format.getGpmlNamespace()))
-				{
-					Logger.log.info ("Recognized format " + ns);
-
-					Logger.log.trace ("Start Validation");
-					if (validate) format.validateDocument(doc);
-					Logger.log.trace ("Copy map elements");
-
-					format.readFromRoot (root, pwy);
-					recognized = true;
-					break;
-				}
-			}
-			if (!recognized)
+			GpmlFormatReader format = getReaderForNamespace (ns);
+			if (format == null)
 			{
 				throw new ConverterException ("This file looks like a pathway, " +
 						"but the namespace " + ns + " was not recognized. This application might be out of date.");
 			}
+			Logger.log.info ("Recognized format " + ns);
+
+			Logger.log.trace ("Start Validation");
+			if (validate) format.validateDocument(doc);
+			Logger.log.trace ("Copy map elements");
+
+			format.readFromRoot (root, pwy);
 		}
 		catch(JDOMParseException pe)
 		{

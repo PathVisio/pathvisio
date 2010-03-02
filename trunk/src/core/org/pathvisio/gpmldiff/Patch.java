@@ -31,6 +31,7 @@ import org.jdom.input.SAXBuilder;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.GpmlFormatReader;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.StaticProperty;
 import org.pathvisio.model.ShapeType;
@@ -118,7 +119,9 @@ class Patch
 					Element f = ((Element)p);
 					if (!f.getName().equals("Change"))
 					{
-						mod.oldElt = GpmlFormat.mapElement(f);
+						GpmlFormatReader reader = GpmlFormat.getReaderForNamespace(
+								f.getNamespace());
+						mod.oldElt = reader.mapElement(f);
 					}
 					else
 					{
@@ -139,7 +142,9 @@ class Patch
 			}
 			else if (e.getName().equals("Insert"))
 			{
-				PathwayElement ins = GpmlFormat.mapElement ((Element)e.getChildren().get(0));
+				Element f = (Element)e.getChildren().get(0);
+				GpmlFormatReader reader = GpmlFormat.getReaderForNamespace(f.getNamespace());
+				PathwayElement ins = reader.mapElement (f);
 				insertions.add (ins);
 			}
 			else if (e.getName().equals("Delete"))
@@ -147,7 +152,9 @@ class Patch
 				ModDel mod = new ModDel();
 				mod.isDeletion = true;
 				mod.changes = null;
-				mod.oldElt = GpmlFormat.mapElement ((Element)e.getChildren().get(0));
+				Element f = (Element)e.getChildren().get(0);
+				GpmlFormatReader reader = GpmlFormat.getReaderForNamespace(f.getNamespace());
+				mod.oldElt = reader.mapElement (f);
 				modifications.put (mod.oldElt, mod);
 			}
 			else

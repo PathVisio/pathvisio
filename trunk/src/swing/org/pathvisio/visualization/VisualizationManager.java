@@ -278,7 +278,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 
 	public static final String ROOT_XML_ELEMENT = "expression-data-visualizations";
 
-	public  InputStream getXmlInput()
+	private InputStream getXmlInput()
 	{
 		File xmlFile = new File(gexManager.getCurrentGex().getDbName() + ".xml");
 		Logger.log.trace("Getting visualizations xml: " + xmlFile);
@@ -292,22 +292,14 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		}
 	}
 
-	public  OutputStream getXmlOutput() {
-		try {
-			File f = new File(gexManager.getCurrentGex().getDbName() + ".xml");
-			Logger.log.trace("Visualization settings will be saved to: " + f);
-			OutputStream out = new FileOutputStream(f);
-			return out;
-		} catch(Exception e) {
-			Logger.log.error("Unable to create visualization settings file", e);
-			return null;
-		}
-	}
-
-	public  void saveXML() {
+	public void saveXML() throws IOException
+	{
 		if(!gexManager.isConnected()) return;
 
-		OutputStream out = getXmlOutput();
+		// write to a temporary file, rename to final file after write was successful.
+		File finalFile = new File(gexManager.getCurrentGex().getDbName() + ".xml");
+		File tempFile = File.createTempFile(finalFile.getName(), ".tmp", finalFile.getParentFile());
+		OutputStream out = new FileOutputStream(tempFile);
 
 		Logger.log.trace("Saving visualizations and color sets to xml: " + out);
 		Document xmlDoc = new Document();
@@ -317,20 +309,17 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		root.addContent(colorSetMgr.getXML());
 
 		Element vis = new Element(XML_ELEMENT);
-
 		for(Visualization v : getVisualizations()) {
 			vis.addContent(v.toXML());
 		}
 		root.addContent(vis);
 
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		xmlOut.output(xmlDoc, out);
+		out.close();
 
-		try {
-			xmlOut.output(xmlDoc, out);
-			out.close();
-		} catch(IOException e) {
-			Logger.log.error("Unable to save visualization settings", e);
-		}
+		if (finalFile.exists()) finalFile.delete();
+		if (!tempFile.renameTo(finalFile)) throw new IOException ("Couldn't rename temporary file");
 	}
 
 
@@ -368,13 +357,11 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 			SAXBuilder parser = new SAXBuilder();
 			doc = parser.build(in);
 			in.close();
-
 			root = doc.getRootElement();
 		} catch(Exception e) {
 			doc = new Document();
 			root = new Element(ROOT_XML_ELEMENT);
 			doc.setRootElement(root);
-
 		}
 		return doc;
 	}

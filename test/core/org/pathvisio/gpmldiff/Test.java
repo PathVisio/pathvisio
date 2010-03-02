@@ -357,7 +357,7 @@ public class Test extends TestCase
 			fail ("Unexpected exception");
 		}
 		assertEquals (ShapeType.RECTANGLE, originalDoc.getPathway().getElementById("bd1").getShapeType());
-		assertEquals (2430.0, originalDoc.getPathway().getElementById("aaa").getMEndX(), 0.01);
+		assertEquals (2430.0 / 15, originalDoc.getPathway().getElementById("aaa").getMEndX(), 0.01);
 		patch.applyTo (originalDoc, 0);
 		assertEquals (2970.0, originalDoc.getPathway().getElementById("aaa").getMEndX(), 0.01);
 		assertEquals (ShapeType.OVAL, originalDoc.getPathway().getElementById("bd1").getShapeType());

@@ -140,23 +140,23 @@ public class TestGraph extends TestCase
 		for (int i = 0; i < 4; ++i)
 		{
 			l[i] = q.getElementById("l" + (i + 1));
-			assertEquals (1750.0, l[i].getMEndX(), 0.01);
-			assertEquals (2000.0, l[i].getMEndY(), 0.01);
+			assertEquals (1750.0 / 15, l[i].getMEndX(), 0.01);
+			assertEquals (2000.0 / 15, l[i].getMEndY(), 0.01);
 			assertTrue (l[i].getMEnd().isRelative());
 			assertFalse (l[i].getMStart().isRelative());
 		}
-		assertEquals (3000.0, l[0].getMStartX());
-		assertEquals (800.0, l[0].getMStartY());
+		assertEquals (3000.0 / 15, l[0].getMStartX());
+		assertEquals (800.0 / 15, l[0].getMStartY());
 
-		base1.setMCenterX(1850.0);
-		base2.setMCenterX(1850.0);
+		base1.setMCenterX(1850.0 / 15);
+		base2.setMCenterX(1850.0 / 15);
 
 		for (int i = 0; i < 4; ++i)
 		{
-			assertEquals (1850.0, l[i].getMEndX(), 0.01);
-			assertEquals (2000.0, l[i].getMEndY(), 0.01);
+			assertEquals (1850.0 / 15, l[i].getMEndX(), 0.01);
+			assertEquals (2000.0 / 15, l[i].getMEndY(), 0.01);
 		}
-		assertEquals (3000.0, l[0].getMStartX());
-		assertEquals (800.0, l[0].getMStartY());
+		assertEquals (3000.0 / 15, l[0].getMStartX());
+		assertEquals (800.0 / 15, l[0].getMStartY());
 	}
 }

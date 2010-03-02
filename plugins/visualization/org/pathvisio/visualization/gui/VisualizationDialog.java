@@ -19,8 +19,10 @@ package org.pathvisio.visualization.gui;
 import java.awt.Component;
 import java.awt.Frame;
 
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
+import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
@@ -61,7 +63,17 @@ public class VisualizationDialog extends OkCancelDialog
 	}
 
 	protected void okPressed() {
-		visMgr.saveXML(); //Save the settings
+		try
+		{
+			visMgr.saveXML(); //Save the settings
+		}
+		catch (Exception ex)
+		{
+			Logger.log.error ("Couldn't save visualization", ex);
+			JOptionPane.showMessageDialog(this,"Couldn't write modifications to disk.\n" + ex.getMessage() + 
+					"\nSee error log for details.",  
+					"Couldn't save visualization", JOptionPane.ERROR_MESSAGE);
+		}
 		super.okPressed();
 	}
 }

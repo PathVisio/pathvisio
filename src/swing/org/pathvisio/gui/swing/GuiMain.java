@@ -408,7 +408,10 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		swingEngine.setApplicationPanel(mainPanel);
 
 		// load plugins from the default plugin dir
-		pluginLocations.add("" + new File (GlobalPreference.getApplicationDir(), "plugins"));
+		File pluginDir = new File (GlobalPreference.getApplicationDir(), "plugins");
+		if (pluginDir.exists()) {
+			pluginLocations.add("" + pluginDir);
+		}
 		processOptions();
 	}
 

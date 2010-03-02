@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.bridgedb.DataSource;
+import org.jdom.Attribute;
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.pathvisio.model.PathwayElement.MAnchor;
@@ -478,4 +480,50 @@ class GpmlFormat200X extends GpmlFormatAbstract implements GpmlFormatReader
 		o.setMCenterY (Double.parseDouble(e.getAttributeValue("CenterY")) / CONVERSION);
 	}
 
+	protected void mapBiopax(PathwayElement o, Element e) throws ConverterException
+	{
+		//this method clones all content,
+		//getContent will leave them attached to the parent, which we don't want
+		//We can safely remove them, since the JDOM element isn't used anymore after this method
+		Element root = new Element("RDF", GpmlFormat.RDF);
+		root.addNamespaceDeclaration(GpmlFormat.RDFS);
+		root.addNamespaceDeclaration(GpmlFormat.RDF);
+		root.addNamespaceDeclaration(GpmlFormat.OWL);
+		root.addNamespaceDeclaration(GpmlFormat.BIOPAX);
+		root.setAttribute(new Attribute("base", getGpmlNamespace().getURI() + "#", Namespace.XML_NAMESPACE));
+		//Element owl = new Element("Ontology", OWL);
+		//owl.setAttribute(new Attribute("about", "", RDF));
+		//Element imp = new Element("imports", OWL);
+		//imp.setAttribute(new Attribute("resource", BIOPAX.getURI(), RDF));
+		//owl.addContent(imp);
+		//root.addContent(owl);
+
+		root.addContent(e.cloneContent());
+		Document bp = new Document(root);
+
+		updateBiopaxNamespace(root);
+		o.setBiopax(bp);
+	}
+
+	private static final Namespace BP_LEV2 = Namespace.getNamespace("bp", "http://www.biopax.org/release/biopax-level2.owl#");
+	
+	/**
+	 * Convert the namespace of biopax element from old level2 to new level3.
+	 * Starting from GpmlFormat2010a, we only support level 3.
+	 * <p>
+	 * We ignore all other differences between level 2 and level 3 here. For
+	 * PublicationXref, it doesn't matter.
+	 */
+	private void updateBiopaxNamespace(Element e)
+	{
+		if (e.getNamespace().equals(BP_LEV2))
+		{
+			e.setNamespace(GpmlFormat.BIOPAX);
+		}
+		for (Object f : e.getChildren())
+		{
+			updateBiopaxNamespace((Element)f);
+		}
+	}
+	
 }

@@ -446,31 +446,7 @@ public abstract class GpmlFormatAbstract
 
 		mapMappInfoDataVariable(o, e);
 	}
-
-	protected void mapBiopax(PathwayElement o, Element e) throws ConverterException
-	{
-		//this method clones all content,
-		//getContent will leave them attached to the parent, which we don't want
-		//We can safely remove them, since the JDOM element isn't used anymore after this method
-		Element root = new Element("RDF", GpmlFormat.RDF);
-		root.addNamespaceDeclaration(GpmlFormat.RDFS);
-		root.addNamespaceDeclaration(GpmlFormat.RDF);
-		root.addNamespaceDeclaration(GpmlFormat.OWL);
-		root.addNamespaceDeclaration(GpmlFormat.BIOPAX);
-		root.setAttribute(new Attribute("base", nsGPML.getURI() + "#", Namespace.XML_NAMESPACE));
-		//Element owl = new Element("Ontology", OWL);
-		//owl.setAttribute(new Attribute("about", "", RDF));
-		//Element imp = new Element("imports", OWL);
-		//imp.setAttribute(new Attribute("resource", BIOPAX.getURI(), RDF));
-		//owl.addContent(imp);
-		//root.addContent(owl);
-
-		root.addContent(e.cloneContent());
-		Document bp = new Document(root);
-
-		o.setBiopax(bp);
-	}
-
+	
 	protected void updateBiopax(PathwayElement o, Element e) throws ConverterException
 	{
 		Document bp = o.getBiopax();

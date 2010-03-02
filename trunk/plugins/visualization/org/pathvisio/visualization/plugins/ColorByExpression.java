@@ -407,7 +407,10 @@ public class ColorByExpression extends VisualizationMethod {
 	public final Element toXML() {
 		Element xml = super.toXML();
 		saveAttributes(xml);
-		for(ConfiguredSample s : useSamples) xml.addContent(s.toXML());
+		for(ConfiguredSample s : useSamples)
+		{
+			if (s.getColorSet() != null) xml.addContent(s.toXML());
+		}
 		return xml;
 	}
 

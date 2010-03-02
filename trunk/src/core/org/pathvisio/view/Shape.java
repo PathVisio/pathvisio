@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 
 /**
  * This class represents a GMMLShape, which can be a
@@ -85,7 +86,7 @@ public class Shape extends GraphicsShape
 
 		java.awt.Shape s = null;
 
-		if (gdata.getShapeType() == null)
+		if (gdata.getShapeType() == null || gdata.getShapeType() == ShapeType.NONE)
 		{
 			s = ShapeRegistry.getShape ("Default", x, y, w, h);
 		}

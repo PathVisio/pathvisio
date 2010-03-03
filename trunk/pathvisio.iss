@@ -28,6 +28,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "pathvisio.bat"; DestDir: "{app}"; Flags: ignoreversion
+Source: "pvicon.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "pathvisio.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "visplugins.jar"; DestDir: "{app}"; Flags: ignoreversion
 Source: "lib\*.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
@@ -37,9 +38,9 @@ Source: "lib\jdom.jar"; DestDir: "{app}\lib"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\PathVisio"; Filename: "{app}\pathvisio.bat";
+Name: "{group}\PathVisio"; Filename: "{app}\pathvisio.bat"; IconFilename: "{app}\pvicon.ico";
 Name: "{group}\{cm:UninstallProgram,PathVisio}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\PathVisio"; Filename: "{app}\pathvisio.bat"; Tasks: desktopicon
+Name: "{userdesktop}\PathVisio"; Filename: "{app}\pathvisio.bat"; IconFilename: "{app}\pvicon.ico"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\pathvisio.bat"; Description: "{cm:LaunchProgram,PathVisio}"; Flags: nowait postinstall skipifsilent
@@ -47,5 +48,5 @@ Filename: "{app}\pathvisio.bat"; Description: "{cm:LaunchProgram,PathVisio}"; Fl
 [Registry]
 Root: HKCR; Subkey: ".gpml"; ValueType: string; ValueName: ""; ValueData: "GpmlPathway"; Flags: uninsdeletevalue
 Root: HKCR; Subkey: "GpmlPathway"; ValueType: string; ValueName: ""; ValueData: "GPML Pathway for PathVisio"; Flags: uninsdeletekey
-; Root: HKCR; Subkey: "GpmlPathway\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\MYPROG.EXE,0"
+Root: HKCR; Subkey: "GpmlPathway\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\pvicon.ico"
 Root: HKCR; Subkey: "GpmlPathway\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\pathvisio.bat"" ""%1"""

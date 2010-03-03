@@ -62,7 +62,6 @@
 		<include name="jdom.jar"/>
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.bio.jar"/>
-		<include name="org.bridgedb.webservice.jar"/>
 		<include name="swing-worker-1.1.jar"/>
 	    <include name="resources.jar"/>
 	  </fileset>
@@ -72,6 +71,7 @@
 	<path id="wikipathways.libs">
 	  <path refid="diffview.libs"/>
 	  <fileset dir="lib">
+		<include name="org.bridgedb.webservice.bridgerest.jar"/>
 		<include name="apache/*.jar"/>
 		<include name="forms-1.2.0.jar"/>
 	  </fileset>

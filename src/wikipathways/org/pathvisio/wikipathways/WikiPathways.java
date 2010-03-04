@@ -220,16 +220,29 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 
 		progress.report("Connecting to database...");
 
-		//Connect to the gene database
+		//Connect to bridgedb (currently supports connections strings for "idmapper-bridgerest" 
+		//and "idmapper-jdbc" (for derby client)
 		if(isUseGdb()) {
-			Class.forName("org.bridgedb.webservice.bridgerest.BridgeRest");
+			String bridgeUrl = parameters.getValue(Parameter.GDB_SERVER);
+			if(!bridgeUrl.endsWith("/")) bridgeUrl = bridgeUrl + "/";
+			if(bridgeUrl.startsWith("idmapper-bridgerest")) {
+				Class.forName("org.bridgedb.webservice.bridgerest.BridgeRest");
+				String geneUrl = bridgeUrl + Encoder.encode(getPwSpecies(), "UTF-8");
+			} else if(bridgeUrl.startsWith("idmapper-jdbc")) {
+				Class.forName("org.apache.derby.jdbc.ClientDriver");
+				Class.forName("org.bridgedb.rdb.IDMapperRdb");
+				String geneUrl = bridgeUrl +  getPwSpecies();
+			}
 			GdbManager gdbManager = swingEngine.getGdbManager();
 			
-			String server = parameters.getValue(Parameter.GDB_SERVER);
-			if(!server.endsWith("/")) server = server + "/";
-			String url = "idmapper-bridgerest:" + server + URLEncoder.encode(getPwSpecies(), "UTF-8");
-			Logger.log.trace("Bridgedb connection string: " + url);
-			gdbManager.setGeneDb(url);
+			Logger.log.trace("Bridgedb connection string: " + geneUrl);
+			gdbManager.setGeneDb(geneUrl);
+			
+			//Also connect to the metabolite database if we're using derby
+			if(bridgeUrl.startsWith("idmapper-jdbc")) {
+				String metUrl = bridgeUrl + "metabolites";
+				gdbManager.setMetaboliteDb(metUrl);
+			}
 		}
 	}
 

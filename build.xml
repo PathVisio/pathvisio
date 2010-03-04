@@ -74,6 +74,8 @@
 		<include name="org.bridgedb.webservice.bridgerest.jar"/>
 		<include name="apache/*.jar"/>
 		<include name="forms-1.2.0.jar"/>
+		<include name="derbyclient.jar" />
+		<include name="org.bridgedb.rdb.jar"/>
 	  </fileset>
 	</path>
 

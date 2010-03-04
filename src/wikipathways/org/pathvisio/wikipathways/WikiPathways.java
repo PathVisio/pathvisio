@@ -225,13 +225,14 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		if(isUseGdb()) {
 			String bridgeUrl = parameters.getValue(Parameter.GDB_SERVER);
 			if(!bridgeUrl.endsWith("/")) bridgeUrl = bridgeUrl + "/";
+			String geneUrl = "";
 			if(bridgeUrl.startsWith("idmapper-bridgerest")) {
 				Class.forName("org.bridgedb.webservice.bridgerest.BridgeRest");
-				String geneUrl = bridgeUrl + Encoder.encode(getPwSpecies(), "UTF-8");
+				geneUrl = bridgeUrl + URLEncoder.encode(getPwSpecies(), "UTF-8");
 			} else if(bridgeUrl.startsWith("idmapper-jdbc")) {
 				Class.forName("org.apache.derby.jdbc.ClientDriver");
 				Class.forName("org.bridgedb.rdb.IDMapperRdb");
-				String geneUrl = bridgeUrl +  getPwSpecies();
+				geneUrl = bridgeUrl +  getPwSpecies();
 			}
 			GdbManager gdbManager = swingEngine.getGdbManager();
 			

@@ -30,13 +30,12 @@ import java.util.Set;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import org.bridgedb.BridgeDb;
 import org.bridgedb.DataSource;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
-import org.bridgedb.rdb.DataDerby;
-import org.bridgedb.rdb.SimpleGdb;
-import org.bridgedb.rdb.SimpleGdbFactory;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;
@@ -168,7 +167,7 @@ public class CommonNodeView {
 		File dir = new File(dbLocation);
 		// try {
 
-		SimpleGdb gdb = null;
+		IDMapper gdb = null;
 		// String[] pgdbFileName = dir.list();
 		File[] pgdbFileName = dir.listFiles();
 
@@ -219,11 +218,13 @@ public class CommonNodeView {
 				// File fGdb = new File(dbLocation + fileName);
 				// System.out.println(speciesOrMetabolite);
 				try {
-					gdb = SimpleGdbFactory.createInstance("" + file,
-							new DataDerby(), 0);
+					Class.forName ("org.bridgedb.rdb.IDMapperRdb");
+					gdb = BridgeDb.connect ("idmapper-pgdb:" + file);
 				} catch (IDMapperException e) {
 					Logger.log.error("Problem while connecting to the Gdb", e);
-
+				}
+				catch (ClassNotFoundException e) {
+					Logger.log.error("Problem while connecting to the Gdb", e);
 				}
 				break;
 			}

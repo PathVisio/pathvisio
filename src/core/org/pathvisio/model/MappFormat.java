@@ -322,8 +322,14 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		double[] size = mi.getMBoardSize();
 		mappInfo[ICOL_BOARDWIDTH] = "" + size[0] * PIXELS_TO_MAPP;
 		mappInfo[ICOL_BOARDHEIGHT] = "" + size[1] * PIXELS_TO_MAPP;
-		mappInfo[ICOL_WINDOWWIDTH] = getSafeDynamicProperty(mi, "org.pathvisio.model.WindowWidth");
-		mappInfo[ICOL_WINDOWHEIGHT] = getSafeDynamicProperty(mi, "org.pathvisio.model.WindowHeight");
+
+		String val;
+		val = mi.getDynamicProperty("org.pathvisio.model.WindowWidth");
+		mappInfo[ICOL_WINDOWWIDTH] = (val == null) ? "0" : val;
+		
+		val = mi.getDynamicProperty("org.pathvisio.model.WindowWidth");
+    	if (val == null) val = "0";
+		mappInfo[ICOL_WINDOWHEIGHT] = (val == null) ? "0" : val;
 
 		return mappInfo;
 	}
@@ -722,7 +728,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static void unmapGeneProductType (PathwayElement o, String[] mappObject) throws ConverterException
     {
     	mappObject[COL_TYPE] = "Gene";
-    	mappObject[COL_SYSTEMCODE] = o.getDataSource().getSystemCode();
+    	mappObject[COL_SYSTEMCODE] = o.getDataSource() != null ? o.getDataSource().getSystemCode() : "";
 		mappObject[COL_HEAD] = getSafeDynamicProperty (o, "org.pathvisio.model.BackpageHead");
 		mappObject[COL_ID] = o.getGeneID();
 		mappObject[COL_LABEL] = o.getTextLabel();

@@ -20,6 +20,7 @@ package org.pathvisio.cytoscape.superpathways;
 import giny.model.Node;
 
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 
@@ -60,6 +61,6 @@ public class CustomNodeGenerator {
 		nv = (DNodeView) Cytoscape.getCurrentNetworkView().getNodeView(node);
 
 		ding.view.DNodeView dnv = (ding.view.DNodeView) nv;
-		dnv.addCustomGraphic(rect, paint, 0);
+		dnv.addCustomGraphic(rect, paint, (byte)0);
 	}
 }

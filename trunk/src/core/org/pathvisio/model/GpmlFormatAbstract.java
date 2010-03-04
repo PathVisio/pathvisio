@@ -275,7 +275,7 @@ public abstract class GpmlFormatAbstract
 	protected void mapShapeColor(PathwayElement o, Element e) throws ConverterException
 	{
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-    	String scol = getAttribute("Shape.Graphics", "FillColor", graphics);
+		String scol = getAttribute(e.getName() + ".Graphics", "FillColor", graphics);
     	if(scol.equals("Transparent")) {
     		o.setTransparent (true);
     	} else {

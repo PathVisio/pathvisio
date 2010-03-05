@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bridgedb.DataSource;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
-import org.bridgedb.rdb.IDMapperRdb;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;
@@ -38,7 +38,6 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ColorExporter;
-import org.pathvisio.util.Utils;
 
 import atlas.model.Factor;
 import atlas.model.FactorData;
@@ -53,14 +52,14 @@ public class AtlasVisualizer {
 	Pathway pathway;
 	GeneSet atlasGenes;
 	List<Factor> factors;
-	List<IDMapperRdb> gdbs;
+	List<IDMapper> gdbs;
 	Organism organism;
 
-	public AtlasVisualizer(Pathway pathway, GeneSet atlasGenes, List<Factor> factors, List<IDMapperRdb> gdbs) {
+	public AtlasVisualizer(Pathway pathway, GeneSet atlasGenes, List<Factor> factors, List<IDMapper> list) {
 		this.pathway = pathway;
 		this.atlasGenes = atlasGenes;
 		this.factors = factors;
-		this.gdbs = gdbs;
+		this.gdbs = list;
 		this.organism = Organism.fromLatinName(pathway.getMappInfo().getOrganism());
 		PreferenceManager.init();
 	}

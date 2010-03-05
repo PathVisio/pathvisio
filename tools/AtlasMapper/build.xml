@@ -29,8 +29,10 @@
 		<include name="wikipathways-client.jar" />
 		<include name="lib/resources.jar" />
 		<include name="lib/jdom.jar" />
-		<include name="lib/bridgedb.jar" />
-		<include name="lib/bridgedb-bio.jar" />
+		<include name="lib/org.bridgedb.jar" />
+		<include name="lib/org.bridgedb.bio.jar" />
+		<include name="lib/org.bridgedb.rdb.jar" />
+		<include name="lib/org.bridgedb.rdb.construct.jar" />
 	</fileset>
 
 	<path id="class.path">

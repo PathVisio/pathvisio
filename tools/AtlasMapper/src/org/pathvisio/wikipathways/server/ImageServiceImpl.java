@@ -53,7 +53,7 @@ public class ImageServiceImpl extends HttpServlet {
 		return cacheMgr;
 	}
 
-	private ImageCache getImageCache() throws ServiceException, IOException, IDMapperException {
+	private ImageCache getImageCache() throws ServiceException, IOException, IDMapperException, ClassNotFoundException {
 		return getCacheManager().getImageCache();
 	}
 

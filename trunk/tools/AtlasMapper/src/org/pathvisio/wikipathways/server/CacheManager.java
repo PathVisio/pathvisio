@@ -27,7 +27,7 @@ import javax.servlet.ServletContext;
 import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.bio.GdbProvider;
+import org.bridgedb.rdb.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 
@@ -84,7 +84,7 @@ public class CacheManager {
 		return retention_time;
 	}
 
-	public ImageCache getImageCache() throws ServiceException, IOException, IDMapperException {
+	public ImageCache getImageCache() throws ServiceException, IOException, IDMapperException, ClassNotFoundException {
 		if(imageCache == null) {
 			imageCache = new ImageCache(
 				getCacheDir().getAbsolutePath(),
@@ -97,7 +97,7 @@ public class CacheManager {
 		return imageCache;
 	}
 
-	public AtlasCache getAtlasCache() throws ServiceException, IOException, IDMapperException {
+	public AtlasCache getAtlasCache() throws ServiceException, IOException, IDMapperException, ClassNotFoundException {
 		if(atlasCache == null) {
 			atlasCache = new AtlasCache(
 					getCacheDir().getAbsolutePath(),
@@ -119,7 +119,7 @@ public class CacheManager {
 		return pathwayCache;
 	}
 
-	public GdbProvider getGdbProvider() throws IOException, IDMapperException {
+	public GdbProvider getGdbProvider() throws IOException, IDMapperException, ClassNotFoundException {
 		if(gdbs == null) {
 			gdbs = GdbProvider.fromConfigFile(
 					new File(propsPath, "gdb.config")

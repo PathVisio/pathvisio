@@ -26,8 +26,8 @@ import java.util.List;
 import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.bio.GdbProvider;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.GdbProvider;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ImageExporter;

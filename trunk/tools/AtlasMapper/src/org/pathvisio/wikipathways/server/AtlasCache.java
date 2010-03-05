@@ -31,17 +31,16 @@ import java.util.Set;
 import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.DataSource;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
-import org.bridgedb.bio.GdbProvider;
 import org.bridgedb.bio.Organism;
-import org.bridgedb.rdb.IDMapperRdb;
+import org.bridgedb.rdb.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.Utils;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
@@ -102,13 +101,13 @@ public class AtlasCache {
 			org = Organism.HomoSapiens;
 			Logger.log.warn("No organism found in pahtway " + p.getId() + ", assuming human");
 		}
-		List<IDMapperRdb> gdbList = gdbs.getGdbs(org);
+		List<IDMapper> gdbList = gdbs.getGdbs(org);
 
 		//Get all ensembl genes on the pathway
 		Set<String> ensIds = new HashSet<String>();
 		for(Xref x : pathway.getDataNodeXrefs()) {
 			if(x.getId() == null || x.getDataSource() == null) continue;
-			for(IDMapperRdb gdb : gdbList) {
+			for(IDMapper gdb : gdbList) {
 				for(Xref c : gdb.mapID(x, ensDs)) {
 					ensIds.add(c.getId());
 				}

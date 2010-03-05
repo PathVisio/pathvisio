@@ -16,15 +16,14 @@ import java.util.Stack;
 import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.DataSource;
+import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.GdbProvider;
 import org.bridgedb.bio.Organism;
-import org.bridgedb.rdb.IDMapperRdb;
+import org.bridgedb.rdb.GdbProvider;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.util.Utils;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.server.AtlasMapperServiceImpl;
 import org.pathvisio.wikipathways.server.PathwayCache;
@@ -51,7 +50,7 @@ public class AtlasStatistics {
 
 	PathwayCache pwCache;
 
-	public AtlasStatistics(File cachePath, File gdbConfig) throws IDMapperException, IOException, ServiceException {
+	public AtlasStatistics(File cachePath, File gdbConfig) throws IDMapperException, IOException, ServiceException, ClassNotFoundException {
 		this.cachePath = cachePath;
 		gdbProv = GdbProvider.fromConfigFile(gdbConfig);
 		wpClient = new WikiPathwaysClient();
@@ -73,7 +72,7 @@ public class AtlasStatistics {
 					Pathway p = wp.getPathway();
 					for(Xref x : p.getDataNodeXrefs()) {
 						if(x.getId() == null || x.getDataSource() == null) continue;
-						for(IDMapperRdb gdb : gdbProv.getGdbs(Organism.fromLatinName(wpi.getSpecies()))) {
+						for(IDMapper gdb : gdbProv.getGdbs(Organism.fromLatinName(wpi.getSpecies()))) {
 							for(Xref ens : gdb.mapID(x, orgEns)) {
 								ensIds.add(ens.getId());
 							}

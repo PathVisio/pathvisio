@@ -17,7 +17,7 @@ AllowNoIcons=yes
 OutputBaseFilename=PathVisio-{#AppVerStr}-Setup
 Compression=lzma
 SolidCompression=yes
-OutputDir=dist
+OutputDir=release
 ChangesAssociations=yes
 
 [Languages]

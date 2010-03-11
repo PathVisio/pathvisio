@@ -34,6 +34,8 @@ import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.MappFormat;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayExporter;
+import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.model.RasterImageExporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -70,7 +72,13 @@ public class Converter {
      */
     public static void main(String[] args)
     {
-		PreferenceManager.init();
+        // Handle command line arguments
+        // Check for custom output path
+        Logger.log.setStream (System.err);
+						//debug, trace, info, warn, error, fatal
+        Logger.log.setLogLevel (false, false, true, true, true, true);
+
+        PreferenceManager.init();
     	Engine engine = new Engine();
     	engine.addPathwayImporter(new GpmlFormat());
     	engine.addPathwayImporter(new MappFormat());
@@ -83,18 +91,33 @@ public class Converter {
 		engine.addPathwayExporter(new EUGeneExporter());
 		engine.addPathwayExporter(new DataNodeListExporter());
 
+		// Transient dependency on Biopax converter
+		try
+		{
+			Class<?> c = Class.forName("org.pathvisio.biopax3.BiopaxFormat");
+			Object o  = c.newInstance();
+			engine.addPathwayExporter((PathwayExporter)o);
+			engine.addPathwayImporter((PathwayImporter)o);
+		}
+		catch (ClassNotFoundException ex)
+		{
+			Logger.log.warn("BioPAX converter not in classpath, BioPAX conversion not available today.");
+		}
+		catch (InstantiationException e)
+		{
+			Logger.log.error("BioPAX instantiation error", e);
+		}
+		catch (IllegalAccessException e)
+		{
+			Logger.log.warn("Access to BioPAX class is Illegal", e);
+		}
+		
 		//Enable MiM support (for export to graphics formats)
 		PreferenceManager.getCurrent().setBoolean(GlobalPreference.MIM_SUPPORT, true);
 		MIMShapes.registerShapes();
 
         File inputFile = null;
         File outputFile = null;
-
-        // Handle command line arguments
-        // Check for custom output path
-        Logger.log.setStream (System.err);
-						//debug, trace, info, warn, error, fatal
-        Logger.log.setLogLevel (false, false, true, true, true, true);
 
 		boolean error = false;
 		if (args.length == 0)

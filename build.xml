@@ -265,7 +265,11 @@ public class Revision
 
 	<target name="jar" depends="compile-swing" description="Generates pathvisio.jar and pathvisio_core.jar">
 		<manifestclasspath property="manifest.cp" jarfile="pathvisio.jar">
-			<classpath refid="standalone.libs" />
+			<classpath>
+				<path refid="standalone.libs" />
+			<!--extra transient dependencies for biopax conversion -->
+				<pathelement location="Biopax3GPML.jar"/>
+			</classpath>
 		</manifestclasspath>
 
 		<jar jarfile="pathvisio.jar">

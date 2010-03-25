@@ -41,14 +41,32 @@ public class PathwayMap
 {
 	public static class PathwayInfo
 	{
-		Set<Xref> srcRefs;
-		String name;
-		File file;
+		private Set<Xref> srcRefs;
+		private String name;
+		private File file;
+		
+		public Set<Xref> getSrcRefs()
+		{
+			return srcRefs;
+		}
+
+		public String getName()
+		{
+			return name;
+		}
+
+		public File getFile()
+		{
+			return file;
+		}
 	}
 
-	List<PathwayInfo> pathways;
+	private final List<PathwayInfo> pathways = new ArrayList<PathwayInfo>();
 
-	PathwayMap(File pwDir)
+	/**
+	 * @param pwyFiles pathway files to read.
+	 */
+	public PathwayMap(List<File> pwyFiles)
 	{
 		try
 		{
@@ -59,17 +77,23 @@ public class PathwayMap
 			Logger.log.error("Problem while searching pathways", e);
 			throw new IllegalStateException(); // TODO: more info in exception
 		}
-
-		doGetSrcRefs(pwDir);
+		
+		doGetSrcRefs(pwyFiles);
+	}
+	
+	/**
+	 * @param pwDir directory with pathway files. All pathways are read recursively
+	 */
+	public PathwayMap(File pwDir)
+	{
+		this (FileUtils.getFiles(pwDir, "gpml", true));
 	}
 
 	private XMLReader xmlReader = null;
 
-	private void doGetSrcRefs(File pwDir)
+	private void doGetSrcRefs(List<File> pwyFiles)
 	{
-		pathways = new ArrayList<PathwayInfo>();
-
-		for (File file : FileUtils.getFiles(pwDir, "gpml", true))
+		for (File file : pwyFiles)
 		{
 			try
 			{
@@ -84,7 +108,7 @@ public class PathwayMap
 				pi.name = pwyParser.getName();
 				pi.srcRefs = srcRefs;
 				pi.file = file;
-				pathways.add (pi);
+				getPathways().add (pi);
 			}
 			catch (ParseException ex)
 			{
@@ -93,14 +117,18 @@ public class PathwayMap
 		}
 	}
 
-
 	public Set<Xref> getSrcRefs()
 	{
 		Set<Xref> result = new HashSet<Xref>();
-		for (PathwayInfo pi : pathways)
+		for (PathwayInfo pi : getPathways())
 		{
 			result.addAll (pi.srcRefs);
 		}
 		return result;
+	}
+
+	public List<PathwayInfo> getPathways()
+	{
+		return pathways;
 	}
 }

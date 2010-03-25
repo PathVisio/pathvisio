@@ -260,7 +260,7 @@ public class ZScoreCalculator
 			Set<String> probesMeasured = new HashSet<String>();
 			Set<String> probesPositive = new HashSet<String>();
 
-			for (Xref ref : pi.srcRefs)
+			for (Xref ref : pi.getSrcRefs())
 			{
 				RefInfo refInfo = dataMap.get(ref);
 				probesMeasured.addAll(refInfo.getProbesMeasured());
@@ -269,11 +269,11 @@ public class ZScoreCalculator
 
 			int cPwyMeasured = probesMeasured.size();
 			int cPwyPositive = probesPositive.size();
-			int cPwyTotal = pi.srcRefs.size();
+			int cPwyTotal = pi.getSrcRefs().size();
 
 			double zscore = Stats.zscore(cPwyMeasured, cPwyPositive, result.bigN, result.bigR);
 			StatisticsPathwayResult spr = new StatisticsPathwayResult(
-					pi.file, pi.name,
+					pi.getFile(), pi.getName(),
 					cPwyMeasured, cPwyPositive, cPwyTotal, zscore);
 			return spr;
 		}
@@ -323,18 +323,18 @@ public class ZScoreCalculator
 			// i.e. further away from 0 than the actual zscore.
 			Map<PathwayInfo, Integer> extremer = new HashMap<PathwayInfo, Integer>();
 
-			for (PathwayInfo pi : pwyMap.pathways) extremer.put (pi, 0);
+			for (PathwayInfo pi : pwyMap.getPathways()) extremer.put (pi, 0);
 
 			for (int i = 0; i < 999; ++i)
 			{
 				permuteMap (dataMap2);
 
-				for (PathwayInfo pi : pwyMap.pathways)
+				for (PathwayInfo pi : pwyMap.getPathways())
 				{
 					int cPwyMeasured = 0;
 					int cPwyPositive = 0;
 
-					for (Xref ref : pi.srcRefs)
+					for (Xref ref : pi.getSrcRefs())
 					{
 						RefInfo refInfo = dataMap2.get(ref);
 						if (refInfo.isMeasured()) cPwyMeasured++;
@@ -351,7 +351,7 @@ public class ZScoreCalculator
 			}
 
 			// report p-vals
-			for (PathwayInfo pi : pwyMap.pathways)
+			for (PathwayInfo pi : pwyMap.getPathways())
 			{
 				double pval = (double)extremer.get(pi) / 1000.0;
 				StatisticsPathwayResult spr = statsMap.get(pi);
@@ -388,9 +388,9 @@ public class ZScoreCalculator
 		{
 			int cPwyMeasured = 0;
 			int cPwyPositive = 0;
-			int cPwyTotal = pi.srcRefs.size();
+			int cPwyTotal = pi.getSrcRefs().size();
 
-			for (Xref ref : pi.srcRefs)
+			for (Xref ref : pi.getSrcRefs())
 			{
 				RefInfo refInfo = dataMap.get(ref);
 				if (refInfo.isMeasured()) cPwyMeasured++;
@@ -399,7 +399,7 @@ public class ZScoreCalculator
 
 			double zscore = Stats.zscore(cPwyMeasured, cPwyPositive, result.bigN, result.bigR);
 			StatisticsPathwayResult spr = new StatisticsPathwayResult(
-					pi.file, pi.name,
+					pi.getFile(), pi.getName(),
 					cPwyMeasured, cPwyPositive, cPwyTotal, zscore);
 			return spr;
 		}
@@ -457,13 +457,13 @@ public class ZScoreCalculator
 		Logger.log.info ("N: " + result.bigN + ", R: " + result.bigR);
 
 		int i = 0;
-		for (PathwayInfo pi : pwyMap.pathways)
+		for (PathwayInfo pi : pwyMap.getPathways())
 		{
 			if (pk != null)
 			{
 				if (pk.isCancelled()) return null;
-				pk.setTaskName("Analyzing " + pi.file.getName());
-				pk.setProgress((int)((0.6 + (0.2 * (double)i / (double)pwyMap.pathways.size())) * 100.0));
+				pk.setTaskName("Analyzing " + pi.getFile().getName());
+				pk.setProgress((int)((0.6 + (0.2 * (double)i / (double)pwyMap.getPathways().size())) * 100.0));
 			}
 			StatisticsPathwayResult spr = m.calculatePathway(pi);
 			statsMap.put (pi, spr);

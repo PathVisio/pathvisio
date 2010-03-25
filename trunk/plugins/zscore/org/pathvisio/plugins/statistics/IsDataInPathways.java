@@ -40,6 +40,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.FileUtils;
 import org.pathvisio.util.PathwayParser;
@@ -74,18 +75,6 @@ public class IsDataInPathways
 		GexManager gexManager = new GexManager();
 		gexManager.setCurrentGex("" + fGex, false);
 
-		XMLReader xmlReader;
-
-		try
-		{
-			xmlReader = XMLReaderFactory.createXMLReader();
-		}
-		catch (SAXException e)
-		{
-			Logger.log.error("Problem while searching pathways", e);
-			return;
-		}
-
 		// read all rows of gex;
 		SimpleGex gex = gexManager.getCurrentGex();
 
@@ -106,16 +95,16 @@ public class IsDataInPathways
 			dataRefs.put (src, src);
 		}
 
-		for (File f : FileUtils.getFiles(pwDir, "gpml", false))
-		{
-			PathwayParser pp = new PathwayParser (f, xmlReader);
+		PathwayMap map = new PathwayMap(pwDir);
 
-			for (XrefWithSymbol ref : pp.getGenes())
+		for (PathwayInfo info : map.getPathways())
+		{
+			for (Xref ref : info.getSrcRefs())
 			{
 				Xref ref2 = new Xref (ref.getId(), ref.getDataSource());
 				if (dataRefs.containsKey(ref2))
 				{
-					counts.get(dataRefs.get(ref2)).add(pp.getName());
+					counts.get(dataRefs.get(ref2)).add(info.getName());
 				}
 			}
 		}

@@ -22,50 +22,96 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Refers to the biological type of a DataNode, e.g. RNA, PROTEIN etc.
- * Most existing pathways use either METABOLITE or GENEPRODUCT. The use of the other
- * types is not clearly defined.
+   Extensible enum
  */
-public enum DataNodeType {
-	UNKOWN("Unknown"),
-	RNA("Rna"),
-	PROTEIN("Protein"),
-	COMPLEX("Complex"),
-	GENEPRODUCT("GeneProduct"),
-	METABOLITE("Metabolite"),
-	PATHWAY("Pathway");
-
+public class DataNodeType {
 	private static final Map<String, DataNodeType> NAME_MAP = new HashMap<String, DataNodeType>();
+	private static List<DataNodeType> values = new ArrayList<DataNodeType>();
 
-	static
+	public static final DataNodeType UNKOWN = new DataNodeType("Unknown");
+	public static final DataNodeType RNA = new DataNodeType("Rna");
+	public static final DataNodeType PROTEIN = new DataNodeType("Protein");
+	public static final DataNodeType COMPLEX = new DataNodeType("Complex");
+	public static final DataNodeType GENEPRODUCT = new DataNodeType("GeneProduct");
+	public static final DataNodeType METABOLITE = new DataNodeType("Metabolite");
+	public static final DataNodeType PATHWAY = new DataNodeType("Pathway");
+
+	private String name;
+
+	/**
+	   The constructor is private so we have to use the "create"
+	   method to add new ShapeTypes. In the create method we make sure
+	   that the same object can't get added twice.
+	   <p>
+	   Note that mappName may be null for Shapes that are not supported by GenMAPP.
+	 */
+	private DataNodeType(String name)
 	{
-		for (DataNodeType dnt : DataNodeType.values())
+		NAME_MAP.put (name, this);
+		this.name = name;
+		// and add it to the array list.
+		values.add (this);
+	}
+
+	/**
+	   Create an object and add it to the list.
+
+	   For extending the enum.
+	 */
+	public static DataNodeType create (String name)
+	{
+		if (NAME_MAP.containsKey (name))
 		{
-			NAME_MAP.put (dnt.getGpmlName(), dnt);
+			return NAME_MAP.get (name);
+		}
+		else
+		{
+			return new DataNodeType(name);
 		}
 	}
 
-	private DataNodeType (String gpmlName) {
-		this.gpmlName = gpmlName;
+	/**
+	 *  @param value the name of the DataNodeType to be returned
+     *  @return the DataNodeType corresponding to that name.
+	 */
+	public static DataNodeType fromName (String value)
+	{
+		return NAME_MAP.get(value);
 	}
-	private String gpmlName;
 
-	String getGpmlName() { return gpmlName; }
-	public String toString() { return getGpmlName(); }
+	/**
+	   @return Stable identifier for this DataNodeType.
+	 */
+	public String getName ()
+	{
+		return name;
+	}
 
+	/**
+	   @return the names of all registered DataNode types, in such a way that the index
+	   is equal to it's ordinal value.
+	   <p>
+	   i.e. DataNodeType.fromName(DataNodeType.getNames[n]).getOrdinal() == n
+	 */
 	static public String[] getNames()
 	{
-		List<String> result = new ArrayList<String>();
-		for (DataNodeType s : DataNodeType.values())
+		String[] result = new String[values.size()];
+
+		for (int i = 0; i < values.size(); ++i)
 		{
-			result.add("" + s.gpmlName);
+			result[i] = values.get(i).getName();
 		}
-		String [] resultArray = new String [result.size()];
-		return result.toArray(resultArray);
+		return result;
 	}
 
-	public static DataNodeType byName(String name)
+	static public DataNodeType[] getValues()
 	{
-		return NAME_MAP.get (name);
+		return values.toArray(new DataNodeType[0]);
 	}
+
+	public String toString()
+	{
+		return name;
+	}
+
 }

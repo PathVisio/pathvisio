@@ -1730,7 +1730,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	public void setDataNodeType(DataNodeType type) {
-		setDataNodeType(type.getGpmlName());
+		setDataNodeType(type.getName());
 	}
 
 	public void setDataNodeType(String v)

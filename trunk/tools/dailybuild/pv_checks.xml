@@ -45,6 +45,11 @@
     <module name="IllegalThrows">
       <property name="illegalClassNames" value="java.lang.Throwable, java.lang.Error, java.lang.RuntimeException, java.lang.Exception"/>
     </module>
+    <module name="RegexpSinglelineJava">
+      <property name="format" value="^(\t* )+[^\s]"/>
+      <property name="message" value="Must use tab for identation"/>
+      <property name="ignoreComments" value="true"/>
+    </module>
   </module>
   <module name="FileLength"/>
 </module>

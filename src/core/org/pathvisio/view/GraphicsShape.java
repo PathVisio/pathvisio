@@ -74,48 +74,64 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 
 	protected void createHandles()
 	{
-        if (gdata.getShapeType() != null && !gdata.getShapeType().isResizeable()) return; // no resizing, no handles
-		handleN	= new Handle(Handle.Freedom.Y, this, this);
-		handleE	= new Handle(Handle.Freedom.X, this, this);
-		handleS	= new Handle(Handle.Freedom.Y, this, this);
-		handleW	= new Handle(Handle.Freedom.X, this, this);
-
-		handleNE = new Handle(Handle.Freedom.FREE, this, this);
-		handleSE = new Handle(Handle.Freedom.FREE, this, this);
-		handleSW = new Handle(Handle.Freedom.FREE, this, this);
-		handleNW = new Handle(Handle.Freedom.FREE, this, this);
-
-
-		handleN.setCursorHint(Cursor.N_RESIZE_CURSOR);
-		handleE.setCursorHint(Cursor.E_RESIZE_CURSOR);
-		handleS.setCursorHint(Cursor.S_RESIZE_CURSOR);
-		handleW.setCursorHint(Cursor.W_RESIZE_CURSOR);
-		handleNE.setCursorHint(Cursor.NE_RESIZE_CURSOR);
-		handleSE.setCursorHint(Cursor.SE_RESIZE_CURSOR);
-		handleSW.setCursorHint(Cursor.SW_RESIZE_CURSOR);
-		handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
-
-		if(	this instanceof GeneProduct ||
-				this instanceof Label)
+		if (gdata.getShapeType() != null && !gdata.getShapeType().isResizeable()
+				&& !gdata.getShapeType().isRotatable())
 		{
-			// No rotation handle for these objects
+			return; // no resizing, no handles
+		}
+		else if (gdata.getShapeType() != null && !gdata.getShapeType().isResizeable()
+				&& gdata.getShapeType().isRotatable())
+		{
+			handleR = new Handle(Handle.Freedom.ROTATION, this, this);
+			handleR.setCursorHint(Cursor.MOVE_CURSOR);
 			handles = new Handle[]
 			{
-					handleN, handleNE, handleE, handleSE,
-					handleS, handleSW, handleW,	handleNW,
+					handleR
 			};
 		}
 		else
 		{
-			handleR = new Handle(Handle.Freedom.ROTATION, this, this);
-			handleR.setCursorHint(Cursor.MOVE_CURSOR);
+			handleN = new Handle(Handle.Freedom.Y, this, this);
+			handleE = new Handle(Handle.Freedom.X, this, this);
+			handleS = new Handle(Handle.Freedom.Y, this, this);
+			handleW = new Handle(Handle.Freedom.X, this, this);
 
-			handles = new Handle[]
+			handleNE = new Handle(Handle.Freedom.FREE, this, this);
+			handleSE = new Handle(Handle.Freedom.FREE, this, this);
+			handleSW = new Handle(Handle.Freedom.FREE, this, this);
+			handleNW = new Handle(Handle.Freedom.FREE, this, this);
+
+			handleN.setCursorHint(Cursor.N_RESIZE_CURSOR);
+			handleE.setCursorHint(Cursor.E_RESIZE_CURSOR);
+			handleS.setCursorHint(Cursor.S_RESIZE_CURSOR);
+			handleW.setCursorHint(Cursor.W_RESIZE_CURSOR);
+			handleNE.setCursorHint(Cursor.NE_RESIZE_CURSOR);
+			handleSE.setCursorHint(Cursor.SE_RESIZE_CURSOR);
+			handleSW.setCursorHint(Cursor.SW_RESIZE_CURSOR);
+			handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
+            
+			if(this instanceof GeneProduct ||
+				this instanceof Label || !gdata.getShapeType().isRotatable())
 			{
+                // No rotation handle for these objects
+				handles = new Handle[]
+				{
+					handleN, handleNE, handleE, handleSE,
+					handleS, handleSW, handleW,	handleNW,
+				};
+			}
+			else
+			{
+				handleR = new Handle(Handle.Freedom.ROTATION, this, this);
+				handleR.setCursorHint(Cursor.MOVE_CURSOR);
+
+				handles = new Handle[]
+				{
 					handleN, handleNE, handleE, handleSE,
 					handleS, handleSW, handleW,	handleNW,
 					handleR
-			};
+				};
+			}
 		}
 		setHandleLocation();
 	}
@@ -300,25 +316,26 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	protected void setHandleLocation()
 	{
 		Point p;
-		p = mToExternal(0, -gdata.getMHeight()/2);
-		handleN.setMLocation(p.x, p.y);
-		p = mToExternal(gdata.getMWidth()/2, 0);
-		handleE.setMLocation(p.x, p.y);
-		p = mToExternal(0,  gdata.getMHeight()/2);
-		handleS.setMLocation(p.x, p.y);
-		p = mToExternal(-gdata.getMWidth()/2, 0);
-		handleW.setMLocation(p.x, p.y);
-
-		p = mToExternal(gdata.getMWidth()/2, -gdata.getMHeight()/2);
-		handleNE.setMLocation(p.x, p.y);
-		p = mToExternal(gdata.getMWidth()/2, gdata.getMHeight()/2);
-		handleSE.setMLocation(p.x, p.y);
-		p = mToExternal(-gdata.getMWidth()/2, gdata.getMHeight()/2);
-		handleSW.setMLocation(p.x, p.y);
-		p = mToExternal(-gdata.getMWidth()/2, -gdata.getMHeight()/2);
-		handleNW.setMLocation(p.x, p.y);
-
-		if (handleR != null)
+		if (gdata.getShapeType() == null || gdata.getShapeType().isResizeable()) {
+			p = mToExternal(0, -gdata.getMHeight()/2);
+			handleN.setMLocation(p.x, p.y);
+			p = mToExternal(gdata.getMWidth()/2, 0);
+			handleE.setMLocation(p.x, p.y);
+			p = mToExternal(0,  gdata.getMHeight()/2);
+			handleS.setMLocation(p.x, p.y);
+			p = mToExternal(-gdata.getMWidth()/2, 0);
+			handleW.setMLocation(p.x, p.y);
+			
+			p = mToExternal(gdata.getMWidth()/2, -gdata.getMHeight()/2);
+			handleNE.setMLocation(p.x, p.y);
+			p = mToExternal(gdata.getMWidth()/2, gdata.getMHeight()/2);
+			handleSE.setMLocation(p.x, p.y);
+			p = mToExternal(-gdata.getMWidth()/2, gdata.getMHeight()/2);
+			handleSW.setMLocation(p.x, p.y);
+			p = mToExternal(-gdata.getMWidth()/2, -gdata.getMHeight()/2);
+			handleNW.setMLocation(p.x, p.y);
+		}
+		if ((gdata.getShapeType() ==null || gdata.getShapeType().isRotatable()) && (handleR != null))
 		{
 			p = mToExternal(gdata.getMWidth()/2 + M_ROTATION_HANDLE_POSITION, 0);
 			handleR.setMLocation(p.x, p.y);
@@ -589,5 +606,4 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		g.setColor(getLineColor());
 		g.draw(shape);
 	}
-
 }

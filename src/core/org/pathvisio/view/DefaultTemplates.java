@@ -165,10 +165,8 @@ public abstract class DefaultTemplates {
 			e.setDataNodeType(type);
 
 			//Default colors for different types
-			switch(type) {
-			case METABOLITE:
+			if (type.equals(DataNodeType.METABOLITE)) {
 				e.setColor(COLOR_METABOLITE);
-				break;
 			}
 
 			e.setTextLabel(type.toString());

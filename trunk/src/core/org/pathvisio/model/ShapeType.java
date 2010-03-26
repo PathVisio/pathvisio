@@ -49,9 +49,10 @@ public class ShapeType
 
 	private String name;
 	private String mappName;
-    private boolean isResizeable;
+	private boolean isResizeable;
+	private boolean isRotatable;
 
-	// integer value always equals the index of this item in the
+    // integer value always equals the index of this item in the
 	// values array.
 	// Warning: may be removed in the future
 	private int value;
@@ -65,16 +66,14 @@ public class ShapeType
 	 */
 	private ShapeType(String name, String mappName)
 	{
-		this(name, mappName, true);
+		this(name, mappName, true, true);
 	}
 
-	private ShapeType(String name, String mappName, boolean isResizeable)
+	private ShapeType (String name, String mappName, boolean isResizeable, boolean isRotatable)
 	{
-		if (name == null)
-		{
-			throw new NullPointerException();
-		}
+		if (name == null) { throw new NullPointerException(); }
 		this.isResizeable = isResizeable;
+		this.isRotatable = isRotatable;
 		this.mappName = mappName;
 		this.name  = name;
 
@@ -103,29 +102,29 @@ public class ShapeType
 		}
 		else
 		{
-			return new ShapeType (name, mappName, true);
+			return new ShapeType (name, mappName, true, true);
 		}
 	}
 
-	/**
-	 * Create an object and add it to the list.
-	 * 
-	 * For extending the enum.
+   /**
+	   Create an object and add it to the list.
+
+	   For extending the enum.
 	 */
-	public static ShapeType create(String name, String mappName,
-			boolean isResizeable)
+	public static ShapeType create (String name, String mappName, boolean isResizeable, boolean isRotatable)
 	{
-		if (nameMappings.containsKey(name))
+		if (nameMappings.containsKey (name))
 		{
-			return nameMappings.get(name);
-		} else
+			return nameMappings.get (name);
+		}
+		else
 		{
-			return new ShapeType(name, mappName, isResizeable);
+			return new ShapeType (name, mappName, isResizeable, isRotatable);
 		}
 	}
 
-	/*
-	 * Warning when using fromMappName: in case value == Poly,
+    /*
+	 * Warning when using fromMappName: in case value == Poly, 
 	 * this will return Triangle. The caller needs to check for
 	 * this special
 	 * case.
@@ -208,7 +207,14 @@ public class ShapeType
 		return name;
 	}
 
-    public boolean isResizeable() {
-        return isResizeable;
-    }
+	public boolean isResizeable()
+	{
+		return isResizeable;
+	}
+
+	public boolean isRotatable()
+	{
+		return isRotatable;
+	}
+
 }

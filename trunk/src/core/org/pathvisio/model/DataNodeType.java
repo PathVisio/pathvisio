@@ -74,7 +74,7 @@ public class DataNodeType {
 	 *  @param value the name of the DataNodeType to be returned
      *  @return the DataNodeType corresponding to that name.
 	 */
-	public static DataNodeType fromName (String value)
+	public static DataNodeType byName (String value)
 	{
 		return NAME_MAP.get(value);
 	}
@@ -113,5 +113,4 @@ public class DataNodeType {
 	{
 		return name;
 	}
-
 }

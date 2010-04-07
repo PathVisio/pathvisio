@@ -29,6 +29,8 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.util.Resources;
+import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.preferences.GlobalPreference;
 
 /**
  * Contains a set of templates, patterns of PathwayElements that can
@@ -161,7 +163,10 @@ public abstract class DefaultTemplates {
 			e.setMWidth(1);
 			e.setMHeight(1);
 			e.setRotation(0);
-			e.setGraphId(p.getUniqueGraphId());
+            if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.DATANODES_ROUNDED)) {
+                 e.setShapeType(ShapeType.ROUNDED_RECTANGLE);
+            }
+            e.setGraphId(p.getUniqueGraphId());
 			e.setDataNodeType(type);
 
 			//Default colors for different types

@@ -13,7 +13,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 package org.pathvisio.view;
 
 import java.net.URL;
@@ -62,4 +61,7 @@ public interface Template {
 	 * @return The icon location, or null if the template doesn't have an icon
 	 */
 	URL getIconLocation();
+
+
+	void postInsert(PathwayElement[] newElements);
 }

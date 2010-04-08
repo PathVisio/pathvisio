@@ -13,7 +13,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 package org.pathvisio.view;
 
 import java.awt.Color;
@@ -73,6 +72,9 @@ public abstract class DefaultTemplates {
 
 		public URL getIconLocation() {
 			return  Resources.getResourceURL("new" + getName().toLowerCase() + ".gif");
+		}
+
+		public void postInsert(PathwayElement[] newElements) {
 		}
 	}
 
@@ -278,6 +280,9 @@ public abstract class DefaultTemplates {
 
 		public URL getIconLocation() {
 			return  Resources.getResourceURL("new" + getName().toLowerCase() + ".gif");
+		}
+
+		public void postInsert(PathwayElement[] newElements) {
 		}
 	}
 

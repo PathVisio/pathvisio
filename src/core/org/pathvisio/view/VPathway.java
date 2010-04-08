@@ -13,7 +13,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 package org.pathvisio.view;
 
 import java.awt.Dimension;
@@ -52,10 +51,10 @@ import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
-import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
@@ -312,7 +311,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 * Method to set the template that provides the new graphics type that has
 	 * to be added next time the user clicks on the drawing.
 	 *
-	 * @param shape A template that provides the elements to be added
+	 * @param t A template that provides the elements to be added
 	 */
 	public void setNewTemplate(Template t) {
 		newTemplate = t;
@@ -476,7 +475,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 *
 	 * @param pctZoomFactor
 	 *            zoomfactor in percent
-	 * @see getFitZoomFactor() for fitting the pathway inside the viewport.
+	 * @see #getFitZoomFactor() for fitting the pathway inside the viewport.
 	 */
 	public void setPctZoom(double pctZoomFactor)
 	{
@@ -1211,7 +1210,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Add a new object to the drawing {@see VPathway#setNewGraphics(int)}
 	 *
-	 * @param pwy
+	 * @param ve
 	 *            The point where the user clicked on the drawing to add a new
 	 *            graphics
 	 */

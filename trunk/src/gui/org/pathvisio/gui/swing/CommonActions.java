@@ -425,6 +425,7 @@ public class CommonActions implements ApplicationEventListener {
 		{
 			this.template = template;
 			this.engine = engine;
+			putValue(Action.NAME, template.getName());
 			putValue(Action.SHORT_DESCRIPTION, template.getDescription());
 			putValue(Action.LONG_DESCRIPTION, template.getDescription());
 			if(template.getIconLocation() != null) {
@@ -445,6 +446,12 @@ public class CommonActions implements ApplicationEventListener {
 //				e.getVPathway().setNewTemplate(null);
 //			}
 //		}
+
+
+		@Override
+		public String toString() {
+			return template.getName();
+		}
 	}
 
 	/**

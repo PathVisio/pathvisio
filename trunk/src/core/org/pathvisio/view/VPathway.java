@@ -1223,30 +1223,32 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 		PathwayElement[] newObjects = newTemplate.addElements(data, mx, my);
 
-		isDragging = true;
-		dragUndoState = DRAG_UNDO_NOT_RECORDING;
+		if (newObjects != null && newObjects.length > 0) {
+			isDragging = true;
+			dragUndoState = DRAG_UNDO_NOT_RECORDING;
 
-		if(newObjects.length > 1) {
-			clearSelection();
-			//Multiple objects: select all and use selectionbox as dragging object
-			for(PathwayElement pwe : newObjects) {
-				Graphics g = getPathwayElementView(pwe);
-				selection.addToSelection(g);
+			if(newObjects.length > 1) {
+				clearSelection();
+				//Multiple objects: select all and use selectionbox as dragging object
+				for(PathwayElement pwe : newObjects) {
+					Graphics g = getPathwayElementView(pwe);
+					selection.addToSelection(g);
+				}
+				pressedObject = selection;
+			} else {
+				//Single object: select object and use dragelement specified by template
+				selectObject(lastAdded);
+				pressedObject = newTemplate.getDragElement(this);
 			}
-			pressedObject = selection;
-		} else {
-			//Single object: select object and use dragelement specified by template
-			selectObject(lastAdded);
-			pressedObject = newTemplate.getDragElement(this);
+
+			newObject = newTemplate.getDragElement(this) == null ? null : newObjects[0];
+			vPreviousX = ve.x;
+			vPreviousY = ve.y;
+
+			fireVPathwayEvent(new VPathwayEvent(this, lastAdded,
+					VPathwayEvent.ELEMENT_ADDED));
+			newTemplate.postInsert(newObjects);
 		}
-
-		newObject = newTemplate.getDragElement(this) == null ? null : newObjects[0];
-
-		vPreviousX = ve.x;
-		vPreviousY = ve.y;
-
-		fireVPathwayEvent(new VPathwayEvent(this, lastAdded,
-				VPathwayEvent.ELEMENT_ADDED));
 		setNewTemplate(null);
 	}
 

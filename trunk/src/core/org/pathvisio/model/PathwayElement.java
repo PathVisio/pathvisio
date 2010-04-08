@@ -2628,7 +2628,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		noFire = times;
 	}
 
-	private List<PathwayElementListener> listeners = new ArrayList<PathwayElementListener>();
+	private Set<PathwayElementListener> listeners = new HashSet<PathwayElementListener>();
 
 	public void addListener(PathwayElementListener v)
 	{

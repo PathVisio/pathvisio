@@ -143,7 +143,10 @@ public class GpmlIndexer {
 			gpmlFiles.add(gpmlFile);
 			// Update index
 			for(IndexerBase i : indexers) {
+				Logger.log.trace("Processing indexer: " + i);
+				Logger.log.trace("Removing pathway " + i.getIndexerName());
 				i.removePathway();
+				Logger.log.trace("Indexing pathway " + i.getIndexerName());
 				i.indexPathway();
 			}
 		} else {

@@ -25,6 +25,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.bridgedb.rdb.GdbProvider;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
 
 /**

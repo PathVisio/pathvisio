@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.CorruptIndexException;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -19,19 +21,34 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.bridgedb.Xref;
+import org.pathvisio.debug.Logger;
 import org.pathvisio.indexer.DataNodeIndexer;
 
 public class WikiPathwaysSearcher {
-	Searcher searcher;
-	public WikiPathwaysSearcher(IndexSearcher searcher) {
-		this.searcher = searcher;
+	IndexReader _reader;
+	Searcher _searcher;
+	
+	public WikiPathwaysSearcher(IndexReader reader) {
+		_reader = reader;
 	}
 
+	private Searcher getSearcher() throws CorruptIndexException, IOException {
+		if(_searcher == null) {
+			Logger.log.info("Opening index searcher");
+			_searcher = new IndexSearcher(_reader);
+		} else if(!_reader.isCurrent()) {
+			Logger.log.info("Index reader out of date: recreating index searcher");
+			_reader = _reader.reopen();
+			_searcher = new IndexSearcher(_reader);
+		}
+		return _searcher;
+	}
+	
 	public List<SearchResult> query(Query query, int limit) throws IOException {
-		TopDocs hits = searcher.search(query, null, limit);
+		TopDocs hits = getSearcher().search(query, null, limit);
 		List<SearchResult> results = new ArrayList<SearchResult>();
 		for(ScoreDoc sd : hits.scoreDocs) {
-			results.add(new SearchResult(searcher.doc(sd.doc), sd.score));
+			results.add(new SearchResult(getSearcher().doc(sd.doc), sd.score));
 		}
 		return results;
 	}
@@ -72,9 +89,9 @@ public class WikiPathwaysSearcher {
 		};
 
 		List<SearchResult> results = new ArrayList<SearchResult>();
-		TopDocs hits = searcher.search(query, null, limit);
+		TopDocs hits = getSearcher().search(query, null, limit);
 		for(ScoreDoc sd : hits.scoreDocs) {
-			results.add(new SearchResult(searcher.doc(sd.doc), sd.score, filter));
+			results.add(new SearchResult(getSearcher().doc(sd.doc), sd.score, filter));
 		}
 		return results;
 	}
@@ -85,9 +102,9 @@ public class WikiPathwaysSearcher {
 		TermQuery query = new TermQuery(new Term(
 				DataNodeIndexer.FIELD_INDEXERID, DataNodeIndexer.class.getName() + pathwaySource)
 		);
-		TopDocs hits = searcher.search(query, null, 10000);
+		TopDocs hits = getSearcher().search(query, null, 10000);
 		for(ScoreDoc sd : hits.scoreDocs) {
-			Document xrefDoc = searcher.doc(sd.doc);
+			Document xrefDoc = getSearcher().doc(sd.doc);
 			String[] idcodes = xrefDoc.getValues(DataNodeIndexer.FIELD_XID_CODE);
 			if(idcodes == null) continue;
 			for(String idcode : idcodes) {

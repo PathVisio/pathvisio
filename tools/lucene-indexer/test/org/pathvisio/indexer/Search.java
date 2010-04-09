@@ -30,7 +30,7 @@ import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.bridgedb.bio.GdbProvider;
+import org.bridgedb.rdb.GdbProvider;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
@@ -41,6 +41,7 @@ public class Search extends TestCase {
 
 	public void testCreateIndex() {
 		try {
+			indexDir.mkdirs();
 			//Start with fresh index
 			for(File f : indexDir.listFiles()) {
 				f.delete();

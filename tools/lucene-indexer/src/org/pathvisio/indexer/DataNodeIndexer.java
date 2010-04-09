@@ -94,8 +94,9 @@ public class DataNodeIndexer extends IndexerBase {
 		Set<Xref> addedXrefs = new HashSet<Xref>();
 
 		Document doc = new Document();
-		doc.add(new Field(FIELD_GRAPHID, pe.getGraphId(), Store.YES, Index.NO));
-
+		if(pe.getGraphId() != null) {
+			doc.add(new Field(FIELD_GRAPHID, pe.getGraphId(), Store.YES, Index.NO));
+		}
 		Xref xref = pe.getXref();
 
 		if(xref == null || xref.getDataSource() == null || xref.getId() == null) {

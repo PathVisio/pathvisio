@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.bridgedb.bio.BioDataSource;
 import org.kohsuke.args4j.CmdLineException;
@@ -40,10 +40,9 @@ public class Server {
 	void startService(int port) throws Exception {
 		component = new Component();
 		component.getServers().add(Protocol.HTTP, port);
+		IndexReader reader = IndexReader.open(indexer.getIndexPath().getAbsolutePath());
 		component.getDefaultHost().attach(
-				new IndexService(new WikiPathwaysSearcher(
-						new IndexSearcher(indexer.getIndexPath().getAbsolutePath())
-				))
+				new IndexService(new WikiPathwaysSearcher(reader))
 		);
 		component.start();
 	}

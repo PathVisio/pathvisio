@@ -91,7 +91,7 @@ public class WikiPathwaysIndexer extends Timer{
 	}
 
 	public WikiPathwaysIndexer(File indexConfig, File gdbConfig) throws ServiceException, ConverterException {
-		log.setLogLevel(true, false, true, true, true, true);
+		log.setLogLevel(true, true, true, true, true, true);
 		parseIndexConfig(indexConfig);
 		parseGdbConfig(gdbConfig);
 		init();

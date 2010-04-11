@@ -118,6 +118,13 @@ public class ExTemplate implements Plugin, Engine.ApplicationEventListener
 		{
 			return ExTemplate.class.getClassLoader().getResource(ICON_PATH);
 		}
+
+		@Override
+		public void postInsert(PathwayElement[] newElements)
+		{
+			// TODO Auto-generated method stub
+			
+		}
 	};
 
 	private Action toolbarAction;

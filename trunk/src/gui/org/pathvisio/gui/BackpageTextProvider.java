@@ -109,11 +109,11 @@ public class BackpageTextProvider
 				if (!type.equals ("Metabolite"))
 				{
 					table = new String[][] {
-					   {"Gene ID", e.getXref().getId()},
-					   {"Gene Symbol", Utils.oneOf(attributes.get("Symbol"))},
-					   {"Synonyms", Utils.oneOf (attributes.get("Synonyms"))},
-					   {"Description", Utils.oneOf (attributes.get("Synonyms"))},
-					   {"Chr", Utils.oneOf (attributes.get("Chromosome"))},
+						{"Gene ID", e.getXref().getId()},
+						{"Gene Symbol", Utils.oneOf(attributes.get("Symbol"))},
+						{"Synonyms", Utils.oneOf (attributes.get("Synonyms"))},
+						{"Description", Utils.oneOf (attributes.get("Description"))},
+						{"Chr", Utils.oneOf (attributes.get("Chromosome"))},
 					};
 				}
 				else
@@ -121,6 +121,7 @@ public class BackpageTextProvider
 					table = new String[][] {
 						{"Metabolite", Utils.oneOf (attributes.get("Symbol"))},
 						{"Bruto Formula", Utils.oneOf (attributes.get("BrutoFormula"))},
+						{"Synonyms", Utils.oneOf (attributes.get("Synonym"))},
 						};
 				}
 

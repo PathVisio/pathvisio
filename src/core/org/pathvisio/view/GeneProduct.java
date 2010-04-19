@@ -67,7 +67,7 @@ public class GeneProduct extends GraphicsShape
 		// first use getVBounds as a rough approximation
 		if (getVBounds().contains(point))
 		{
-			return true;
+			return getVShape(false).contains(point);
 		}
 		else
 		{

@@ -139,14 +139,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	private Pathway data;
 
 	/**
-	 * @deprecated use getPathwayModel() instead
-	 */
-	public Pathway getGmmlData()
-	{
-		return data;
-	}
-
-	/**
 	 * Returns the associated org.pathvisio.model.Pathway object
 	 */
 	public Pathway getPathwayModel()
@@ -270,14 +262,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		if(changed != originalState.hasChanged()) {
 			data.fireStatusFlagEvent(new StatusFlagEvent(originalState.hasChanged()));
 		}
-	}
-
-	/**
-	 * @deprecated use fromModel instead
-	 */
-	public void fromGmmlData(Pathway aData)
-	{
-		fromModel (aData);
 	}
 
 	/**

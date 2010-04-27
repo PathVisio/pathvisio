@@ -658,10 +658,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 						(Handle) pressedObject);
 			}
 
-			if (pressedObject instanceof Graphics)
-			{ //notify parents of any moving children!
-				((Graphics) pressedObject).getPathwayElement().notifyParentGroupOfChildMovementOrResize();
-			}
 			redrawDirtyRect();
 		} else {
 			List<VPathwayElement> objects = getObjectsAt(new Point2D.Double(ve.getX(), ve.getY()));
@@ -1794,8 +1790,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 					g.vMoveBy(0, vBoundsFirst.getMaxY() - vBounds.getMaxY());
 				break;
 			}
-			// notify parents of any moving children!
-			g.getPathwayElement().notifyParentGroupOfChildMovementOrResize();
 		}
 	}
 
@@ -1904,8 +1898,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 						vBoundsPrev.getMaxY() - vBoundsCurr.getMaxY());
 				break;
 			}
-			// notify parents of any moving children!
-			eCurr.getPathwayElement().notifyParentGroupOfChildMovementOrResize();
 		}
 	}
 
@@ -1944,8 +1936,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				g.setVScaleRectangle(r);
 				g.vMoveBy((oldWidth - maxW) / 2, 0);
 			}
-			// notify parents of any moving children!
-			g.getPathwayElement().notifyParentGroupOfChildMovementOrResize();
 		}
 	}
 
@@ -1984,8 +1974,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				g.setVScaleRectangle(r);
 				g.vMoveBy(0, (oldHeight - maxH) / 2);
 			}
-			// notify parents of any moving children!
-			g.getPathwayElement().notifyParentGroupOfChildMovementOrResize();
 		}
 	}
 

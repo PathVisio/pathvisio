@@ -110,7 +110,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			handleSW.setCursorHint(Cursor.SW_RESIZE_CURSOR);
 			handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
             
-			if(this instanceof GeneProduct ||
+			if(this instanceof GeneProduct || this instanceof State ||
 				this instanceof Label || !gdata.getShapeType().isRotatable())
 			{
                 // No rotation handle for these objects

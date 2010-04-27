@@ -90,9 +90,16 @@ public class PathwayTableModel extends AbstractTableModel implements SelectionLi
 		stopEditing();
 		//System.err.println("Input removed");
 		input.remove(pwElm);
-		updatePropertyCounts(pwElm, true);
-		pwElm.removeListener(this);
-		refresh(true);
+		if (input.size() > 0)
+		{
+			updatePropertyCounts(pwElm, true);
+			pwElm.removeListener(this);
+			refresh(true);
+		}
+		else
+		{
+			reset();
+		}
 	}
 
 	private void stopEditing() {

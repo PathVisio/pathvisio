@@ -38,6 +38,8 @@ import org.pathvisio.biopax.BiopaxElementManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
 * This class is the model for pathway data. It is responsible for
@@ -246,6 +248,36 @@ public class Pathway
 		if (o.getParent() != null) { o.getParent().remove(o); }
 		dataObjects.add(o);
 		o.setParent(this);
+		for (MPoint p : o.getMPoints())
+		{
+			if (p.getGraphRef() != null)
+			{
+				addGraphRef(p.getGraphRef(), p);
+			}
+		}
+		if(o.getGroupRef() != null)
+		{
+			addGroupRef(o.getGroupRef(), o);
+		}
+		for (MAnchor a : o.getMAnchors())
+		{
+			if(a.getGraphId() != null)
+			{
+				addGraphId(a.getGraphId(), a);
+			}
+		}
+		if (o.getGraphId() != null)
+		{
+			addGraphId(o.getGraphId(), o);
+		}
+		if (o.getGroupId() != null)
+		{
+			addGroupId(o.getGroupId(), o);
+		}
+		if (o.getGraphRef() != null)
+		{
+			addGraphRef(o.getGraphRef(), (GraphRefContainer)o);
+		}
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
 	}
 
@@ -284,6 +316,14 @@ public class Pathway
 	void childModified (PathwayElementEvent e)
 	{
 		markChanged();
+		if (e.isCoordinateChange())
+		{
+			List<GraphRefContainer> references = getReferringObjects(e.getModifiedPathwayElement().getGraphId());
+			for(GraphRefContainer refc : references) 
+			{
+				refc.refeeChanged();
+			}
+		}
 	}
 
 	/**
@@ -328,6 +368,35 @@ public class Pathway
 		List<GraphRefContainer> references = getReferringObjects(o.getGraphId());
 		for(GraphRefContainer refc : references) {
 			refc.unlink();
+		}
+		for (MPoint p : o.getMPoints())
+		{
+			if (p.getGraphRef() != null)
+			{
+				removeGraphRef(p.getGraphRef(), p);
+			}
+		}
+		if(o.getGroupRef() != null)
+		{
+			removeGroupRef(o.getGroupRef(), o);
+		}
+		for (MAnchor a : o.getMAnchors()) {
+			if (a.getGraphId() != null)
+			{
+				removeGraphId(a.getGraphId());
+			}
+		}
+		if (o.getGraphId() != null)
+		{
+			removeGraphId(o.getGraphId());
+		}
+		if (o.getGroupId() != null)
+		{
+			removeGroupId(o.getGroupId());
+		}
+		if (o.getGraphRef() != null)
+		{
+			removeGraphRef(o.getGraphRef(), (GraphRefContainer)o);
 		}
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.DELETED));
 		o.setParent(null);
@@ -427,7 +496,7 @@ public class Pathway
 	 * @param id
 	 * @param target
 	 */
-	public void removeGraphRef (String id, GraphRefContainer target)
+	void removeGraphRef (String id, GraphRefContainer target)
 	{
 		if (!graphRefs.containsKey(id)) throw new IllegalArgumentException();
 
@@ -454,7 +523,7 @@ public class Pathway
 		graphIds.put(id, idc);
 	}
 
-	public void removeId (String id)
+	void removeGraphId (String id)
 	{
 		graphIds.remove(id);
 	}
@@ -466,7 +535,7 @@ public class Pathway
 		return groupIds.keySet();
 	}
 
-	public void addGroupId(String id, PathwayElement group) {
+	void addGroupId(String id, PathwayElement group) {
 		if (id == null)
 		{
 			throw new IllegalArgumentException ("unique id can't be null");
@@ -478,7 +547,7 @@ public class Pathway
 		groupIds.put(id, group);
 	}
 
-	public void removeGroupId(String id) {
+	void removeGroupId(String id) {
 		groupIds.remove(id);
 	}
 
@@ -486,7 +555,7 @@ public class Pathway
 		return groupIds.get(id);
 	}
 
-	public void addGroupRef (String ref, PathwayElement child)
+	void addGroupRef (String ref, PathwayElement child)
 	{
 		if (groupRefs.containsKey(ref))
 		{
@@ -498,11 +567,10 @@ public class Pathway
 			Set<PathwayElement> s = new HashSet<PathwayElement>();
 			s.add(child);
 			groupRefs.put(ref, s);
-
 		}
 	}
 
-	public void removeGroupRef (String id, PathwayElement child)
+	void removeGroupRef (String id, PathwayElement child)
 	{
 		if (!groupRefs.containsKey(id)) throw new IllegalArgumentException();
 
@@ -840,4 +908,14 @@ public class Pathway
 			i.remove();
 		}
 	}
+
+	public void printRefsDebugInfo()
+	{
+		for (PathwayElement elt : dataObjects)
+		{
+			elt.printRefsDebugInfo();
+		}
+	}
+	
+
 }

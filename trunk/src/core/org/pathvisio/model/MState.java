@@ -16,64 +16,120 @@
 //
 package org.pathvisio.model;
 
+import org.pathvisio.model.GraphLink.GraphIdContainer;
+import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.util.Utils;
+
 /**
  * State-specific implementation of methods that calculate derived
  * coordinates that are not stored in GPML directly
  */
-public class MState extends PathwayElement
+public class MState extends PathwayElement implements GraphRefContainer
 {
 	protected MState()
 	{
 		super(ObjectType.STATE);
 	}
 
-	public double getMCenterX()
+	@Override
+	public int getZOrder()
 	{
 		PathwayElement dn = getParentDataNode();
-		return dn.getMCenterX() + (getRelX() * dn.getMWidth() / 2);
+		if (dn == null) return 0; //TODO: must be cached like centerX etc.
+		return dn.getZOrder() + 1;
 	}
-
-	public double getMCenterY()
-	{
-		PathwayElement dn = getParentDataNode();
-		return dn.getMCenterY() + (getRelY() * dn.getMHeight() / 2);
-	}
-
-	public double getMLeft()
-	{
-		return getMCenterX() - getMWidth() / 2;
-	}
-
-	public double getMTop()
-	{
-		return getMCenterY() - getMHeight() / 2;
-	}
-
-	public void setMCenterX(double v)
-	{
-		//TODO (not sure if you should be able to set this directly)
-	}
-
-	public void setMCenterY(double v)
-	{
-		//TODO (not sure if you should be able to set this directly)
-	}
-
-	public void setMLeft(double v)
-	{
-		//TODO (not sure if you should be able to set this directly)
-	}
-
-	public void setMTop(double v)
-	{
-		//TODO (not sure if you should be able to set this directly)
-	}
-
-	private PathwayElement getParentDataNode()
+	
+	public PathwayElement getParentDataNode()
 	{
 		Pathway parent = getParent();
-		if (parent == null) return null;
+		if (parent == null) 
+			return null;
 
 		return parent.getElementById(getGraphRef());
 	}
+	
+	private void updateCoordinates()
+	{
+		PathwayElement dn = getParentDataNode();
+		if (dn != null)
+		{
+			double centerx = dn.getMCenterX() + (getRelX() * dn.getMWidth() / 2);
+			double centery = dn.getMCenterY() + (getRelY() * dn.getMHeight() / 2);
+			setMCenterY(centery);
+			setMCenterX(centerx);
+		}
+	}
+
+	@Override
+	public void linkTo(GraphIdContainer idc, double relX, double relY)
+	{
+		String id = idc.getGraphId();
+		if(id == null) id = idc.setGeneratedGraphId();
+		setGraphRef(idc.getGraphId());
+		setRelX(relX);
+		setRelY(relY);
+	}
+
+	@Override
+	public void unlink()
+	{
+		// called when referred object is being destroyed.
+		// destroy self.
+		parent.remove(this);
+	}
+
+	@Override
+	public void setRelX(double value)
+	{
+		super.setRelX(value);
+		updateCoordinates();
+	}
+	
+	@Override
+	public void setRelY(double value)
+	{
+		super.setRelY(value);
+		updateCoordinates();
+	}
+	
+	@Override
+	public void refeeChanged()
+	{
+		updateCoordinates();
+	}
+
+	public void setGraphRef(String v)
+	{
+		if (!Utils.stringEquals(graphRef, v))
+		{
+			if (parent != null)
+			{
+				if (graphRef != null)
+				{
+					parent.removeGraphRef(graphRef, this);
+				}
+				if (v != null)
+				{
+					parent.addGraphRef(v, this);
+					updateCoordinates();
+				}
+			}
+			graphRef = v;
+			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.GRAPHREF));
+		}
+	}
+
+	@Override
+	public void setParent(Pathway v)
+	{
+		if (parent != v)
+		{
+			super.setParent(v);
+			if (parent != null && graphRef != null)
+			{
+				updateCoordinates();
+			}
+		}
+	}
+
 }

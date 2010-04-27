@@ -30,6 +30,7 @@ import java.util.List;
 import org.pathvisio.biopax.BiopaxEvent;
 import org.pathvisio.biopax.BiopaxListener;
 import org.pathvisio.biopax.reflect.PublicationXref;
+import org.pathvisio.debug.DebugList;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementEvent;
@@ -45,7 +46,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	
 	// children is everything that moves when this element is dragged.
 	// includes Citation and State
-	private List<VPathwayElement> children = new ArrayList<VPathwayElement>();
+	private List<VPathwayElement> children = new DebugList<VPathwayElement>();
 	
 	private Citation citation;
 
@@ -236,7 +237,12 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		super.destroy();
 		gdata.removeListener(canvas);
 		gdata.removeListener(this);
-		if (citation != null) citation.destroy();
+		for (VPathwayElement child : children)
+		{
+			child.destroy();
+		}
+		children.clear();
+		citation = null;
 		gdata.getBiopaxReferenceManager().removeBiopaxListener(this);
 
 		//View should not remove its model
@@ -287,6 +293,11 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	public void addChild(VPathwayElement elt)
 	{
 		children.add(elt);
+	}
+
+	public void removeChild(VPathwayElement elt)
+	{
+		children.remove(elt);
 	}
 
 }

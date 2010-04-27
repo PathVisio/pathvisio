@@ -34,9 +34,7 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
@@ -89,6 +87,22 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 					handleR
 			};
 		}
+		else if (this instanceof State)
+		{
+			handleNE = new Handle(Handle.Freedom.FREE, this, this);
+			handleSE = new Handle(Handle.Freedom.FREE, this, this);
+			handleSW = new Handle(Handle.Freedom.FREE, this, this);
+			handleNW = new Handle(Handle.Freedom.FREE, this, this);
+			handleNE.setCursorHint(Cursor.NE_RESIZE_CURSOR);
+			handleSE.setCursorHint(Cursor.SE_RESIZE_CURSOR);
+			handleSW.setCursorHint(Cursor.SW_RESIZE_CURSOR);
+			handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
+			handles = new Handle[]
+  				{
+  					handleNE, handleSE,
+  					handleSW, handleNW,
+  				};				
+		}
 		else
 		{
 			handleN = new Handle(Handle.Freedom.Y, this, this);
@@ -110,7 +124,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			handleSW.setCursorHint(Cursor.SW_RESIZE_CURSOR);
 			handleNW.setCursorHint(Cursor.NW_RESIZE_CURSOR);
             
-			if(this instanceof GeneProduct || this instanceof State ||
+			if(this instanceof GeneProduct || 
 				this instanceof Label || !gdata.getShapeType().isRotatable())
 			{
                 // No rotation handle for these objects
@@ -147,15 +161,6 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	{
 		gdata.setMLeft(gdata.getMLeft()  + mFromV(vdx));
 		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
-		//Redraw graphRefs
-		for(GraphRefContainer ref : gdata.getReferences()) {
-			if(ref instanceof MPoint) {
-				VPoint vp = canvas.getPoint((MPoint)ref);
-				if(vp != null) {
-					vp.getLine().recalculateConnector();
-				}
-			}
-		}
 	}
 
 	public Handle[] getHandles()
@@ -317,14 +322,18 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	{
 		Point p;
 		if (gdata.getShapeType() == null || gdata.getShapeType().isResizeable()) {
-			p = mToExternal(0, -gdata.getMHeight()/2);
-			handleN.setMLocation(p.x, p.y);
-			p = mToExternal(gdata.getMWidth()/2, 0);
-			handleE.setMLocation(p.x, p.y);
-			p = mToExternal(0,  gdata.getMHeight()/2);
-			handleS.setMLocation(p.x, p.y);
-			p = mToExternal(-gdata.getMWidth()/2, 0);
-			handleW.setMLocation(p.x, p.y);
+			
+			if (handleN != null)
+			{
+				p = mToExternal(0, -gdata.getMHeight()/2);
+				handleN.setMLocation(p.x, p.y);
+				p = mToExternal(gdata.getMWidth()/2, 0);
+				handleE.setMLocation(p.x, p.y);
+				p = mToExternal(0,  gdata.getMHeight()/2);
+				handleS.setMLocation(p.x, p.y);
+				p = mToExternal(-gdata.getMWidth()/2, 0);
+				handleW.setMLocation(p.x, p.y);
+			}
 			
 			p = mToExternal(gdata.getMWidth()/2, -gdata.getMHeight()/2);
 			handleNE.setMLocation(p.x, p.y);

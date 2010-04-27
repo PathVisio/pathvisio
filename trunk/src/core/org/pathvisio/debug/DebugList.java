@@ -100,10 +100,10 @@ public class DebugList<E> implements List<E>
 			{
 				ConcurrentModificationException ex = new ConcurrentModificationException();
 				ex.initCause(parent.cause);
+				System.out.println ("Detected concurrent modification");
+				System.out.println ("Modification was done by");
+				parent.cause.printStackTrace();
 				throw ex;
-//				System.out.println ("Detected concurrent modification");
-//				System.out.println ("Modification was done by");
-//				parent.cause.printStackTrace();
 			}
 			return delegate.next();
 		}

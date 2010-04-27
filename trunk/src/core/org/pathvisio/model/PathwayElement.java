@@ -398,7 +398,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		 */
 		public void setGraphRef(String v)
 		{
-            if (!Utils.stringEquals(graphRef, v))
+			if (!Utils.stringEquals(graphRef, v))
 			{
 				if (parent != null)
 				{
@@ -412,7 +412,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					}
 				}
 				graphRef = v;
-				//fireObjectModifiedEvent(new PathwayElementEvent(PathwayElement.this, StaticProperty.GRAPHREF));
 			}
 		}
 
@@ -476,6 +475,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			String ref = getGraphRef();
 			return ref != null && !"".equals(ref);
 		}
+
+		@Override
+		public void refeeChanged()
+		{
+			// called whenever the object being referred to has changed.
+			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(PathwayElement.this));
+		}
 	}
 
 	/**
@@ -535,6 +541,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 																// Radius for
 																// rect and oval
 
+	private static final int M_INITIAL_STATE_SIZE = 15;
+	
 	private static final int M_INITIAL_BRACE_HEIGHT = 15;
 
 	private static final int M_INITIAL_BRACE_WIDTH = 60;
@@ -653,7 +661,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * Parent of this object: may be null (for example, when object is in
 	 * clipboard)
 	 */
-	private Pathway parent = null;
+	protected Pathway parent = null;
 
 	public Pathway getParent()
 	{
@@ -671,76 +679,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * Set parent. Do not use this method directly! parent is set automatically
 	 * when using Pathway.add/remove
-	 *
-	 * This method takes care of graphref reference accounting.
-	 *
-	 * @param v
-	 *            the parent
+	 * @param v the parent
 	 */
-	public void setParent(Pathway v)
+	void setParent(Pathway v)
 	{
-		if (v != parent)
-		{
-			if (parent != null)
-			{
-				for (MPoint p : mPoints)
-				{
-					if (p.getGraphRef() != null)
-					{
-						parent.removeGraphRef(p.getGraphRef(), p);
-					}
-				}
-				if(getGroupRef() != null)
-				{
-					parent.removeGroupRef(getGroupRef(), this);
-				}
-				for (MAnchor a : anchors) {
-					if (a.getGraphId() != null)
-					{
-						parent.removeId(a.getGraphId());
-					}
-				}
-				if (graphId != null)
-				{
-					parent.removeId(graphId);
-				}
-				if (groupId != null)
-				{
-					parent.removeGroupId(groupId);
-				}
-				zOrder = parent.getMaxZOrder() + 1;
-			}
-			parent = v;
-			if (v != null)
-			{
-				for (MPoint p : mPoints)
-				{
-					if (p.getGraphRef() != null)
-					{
-						v.addGraphRef(p.getGraphRef(), p);
-					}
-				}
-				if(getGroupRef() != null)
-				{
-					v.addGroupRef(getGroupRef(), this);
-				}
-				for (MAnchor a : anchors)
-				{
-					if(a.getGraphId() != null)
-					{
-						parent.addGraphId(a.getGraphId(), a);
-					}
-				}
-				if (graphId != null)
-				{
-					parent.addGraphId(graphId, this);
-				}
-				if (groupId != null)
-				{
-					parent.addGroupId(groupId, this);
-				}
-			}
-		}
+		parent = v;
 	}
 
 	/**
@@ -1335,6 +1278,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		copyright = src.copyright;
 		mCenterx = src.mCenterx;
 		mCentery = src.mCentery;
+		relX = src.relX;
+		relY = src.relY;
 		zOrder =  src.zOrder;
 		color = src.color;
 		fillColor = src.fillColor;
@@ -1388,6 +1333,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		version = src.version;
 		mWidth = src.mWidth;
 		graphId = src.graphId;
+		graphRef = src.graphRef;
 		groupId = src.groupId;
 		groupRef = src.groupRef;
 		groupStyle = src.groupStyle;
@@ -2413,7 +2359,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			{
 				if (groupId != null)
 				{
-					parent.removeId(groupId);
+					parent.removeGroupId(groupId);
 				}
 				// Check: move add before remove??
 				if (w != null)
@@ -2442,7 +2388,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	private String graphRef = null;
+	protected String graphRef = null;
 
 	/** graphRef property, used by Modification */
 	public String getGraphRef()
@@ -2451,7 +2397,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	/**
-	 * set graphRef property, used by Modification
+	 * set graphRef property, used by State
 	 * The new graphRef should exist and point to an existing DataNode
 	 */
 	public void setGraphRef (String value)
@@ -2694,6 +2640,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setMEndX(getMStartX() + M_INITIAL_SHAPE_SIZE);
 			setMEndY(getMStartY() + M_INITIAL_SHAPE_SIZE);
 			break;
+		case STATE:
+			setMWidth(M_INITIAL_STATE_SIZE);
+			setMHeight(M_INITIAL_STATE_SIZE);
+			break;
 		}
 	}
 
@@ -2730,5 +2680,25 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if(relX != 0 && bounds.getWidth() != 0) relX /= bounds.getWidth() / 2;
 		if(relY != 0 && bounds.getHeight() != 0) relY /= bounds.getHeight() / 2;
 		return new Point2D.Double(relX, relY);
+	}
+
+	public void printRefsDebugInfo()
+	{
+		System.err.println (objectType + " " + getGraphId());
+		if (this instanceof MLine)
+		{
+			for (MPoint p : getMPoints())
+			{
+				System.err.println("  p: " + p.getGraphId());
+			}
+			for (MAnchor a : getMAnchors())
+			{
+				System.err.println("  a: " + a.getGraphId());
+			}
+		}
+		if (this instanceof MState)
+		{
+			System.err.println ("  " + getGraphRef());
+		}
 	}
 }

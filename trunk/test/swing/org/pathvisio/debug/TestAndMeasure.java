@@ -167,7 +167,6 @@ public class TestAndMeasure extends TestCase
 			public Object create() 
 			{
 				PathwayElement elt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-				elt.setParent(pwy1);
 				elt.setMCenterX(5);
 				elt.setMCenterY(10);
 				elt.setMWidth(8);
@@ -175,6 +174,7 @@ public class TestAndMeasure extends TestCase
 				elt.setDataSource(BioDataSource.ENTREZ_GENE);
 				elt.setGeneID("3463");
 				elt.setTextLabel("INSR");
+				pwy1.add (elt);
 				return elt;
 			}
 
@@ -188,13 +188,13 @@ public class TestAndMeasure extends TestCase
 			public Object create() 
 			{
 				PathwayElement elt = PathwayElement.createPathwayElement(ObjectType.LINE);
-				elt.setParent(pwy2);
 				elt.setMStartX(5);
 				elt.setMStartY(10);
 				elt.setMEndX(8);
 				elt.setMEndY(10);
 				elt.setStartGraphRef("abc");
 				elt.setEndGraphRef("def");
+				pwy2.add (elt);
 				return elt;
 			}
 
@@ -210,7 +210,6 @@ public class TestAndMeasure extends TestCase
 			public Object create() 
 			{
 				PathwayElement elt = PathwayElement.createPathwayElement(ObjectType.DATANODE);
-				elt.setParent(pwy3);
 				elt.setMCenterX(5);
 				elt.setMCenterY(10);
 				elt.setMWidth(8);
@@ -218,6 +217,7 @@ public class TestAndMeasure extends TestCase
 				elt.setDataSource(BioDataSource.ENTREZ_GENE);
 				elt.setGeneID("3463");
 				elt.setTextLabel("INSR");
+				pwy3.add (elt);
 				VPathwayElement velt = new GeneProduct(vpwy3, elt);
 				return velt;
 			}
@@ -232,13 +232,13 @@ public class TestAndMeasure extends TestCase
 			public Object create() 
 			{
 				PathwayElement elt = PathwayElement.createPathwayElement(ObjectType.LINE);
-				elt.setParent(pwy4);
 				elt.setMStartX(5);
 				elt.setMStartY(10);
 				elt.setMEndX(8);
 				elt.setMEndY(10);
 				elt.setStartGraphRef("abc");
 				elt.setEndGraphRef("def");
+				pwy4.add (elt);
 				VPathwayElement velt = new Line(vpwy4, elt);
 				return velt;
 			}

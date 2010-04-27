@@ -316,13 +316,26 @@ public class Pathway
 	void childModified (PathwayElementEvent e)
 	{
 		markChanged();
+		// a coordinate change could trigger dependent objects such as states, 
+		// groups and connectors to be updated as well.
 		if (e.isCoordinateChange())
 		{
-			List<GraphRefContainer> references = getReferringObjects(e.getModifiedPathwayElement().getGraphId());
+
+			PathwayElement elt = e.getModifiedPathwayElement();
+			List<GraphRefContainer> references = getReferringObjects(elt.getGraphId());
 			for(GraphRefContainer refc : references) 
 			{
 				refc.refeeChanged();
 			}
+			
+			String ref = elt.getGroupRef();
+			if (ref != null && getGroupById(ref) != null)
+			{
+				//identify group object and notify model change to trigger view update
+				MGroup group = (MGroup)getGroupById(ref);
+				group.fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(group));
+			}
+
 		}
 	}
 

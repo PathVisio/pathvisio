@@ -499,8 +499,6 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 		for (VPathwayElement o : selection) {
 			if(o instanceof Graphics) {
 				o.vMoveBy(vdx, vdy);
-				// notify parents of any moving children!
-				((Graphics) o).getPathwayElement().notifyParentGroupOfChildMovementOrResize();
 			}
 		}
 //		// Move selected object and their references

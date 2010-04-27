@@ -263,9 +263,6 @@ public class Handle extends VPathwayElement
 		}
 
 		adjustable.adjustToHandle(this, vnx, vny);
-		if (parent instanceof Graphics)  { // notify parents of any resized children!
-			((Graphics) parent).getPathwayElement().notifyParentGroupOfChildMovementOrResize();
-		}
 		markDirty();
 	}
 

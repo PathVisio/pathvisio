@@ -2373,21 +2373,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	}
 
-	/**
-	 * Notifies the parent group of a movement or resize change in a child element via groupId.
-	 */
-	public void notifyParentGroupOfChildMovementOrResize()
-	{
-		String ref = this.getGroupRef();
-		if (ref != null)
-		{ //identify group object and notify model change to trigger view update
-			if ((this.getParent().getGroupById(ref)) != null){
-				MGroup group = (MGroup)this.getParent().getGroupById(ref);
-				group.fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(group));
-			}
-		}
-	}
-
 	protected String graphRef = null;
 
 	/** graphRef property, used by Modification */

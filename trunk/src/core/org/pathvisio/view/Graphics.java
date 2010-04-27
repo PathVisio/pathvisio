@@ -24,6 +24,7 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.pathvisio.biopax.BiopaxEvent;
@@ -41,6 +42,11 @@ import org.pathvisio.model.PathwayElementListener;
 public abstract class Graphics extends VPathwayElement implements PathwayElementListener, BiopaxListener
 {
 	protected PathwayElement gdata = null;
+	
+	// children is everything that moves when this element is dragged.
+	// includes Citation and State
+	private List<VPathwayElement> children = new ArrayList<VPathwayElement>();
+	
 	private Citation citation;
 
 	public Graphics(VPathway canvas, PathwayElement o) {
@@ -64,10 +70,12 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		if (xrefs.size() > 0 && citation == null)
 		{
 			citation = createCitation();
+			children.add(citation);
 		}
 		else if (xrefs.size() == 0 && citation != null)
 		{
 			citation.destroy();
+			children.remove(citation);
 			citation = null;
 		}
 
@@ -82,7 +90,8 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 
 	public void markDirty() {
 		super.markDirty();
-		if (citation != null) citation.markDirty();
+		for (VPathwayElement child : children)
+			child.markDirty();
 	}
 
 	protected Citation getCitation() {
@@ -273,6 +282,11 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 				  BasicStroke.JOIN_MITER,
 				  10, new float[] {4, 4}, 0));
 		}		
+	}
+
+	public void addChild(VPathwayElement elt)
+	{
+		children.add(elt);
 	}
 
 }

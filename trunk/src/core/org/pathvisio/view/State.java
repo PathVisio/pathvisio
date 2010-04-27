@@ -18,11 +18,9 @@ package org.pathvisio.view;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.font.TextLayout;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 
 import org.pathvisio.model.PathwayElement;
 
@@ -31,6 +29,8 @@ import org.pathvisio.model.PathwayElement;
  */
 public class State extends GraphicsShape
 {
+	final private Graphics parent;
+	
 	public static final Color INITIAL_FILL_COLOR = Color.WHITE;
 
 	//note: not the same as color!
@@ -38,40 +38,21 @@ public class State extends GraphicsShape
 
 	public State (VPathway canvas, PathwayElement o) {
 		super(canvas, o);
-		setHandleLocation();
+		PathwayElement mParent = canvas.getPathwayModel().getElementById(o.getGraphRef()); 
+		this.parent = canvas.getPathwayElementView(mParent);
+		parent.addChild(this);
 	}
 
 	public void doDraw(Graphics2D g)
 	{
-		java.awt.Shape origClip = g.getClip();
-		RectangularShape area = new Rectangle2D.Double(
-			getVLeft(), getVTop(), getVWidth(), getVHeight());
-
-		//White background
-		g.setPaint (Color.WHITE);
-		g.fill(area);
-
-		//Rectangular Outline
-		g.setStroke(new BasicStroke());
-		if(isSelected()) {
-			g.setColor(selectColor);
-		} else {
-			g.setColor(gdata.getColor());
-		}
-		g.draw(area);
-
-		//Label
-		//Don't draw label outside gene box
-		g.clip (new Rectangle2D.Double (area.getX() - 1, area.getY() - 1, area.getWidth() + 1, area.getHeight()+ 1));
-
-		Font f = getVFont();
-		g.setFont(f);
-
+		g.setColor(getLineColor());
+		setLineStyle(g);
+		drawShape(g);
+		
+		g.setFont(getVFont());
 		drawTextLabel(g);
-
-		g.setClip(origClip); //Reset clipping
+		
 		drawHighlight(g);
-		super.doDraw((Graphics2D)g.create());
 	}
 
 	public void drawHighlight(Graphics2D g)
@@ -85,4 +66,16 @@ public class State extends GraphicsShape
 			g.draw(r);
 		}
 	}
+
+	@Override protected int getZOrder() {
+		return parent.getZOrder() + 1;
+	}
+	
+	
+//	protected Point2D getVPosition() 
+//	{
+//		Point2D rPostion = new Point2D.Double(gdata.getRelX(), gdata.getRelY());
+//		Point2D mp = parent.toAbsoluteCoordinate(rPosition);
+//		Point2D vp = new Point2D.Double(vFromM(mp.getX()), vFromM(mp.getY()));
+//	}
 }

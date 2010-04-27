@@ -1000,6 +1000,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setRotation((Double) value);
 			break;
 
+		case RELX:
+			setRelX((Double) value);
+			break;
+		case RELY:
+			setRelY((Double) value);
+			break;
 		case STARTX:
 			setMStartX((Double) value);
 			break;
@@ -1180,7 +1186,12 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		case ROTATION:
 			result = getRotation();
 			break;
-
+		case RELX:
+			result = getRelX();
+			break;
+		case RELY:
+			result = getRelY();
+			break;
 		case STARTX:
 			result = getMStartX();
 			break;
@@ -2456,7 +2467,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	private double relX;
 
 	/**
-	 * relX property, used by Modification.
+	 * relX property, used by State.
 	 * Should normally be between -1.0 and 1.0, where 1.0
 	 * corresponds to the edge of the parent object
 	 */
@@ -2480,7 +2491,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	private double relY;
 
 	/**
-	 * relX property, used by Modification.
+	 * relX property, used by State.
 	 * Should normally be between -1.0 and 1.0, where 1.0
 	 * corresponds to the edge of the parent object
 	 */

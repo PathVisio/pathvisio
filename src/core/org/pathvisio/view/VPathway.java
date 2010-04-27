@@ -26,6 +26,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
@@ -2585,4 +2586,32 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			if (elt.toBeRemoved()) { i.remove(); }
 		}
 	}
+
+	/**
+	 * Move multiple elements together (either a group or a selection).
+	 * If a State is contained together with its parent DataNode, then the state is not moved. 
+	 */
+	public void moveMultipleElements (Collection<? extends VPathwayElement> toMove, double vdx, double vdy)
+	{
+		// collect all graphIds in selection
+		Set<String> eltIds = new HashSet<String>();
+		for (VPathwayElement o : toMove)
+			if (o instanceof Graphics) 
+				{
+					String id = ((Graphics)o).getPathwayElement().getGraphId();
+					if (id != null) eltIds.add(id);
+				}
+		
+		for (VPathwayElement o : toMove) 
+		{
+			// skip if parent of state is also in selection.
+			if (o instanceof State && eltIds.contains (((State)o).getPathwayElement().getGraphRef()))
+					continue;
+
+			if(o instanceof Graphics) {
+				o.vMoveBy(vdx, vdy);
+			}
+		}
+	}
+
 }

@@ -249,19 +249,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	@Override
 	protected void vMoveBy(double dx, double dy)
 	{
-		for (Graphics g : getGroupGraphics())
-		{
-			g.vMoveBy(dx, dy);
-		}
-		//Move graphRefs
-		//GraphLink.moveRefsBy(gdata, mFromV(vdx), mFromV(vdy));
-		Set<VPoint> toMove = new HashSet<VPoint>();
-		for(GraphRefContainer ref : gdata.getReferences()) {
-			if(ref instanceof MPoint) {
-				toMove.add(canvas.getPoint((MPoint)ref));
-			}
-		}
-		for(VPoint p : toMove) p.vMoveBy(dx, dy);
+		canvas.moveMultipleElements(getGroupGraphics(), dx, dy);
 
 		// update group outline
 		markDirty();

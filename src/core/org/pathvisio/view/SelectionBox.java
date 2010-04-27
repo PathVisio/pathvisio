@@ -496,50 +496,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 		setHandleLocation();
 		markDirty();
 
-		for (VPathwayElement o : selection) {
-			if(o instanceof Graphics) {
-				o.vMoveBy(vdx, vdy);
-			}
-		}
-//		// Move selected object and their references
-//		Set<GraphRefContainer> not = new HashSet<GraphRefContainer>(); // Will
-//		// be moved by linking object
-//		Set<VPoint> points = new HashSet<VPoint>(); // Will not be moved by
-//		// linking object
-//
-//		for (VPathwayElement o : selection)
-//		{
-//			if (o instanceof Graphics)
-//			{
-//				PathwayElement g = ((Graphics) o).getPathwayElement();
-//				if (!(o instanceof Line))
-//				{
-//					o.vMoveBy(vdx, vdy);
-//					not.addAll(g.getReferences());
-//				}
-//				if (g.getObjectType() == ObjectType.LINE)
-//				{
-//					points.addAll(((Line) o).getPoints());
-//				}
-//			} else if (o instanceof VAnchor) {
-//				MAnchor m = ((VAnchor)o).getMAnchor();
-//				not.addAll(m.getReferences());
-//			}
-//
-//		}
-
-//		for (GraphRefContainer ref : not)
-//		{
-//			if (ref instanceof MPoint)
-//			{
-//				points.remove(canvas.getPoint((MPoint) ref));
-//			}
-//		}
-//
-//		for (VPoint p : points)
-//		{
-//			p.vMoveBy(vdx, vdy);
-//		}
+		canvas.moveMultipleElements(selection, vdx, vdy);
 	}
 
 	public void doDraw(Graphics2D g)

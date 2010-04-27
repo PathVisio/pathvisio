@@ -16,6 +16,8 @@
 //
 package org.pathvisio.view;
 
+import static org.pathvisio.model.ObjectType.STATE;
+
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -36,6 +38,7 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.util.Resources;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
@@ -97,6 +100,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final OrderUpAction orderUp;
 	public final OrderDownAction orderDown;
 	public final ShowUnlinkedConnectors showUnlinked;
+	public final AddState addState;
+	public final RemoveState removeState;
 
 	private final Engine engine;
 
@@ -123,6 +128,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		orderUp = new OrderUpAction(engine);
 		orderDown = new OrderDownAction(engine);
 		showUnlinked = new ShowUnlinkedConnectors();
+		addState = new AddState();
+		removeState = new RemoveState();
 
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -383,6 +390,68 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				}
 				vPathway.redrawDirtyRect();
 			}
+		}
+	}
+
+	private class AddState extends AbstractAction
+	{
+		AddState()
+		{
+			super ("Add State...");
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0)
+		{
+			List<Graphics> selection = vPathway.getSelectedGraphics();
+			if(selection.size() > 0) {
+				vPathway.getUndoManager().newAction("Add State");
+				for(Graphics g : selection) {
+					if(g instanceof GeneProduct) {
+						GeneProduct gp = (GeneProduct)g;
+						PathwayElement elt = PathwayElement.createPathwayElement(STATE);
+						elt.setRelX(1.0);
+						elt.setRelY(1.0);
+						elt.setGraphRef(gp.getPathwayElement().doGetGraphId());
+						elt.setMWidth (10);
+						elt.setMHeight (10);
+						elt.setShapeType(ShapeType.OVAL);
+						engine.getActivePathway().add(elt);
+						elt.setGeneratedGraphId();
+					}
+				}
+				vPathway.redrawDirtyRect();
+			}			
+		}
+	}
+
+	private class RemoveState extends AbstractAction
+	{
+		RemoveState()
+		{
+			super ("Remove State...");
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent arg0)
+		{
+			vPathway.getUndoManager().newAction("Remove State");
+			List<VPathwayElement> toRemove = new ArrayList<VPathwayElement>();
+			List<Graphics> selection = vPathway.getSelectedGraphics();
+			if(selection.size() > 0) {
+				for(Graphics g : selection) {
+					if(g instanceof State) {
+						toRemove.add(g);
+					}
+				}
+				vPathway.redrawDirtyRect();
+			}			
+			if (toRemove.size() > 0)
+			{
+				vPathway.getUndoManager().newAction("Remove state(s)");
+				vPathway.removeDrawingObjects(toRemove, true);
+			}
+			
 		}
 	}
 

@@ -35,12 +35,14 @@ import org.pathvisio.model.AnchorType;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.view.Citation;
+import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Group;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.InfoBox;
 import org.pathvisio.view.Line;
 import org.pathvisio.view.MouseEvent;
+import org.pathvisio.view.State;
 import org.pathvisio.view.VAnchor;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
@@ -121,6 +123,15 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			menu.add(vActions.toggleComplex);
 		}
 
+		if (e instanceof GeneProduct)
+		{
+			menu.add(vActions.addState);
+		}
+		if (e instanceof State)
+		{
+			menu.add(vActions.removeState);
+		}
+		
 		if((e instanceof Line)) {
 			final Line line = (Line)e;
 

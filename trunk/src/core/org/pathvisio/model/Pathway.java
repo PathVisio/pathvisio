@@ -40,6 +40,7 @@ import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.view.Graphics;
 
 /**
 * This class is the model for pathway data. It is responsible for
@@ -332,7 +333,7 @@ public class Pathway
 			if (ref != null && getGroupById(ref) != null)
 			{
 				//identify group object and notify model change to trigger view update
-				MGroup group = (MGroup)getGroupById(ref);
+				PathwayElement group = getGroupById(ref);
 				group.fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(group));
 			}
 
@@ -382,16 +383,10 @@ public class Pathway
 		for(GraphRefContainer refc : references) {
 			refc.unlink();
 		}
-		for (MPoint p : o.getMPoints())
+		String groupRef = o.getGroupRef();
+		if(groupRef != null)
 		{
-			if (p.getGraphRef() != null)
-			{
-				removeGraphRef(p.getGraphRef(), p);
-			}
-		}
-		if(o.getGroupRef() != null)
-		{
-			removeGroupRef(o.getGroupRef(), o);
+			removeGroupRef(groupRef, o);			
 		}
 		for (MAnchor a : o.getMAnchors()) {
 			if (a.getGraphId() != null)
@@ -477,6 +472,7 @@ public class Pathway
 	{
 		List<GraphRefContainer> refs = graphRefs.get(id);
 		if(refs != null) {
+			// create defensive copy to prevent problems with ConcurrentModification.
 			refs = new ArrayList<GraphRefContainer>(refs);
 		} else {
 			refs = new ArrayList<GraphRefContainer>();
@@ -588,16 +584,21 @@ public class Pathway
 		if (!groupRefs.containsKey(id)) throw new IllegalArgumentException();
 
 		groupRefs.get(id).remove(child);
-
-
+		
+		//Find out if this element is the last one in a group
+		//If so, remove the group as well			
 		if (groupRefs.get(id).size() == 0)
 		{
 			groupRefs.remove(id);
-		} else {
+			PathwayElement group = getGroupById(id);
+			if (group != null) forceRemove(group);
+		} 
+		else 
+		{
 			// redraw group outline
-			if (getGroupById(id) !=null ){
+			if (getGroupById(id) != null ){
 				MGroup group = (MGroup)getGroupById(id);
-				group.fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(group, StaticProperty.GROUPREF));
+				group.fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(group));
 			}
 		}
 	}

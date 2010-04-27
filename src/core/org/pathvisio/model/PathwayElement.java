@@ -456,6 +456,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				moveTo(abs.getX(), abs.getY());
 				relativeSet = false;
 				setGraphRef(null);
+				fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(PathwayElement.this));
 			}
 		}
 

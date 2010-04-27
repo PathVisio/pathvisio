@@ -1550,20 +1550,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			{
 				if (toRemove instanceof Graphics)
 				{
-					//Find out if this element is the last one in a group
-					//If so, remove the group as well
-					PathwayElement pwElm = ((Graphics)toRemove).getPathwayElement();
-					String groupRef = pwElm.getGroupRef();
-					if(groupRef != null) {
-						Set<PathwayElement> groupElms = data.getGroupElements(groupRef);
-						if(groupElms != null && groupElms.size() == 1) {
-							PathwayElement group = data.getGroupById(groupRef);
-							if(group != null) {
-								removeDrawingObject(getPathwayElementView(group), true);
-							}
-						}
-					}
-
 					//Remove the model object
 					data.remove(((Graphics) toRemove).getPathwayElement());
 				}

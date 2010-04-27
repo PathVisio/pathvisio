@@ -71,7 +71,39 @@ public class State extends GraphicsShape
 		return parent.getZOrder() + 1;
 	}
 	
-	
+	protected void vMoveBy(double vdx, double vdy)
+	{
+		Point2D newPos = new Point2D.Double (getVCenterX() + vdx, getVCenterY() + vdy); 
+		Point2D newRel = parent.getPathwayElement().toRelativeCoordinate(newPos);
+		double x = newRel.getX();
+		double y = newRel.getY();
+		if (x > 1) x = 1;
+		if (x < -1) x = -1;
+		if (y > 1) y = 1;
+		if (y < -1) y = -1;
+		gdata.setRelX(x);
+		gdata.setRelY(y);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * State overrides vContains, because the base implementation only considers a 
+	 * hit with the outline, which makes it hard to grab with the mouse.
+	 */
+	@Override
+	protected boolean vContains(Point2D point)
+	{
+		// first use getVBounds as a rough approximation
+		if (getVBounds().contains(point))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 //	protected Point2D getVPosition() 
 //	{
 //		Point2D rPostion = new Point2D.Double(gdata.getRelX(), gdata.getRelY());

@@ -72,17 +72,17 @@ public abstract class GraphLink
 		String getGraphRef();
 		void linkTo(GraphIdContainer idc, double relX, double relY);
 		void unlink();
-		/**
-		 * @deprecated GraphRefs now have relative coordinates and don't
-		 * need to be moved
-		 */
-		void moveBy(double dx, double dy);
 
 		/**
 		 * return the parent Pathway object,
 		 * needed for maintaining a consistent list of graphId's
 		 */
 		Pathway getPathway();
+		
+		/**
+		 * Called whenever the object being referred to changes coordinates.
+		 */
+		void refeeChanged();
 	}
 
 	/**
@@ -105,7 +105,7 @@ public abstract class GraphLink
 			{
 				if (graphId != null)
 				{
-					data.removeId(graphId);
+					data.removeGraphId(graphId);
 				}
 				if (v != null)
 				{

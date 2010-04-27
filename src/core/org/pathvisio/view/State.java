@@ -22,15 +22,14 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import org.pathvisio.model.MState;
 import org.pathvisio.model.PathwayElement;
 
 /**
  * represents the view of a PathwayElement with ObjectType.STATE.
  */
 public class State extends GraphicsShape
-{
-	final private Graphics parent;
-	
+{	
 	public static final Color INITIAL_FILL_COLOR = Color.WHITE;
 
 	//note: not the same as color!
@@ -38,9 +37,6 @@ public class State extends GraphicsShape
 
 	public State (VPathway canvas, PathwayElement o) {
 		super(canvas, o);
-		PathwayElement mParent = canvas.getPathwayModel().getElementById(o.getGraphRef()); 
-		this.parent = canvas.getPathwayElementView(mParent);
-		parent.addChild(this);
 	}
 
 	public void doDraw(Graphics2D g)
@@ -67,14 +63,10 @@ public class State extends GraphicsShape
 		}
 	}
 
-	@Override protected int getZOrder() {
-		return parent.getZOrder() + 1;
-	}
-	
 	protected void vMoveBy(double vdx, double vdy)
 	{
 		Point2D newPos = new Point2D.Double (getVCenterX() + vdx, getVCenterY() + vdy); 
-		Point2D newRel = parent.getPathwayElement().toRelativeCoordinate(newPos);
+		Point2D newRel = ((MState)gdata).getParentDataNode().toRelativeCoordinate(newPos);
 		double x = newRel.getX();
 		double y = newRel.getY();
 		if (x > 1) x = 1;
@@ -104,10 +96,9 @@ public class State extends GraphicsShape
 		}
 	}
 
-//	protected Point2D getVPosition() 
-//	{
-//		Point2D rPostion = new Point2D.Double(gdata.getRelX(), gdata.getRelY());
-//		Point2D mp = parent.toAbsoluteCoordinate(rPosition);
-//		Point2D vp = new Point2D.Double(vFromM(mp.getX()), vFromM(mp.getY()));
-//	}
+	@Override
+	public void destroy()
+	{
+		super.destroy();
+	}
 }

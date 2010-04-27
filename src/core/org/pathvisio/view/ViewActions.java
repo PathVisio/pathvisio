@@ -36,11 +36,11 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.model.GroupStyle;
+import org.pathvisio.model.MState;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.util.Resources;
-import org.pathvisio.util.Utils;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 
@@ -410,11 +410,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 					if(g instanceof GeneProduct) {
 						GeneProduct gp = (GeneProduct)g;
 						PathwayElement elt = PathwayElement.createPathwayElement(STATE);
-						elt.setRelX(1.0);
-						elt.setRelY(1.0);
-						elt.setGraphRef(gp.getPathwayElement().doGetGraphId());
-						elt.setMWidth (10);
-						elt.setMHeight (10);
+						elt.setInitialSize();
+						((MState)elt).linkTo (gp.getPathwayElement(), 1.0, 1.0); 
 						elt.setShapeType(ShapeType.OVAL);
 						engine.getActivePathway().add(elt);
 						elt.setGeneratedGraphId();

@@ -1371,8 +1371,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 							// loop, so just save vpe of highest-level group for
 							// deletion later (see below)
 							vpeToRemove = vpe;
-							// clear id from hash map
-							data.removeGroupId(groupRefToRemove);
 							}
 						}
 					}
@@ -1717,9 +1715,8 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	}
 
 	/**
-	 * Makes a copy of all GmmlDataObjects in current selection, and puts them
+	 * Makes a copy of all PathwayElements in current selection, and puts them
 	 * in the global clipboard.
-	 *
 	 */
 	public void copyToClipboard()
 	{
@@ -2291,6 +2288,15 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				p.setEndGraphRef(null);
 			}
 		}
+		y = p.getGraphRef();
+		if (y != null)
+		{
+			if (idmap.containsKey(y))
+			{
+				p.setGraphRef(idmap.get(y));
+			} 
+			// If the ref points to an item outside the selection, keep using original!
+		}		
 		// update groupref
 		String groupRef = p.getGroupRef();
 		if (groupRef != null)

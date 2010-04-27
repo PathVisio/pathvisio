@@ -264,6 +264,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 				e = new Element("State", getGpmlNamespace());
 				updateCommon (o, e);
 				e.addContent(new Element("Graphics", getGpmlNamespace()));
+				e.addContent(new Element("Xref", getGpmlNamespace()));
 				updateStateData(o, e);
 				updateShapeCommon(o, e);
 				break;
@@ -465,6 +466,10 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 	{
 		String base = e.getName();
 		o.setTextLabel (getAttribute(base, "TextLabel", e));
+
+		// TODO dirty hack: the fact that state doesn't allow font data is a bug 
+		if (e.getName().equals ("State")) return;
+		
     	Element graphics = e.getChild("Graphics", e.getNamespace());
 
     	String fontSizeString = getAttribute(base + ".Graphics", "FontSize", graphics);
@@ -480,7 +485,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
     	o.setUnderline (fontDecoration != null && fontDecoration.equals("Underline"));
     	o.setStrikethru (fontStrikethru != null && fontStrikethru.equals("Strikethru"));
     	
-	    o.setFontName (getAttribute(base + ".Graphics", "FontName", graphics));
+    	o.setFontName (getAttribute(base + ".Graphics", "FontName", graphics));
 	    
 		o.setValign(ValignType.fromGpmlName(getAttribute(base + ".Graphics", "Valign", graphics)));
 		o.setAlign(AlignType.fromGpmlName(getAttribute(base + ".Graphics", "Align", graphics)));	    
@@ -490,6 +495,10 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 	{
 		String base = e.getName();
 		setAttribute(base, "TextLabel", e, o.getTextLabel());
+
+		// TODO dirty hack: the fact that state doesn't allow font data is a bug 
+		if (e.getName().equals ("State")) return;
+		
 		Element graphics = e.getChild("Graphics", e.getNamespace());
 		setAttribute(base + ".Graphics", "FontName", graphics, o.getFontName() == null ? "" : o.getFontName());
 		setAttribute(base + ".Graphics", "FontWeight", graphics, o.isBold() ? "Bold" : "Normal");
@@ -557,18 +566,29 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		o.setMWidth (Double.parseDouble(getAttribute("State.Graphics", "Width", graphics)));
 		o.setMHeight (Double.parseDouble(getAttribute("State.Graphics", "Height", graphics)));
 
-		//TODO
-		//StateType
-		// ShapeType???
-		// Line style???
-		// Xref???
+		o.setDataNodeType (getAttribute("State", "StateType", e));
+		o.setGraphRef(getAttribute("State", "GraphRef", e));
+		Element xref = e.getChild ("Xref", e.getNamespace());
+		o.setGeneID (getAttribute("State.Xref", "ID", xref));
+		o.setDataSource (DataSource.getByFullName (getAttribute("State.Xref", "Database", xref)));
 	}
 
-	protected static void updateStateData(PathwayElement o, Element e) throws ConverterException
+	protected void updateStateData(PathwayElement o, Element e) throws ConverterException
 	{
-		//TODO W, H, relx, rely
-		//TODO StateType
-		//TODO Xref
+		String base = e.getName();
+		Element graphics = e.getChild("Graphics", e.getNamespace());
+
+		setAttribute(base + ".Graphics", "RelX", graphics, "" + o.getRelX());
+		setAttribute(base + ".Graphics", "RelY", graphics, "" + o.getRelY());
+		setAttribute(base + ".Graphics", "Width", graphics, "" + o.getMWidth());
+		setAttribute(base + ".Graphics", "Height", graphics, "" + o.getMHeight());
+		
+		setAttribute ("State", "StateType", e, o.getDataNodeType());
+		setAttribute ("State", "GraphRef", e, o.getGraphRef());
+		Element xref = e.getChild("Xref", e.getNamespace());
+		String database = o.getDataSource() == null ? "" : o.getDataSource().getFullName();
+		setAttribute ("State.Xref", "Database", xref, database == null ? "" : database);
+		setAttribute ("State.Xref", "ID", xref, o.getGeneID());
 	}
 
 	protected void mapLineStyle(PathwayElement o, Element e) throws ConverterException

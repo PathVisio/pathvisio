@@ -44,13 +44,20 @@ public class GroupStyle implements Comparable<GroupStyle> {
 	public static final GroupStyle COMPLEX = new GroupStyle ("Complex");
 
 	private String name;
+    private boolean disallowLinks;
 
 	private GroupStyle (String name)
+    {
+        this(name, false);
+    }    
+
+    private GroupStyle (String name, boolean disallowLinks)
 	{
 		if (name == null) { throw new NullPointerException(); }
 
 		this.name  = name;
-		values.add(this);
+        this.disallowLinks = disallowLinks;
+        values.add(this);
 		nameMappings.put (name, this);
 	}
 
@@ -64,7 +71,18 @@ public class GroupStyle implements Comparable<GroupStyle> {
 		return new GroupStyle(name);
 	}
 
-	/**
+    /**
+       Create an object and add it to the list.
+
+       For extending the enum.
+     */
+    public static GroupStyle create (String name, boolean disallowLinks)
+    {
+        return new GroupStyle(name, disallowLinks);
+    }
+
+
+    /**
 	   looks up the ConnectorType corresponding to that name.
 	 */
 	public static GroupStyle fromName (String value)
@@ -96,7 +114,11 @@ public class GroupStyle implements Comparable<GroupStyle> {
 		return name;
 	}
 
-	static public GroupStyle[] getValues()
+    public boolean isDisallowLinks() {
+        return disallowLinks;
+    }
+
+    static public GroupStyle[] getValues()
 	{
 		return values.toArray(new GroupStyle[0]);
 	}

@@ -340,7 +340,10 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		//Number of link anchors depends on the size of the object
 		//If the width/height is large enough, there will be three link anchors per side,
 		//Otherwise there will be only one link anchor per side
-		int numH = gdata.getMWidth() >= MIN_SIZE_LA ? 3 : 1;
+        if (gdata.getGroupStyle().isDisallowLinks()) {
+            return linkAnchors;
+        }
+        int numH = gdata.getMWidth() >= MIN_SIZE_LA ? 3 : 1;
 		int numV = gdata.getMHeight() >= MIN_SIZE_LA ? 3 : 1;
 		if(numH != numLinkanchorsH || numV != numLinkanchorsV) {
 			createLinkAnchors(numH, numV);

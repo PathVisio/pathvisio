@@ -452,8 +452,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			if (graphRef != null)
 			{
-				Point2D abs = getAbsolute();
-				moveTo(abs.getX(), abs.getY());
+				if (getPathway() != null)
+				{
+					Point2D abs = getAbsolute();
+					moveTo(abs.getX(), abs.getY());
+				}
 				relativeSet = false;
 				setGraphRef(null);
 				fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(PathwayElement.this));

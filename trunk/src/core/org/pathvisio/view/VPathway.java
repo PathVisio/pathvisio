@@ -1620,7 +1620,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
         for (PathwayElement element : getPathwayModel().getDataObjects()) {
              if (element instanceof MLine) {
                  for (MAnchor anchor:element.getMAnchors()) {
-                      if (anchor.getGraphId().equals(graphId1) || anchor.getGraphId().equals(graphId2)) {
+                     if (anchor.getGraphId() != null && (anchor.getGraphId().equals(graphId1) || anchor.getGraphId().equals(graphId2))) {
                           anchor.setGraphId(null);
                       }
                  }

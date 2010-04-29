@@ -643,6 +643,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			shapeType = ShapeType.RECTANGLE;
 		}
+		
 		objectType = ot;
 		zOrder = getDefaultZOrder (ot);
 	}

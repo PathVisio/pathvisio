@@ -26,6 +26,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.Toolkit;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageProducer;
@@ -55,6 +56,7 @@ import org.pathvisio.util.ColorConverter;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.GeneProduct;
 import org.pathvisio.view.Graphics;
+import org.pathvisio.view.Legend;
 import org.pathvisio.visualization.VisualizationManager.VisualizationException;
 import org.pathvisio.visualization.VisualizationMethod;
 import org.pathvisio.visualization.colorset.ColorSet;
@@ -234,11 +236,6 @@ public class ColorByExpression extends VisualizationMethod {
 		Rectangle area = da.getBounds();
 
 		drawArea(gp, area, g2d);
-
-//		Color c = gp.getPathwayElement().getColor();
-//		g2d.setColor(c);
-//		g2d.fill(area);
-
 	}
 
 	void drawArea(final GeneProduct gp, Rectangle area, Graphics2D g2d) {

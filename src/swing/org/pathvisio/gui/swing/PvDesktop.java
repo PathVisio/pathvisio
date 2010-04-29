@@ -37,7 +37,9 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
+import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.plugin.PluginManager;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -316,6 +318,27 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	public void visualizationEvent(VisualizationEvent e)
 	{
 		loadGexCache();
+		
+		if (visualizationManager.isShowLegend())
+		{
+			// check if pwy contains a legend, add it if not
+			Pathway pwy = swingEngine.getEngine().getActivePathway();
+			boolean found = false;
+			for (PathwayElement elt : pwy.getDataObjects())
+			{
+				if (elt.getObjectType() == ObjectType.LEGEND) { found = true; break; } 
+			}
+			if (!found)
+			{ 
+				PathwayElement elt = PathwayElement.createPathwayElement(ObjectType.LEGEND);
+				elt.setMWidth (200);
+				elt.setMHeight (400);
+				elt.setMLeft(0);
+				elt.setMTop(0);
+				pwy.add(elt);
+			}
+		}
+		
 		// redraw Pathway
 		VPathway vPwy = swingEngine.getEngine().getActiveVPathway();
 		if (vPwy != null) vPwy.redraw();

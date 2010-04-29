@@ -22,6 +22,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -44,16 +45,14 @@ import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 /**
 * This class shows a legend for the currently loaded visualization and color-sets.
 */
-public class Legend extends JPanel implements VisualizationListener {
+public class LegendPanel extends JPanel implements VisualizationListener {
 
-	final ColorSetManager colorSetManager;
 	final VisualizationManager visualizationManager;
 
-	public Legend(VisualizationManager visualizationManager)
+	public LegendPanel(VisualizationManager visualizationManager)
 	{
 		this.visualizationManager = visualizationManager;
 		visualizationManager.addListener(this);
-		colorSetManager = visualizationManager.getColorSetManager();
 		setBorder (BorderFactory.createLineBorder(Color.BLACK));
 		createContents();
 		rebuildContent();
@@ -67,7 +66,7 @@ public class Legend extends JPanel implements VisualizationListener {
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		drawVisualization ((Graphics2D)g);
+		drawVisualization (visualizationManager, (Graphics2D)g, new Rectangle2D.Double(0, 0, 100, 100), 1.0);
 	}
 
 	/**
@@ -80,14 +79,15 @@ public class Legend extends JPanel implements VisualizationListener {
 	}
 
 
-	private void drawVisualization(Graphics2D g)
+	public static void drawVisualization(VisualizationManager visualizationManager, Graphics2D g, Rectangle2D area, double zoomFactor)
 	{
 		Visualization v = visualizationManager.getActiveVisualization();
 		if (v == null) return;
 
-		int xpos = MARGIN_LEFT;
-		int ypos = MARGIN_TOP;
+		double xpos = (int) (zoomFactor * MARGIN_LEFT + area.getMinX());
+		double ypos = (int) (zoomFactor * MARGIN_TOP + area.getMinY());
 
+		ColorSetManager colorSetManager = visualizationManager.getColorSetManager();
 		boolean advanced = colorSetManager.getColorSets().size() > 1;
 
 		Set<ColorSet> usedColorSets = new HashSet<ColorSet>();
@@ -96,7 +96,7 @@ public class Legend extends JPanel implements VisualizationListener {
 		{
 			if (vm instanceof ColorByExpression)
 			{
-				ypos = drawSamples (g, (ColorByExpression)vm, xpos, ypos, advanced);
+				ypos = drawSamples (g, (ColorByExpression)vm, xpos, ypos, advanced, zoomFactor);
 				for (ConfiguredSample cs : ((ColorByExpression)vm).getConfiguredSamples())
 				{
 					usedColorSets.add(cs.getColorSet());
@@ -106,99 +106,99 @@ public class Legend extends JPanel implements VisualizationListener {
 
 		for (ColorSet cs : usedColorSets)
 		{
-			ypos = drawColorset(g, cs, xpos, ypos, advanced);
+			ypos = drawColorset(g, cs, xpos, ypos, advanced, zoomFactor);
 		}
 	}
 
-	private static final int TOTAL_SAMPLES_WIDTH = 100;
-	private static final int SAMPLES_HEIGHT = 20;
-	private static final int COLOR_BOX_SIZE = 20;
-	private static final int COLOR_GRADIENT_WIDTH = 80;
-	private static final int COLOR_GRADIENT_MARGIN = 50;
-	private static final int MARGIN_LEFT = 5;
-	private static final int MARGIN_TOP = 5;
-	private static final int INNER_MARGIN = 5;
+	private static final double TOTAL_SAMPLES_WIDTH = 100;
+	private static final double SAMPLES_HEIGHT = 20;
+	private static final double COLOR_BOX_SIZE = 20;
+	private static final double COLOR_GRADIENT_WIDTH = 80;
+	private static final double COLOR_GRADIENT_MARGIN = 50;
+	private static final double MARGIN_LEFT = 5;
+	private static final double MARGIN_TOP = 5;
+	private static final double INNER_MARGIN = 5;
 
-	private int drawSamples (Graphics2D g, ColorByExpression cbex, int left, int top, boolean advanced)
+	private static double drawSamples (Graphics2D g, ColorByExpression cbex, double left, double top, boolean advanced, double zoomFactor)
 	{
-		int lineHeight = g.getFontMetrics().getHeight();
+		double lineHeight = g.getFontMetrics().getHeight();
 		int sampleNum = cbex.getConfiguredSamples().size();
-		int partWidth = TOTAL_SAMPLES_WIDTH / sampleNum;
-		int baseline = top + SAMPLES_HEIGHT + INNER_MARGIN;
+		double partWidth = TOTAL_SAMPLES_WIDTH / sampleNum * zoomFactor;
+		double baseline = top + (SAMPLES_HEIGHT + INNER_MARGIN * zoomFactor);
 
 		for (int i = 0; i < sampleNum; ++i)
 		{
-			g.drawRect (left + i * partWidth, top, partWidth, SAMPLES_HEIGHT);
-			int base = lineHeight - g.getFontMetrics().getDescent();
+			g.drawRect ((int)(left + i * partWidth), (int)top, (int)partWidth, (int) (SAMPLES_HEIGHT * zoomFactor));
+			double base = lineHeight - g.getFontMetrics().getDescent();
 
-			int labelLeft = (partWidth / 2) + (i * partWidth);
-			int labelTop = baseline + lineHeight * (sampleNum - i);
+			double labelLeft = left + (partWidth / 2) + (i * partWidth);
+			double labelTop = baseline + lineHeight * (sampleNum - i);
 
 			ColorByExpression.ConfiguredSample s = cbex.getConfiguredSamples().get(i);
 			String label = s.getSample().getName();
 			if (advanced) label += " (" + s.getColorSetName() + ")";
-			g.drawString (label, labelLeft, labelTop + base);
-			g.drawLine (labelLeft, baseline, labelLeft, labelTop);
+			g.drawString (label, (int)labelLeft, (int)(labelTop + base));
+			g.drawLine ((int)labelLeft, (int)baseline, (int)labelLeft, (int)labelTop);
 		}
 
-		return baseline + (lineHeight * (sampleNum + 1)) + INNER_MARGIN;
+		return baseline + (lineHeight * (sampleNum + 1)) + (INNER_MARGIN * zoomFactor);
 	}
 
-	private int drawColorset (Graphics2D g, ColorSet cs, int left, int top, boolean advanced)
+	private static double drawColorset (Graphics2D g, ColorSet cs, double left, double top, boolean advanced, double zoomFactor)
 	{
-		int xco = left;
-		int yco = top;
+		double xco = left;
+		double yco = top;
 		int base = g.getFontMetrics().getHeight() - g.getFontMetrics().getDescent();
 		g.setColor (Color.BLACK);
 		if (advanced)
 		{
-			g.drawString(cs.getName(), left, top + base);
+			g.drawString(cs.getName(), (int)left, (int)(top + base));
 			yco += g.getFontMetrics().getHeight();
 		}
 
 		for (ColorSetObject cso : cs.getObjects())
 		{
-			yco = drawColorsetObject (g, cso, xco, yco);
+			yco = drawColorsetObject (g, cso, xco, yco, zoomFactor);
 		}
 
-		return yco + INNER_MARGIN;
+		return (int) (yco + (INNER_MARGIN * zoomFactor));
 	}
 
-	private int drawColorsetObject (Graphics2D g, ColorSetObject cso, int left, int top)
+	private static double drawColorsetObject (Graphics2D g, ColorSetObject cso, double left, double top, double zoomFactor)
 	{
 		int height = g.getFontMetrics().getHeight();
 		int base = height - g.getFontMetrics().getDescent();
-		int xco = left + COLOR_GRADIENT_MARGIN;
-		int yco = top;
+		double xco = left + (zoomFactor * COLOR_GRADIENT_MARGIN);
+		double yco = top;
 		if (cso instanceof ColorGradient)
 		{
-			Rectangle bounds = new Rectangle (xco, yco, COLOR_GRADIENT_WIDTH, COLOR_BOX_SIZE);
+			Rectangle bounds = new Rectangle ((int)xco, (int)yco, (int)(COLOR_GRADIENT_WIDTH * zoomFactor), (int)(COLOR_BOX_SIZE * zoomFactor));
 			ColorGradient cg = (ColorGradient)cso;
 			cg.paintPreview(g, bounds);
 			g.setColor (Color.BLACK); // paintPreview will change pen Color
-			yco += COLOR_BOX_SIZE;
+			yco += zoomFactor * COLOR_BOX_SIZE;
 
 			int num = cg.getColorValuePairs().size();
-			int w = COLOR_GRADIENT_WIDTH / (num - 1);
+			double w = (zoomFactor * COLOR_GRADIENT_WIDTH) / (num - 1);
 			for (int i = 0; i < num; ++i)
 			{
 				ColorValuePair cvp = cg.getColorValuePairs().get (i);
-				int labelLeft = xco + i * w;
-				int labelTop = yco + INNER_MARGIN;
+				double labelLeft = xco + i * w;
+				double labelTop = yco + (INNER_MARGIN * zoomFactor);
 				String label = "" + cvp.getValue();
 				int labelWidth = (int)g.getFontMetrics().getStringBounds(label, g).getWidth();
-				g.drawString (label, labelLeft - labelWidth / 2, labelTop + base);
-				g.drawLine (labelLeft, yco, labelLeft, labelTop);
+				g.drawString (label, (int)(labelLeft - labelWidth / 2), (int)(labelTop + base));
+				g.drawLine ((int)labelLeft, (int)yco, (int)labelLeft, (int)labelTop);
 			}
 
-			return yco + height + INNER_MARGIN + INNER_MARGIN;
+			return yco + height + (zoomFactor * (INNER_MARGIN + INNER_MARGIN));
 		}
 		else
 		{
-			Rectangle bounds2 = new Rectangle (xco, yco, COLOR_BOX_SIZE, COLOR_BOX_SIZE);
-			Rectangle bounds = new Rectangle (xco + 1, yco + 1, COLOR_BOX_SIZE-2, COLOR_BOX_SIZE-2);
+			Rectangle2D bounds2 = new Rectangle2D.Double (xco, yco, zoomFactor * COLOR_BOX_SIZE, zoomFactor * COLOR_BOX_SIZE);
+			Rectangle2D bounds = new Rectangle2D.Double (xco + 1, yco + 1, COLOR_BOX_SIZE-2, COLOR_BOX_SIZE-2);
 			ColorRule cr = (ColorRule)cso;
-			g.drawString (cr.getExpression(), xco + COLOR_BOX_SIZE + INNER_MARGIN, yco + base);
+			g.drawString (cr.getExpression(), (int)(xco + (zoomFactor * (COLOR_BOX_SIZE + INNER_MARGIN))), (int)(yco + base));
 			g.setColor(cr.getColor());
 			g.fill(bounds);
 			g.setColor (Color.WHITE);

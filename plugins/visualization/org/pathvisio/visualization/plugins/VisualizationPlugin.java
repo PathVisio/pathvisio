@@ -24,7 +24,6 @@ import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTabbedPane;
 
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager.GexManagerEvent;
 import org.pathvisio.gex.GexManager.GexManagerListener;
 import org.pathvisio.gui.swing.MainPanel;
@@ -90,7 +89,7 @@ public class VisualizationPlugin implements Plugin
 		visualizationCombo = new JComboBox(model);
 		desktop.getSwingEngine().getApplicationPanel().addToToolbar(visualizationCombo);
 
-		Legend legendPane = new Legend(desktop.getVisualizationManager());
+		LegendPanel legendPane = new LegendPanel(desktop.getVisualizationManager());
 		JTabbedPane tabPane = desktop.getSideBarTabbedPane();
 		if(tabPane != null) {
 			tabPane.addTab ("Legend", legendPane);
@@ -131,7 +130,6 @@ public class VisualizationPlugin implements Plugin
 		public void gexManagerEvent(GexManagerEvent e)
 		{
 			boolean isConnected = ste.getGexManager().isConnected();
-			Logger.log.trace("Visualization options action, gexmanager event, connected: " + isConnected);
 			setEnabled(isConnected);
 		}
 	}

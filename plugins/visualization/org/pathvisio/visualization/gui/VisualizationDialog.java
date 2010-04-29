@@ -41,7 +41,8 @@ public class VisualizationDialog extends OkCancelDialog
 
 		this.visMgr = visMgr;
 
-		setDialogComponent(new JScrollPane (createDialogPane()));
+		visPanel = new VisualizationPanel(visMgr);
+		setDialogComponent(new JScrollPane (visPanel));
 
 		//If there is no visualization yet, create one
 		if(visMgr.getVisualizations().size() == 0) {
@@ -50,16 +51,10 @@ public class VisualizationDialog extends OkCancelDialog
 		if(visMgr.getActiveVisualization() == null) {
 			visMgr.setActiveVisualization(0);
 		}
-		visPanel.setVisualizationManager(visMgr);
 
 		pack();
 		// we have to do this again after pack():
 		setLocationRelativeTo(locationComp);
-	}
-
-	protected Component createDialogPane() {
-		visPanel = new VisualizationPanel();
-		return visPanel;
 	}
 
 	protected void okPressed() {

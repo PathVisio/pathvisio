@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -48,16 +49,20 @@ public class VisualizationPanel extends JPanel implements ActionListener
 	static final String ACTION_REMOVE = "Remove";
 	static final String ACTION_RENAME = "Rename";
 	static final String ACTION_COMBO = "Combo";
+	static final String ACTION_SHOWLEGEND = "Show legend";
 
-	VisualizationManager visMgr;
+	private final VisualizationManager visMgr;
 
-	JComboBox visCombo;
-	JPanel methods;
-
-	public VisualizationPanel() {
+	private JComboBox visCombo;
+	private JPanel methods;
+	private JCheckBox ckLegend;
+	
+	public VisualizationPanel(VisualizationManager visMgr) 
+	{
+		this.visMgr = visMgr;
 		FormLayout layout = new FormLayout(
 				"pref, 4dlu, 100dlu:grow, 4dlu, left:pref",
-				"pref, 4dlu, fill:max(250dlu;pref):grow"
+				"pref, 4dlu, pref, 4dlu, fill:max(250dlu;pref):grow"
 		);
 		setLayout(layout);
 
@@ -80,12 +85,21 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		visButton.addComponent(mRemove);
 		visButton.addComponent(mRename);
 
+		ckLegend = new JCheckBox("Show legend");
+		ckLegend.setActionCommand(ACTION_SHOWLEGEND);
+		ckLegend.setSelected(visMgr.isShowLegend());
+		ckLegend.addActionListener(this);
+		
 		methods = new JPanel();
 		CellConstraints cc = new CellConstraints();
+		
 		add(new JLabel("Visualization"), cc.xy(1, 1));
 		add(visCombo, cc.xy(3, 1));
 		add(visButton, cc.xy(5, 1));
-		add(methods, cc.xyw(1, 3, 5));
+		add(ckLegend, cc.xyw(1, 3, 5));
+		add(methods, cc.xyw(1, 5, 5));
+		
+		refresh();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -124,12 +138,11 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		} else if (ACTION_COMBO.equals(action)) {
 			visMgr.setActiveVisualization((Visualization)visCombo.getSelectedItem());
 			refresh();
+		} 
+		else if (ACTION_SHOWLEGEND.equals(action))
+		{
+			visMgr.setShowLegend(ckLegend.isSelected());
 		}
-	}
-
-	public void setVisualizationManager(VisualizationManager mgr) {
-		this.visMgr = mgr;
-		refresh();
 	}
 
 	private void refresh() {

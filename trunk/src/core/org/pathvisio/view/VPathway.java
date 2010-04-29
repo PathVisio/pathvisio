@@ -230,6 +230,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			break;
 		case STATE:
 			result = new State (this, o);
+			break;
+		case LEGEND:
+			result = new Legend(this, o);
+			break;
 		}
 		return result;
 	}

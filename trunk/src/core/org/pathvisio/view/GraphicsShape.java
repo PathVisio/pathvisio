@@ -446,8 +446,13 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		//Number of link anchors depends on the size of the object
 		//If the width/height is large enough, there will be three link anchors per side,
 		//Otherwise there will be only one link anchor per side
-		int numH = gdata.getMWidth() >= MIN_SIZE_LA ? 3 : 1;
-		int numV = gdata.getMHeight() >= MIN_SIZE_LA ? 3 : 1;
+		String anchorsCnt = gdata.getDynamicProperty("NumberOfAnchors");
+        int numAnchors = 3;
+        if (anchorsCnt != null) {
+            numAnchors = Integer.parseInt(anchorsCnt);
+        }
+        int numH = gdata.getMWidth() < MIN_SIZE_LA ? 1 : numAnchors;
+		int numV = gdata.getMHeight() < MIN_SIZE_LA ? 1 : numAnchors;
 		if(numH != numLinkanchorsH || numV != numLinkanchorsV) {
 			createLinkAnchors(numH, numV);
 		}

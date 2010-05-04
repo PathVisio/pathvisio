@@ -504,8 +504,8 @@ public class Revision
 				<include name="lib/org.bridgedb.rdb.jar"/>
 				<include name="lib/org.bridgedb.webservice.bridgerest.jar"/>
 				<include name="lib/org.bridgedb.bio.jar"/>
+				<include name="lib/org.bridgedb.rdb.construct.jar"/>
 				<include name="lib/commons-math-2.0.jar"/>
-<!--				<include name="lib/paxtools/*.jar"/> -->
 				<include name="lib/resources.jar"/>
 				<include name="lib/swing-worker-1.1.jar"/>
 				<include name="lib/licenses/*"/>

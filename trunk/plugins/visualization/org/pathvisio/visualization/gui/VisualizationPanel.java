@@ -87,7 +87,8 @@ public class VisualizationPanel extends JPanel implements ActionListener
 
 		ckLegend = new JCheckBox("Show legend");
 		ckLegend.setActionCommand(ACTION_SHOWLEGEND);
-		ckLegend.setSelected(visMgr.isShowLegend());
+		Visualization v = visMgr.getActiveVisualization();
+		if (v != null) ckLegend.setSelected(v.isShowLegend());
 		ckLegend.addActionListener(this);
 		
 		methods = new JPanel();
@@ -141,7 +142,10 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		} 
 		else if (ACTION_SHOWLEGEND.equals(action))
 		{
-			visMgr.setShowLegend(ckLegend.isSelected());
+			Visualization v = visMgr.getActiveVisualization();
+			if(v != null) {
+				v.setShowLegend(ckLegend.isSelected());
+			}
 		}
 	}
 
@@ -166,6 +170,7 @@ public class VisualizationPanel extends JPanel implements ActionListener
 					builder.append(mp);
 					builder.nextLine();
 				}
+				ckLegend.setSelected(v.isShowLegend());
 			}
 		} else {
 			visCombo.setModel(new DefaultComboBoxModel());

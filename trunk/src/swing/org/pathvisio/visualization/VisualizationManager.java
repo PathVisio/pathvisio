@@ -68,7 +68,6 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	private final Engine engine;
 	private final GexManager gexManager;
 	private final VisualizationMethodRegistry methodRegistry;
-	private boolean showLegend;
 	
 	public VisualizationManager(Engine engine, GexManager gexManager) {
 		colorSetMgr = new ColorSetManager();
@@ -145,16 +144,6 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	 */
 	public List<Visualization> getVisualizations() {
 		return visualizations;
-	}
-
-	public boolean isShowLegend() { return showLegend; }
-	public void setShowLegend (boolean value) 
-	{ 
-		showLegend = value; 
-		fireVisualizationEvent(
-				new VisualizationEvent(
-					VisualizationManager.class,
-					VisualizationEvent.VISUALIZATION_MODIFIED));
 	}
 
 	/**

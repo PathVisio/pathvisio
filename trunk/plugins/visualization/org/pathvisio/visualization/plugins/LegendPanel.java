@@ -66,7 +66,8 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		drawVisualization (visualizationManager, (Graphics2D)g, new Rectangle2D.Double(0, 0, 100, 100), 1.0);
+		drawVisualization (visualizationManager.getActiveVisualization(), visualizationManager.getColorSetManager(), 
+				(Graphics2D)g, new Rectangle2D.Double(0, 0, 100, 100), 1.0);
 	}
 
 	/**
@@ -79,15 +80,13 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 	}
 
 
-	public static void drawVisualization(VisualizationManager visualizationManager, Graphics2D g, Rectangle2D area, double zoomFactor)
+	public static void drawVisualization(Visualization v, ColorSetManager colorSetManager, Graphics2D g, Rectangle2D area, double zoomFactor)
 	{
-		Visualization v = visualizationManager.getActiveVisualization();
 		if (v == null) return;
 
 		double xpos = (int) (zoomFactor * MARGIN_LEFT + area.getMinX());
 		double ypos = (int) (zoomFactor * MARGIN_TOP + area.getMinY());
 
-		ColorSetManager colorSetManager = visualizationManager.getColorSetManager();
 		boolean advanced = colorSetManager.getColorSets().size() > 1;
 
 		Set<ColorSet> usedColorSets = new HashSet<ColorSet>();

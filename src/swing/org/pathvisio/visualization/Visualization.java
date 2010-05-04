@@ -33,7 +33,6 @@ import org.jdom.Element;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Legend;
-import org.pathvisio.visualization.plugins.LegendPanel;
 
 /**
  * Represents a set of configured visualization plugins
@@ -151,15 +150,6 @@ public class Visualization
 		{
 			m.visualizeOnDrawing(g, g2d);
 		}
-		if (g instanceof Legend && visMgr.isShowLegend())
-		{
-			Legend l = (Legend)g;
-			Rectangle2D area = l.getVBounds();
-			double zoomFactor = l.getDrawing().getZoomFactor();
-			Font f = l.getVFont();
-			g2d.setFont(f);
-			LegendPanel.drawVisualization(visMgr, g2d, area, zoomFactor);
-		}
 	}
 
 	/**
@@ -253,4 +243,13 @@ public class Visualization
 	public String toString() {
 		return name;
 	}
+
+	private boolean showLegend;
+	public boolean isShowLegend() { return showLegend; }
+	public void setShowLegend (boolean value) 
+	{ 
+		showLegend = value;
+		modified();
+	}
+
 }

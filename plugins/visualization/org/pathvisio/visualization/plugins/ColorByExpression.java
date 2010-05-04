@@ -19,6 +19,7 @@ package org.pathvisio.visualization.plugins;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
@@ -227,15 +228,26 @@ public class ColorByExpression extends VisualizationMethod {
 	}
 
 	public void visualizeOnDrawing(Graphics g, Graphics2D g2d) {
-		if(!(g instanceof GeneProduct)) return;
-		if(useSamples.size() == 0) return; //Nothing to draw
-
-		GeneProduct gp = (GeneProduct) g;
-
-		Shape da = getVisualization().provideDrawArea(this, g);
-		Rectangle area = da.getBounds();
-
-		drawArea(gp, area, g2d);
+		if(g instanceof GeneProduct)
+		{
+			if(useSamples.size() == 0) return; //Nothing to draw
+	
+			GeneProduct gp = (GeneProduct) g;
+	
+			Shape da = getVisualization().provideDrawArea(this, g);
+			Rectangle area = da.getBounds();
+	
+			drawArea(gp, area, g2d);
+		}
+		else if (g instanceof Legend && getVisualization().isShowLegend())
+		{
+			Legend l = (Legend)g;
+			Rectangle2D area = l.getVBounds();
+			double zoomFactor = l.getDrawing().getZoomFactor();
+			Font f = l.getVFont();
+			g2d.setFont(f);
+			LegendPanel.drawVisualization(getVisualization(), csm, g2d, area, zoomFactor);
+		}
 	}
 
 	void drawArea(final GeneProduct gp, Rectangle area, Graphics2D g2d) {

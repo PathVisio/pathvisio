@@ -45,6 +45,7 @@ import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swing.StandaloneCompat;
 import org.pathvisio.view.VPathway;
+import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationEvent;
 import org.pathvisio.visualization.VisualizationManager;
 
@@ -319,7 +320,8 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	{
 		loadGexCache();
 		
-		if (visualizationManager.isShowLegend())
+		Visualization v = visualizationManager.getActiveVisualization(); 
+		if (v != null && v.isShowLegend())
 		{
 			// check if pwy contains a legend, add it if not
 			Pathway pwy = swingEngine.getEngine().getActivePathway();

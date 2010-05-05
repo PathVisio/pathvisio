@@ -26,24 +26,31 @@ public enum ObjectType
 {
 	/** any shape with width and height */
 	SHAPE ("Shape"),
+	
 	/** a rectangle that contains a link to an online biological database */
 	DATANODE ("DataNode"),
+	
 	/** a piece of text */
 	LABEL ("Label"),
+
 	/** a connector. Can be straight, or can consist of multiple line segments */
 	LINE ("Line"),
-	/** One per pathway.
-	 * TODO unused */
+	
+	/** Zero or one per pathway. Placeholder object to let visualization plugins draw a legend */
 	LEGEND ("Legend"),
-	/** One per pathway
-	 * TODO unused */
+	
+	/** One per pathway. TODO: unused. */
 	INFOBOX ("InfoBox"),
+	
 	/** The pathway description, one per pathway. In GPML this is the root tag */
 	MAPPINFO ("Pathway"),
+	
 	/** a grouping of pathway elements */
 	GROUP ("Group"),
+	
 	/** a pool of BioPAX definitions */
 	BIOPAX ("Biopax"),
+	
 	/** similar to DataNode, but State is always
 	 * attached to - and specified relative to - another DataNode */
 	STATE ("State");

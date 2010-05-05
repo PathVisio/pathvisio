@@ -26,6 +26,14 @@ import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.model.PathwayElement;
 
+/**
+ * Legend objects can be used by plugins to draw a Legend for visualization of 
+ * expression datasets, for example to indicate which color corresponds to which expression value.
+ * <p>
+ * In the absence of any visualizations, Legends are completely empty.
+ * <p> 
+ * Legends are automatically created for pathway elements with ObjectType.LEGEND. 
+ */
 public class Legend extends Graphics
 {
 	public Legend(VPathway canvas, PathwayElement o)
@@ -38,6 +46,9 @@ public class Legend extends Graphics
 	private static final int M_INITIAL_LEGEND_WIDTH = 200;
 	private static final int M_INITIAL_LEGEND_HEIGHT = 300;
 
+	/**
+	 * Draws nothing by default, only when it is selected an outline is drawn.
+	 */
 	@Override
 	protected void doDraw(Graphics2D g)
 	{
@@ -54,6 +65,9 @@ public class Legend extends Graphics
 		}
 	}
 
+	/**
+	 * Simple drag operation, object is moved by the delta coordinates passed in.
+	 */
 	@Override
 	protected void vMoveBy(double vdx, double vdy)
 	{
@@ -62,9 +76,8 @@ public class Legend extends Graphics
 	}
 
 	/**
-	 * {@inheritDoc}
-	 * GeneProduct overrides vContains, because the base implementation only considers a 
-	 * hit with the outline, which makes it hard to grab with the mouse.
+	 * vContains looks for overlap with the whole rectangle, not just the outline,
+	 * so it is easy to drag.
 	 */
 	@Override
 	protected boolean vContains(Point2D point)
@@ -80,6 +93,9 @@ public class Legend extends Graphics
 		}
 	}
 
+	/**
+	 * Simply a rectangle of constant size.
+	 */
 	@Override
 	protected Shape getVShape(boolean rotate)
 	{
@@ -94,6 +110,9 @@ public class Legend extends Graphics
 		return new Rectangle2D.Double(vLeft, vTop, vW, vH);
 	}
 
+	/**
+	 * Get Font object scaled to current zoom factor.
+	 */
 	public Font getVFont() {
 		String name = gdata.getFontName();
 		int style = getVFontStyle();
@@ -101,11 +120,17 @@ public class Legend extends Graphics
 		return new Font(name, style, size);
 	}
 
+	/**
+	 * Get font size scaled to current zoom factor.
+	 */
 	double getVFontSize()
 	{
 		return vFromM(gdata.getMFontSize());
 	}
 
+	/**
+	 * Doesn't do anything, you can't change the size of a Legend object.
+	 */
 	@Override
 	protected void setVScaleRectangle(Rectangle2D r)
 	{

@@ -22,10 +22,13 @@ import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.rpc.ServiceException;
+import java.lang.ClassNotFoundException;
 
 import org.bridgedb.bio.Organism;
 import org.kohsuke.args4j.CmdLineException;
@@ -33,6 +36,7 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
+import org.bridgedb.IDMapperException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.RasterImageExporter;
@@ -111,11 +115,13 @@ public class Converter {
 		return organism;
 	}
 
-	private void recursiveConversion() throws FileNotFoundException, RemoteException, JAXBException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
+	private void recursiveConversion() throws FileNotFoundException, RemoteException, JAXBException, ConverterException, ServiceException,
+	ParserConfigurationException, SAXException, ClassNotFoundException, IDMapperException {
 		recursiveConversion(keggPath);
 	}
 
-	private void recursiveConversion(File dir) throws FileNotFoundException, JAXBException, RemoteException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
+	private void recursiveConversion(File dir) throws FileNotFoundException, JAXBException, RemoteException, ConverterException, ServiceException,
+	ParserConfigurationException, SAXException, ClassNotFoundException, IDMapperException {
 		if(dir.isDirectory()) {
 			for(File f : dir.listFiles()) {
 				recursiveConversion(f);
@@ -128,14 +134,16 @@ public class Converter {
 		}
 	}
 
-	private void convert(File file) throws JAXBException, FileNotFoundException, RemoteException, ConverterException, ServiceException, ParserConfigurationException, SAXException {
+	private void convert(File file) throws JAXBException, FileNotFoundException, RemoteException, ConverterException, ServiceException,
+	ParserConfigurationException, ClassNotFoundException, SAXException, IDMapperException {
 		//Check for overwrite
 		Logger.log.trace("Processing " + file);
 
-		//Check for overwrite
+		//Define a string (suffix) to add to gpml filenames if user decided to use map files
 		String fileAdd = useMap ? "_map" : "";
 		File gpmlFile = new File(outPath, file.getName() + fileAdd + ".gpml");
 
+		//Check for overwrite
 		if(!overwrite && gpmlFile.exists()) {
 			Logger.log.trace("Skipping " + file + ", " +
 					gpmlFile + "already exists (use -overwrite to overwrite)."
@@ -149,16 +157,20 @@ public class Converter {
 
 		org.pathvisio.model.Pathway gpmlPathway = null;
 
-		if(useMap && !file.getName().startsWith("map")) {
+		if(useMap && (!file.getName().startsWith("ko"))) {
 			//Try to find the corresponding map file
 			Matcher m = KGML_PATTERN.matcher(file.getName());
 			if(m.matches()) {
+				
 				File mapFile = new File(
-						file.getParentFile(), "map" + m.group(1) + "." + m.group(2)
+						file.getParentFile(), "ko" + m.group(1) + "." + m.group(2)
 				);
 				if(!mapFile.exists()) {
-					throw new FileNotFoundException("Unable to find reference map file for " + file.getName() +
-							"\nExpected " + mapFile.getName());
+					
+						throw new FileNotFoundException("Unable to find reference map file for " + file.getName() +
+								"\nExpected " + mapFile.getName());
+					
+					
 				}
 				Logger.log.trace("Using map " + mapFile);
 
@@ -184,14 +196,14 @@ public class Converter {
 		}
 	}
 
-	private org.pathvisio.model.Pathway convert(Pathway pathway) throws RemoteException, ConverterException, ServiceException {
+	private org.pathvisio.model.Pathway convert(Pathway pathway) throws RemoteException, ConverterException, ServiceException, ClassNotFoundException, IDMapperException {
 		KeggFormat kf = new KeggFormat(pathway, getOrganism());
 		kf.setUseWebservice(!offline);
 		kf.setSpacing(spacing);
 		return kf.convert();
 	}
 
-	private org.pathvisio.model.Pathway convert(Pathway map, Pathway ko) throws RemoteException, ConverterException, ServiceException {
+	private org.pathvisio.model.Pathway convert(Pathway map, Pathway ko) throws RemoteException, ConverterException, ServiceException, ClassNotFoundException, IDMapperException {
 		KeggFormat kf = new KeggFormat(map, ko, getOrganism());
 		kf.setUseWebservice(!offline);
 		kf.setSpacing(spacing);

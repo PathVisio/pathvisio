@@ -77,6 +77,10 @@ public class Util {
 			return "xtr";
 		case ZeaMays:
 			return "ezma";
+		case MycobacteriumTuberculosis:
+			return "mtu";
+		case AnophelesGambiae:
+			return "aga";
 		default:
 			throw new ConverterException("No KEGG code for organism " + organism);
 		}

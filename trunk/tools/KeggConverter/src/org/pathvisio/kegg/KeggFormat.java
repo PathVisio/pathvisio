@@ -28,12 +28,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.lang.ClassNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
+import org.bridgedb.AttributeMapper;
+import org.bridgedb.IDMapper;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.BridgeDb;
+import org.bridgedb.Xref;
+import org.bridgedb.webservice.bridgerest.BridgeRest;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ConverterException;
@@ -81,15 +90,19 @@ public class KeggFormat {
 
 	private KeggService keggService;
 	private Organism organism;
+	private String species;
+	private String shortName;
 	private Pathway pathway; //Main pathway
 	private Pathway map; //Used only to improve species specific pathway
 
 	private org.pathvisio.model.Pathway gpmlPathway;
 
 	private Map<String, PathwayElement> id2gpml = new HashMap<String, PathwayElement>();
+	private Map<String, PathwayElement> reaction2gpml = new HashMap<String, PathwayElement>();
 	private Set<String> addedMapLinks = new HashSet<String>();
 	private SetMultimap<String, String> reaction2entry = new HashMultimap<String, String>();
 
+	
 	//Contains extra information from relation elements, on which compound
 	//is linked to which reaction (in case there are multiple compounds with the same
 	//name on the map)
@@ -102,11 +115,14 @@ public class KeggFormat {
 	public KeggFormat(Pathway pathway, Organism organism) {
 		this.pathway = pathway;
 		this.organism = organism;
+		this.shortName = organism.shortName();
+		this.species = organism.latinName();
 	}
 
 	public KeggFormat(Pathway map, Pathway ko, Organism organism) {
 		this(ko, organism);
 		this.map = map;
+		this.shortName = organism.shortName();
 	}
 
 	public void setSpacing(double spacing) {
@@ -125,7 +141,7 @@ public class KeggFormat {
 		return keggService != null;
 	}
 
-	public org.pathvisio.model.Pathway convert() throws RemoteException, ConverterException {
+	public org.pathvisio.model.Pathway convert() throws RemoteException, ConverterException, ClassNotFoundException, IDMapperException {
 		id2gpml.clear();
 		addedMapLinks.clear();
 		gpmlPathway = new org.pathvisio.model.Pathway();
@@ -133,7 +149,8 @@ public class KeggFormat {
 		ecrelEnzyme2Compound.clear();
 		entriesById.clear();
 		entryName2Ids.clear();
-
+		reaction2gpml.clear();
+		
 		//Convert pathway attributes
 		PathwayElement mappInfo = gpmlPathway.getMappInfo();
 		String title = pathway.getTitle();
@@ -143,8 +160,9 @@ public class KeggFormat {
 				title = title.substring(0, 50);
 			}
 			mappInfo.setMapInfoName(title);
+			mappInfo.setOrganism(species);
 		}
-		mappInfo.setMapInfoDataSource(pathway.getLink());
+		mappInfo.setMapInfoDataSource(pathway.getLink()); //KH add url to kgml map
 
 		//Some information to track which kegg id and version was used
 		mappInfo.setDynamicProperty(KEGG_ID, pathway.getName());
@@ -154,21 +172,46 @@ public class KeggFormat {
 
 		//Convert entries from organism specific pathway
 		for(Entry entry : pathway.getEntry()) {
-			Logger.log.trace("Processing entry (" + entry.getType() + "): " + entry.getName());
-			convertEntry(entry);
+			List<Graphics> entrygraphics = entry.getGraphics();
+			if (entrygraphics.size() == 1){
+				String graphicstype = entrygraphics.get(0).getType();
+				if (!graphicstype.equals("line")){
+					Logger.log.trace("Processing entry (" + entry.getType() + "): " + entry.getName());
+					convertEntry(entry);
+				}
+				else{
+					Logger.log.trace("Skipping entry "+entry.getName()+ ". This entry defines a line.");
+				}
+			}	
+			else
+			{
+				Logger.log.trace("Skipping entry " + entry.getName() + ". Entry has multiple graphics.");
+			}
 		}
 
 		//Convert entries that are only in the reference pathway
 		//And add additional reaction information
 		if(map != null) {
 			for(Entry entry : map.getEntry()) {
-				Logger.log.trace("Processing reference entry (" + entry.getType() + "): " + entry.getName() + ", " + entry.getId());
-				if(id2gpml.get(entry.getId()) == null) {
-					Logger.log.trace("Converting, was not present in organism specific map");
-					convertEntry(entry);
-				} else {
-					Logger.log.trace("Skipping, already converted");
-					mapToReaction(entry); //Still map reactions, map may contain additional values
+				List<Graphics> entrygraphics = entry.getGraphics();
+				if (entrygraphics.size() == 1){
+					String graphicstype = entrygraphics.get(0).getType();
+				
+				if (!graphicstype.equals("line")){
+					Logger.log.trace("Processing reference entry (" + entry.getType() + "): " + entry.getName() + ", " + entry.getId());
+					if(id2gpml.get(entry.getId()) == null) {
+						Logger.log.trace("Converting, was not present in organism specific map");
+						convertEntry(entry);
+					} else {
+						Logger.log.trace("Skipping, already converted");
+						mapToReaction(entry); //Still map reactions, map may contain additional values
+					}
+				}
+				else{
+					Logger.log.trace("Skipping reference entry "+entry.getName()+ ". This entry defines a line.");				}
+				}
+				else{
+					Logger.log.trace("Skipping reference entry " + entry.getName() + ". Entry has multiple graphics.");
 				}
 			}
 		}
@@ -206,8 +249,8 @@ public class KeggFormat {
 		if(map != null) {
 			//Convert reactions that are only in the reference pathway
 			for(Reaction reaction : map.getReaction()) {
-				Logger.log.trace("Processing reference reaction:" + reaction.getType());
-				if(!id2gpml.keySet().contains(reaction.getName())) {
+				Logger.log.trace("Processing reference reaction:" + reaction.getId());
+				if(!id2gpml.keySet().contains(reactionId(reaction))) { 
 					Logger.log.trace("Converting, was not present in organism specific map");
 					convertReaction(reaction);
 				} else {
@@ -217,7 +260,8 @@ public class KeggFormat {
 		}
 
 		return gpmlPathway;
-	}
+		
+	} 
 
 	private void mapConvertedId(String id, PathwayElement e) {
 		if(id2gpml.containsKey(id)) {
@@ -230,13 +274,13 @@ public class KeggFormat {
 	private PathwayElement getReactionCompounds(String compoundName, Reaction reaction) {
 		//Get the entries that are linked to this reaction
 		Set<String> reactionEnzymes = reaction2entry.get(reaction.getName());
+		
 		if(reactionEnzymes == null) {
 			throw new RuntimeException("Unable to find reaction entries for " + compoundName);
 		}
-
+		
 		//Try to find the correct compound id for these entries
 		String compoundId = null;
-
 		for(String entry : reactionEnzymes) {
 			Set<String> ids = ecrelEnzyme2Compound.get(entry);
 			for(String cid : ids) {
@@ -249,23 +293,37 @@ public class KeggFormat {
 				}
 			}
 		}
-
+		
 		if(compoundId == null) { //No ECrel for this compound, take closest to enzymes
 			//Find the compound with correct name closest to reaction entry
 			double shortestD = Double.MAX_VALUE;
 			String shortestCid = null;
 			for(String eid : reactionEnzymes) {
 				Entry entry = entriesById.get(eid);
-				Point2D epoint = new Point2D.Double(
-						Double.parseDouble(entry.getGraphics().getX()),
-						Double.parseDouble(entry.getGraphics().getY())
-				);
-				for(String ceid : entryName2Ids.get(compoundName)) {
-					Entry centry = entriesById.get(ceid);
-					Point2D cpoint = new Point2D.Double(
-						Double.parseDouble(centry.getGraphics().getX()),
-						Double.parseDouble(centry.getGraphics().getY())
-					);
+				Point2D epoint = null;
+				Point2D cpoint = null;
+				//getGraphics returns a list. Only deal with entries that have one graphic
+				List<Graphics> egraphics = entry.getGraphics();
+				if (egraphics.size() == 1)
+				{
+				Graphics eg = egraphics.get(0);
+					if (!eg.getType().equals("line")){
+						epoint = new Point2D.Double(
+								Double.parseDouble(eg.getX()), 
+								Double.parseDouble(eg.getY()));
+
+						for(String ceid : entryName2Ids.get(compoundName)) {
+							Entry centry = entriesById.get(ceid);
+							List<Graphics> cgraphics = centry.getGraphics();
+							if (cgraphics.size() == 1){
+								Graphics cg = cgraphics.get(0);
+								if (!cg.getType().equals("line")){
+									cpoint = new Point2D.Double(
+											Double.parseDouble(cg.getX()),
+											Double.parseDouble(cg.getY()));
+								}
+							}
+				
 					double d = cpoint.distance(epoint);
 					if(d < shortestD) {
 						shortestD = d;
@@ -273,27 +331,43 @@ public class KeggFormat {
 					}
 				}
 			}
-			compoundId = shortestCid;
+		}
+			}
+		compoundId = shortestCid;
 		}
 		return id2gpml.get(compoundId);
 	}
 
 	private void convertReaction(Reaction reaction) {
 		// Create a list of elements in relations with reaction
-		Set<String> enzymeIds = reaction2entry.get(reaction.getName());
-
+		String reactionName = reaction.getName();
+		List<String> reactions = new ArrayList<String>();
 		List<PathwayElement> substrates = new ArrayList<PathwayElement>();
-		for(Substrate s : reaction.getSubstrate()) {
-			PathwayElement pwe = getReactionCompounds(s.getName(), reaction);
+		List<PathwayElement> products = new ArrayList<PathwayElement>();
+		Set<String> enzymeIds = new HashSet<String>();
+		
+		if (reactionName.contains(" ")){
+			String[] names = reactionName.split(" ");
+			for(int i = 0; i < names.length; i++) {
+				reactions.add(names[i]);
+			}
+		}
+			
+		enzymeIds = reaction2entry.get(reactionName);
+		
+		for(Substrate s : reaction.getSubstrate()) { 
+			PathwayElement pwe = getReactionCompounds(s.getName(), reaction); 
 				if(pwe != null) substrates.add(pwe);
 		}
-		List<PathwayElement> products = new ArrayList<PathwayElement>();
+		Logger.log.trace("Substrates: " + substrates);
+		
 		for(Product p : reaction.getProduct()) {
 			PathwayElement pwe = getReactionCompounds(p.getName(), reaction);
 			if(pwe != null) products.add(pwe);
 		}
 		Logger.log.trace("Products: " + products);
-
+		
+		
 		//Add a reaction anchor + line to the datanodes
 		if(substrates.size() > 0 && products.size() > 0) {
 			PathwayElement substrate = substrates.get(0);
@@ -301,8 +375,10 @@ public class KeggFormat {
 
 			//First create a base line between the first substrate / product
 			MLine line = createPathwayLine(substrate, product);
-			line.addComment(reaction.getName(), COMMENT_SOURCE);
+			line.addComment(reaction.getName(), COMMENT_SOURCE); 
 			gpmlPathway.add(line);
+			line.setGeneratedGraphId();
+			
 
 			//Create the lines for the remaining substrates / products
 			MAnchor anchorIn = null;
@@ -311,6 +387,7 @@ public class KeggFormat {
 				MLine l = createPathwayLine(substrates.get(i), anchorIn);
 				l.setConnectorType(ConnectorType.CURVED);
 				gpmlPathway.add(l);
+				l.setGeneratedGraphId();
 			}
 			MAnchor anchorOut = null;
 			for(int i = 1; i < products.size(); i++) {
@@ -318,10 +395,11 @@ public class KeggFormat {
 				MLine l = createPathwayLine(anchorOut, products.get(i));
 				l.setConnectorType(ConnectorType.CURVED);
 				gpmlPathway.add(l);
+				l.setGeneratedGraphId();
 			}
 
 			line.setZOrder(gpmlPathway.getMinZOrder());
-			mapConvertedId(reaction.getName(), line);
+			mapConvertedId(reactionId(reaction), line);
 
 			if(enzymeIds != null) {
 				//Add the mediators
@@ -336,6 +414,7 @@ public class KeggFormat {
 				Point ep = Util.findBorders(m, product)[1];
 				line.getMStart().setRelativePosition(sp.x, sp.y);
 				line.getMEnd().setRelativePosition(ep.x, ep.y);
+				
 
 				//Set the waypoints
 				line.setConnectorType(ConnectorType.ELBOW);
@@ -390,6 +469,7 @@ public class KeggFormat {
 					addReactionMediator(line, id2gpml.get(entryId));
 				}
 			}
+		System.out.println("Reaction line: "+line);
 		} else {
 			Logger.log.error("No DataNodes to connect to for reaction " + reaction.getName());
 		}
@@ -408,6 +488,7 @@ public class KeggFormat {
 		//draw a line from the bottom of the datanodes to the anchor
 		PathwayElement aline = PathwayElement.createPathwayElement(ObjectType.LINE);
 		gpmlPathway.add(aline);
+		aline.setGeneratedGraphId();
 		aline.setEndLineType(LineType.fromName("mim-catalysis"));
 		aline.setStartGraphRef(Util.getGraphId(mediator));
 		anchor.setGeneratedGraphId();
@@ -418,27 +499,34 @@ public class KeggFormat {
 	}
 
 	private void convertRelation(Relation relation) {
+		
 		PathwayElement e1 = id2gpml.get(relation.getEntry1());
 		PathwayElement e2 = id2gpml.get(relation.getEntry2());
+		
+		
 		Subtype subtype = null;
 		if(relation.getSubtype().size() > 0) {
 			subtype = relation.getSubtype().get(0);
+			
 		} else {
 			Logger.log.warn("No subtype for " + relation);
 		}
 		Type type = Type.fromString(relation.getType());
-
+		
 		switch(type) {
 		case ECREL:
 			//ECrel is redundant with reaction,
 			//but contains information about which compound element
 			//to connect to, in case of duplicate elements mapping
 			//to the same compound. Here we store this information for later use.
+			
+			if (relation.getSubtype().size() > 0){
 			String cid = subtype.getValue();
 			ecrelEnzyme2Compound.put(relation.getEntry1(), cid);
 			ecrelEnzyme2Compound.put(relation.getEntry2(), cid);
+			}
 
-//			//Test: Add lines for ECrel
+			//Test: Add lines for ECrel
 //			PathwayElement ec = id2gpml.get(cid);
 //			if(ec != null && e1 != null && e2 != null) {
 //				PathwayElement l1 = createPathwayLine(e1, ec);
@@ -454,10 +542,12 @@ public class KeggFormat {
 		case MAPLINK:
 			if("compound".equals(subtype.getName())) {
 				String maplinkid = null;
+				
 				//Find out which entry is the map
 				//NOTE: the arrow direction sometimes doesn't match
 				//that on the image on the kegg site. As far as I could
 				//see, this is just incorrectly defined in the KGML.
+				
 				if(e2.getObjectType() == ObjectType.LABEL) { //entry2 is map
 					e1 = id2gpml.get(subtype.getValue());
 					maplinkid = relation.getEntry2() + subtype.getValue();
@@ -486,12 +576,13 @@ public class KeggFormat {
 			}
 			mapConvertedId(relationId(relation), line);
 			gpmlPathway.add(line);
+			line.setGeneratedGraphId();
 		} else {
 			Logger.log.warn("Invalid relation, missing connecting element for: " + relation);
 		}
-	}
+	}  
 
-	private void convertEntry(Entry entry) throws RemoteException, ConverterException {
+	private void convertEntry(Entry entry) throws RemoteException, ConverterException, ClassNotFoundException, IDMapperException {
 		Type type = Type.fromString(entry.getType());
 		switch(type) {
 		case MAP:
@@ -514,98 +605,125 @@ public class KeggFormat {
 		entryName2Ids.put(entry.getName(), entry.getId());
 	}
 
-	private void convertCompound(Entry compound) throws RemoteException, ConverterException {
-		Graphics graphics = compound.getGraphics();
+	private void convertCompound(Entry compound) throws RemoteException, ConverterException, ClassNotFoundException, IDMapperException {
+		List<Graphics> graphics = compound.getGraphics();
 
 		String name = compound.getName();
-		String label = graphics.getName();
-		if(isUseWebservice()) { //fetch the real name from the webservice
-			label = keggService.getKeggSymbol(name);
+		
+		if (graphics.size() == 1)
+			{
+			Graphics cg = graphics.get(0);
+			String wlabel = null;
+			
+			if(isUseWebservice()) { //fetch the real name from the webservice
+				wlabel = keggService.getKeggSymbol("cpd:"+cg.getName());
+			}
+				
+			PathwayElement pwElm = createDataNode(
+				cg,
+				DataNodeType.METABOLITE,
+				wlabel,
+				name.replace("cpd:", ""),
+				BioDataSource.KEGG_COMPOUND);
+
+			gpmlPathway.add(pwElm);
+			pwElm.setGeneratedGraphId();
+			mapConvertedId(compound.getId(), pwElm);
+		}
+		
+		else {
+			Logger.log.trace("Skipping compound "+compound.getName()+ " due to multiple graphics");
 		}
 
-		PathwayElement pwElm = createDataNode(
-				graphics,
-				DataNodeType.METABOLITE,
-				label,
-				name.replace("cpd:", ""),
-				BioDataSource.KEGG_COMPOUND
-		);
-
-		gpmlPathway.add(pwElm);
-		mapConvertedId(compound.getId(), pwElm);
 	}
 
+	// convert links to other pathways appearing in KEGG pathways as a label
 	private void convertMap(Entry map) {
 		String label = map.getName();
 		PathwayElement link = PathwayElement.createPathwayElement(ObjectType.LABEL);
 		link.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 		link.addComment(link.new Comment(map.getLink(), COMMENT_SOURCE));
-		Graphics graphics = map.getGraphics();
-		if(graphics != null) {
-			String glabel = graphics.getName();
-			if(glabel == null) glabel = label;
-			else label = glabel;
-			if(label.startsWith("TITLE:")) {
-				return; //This is the title of this map, skip it
+		List<Graphics> graphics = map.getGraphics(); 
+		
+		// This assumes that any duplicate graphics have relevant coordinates and titles
+		//This is somewhat inconsistent since for other entry types multiple graphcis are not considered
+		if(graphics.size()>0) {   
+				Iterator g = graphics.iterator(); 
+				while (g.hasNext()){
+					Graphics mg = (Graphics) g.next();
+					String glabel = mg.getName();
+					if(glabel == null) glabel = label;
+					else label = glabel;
+					if(label.startsWith("TITLE:")) {
+						return; //This is the title of this map, skip it
+					}
+					convertGraphics(link, mg); //Section moved into while since graphics is a list
+					link.setTextLabel(label); //convert one map object per graphic returned by getGraphics()
+					mapConvertedId(map.getId(), link);
+					gpmlPathway.add(link);
+					link.setGeneratedGraphId();
 			}
-			convertGraphics(link, graphics);
 		}
-
-		link.setTextLabel(label);
-		mapConvertedId(map.getId(), link);
-		gpmlPathway.add(link);
 	}
 
 	private void convertDataNode(Entry entry) throws RemoteException, ConverterException {
-		Graphics graphics = entry.getGraphics();
-		if(graphics == null) {
+		List<Graphics> graphics = entry.getGraphics();
+		
+		if(graphics.isEmpty()) {
 			Logger.log.warn("Skipping entry without graphics: " + entry.getId() + ", " + entry.getName());
 			return;
 		}
-		String label = graphics.getName();
+		
+		if (graphics.size() == 1)
+		{
+		
+			Graphics dg = graphics.get(0);
+			String label = dg.getName();
+			String name = entry.getName();
+			String[] ids = name.split(" ");
 
-		String name = entry.getName();
-		String[] ids = name.split(" ");
+			//Add all ids as a stack
+			Set<PathwayElement> pwElms = new HashSet<PathwayElement>();
 
-		//Add all ids as a stack
-		Set<PathwayElement> pwElms = new HashSet<PathwayElement>();
+			for(int i = 0; i < ids.length; i++) {
+				String id = ids[i];
+				String[] genes = getGenes(id, organism, Type.fromString(entry.getType()));
 
-		for(int i = 0; i < ids.length; i++) {
-			String id = ids[i];
-			String[] genes = getGenes(id, organism, Type.fromString(entry.getType()));
+				for(String gene : genes) {
+					String geneName = dg.getName();
+					if(isUseWebservice()) { //fetch the real name from the webservice
+						geneName = keggService.getKeggSymbol(
+								Util.getKeggOrganism(organism) + ":" + gene
+						);
+					}
+					
+					
 
-			for(String gene : genes) {
-				String geneName = graphics.getName();
-				if(isUseWebservice()) { //fetch the real name from the webservice
-					geneName = keggService.getKeggSymbol(
-							Util.getKeggOrganism(organism) + ":" + gene
-					);
-				}
-
-				//Create gpml element
-				PathwayElement pwElm = createDataNode(
-						graphics,
+					//Create gpml element
+					PathwayElement pwElm = createDataNode(
+						dg,
 						DataNodeType.GENEPRODUCT,
 						geneName == null ? "" : geneName,
 						gene == null ? "" : gene,
 						BioDataSource.ENTREZ_GENE
-				);
+					);
 
-				//Add comments regarding the source on KEGG
-				String e_id = entry.getId();
-				String e_type = entry.getType();
-				String e_name = entry.getName();
-				pwElm.addComment(pwElm.new Comment(
+					//Add comments regarding the source on KEGG
+					String e_id = entry.getId();
+					String e_type = entry.getType();
+					String e_name = entry.getName();
+					pwElm.addComment(pwElm.new Comment(
 						"Original kegg element: " + e_type + ";" + e_id + ";" + e_name,
 						COMMENT_SOURCE
-				));
-				gpmlPathway.add(pwElm);
-				pwElms.add(pwElm);
-			}
+					));
+					gpmlPathway.add(pwElm);
+					pwElm.setGeneratedGraphId();
+					pwElms.add(pwElm);
+				}
 
 			if(genes.length == 0) { //Plain conversion if no gene mappings could be found
 				PathwayElement pwElm = createDataNode(
-						graphics,
+						dg, //TODO: refactor variable names
 						DataNodeType.GENEPRODUCT,
 						name == null ? "" : name,
 						label == null ? "" : label,
@@ -613,10 +731,11 @@ public class KeggFormat {
 				);
 
 				gpmlPathway.add(pwElm);
+				pwElm.setGeneratedGraphId();
 				pwElms.add(pwElm);
 			}
-		}
-
+		} //end for loop
+			
 		if(pwElms.size() > 1) {
 			PathwayElement group = createGroup(name, pwElms);
 			Util.stackElements(pwElms);
@@ -626,6 +745,11 @@ public class KeggFormat {
 			mapConvertedId(entry.getId(), pwElm);
 		}
 		mapToReaction(entry);
+	}
+		
+		else {
+			Logger.log.trace("Skipping datanode "+entry.getName()+" due to mutliple graphics.");
+		}
 	}
 
 	private void mapToReaction(Entry entry) {
@@ -648,6 +772,11 @@ public class KeggFormat {
 				id += s.getName() + s.getValue();
 			}
 		}
+		return id;
+	}
+	
+	private String reactionId(Reaction r) {
+		String id = r.getId() + r.getName();
 		return id;
 	}
 
@@ -678,7 +807,7 @@ public class KeggFormat {
 		Point[] pts = Util.findBorders(start, end);
 		line.getMStart().setRelativePosition(pts[0].x, pts[0].y);
 		line.getMEnd().setRelativePosition(pts[1].x, pts[1].y);
-
+		
 		return line;
 	}
 
@@ -686,6 +815,7 @@ public class KeggFormat {
 		PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
 		group.setTextLabel(name);
 		gpmlPathway.add(group);
+		group.setGeneratedGraphId();
 		String id = gpmlPathway.getUniqueGroupId();
 		group.setGroupId(id);
 		for(PathwayElement pe : elements) {
@@ -707,8 +837,42 @@ public class KeggFormat {
 		pwElm.setColor(colorGPML);
 
 		// Set x, y, width, height
-		String s_cx = graphics.getX();
-		String s_cy = graphics.getY();
+		
+		String s_cx = null;
+		String s_cy = null;
+		
+		if (graphics.getX() == null){
+		String coords = graphics.getCoords();
+		String[] coordinates = coords.split(",");
+		
+		double x = 0.0;
+		double y = 0.0;
+		int numCoords = coordinates.length/2;
+
+		for(int i = 0; i < coordinates.length; i++){
+			if (i %2 == 0){
+				//even = x
+				x = x + Double.parseDouble(coordinates[i]);
+			}
+			else{
+				//uneven = y
+				y = y + Double.parseDouble(coordinates[i]);
+			}
+		}
+
+		double cx = x/numCoords;
+		double cy = y/numCoords;
+		
+		s_cx = Double.toString(cx);
+		s_cy = Double.toString(cy);
+		
+		}
+		
+		else{
+			s_cx = graphics.getX();
+			s_cy = graphics.getY();
+		}
+		
 		String s_w = graphics.getWidth();
 		String s_h = graphics.getHeight();
 
@@ -722,6 +886,7 @@ public class KeggFormat {
 
 		pwElm.setMCenterX(coordinateSpacing(coordinateToGpml(centerX)));
 		pwElm.setMCenterY(coordinateSpacing(coordinateToGpml(centerY)));
+		
 	}
 
 	private PathwayElement createDataNode(Graphics graphics, DataNodeType type, String label, String id, DataSource source) {

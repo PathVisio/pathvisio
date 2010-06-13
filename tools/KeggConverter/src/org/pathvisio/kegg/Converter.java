@@ -157,13 +157,13 @@ public class Converter {
 
 		org.pathvisio.model.Pathway gpmlPathway = null;
 
-		if(useMap && (!file.getName().startsWith("ko"))) {
+		if(useMap && (!file.getName().startsWith("ec"))) {
 			//Try to find the corresponding map file
 			Matcher m = KGML_PATTERN.matcher(file.getName());
 			if(m.matches()) {
 				
 				File mapFile = new File(
-						file.getParentFile(), "ko" + m.group(1) + "." + m.group(2)
+						file.getParentFile(), "ec" + m.group(1) + "." + m.group(2)
 				);
 				if(!mapFile.exists()) {
 					

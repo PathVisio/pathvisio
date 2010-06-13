@@ -42,7 +42,6 @@ import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.BridgeDb;
 import org.bridgedb.Xref;
-import org.bridgedb.webservice.bridgerest.BridgeRest;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ConverterException;

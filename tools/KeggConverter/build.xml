@@ -89,7 +89,7 @@
 		<copy file="${pathvisio.dir}/lib/org.bridgedb.bio.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/pathvisio_core.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${lib.dir}/axis.jar" toDir="${dist.dir}/lib"/>
-		<copy file="KGML_v0.6.1_.dtd" toDir="${dist.dir}"/>
+		<copy file="KGML_v0.7.1_.dtd" toDir="${dist.dir}"/>
 		<copy toDir="${dist.dir}/lib">
 			<fileset dir="${lib.dir}">
 				<include name="*.jar"/>

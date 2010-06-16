@@ -22,7 +22,6 @@ import giny.model.Node;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,17 +32,12 @@ import java.util.Vector;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.preferences.GlobalPreference;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
 import cytoscape.data.CyAttributes;
 import cytoscape.data.Semantics;
-import cytoscape.layout.CyLayoutAlgorithm;
-import cytoscape.layout.CyLayouts;
-import cytoscape.layout.LayoutProperties;
-import cytoscape.layout.Tunable;
 import cytoscape.task.TaskMonitor;
 
 public class PathwaysMerge {
@@ -72,97 +66,6 @@ public class PathwaysMerge {
 		networks = nets;
 		nodePairByTranslation = m;
 		colorPool = c;
-
-		mapSysCodeToBioDS = new HashMap<String, DataSource>();
-		mapSysCodeToBioDS.put("Entrez Gene", BioDataSource.ENTREZ_GENE);
-		mapSysCodeToBioDS.put("Ensembl Rat", BioDataSource.ENSEMBL_RAT);
-		mapSysCodeToBioDS.put("TAIR", BioDataSource.TAIR);
-		mapSysCodeToBioDS.put("Agilent", BioDataSource.AGILENT);
-		mapSysCodeToBioDS.put("BioGrid", BioDataSource.BIOGRID);
-		mapSysCodeToBioDS.put("Cint", BioDataSource.CINT);
-		mapSysCodeToBioDS.put("CCDS", BioDataSource.CCDS);
-		mapSysCodeToBioDS.put("CAS", BioDataSource.CAS);
-		mapSysCodeToBioDS.put("ChEBI", BioDataSource.CHEBI);
-		mapSysCodeToBioDS.put("HMDB", BioDataSource.HMDB);
-		mapSysCodeToBioDS.put("Kegg Compound", BioDataSource.KEGG_COMPOUND);
-		mapSysCodeToBioDS.put("PubChem", BioDataSource.PUBCHEM);
-		mapSysCodeToBioDS.put("Chemspider", BioDataSource.CHEMSPIDER);
-		mapSysCodeToBioDS.put("SGD", BioDataSource.SGD);
-		mapSysCodeToBioDS.put("EC Number", BioDataSource.ENZYME_CODE);
-		mapSysCodeToBioDS.put("Ecoli", BioDataSource.ECOLI);
-		mapSysCodeToBioDS.put("EMBL", BioDataSource.EMBL);
-		mapSysCodeToBioDS.put("Ensembl", BioDataSource.ENSEMBL);
-		mapSysCodeToBioDS.put("Ensembl Mosquito",
-				BioDataSource.ENSEMBL_MOSQUITO);
-		mapSysCodeToBioDS.put("Gramene Arabidopsis",
-				BioDataSource.GRAMENE_ARABIDOPSIS);
-		mapSysCodeToBioDS.put("Ensembl B. subtilis",
-				BioDataSource.ENSEMBL_BSUBTILIS);
-		mapSysCodeToBioDS.put("Ensembl Cow", BioDataSource.ENSEMBL_COW);
-		mapSysCodeToBioDS.put("Ensembl C. elegans",
-				BioDataSource.ENSEMBL_CELEGANS);
-		mapSysCodeToBioDS.put("Ensembl Dog", BioDataSource.ENSEMBL_DOG);
-		mapSysCodeToBioDS.put("Ensembl Fruitfly",
-				BioDataSource.ENSEMBL_FRUITFLY);
-		mapSysCodeToBioDS.put("Ensembl Zebrafish",
-				BioDataSource.ENSEMBL_ZEBRAFISH);
-		mapSysCodeToBioDS.put("Ensembl E. coli", BioDataSource.ENSEMBL_ECOLI);
-		mapSysCodeToBioDS.put("Ensembl Chicken", BioDataSource.ENSEMBL_CHICKEN);
-		mapSysCodeToBioDS.put("Ensembl Human", BioDataSource.ENSEMBL_HUMAN);
-		mapSysCodeToBioDS.put("Ensembl Mouse", BioDataSource.ENSEMBL_MOUSE);
-		mapSysCodeToBioDS.put("Gramene Rice", BioDataSource.GRAMENE_RICE);
-		mapSysCodeToBioDS.put("Ensembl Chimp", BioDataSource.ENSEMBL_CHIMP);
-		mapSysCodeToBioDS.put("Ensembl Horse", BioDataSource.ENSEMBL_HORSE);
-		mapSysCodeToBioDS.put("Ensembl Yeast",
-				BioDataSource.ENSEMBL_SCEREVISIAE);
-		mapSysCodeToBioDS.put("Ensembl Xenopu", BioDataSource.ENSEMBL_XENOPUS);
-		mapSysCodeToBioDS.put("FlyBase", BioDataSource.FLYBASE);
-		mapSysCodeToBioDS.put("GenBank", BioDataSource.GENBANK);
-		mapSysCodeToBioDS.put("CodeLink", BioDataSource.CODELINK);
-		mapSysCodeToBioDS.put("Gramene Genes DB",
-				BioDataSource.GRAMENE_GENES_DB);
-		mapSysCodeToBioDS.put("Gramene Literature",
-				BioDataSource.GRAMENE_LITERATURE);
-		mapSysCodeToBioDS.put("Gramene Pathway", BioDataSource.GRAMENE_PATHWAY);
-		mapSysCodeToBioDS.put("GenPept", BioDataSource.GEN_PEPT);
-		mapSysCodeToBioDS.put("HUGO", BioDataSource.HUGO);
-		mapSysCodeToBioDS.put("HsGene", BioDataSource.HSGENE);
-		mapSysCodeToBioDS.put("InterPro", BioDataSource.INTERPRO);
-		mapSysCodeToBioDS.put("Illumina", BioDataSource.ILLUMINA);
-		mapSysCodeToBioDS.put("IPI", BioDataSource.IPI);
-		mapSysCodeToBioDS.put("IRGSP Gene", BioDataSource.IRGSP_GENE);
-		mapSysCodeToBioDS.put("MGI", BioDataSource.MGI);
-		mapSysCodeToBioDS.put("miRBase", BioDataSource.MIRBASE);
-		mapSysCodeToBioDS.put("MaizeGDB", BioDataSource.MAIZE_GDB);
-		mapSysCodeToBioDS.put("NASC Gene", BioDataSource.NASC_GENE);
-		mapSysCodeToBioDS.put("NuGO wiki", BioDataSource.NUGOWIKI);
-		mapSysCodeToBioDS.put("Other", BioDataSource.OTHER);
-		mapSysCodeToBioDS.put("Oryzabase", BioDataSource.ORYZA_BASE);
-		mapSysCodeToBioDS.put("OMIM", BioDataSource.OMIM);
-		mapSysCodeToBioDS.put("Rice Ensembl Gene",
-				BioDataSource.RICE_ENSEMBL_GENE);
-		mapSysCodeToBioDS.put("PDB", BioDataSource.PDB);
-		mapSysCodeToBioDS.put("Pfam", BioDataSource.PFAM);
-		mapSysCodeToBioDS.put("PlantGDB", BioDataSource.PLANTGDB);
-		mapSysCodeToBioDS.put("RefSeq", BioDataSource.REFSEQ);
-		mapSysCodeToBioDS.put("RGD", BioDataSource.RGD);
-		mapSysCodeToBioDS.put("Rfam", BioDataSource.RFAM);
-		mapSysCodeToBioDS.put("Uniprot/TrEMBL", BioDataSource.UNIPROT);
-		mapSysCodeToBioDS.put("dbSNP", BioDataSource.SNP);
-		mapSysCodeToBioDS.put("GeneOntology", BioDataSource.GENE_ONTOLOGY);
-		mapSysCodeToBioDS.put("UniGene", BioDataSource.UNIGENE);
-		mapSysCodeToBioDS.put("UCSC Genome Browser", BioDataSource.UCSC);
-		mapSysCodeToBioDS.put("WormBase", BioDataSource.WORMBASE);
-		mapSysCodeToBioDS.put("Wikipedia", BioDataSource.WIKIPEDIA);
-		mapSysCodeToBioDS.put("Wheat gene catalog",
-				BioDataSource.WHEAT_GENE_CATALOG);
-		mapSysCodeToBioDS.put("Wheat gene names",
-				BioDataSource.WHEAT_GENE_NAMES);
-		mapSysCodeToBioDS.put("Wheat gene refs",
-				BioDataSource.WHEAT_GENE_REFERENCES);
-		mapSysCodeToBioDS.put("Affy", BioDataSource.AFFY);
-		mapSysCodeToBioDS.put("ZFIN", BioDataSource.ZFIN);
-
 	}
 
 	public void interrupt() {

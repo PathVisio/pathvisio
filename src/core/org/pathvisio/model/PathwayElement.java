@@ -480,7 +480,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			return ref != null && !"".equals(ref);
 		}
 
-		@Override
 		public void refeeChanged()
 		{
 			// called whenever the object being referred to has changed.

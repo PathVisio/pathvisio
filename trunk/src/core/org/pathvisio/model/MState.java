@@ -60,7 +60,6 @@ public class MState extends PathwayElement implements GraphRefContainer
 		}
 	}
 
-	@Override
 	public void linkTo(GraphIdContainer idc, double relX, double relY)
 	{
 		String id = idc.getGraphId();
@@ -70,7 +69,6 @@ public class MState extends PathwayElement implements GraphRefContainer
 		setRelY(relY);
 	}
 
-	@Override
 	public void unlink()
 	{
 		// called when referred object is being destroyed.
@@ -92,7 +90,6 @@ public class MState extends PathwayElement implements GraphRefContainer
 		updateCoordinates();
 	}
 	
-	@Override
 	public void refeeChanged()
 	{
 		updateCoordinates();

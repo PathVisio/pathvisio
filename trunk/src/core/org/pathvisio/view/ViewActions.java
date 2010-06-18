@@ -400,7 +400,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			super ("Add State...");
 		}
 		
-		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
 			List<Graphics> selection = vPathway.getSelectedGraphics();
@@ -429,7 +428,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			super ("Remove State...");
 		}
 		
-		@Override
 		public void actionPerformed(ActionEvent arg0)
 		{
 			vPathway.getUndoManager().newAction("Remove State");

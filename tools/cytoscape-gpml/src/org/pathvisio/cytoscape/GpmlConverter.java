@@ -297,7 +297,7 @@ public class GpmlConverter {
 			cyGroup = CyGroupManager.createGroup(group.getGroupId(), null);
 		}
 		CyNode gn = cyGroup.getGroupNode();
-		gn.setIdentifier(group.getGraphId());
+		gn.setIdentifier(group.getGraphId() == null ? group.setGeneratedGraphId() : group.getGraphId());
 		nodeIds.put(group, gn.getIdentifier());
 		return gn;
 	}

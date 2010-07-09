@@ -13,7 +13,7 @@ pluginName=Superpathways-Plugin
 pluginDescription=The Superpathways plugin for Cytoscape is to help merge multiple pathways into a single Cytoscape network.<p>This plugin makes it possible to select multiple pathways from Wiki Pathways and load them in a single network. The plugin would merge nodes that represent the same biological entity (e.g. gene, protein or molecule).</p>
 
 # Plugin version number, this must be two numbers separated by a decimlal.  Ex. 0.2, 14.03
-pluginVersion=1.1
+pluginVersion=1.2
 
 # Compatible Cytoscape version. If there are more than one version, seperate by ",".
 cytoscapeVersion=2.6

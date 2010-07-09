@@ -1712,9 +1712,13 @@ public class SuperpathwaysGui extends JPanel {
 			// make the correspondance of the color between the common node view
 			// and the merged network
 
+			Map<String, Color> pwNameToColor = null;
 			if (!isCancelled()) {
-				Map<String, Color> pwNameToColor = cnViewObject
-						.drawCommonNodeView();
+				try {
+					pwNameToColor = cnViewObject.drawCommonNodeView();
+				} catch (Exception e) {
+					Logger.log.error("Unable to draw common node view", e);
+				}
 
 				WSPathway wsPathway = new WSPathway();
 				Pathway pathway = new Pathway();
@@ -1752,7 +1756,7 @@ public class SuperpathwaysGui extends JPanel {
 					CyNetwork net = spPlugin.load(pathway, true);
 
 					// the following code is for coloring the nodes by default
-					applyGpmlVisualStyle(mClient.getPlugin().mGpmlHandler,
+					if(pwNameToColor != null) applyGpmlVisualStyle(mClient.getPlugin().mGpmlHandler,
 							pwNameToColor, pwName, true,
 							superpathwaysVisualStyleCounter);
 

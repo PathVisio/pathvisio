@@ -96,7 +96,7 @@ public class CommonNodeView {
 		return nodePairByTranslation;
 	}
 
-	public commonNodePathwayPair findCommonNode(String pw1ID, String pw1NameID, String pw2ID, String pw2NameID) {
+	public commonNodePathwayPair findCommonNode(String pw1ID, String pw1NameID, String pw2ID, String pw2NameID) throws ClassNotFoundException, IDMapperException {
 		commonNodePathwayPair cnPwPair = new commonNodePathwayPair();
 
 		int commonNode = 0;
@@ -161,76 +161,8 @@ public class CommonNodeView {
 				.getOrganism());
 		// System.out.println("The organism for pathway2 is " + organism);
 
-		String orgCode = organism.code();
-		// System.out.println("The organism code for pathway2 is " + orgCode);
-
-		File dir = new File(dbLocation);
-		// try {
-
-		IDMapper gdb = null;
-		// String[] pgdbFileName = dir.list();
-		File[] pgdbFileName = dir.listFiles();
-
-		if (pgdbFileName == null) {
-
-			JOptionPane
-					.showMessageDialog(
-							mClient.getGUI(),
-							"There's no database in the default folder, please choose the directory where you've loaded the databases!");
-
-			JFileChooser chooser = new JFileChooser();
-			chooser.setCurrentDirectory(new java.io.File("."));
-			chooser
-					.setDialogTitle("Choose the direcotry where you've loaded databases...");
-			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			// disable the "All files" option.
-			chooser.setAcceptAllFileFilterUsed(false);
-
-			if (chooser.showOpenDialog(mClient.getPlugin().mWindow) == JFileChooser.APPROVE_OPTION) {
-				System.out.println("getCurrentDirectory(): "
-						+ chooser.getCurrentDirectory());
-				System.out.println("getSelectedFile() : "
-						+ chooser.getSelectedFile());
-				dir = chooser.getSelectedFile();
-				dbLocation = chooser.getSelectedFile().toString() + "/";
-				pgdbFileName = dir.listFiles();
-			}
-
-		}
-		for (int i = 0; i < pgdbFileName.length; i++) {
-			
-			if (interrupted)
-				return null;
-
-			// String fileName = pgdbFileName[i];
-			File file = pgdbFileName[i];
-			if (file.isDirectory())
-				continue; // skip directories
-			String fileName = file.getName();
-			int index = fileName.indexOf("_");
-			if (index < 0)
-				continue; // Skip this file, not the pgdb naming
-			// scheme
-			String speciesOrMetabolite = fileName.substring(0, index);
-			// System.out.println(speciesOrMetabolite);
-			if (speciesOrMetabolite.equals((Object) orgCode)) {
-				System.out.println(dbLocation + fileName);
-				// File fGdb = new File(dbLocation + fileName);
-				// System.out.println(speciesOrMetabolite);
-				try {
-					Class.forName ("org.bridgedb.rdb.IDMapperRdb");
-					gdb = BridgeDb.connect ("idmapper-pgdb:" + file);
-				} catch (IDMapperException e) {
-					Logger.log.error("Problem while connecting to the Gdb", e);
-				}
-				catch (ClassNotFoundException e) {
-					Logger.log.error("Problem while connecting to the Gdb", e);
-				}
-				break;
-			}
-
-		}
-
+		IDMapper gdb = mClient.getPlugin().getIDMapper(organism);
+		
 		// create the list of Xref for the pathway2: XrefListPw2
 		System.out.println("Xref info of the other pathway: " + pw2ID);
 		for (PathwayElement pw2Elm : pathway2.getDataObjects()) {
@@ -298,7 +230,7 @@ public class CommonNodeView {
 		return cnPwPair;
 	}
 
-	public List<commonNodePathwayPair> findCommonNodeForPathwaysGroup() {
+	public List<commonNodePathwayPair> findCommonNodeForPathwaysGroup() throws ClassNotFoundException, IDMapperException {
 		List<commonNodePathwayPair> commonNodeInfoPwGroup = new ArrayList<commonNodePathwayPair>();
 
 		System.out.println("For Databases: " + dbLocation);
@@ -323,7 +255,7 @@ public class CommonNodeView {
 		return commonNodeInfoPwGroup;
 	}
 
-	public Map<String, Color> drawCommonNodeView() {
+	public Map<String, Color> drawCommonNodeView() throws ClassNotFoundException, IDMapperException {
 
 		if (interrupted)
 			return null;

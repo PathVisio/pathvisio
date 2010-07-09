@@ -17,16 +17,28 @@
 
 package org.pathvisio.cytoscape.superpathways;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 
+import org.bridgedb.BridgeDb;
+import org.bridgedb.IDMapper;
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperStack;
+import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.Organism;
 import org.pathvisio.cytoscape.GpmlConverter;
 import org.pathvisio.cytoscape.GpmlHandler;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.preferences.GlobalPreference;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
@@ -46,12 +58,17 @@ public class SuperpathwaysPlugin extends CytoscapePlugin {
 	private static SuperpathwaysPlugin mInstance;
     SuperpathwaysGui mSpGui;
 	
+    private String idmLocation = GlobalPreference.getDataDir().toString()
+		+ "/gene databases/";
+    private Map<Organism, IDMapper> idMappers = new HashMap<Organism, IDMapper>();
 	
 	public static SuperpathwaysPlugin getInstance() {
 		return mInstance;
 	}
 
 	public SuperpathwaysPlugin() {
+		BioDataSource.init();
+		
 		if (mInstance != null) {
 			throw new RuntimeException(
 					"SuperpathwaysPlugin is already instantiated! Use static"
@@ -85,6 +102,63 @@ public class SuperpathwaysPlugin extends CytoscapePlugin {
 
 	}
 
+	public IDMapper getIDMapper(Organism organism) throws ClassNotFoundException, IDMapperException {
+		Class.forName ("org.bridgedb.rdb.IDMapperRdb");
+		
+		IDMapper idm = idMappers.get(organism);
+		if(idm == null) {
+			IDMapperStack idms = new IDMapperStack();
+			idm = idms;
+			idMappers.put(organism, idm);
+			
+			//Try to find the available bridgedb databases, ask for location if necessary
+			File[] idmFiles = new File(idmLocation).listFiles();
+			boolean speciesFound = false;
+			
+			if(idmFiles != null) for(int i = 0; i < idmFiles.length; i++) {
+				File file = idmFiles[i];
+				if (file.isDirectory()) continue; // skip directories
+				String fileName = file.getName();
+				int index = fileName.indexOf("_");
+				if (index < 0) continue; // Skip this file, not the pgdb naming scheme
+				String prefix = fileName.substring(0, index);
+				// System.out.println(speciesOrMetabolite);
+				if (prefix.equals(organism.code())) {
+					Logger.log.info("Connecting to idmapper " + file);
+					idms.addIDMapper("idmapper-pgdb:" + file);
+					speciesFound = true;
+				} else if("metabolites".equals(prefix)) {
+					Logger.log.info("Connecting to idmapper " + file);
+					idms.addIDMapper("idmapper-pgdb:" + file);
+				}
+			}
+
+			if (!speciesFound) {
+				JOptionPane
+						.showMessageDialog(
+								mWindow,
+								"Could not find bridgedb database for " + organism.latinName() + " in " + idmFiles + ". " +
+										"\nPlease download the database from http://bridgedb.org and " +
+										"point me to its location.");
+	
+				JFileChooser chooser = new JFileChooser();
+				chooser.setCurrentDirectory(new java.io.File("."));
+				chooser
+						.setDialogTitle("Choose the bridgedb database for " + organism.latinName());
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				if (chooser.showOpenDialog(mWindow) == JFileChooser.APPROVE_OPTION) {
+					File file = chooser.getSelectedFile();
+					if(file != null) {
+						Logger.log.info("Connecting to idmapper " + file);
+						idms.addIDMapper("idmapper-pgdb:" + file);
+						idmLocation = file.getParent();
+					}
+				}
+			}
+		}
+		return idm;
+	}
+	
 	/*
 	 * public GpmlHandler getGpmlHandler() { return mGpmlHandler; }
 	 */

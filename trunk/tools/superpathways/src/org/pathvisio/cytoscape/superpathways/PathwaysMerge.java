@@ -444,10 +444,8 @@ public class PathwaysMerge {
 
 				// use Map<Xref, Xref> nodePairByTranslation to help determine
 				// whether two nodes match
-				Xref x1 = new Xref((String) geneID1, mapSysCodeToBioDS
-						.get((String) systemCode1));
-				Xref x2 = new Xref((String) geneID2, mapSysCodeToBioDS
-						.get((String) systemCode2));
+				Xref x1 = new Xref((String) geneID1, DataSource.getBySystemCode((String) systemCode1));
+				Xref x2 = new Xref((String) geneID2, DataSource.getBySystemCode((String) systemCode2));
 				// System.out.println("Xref1 in merge: "+x1.toString());
 				// System.out.println("Xref2 in merge: "+x2.toString());
 

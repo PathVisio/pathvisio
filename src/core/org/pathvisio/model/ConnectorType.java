@@ -56,8 +56,20 @@ public class ConnectorType implements Comparable<ConnectorType> {
 	 * returns a connectorType with a given name.
 	 * If the connectorType doesn't exist yet, it is created.
 	 * for extending the enum.
+	 * 
+	 * @deprecated Use {@link #fromName(String)} instead.
 	 */
 	public static ConnectorType getInstance (String name)
+	{
+		return fromName(name);
+	}
+
+	/**
+	 * returns a connectorType with a given name.
+	 * If the connectorType doesn't exist yet, it is created.
+	 * for extending the enum.
+	 */
+	public static ConnectorType fromName (String name)
 	{
 		if (nameMappings.containsKey (name))
 		{
@@ -65,14 +77,6 @@ public class ConnectorType implements Comparable<ConnectorType> {
 		}
 		else
 			return new ConnectorType(name);
-	}
-
-	/**
-	   looks up the ConnectorType corresponding to that name.
-	 */
-	public static ConnectorType fromName (String value)
-	{
-		return nameMappings.get(value);
 	}
 
 	/**

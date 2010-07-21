@@ -149,6 +149,16 @@ public class FileUtils {
 	}
 
 	/**
+	 * Replaces file extension with something else. If there was no extension previously, the new one will simply be added.
+	 * @param fname file name to use.
+	 * @param extension New extension to use. Should not include dot.
+	 */
+	public static File replaceExtension(File fname, String extension)
+	{
+		return new File (removeExtension(fname.toString()) + "." + extension);
+	}
+	
+	/**
 	 * Downloads a remote file given by an URL to the given local file
 	 * @param url The URL that specifies the location of the file to download
 	 * @param toFile The local file to which the remote file will be downloaded

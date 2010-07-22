@@ -36,6 +36,7 @@ public abstract class ConnectorShapeFactory {
 		shapes.put(ConnectorType.STRAIGHT.getName(), StraightConnectorShape.class);
 		shapes.put(ConnectorType.ELBOW.getName(), ElbowConnectorShape.class);
 		shapes.put(ConnectorType.CURVED.getName(), CurvedConnectorShape.class);
+		shapes.put(ConnectorType.SEGMENTED.getName(), FreeConnectorShape.class);
 	}
 
 	public static void registerShape(String name, Class<? extends ConnectorShape> shapeClass) {

@@ -21,6 +21,7 @@ import static org.pathvisio.model.ObjectType.STATE;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.geom.Point2D;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +36,16 @@ import javax.swing.KeyStroke;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.debug.Logger;
+import org.pathvisio.model.ConnectorShape;
 import org.pathvisio.model.GroupStyle;
+import org.pathvisio.model.MLine;
 import org.pathvisio.model.MState;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.FreeConnectorShape;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
@@ -95,6 +101,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final KeyMoveAction keyMove;
 	public final UndoAction undo;
 	public final AddAnchorAction addAnchor;
+	public final WaypointAction addWaypoint;
+	public final WaypointAction removeWaypoint;
 	public final OrderBottomAction orderSendToBack;
 	public final OrderTopAction orderBringToFront;
 	public final OrderUpAction orderUp;
@@ -123,6 +131,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		keyMove = new KeyMoveAction(engine, null);
 		undo = new UndoAction(engine);
 		addAnchor = new AddAnchorAction();
+		addWaypoint = new WaypointAction(true);
+		removeWaypoint = new WaypointAction(false);
 		orderSendToBack = new OrderBottomAction(engine);
 		orderBringToFront = new OrderTopAction(engine);
 		orderUp = new OrderUpAction(engine);
@@ -144,6 +154,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_EDITMODE);
 		registerToGroup(keyMove, ViewActions.GROUP_ENABLE_EDITMODE);
 		registerToGroup(addAnchor, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(addWaypoint, GROUP_ENABLE_WHEN_SELECTION);
+		registerToGroup(removeWaypoint, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(showUnlinked, GROUP_ENABLE_VPATHWAY_LOADED);
 
 		resetGroupStates();
@@ -354,6 +366,94 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		}
 	}
 
+	/**
+	 * Add/remove waypoints on a segmented line.
+	 * @author thomas
+	 */
+	private class WaypointAction extends AbstractAction implements SelectionListener {
+		boolean add;
+		
+		public WaypointAction(boolean add) {
+			this.add = add;
+			
+			if(add) {
+				putValue(NAME, "Add waypoint");
+				putValue(SHORT_DESCRIPTION, "Add a waypoint to the selected line");
+			} else {
+				putValue(NAME, "Remove last waypoint");
+				putValue(SHORT_DESCRIPTION, "Removes the last waypoint from the selected line");
+			}
+			vPathway.addSelectionListener(this);
+			setEnabled(false);
+		}
+
+		public void selectionEvent(SelectionEvent e) {
+			boolean enable = false;
+			if(e.selection.size() == 1) {
+				VPathwayElement ve = e.selection.iterator().next();
+				if(ve instanceof Line) {
+					ConnectorShape s = ((MLine)((Line)ve).getPathwayElement()).getConnectorShape();
+					enable = s instanceof FreeConnectorShape;
+				} else {
+					enable = false;
+				}
+			}
+			setEnabled(enable);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			List<Graphics> selection = vPathway.getSelectedGraphics();
+			if(selection.size() == 1) {
+				Graphics g = selection.get(0);
+				if(g instanceof Line) {
+					Line l = (Line)g;
+					ConnectorShape s = ((MLine)l.getPathwayElement()).getConnectorShape();
+					if(s instanceof FreeConnectorShape) {
+						vPathway.getUndoManager().newAction("" + getValue(NAME));
+						if(add) {
+							addWaypoint((FreeConnectorShape)s, (MLine)l.getPathwayElement());
+						} else {
+							removeWaypoint((MLine)l.getPathwayElement());
+						}
+						vPathway.redrawDirtyRect();
+					}
+				}
+			}
+		}
+		
+		private void removeWaypoint(MLine l) {
+			//TODO: Instead of removing the last point, it would be better to adjust the context
+			//menu to remove a specific point (like with anchors). This could be done by making 
+			//VPoint extend VPathwayElement so we can directly get the selected waypoint here.
+			ArrayList<MPoint> newPoints = new ArrayList<MPoint>(l.getMPoints());
+			newPoints.remove(newPoints.size() - 2);
+			l.setMPoints(newPoints);
+		}
+		
+		private void addWaypoint(FreeConnectorShape s, MLine l) {
+			//TODO: It would be nice to have access to the mouse position here, so
+			//we can add the waypoint to where the user clicked
+			//Point2D mp = new Point2D.Double(vPathway.mFromV(p.getX()), vPathway.mFromV(p.getY()));
+			//WayPoint nwp = new WayPoint(mp);
+			//double c = s.toLineCoordinate(p);
+			
+			//We don't have the mouse position, just add the waypoint in the center
+			//with an offset if needed
+			List<MPoint> oldPoints = l.getMPoints();
+			List<MPoint> newPoints = new ArrayList<MPoint>(oldPoints);
+			
+			int i = oldPoints.size() - 1; //MPoints size always >= 2
+			MPoint mp = oldPoints.get(i);
+			MPoint mp2 = oldPoints.get(i - 1);
+			double mc = s.toLineCoordinate(mp.toPoint2D());
+			double mc2 = s.toLineCoordinate(mp2.toPoint2D());
+			double c = mc2 + (mc - mc2) / 2.0; //Add new waypoint on center of last segment
+			Point2D p = s.fromLineCoordinate(c);
+			newPoints.add(i, l.new MPoint(p.getX(), p.getY()));
+			l.setMPoints(newPoints);
+		}
+	}
+	
 	private class AddAnchorAction extends AbstractAction implements SelectionListener {
 
 		public AddAnchorAction() {

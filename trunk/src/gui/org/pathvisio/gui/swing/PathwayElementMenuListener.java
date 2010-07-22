@@ -136,6 +136,12 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			final Line line = (Line)e;
 
 			menu.add(vActions.addAnchor);
+			
+			if (line.getPathwayElement().getConnectorType() == ConnectorType.SEGMENTED) {
+				menu.add(vActions.addWaypoint);
+				menu.add(vActions.removeWaypoint);
+			}
+			
 			JMenu typeMenu = new JMenu("Line type");
 
 			ButtonGroup buttons = new ButtonGroup();

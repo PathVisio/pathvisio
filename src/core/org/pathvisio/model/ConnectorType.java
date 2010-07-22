@@ -40,6 +40,7 @@ public class ConnectorType implements Comparable<ConnectorType> {
 	public static final ConnectorType STRAIGHT = new ConnectorType ("Straight");
 	public static final ConnectorType ELBOW = new ConnectorType ("Elbow");
 	public static final ConnectorType CURVED = new ConnectorType ("Curved");
+	public static final ConnectorType SEGMENTED = new ConnectorType("Segmented");
 
 	private String name;
 

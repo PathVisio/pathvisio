@@ -364,8 +364,7 @@ public class KeggFormat {
 			PathwayElement pwe = getReactionCompounds(p.getName(), reaction);
 			if(pwe != null) products.add(pwe);
 		}
-		Logger.log.trace("Products: " + products);
-		
+		Logger.log.trace("Products: " + products);		
 		
 		//Add a reaction anchor + line to the datanodes
 		if(substrates.size() > 0 && products.size() > 0) {
@@ -468,7 +467,7 @@ public class KeggFormat {
 					addReactionMediator(line, id2gpml.get(entryId));
 				}
 			}
-		System.out.println("Reaction line: "+line);
+		//System.out.println("Reaction line: "+line);
 		} else {
 			Logger.log.error("No DataNodes to connect to for reaction " + reaction.getName());
 		}
@@ -547,7 +546,7 @@ public class KeggFormat {
 				//that on the image on the kegg site. As far as I could
 				//see, this is just incorrectly defined in the KGML.
 				
-				if(e2.getObjectType() == ObjectType.LABEL) { //entry2 is map
+				if(e2.getXref().toString().contains("path:")){ //entry 2 is map
 					e1 = id2gpml.get(subtype.getValue());
 					maplinkid = relation.getEntry2() + subtype.getValue();
 				} else { //entry1 = map
@@ -638,30 +637,47 @@ public class KeggFormat {
 
 	// convert links to other pathways appearing in KEGG pathways as a label
 	private void convertMap(Entry map) {
-		String label = map.getName();
-		PathwayElement link = PathwayElement.createPathwayElement(ObjectType.LABEL);
-		link.setShapeType(ShapeType.ROUNDED_RECTANGLE);
-		link.addComment(link.new Comment(map.getLink(), COMMENT_SOURCE));
-		List<Graphics> graphics = map.getGraphics(); 
+		List<Graphics> graphics = map.getGraphics();
 		
-		// This assumes that any duplicate graphics have relevant coordinates and titles
-		//This is somewhat inconsistent since for other entry types multiple graphcis are not considered
-		if(graphics.size()>0) {   
-				Iterator g = graphics.iterator(); 
-				while (g.hasNext()){
-					Graphics mg = (Graphics) g.next();
-					String glabel = mg.getName();
-					if(glabel == null) glabel = label;
-					else label = glabel;
-					if(label.startsWith("TITLE:")) {
-						return; //This is the title of this map, skip it
-					}
-					convertGraphics(link, mg); //Section moved into while since graphics is a list
-					link.setTextLabel(label); //convert one map object per graphic returned by getGraphics()
-					mapConvertedId(map.getId(), link);
-					gpmlPathway.add(link);
-					link.setGeneratedGraphId();
+		if(graphics.isEmpty()) {
+			Logger.log.warn("Skipping entry without graphics: " + map.getId() + ", " + map.getName());
+			return;
+		}
+		
+		if (graphics.size() == 1)
+		{
+			Graphics dg = graphics.get(0);
+			String name = map.getName();
+			String label = dg.getName();
+			
+			if(label.startsWith("TITLE:")) {
+			return; //This is the title of this map, skip it
 			}
+	
+			//Create gpml element
+			PathwayElement pwElm = createDataNode(
+				dg,
+				DataNodeType.GENEPRODUCT,
+				label == null ? "" : label,
+				name == null ? "" : name,
+				BioDataSource.KEGG_GENES
+			);
+
+			//Add comments regarding the source on KEGG and set shape type
+			String e_id = map.getId();
+			String e_type = map.getType();
+			String e_name = map.getName();
+			pwElm.addComment(pwElm.new Comment("Original kegg element: " + e_type + ";" + e_id + ";" + e_name, COMMENT_SOURCE));
+			pwElm.setShapeType(ShapeType.ROUNDED_RECTANGLE);
+		
+			gpmlPathway.add(pwElm);
+			pwElm.setGeneratedGraphId();
+			mapConvertedId(map.getId(), pwElm);
+			mapToReaction(map);
+			}
+		
+		else {
+			Logger.log.trace("Skipping datanode "+map.getName()+" due to mutliple graphics.");
 		}
 	}
 
@@ -682,12 +698,13 @@ public class KeggFormat {
 			String[] ids = name.split(" ");
 
 			//Add all ids as a stack
-			Set<PathwayElement> pwElms = new HashSet<PathwayElement>();
+			List<PathwayElement> pwElms = new ArrayList<PathwayElement>();
 
 			for(int i = 0; i < ids.length; i++) {
 				String id = ids[i];
 				String[] genes = getGenes(id, organism, Type.fromString(entry.getType()));
 
+				
 				for(String gene : genes) {
 					String geneName = dg.getName();
 					if(isUseWebservice()) { //fetch the real name from the webservice
@@ -712,9 +729,8 @@ public class KeggFormat {
 					String e_type = entry.getType();
 					String e_name = entry.getName();
 					pwElm.addComment(pwElm.new Comment(
-						"Original kegg element: " + e_type + ";" + e_id + ";" + e_name,
-						COMMENT_SOURCE
-					));
+						"Original kegg element: " + e_type + ";" + e_id + ";" + e_name, COMMENT_SOURCE));
+					
 					gpmlPathway.add(pwElm);
 					pwElm.setGeneratedGraphId();
 					pwElms.add(pwElm);
@@ -724,11 +740,11 @@ public class KeggFormat {
 				PathwayElement pwElm = createDataNode(
 						dg, //TODO: refactor variable names
 						DataNodeType.GENEPRODUCT,
-						name == null ? "" : name,
+						name == null ? "" : id,
 						label == null ? "" : label,
 						DataSource.getByFullName("Kegg " + entry.getType())
 				);
-
+				
 				gpmlPathway.add(pwElm);
 				pwElm.setGeneratedGraphId();
 				pwElms.add(pwElm);
@@ -736,9 +752,10 @@ public class KeggFormat {
 		} //end for loop
 			
 		if(pwElms.size() > 1) {
-			PathwayElement group = createGroup(name, pwElms);
+			PathwayElement group = createGroup(name, pwElms);  
 			Util.stackElements(pwElms);
 			mapConvertedId(entry.getId(), group);
+			//mapConvertedId(entry.getId(), pwElms.get(0));   // this is for the case when you don't want to create groups
 		} else {
 			PathwayElement pwElm = pwElms.iterator().next();
 			mapConvertedId(entry.getId(), pwElm);

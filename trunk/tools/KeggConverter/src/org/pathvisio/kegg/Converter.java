@@ -70,6 +70,9 @@ public class Converter {
 
 	@Option(name = "-spacing", required = false, usage = "Multiplier for the coordinates to get more spacing between the elements (default = 2).")
 	private double spacing = 2;
+	
+	@Option(name = "-map", required = true, usage = "Prefix for map files, either ec or ko.")
+	private String map;
 
 	public static void main(String[] args) {
 		PreferenceManager.init();
@@ -157,13 +160,13 @@ public class Converter {
 
 		org.pathvisio.model.Pathway gpmlPathway = null;
 
-		if(useMap && (!file.getName().startsWith("ec"))) {
+		if(useMap && (!file.getName().startsWith(map))) {
 			//Try to find the corresponding map file
 			Matcher m = KGML_PATTERN.matcher(file.getName());
 			if(m.matches()) {
 				
 				File mapFile = new File(
-						file.getParentFile(), "ec" + m.group(1) + "." + m.group(2)
+						file.getParentFile(), map + m.group(1) + "." + m.group(2)
 				);
 				if(!mapFile.exists()) {
 					

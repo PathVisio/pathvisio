@@ -205,10 +205,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		int numItemsPerRow = 10;
 		objectsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
 		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular components", numItemsPerRow);
-		objectsPane.addButtons(actions.newMIMShapeActions, "Molecular interaction map", numItemsPerRow);
+		objectsPane.addButtons(actions.newMIMShapeActions, "MIM shapes", numItemsPerRow);
 		objectsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
 		objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
-		objectsPane.addButtons(actions.newMIMInteractionActions, "Molecular interaction map", numItemsPerRow);
+		objectsPane.addButtons(actions.newMIMInteractionActions, "MIM interactions", numItemsPerRow);
 		
 		propertyTable = new JTable(model) {
 
@@ -303,9 +303,11 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				zs=zs.replace("%","");
 				try {
 					double zf = Double.parseDouble(zs);
-					ZoomAction za = new ZoomAction(swingEngine.getEngine(), zf);
-					za.setEnabled(true);
-					za.actionPerformed(e);
+						if(zf > 0){ // Ignore negtive number
+							ZoomAction za = new ZoomAction(swingEngine.getEngine(), zf);
+							za.setEnabled(true);
+							za.actionPerformed(e);
+						}
 				} catch (Exception ex) {
 					// Ignore bad input
 				}

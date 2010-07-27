@@ -250,7 +250,7 @@ public class MainPanelStandalone extends MainPanel
 		addLabel(shapeButton, "Cellular components");
 		addButtons(actions.newCellularComponentActions, shapeButton, numItemsPerRow);
 
-		addLabel(shapeButton, "Molecular interaction map");
+		addLabel(shapeButton, "MIM shapes");
 		addButtons(actions.newMIMShapeActions, shapeButton, numItemsPerRow);
 		
 		// addMenuItems() can be used to display item with label as memu items
@@ -276,7 +276,7 @@ public class MainPanelStandalone extends MainPanel
 		addLabel(lineButton, "Receptor/ligand");
 		addButtons(actions.newRLInteractionActions, lineButton, numItemsPerRow);
 		
-		addLabel(lineButton, "Molecular interaction map");
+		addLabel(lineButton, "MIM interactions");
 		addButtons(actions.newMIMInteractionActions, lineButton, numItemsPerRow);		
 		
 		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);

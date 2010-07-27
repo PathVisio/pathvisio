@@ -262,12 +262,12 @@ public class MainPanelStandalone extends MainPanel
 		//tb.addSeparator();
 		
 		// define the drop-down menu for interactions
-		icon = "newlinemenu.gif";
+		icon = "newinteractionmenu.gif";
 		tooltip = "Select a interaction to draw";
 		DropDownButton lineButton = new DropDownButton(
 				new ImageIcon(Resources.getResourceURL(icon)));
 		lineButton.setToolTipText(tooltip);		
-		itemsDropDown = lineButton;
+		//itemsDropDown = lineButton;
 		
 		numItemsPerRow = 6;		
 		addLabel(lineButton, "Basic interactions");

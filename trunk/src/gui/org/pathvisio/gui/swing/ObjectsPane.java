@@ -33,15 +33,15 @@ import javax.swing.border.Border;
 import org.pathvisio.Engine;
 
 /**
- * A side panel which displays all items.
+ * A side panel which displays all objects.
  */
-public class ItemsPane extends JPanel
+public class ObjectsPane extends JPanel
 {
 	private Engine engine;
 	private SwingEngine swingEngine;
 	private JPanel currentPane;
 
-	public ItemsPane(SwingEngine swingEngine)
+	public ObjectsPane(SwingEngine swingEngine)
 	{
 		this.engine = swingEngine.getEngine();
 		this.swingEngine = swingEngine;

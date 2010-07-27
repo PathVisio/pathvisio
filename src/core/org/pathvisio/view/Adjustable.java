@@ -37,5 +37,4 @@ public interface Adjustable
 	public double getVWidth();
 	
 	public double getVHeight();
-	//public Rectangle2D calculateVOutline();
 }

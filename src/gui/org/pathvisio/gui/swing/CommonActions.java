@@ -111,13 +111,17 @@ public class CommonActions implements ApplicationEventListener {
 
 	public final Action[][] newElementActions;
 	
-	public final Action[] newShapeActions;
-	
-	public final Action[] newInteractionActions;
+	public final Action[] newShapeActions;	
 	
 	public final Action[] newCellularComponentActions;
 	
-	public final Action[] newMolecularInteractionMapActions;
+	public final Action[] newMIMShapeActions;
+	
+	public final Action[] newInteractionActions;
+	
+	public final Action[] newRLInteractionActions;
+	
+	public final Action[] newMIMInteractionActions;
 
 	private final SwingEngine swingEngine;
 
@@ -192,30 +196,35 @@ public class CommonActions implements ApplicationEventListener {
 							new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.OVAL))
 					},
 					new Action[] {
-							new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC))
+							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+									"arrow", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT)
+							),
 					},
-					new Action[] {
-							new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE))
-					},
+					//new Action[] {
+						//	new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC))
+					//},
+					//new Action[] {
+						//	new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE))
+					//},
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.LineTemplate(
 									"tbar", LineStyle.SOLID, LineType.LINE, LineType.TBAR, ConnectorType.STRAIGHT
 							))
 					},
-					new Action[] {
-							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									"ligandround", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND, ConnectorType.STRAIGHT)
-							),
-							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									"receptorround", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND, ConnectorType.STRAIGHT)
-							),
-							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									"ligandsquare", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE, ConnectorType.STRAIGHT)
-							),
-							new NewElementAction(e, new DefaultTemplates.LineTemplate(
-									"receptorsquare", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE, ConnectorType.STRAIGHT)
-							),
-					},
+//					new Action[] {
+//							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+//									"ligandround", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND, ConnectorType.STRAIGHT)
+//							),
+//							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+//									"receptorround", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND, ConnectorType.STRAIGHT)
+//							),
+//							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+//									"ligandsquare", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE, ConnectorType.STRAIGHT)
+//							),
+//							new NewElementAction(e, new DefaultTemplates.LineTemplate(
+//									"receptorsquare", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE, ConnectorType.STRAIGHT)
+//							),
+//					},
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.InteractionTemplate()) },
 					new Action[] {
@@ -223,7 +232,7 @@ public class CommonActions implements ApplicationEventListener {
 
 			};
 		 
-		 // actions for "Shapes" section
+		 // actions for "Basic shapes" section
 		 newShapeActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.RECTANGLE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.OVAL)),
@@ -235,7 +244,7 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)),
 		 };
 		
-		// actions for "Interactions" section
+		// actions for "Basic interactions" section
 		 newInteractionActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
@@ -258,6 +267,10 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "tbar", LineStyle.SOLID, LineType.LINE, LineType.TBAR, ConnectorType.STRAIGHT
 				 )),
+		 };
+		
+		 // actions for "Receptor/ligand interactions" section
+		 newRLInteractionActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "ligandround", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND, ConnectorType.STRAIGHT)
 				 ),
@@ -271,7 +284,7 @@ public class CommonActions implements ApplicationEventListener {
 						 "receptorsquare", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE, ConnectorType.STRAIGHT)
 				 ),
 		 };
-		
+		 
 		 // actions for "Cellular Component" section
 		 newCellularComponentActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.VESICLE)),
@@ -283,8 +296,16 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.PROTEINB)),
 		 };
 		
-		 // actions for "Molecular Interaction Map" section
-		 newMolecularInteractionMapActions = new Action[] {
+		 // actions for "Molecular Interaction Map Shapes" section
+		 newMIMShapeActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_PHOSPHORYLATED_SHAPE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_INTERACTION_SHAPE)),
+				 
+		 };
+		 
+		 // actions for "Molecular Interaction Map Interactions" section
+		 newMIMInteractionActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Necessary stimulation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_NECESSARY_STIMULATION, ConnectorType.STRAIGHT)
 				 ),
@@ -324,10 +345,6 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Gap", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_GAP, ConnectorType.STRAIGHT)
 				 ),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_PHOSPHORYLATED_SHAPE)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_INTERACTION_SHAPE)),
-				 
 		 };
 		
 		saveAction = new SaveAction(se, true, false);

@@ -55,6 +55,7 @@ import org.pathvisio.view.Template;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.ViewActions;
+import org.pathvisio.view.MIMShapes; //lb
 
 /**
  * A collection of {@link Action}s that may be used throughout the program (e.g. in
@@ -109,6 +110,14 @@ public class CommonActions implements ApplicationEventListener {
 	public final Action[] layoutActions;
 
 	public final Action[][] newElementActions;
+	
+	public final Action[] newShapeActions; //lb
+	
+	public final Action[] newInteractionActions; //lb
+	
+	public final Action[] newCellularComponentActions; //lb
+	
+	public final Action[] newMolecularInteractionMapActions; //lb
 
 	private final SwingEngine swingEngine;
 
@@ -211,8 +220,116 @@ public class CommonActions implements ApplicationEventListener {
 							new NewElementAction(e, new DefaultTemplates.InteractionTemplate()) },
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.ReactionTemplate()) },
-			};
 
+			};
+		 
+		 // actions for "Shapes" section
+		 newShapeActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.RECTANGLE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.OVAL)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ROUNDED_RECTANGLE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.TRIANGLE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.PENTAGON)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.HEXAGON)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)),
+		 };
+		
+		// actions for "Interactions" section
+		 newInteractionActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "arrow", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "dashedline", LineStyle.DASHED, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "dashedarrow", LineStyle.DASHED, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "elbow", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.ELBOW)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "curve", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.CURVED)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "tbar", LineStyle.SOLID, LineType.LINE, LineType.TBAR, ConnectorType.STRAIGHT
+				 )),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "ligandround", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_ROUND, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "ligandsquare", LineStyle.SOLID, LineType.LINE, LineType.LIGAND_SQUARE, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "receptorround", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_ROUND, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "receptorsquare", LineStyle.SOLID, LineType.LINE, LineType.RECEPTOR_SQUARE, ConnectorType.STRAIGHT)
+				 ),
+		 };
+		
+		 // actions for "Cellular Component" section
+		 newCellularComponentActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.VESICLE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.CELLA)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.RIBOSOME)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANA)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANB)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANC)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.PROTEINB)),
+		 };
+		
+		 // actions for "Molecular Interaction Map" section
+		 newMolecularInteractionMapActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Necessary stimulation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_NECESSARY_STIMULATION, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Binding", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BINDING, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Conversion", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_CONVERSION, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Stimulation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_STIMULATION, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Modification", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_MODIFICATION, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Catalysis", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_CATALYSIS, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Inhibition", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_INHIBITION, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Cleavage", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_CLEAVAGE, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Covalent bond", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_COVALENT_BOND, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Branching left", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_LEFT, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Branching right", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_RIGHT, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Transcription-translation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_TRANSLATION, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Gap", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_GAP, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_PHOSPHORYLATED_SHAPE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_INTERACTION_SHAPE)),
+				 
+		 };
+		
 		saveAction = new SaveAction(se, true, false);
 		saveAsAction = new SaveAction(se, true, true);
 		standaloneSaveAction = new SaveAction(se, false, false);

@@ -19,6 +19,10 @@ package org.pathvisio.gui.swing;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -39,6 +43,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -60,6 +65,7 @@ import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
+import org.pathvisio.gui.swing.ImageButton;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.Graphics;
@@ -91,6 +97,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	protected JTabbedPane sidebarTabbedPane;
 
 	protected JMenuBar menuBar;
+	
+	protected DropDownButton itemsDropDown; //[lb]
 
 	private JTable propertyTable;
 
@@ -327,13 +335,13 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			} else { //This is the line/receptor sub-menu
 				String icon = "newlinemenu.gif";
 				String tooltip = "Select a line to draw";
-
+				
 				if(submenu.equals("receptors")) { //Next one is receptors
 					icon = "newlineshapemenu.gif";
 					tooltip = "Select a receptor/ligand to draw";
 				} else {
 					submenu = "receptors";
-				}
+				}				
 				DropDownButton lineButton = new DropDownButton(
 						new ImageIcon(Resources.getResourceURL(icon)));
 				lineButton.setToolTipText(tooltip);
@@ -344,7 +352,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				lineButton.setEnabled(false);
 			}
 		}
-
+		
 		tb.addSeparator();
 
 		addToToolbar(actions.layoutActions);
@@ -493,5 +501,90 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public void dispose()
 	{
 		backpagePane.dispose();
+	}
+	
+	/**
+	 * hook of the drop-down menu
+	 */
+	public DropDownButton getItemsDropDown()
+	{
+		return itemsDropDown;
+	}
+	
+	/**
+	 * add section label to the drop-down menu
+	 */
+	public void addLabel(DropDownButton lineButton, String s)
+	{
+		JLabel title = new JLabel(s);
+		title.setForeground(new Color(50,21,110));
+		title.setFont(new Font("sansserif", Font.BOLD, 12));
+		JPanel titlePanel = new JPanel();
+		titlePanel.setBackground(new Color(221,231,238));
+		titlePanel.add(title);		
+		lineButton.addComponent(titlePanel);
+	}
+	
+	/**
+	 * add item buttons to the drop-down menu, multiple items per row
+	 */
+	public void addButtons(Action [] aa, DropDownButton lineButton, int numItemPerRow)
+	{
+		JPanel pane = new JPanel();
+		pane.setBackground(Color.white);
+		pane.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridheight = 1;
+		c.gridwidth = 1;
+		c.fill = c.NONE;
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		
+		final JPopupMenu popup = lineButton.getPopupMenu();
+
+		int i=0;
+		for(Action a : aa) {
+			c.gridx = i%numItemPerRow;
+			c.gridy = i/numItemPerRow;		
+			// clicking a button should cause the popupmenu disappear, any better way to do it?
+			ImageButton button= new ImageButton(a);
+			button.addActionListener(new ActionListener() { 
+				  public void actionPerformed(ActionEvent e) { 
+				    popup.setVisible(false);
+				  } 
+			});
+			pane.add(button,c);
+			i++;
+		}
+
+		// fill the rest spaces using dummy button when there are less than numItemPerRow items, any better way?
+		for(;i < numItemPerRow;i++){
+			c.gridx = i;
+			JButton dummy = new JButton();
+			Dimension dim = new Dimension(25,0);
+			dummy.setPreferredSize(dim);
+			dummy.setContentAreaFilled(false);
+			pane.add(dummy,c);
+		}
+		
+		lineButton.addComponent(pane);
+	}
+	
+	/**
+	 * add item buttons and section label to the drop-down menu
+	 */
+	public void addButtons(Action [] aa, DropDownButton lineButton, int numItemPerRow, String label){
+		addLabel(lineButton,label);
+		addButtons(aa,lineButton,numItemPerRow);
+	}
+	
+	/**
+	 * add items with text to the drop-down menu (e.g. -> arrow)
+	 */
+	public void addMenuItems(Action [] aa, DropDownButton lineButton)
+	{
+		for(Action a : aa) {
+			lineButton.addComponent(new JMenuItem(a));
+		}
 	}
 }

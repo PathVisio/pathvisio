@@ -44,6 +44,11 @@ public class MIMShapes
     public static final LineType MIM_TRANSLATION = LineType.create ("mim-transcription-translation", "Arrow");
     public static final LineType MIM_GAP = LineType.create ("mim-gap", null);
 
+    //lb
+    public static final ShapeType MIM_PHOSPHORYLATED_SHAPE = ShapeType.create ("mim-phosphorylated", null);
+    public static final ShapeType MIM_DEGRADATION_SHAPE = ShapeType.create ("mim-degradation", null);
+    public static final ShapeType MIM_INTERACTION_SHAPE = ShapeType.create ("mim-interaction", null);
+     
     public static void registerShapes()
 	{
 		ShapeRegistry.registerShape ("mim-phosphorylated", getPluggableShape (MIM_PHOSPHORYLATED));
@@ -64,9 +69,9 @@ public class MIMShapes
         ShapeRegistry.registerArrow (MIM_TRANSLATION.getName(), getMIMTranslation(), ArrowShape.FillType.WIRE, ARROWWIDTH + ARROWHEIGHT);
         ShapeRegistry.registerArrow (MIM_GAP.getName(), getMIMGap(), ArrowShape.FillType.OPEN, 10);
 
-        ShapeType.create ("mim-phosphorylated", null);
-		ShapeType.create ("mim-degradation", null);
-		ShapeType.create ("mim-interaction", null);
+        //ShapeType.create ("mim-phosphorylated", null);
+		//ShapeType.create ("mim-degradation", null);
+		//ShapeType.create ("mim-interaction", null);
 	}
 
     private static final int MIM_PHOSPHORYLATED = 0;

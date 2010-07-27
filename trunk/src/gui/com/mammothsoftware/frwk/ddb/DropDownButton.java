@@ -205,8 +205,8 @@ public class DropDownButton extends JButton implements ActionListener {
         JPopupMenu popup = getPopupMenu();
         popup.show(this, 0, this.getHeight());
     }
-
-   protected JPopupMenu getPopupMenu() { return popup; }
+   
+   public JPopupMenu getPopupMenu() { return popup; }
 
    private static class DownArrow implements Icon {
 

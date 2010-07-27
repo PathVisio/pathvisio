@@ -216,7 +216,7 @@ public class MainPanelStandalone extends MainPanel
 			} else { //This is the line/receptor sub-menu
 				String icon = "newlinemenu.gif";
 				String tooltip = "Select a line to draw";
-
+				
 				if(submenu.equals("receptors")) { //Next one is receptors
 					icon = "newlineshapemenu.gif";
 					tooltip = "Select a receptor/ligand to draw";
@@ -226,12 +226,41 @@ public class MainPanelStandalone extends MainPanel
 				DropDownButton lineButton = new DropDownButton(new ImageIcon(
 						Resources.getResourceURL(icon)));
 				lineButton.setToolTipText(tooltip);
+				
 				for(Action a : aa) {
 					lineButton.addComponent(new JMenuItem(a));
 				}
 				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
+				//lineButton.setEnabled(false);
 			}
 		}
+		
+		// define the drop-down menu 
+		String icon = "newitems.gif";
+		String tooltip = "Select a item to draw";
+		DropDownButton lineButton = new DropDownButton(
+				new ImageIcon(Resources.getResourceURL(icon)));
+		lineButton.setToolTipText(tooltip);		
+		itemsDropDown = lineButton;
+		
+		int numItemsPerRow = 6;
+		addLabel(lineButton, "Shapes");
+		addButtons(actions.newShapeActions,lineButton,numItemsPerRow);
+		
+		addLabel(lineButton, "Interactions");
+		addButtons(actions.newInteractionActions,lineButton,numItemsPerRow);
+
+		addLabel(lineButton, "Cellular components");
+		addButtons(actions.newCellularComponentActions,lineButton,numItemsPerRow);
+
+		addLabel(lineButton, "Molecular interaction maps");
+		addButtons(actions.newMolecularInteractionMapActions,lineButton,numItemsPerRow);
+		
+		// addMenuItems() can be used to display item with label as memu items
+		//addMenuItems(actions.newMolecularInteractionMapActions,lineButton);
+		
+		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
+		//lineButton.setEnabled(false);
 
 		tb.addSeparator();
 

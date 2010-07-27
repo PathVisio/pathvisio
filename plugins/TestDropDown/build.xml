@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<project name="TestDropDownPlugin" default="install" basedir=".">
+  
+  <property name="base.name" value="TestDropDown"/>
+  <property name="jar.name" value="${base.name}.jar"/>
+  <property name="pathvisio.dir" value="../.."/>
+
+  <property environment="env"/>
+  <property name="install.dir" value="${env.HOME}/.PathVisio/plugins/"/>
+  
+  <path id="project.class.path">
+	<path id="project.class.path">
+		<pathelement location="${pathvisio.dir}/pathvisio.jar"/>
+		<fileset dir="${pathvisio.dir}/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+  </path>
+  
+  <target name="prepare">
+	<mkdir dir="build"/>
+
+	<fail message="Can't find ${pathvisio.dir}/pathvisio.jar, please specify the path to pathvisio with -Dpathvisio.dir=....">
+		<condition>
+			<not><available file="${pathvisio.dir}/pathvisio.jar"/></not>
+		</condition>
+	</fail>
+  </target>
+  
+  <target name="build" depends="prepare">
+	<javac srcdir="."
+		   includes="**"
+		   debug="true"
+		   destdir="build">
+	  <classpath refid="project.class.path"/>
+	</javac>
+  </target>
+  
+  <target name="jar" depends="build">
+	<jar jarfile="${jar.name}">
+	<manifest>
+		<attribute name="PathVisio-Plugin-Class" value="org.pathvisio.plugins.TestDropDownPlugin"/>
+	</manifest>
+	  <fileset dir="build" includes="**/*.class"/>
+	</jar>
+  </target>
+
+  <target name="install" depends="jar">
+	<copy file="${jar.name}"
+		  toDir="${install.dir}"/>
+  </target>
+
+  <target name="clean">
+	<delete dir="build"/>
+  </target>
+
+  <target name="dist-clean" depends="clean">
+	<delete file="${jar.name}"/>
+  </target>
+
+</project>

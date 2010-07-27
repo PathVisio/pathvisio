@@ -239,6 +239,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		});
 
 		sidebarTabbedPane = new JTabbedPane();
+		//sidebarTabbedPane.addTab("Items", null);
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );
 		sidebarTabbedPane.addTab( "Backpage", new JScrollPane(backpagePane) );
 

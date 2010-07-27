@@ -235,34 +235,55 @@ public class MainPanelStandalone extends MainPanel
 			}
 		}
 		
-		// define the drop-down menu 
+		// define the drop-down menu for shapes 
 		String icon = "newitems.gif";
-		String tooltip = "Select a item to draw";
+		String tooltip = "Select a shape to draw";
+		DropDownButton shapeButton = new DropDownButton(
+				new ImageIcon(Resources.getResourceURL(icon)));
+		shapeButton.setToolTipText(tooltip);		
+		itemsDropDown = shapeButton;
+		
+		int numItemsPerRow = 6;
+		addLabel(shapeButton, "Basic shapes");
+		addButtons(actions.newShapeActions, shapeButton, numItemsPerRow);		
+
+		addLabel(shapeButton, "Cellular components");
+		addButtons(actions.newCellularComponentActions, shapeButton, numItemsPerRow);
+
+		addLabel(shapeButton, "Molecular interaction map");
+		addButtons(actions.newMIMShapeActions, shapeButton, numItemsPerRow);
+		
+		// addMenuItems() can be used to display item with label as memu items
+		//addMenuItems(actions.newMolecularInteractionMapActions, shapeButton);
+		
+		addToToolbar(shapeButton, TB_GROUP_SHOW_IF_EDITMODE);
+		//shapeButton.setEnabled(false);
+
+		//tb.addSeparator();
+		
+		// define the drop-down menu for interactions
+		icon = "newlinemenu.gif";
+		tooltip = "Select a interaction to draw";
 		DropDownButton lineButton = new DropDownButton(
 				new ImageIcon(Resources.getResourceURL(icon)));
 		lineButton.setToolTipText(tooltip);		
 		itemsDropDown = lineButton;
 		
-		int numItemsPerRow = 6;
-		addLabel(lineButton, "Shapes");
-		addButtons(actions.newShapeActions,lineButton,numItemsPerRow);
-		
-		addLabel(lineButton, "Interactions");
-		addButtons(actions.newInteractionActions,lineButton,numItemsPerRow);
+		numItemsPerRow = 6;		
+		addLabel(lineButton, "Basic interactions");
+		addButtons(actions.newInteractionActions, lineButton, numItemsPerRow);
 
-		addLabel(lineButton, "Cellular components");
-		addButtons(actions.newCellularComponentActions,lineButton,numItemsPerRow);
-
-		addLabel(lineButton, "Molecular interaction maps");
-		addButtons(actions.newMolecularInteractionMapActions,lineButton,numItemsPerRow);
+		addLabel(lineButton, "Receptor/ligand");
+		addButtons(actions.newRLInteractionActions, lineButton, numItemsPerRow);
 		
-		// addMenuItems() can be used to display item with label as memu items
-		//addMenuItems(actions.newMolecularInteractionMapActions,lineButton);
+		addLabel(lineButton, "Molecular interaction map");
+		addButtons(actions.newMIMInteractionActions, lineButton, numItemsPerRow);		
 		
 		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
 		//lineButton.setEnabled(false);
 
 		tb.addSeparator();
+		
 
 		addToToolbar(actions.layoutActions);
 	}

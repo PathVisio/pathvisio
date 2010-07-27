@@ -16,45 +16,16 @@
 //
 package org.pathvisio.plugins;
 
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JToolBar;
-
-//import org.pathvisio.gui.swing.PvDesktop;
-//import org.pathvisio.plugin.Plugin;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.net.URL;
-
 import javax.swing.Action;
 
-import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.gui.swing.CommonActions.NewElementAction;
 import org.pathvisio.model.ConnectorType;
-import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.plugin.Plugin;
-import org.pathvisio.util.Resources;
 import org.pathvisio.view.DefaultTemplates;
-import org.pathvisio.view.MIMShapes;
-import org.pathvisio.view.Template;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
-
-import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 /**
  * A example of adding user-defined shapes (in MyShapes.java) to the drop-down menu.

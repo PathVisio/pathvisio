@@ -141,4 +141,8 @@ public class VPoint implements Adjustable
 	{
 		return handle;
 	}
+	
+	public double getVWidth() { return 0;  }
+
+	public double getVHeight() { return 0;  }
 }

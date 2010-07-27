@@ -89,9 +89,9 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		else if (this instanceof State)
 		{
-			handleNE = new Handle(Handle.Freedom.FREE, this, this);
+			handleNE = new Handle(Handle.Freedom.FREER, this, this);
 			handleSE = new Handle(Handle.Freedom.FREE, this, this);
-			handleSW = new Handle(Handle.Freedom.FREE, this, this);
+			handleSW = new Handle(Handle.Freedom.FREER, this, this);
 			handleNW = new Handle(Handle.Freedom.FREE, this, this);
 			handleNE.setCursorHint(Cursor.NE_RESIZE_CURSOR);
 			handleSE.setCursorHint(Cursor.SE_RESIZE_CURSOR);
@@ -110,9 +110,9 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			handleS = new Handle(Handle.Freedom.Y, this, this);
 			handleW = new Handle(Handle.Freedom.X, this, this);
 
-			handleNE = new Handle(Handle.Freedom.FREE, this, this);
+			handleNE = new Handle(Handle.Freedom.FREER, this, this);
 			handleSE = new Handle(Handle.Freedom.FREE, this, this);
-			handleSW = new Handle(Handle.Freedom.FREE, this, this);
+			handleSW = new Handle(Handle.Freedom.FREER, this, this);
 			handleNW = new Handle(Handle.Freedom.FREE, this, this);
 
 			handleN.setCursorHint(Cursor.N_RESIZE_CURSOR);

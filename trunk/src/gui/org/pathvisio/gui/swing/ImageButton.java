@@ -9,7 +9,11 @@ import java.awt.event.MouseListener;
 import javax.swing.Action;
 import javax.swing.JButton;
 
-
+/**
+ * this is the buttons on the drop-down panel
+ *
+ * @author bing
+ */
 public class ImageButton extends JButton{
 	
 	public ImageButton(Action a){

@@ -44,8 +44,10 @@ public class Handle extends VPathwayElement
 	 * the life of a Handle.
 	 */
 	enum Freedom {
-		/** a FREE handle can move to any location on the canvas */
+		/** a FREE handle can move to any location on the canvas, it move diagonally when SHIFT is pressed */
 		FREE,
+		/** a FREER handle can move to any location on the canvas, it move diagonally (perpendicular to XY) when SHIFT is pressed */
+		FREER,
 		/** an X handle can only move horizontally */
 		X,
 		/** an Y handle can only move vertically */
@@ -233,11 +235,13 @@ public class Handle extends VPathwayElement
 	   It is the responsibility of the {@link Adjustable} to
 	   update the position of this Handle again.
 	 */
-	public void vMoveTo (double vnx, double vny)
+	public void vMoveTo(double vnx, double vny)
 	{
 		markDirty();
-
-		if(freedom != Freedom.FREE && freedom != Freedom.ROTATION) {
+		
+		if((freedom != Freedom.FREE || canvas.isSnapToAngle()) 
+				&& (freedom != Freedom.FREER || canvas.isSnapToAngle()) 
+				&& freedom != Freedom.ROTATION ) {
 			Point v = new Point(0,0);
 			Rectangle2D b = adjustable.getVBounds();
 			Point base = new Point (b.getCenterX(), b.getCenterY());
@@ -257,11 +261,36 @@ public class Handle extends VPathwayElement
 			{
 				v = new Point (b.getHeight(), -b.getWidth());
 			}
+			if (freedom == Freedom.FREE)
+			{
+				v = new Point (adjustable.getVWidth(), adjustable.getVHeight());
+			}
+			else if (freedom == Freedom.FREER)
+			{
+				v = new Point (adjustable.getVWidth(), -adjustable.getVHeight());
+			}
 			Point yr = LinAlg.rotate(v, -rotation);
 			Point prj = LinAlg.project(base, new Point(vnx, vny), yr);
 			vnx = prj.x; vny = prj.y;
 		}
 
+		/*
+		if ((freedom == Freedom.FREE || freedom == Freedom.FREER) && canvas.isSnapToAngle())
+		{
+			// powerpoint like handler
+			double w = adjustable.getVWidth();
+			double h = adjustable.getVHeight();
+			Rectangle2D b = adjustable.getVBounds();
+			Point base = new Point (b.getCenterX()-w/2, b.getCenterY()-h/2);
+			double ratio = w/h; 
+			System.out.println("["+base.x+" "+ base.y+"] ratio="+ratio);
+			if((vnx - base.x) / (vny - base.y) < ratio) {
+				vnx = (vny - base.y) * ratio + base.x;
+			} else {
+				vny = (vnx - base.x) / ratio + base.y; 
+			}	
+		}		
+		*/
 		adjustable.adjustToHandle(this, vnx, vny);
 		markDirty();
 	}

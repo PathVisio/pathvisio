@@ -32,4 +32,10 @@ public interface Adjustable
 
 	/** only needs to be implemented for Handles that are not type Handle.DIRECTION_FREE */
 	public Rectangle2D getVBounds();
+	
+	/** only needs to be implemented for Handles that are not type Handle.DIRECTION_FREE */
+	public double getVWidth();
+	
+	public double getVHeight();
+	//public Rectangle2D calculateVOutline();
 }

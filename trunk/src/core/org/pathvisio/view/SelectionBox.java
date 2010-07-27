@@ -592,4 +592,8 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	protected int getZOrder() {
 		return VPathway.ZORDER_SELECTIONBOX;
 	}
+	
+	public double getVWidth() { return vFromM(mWidth);  }
+
+	public double getVHeight() { return vFromM(mHeight);  }
 }

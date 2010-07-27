@@ -16,6 +16,8 @@
 //
 package org.pathvisio.plugins;
 
+import com.mammothsoftware.frwk.ddb.DropDownButton;
+
 import javax.swing.Action;
 
 import org.pathvisio.Engine;
@@ -26,6 +28,7 @@ import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.plugin.Plugin;
 import org.pathvisio.view.DefaultTemplates;
+
 
 /**
  * A example of adding user-defined shapes (in MyShapes.java) to the drop-down menu.
@@ -54,7 +57,10 @@ public class TestDropDownPlugin implements Plugin
 		DropDownButton lineButton = desktop.getSwingEngine().getApplicationPanel().getItemsDropDown();
 
 		// add buttons to the drop-down menu
-		desktop.getSwingEngine().getApplicationPanel().addButtons(aa, lineButton, 6, "Test");
+		desktop.getSwingEngine().getApplicationPanel().addButtons(aa, lineButton, 6, "User Defined");
+		
+		// add buttons to the objects tab
+		desktop.getSwingEngine().getApplicationPanel().getObjectsPane().addButtons(aa, "User Defined", 10);
 	}
 
 	public void done() {}	

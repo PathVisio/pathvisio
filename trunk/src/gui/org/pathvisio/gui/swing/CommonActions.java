@@ -111,13 +111,13 @@ public class CommonActions implements ApplicationEventListener {
 
 	public final Action[][] newElementActions;
 	
-	public final Action[] newShapeActions; //lb
+	public final Action[] newShapeActions;
 	
-	public final Action[] newInteractionActions; //lb
+	public final Action[] newInteractionActions;
 	
-	public final Action[] newCellularComponentActions; //lb
+	public final Action[] newCellularComponentActions;
 	
-	public final Action[] newMolecularInteractionMapActions; //lb
+	public final Action[] newMolecularInteractionMapActions;
 
 	private final SwingEngine swingEngine;
 

@@ -98,7 +98,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	protected JMenuBar menuBar;
 	
-	protected DropDownButton itemsDropDown; //[lb]
+	protected DropDownButton itemsDropDown;
 
 	private JTable propertyTable;
 
@@ -547,10 +547,11 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 			c.gridx = i%numItemPerRow;
 			c.gridy = i/numItemPerRow;		
 			// clicking a button should cause the popupmenu disappear, any better way to do it?
-			ImageButton button= new ImageButton(a);
+			final ImageButton button= new ImageButton(a);
 			button.addActionListener(new ActionListener() { 
-				  public void actionPerformed(ActionEvent e) { 
-				    popup.setVisible(false);
+				  public void actionPerformed(ActionEvent e) {
+					  button.setContentAreaFilled(false);
+					  popup.setVisible(false);
 				  } 
 			});
 			pane.add(button,c);

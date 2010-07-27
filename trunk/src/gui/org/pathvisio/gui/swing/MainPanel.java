@@ -99,6 +99,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	protected JMenuBar menuBar;
 	
 	protected DropDownButton itemsDropDown;
+	
+	private ItemsPane itemsPane;
 
 	private JTable propertyTable;
 
@@ -195,7 +197,16 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		pathwayScrollPane = new JScrollPane();
 		// set background color when no VPathway is loaded, override l&f because it is usually white.
 		pathwayScrollPane.getViewport().setBackground(Color.LIGHT_GRAY);
-
+		
+		itemsPane = new ItemsPane(swingEngine);
+		int numItemsPerRow = 10;
+		itemsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
+		itemsPane.addButtons(actions.newCellularComponentActions, "Cellular components", numItemsPerRow);
+		itemsPane.addButtons(actions.newMIMShapeActions, "Molecular interaction map", numItemsPerRow);
+		itemsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
+		itemsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
+		itemsPane.addButtons(actions.newMIMInteractionActions, "Molecular interaction map", numItemsPerRow);
+		
 		propertyTable = new JTable(model) {
 
 			public TableCellRenderer getCellRenderer(int row, int column) {
@@ -239,7 +250,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		});
 
 		sidebarTabbedPane = new JTabbedPane();
-		//sidebarTabbedPane.addTab("Items", null);
+		sidebarTabbedPane.addTab("Items", itemsPane);
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );
 		sidebarTabbedPane.addTab( "Backpage", new JScrollPane(backpagePane) );
 

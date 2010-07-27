@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing;
 
+import com.mammothsoftware.frwk.ddb.DropDownButton;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -65,7 +67,6 @@ import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
-import org.pathvisio.gui.swing.ImageButton;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.Graphics;
@@ -76,7 +77,9 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 
-import com.mammothsoftware.frwk.ddb.DropDownButton;
+
+
+
 
 /**
  * this is the contents of the main window in the WikiPathways applet,
@@ -100,7 +103,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	
 	protected DropDownButton itemsDropDown;
 	
-	private ItemsPane itemsPane;
+	private ObjectsPane objectsPane;
 
 	private JTable propertyTable;
 
@@ -198,14 +201,14 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		// set background color when no VPathway is loaded, override l&f because it is usually white.
 		pathwayScrollPane.getViewport().setBackground(Color.LIGHT_GRAY);
 		
-		itemsPane = new ItemsPane(swingEngine);
+		objectsPane = new ObjectsPane(swingEngine);
 		int numItemsPerRow = 10;
-		itemsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
-		itemsPane.addButtons(actions.newCellularComponentActions, "Cellular components", numItemsPerRow);
-		itemsPane.addButtons(actions.newMIMShapeActions, "Molecular interaction map", numItemsPerRow);
-		itemsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
-		itemsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
-		itemsPane.addButtons(actions.newMIMInteractionActions, "Molecular interaction map", numItemsPerRow);
+		objectsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
+		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular components", numItemsPerRow);
+		objectsPane.addButtons(actions.newMIMShapeActions, "Molecular interaction map", numItemsPerRow);
+		objectsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
+		objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
+		objectsPane.addButtons(actions.newMIMInteractionActions, "Molecular interaction map", numItemsPerRow);
 		
 		propertyTable = new JTable(model) {
 
@@ -250,7 +253,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		});
 
 		sidebarTabbedPane = new JTabbedPane();
-		sidebarTabbedPane.addTab("Items", itemsPane);
+		sidebarTabbedPane.addTab("Objects", objectsPane);
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );
 		sidebarTabbedPane.addTab( "Backpage", new JScrollPane(backpagePane) );
 
@@ -513,6 +516,14 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public void dispose()
 	{
 		backpagePane.dispose();
+	}
+
+	/**
+	 * hook of the objects tab
+	 */
+	public ObjectsPane getObjectsPane()
+	{
+		return objectsPane;
 	}
 	
 	/**

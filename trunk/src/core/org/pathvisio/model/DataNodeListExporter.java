@@ -149,7 +149,7 @@ public class DataNodeListExporter implements PathwayExporter {
 	 */
 	protected void printHeaders(PrintStream out) {
 		//print headers
-		out.println("ID\tDatabase");
+		out.println("Identifier\tDatabase");
 	}
 
 	private boolean checkString(String string) {

@@ -227,7 +227,7 @@ public class PropertyView implements Comparable<PropertyView> {
 		TypeHandler handler = getTypeHandler();
 		if (handler != null) {
 			if (handler instanceof ContextSensitiveEditor) {
-				((ContextSensitiveEditor)handler).updateEditor(swingEngine, vPathway.getPathwayModel(), this);
+				((ContextSensitiveEditor)handler).updateEditor(swingEngine, elements, vPathway.getPathwayModel(), this);
 			}
 			return handler.getValueEditor();
 		}

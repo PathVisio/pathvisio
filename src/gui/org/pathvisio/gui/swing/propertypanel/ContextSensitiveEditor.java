@@ -15,7 +15,10 @@
 // limitations under the License.
 package org.pathvisio.gui.swing.propertypanel;
 
+import java.util.Collection;
+
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.gui.swing.SwingEngine;
 
 /**
@@ -37,5 +40,5 @@ public interface ContextSensitiveEditor {
 	 * @param pathway the current pathway
 	 * @param propHandler the PropertyHandler containing the elements whose properties are being edited
 	 */
-	void updateEditor(SwingEngine swingEngine, Pathway pathway, PropertyView propHandler);
+	void updateEditor(SwingEngine swingEngine, Collection<PathwayElement> elements, Pathway pathway, PropertyView propHandler);
 }

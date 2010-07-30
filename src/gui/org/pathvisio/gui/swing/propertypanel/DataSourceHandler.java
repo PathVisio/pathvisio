@@ -15,8 +15,12 @@
 // limitations under the License.
 package org.pathvisio.gui.swing.propertypanel;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Comparator;
@@ -30,6 +34,8 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableCellEditor;
 
+import org.pathvisio.model.DataNodeType;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.StaticPropertyType;
 import org.pathvisio.model.Pathway;
@@ -39,8 +45,6 @@ import org.bridgedb.bio.Organism;
 
 /**
  * This class knows how to handle a datasource, which is context sensitive and needs to be updated before use.
- *
- * @author Mark Woon
  */
 public class DataSourceHandler extends DefaultCellEditor implements ContextSensitiveEditor, TableCellRenderer,
 		TypeHandler {
@@ -57,17 +61,76 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		renderer = new JComboBox();
 	}
 
-
 	//-- ContextSensitiveEditor methods --//
 
-	public void updateEditor(SwingEngine swingEngine, Pathway pathway, PropertyView propHandler) {
+	//TODO: make part of org.bridgedb.DataSource
+	/**
+	 * returns a filtered subset of available datasources.
+	 * @param type Filter for specified type. If null, don't filter on primary-ness.
+	 * @param o Filter for specified organism. If null, don't filter on organism.
+	 * @return filtered set.
+	 */
+	private static Set<DataSource> getFilteredSetAlt (String[] type, Object o)
+	{
+		final Set<DataSource> result = new HashSet<DataSource>();
+		final Set<String> types = new HashSet<String>(Arrays.asList(type));
+		for (DataSource ds : DataSource.getDataSources())
+		{
+			System.out.println (ds);
+			if (
+					(type == null || types.contains(ds.getType())) &&
+					(o == null || ds.getOrganism() == null || o == ds.getOrganism())
+				)
+			{
+				result.add (ds);
+			}
+		}
+		return result;
+	}
 
+	private static final Map<String, String[]> DSTYPE_BY_DNTYPE = new HashMap<String, String[]>();
+	static
+	{
+		DSTYPE_BY_DNTYPE.put (DataNodeType.UNKOWN.getName(), null);
+		DSTYPE_BY_DNTYPE.put (DataNodeType.METABOLITE.getName(), new String[] {"metabolite"});
+		DSTYPE_BY_DNTYPE.put (DataNodeType.COMPLEX.getName(), null);
+		DSTYPE_BY_DNTYPE.put (DataNodeType.PATHWAY.getName(), new String[] {"pathway"});
+		DSTYPE_BY_DNTYPE.put (DataNodeType.PROTEIN.getName(), new String[] {"gene", "protein"});
+		DSTYPE_BY_DNTYPE.put (DataNodeType.GENEPRODUCT.getName(), new String[] {"gene", "protein"});
+		DSTYPE_BY_DNTYPE.put (DataNodeType.RNA.getName(), new String[] {"gene", "protein"});
+	}
+
+	@Override
+	public void updateEditor(SwingEngine swingEngine, Collection<PathwayElement> elements,
+			Pathway pathway, PropertyView propHandler)
+	{
+		boolean first = true;
+		String dnType = null;
+		for (PathwayElement element : elements)
+		{
+			if (first)
+			{
+				dnType = element.getDataNodeType();
+				first = false;
+			}
+			else
+			{
+				if (dnType != element.getDataNodeType())  // mix of types
+					dnType = null;
+			}
+		}
+		
 		SortedSet<DataSource> dataSources = new TreeSet<DataSource>(new Comparator<DataSource>() {
 			public int compare(DataSource arg0, DataSource arg1) {
 				return ("" + arg0.getFullName()).toLowerCase().compareTo(("" + arg1.getFullName()).toLowerCase());
 			}
 		});
-		dataSources.addAll(DataSource.getFilteredSet(true, null, Organism.fromLatinName(pathway.getMappInfo().getOrganism())));
+		
+		String[] dsType = null; // null is default: no filtering
+		if (DSTYPE_BY_DNTYPE.containsKey(dnType)) dsType = DSTYPE_BY_DNTYPE.get(dnType);
+
+		dataSources.addAll(getFilteredSetAlt(dsType, 
+				Organism.fromLatinName(pathway.getMappInfo().getOrganism())));
 
 		if (isDifferent(dataSources)) {
 			renderer.removeAllItems();
@@ -149,4 +212,5 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		editor.setSelectedItem(value2label.get(value));
 		return editor;
 	}
+
 }

@@ -77,7 +77,6 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		if (type != null) types.addAll(Arrays.asList(type));
 		for (DataSource ds : DataSource.getDataSources())
 		{
-			System.out.println (ds);
 			if (
 					(primary == null || primary == ds.isPrimary()) &&
 					(type == null || types.contains(ds.getType())) &&

@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing.propertypanel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Component;
+import java.util.Collection;
 
 import javax.swing.JButton;
 import javax.swing.AbstractCellEditor;
@@ -34,8 +35,6 @@ import org.pathvisio.gui.swing.SwingEngine;
 
 /**
  * This class knows how to edit comments.
- *
- * @author Mark Woon
  */
 public class CommentsHandler extends AbstractCellEditor implements ContextSensitiveEditor, TableCellEditor, TypeHandler, ActionListener {
 	private static final String BUTTON_LABEL = "View/edit comments";
@@ -75,8 +74,10 @@ public class CommentsHandler extends AbstractCellEditor implements ContextSensit
 
 	//-- ContextSensitiveEditor methods --//
 
-	public void updateEditor(SwingEngine aSwingEngine, Pathway pathway, PropertyView propHandler) {
-
+	@Override
+	public void updateEditor(SwingEngine aSwingEngine, Collection<PathwayElement> elements,
+			Pathway pathway, PropertyView propHandler)
+	{
 		// can only edit comments for a single item at a time
 		canEdit = propHandler.elements.size() == 1;
 		swingEngine = aSwingEngine;
@@ -111,4 +112,5 @@ public class CommentsHandler extends AbstractCellEditor implements ContextSensit
 		}
 		fireEditingCanceled();  // always fire - PathwayElementDialog saves data itself
 	}
+
 }

@@ -58,6 +58,8 @@ import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
+import org.pathvisio.gui.swing.propertypanel.DataSourceHandler;
+import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.PermissiveComboBox;
@@ -77,17 +79,20 @@ public class DataNodeDialog extends PathwayElementDialog {
 	CompleterQueryTextField symText;
 	CompleterQueryTextField idText;
 	private PermissiveComboBox dbCombo;
+	private PermissiveComboBox typeCombo;
 	private DataSourceModel dsm;
 
 	public void refresh() {
 		super.refresh();
 		symText.setText(getInput().getTextLabel());
 		idText.setText(getInput().getGeneID());
-//		if(input.getDataSource() != null) {
-			dsm.setSelectedItem(input.getDataSource());
-//		} else {
-//			dsm.setSelectedIndex(-1);
-//		}
+		String dnType = getInput().getDataNodeType();
+		typeCombo.setSelectedItem(DataNodeType.byName(dnType));
+		String[] dsType = null; // null is default: no filtering
+		if (DataSourceHandler.DSTYPE_BY_DNTYPE.containsKey(dnType)) dsType = 
+			DataSourceHandler.DSTYPE_BY_DNTYPE.get(dnType);
+		dsm.setTypeFilter(dsType);
+		dsm.setSelectedItem(input.getDataSource());
 		pack();
 	}
 
@@ -97,6 +102,15 @@ public class DataNodeDialog extends PathwayElementDialog {
 		if (sym == null || sym.equals ("")) sym = ref.getId();
 		symText.setText(sym);
 		idText.setText(ref.getId());
+		String type = ref.getDataSource().getType();
+		if ("metabolite".equals(type))
+			typeCombo.setSelectedItem(DataNodeType.METABOLITE);
+		else if ("gene".equals(type))
+			typeCombo.setSelectedItem(DataNodeType.GENEPRODUCT);
+		else if ("protein".equals(type))
+			typeCombo.setSelectedItem(DataNodeType.PROTEIN);
+		else if ("pathway".equals(type))
+			typeCombo.setSelectedItem(DataNodeType.PATHWAY);
 		dsm.setSelectedItem(ref.getDataSource());
 	}
 
@@ -236,7 +250,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		JLabel symLabel = new JLabel("Text label");
 		JLabel idLabel = new JLabel("Identifier");
 		JLabel dbLabel = new JLabel("Database");
-
+		JLabel typeLabel = new JLabel ("Biological Type");
 		symText = new CompleterQueryTextField(new OptionProvider() {
 			public List<String> provideOptions(String text) {
 				if(text == null) return Collections.emptyList();
@@ -278,6 +292,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		dsm.setPrimaryFilter(true);
 		dsm.setSpeciesFilter(swingEngine.getCurrentOrganism());
 		dbCombo = new PermissiveComboBox(dsm);
+		typeCombo = new PermissiveComboBox(DataNodeType.getValues());
 
 		GridBagConstraints c = new GridBagConstraints();
 		c.ipadx = c.ipady = 5;
@@ -286,12 +301,14 @@ public class DataNodeDialog extends PathwayElementDialog {
 		c.gridx = 0;
 		c.gridy = GridBagConstraints.RELATIVE;
 		fieldPanel.add(symLabel, c);
+		fieldPanel.add(typeLabel, c);
 		fieldPanel.add(idLabel, c);
 		fieldPanel.add(dbLabel, c);
 		c.gridx = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
 		fieldPanel.add(symText, c);
+		fieldPanel.add(typeCombo, c);
 		fieldPanel.add(idText, c);
 		fieldPanel.add(dbCombo, c);
 
@@ -327,16 +344,18 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public void intervalRemoved(ListDataEvent arg0) { }
 		});
 
-//		dbCombo.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				DataSource item = (DataSource)dbCombo.getSelectedItem();
-//				getInput().setDataSource(item);
-//			}
-//		});
+		typeCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DataNodeType item = (DataNodeType)typeCombo.getSelectedItem();
+				getInput().setDataNodeType(item);
+				refresh();
+			}
+		});
 
 		symText.setEnabled(!readonly);
 		idText.setEnabled(!readonly);
 		dbCombo.setEnabled(!readonly);
+		typeCombo.setEnabled(!readonly);
 
 		parent.add("Annotation", panel);
 		parent.setSelectedComponent(panel);

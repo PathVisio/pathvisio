@@ -70,14 +70,16 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 	 * @param o Filter for specified organism. If null, don't filter on organism.
 	 * @return filtered set.
 	 */
-	private static Set<DataSource> getFilteredSetAlt (String[] type, Object o)
+	public static Set<DataSource> getFilteredSetAlt (Boolean primary, String[] type, Object o)
 	{
 		final Set<DataSource> result = new HashSet<DataSource>();
-		final Set<String> types = new HashSet<String>(Arrays.asList(type));
+		final Set<String> types = new HashSet<String>();
+		if (type != null) types.addAll(Arrays.asList(type));
 		for (DataSource ds : DataSource.getDataSources())
 		{
 			System.out.println (ds);
 			if (
+					(primary == null || primary == ds.isPrimary()) &&
 					(type == null || types.contains(ds.getType())) &&
 					(o == null || ds.getOrganism() == null || o == ds.getOrganism())
 				)
@@ -88,7 +90,7 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		return result;
 	}
 
-	private static final Map<String, String[]> DSTYPE_BY_DNTYPE = new HashMap<String, String[]>();
+	public static final Map<String, String[]> DSTYPE_BY_DNTYPE = new HashMap<String, String[]>();
 	static
 	{
 		DSTYPE_BY_DNTYPE.put (DataNodeType.UNKOWN.getName(), null);
@@ -129,7 +131,7 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		String[] dsType = null; // null is default: no filtering
 		if (DSTYPE_BY_DNTYPE.containsKey(dnType)) dsType = DSTYPE_BY_DNTYPE.get(dnType);
 
-		dataSources.addAll(getFilteredSetAlt(dsType, 
+		dataSources.addAll(getFilteredSetAlt(true, dsType, 
 				Organism.fromLatinName(pathway.getMappInfo().getOrganism())));
 
 		if (isDifferent(dataSources)) {

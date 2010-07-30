@@ -27,6 +27,7 @@ import javax.swing.event.ListDataListener;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.bio.Organism;
+import org.pathvisio.gui.swing.propertypanel.DataSourceHandler;
 
 /**
  * Stick this into a ComboBox to let the user
@@ -113,7 +114,7 @@ public class DataSourceModel implements ComboBoxModel
 	private void initItems()
 	{
 		items = new ArrayList<DataSource>();
-		items.addAll (DataSource.getFilteredSet(primary, metabolite, organism));
+		items.addAll (DataSourceHandler.getFilteredSetAlt(primary, type, organism));
 		Collections.sort (items, new Comparator<DataSource>()
 		{
 			public int compare(DataSource arg0, DataSource arg1)
@@ -138,7 +139,7 @@ public class DataSourceModel implements ComboBoxModel
 	}
 
 	private Organism organism = null;
-	private Boolean metabolite = null;
+	private String[] type = null;
 	private Boolean primary = null;
 
 	public void setSpeciesFilter (Organism aOrganism)
@@ -149,13 +150,19 @@ public class DataSourceModel implements ComboBoxModel
 
 	public void setMetaboliteFilter (Boolean aMetabolite)
 	{
-		metabolite = aMetabolite;
+		type = new String[] { "metabolite" };
 		initItems();
 	}
 
 	public void setPrimaryFilter (Boolean aPrimary)
 	{
 		primary = aPrimary;
+		initItems();
+	}
+
+	public void setTypeFilter (String [] aType)
+	{
+		type = aType;
 		initItems();
 	}
 }

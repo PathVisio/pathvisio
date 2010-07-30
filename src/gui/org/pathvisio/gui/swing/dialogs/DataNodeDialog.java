@@ -38,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -56,6 +57,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.DataSourceModel;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.completer.CompleterQueryTextArea;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
 import org.pathvisio.gui.swing.propertypanel.DataSourceHandler;
@@ -76,7 +78,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		setButton.requestFocus();
 	}
 
-	CompleterQueryTextField symText;
+	CompleterQueryTextArea symText;
 	CompleterQueryTextField idText;
 	private PermissiveComboBox dbCombo;
 	private PermissiveComboBox typeCombo;
@@ -251,7 +253,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		JLabel idLabel = new JLabel("Identifier");
 		JLabel dbLabel = new JLabel("Database");
 		JLabel typeLabel = new JLabel ("Biological Type");
-		symText = new CompleterQueryTextField(new OptionProvider() {
+		symText = new CompleterQueryTextArea(new OptionProvider() {
 			public List<String> provideOptions(String text) {
 				if(text == null) return Collections.emptyList();
 
@@ -266,7 +268,8 @@ public class DataNodeDialog extends PathwayElementDialog {
 				return symbols;
 			}
 		}, true);
-
+		symText.setColumns(20);
+		symText.setRows(2);
 		idText = new CompleterQueryTextField(new OptionProvider() {
 			public List<String> provideOptions(String text) {
 				if(text == null) return Collections.emptyList();
@@ -307,7 +310,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		c.gridx = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
-		fieldPanel.add(symText, c);
+		fieldPanel.add(new JScrollPane(symText), c);
 		fieldPanel.add(typeCombo, c);
 		fieldPanel.add(idText, c);
 		fieldPanel.add(dbCombo, c);

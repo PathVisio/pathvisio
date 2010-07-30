@@ -11,11 +11,13 @@
  */
 package com.jroller.completer;
 
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
+import javax.swing.text.JTextComponent;
 
 abstract public class AbstractCompleterFilter extends DocumentFilter
 {
@@ -23,7 +25,7 @@ abstract public class AbstractCompleterFilter extends DocumentFilter
 
   abstract public Object getCompleterObjectAt(int i);
 
-  abstract public JTextField getTextField();
+  abstract public JTextComponent getTextComponent();
 
   private boolean performCompletion = false;
   public void setPerformCompletion(boolean perform) {
@@ -75,7 +77,7 @@ abstract public class AbstractCompleterFilter extends DocumentFilter
               else
                   filterBypass.insertString(_preText.length(), objStringEnd, attributeSet);
 
-              getTextField().select(_preText.length(), doc.getLength());
+              getTextComponent().select(_preText.length(), doc.getLength());
               _firstSelectedIndex = i;
               break;
           }

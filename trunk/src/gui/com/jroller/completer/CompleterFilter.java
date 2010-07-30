@@ -12,7 +12,9 @@
 package com.jroller.completer;
 
 
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 /**
  * A filter that will attempt to autocomplete enties into a textfield with the string representations
@@ -30,7 +32,7 @@ public class CompleterFilter extends AbstractCompleterFilter
      * @param completerObjs an array of objects used to attempt completion
      * @param textField the text component to receive the completion
      */
-    public CompleterFilter(Object[] completerObjs, JTextField textField)
+    public CompleterFilter(Object[] completerObjs, JTextComponent textField)
     {
         _objectList = completerObjs;
         _textField = textField;
@@ -49,7 +51,7 @@ public class CompleterFilter extends AbstractCompleterFilter
     }
 
     @Override
-    public JTextField getTextField()
+    public JTextComponent getTextComponent()
     {
       return _textField;
     }
@@ -64,6 +66,6 @@ public class CompleterFilter extends AbstractCompleterFilter
       _firstSelectedIndex = -1;
     }
 
-    protected JTextField _textField;
+    protected JTextComponent _textField;
     protected Object[]   _objectList;
 }

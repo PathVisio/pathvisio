@@ -23,9 +23,11 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
 
 /**
  * A completer filter that queries the completion options via
@@ -41,10 +43,10 @@ public class CompleterQueryFilter extends CompleterFilterWithWindow {
 
 	QueryThread t = new QueryThread();
 
-	public CompleterQueryFilter(JTextField textField) {
+	public CompleterQueryFilter(JTextComponent textField) {
 		super(new Object[0], textField);
 	}
-	public CompleterQueryFilter(JTextField textField, OptionProvider optionProvider) {
+	public CompleterQueryFilter(JTextComponent textField, OptionProvider optionProvider) {
 		this(textField);
 		this.optionProvider = optionProvider;
 	}

@@ -26,6 +26,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JWindow;
 import javax.swing.KeyStroke;
@@ -37,12 +38,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.JTextComponent;
 
 
 public class CompleterFilterWithWindow extends CompleterFilter
 {
 
-	public CompleterFilterWithWindow(Object[] completerObjs, JTextField textField)
+	public CompleterFilterWithWindow(Object[] completerObjs, JTextComponent textField)
 	{
 		super(completerObjs, textField);
 		_init();

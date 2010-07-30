@@ -74,7 +74,6 @@ public class CommentsHandler extends AbstractCellEditor implements ContextSensit
 
 	//-- ContextSensitiveEditor methods --//
 
-	@Override
 	public void updateEditor(SwingEngine aSwingEngine, Collection<PathwayElement> elements,
 			Pathway pathway, PropertyView propHandler)
 	{

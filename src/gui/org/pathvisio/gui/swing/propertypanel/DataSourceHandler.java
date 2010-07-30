@@ -101,7 +101,6 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		DSTYPE_BY_DNTYPE.put (DataNodeType.RNA.getName(), new String[] {"gene", "protein"});
 	}
 
-	@Override
 	public void updateEditor(SwingEngine swingEngine, Collection<PathwayElement> elements,
 			Pathway pathway, PropertyView propHandler)
 	{

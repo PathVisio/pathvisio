@@ -16,12 +16,12 @@
 //
 package org.pathvisio.util.swing;
 
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 /** 
@@ -30,14 +30,14 @@ import javax.swing.JTextField;
 public class BrowseButtonActionListener implements ActionListener
 {
 	private final JTextField txt;
-	private final JFrame frame;
+	private final Container frame;
 	private final int fileSelectionMode;
 	
 	/**
 	 * @param txt: JTextField, will read default file from this field, and will write selected file to this field.
 	 * @param fileSelectionMode: one of JFileChooser.DIRECTORIES_ONLY, JFileChooser.FILES_ONLY or JFileChooser.FILES_AND_DIRECTORIES
 	 */
-	public BrowseButtonActionListener (JTextField txt, JFrame frame, int fileSelectionMode)
+	public BrowseButtonActionListener (JTextField txt, Container frame, int fileSelectionMode)
 	{
 		this.txt = txt;
 		this.frame = frame;

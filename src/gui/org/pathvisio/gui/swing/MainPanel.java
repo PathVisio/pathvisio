@@ -296,14 +296,23 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		public void actionPerformed(ActionEvent e){
 			JComboBox combo = (JComboBox) e.getSource();
 			Object s = combo.getSelectedItem();
+			
 			if (s instanceof Action) {
 				((Action) s).actionPerformed(e);
+				
+				// after the selection of "fit to window" the new calculated zoom 
+				// percentage is displayed 
+				if(s instanceof CommonActions.ZoomToFitAction) {
+					double pct = swingEngine.getEngine().getActiveVPathway().getPctZoom();
+					double rpct = Math.round(pct);
+					combo.setSelectedItem(rpct + "%");
+				}
 			} else if (s instanceof String) {
 				String zs = (String) s;
 				zs=zs.replace("%","");
 				try {
 					double zf = Double.parseDouble(zs);
-						if(zf > 0){ // Ignore negtive number
+						if(zf > 0){ // Ignore negative number
 							ZoomAction za = new ZoomAction(swingEngine.getEngine(), zf);
 							za.setEnabled(true);
 							za.actionPerformed(e);

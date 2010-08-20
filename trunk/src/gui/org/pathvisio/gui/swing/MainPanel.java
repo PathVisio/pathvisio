@@ -234,23 +234,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		bpt.addBackpageHook(new BackpageXrefs(swingEngine.getGdbManager().getCurrentGdb()));
 
 		backpagePane = new BackpagePane(bpt, swingEngine.getEngine());
-		backpagePane.addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-					try {
-						MainPanel.this.swingEngine.openUrl(e.getURL());
-					} catch(UnsupportedOperationException ex) {
-						Logger.log.error("Unable to open URL", ex);
-						JOptionPane.showMessageDialog(
-								MainPanel.this,
-								"No browser launcher specified",
-								"Unable to open link",
-								JOptionPane.ERROR_MESSAGE
-						);
-					}
-				}
-			}
-		});
+		backpagePane.addHyperlinkListener(swingEngine);
 
 		sidebarTabbedPane = new JTabbedPane();
 		sidebarTabbedPane.addTab("Objects", objectsPane);

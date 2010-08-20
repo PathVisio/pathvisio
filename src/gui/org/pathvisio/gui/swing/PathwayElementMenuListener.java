@@ -17,6 +17,8 @@
 package org.pathvisio.gui.swing;
 
 import java.awt.Component;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingUtilities;
 
 import org.pathvisio.gui.swing.CommonActions.AddLiteratureAction;
 import org.pathvisio.gui.swing.CommonActions.EditLiteratureAction;
@@ -49,6 +52,7 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.ViewActions;
+import org.pathvisio.view.ViewActions.PositionPasteAction;
 import org.pathvisio.view.swing.VPathwaySwing;
 
 /**
@@ -61,6 +65,7 @@ import org.pathvisio.view.swing.VPathwaySwing;
 public class PathwayElementMenuListener implements VPathwayListener {
 
 	private List<PathwayElementMenuHook> hooks = new ArrayList<PathwayElementMenuHook>();
+	
 
 	public void addPathwayElementMenuHook(PathwayElementMenuHook hook)
 	{
@@ -108,6 +113,18 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		selectMenu.add(vActions.selectDataNodes);
 		menu.add(selectMenu);
 		menu.addSeparator();
+		
+		// new feature to copy and paste with the right-click menu
+		menu.add(vActions.copy);
+		
+		PositionPasteAction a = vActions.positionPaste;
+		Point loc = MouseInfo.getPointerInfo().getLocation();
+		SwingUtilities.convertPointFromScreen(loc, component);
+		a.setPosition(loc);
+		
+		menu.add(a);
+		menu.addSeparator();
+		
 
 		//Only show group/ungroup when multiple objects or a group are selected
 		if((e instanceof Group)) {
@@ -205,6 +222,8 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			menu.addSeparator();
 			menu.add(new PropertiesAction(swingEngine, component,e));
 		}
+		
+		
 
 		// give plug-ins a chance to add menu items.
 		for (PathwayElementMenuHook hook : hooks)
@@ -237,7 +256,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		case VPathwayEvent.ELEMENT_CLICKED_UP:
 			assert(e.getVPathway() != null);
 			assert(e.getVPathway().getWrapper() instanceof VPathwaySwing);
-
+			
 			if(e.getMouseEvent().isPopupTrigger()) {
 				Component invoker = (VPathwaySwing)e.getVPathway().getWrapper();
 				MouseEvent me = e.getMouseEvent();

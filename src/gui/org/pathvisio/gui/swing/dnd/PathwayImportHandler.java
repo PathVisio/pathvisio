@@ -16,11 +16,14 @@
 //
 package org.pathvisio.gui.swing.dnd;
 
+import java.awt.Point;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -44,6 +47,7 @@ public class PathwayImportHandler extends TransferHandler implements ClipboardOw
 
 	static final int NOT_OWNER = -1;
 	int timesPasted; //Keeps track of how many times the same data is pasted
+	static final double M_PASTE_OFFSET = 10;
 
 	Set<DataFlavor> supportedFlavors;
 
@@ -59,13 +63,27 @@ public class PathwayImportHandler extends TransferHandler implements ClipboardOw
 		}
 		return false;
 	}
-
+	
 	public boolean importData(JComponent comp, Transferable t) {
 		try {
 			String xml = PathwayTransferable.getText(t);
 			if(xml != null) {
 				Logger.log.trace("Importing from xml: " + xml);
-				importGpml(comp, xml);
+				importGpml(comp, xml, null);
+			}
+
+		} catch(Exception e) {
+			Logger.log.error("Unable to paste pathway data", e);
+		}
+		return false;
+	}
+	
+	public boolean importDataAtCursorPosition(JComponent comp, Transferable t, Point p) {
+		try {
+			String xml = PathwayTransferable.getText(t);
+			if(xml != null) {
+				Logger.log.trace("Importing from xml: " + xml);
+				importGpml(comp, xml, p);
 			}
 
 		} catch(Exception e) {
@@ -74,7 +92,10 @@ public class PathwayImportHandler extends TransferHandler implements ClipboardOw
 		return false;
 	}
 
-	private boolean importGpml(JComponent comp, String xml) throws UnsupportedFlavorException, IOException, ConverterException {
+	/**
+	 * new parameter p is just used for paste with the right click menu
+	 */
+	private boolean importGpml(JComponent comp, String xml, Point p) throws UnsupportedFlavorException, IOException, ConverterException {
 		Pathway pnew = new Pathway();
 		GpmlFormat.readFromXml(pnew, new StringReader(xml), true);
 
@@ -90,10 +111,15 @@ public class PathwayImportHandler extends TransferHandler implements ClipboardOw
 				}
 			}
 		}
-		int shift = 0;
-		if(timesPasted != NOT_OWNER) shift = ++timesPasted;
-
-		((VPathwaySwing)comp).getChild().paste(elements, shift);
+		
+		if(p == null) {
+			int shift = 0;
+			if(timesPasted != NOT_OWNER) shift = ++timesPasted;
+			((VPathwaySwing)comp).getChild().paste(elements, shift * M_PASTE_OFFSET, shift * M_PASTE_OFFSET);
+		} else {
+			Point2D.Double shift = calculateShift(elements, p);
+			((VPathwaySwing)comp).getChild().paste(elements, shift.x, shift.y);
+		}
 		return false;
 	}
 
@@ -103,5 +129,33 @@ public class PathwayImportHandler extends TransferHandler implements ClipboardOw
 
 	public void obtainedOwnership() {
 		timesPasted = 0;
+	}
+	
+	private Point2D.Double calculateShift(List<PathwayElement> elements, Point cursorPosition) {
+		Point2D.Double topLeftCorner = getTopLeftCorner(elements);
+		double xShift = cursorPosition.x - topLeftCorner.x;
+		double yShift = cursorPosition.y - topLeftCorner.y;
+		return new Point2D.Double(xShift, yShift);
+	}
+	
+	/**
+	 * Returns the top left corner of the bounding box around the elements
+	 * @param elements = list of PathwayElement objects
+	 * @return
+	 */
+	private Point2D.Double getTopLeftCorner(List<PathwayElement> elements) {
+		
+		Rectangle2D vr = null;
+		for (PathwayElement o : elements)
+		{
+			if (o.getObjectType() == ObjectType.INFOBOX) continue;
+			if (o.getObjectType() == ObjectType.BIOPAX) continue;
+			else {
+				if (vr == null) vr = o.getMBounds();
+				else vr.add(o.getMBounds());
+			}
+		}
+		
+		return new Point2D.Double(vr.getX(), vr.getY());
 	}
 }

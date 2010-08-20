@@ -16,9 +16,6 @@
 //
 package org.pathvisio.view.swing;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -64,6 +61,9 @@ import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * swing-dependent implementation of VPathway.
@@ -241,10 +241,22 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		}
 	}
 
+	/**
+	 * paste from clip board with the common shift
+	 */
 	public void pasteFromClipboard() {
 		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 		TransferHandler handler = getTransferHandler();
 		handler.importData(this, clip.getContents(this));
+	}
+	
+	/**
+	 * paste from clip board at the cursor position
+	 */
+	public void positionPasteFromClipboard(Point cursorPosition) {
+		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+		PathwayImportHandler handler = (PathwayImportHandler) getTransferHandler();
+		handler.importDataAtCursorPosition(this, clip.getContents(this), cursorPosition);
 	}
 
 	List<PathwayElement> lastCopied;

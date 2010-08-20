@@ -17,6 +17,7 @@
 package org.pathvisio.view;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 
@@ -44,6 +45,7 @@ public abstract interface VPathwayWrapper
 	public void registerKeyboardAction(KeyStroke k, Action a);
 	public void copyToClipboard(Pathway source, List<PathwayElement> copyElements);
 	public void pasteFromClipboard();
+	public void positionPasteFromClipboard(Point cursorPosition);
 
 	/** make sure r is visible */
 	public void scrollTo(Rectangle r);

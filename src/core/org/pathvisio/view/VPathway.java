@@ -43,19 +43,19 @@ import javax.swing.Timer;
 
 import org.pathvisio.Engine;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
-import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElement.MAnchor;
-import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
+import org.pathvisio.model.Pathway.StatusFlagEvent;
+import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
@@ -74,7 +74,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 {
 	static final int ZORDER_SELECTIONBOX = Integer.MAX_VALUE;
 	static final int ZORDER_HANDLE = Integer.MAX_VALUE - 1;
-	static final double M_PASTE_OFFSET = 10;
+	
 
 	private boolean selectionEnabled = true;
 
@@ -2196,7 +2196,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	}
 
 	public void paste(List<PathwayElement> elements) {
-		paste(elements, 0);
+		paste(elements, 0, 0);
 	}
 
 	/**
@@ -2273,42 +2273,41 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 		}
 	}
-
-	public void paste(List<PathwayElement> elements, int shift)
-	{
+	
+	public void paste(List<PathwayElement> elements, double xShift, double yShift) {
 		undoManager.newAction("Paste");
 		clearSelection();
+		
 		Map<String, String> idmap = new HashMap<String, String>();
 		Set<String> newids = new HashSet<String>();
-
+		
 		// Step 1: generate new unique ids for copied items
 		generateNewIds (elements, idmap, newids);
-
+		
 		// Step 2: do the actual copying
 		for (PathwayElement o : elements)
 		{
-			if (o.getObjectType() == ObjectType.INFOBOX)
-			{
+			if (o.getObjectType() == ObjectType.INFOBOX) {
 				// we skip infobox because it should be unique in a pathway
 				continue;
 			}
 
-			if (o.getObjectType() == ObjectType.BIOPAX)
-			{
+			if (o.getObjectType() == ObjectType.BIOPAX) {
 				// Merge the copied biopax elements with existing
 				data.mergeBiopax(o);
 				continue;
 			}
 
 			lastAdded = null;
+
 			if(o.getObjectType() == ObjectType.LINE) {
-				o.setMStartX(o.getMStartX() + shift * M_PASTE_OFFSET);
-				o.setMStartY(o.getMStartY() + shift * M_PASTE_OFFSET);
-				o.setMEndX(o.getMEndX() + shift * M_PASTE_OFFSET);
-				o.setMEndY(o.getMEndY() + shift * M_PASTE_OFFSET);
+				o.setMStartX(o.getMStartX() + xShift);
+				o.setMStartY(o.getMStartY() + yShift);
+				o.setMEndX(o.getMEndX() + xShift);
+				o.setMEndY(o.getMEndY() + yShift);
 			} else {
-				o.setMLeft(o.getMLeft() + shift * M_PASTE_OFFSET);
-				o.setMTop(o.getMTop() + shift * M_PASTE_OFFSET);
+				o.setMLeft(o.getMLeft() + xShift);
+				o.setMTop(o.getMTop() + yShift);
 			}
 
 			// make another copy to preserve clipboard contents for next paste
@@ -2338,6 +2337,16 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		if (isEditMode())
 		{ // Only paste in edit mode
 			parent.pasteFromClipboard();
+		}
+	}
+	
+	/**
+	 * paste from clip board at the current cursor position
+	 */
+	public void positionPasteFromClipboard(Point cursorPosition) {
+		if(isEditMode()) {
+			
+			parent.positionPasteFromClipboard(cursorPosition);
 		}
 	}
 

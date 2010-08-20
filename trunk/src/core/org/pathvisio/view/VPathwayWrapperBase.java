@@ -17,6 +17,7 @@
 package org.pathvisio.view;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
 
@@ -78,11 +79,15 @@ public class VPathwayWrapperBase implements VPathwayWrapper {
 
 	}
 
+	public void positionPasteFromClipboard(Point cursorPosition) {}
+
 	public void scrollTo(Rectangle r) {
 		// TODO Auto-generated method stub
 
 	}
 
 	public void dispose() {}
+
+	
 
 }

@@ -18,6 +18,7 @@ package org.pathvisio.view;
 
 import static org.pathvisio.model.ObjectType.STATE;
 
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
@@ -36,14 +37,13 @@ import javax.swing.KeyStroke;
 import org.pathvisio.ApplicationEvent;
 import org.pathvisio.Engine;
 import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConnectorShape;
+import org.pathvisio.model.FreeConnectorShape;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.MState;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.FreeConnectorShape;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.util.Resources;
@@ -98,6 +98,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final DeleteAction delete2;
 	public final CopyAction copy;
 	public final PasteAction paste;
+	public final PositionPasteAction positionPaste;
 	public final KeyMoveAction keyMove;
 	public final UndoAction undo;
 	public final AddAnchorAction addAnchor;
@@ -128,6 +129,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		delete2 = new DeleteAction(java.awt.event.KeyEvent.VK_BACK_SPACE);
 		copy = new CopyAction(engine);
 		paste = new PasteAction(engine);
+		positionPaste = new PositionPasteAction(engine);
 		keyMove = new KeyMoveAction(engine, null);
 		undo = new UndoAction(engine);
 		addAnchor = new AddAnchorAction();
@@ -152,6 +154,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(copy, 	ViewActions.GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(paste, 	ViewActions.GROUP_ENABLE_EDITMODE);
+		registerToGroup(positionPaste, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(positionPaste, 	ViewActions.GROUP_ENABLE_EDITMODE);
 		registerToGroup(keyMove, ViewActions.GROUP_ENABLE_EDITMODE);
 		registerToGroup(addAnchor, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(addWaypoint, GROUP_ENABLE_WHEN_SELECTION);
@@ -315,6 +319,41 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public void actionPerformed(ActionEvent e) {
 			VPathway vp = engine.getActiveVPathway();
 			if(isEnabled() && vp != null) vp.pasteFromClipboard();
+		}
+	}
+	
+	/** "Paste" command from the right click menu, pastes from clipboard */
+	public static class PositionPasteAction extends AbstractAction {
+		private static final long serialVersionUID = 1L;
+		Engine engine;
+		private Point position;
+		
+		public PositionPasteAction(Engine engine) {
+			super();
+			this.engine = engine;
+			putValue(NAME, "Paste");
+			putValue(SMALL_ICON, new ImageIcon(IMG_PASTE));
+			String descr = "Paste pathway objects from clipboard";
+			putValue(Action.SHORT_DESCRIPTION, descr);
+			putValue(Action.LONG_DESCRIPTION, descr);
+			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V,
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = engine.getActiveVPathway();
+			if(isEnabled() && vp != null) {
+				vp.positionPasteFromClipboard(position);
+			}
+			resetPosition();
+		}
+		
+		public void setPosition(Point position) {
+			this.position = position;
+		}
+		
+		private void resetPosition() {
+			position = null;
 		}
 	}
 

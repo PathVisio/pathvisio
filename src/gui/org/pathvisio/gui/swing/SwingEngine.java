@@ -28,6 +28,8 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.bridgedb.bio.Organism;
@@ -59,7 +61,8 @@ import org.pathvisio.view.swing.VPathwaySwing;
  * It keeps the main panel, the main frame and has
  * helper functions for opening, closing, importing and exporting Pathways.
  */
-public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlagListener {
+public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlagListener, HyperlinkListener 
+{
 	private MainPanel mainPanel;
 
 	private CommonActions actions;
@@ -603,5 +606,27 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		String organism = getEngine().getActivePathway().getMappInfo().getOrganism();
 		return Organism.fromLatinName(organism);
+	}
+
+	@Override
+	public void hyperlinkUpdate(HyperlinkEvent e)
+	{
+		if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+			try {
+				openUrl(e.getURL());
+			} catch(UnsupportedOperationException ex) {
+				Logger.log.error("Unable to open URL", ex);
+				JOptionPane.showMessageDialog(
+						mainPanel,
+						"No browser launcher specified",
+						"Unable to open link",
+						JOptionPane.ERROR_MESSAGE
+				);
+			}
+		}
+		else
+		{
+			//TODO: show URL in status bar when mousing over
+		}
 	}
 }

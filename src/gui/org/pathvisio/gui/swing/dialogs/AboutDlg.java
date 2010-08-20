@@ -25,6 +25,7 @@ import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -52,32 +53,35 @@ public class AboutDlg
 		final JFrame aboutDlg = new JFrame();
 
 		FormLayout layout = new FormLayout(
-				"4dlu, pref, 4dlu, pref, 4dlu",
-				"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
+				"4dlu, pref, 4dlu, fill:120dlu:grow, 4dlu",
+				"4dlu, 200dlu:grow, 4dlu, pref, 4dlu, pref, 4dlu");
 
 		JLabel versionLabel = new JLabel (swingEngine.getEngine().getApplicationName());
 		JLabel revisionLabel = new JLabel (Revision.REVISION);
-		JLabel label = new JLabel();
+		JEditorPane label = new JEditorPane();
+		label.setContentType("text/html");
+		label.setEditable(false);
 		label.setText(
 				"<html><h3>Core developers</h3>\n" +
-				"<p>Thomas Kelder, Martijn van Iersel<br>\n" +
-				"Kristina Hanspers, Alex Pico<br>\n" +
+				"<p>Thomas Kelder, Martijn van Iersel\n" +
+				"Kristina Hanspers, Alex Pico, Tina Kutmon\n" +
 				"<h3>Contributors</h3>\n" +
-				"<p>R.M.H. Besseling, S.P.M.Crijns, I. Kaashoek<br>\n" +
-				"M.M. Palm, E.D. Pelgrim, E. Neuteboom,<br>\n" +
-				"E.J. Creusen, P. Moeskops, Adem Bilican,<br>\n" +
-				"Margot Sunshine, Mark Woon, Bing Liu<br>\n" +
+				"<p>R.M.H. Besseling, S.P.M.Crijns, I. Kaashoek\n" +
+				"M.M. Palm, E.D. Pelgrim, E. Neuteboom,\n" +
+				"E.J. Creusen, P. Moeskops, Adem Bilican,\n" +
+				"Margot Sunshine, Mark Woon, Bing Liu\n" +
 				"<h3>Visit our website</h3>" +
-				"<p>http://www.pathvisio.org" +
+				"<p><a href=\"http://www.pathvisio.org\">http://www.pathvisio.org</a>" +
 				"</html>");
+		label.addHyperlinkListener(swingEngine);
 		JLabel iconLbl = new JLabel(new ImageIcon (IMG_ABOUT_LOGO));
 
 		CellConstraints cc = new CellConstraints();
 
 		JPanel dialogBox = new JPanel();
 		dialogBox.setLayout (layout);
-		dialogBox .add (iconLbl, cc.xy(2,2));
-		dialogBox .add (label, cc.xy(4,2));
+		dialogBox.add (iconLbl, cc.xy(2,2));
+		dialogBox.add (label, cc.xy(4,2));
 
 		JButton btnOk = new JButton();
 		btnOk.setText("OK");

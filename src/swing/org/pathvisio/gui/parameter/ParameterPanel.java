@@ -94,7 +94,6 @@ public class ParameterPanel extends JPanel implements ParameterModelListener
 		refreshValues();
 	}
 
-	@Override
 	public void parametersChanged(ParameterModelEvent e)
 	{
 		switch (e.getType())

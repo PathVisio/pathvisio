@@ -51,7 +51,6 @@ public class FileEditor implements Editor, DocumentListener, ActionListener
         builder.nextLine();
 	}
 
-	@Override
 	public Object getValue()
 	{
 		return new File (txtFile.getText());
@@ -59,7 +58,6 @@ public class FileEditor implements Editor, DocumentListener, ActionListener
 
 	boolean ignoreEvent = false;
 	
-	@Override
 	public void setValue(Object val)
 	{
 		if (ignoreEvent) return;
@@ -75,19 +73,16 @@ public class FileEditor implements Editor, DocumentListener, ActionListener
 		ignoreEvent = false;
 	}
 
-	@Override
 	public void changedUpdate(DocumentEvent arg0)
 	{
 		handleDocumentEvent(arg0);
 	}
 
-	@Override
 	public void insertUpdate(DocumentEvent arg0)
 	{
 		handleDocumentEvent(arg0);
 	}
 
-	@Override
 	public void removeUpdate(DocumentEvent arg0)
 	{
 		handleDocumentEvent(arg0);

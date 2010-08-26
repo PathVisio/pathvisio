@@ -246,7 +246,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		case VPathwayEvent.ELEMENT_CLICKED_DOWN:
 			if(e.getAffectedElement() instanceof Citation) {
 				Citation c = (Citation)e.getAffectedElement();
-				PathwayElementDialog d = PathwayElementDialog.getInstance(swingEngine,
+				PathwayElementDialog d = swingEngine.getPopupDialogHandler().getInstance(
 						c.getParent().getPathwayElement(), false, null, null
 				);
 				d.selectPathwayElementPanel(PathwayElementDialog.TAB_LITERATURE);

@@ -43,27 +43,6 @@ public class PathwayElementDialog extends OkCancelDialog {
 	public static final String TAB_COMMENTS = "Comments";
 	public static final String TAB_LITERATURE = "Literature";
 
-	/**
-	 * Create a dialog for the given pathway element.
-	 * @param e The pathway element
-	 * @param readonly Whether the dialog should be read-only or not
-	 * @return An instance of a subclass of PathwayElementDialog (depends on the
-	 * type attribute of the given PathwayElement, e.g. type DATANODE returns a DataNodeDialog
-	 */
-	public static PathwayElementDialog getInstance(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
-		switch(e.getObjectType()) {
-		case LABEL:
-		case SHAPE:
-			return new LabelDialog(swingEngine, e, readonly, frame, locationComp);
-		case DATANODE:
-			return new DataNodeDialog(swingEngine, e, readonly, frame, locationComp);
-		case INFOBOX:
-			return new PathwayElementDialog(swingEngine, e.getParent().getMappInfo(), readonly, frame, "Pathway properties", locationComp);
-		default:
-			return new PathwayElementDialog(swingEngine, e, readonly, frame, "Element properties", locationComp);
-		}
-	}
-
 	PathwayElement input;
 	private JTabbedPane dialogPane;
 	private Map<String, PathwayElementPanel> panels;
@@ -151,13 +130,13 @@ public class PathwayElementDialog extends OkCancelDialog {
 	 * @param tabLabel
 	 * @param p
 	 */
-	protected void addPathwayElementPanel(String tabLabel, PathwayElementPanel p) {
+	public void addPathwayElementPanel(String tabLabel, PathwayElementPanel p) {
 		p.setReadOnly(readonly);
 		dialogPane.add(tabLabel, p);
 		panels.put(tabLabel, p);
 	}
 
-	protected void removePathwayElementPanel(String tabLabel) {
+	public void removePathwayElementPanel(String tabLabel) {
 		PathwayElementPanel panel = panels.get(tabLabel);
 		if(panel != null) {
 			dialogPane.remove(panel);

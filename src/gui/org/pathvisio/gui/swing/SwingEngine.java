@@ -40,6 +40,7 @@ import org.pathvisio.Engine.ApplicationEventListener;
 import org.pathvisio.Globals;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.gui.swing.dialogs.PopupDialogHandler;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.Pathway;
@@ -628,5 +629,12 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		{
 			//TODO: show URL in status bar when mousing over
 		}
+	}
+
+	private PopupDialogHandler popupDlgHandler = new PopupDialogHandler(this);
+	
+	public PopupDialogHandler getPopupDialogHandler()
+	{
+		return popupDlgHandler;
 	}
 }

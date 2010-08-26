@@ -651,8 +651,8 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) {
 			if(element instanceof Graphics) {
 				PathwayElement p = ((Graphics)element).getPathwayElement();
-				PathwayElementDialog pd = PathwayElementDialog.getInstance(
-						swingEngine, p, !element.getDrawing().isEditMode(), null, parent);
+				PathwayElementDialog pd = swingEngine.getPopupDialogHandler().getInstance(
+						p, !element.getDrawing().isEditMode(), null, parent);
 				if(pd != null) {
 					pd.selectPathwayElementPanel(getSelectedPanel());
 					pd.setVisible(true);

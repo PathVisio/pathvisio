@@ -105,7 +105,7 @@ public class CommentsHandler extends AbstractCellEditor implements ContextSensit
 	public void actionPerformed(ActionEvent e) {
 
 		if(canEdit && BUTTON_COMMAND.equals(e.getActionCommand())) {
-			PathwayElementDialog d = PathwayElementDialog.getInstance(swingEngine, currentElement, false, null, button);
+			PathwayElementDialog d = swingEngine.getPopupDialogHandler().getInstance(currentElement, false, null, button);
 			d.selectPathwayElementPanel(PathwayElementDialog.TAB_COMMENTS);
 			d.setVisible(true);
 		}

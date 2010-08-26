@@ -459,7 +459,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 					!(pwe instanceof SelectionBox)) {
 				PathwayElement p = ((Graphics)pwe).getPathwayElement();
 				if(p != null) {
-					PathwayElementDialog.getInstance(swingEngine, p, !vp.isEditMode(), null, this).setVisible(true);
+					swingEngine.getPopupDialogHandler().getInstance(p, !vp.isEditMode(), null, this).setVisible(true);
 				}
 			}
 			break;

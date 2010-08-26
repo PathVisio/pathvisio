@@ -43,37 +43,31 @@ public class SimpleParameterModel extends AbstractParameterModel implements Para
 		}
 	}
 	
-	@Override
 	public Object getMetaData(int i)
 	{
 		return metadata[i];
 	}
 
-	@Override
 	public String getHint(int i)
 	{
 		return labels[i];
 	}
 
-	@Override
 	public String getLabel(int i)
 	{
 		return labels[i];
 	}
 
-	@Override
 	public int getNum()
 	{
 		return values.length;
 	}
 
-	@Override
 	public Object getValue(int i)
 	{
 		return values[i];
 	}
 
-	@Override
 	public void setValue(int i, Object val)
 	{
 		values[i] = val;

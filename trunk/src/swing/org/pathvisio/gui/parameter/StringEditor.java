@@ -47,13 +47,11 @@ public class StringEditor implements Editor, DocumentListener
         builder.nextLine();
 	}
 
-	@Override
 	public Object getValue()
 	{
 		return txtField.getText();
 	}
 
-	@Override
 	public void setValue(Object val)
 	{
 		if (ignoreEvent) return;
@@ -70,19 +68,16 @@ public class StringEditor implements Editor, DocumentListener
 		ignoreEvent = false;
 	}
 
-	@Override
 	public void changedUpdate(DocumentEvent arg0)
 	{
 		handleDocumentEvent(arg0);		
 	}
 
-	@Override
 	public void insertUpdate(DocumentEvent arg0)
 	{		
 		handleDocumentEvent(arg0);		
 	}
 
-	@Override
 	public void removeUpdate(DocumentEvent arg0)
 	{
 		handleDocumentEvent(arg0);		

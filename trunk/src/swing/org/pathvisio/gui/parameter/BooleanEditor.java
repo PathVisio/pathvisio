@@ -45,13 +45,11 @@ public class BooleanEditor implements Editor, ActionListener
         builder.nextLine();
 	}
 
-	@Override
 	public Object getValue()
 	{
 		return Boolean.valueOf(ckVal.isSelected());
 	}
 
-	@Override
 	public void setValue(Object val)
 	{
 		if (ignoreEvent) return;
@@ -60,7 +58,6 @@ public class BooleanEditor implements Editor, ActionListener
 
 	private boolean ignoreEvent = false;
 	
-	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{		
 		ignoreEvent = true;

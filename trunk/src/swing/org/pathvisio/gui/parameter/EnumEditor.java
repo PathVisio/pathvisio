@@ -48,13 +48,11 @@ public class EnumEditor implements Editor, ActionListener
         builder.nextLine();
 	}
 
-	@Override
 	public Object getValue()
 	{
 		return cbBox.getSelectedItem();
 	}
 
-	@Override
 	public void setValue(Object val)
 	{
 		if (ignoreEvent) return;
@@ -63,7 +61,6 @@ public class EnumEditor implements Editor, ActionListener
 
 	private boolean ignoreEvent = false;
 	
-	@Override
 	public void actionPerformed(ActionEvent arg0)
 	{
 		ignoreEvent = true;

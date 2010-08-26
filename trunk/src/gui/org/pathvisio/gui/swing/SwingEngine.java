@@ -609,7 +609,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return Organism.fromLatinName(organism);
 	}
 
-	@Override
 	public void hyperlinkUpdate(HyperlinkEvent e)
 	{
 		if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {

@@ -95,7 +95,7 @@ class JavaEmitter implements Emitter
 		target = w;
 		name = _name;
 		target.println ("GeneralPath path = new GeneralPath();");
-		Point2D.Double pen = new Point2D.Double(0,0);
+		pen = new Point2D.Double(0,0);
 	}
 
 	public void move (Point2D p)
@@ -178,7 +178,15 @@ class JavaEmitter implements Emitter
 
 	public void cubicRelative (Point2D p1, Point2D p2, Point2D p)
 	{
-		assert (false);
+		target.print ("path.curveTo (");
+		printRelativePoint (p1);
+		target.print (", ");
+		printRelativePoint (p2);
+		target.print (", ");
+		printRelativePoint (p);
+		pen.setLocation (pen.getX() + p.getX(), pen.getY() + p.getY());
+		target.println (");");
+//		pen = p;
 	}
 
 	public void quadRelative (Point2D p1, Point2D p)

@@ -229,6 +229,42 @@ public abstract class DefaultTemplates {
 	}
 
 	/**
+	 * Template for adding a Shape to a Pathway. Pass a ShapeType upon creation.
+	 */
+	public static class CellularComponentTemplate extends SingleElementTemplate {
+		ShapeType type;
+
+		public CellularComponentTemplate(ShapeType type)
+		{
+			this.type = type;
+		}
+
+		public PathwayElement[] addElements(Pathway p, double mx, double my) {
+			PathwayElement e = PathwayElement.createPathwayElement(ObjectType.SHAPE);
+			e.setShapeType(type);
+			e.setMCenterX(mx);
+			e.setMCenterY(my);
+			e.setMWidth(1);
+			e.setMHeight(1);
+			e.setRotation(0);
+			e.setColor(Color.LIGHT_GRAY);
+			e.setLineThickness(3.0);
+			e.setGraphId(p.getUniqueGraphId());
+			addElement(e, p);
+			return new PathwayElement[] { e };
+		}
+
+		public VPathwayElement getDragElement(VPathway vp) {
+			Shape s = (Shape)super.getDragElement(vp);
+			return s.handleSE;
+		}
+
+		public String getName() {
+			return type.toString();
+		}
+	}
+
+	/**
 	 * Template for an interaction, two datanodes with a connecting line.
 	 */
 	public static class InteractionTemplate implements Template {

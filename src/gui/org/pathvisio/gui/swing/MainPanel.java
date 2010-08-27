@@ -204,11 +204,11 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		objectsPane = new ObjectsPane(swingEngine);
 		int numItemsPerRow = 10;
 		objectsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
-		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular components", numItemsPerRow);
 		objectsPane.addButtons(actions.newMIMShapeActions, "MIM shapes", numItemsPerRow);
 		objectsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
-		objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
+		//objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
 		objectsPane.addButtons(actions.newMIMInteractionActions, "MIM interactions", numItemsPerRow);
+		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular compartments", numItemsPerRow);
 		
 		propertyTable = new JTable(model) {
 

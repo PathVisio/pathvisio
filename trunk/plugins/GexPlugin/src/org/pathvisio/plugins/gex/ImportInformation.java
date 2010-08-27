@@ -610,6 +610,7 @@ public class ImportInformation {
 
 		//Look for maximum.
 		double max = 0;
+		double second = 0;
 		DataSource maxds = null;
 		int maxCol = -1;
 
@@ -623,6 +624,8 @@ public class ImportInformation {
 				double percentage = (double)counters.get(ds).getColumnCount(col)/(double)row;
 				if (percentage > max && percentage <= 1)
 				{
+					// remember the second highest percentage too
+					second = max;
 					max = percentage;
 					maxds = ds;
 					maxCol = col;
@@ -632,7 +635,13 @@ public class ImportInformation {
 
 		//Select the right entry in the drop down menu and change the system code in importInformation
 		guessDataSource = maxds;
-		guessIdColumn = maxCol;
+
+		// only set guessIdColumn if the guess is a clear outlier,
+		// if it's hardly above noise, just set it to 0. 
+		if (max > 2 * second)
+			guessIdColumn = maxCol;
+		else
+			guessIdColumn = 0;
 	}
 
 	int dataRowsImported = 0;

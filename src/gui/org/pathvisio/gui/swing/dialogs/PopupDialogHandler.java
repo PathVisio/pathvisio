@@ -81,10 +81,13 @@ public class PopupDialogHandler
 		case LABEL:
 		case SHAPE:
 			result = new LabelDialog(swingEngine, e, readonly, frame, locationComp);
+			break;
 		case DATANODE:
 			result = new DataNodeDialog(swingEngine, e, readonly, frame, locationComp);
+			break;
 		case INFOBOX:
 			result = new PathwayElementDialog(swingEngine, e.getParent().getMappInfo(), readonly, frame, "Pathway properties", locationComp);
+			break;
 		default:
 			result = new PathwayElementDialog(swingEngine, e, readonly, frame, "Element properties", locationComp);
 		}	

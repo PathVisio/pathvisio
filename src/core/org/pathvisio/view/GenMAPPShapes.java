@@ -216,10 +216,18 @@ class GenMAPPShapes
 			area.exclusiveOr(new Area(n2));
 			break;
 		case MITOCHONDRIA:
-			RoundRectangle2D.Double m1 = new RoundRectangle2D.Double (0, 0, 200, 100, 40, 60);
-			Ellipse2D.Double m2 = new Ellipse2D.Double (4, 4, 192, 92);
+			Ellipse2D.Double m0 = new Ellipse2D.Double (0, 0, 186, 100);
+			Ellipse2D.Double m1 = new Ellipse2D.Double (15, 25, 40, 50);
+			Ellipse2D.Double m2 = new Ellipse2D.Double (50, 15, 30, 70);
+			Ellipse2D.Double m3 = new Ellipse2D.Double (78, 10, 30, 80);
+			Ellipse2D.Double m4 = new Ellipse2D.Double (106, 15, 30, 70);
+			Ellipse2D.Double m5 = new Ellipse2D.Double (131, 25, 40, 50);
 			area.add(new Area(m1));
-			area.exclusiveOr(new Area(m2));
+			area.add(new Area(m2));
+			area.add(new Area(m3));
+			area.add(new Area(m4));
+			area.add(new Area(m5));
+			area.exclusiveOr(new Area(m0));
 			break;
 		case ORGANELLE:
 			RoundRectangle2D.Double g1 = new RoundRectangle2D.Double(0,0,200,100,40, 60);

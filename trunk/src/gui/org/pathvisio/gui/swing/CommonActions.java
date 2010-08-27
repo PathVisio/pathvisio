@@ -285,15 +285,19 @@ public class CommonActions implements ApplicationEventListener {
 				 ),
 		 };
 		 
-		 // actions for "Cellular Component" section
+		 // actions for "Cellular Compartment" section
 		 newCellularComponentActions = new Action[] {
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.VESICLE)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.CELLA)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.RIBOSOME)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANA)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANB)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANC)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.PROTEINB)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.CELL)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.NUCLEUS)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.MITOCHONDRIA)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANELLE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.VESICLE))
+//				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.CELLA)),
+//				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.RIBOSOME)),
+//				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANA)),
+//				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANB)),
+//				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ORGANC)),
+//				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.PROTEINB)),
 		 };
 		
 		 // actions for "Molecular Interaction Map Shapes" section

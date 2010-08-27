@@ -443,19 +443,26 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 					{
 						unmapShapeType(o, row);
 					}
-					else if (s == ShapeType.CELLA ||
-							 s == ShapeType.RIBOSOME ||
-							 s == ShapeType.ORGANA ||
-							 s == ShapeType.ORGANB ||
-							 s == ShapeType.ORGANC)
+					else if (s == ShapeType.CELL ||
+							s == ShapeType.MITOCHONDRIA ||
+							s == ShapeType.ORGANELLE ||
+							s == ShapeType.NUCLEUS ||
+							s == ShapeType.MEMBRANE ||
+							s == ShapeType.VESICLE
+//							s == ShapeType.CELLA ||
+//							 s == ShapeType.RIBOSOME ||
+//							 s == ShapeType.ORGANA ||
+//							 s == ShapeType.ORGANB ||
+//							 s == ShapeType.ORGANC
+							 )
 					{
 						unmapFixedShapeType(o, row);
 					}
 					else if (s == ShapeType.PENTAGON ||
 							 s == ShapeType.HEXAGON ||
-							 s == ShapeType.TRIANGLE ||
-							 s == ShapeType.PROTEINB ||
-							 s == ShapeType.VESICLE)
+							 s == ShapeType.TRIANGLE 
+//							 s == ShapeType.PROTEINB ||
+							 )
 					{
 						unmapComplexShapeType(o, row);
 					}
@@ -516,11 +523,13 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		// statement
 
 		List<String> typeslist = Arrays.asList(new String[] {
-				"Arrow", "DottedArrow", "DottedLine", "Line",
-				"Brace", "Gene", "InfoBox", "Label", "Legend", "Oval",
-				"Rectangle", "TBar", "Receptor", "LigandSq",  "ReceptorSq",
-				"LigandRd", "ReceptorRd", "CellA", "Arc", "Ribosome",
-				"OrganA", "OrganB", "OrganC", "ProteinB", "Poly", "Vesicle"
+				"Arrow", "DottedArrow", "DottedLine", "Line","TBar", "Receptor", 
+				"Brace", "Gene", "InfoBox", "Label", "Legend", 
+				"Oval", "Rectangle", "Arc","Poly", "Vesicle", 
+				"Cell", "Nucleus","Mitochondria","Organelle","Membrane"
+//				"LigandSq",  "ReceptorSq",
+//				"LigandRd", "ReceptorRd", 
+//				"CellA",  "Ribosome", "OrganA", "OrganB", "OrganC", "ProteinB" 
 		});
 		PathwayElement o = null;
 		int index = typeslist.indexOf(row[COL_TYPE]);
@@ -530,55 +539,55 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 				case 1: /*DottedArrow*/
 				case 2: /*DottedLine"*/
 				case 3: /*Line*/
-				case 11: /*TBar*/
-				case 12: /*Receptor*/
-				case 13: /*LigandSq*/
-				case 14: /*ReceptorSq*/
-				case 15: /*LigandRd*/
-				case 16: /*ReceptorRd*/
+				case 4: /*TBar*/
+				case 5: /*Receptor*/
+//				case 21: /*LigandSq*/
+//				case 22: /*ReceptorSq*/
+//				case 23: /*LigandRd*/
+//				case 24: /*ReceptorRd*/
 						o = mapLineType(row);
 						mapNotesAndComments (o, row);
 						break;
-				case 4: /*Brace*/
+				case 6: /*Brace*/
 						o = mapBraceType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
 						break;
-				case 5: /*Gene*/
+				case 7: /*Gene*/
 						o = mapGeneProductType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
 						break;
-				case 6: /*InfoBox*/
+				case 8: /*InfoBox*/
 						o = mapInfoBoxType (row, data);
 						break;
-				case 7: /*Label*/
+				case 9: /*Label*/
 						o = mapLabelType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
 						break;
-				case 8: /*Legend*/
+				case 10: /*Legend*/
 						o = mapLegendType(row);
 						break;
-				case 9: /*Oval*/
-				case 10: /*Rectangle*/
-				case 18: /*Arc*/
+				case 11: /*Oval*/
+				case 12: /*Rectangle*/
+				case 13: /*Arc*/
 						o = mapShapeType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
 						break;
-				case 17: /*CellA*/
-				case 19: /*Ribosome*/
-				case 20: /*OrganA*/
-				case 21: /*OrganB*/
-				case 22: /*OrganC*/
+				case 15: /*Vesicle*/
+				case 16: /*CellA*/  /*Cell*/
+				case 17: /*Ribosome*/ /*Nucleus*/
+				case 18: /*OrganA*/ /*Mitochondria*/
+				case 19: /*OrganB*/ /*Organelle*/
+				case 20: /*OrganC*/ /*Membrane*/
 						o = mapFixedShapeType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
 						break;
-				case 23: /*ProteinB*/
-				case 24: /*Poly*/
-				case 25: /*Vesicle*/
+//				case 30: /*ProteinB*/
+				case 14: /*Poly*/
 						o = mapComplexShapeType(row);
 						mapNotesAndComments (o, row);
 						o.setGraphId(data.getUniqueGraphId());
@@ -928,32 +937,32 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         o.setShapeType(ShapeType.fromMappName(mappObject[COL_TYPE]));
         mapCenter (o, mappObject);
 
-        if (o.shapeType == ShapeType.CELLA)
-		{
-        	o.setRotation (-1.308997);
-        	o.setMWidth(1500 / PIXELS_TO_MAPP);
-        	o.setMHeight(375 / PIXELS_TO_MAPP);
-        }
-		else if (o.shapeType == ShapeType.RIBOSOME)
-		{
-        	o.setMWidth (600 / PIXELS_TO_MAPP);
-        	o.setMHeight (600 / PIXELS_TO_MAPP);
-		}
-		else if (o.shapeType == ShapeType.ORGANA)
-		{
-        	o.setMWidth (500 / PIXELS_TO_MAPP);
-        	o.setMHeight (2000 / PIXELS_TO_MAPP);
-		}
-		else if (o.shapeType == ShapeType.ORGANB)
-		{
-        	o.setMWidth (500 / PIXELS_TO_MAPP);
-        	o.setMHeight (2000 / PIXELS_TO_MAPP);
-		}
-		else if (o.shapeType == ShapeType.ORGANC)
-		{
-        	o.setMWidth (600 / PIXELS_TO_MAPP);
-        	o.setMHeight (600 / PIXELS_TO_MAPP);
-        }
+//        if (o.shapeType == ShapeType.CELLA)
+//		{
+//        	o.setRotation (-1.308997);
+//        	o.setMWidth(1500 / PIXELS_TO_MAPP);
+//        	o.setMHeight(375 / PIXELS_TO_MAPP);
+//        }
+//		else if (o.shapeType == ShapeType.RIBOSOME)
+//		{
+//        	o.setMWidth (600 / PIXELS_TO_MAPP);
+//        	o.setMHeight (600 / PIXELS_TO_MAPP);
+//		}
+//		else if (o.shapeType == ShapeType.ORGANA)
+//		{
+//        	o.setMWidth (500 / PIXELS_TO_MAPP);
+//        	o.setMHeight (2000 / PIXELS_TO_MAPP);
+//		}
+//		else if (o.shapeType == ShapeType.ORGANB)
+//		{
+//        	o.setMWidth (500 / PIXELS_TO_MAPP);
+//        	o.setMHeight (2000 / PIXELS_TO_MAPP);
+//		}
+//		else if (o.shapeType == ShapeType.ORGANC)
+//		{
+//        	o.setMWidth (600 / PIXELS_TO_MAPP);
+//        	o.setMHeight (600 / PIXELS_TO_MAPP);
+//        }
         return o;
     }
 
@@ -962,13 +971,13 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	ShapeType shapeType = o.getShapeType();
     	mappObject[COL_TYPE] = shapeType.getMappName();
 
-    	if (shapeType == ShapeType.CELLA)
-    	{
-    		mappObject[COL_ROTATION] = "-1.308997";
-    		mappObject[COL_COLOR] = "0";
-    		mappObject[COL_WIDTH] = "1500";
-    		mappObject[COL_HEIGHT] = "375";
-    	}
+//    	if (shapeType == ShapeType.CELLA)
+//    	{
+//    		mappObject[COL_ROTATION] = "-1.308997";
+//    		mappObject[COL_COLOR] = "0";
+//    		mappObject[COL_WIDTH] = "1500";
+//    		mappObject[COL_HEIGHT] = "375";
+//    	}
     	unmapShape (o, mappObject);
     }
 
@@ -1020,14 +1029,14 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     	unmapCenter (o, mappObject);
     	double size = o.getMWidth();
     	mappObject[COL_WIDTH] = "" + size;
-    	if (shapeType == ShapeType.PROTEINB)
-    	{
-    		mappObject[COL_HEIGHT] = "0";
-    	}
-    	else
-    	{
+//    	if (shapeType == ShapeType.PROTEINB)
+//    	{
+//    		mappObject[COL_HEIGHT] = "0";
+//    	}
+//    	else
+//    	{
     		mappObject[COL_HEIGHT] = "400";
-    	}
+//    	}
         unmapRotation (o, mappObject);
     }
 

@@ -40,12 +40,20 @@ public class ShapeType
 	public static final ShapeType MITOCHONDRIA = new ShapeType ("Mitochondria", "Mitochondria");
 	public static final ShapeType ORGANELLE = new ShapeType ("Organelle", "Organelle");
 	public static final ShapeType MEMBRANE = new ShapeType ("Membrane", "Membrane");
-//	public static final ShapeType CELLA = new ShapeType ("CellA", "CellA");
-//	public static final ShapeType RIBOSOME = new ShapeType ("Ribosome", "Ribosome");
-//	public static final ShapeType ORGANA = new ShapeType ("OrganA", "OrganA");
-//	public static final ShapeType ORGANB = new ShapeType ("OrganB", "OrganB");
-//	public static final ShapeType ORGANC = new ShapeType ("OrganC", "OrganC");
-//	public static final ShapeType PROTEINB = new ShapeType ("ProteinComplex", "ProteinB");
+	
+	@Deprecated
+	public static final ShapeType CELLA = new ShapeType ("CellA", "CellA");
+	@Deprecated
+	public static final ShapeType RIBOSOME = new ShapeType ("Ribosome", "Ribosome");
+	@Deprecated
+	public static final ShapeType ORGANA = new ShapeType ("OrganA", "OrganA");
+	@Deprecated
+	public static final ShapeType ORGANB = new ShapeType ("OrganB", "OrganB");
+	@Deprecated
+	public static final ShapeType ORGANC = new ShapeType ("OrganC", "OrganC");
+	@Deprecated
+	public static final ShapeType PROTEINB = new ShapeType ("ProteinComplex", "ProteinB");
+	
 	public static final ShapeType TRIANGLE = new ShapeType ("Triangle", "Poly"); // poly ;in MAPP
 	public static final ShapeType VESICLE = new ShapeType ("Vesicle", "Vesicle");
 	public static final ShapeType PENTAGON = new ShapeType ("Pentagon", "Poly"); // poly in MAPP

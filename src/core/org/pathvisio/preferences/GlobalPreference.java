@@ -110,7 +110,6 @@ public enum GlobalPreference implements Preference
 		),
 
 	MAX_NR_CITATIONS ("" + 5),
-	GENMAPP_COMPATIBLE(Boolean.toString(true))
 
 	;
 	GlobalPreference(String defaultValue) {

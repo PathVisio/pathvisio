@@ -43,7 +43,7 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("ProteinComplex", getPluggableShape (Internal.PROTEINB));
 	    ShapeRegistry.registerShape ("Cell", getCombinedShape (Internal.CELL));
 	    ShapeRegistry.registerShape ("Nucleus", getCombinedShape (Internal.NUCLEUS));
-	    ShapeRegistry.registerShape ("Mitochondria", getCombinedShape (Internal.MITOCHONDRIA));
+	    ShapeRegistry.registerShape ("Mitochondria", getPluggableShape (Internal.MITOCHONDRIA));
 	    ShapeRegistry.registerShape ("Organelle", getCombinedShape (Internal.ORGANELLE));
 	    ShapeRegistry.registerShape ("Vesicle", getCombinedShape (Internal.VESICLE));
 
@@ -189,6 +189,34 @@ class GenMAPPShapes
 			path.curveTo (26, 0, 33, 14, 33, 30);
 			path.closePath();
 			break;
+		case MITOCHONDRIA:
+			path.moveTo (72.81f, 85.70f);
+			path.curveTo (97.59f, 83.01f, 94.55f, 147.38f, 119.28f, 144.29f);
+			path.curveTo (166.27f, 144.40f, 136.22f, 42.38f, 175.51f, 41.70f);
+			path.curveTo (215.08f, 41.02f, 188.27f, 150.12f, 227.79f, 148.28f);
+			path.curveTo (271.14f, 146.25f, 230.67f, 29.04f, 274.00f, 26.55f);
+			path.curveTo (317.72f, 24.05f, 290.58f, 142.55f, 334.36f, 143.22f);
+			path.curveTo (371.55f, 143.80f, 351.55f, 43.14f, 388.66f, 45.75f);
+			path.curveTo (429.51f, 48.62f, 392.43f, 153.80f, 432.85f, 160.40f);
+			path.curveTo (459.82f, 164.80f, 457.96f, 94.30f, 485.13f, 97.26f);
+			path.curveTo (548.33f, 124.69f, 534.13f, 233.75f, 472.75f, 258.89f);
+			path.curveTo (454.92f, 261.42f, 450.22f, 220.87f, 432.35f, 223.03f);
+			path.curveTo (400.60f, 226.86f, 409.73f, 303.71f, 377.80f, 301.95f);
+			path.curveTo (348.05f, 300.30f, 365.16f, 223.61f, 335.37f, 223.28f);
+			path.curveTo (295.83f, 222.85f, 316.30f, 327.99f, 276.78f, 326.44f);
+			path.curveTo (241.90f, 325.08f, 266.95f, 236.11f, 232.34f, 231.61f);
+			path.curveTo (200.07f, 227.42f, 201.79f, 311.88f, 169.71f, 306.49f);
+			path.curveTo (134.22f, 300.53f, 167.04f, 209.92f, 131.32f, 205.60f);
+			path.curveTo (110.14f, 203.04f, 116.28f, 257.74f, 94.95f, 258.26f);
+			path.curveTo (15.35f, 236.77f, 5.51f, 114.51f, 72.81f, 85.70f);
+			path.closePath();
+			path.moveTo (272.82f, 0.84f);
+			path.curveTo (378.97f, 1.13f, 542.51f, 62.39f, 543.54f, 168.53f);
+			path.curveTo (544.58f, 275.18f, 381.50f, 342.19f, 274.84f, 342.28f);
+			path.curveTo (166.69f, 342.36f, 0.84f, 274.66f, 2.10f, 166.51f);
+			path.curveTo (3.33f, 60.72f, 167.03f, 0.56f, 272.82f, 0.84f);
+			path.closePath();
+			break;
 		}
 		return path;
 	}
@@ -215,20 +243,6 @@ class GenMAPPShapes
 			area.add(new Area(n1));
 			area.exclusiveOr(new Area(n2));
 			break;
-		case MITOCHONDRIA:
-			Ellipse2D.Double m0 = new Ellipse2D.Double (0, 0, 186, 100);
-			Ellipse2D.Double m1 = new Ellipse2D.Double (15, 25, 40, 50);
-			Ellipse2D.Double m2 = new Ellipse2D.Double (50, 15, 30, 70);
-			Ellipse2D.Double m3 = new Ellipse2D.Double (78, 10, 30, 80);
-			Ellipse2D.Double m4 = new Ellipse2D.Double (106, 15, 30, 70);
-			Ellipse2D.Double m5 = new Ellipse2D.Double (131, 25, 40, 50);
-			area.add(new Area(m1));
-			area.add(new Area(m2));
-			area.add(new Area(m3));
-			area.add(new Area(m4));
-			area.add(new Area(m5));
-			area.exclusiveOr(new Area(m0));
-			break;
 		case ORGANELLE:
 			RoundRectangle2D.Double g1 = new RoundRectangle2D.Double(0,0,200,100,40, 60);
 			RoundRectangle2D.Double g2 = new RoundRectangle2D.Double(8,8,184,84,40, 60);
@@ -238,8 +252,7 @@ class GenMAPPShapes
 		case VESICLE:
 			Ellipse2D.Double v1 = new Ellipse2D.Double (0, 0, 100, 100);
 			area.add(new Area(v1));
-			break;
-			
+			break;	
 		
 		}
 		return area;

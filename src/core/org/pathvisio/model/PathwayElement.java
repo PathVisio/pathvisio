@@ -2092,7 +2092,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		if (!Utils.stringEquals(mapInfoName, v))
 		{
-			if (v.length() > MAP_TITLE_MAX_LEN)
+			if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.GENMAPP_COMPATIBLE) && v.length() > MAP_TITLE_MAX_LEN)
 			{
 				throw new IllegalArgumentException("Map info name exceeds maximum length of " + MAP_TITLE_MAX_LEN);
 			}

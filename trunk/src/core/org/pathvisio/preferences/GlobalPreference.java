@@ -13,7 +13,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
 package org.pathvisio.preferences;
 
 import java.awt.Color;
@@ -111,6 +110,7 @@ public enum GlobalPreference implements Preference
 		),
 
 	MAX_NR_CITATIONS ("" + 5),
+	GENMAPP_COMPATIBLE(Boolean.toString(true))
 
 	;
 	GlobalPreference(String defaultValue) {

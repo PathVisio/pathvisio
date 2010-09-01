@@ -2079,12 +2079,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return mapInfoName;
 	}
 
-	/*
-	 * maximum length of pathway title. GenMAPP MAPP format imposes this limit,
-	 * so we have it too to be backwards compatible.
-	 */
-	public static final int MAP_TITLE_MAX_LEN = 50;
-
 	public void setMapInfoName(String v)
 	{
 		if (v == null)
@@ -2092,14 +2086,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 		if (!Utils.stringEquals(mapInfoName, v))
 		{
-			if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.GENMAPP_COMPATIBLE) && v.length() > MAP_TITLE_MAX_LEN)
-			{
-				throw new IllegalArgumentException("Map info name exceeds maximum length of " + MAP_TITLE_MAX_LEN);
-			}
-			else
-			{
-				mapInfoName = v;
-			}
+			mapInfoName = v;
 			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.MAPINFONAME));
 		}
 	}

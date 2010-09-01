@@ -307,8 +307,13 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 			if (o.getObjectType() == ObjectType.MAPPINFO)
 				mi = o;
 		}
+		
+		String mapInfoName = mi.getMapInfoName();
+		// MAPP format imposes a limit of 50 characters.
+		if (mapInfoName.length() > 50) mapInfoName = mapInfoName.substring(0, 50);
+		Logger.log.warn("Truncated MAPP INFO name to 50 characters");
 
-		mappInfo[ICOL_TITLE] = mi.getMapInfoName();
+		mappInfo[ICOL_TITLE] = mapInfoName;
 		mappInfo[ICOL_VERSION] = mi.getVersion();
 		mappInfo[ICOL_AUTHOR] = mi.getAuthor();
 		mappInfo[ICOL_MAINT] = mi.getMaintainer();

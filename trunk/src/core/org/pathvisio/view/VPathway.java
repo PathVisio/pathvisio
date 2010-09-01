@@ -75,7 +75,12 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	static final int ZORDER_SELECTIONBOX = Integer.MAX_VALUE;
 	static final int ZORDER_HANDLE = Integer.MAX_VALUE - 1;
 	
-
+	// flags for cursor change if mouse is over a
+	// label with href and ctrl button is pressed
+	private boolean stateCtrl = false;
+	private boolean stateEntered = false;
+	private VPathwayElement lastEnteredElement = null;
+	
 	private boolean selectionEnabled = true;
 
 	private Pathway temporaryCopy = null;
@@ -650,30 +655,56 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			redrawDirtyRect();
 		} else {
 			List<VPathwayElement> objects = getObjectsAt(new Point2D.Double(ve.getX(), ve.getY()));
-			Set<VPathwayElement> toRemove = new HashSet<VPathwayElement>();
+			
 			//Process mouseexit events
-			for(VPathwayElement vpe : lastMouseOver) {
-				if(!objects.contains(vpe)) {
-					toRemove.add(vpe);
-					fireVElementMouseEvent(new VElementMouseEvent(
-							this, VElementMouseEvent.TYPE_MOUSEEXIT, vpe, ve
-					));
-				}
-			}
-			lastMouseOver.removeAll(toRemove);
-
+			processMouseExitEvents(ve, objects);
+			
 			//Process mouseenter events
-			for(VPathwayElement vpe : objects) {
-				if(!lastMouseOver.contains(vpe)) {
-					lastMouseOver.add(vpe);
+			processMouseEnterEvents(ve, objects);
+		}
+
+		hoverManager.reset(ve);
+	}
+
+	private void processMouseEnterEvents(MouseEvent ve, List<VPathwayElement> objects) {
+		for(VPathwayElement vpe : objects) {
+			if(!lastMouseOver.contains(vpe)) {
+				lastMouseOver.add(vpe);
+				stateEntered = true;
+				if(vpe instanceof Label && !((Label)vpe).gdata.getHref().equals("")) {
+					lastEnteredElement = vpe;
+				} else {					
 					fireVElementMouseEvent(new VElementMouseEvent(
 							this, VElementMouseEvent.TYPE_MOUSEENTER, vpe, ve
 					));
 				}
 			}
 		}
+		if(lastEnteredElement != null) {
+			fireHyperlinkUpdate(lastEnteredElement);
+		}
+	}
 
-		hoverManager.reset(ve);
+	private void processMouseExitEvents(MouseEvent ve, List<VPathwayElement> objects) {
+		Set<VPathwayElement> toRemove = new HashSet<VPathwayElement>();
+		
+		for(VPathwayElement vpe : lastMouseOver) {
+			if(!objects.contains(vpe)) {
+				toRemove.add(vpe);
+				stateEntered = false;
+				if(lastEnteredElement == vpe) {
+					fireHyperlinkUpdate(lastEnteredElement);
+					lastEnteredElement = null;
+				} else {
+					fireVElementMouseEvent(new VElementMouseEvent(
+							this, VElementMouseEvent.TYPE_MOUSEEXIT, vpe, ve
+					));
+				}
+				
+			}
+		}
+		
+		lastMouseOver.removeAll(toRemove);
 	}
 
 	private Set<VPathwayElement> lastMouseOver = new HashSet<VPathwayElement>();
@@ -753,33 +784,50 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		clearSelection();
 		selection.addToSelection(o);
 	}
+	
+	 // opens href of a Label with ctrl + click
+	private boolean openHref(MouseEvent e, VPathwayElement o) {
+		if(e.isKeyDown(128) && o != null && o instanceof Label) {
+			String href = ((Label)o).gdata.getHref();
+			if(selection.getSelection().size() < 1 && !href.equals("")) {
+				fireVPathwayEvent(new VPathwayEvent(this, o, VPathwayEvent.HREF_ACTIVATED));
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Handles mouse Pressed input
 	 */
 	public void mouseDown(MouseEvent e)
 	{
-		vDragStart = new Point(e.getX(), e.getY());
-		temporaryCopy = (Pathway) data.clone();
-		// setFocus();
-		if (editMode)
-		{
-			if (newTemplate != null)
+		
+		VPathwayElement vpe = getObjectAt(e.getLocation());
+		if(!openHref(e, vpe)) {
+			// setFocus();
+			vDragStart = new Point(e.getX(), e.getY());
+			temporaryCopy = (Pathway) data.clone();
+		
+			if (editMode)
 			{
-				newObject(new Point(e.getX(), e.getY()));
-				// SwtGui.getCurrent().getWindow().deselectNewItemActions();
+				if (newTemplate != null)
+				{
+					newObject(new Point(e.getX(), e.getY()));
+					// SwtGui.getCurrent().getWindow().deselectNewItemActions();
+				} else
+				{
+					editObject(new Point(e.getX(), e.getY()), e);
+				}
 			} else
 			{
-				editObject(new Point(e.getX(), e.getY()), e);
+				mouseDownViewMode(e);
 			}
-		} else
-		{
-			mouseDownViewMode(e);
-		}
-		if (pressedObject != null)
-		{
-			fireVPathwayEvent(new VPathwayEvent(this, pressedObject, e,
-					VPathwayEvent.ELEMENT_CLICKED_DOWN));
+			if (pressedObject != null)
+			{
+				fireVPathwayEvent(new VPathwayEvent(this, pressedObject, e,
+						VPathwayEvent.ELEMENT_CLICKED_DOWN));
+			}
 		}
 	}
 
@@ -1398,10 +1446,26 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 		return null;
 	}
+	
+	private void fireHyperlinkUpdate(VPathwayElement vpe) {
+		int type;         
+		if(stateEntered && stateCtrl) {
+			type = VElementMouseEvent.TYPE_MOUSE_SHOWHAND;
+		} else {
+			type = VElementMouseEvent.TYPE_MOUSE_NOTSHOWHAND;
+		}         
+		fireVElementMouseEvent(new VElementMouseEvent(this, type, vpe));
+	}
 
 	public void keyPressed(KeyEvent e)
 	{
 		// Use registerKeyboardActions
+		if(KeyEvent.CTRL == e.getKeyCode()) {
+			stateCtrl = true;
+			if(lastEnteredElement != null) {
+				fireHyperlinkUpdate(lastEnteredElement);
+			}
+		}
 	}
 
 	//TODO: should use Toolkit.getMenuShortcutKeyMask(), but
@@ -1512,6 +1576,12 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public void keyReleased(KeyEvent e)
 	{
 		// use registerKeyboardActions
+		if(KeyEvent.CTRL == e.getKeyCode()) {
+			stateCtrl = false;
+			if(lastEnteredElement != null) {
+				fireHyperlinkUpdate(lastEnteredElement);
+			}
+		}
 	}
 
 	/**

@@ -54,6 +54,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.Handle;
+import org.pathvisio.view.Label;
 import org.pathvisio.view.VElementMouseEvent;
 import org.pathvisio.view.VElementMouseListener;
 import org.pathvisio.view.VPathway;
@@ -371,6 +372,12 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 				Handle h = (Handle)e.getElement();
 				setCursor(Cursor.getPredefinedCursor(h.getCursorHint()));
 			} else if(e.getType() == VElementMouseEvent.TYPE_MOUSEEXIT) {
+				setCursor(Cursor.getDefaultCursor());
+			}
+		} else if (e.getElement() instanceof Label) {
+			if(e.getType() == VElementMouseEvent.TYPE_MOUSE_SHOWHAND) {
+				setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			} else if(e.getType() == VElementMouseEvent.TYPE_MOUSE_NOTSHOWHAND) {
 				setCursor(Cursor.getDefaultCursor());
 			}
 		}

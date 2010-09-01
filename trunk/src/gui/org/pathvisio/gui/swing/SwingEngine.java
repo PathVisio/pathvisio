@@ -18,6 +18,7 @@ package org.pathvisio.gui.swing;
 
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
 import java.util.Comparator;
@@ -139,6 +140,21 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		}
 	}
 
+	public void handleMalformedURLException(String message, Component c, Throwable e) {
+		if(e.getMessage() != null && e.getMessage().contains("no protocol:")) {
+			JOptionPane.showMessageDialog(c,
+					message + "\n\n" +
+					"Please correct the specified hyperlink for this Label in the \"properties pane\" on the right.\n" +
+					"(http://www.example.com)\n\n" +
+					"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n"
+					, "Error", JOptionPane.ERROR_MESSAGE);
+			Logger.log.error("MalformedURLException", e);
+		} else {
+			JOptionPane.showMessageDialog(c, message + "\nSee error log for details\n" + e.getClass(), "Error", JOptionPane.ERROR_MESSAGE);
+			Logger.log.error("MalformedURLException", e);
+		}
+	}
+	
 	public VPathwayWrapper createWrapper() {
 		 return new VPathwaySwing(getApplicationPanel().getScrollPane());
 	}

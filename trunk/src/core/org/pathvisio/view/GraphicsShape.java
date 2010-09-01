@@ -543,6 +543,9 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			for(int i = 0; i < lines.length; i++) {
 				if(lines[i].equals("")) continue; //Can't have attributed string with 0 length
 				AttributedString ats = getVAttributedString(lines[i]);
+				if(!gdata.getHref().equals("")) {
+					ats.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+	            }
 				Rectangle2D tb = fm.getStringBounds(ats.getIterator(), 0, lines[i].length(), g);
 
 				int xoffset = area.x;

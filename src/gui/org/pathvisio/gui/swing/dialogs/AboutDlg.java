@@ -69,7 +69,8 @@ public class AboutDlg
 				"<p>R.M.H. Besseling, S.P.M.Crijns, I. Kaashoek\n" +
 				"M.M. Palm, E.D. Pelgrim, E. Neuteboom,\n" +
 				"E.J. Creusen, P. Moeskops, Adem Bilican,\n" +
-				"Margot Sunshine, Mark Woon, Bing Liu\n" +
+				"Margot Sunshine, Mark Woon, Bing Liu,\n" +
+				"Ferry Jagers\n" +
 				"<h3>Visit our website</h3>" +
 				"<p><a href=\"http://www.pathvisio.org\">http://www.pathvisio.org</a>" +
 				"</html>");

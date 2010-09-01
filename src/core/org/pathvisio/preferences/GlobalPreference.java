@@ -42,6 +42,7 @@ public enum GlobalPreference implements Preference
 	COLOR_NO_DATA_FOUND(new Color(180, 180, 180)),
 	COLOR_SELECTED(Color.RED),
 	COLOR_HIGHLIGHTED(Color.GREEN),
+	COLOR_LINK(Color.BLUE),
 
 	DATANODES_ROUNDED(Boolean.toString(false)),
 

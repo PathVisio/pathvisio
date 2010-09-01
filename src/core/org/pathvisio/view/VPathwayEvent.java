@@ -35,6 +35,7 @@ public class VPathwayEvent extends EventObject {
 	public static final int ELEMENT_CLICKED_UP = 6;
 	public static final int ELEMENT_CLICKED_DOWN = 7;
 	public static final int ELEMENT_HOVER = 8;
+	public static final int HREF_ACTIVATED = 9;
 
 	int type;
 	List<VPathwayElement> affectedElements;

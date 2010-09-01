@@ -36,6 +36,8 @@ import org.jdom.Document;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
 
 /**
@@ -2033,6 +2035,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(href, input))
 		{
 			href = input;
+			setColor(PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_LINK)); 
 			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.HREF));
 		}
 	}

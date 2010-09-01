@@ -27,6 +27,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,6 +73,7 @@ import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Handle;
+import org.pathvisio.view.Label;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
@@ -473,7 +476,20 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				b.setEnabled(false);
 			}
 			break;
+		case VPathwayEvent.HREF_ACTIVATED:
+			if(e.getAffectedElement() instanceof Label) {
+				try {
+					hyperlinkUpdate(new HyperlinkEvent(e.getSource(), HyperlinkEvent.EventType.ACTIVATED, new URL(((Label)e.getAffectedElement()).getPathwayElement().getHref())));
+				} catch (MalformedURLException e1) {
+					swingEngine.getEngine().getActiveVPathway().selectObject(e.getAffectedElement());
+					swingEngine.handleMalformedURLException("The specified link address is not valid.", this, e1);
+				}
+			}
 		}
+	}
+	
+	public void hyperlinkUpdate(HyperlinkEvent e) {
+		swingEngine.hyperlinkUpdate(e);
 	}
 
 	public void applicationEvent(ApplicationEvent e) {

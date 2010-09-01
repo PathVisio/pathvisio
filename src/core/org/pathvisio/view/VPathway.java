@@ -2329,6 +2329,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				((MLine)o).getConnectorShape().recalculateShape(((MLine)o));
 			}
 		}
+		moveGraphicsTop(getSelectedGraphics());
 		redrawDirtyRect();
 	}
 

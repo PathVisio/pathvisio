@@ -16,6 +16,9 @@
 //
 package org.pathvisio.view.swing;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -53,6 +56,7 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.view.GraphicsShape;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.Label;
 import org.pathvisio.view.VElementMouseEvent;
@@ -63,8 +67,6 @@ import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
 import org.pathvisio.view.VPathwayWrapper;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * swing-dependent implementation of VPathway.
@@ -369,8 +371,11 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		//Change mouse cursor based on underlying object
 		if(	e.getElement() instanceof Handle) {
 			if(e.getType() == VElementMouseEvent.TYPE_MOUSEENTER) {
-				Handle h = (Handle)e.getElement();
-				setCursor(Cursor.getPredefinedCursor(h.getCursorHint()));
+				
+				Handle h = (Handle) e.getElement();
+				if(h.getAngle() == 1)  setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+				else setCursor(Cursor.getPredefinedCursor(calculateCursorStyle(e)));
+				
 			} else if(e.getType() == VElementMouseEvent.TYPE_MOUSEEXIT) {
 				setCursor(Cursor.getDefaultCursor());
 			}
@@ -383,6 +388,67 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		}
 	}
 
+	/**
+	 * calculates the corresponding cursor type
+	 * depending on the angle of the current handle object
+	 * and the rotation of the object
+	 * @param e
+	 * @return
+	 */
+	private int calculateCursorStyle(VElementMouseEvent e) {
+		Handle h = (Handle) e.getElement();
+		if(h.getParent() instanceof GraphicsShape) {
+			GraphicsShape gs = (GraphicsShape) h.getParent();
+			double rotation = gs.getPathwayElement().getRotation();
+			double degrees = h.getAngle() + (rotation * (180 / Math.PI));
+			
+			if(degrees > 360)  degrees = degrees - 360;
+			
+			if(h.getAngle() == 1) {
+				return Cursor.MOVE_CURSOR;
+			} else {
+				switch (h.getFreedom()) {
+					case X:
+						return getXYCursorPosition(degrees);
+					case Y:
+						return getXYCursorPosition(degrees);
+					case FREE:
+						return getFREECursorPosition(degrees);
+					case FREER:
+						return getFREECursorPosition(degrees);
+				}
+			}
+		}
+
+		return Cursor.DEFAULT_CURSOR;
+	}
+
+	private int getXYCursorPosition(double degrees) {
+		if(degrees < 45 || degrees > 315) {
+			return Cursor.E_RESIZE_CURSOR;
+		} else if (degrees < 135) {
+			return Cursor.S_RESIZE_CURSOR;
+		} else if (degrees < 225) {
+			return Cursor.W_RESIZE_CURSOR;
+		} else if (degrees < 315) {
+			return Cursor.N_RESIZE_CURSOR;
+		}
+		return Cursor.DEFAULT_CURSOR;
+	}
+	
+	private int getFREECursorPosition(double degrees) {
+		if(degrees < 90) {
+			return Cursor.SE_RESIZE_CURSOR;
+		} else if(degrees < 180) {
+			return Cursor.SW_RESIZE_CURSOR;
+		} else if (degrees < 270) {
+			return Cursor.NW_RESIZE_CURSOR;
+		} else if (degrees <= 360) {
+			return Cursor.NE_RESIZE_CURSOR;
+		}
+		return Cursor.DEFAULT_CURSOR;
+	}
+	
 	private boolean disposed = false;
 	public void dispose()
 	{

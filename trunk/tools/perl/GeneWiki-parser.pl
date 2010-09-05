@@ -69,7 +69,7 @@ my @linkArray = ();
 my $color;
 
 print OUTFILE "<noinclude>\n<!--\nChecklist:\n1. Locate appropriate pathway article and update imagemap default link accordingly. Also consider modifying the \"Description\" at the very bottom of the template to provide a more descriptive pathway name.\n2. Check pathway for \"search for\" links when hovering and attempt to locate an appropriate wikipedia article. Update imagemap link, link color, and highlight references accordingly.\n3. Check pathway for external links in green and attempt to locate appropriate wikipedia content instead. Update imagemap link, link color, and highlight references accordingly.\n4. Delete this checklist from the template :)\n-->\n"; 
-print OUTFILE "{{Documentation|Template:Interactive_pathway_maps\/doc}}<\/noinclude>{{{header|\'\'Click on genes, proteins and metabolites below to visit [[Portal:Gene_Wiki|Gene Wiki]] pages and related Wikipedia articles. The pathway can be downloaded and edited at [http:\/\/www.wikipathways.org\/index.php\/Pathway:$WPID WikiPathways].\'\'}}}\n\n<div style=\"overflow:auto\; width:{{{width}}}px\; height:{{{height}}}px\">\n\n"; 
+print OUTFILE "{{Documentation|Template:Interactive_pathway_maps\/doc}}<\/noinclude>{{{header|\'\'Click on genes, proteins and metabolites below to link to respective Wikipedia articles.\'\' <ref name=\"WikiPathways\">The interactive pathway map can be edited at WikiPathways: {{cite web | url = http:\/\/www.wikipathways.org\/index.php\/Pathway:$WPID | title = $pathway | author =  | date = | work = | publisher = | pages = | accessdate = }}</ref> }}}\n\n<div style=\"overflow:auto\; width:{{{width}}}px\; height:{{{height}}}px\">\n\n"; 
 
 while (my $line = <HTML>)
       {
@@ -400,7 +400,7 @@ for my $i ( 0 .. $#linkArray ) {
 }
 print OUTFILE "|#default=".$oleft."\n}}\n";
 
-print OUTFILE "|Location=left\n|Description=".$pathway."  [[http:\/\/www.wikipathways.org\/index.php\/Pathway:$WPID edit]]\n}}\n</div>";
+print OUTFILE "|Location=left\n|Description=".$pathway."  [[http:\/\/www.wikipathways.org\/index.php\/Pathway:$WPID edit]]\n}}\n</div><noinclude>{{reflist}}</noinclude>";
 close OUTFILE;
 close HTML;
 

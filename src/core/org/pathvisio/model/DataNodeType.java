@@ -31,6 +31,7 @@ public class DataNodeType {
 	public static final DataNodeType UNKOWN = new DataNodeType("Unknown");
 	public static final DataNodeType RNA = new DataNodeType("Rna");
 	public static final DataNodeType PROTEIN = new DataNodeType("Protein");
+	@Deprecated
 	public static final DataNodeType COMPLEX = new DataNodeType("Complex");
 	public static final DataNodeType GENEPRODUCT = new DataNodeType("GeneProduct");
 	public static final DataNodeType METABOLITE = new DataNodeType("Metabolite");

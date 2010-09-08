@@ -243,7 +243,6 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.GENEPRODUCT)),
 				 new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.METABOLITE)),
 				 new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.PATHWAY)),
-				 new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.COMPLEX)),
 				 new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.PROTEIN)),
 				 new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.RNA)),
 				 new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.UNKOWN)),

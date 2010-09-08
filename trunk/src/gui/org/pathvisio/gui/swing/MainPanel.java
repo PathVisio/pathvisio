@@ -347,7 +347,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		for(Action[] aa : actions.newElementActions) {
 			if(aa.length == 1) {
-				addToToolbar(aa[0]);
+//				addToToolbar(aa[0]);
 			} else { //This is the line/receptor sub-menu
 				String icon = "newlinemenu.gif";
 				String tooltip = "Select a line to draw";
@@ -364,8 +364,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				for(Action a : aa) {
 					lineButton.addComponent(new JMenuItem(a));
 				}
-				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
-				lineButton.setEnabled(false);
+//				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
+//				lineButton.setEnabled(false);
 			}
 		}
 		

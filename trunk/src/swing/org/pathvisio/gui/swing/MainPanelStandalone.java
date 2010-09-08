@@ -212,7 +212,7 @@ public class MainPanelStandalone extends MainPanel
 
 		for(Action[] aa : actions.newElementActions) {
 			if(aa.length == 1) {
-				addToToolbar(aa[0]);
+//				addToToolbar(aa[0]);
 			} else { //This is the line/receptor sub-menu
 				String icon = "newlinemenu.gif";
 				String tooltip = "Select a line to draw";
@@ -230,7 +230,7 @@ public class MainPanelStandalone extends MainPanel
 				for(Action a : aa) {
 					lineButton.addComponent(new JMenuItem(a));
 				}
-				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
+//				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
 				//lineButton.setEnabled(false);
 			}
 		}
@@ -264,11 +264,11 @@ public class MainPanelStandalone extends MainPanel
 		addLabel(shapeButton, "Basic shapes");
 		addButtons(actions.newShapeActions, shapeButton, numItemsPerRow);		
 
-		addLabel(shapeButton, "Cellular components");
-		addButtons(actions.newCellularComponentActions, shapeButton, numItemsPerRow);
-
 		addLabel(shapeButton, "MIM shapes");
 		addButtons(actions.newMIMShapeActions, shapeButton, numItemsPerRow);
+
+		addLabel(shapeButton, "Cellular components");
+		addButtons(actions.newCellularComponentActions, shapeButton, numItemsPerRow);
 		
 		// addMenuItems() can be used to display item with label as memu items
 		//addMenuItems(actions.newMolecularInteractionMapActions, shapeButton);
@@ -290,8 +290,8 @@ public class MainPanelStandalone extends MainPanel
 		addLabel(lineButton, "Basic interactions");
 		addButtons(actions.newInteractionActions, lineButton, numItemsPerRow);
 
-		addLabel(lineButton, "Receptor/ligand");
-		addButtons(actions.newRLInteractionActions, lineButton, numItemsPerRow);
+//		addLabel(lineButton, "Receptor/ligand");
+//		addButtons(actions.newRLInteractionActions, lineButton, numItemsPerRow);
 		
 		addLabel(lineButton, "MIM interactions");
 		addButtons(actions.newMIMInteractionActions, lineButton, numItemsPerRow);		
@@ -308,7 +308,7 @@ public class MainPanelStandalone extends MainPanel
 		
 		numItemsPerRow = 6;		
 		addLabel(templateButton, "Templates");
-		addButtons(actions.newInteractionActions, templateButton, numItemsPerRow);	
+		addButtons(actions.newTemplateActions, templateButton, numItemsPerRow);	
 		
 		addToToolbar(templateButton, TB_GROUP_SHOW_IF_EDITMODE);
 		//lineButton.setEnabled(false);

@@ -37,6 +37,7 @@ import org.pathvisio.preferences.GlobalPreference;
  */
 public abstract class DefaultTemplates {
 	final static Color COLOR_METABOLITE = Color.BLUE;
+	final static Color COLOR_PATHWAY = new Color(20,150,30);
 
 	/**
 	 * Abstract base for templates that only add a single PathwayElement
@@ -174,6 +175,11 @@ public abstract class DefaultTemplates {
 			//Default colors for different types
 			if (type.equals(DataNodeType.METABOLITE)) {
 				e.setColor(COLOR_METABOLITE);
+			} else if (type.equals(DataNodeType.PATHWAY)) {
+				e.setColor(COLOR_PATHWAY);
+				e.setMFontSize(12);
+				e.setBold(true);
+				e.setShapeType(ShapeType.NONE);
 			}
 
 			e.setTextLabel(type.toString());

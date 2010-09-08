@@ -234,16 +234,33 @@ public class MainPanelStandalone extends MainPanel
 				//lineButton.setEnabled(false);
 			}
 		}
+
+		// define the drop-down menu for data nodes 
+		String icon = "newdatanodemenu.gif";
+		String tooltip = "Select a data node to draw";
+		DropDownButton datanodeButton = new DropDownButton(
+				new ImageIcon(Resources.getResourceURL(icon)));
+		datanodeButton.setToolTipText(tooltip);		
+		//itemsDropDown = datanodeButton;
+		
+		int numItemsPerRow = 6;
+		addLabel(datanodeButton, "Data Nodes");
+		addButtons(actions.newDatanodeActions, datanodeButton, numItemsPerRow);		
+
+		addLabel(datanodeButton, "Annotations");
+		addButtons(actions.newAnnotationActions, datanodeButton, numItemsPerRow);
+		
+		addToToolbar(datanodeButton, TB_GROUP_SHOW_IF_EDITMODE);
 		
 		// define the drop-down menu for shapes 
-		String icon = "newitems.gif";
-		String tooltip = "Select a shape to draw";
+		icon = "newitemmenu.gif";
+		tooltip = "Select a shape to draw";
 		DropDownButton shapeButton = new DropDownButton(
 				new ImageIcon(Resources.getResourceURL(icon)));
 		shapeButton.setToolTipText(tooltip);		
 		itemsDropDown = shapeButton;
 		
-		int numItemsPerRow = 6;
+		numItemsPerRow = 6;
 		addLabel(shapeButton, "Basic shapes");
 		addButtons(actions.newShapeActions, shapeButton, numItemsPerRow);		
 
@@ -263,7 +280,7 @@ public class MainPanelStandalone extends MainPanel
 		
 		// define the drop-down menu for interactions
 		icon = "newinteractionmenu.gif";
-		tooltip = "Select a interaction to draw";
+		tooltip = "Select an interaction to draw";
 		DropDownButton lineButton = new DropDownButton(
 				new ImageIcon(Resources.getResourceURL(icon)));
 		lineButton.setToolTipText(tooltip);		
@@ -280,6 +297,20 @@ public class MainPanelStandalone extends MainPanel
 		addButtons(actions.newMIMInteractionActions, lineButton, numItemsPerRow);		
 		
 		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
+		//lineButton.setEnabled(false);
+
+		// define the drop-down menu for templates
+		icon = "newtemplatemenu.gif";
+		tooltip = "Select a template to draw";
+		DropDownButton templateButton = new DropDownButton(
+				new ImageIcon(Resources.getResourceURL(icon)));
+		templateButton.setToolTipText(tooltip);		
+		
+		numItemsPerRow = 6;		
+		addLabel(templateButton, "Templates");
+		addButtons(actions.newInteractionActions, templateButton, numItemsPerRow);	
+		
+		addToToolbar(templateButton, TB_GROUP_SHOW_IF_EDITMODE);
 		//lineButton.setEnabled(false);
 
 		tb.addSeparator();

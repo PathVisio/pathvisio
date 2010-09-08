@@ -18,7 +18,6 @@ package org.pathvisio.gui.swing;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
 import java.util.Comparator;

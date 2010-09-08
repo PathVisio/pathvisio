@@ -16,6 +16,7 @@
 //
 package org.pathvisio.gui.swing;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -210,38 +211,37 @@ public class MainPanelStandalone extends MainPanel
 
 		String submenu = "line";
 
-		for(Action[] aa : actions.newElementActions) {
-			if(aa.length == 1) {
+//		for(Action[] aa : actions.newElementActions) {
+//			if(aa.length == 1) {
 //				addToToolbar(aa[0]);
-			} else { //This is the line/receptor sub-menu
-				String icon = "newlinemenu.gif";
-				String tooltip = "Select a line to draw";
-				
-				if(submenu.equals("receptors")) { //Next one is receptors
-					icon = "newlineshapemenu.gif";
-					tooltip = "Select a receptor/ligand to draw";
-				} else {
-					submenu = "receptors";
-				}
-				DropDownButton lineButton = new DropDownButton(new ImageIcon(
-						Resources.getResourceURL(icon)));
-				lineButton.setToolTipText(tooltip);
-				
-				for(Action a : aa) {
-					lineButton.addComponent(new JMenuItem(a));
-				}
+//			} else { //This is the line/receptor sub-menu
+//				String icon = "newlinemenu.gif";
+//				String tooltip = "Select a line to draw";
+//				
+//				if(submenu.equals("receptors")) { //Next one is receptors
+//					icon = "newlineshapemenu.gif";
+//					tooltip = "Select a receptor/ligand to draw";
+//				} else {
+//					submenu = "receptors";
+//				}
+//				DropDownButton lineButton = new DropDownButton(new ImageIcon(
+//						Resources.getResourceURL(icon)));
+//				lineButton.setToolTipText(tooltip);
+//				
+//				for(Action a : aa) {
+//					lineButton.addComponent(new JMenuItem(a));
+//				}
 //				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
-				//lineButton.setEnabled(false);
-			}
-		}
-
+//				//lineButton.setEnabled(false);
+//			}
+//		}
+		
 		// define the drop-down menu for data nodes 
 		String icon = "newdatanodemenu.gif";
 		String tooltip = "Select a data node to draw";
 		DropDownButton datanodeButton = new DropDownButton(
 				new ImageIcon(Resources.getResourceURL(icon)));
 		datanodeButton.setToolTipText(tooltip);		
-		//itemsDropDown = datanodeButton;
 		
 		int numItemsPerRow = 6;
 		addLabel(datanodeButton, "Data Nodes");
@@ -251,6 +251,7 @@ public class MainPanelStandalone extends MainPanel
 		addButtons(actions.newAnnotationActions, datanodeButton, numItemsPerRow);
 		
 		addToToolbar(datanodeButton, TB_GROUP_SHOW_IF_EDITMODE);
+		tb.addSeparator(new Dimension(2,0));
 		
 		// define the drop-down menu for shapes 
 		icon = "newitemmenu.gif";
@@ -270,13 +271,8 @@ public class MainPanelStandalone extends MainPanel
 		addLabel(shapeButton, "Cellular components");
 		addButtons(actions.newCellularComponentActions, shapeButton, numItemsPerRow);
 		
-		// addMenuItems() can be used to display item with label as memu items
-		//addMenuItems(actions.newMolecularInteractionMapActions, shapeButton);
-		
 		addToToolbar(shapeButton, TB_GROUP_SHOW_IF_EDITMODE);
-		//shapeButton.setEnabled(false);
-
-		//tb.addSeparator();
+		tb.addSeparator(new Dimension(2,0));
 		
 		// define the drop-down menu for interactions
 		icon = "newinteractionmenu.gif";
@@ -284,21 +280,17 @@ public class MainPanelStandalone extends MainPanel
 		DropDownButton lineButton = new DropDownButton(
 				new ImageIcon(Resources.getResourceURL(icon)));
 		lineButton.setToolTipText(tooltip);		
-		//itemsDropDown = lineButton;
 		
 		numItemsPerRow = 6;		
 		addLabel(lineButton, "Basic interactions");
 		addButtons(actions.newInteractionActions, lineButton, numItemsPerRow);
-
-//		addLabel(lineButton, "Receptor/ligand");
-//		addButtons(actions.newRLInteractionActions, lineButton, numItemsPerRow);
 		
 		addLabel(lineButton, "MIM interactions");
 		addButtons(actions.newMIMInteractionActions, lineButton, numItemsPerRow);		
 		
 		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
-		//lineButton.setEnabled(false);
-
+		tb.addSeparator(new Dimension(2,0));
+		
 		// define the drop-down menu for templates
 		icon = "newtemplatemenu.gif";
 		tooltip = "Select a template to draw";
@@ -311,10 +303,7 @@ public class MainPanelStandalone extends MainPanel
 		addButtons(actions.newTemplateActions, templateButton, numItemsPerRow);	
 		
 		addToToolbar(templateButton, TB_GROUP_SHOW_IF_EDITMODE);
-		//lineButton.setEnabled(false);
-
 		tb.addSeparator();
-		
 
 		addToToolbar(actions.layoutActions);
 	}

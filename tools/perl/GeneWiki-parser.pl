@@ -299,6 +299,9 @@ while (my $line = <HTML>)
       			}
       		}
 
+	#remove #interactive_pathway_map anchor from links
+	$newlink =~ s/#Interactive_pathway_map//;
+	
 	#make unique references to copies
 	if ($seen{$id}++){
 		my $alt = $seen{$id} - 1;

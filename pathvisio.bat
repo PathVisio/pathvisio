@@ -1,2 +1,2 @@
 cd /d %~dp0
-java -jar pathvisio.jar -p visplugins.jar %*
+java -Xmx1024m -jar pathvisio.jar -p visplugins.jar %*

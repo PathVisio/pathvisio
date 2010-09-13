@@ -61,6 +61,7 @@ import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.Utils;
 import org.pathvisio.view.SelectionBox.SelectionListener;
 import org.pathvisio.view.ViewActions.KeyMoveAction;
+import org.pathvisio.view.ViewActions.TextFormattingAction;
 
 /**
  * This class implements and handles a drawing. Graphics objects are stored in
@@ -1475,6 +1476,14 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			.getKeyStroke(java.awt.event.KeyEvent.VK_D,
 					java.awt.Event.CTRL_MASK);
 
+	public static final KeyStroke KEY_BOLD = KeyStroke
+	.getKeyStroke(java.awt.event.KeyEvent.VK_B,
+			java.awt.Event.CTRL_MASK);
+	
+	public static final KeyStroke KEY_ITALIC = KeyStroke
+	.getKeyStroke(java.awt.event.KeyEvent.VK_I,
+			java.awt.Event.CTRL_MASK);	
+	
 	public static final KeyStroke KEY_MOVERIGHT = KeyStroke.getKeyStroke(
 			java.awt.event.KeyEvent.VK_RIGHT, 0);
 
@@ -1571,6 +1580,12 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		parent.registerKeyboardAction(KEY_MOVEDOWN_SHIFT, new KeyMoveAction(
 				engine,
 				KEY_MOVEDOWN_SHIFT));
+		parent.registerKeyboardAction(KEY_BOLD, new TextFormattingAction(
+				engine,
+				KEY_BOLD));
+		parent.registerKeyboardAction(KEY_ITALIC, new TextFormattingAction(
+				engine,
+				KEY_ITALIC));
 	}
 
 	public void keyReleased(KeyEvent e)

@@ -26,8 +26,10 @@ import java.awt.geom.Point2D;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -111,6 +113,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final ShowUnlinkedConnectors showUnlinked;
 	public final AddState addState;
 	public final RemoveState removeState;
+	public final TextFormattingAction formatText;
 
 	private final Engine engine;
 
@@ -142,6 +145,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		showUnlinked = new ShowUnlinkedConnectors();
 		addState = new AddState();
 		removeState = new RemoveState();
+		formatText = new TextFormattingAction(engine, null);
 
 		registerToGroup(selectDataNodes, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(selectAll, GROUP_ENABLE_VPATHWAY_LOADED);
@@ -867,6 +871,38 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 					}
 				}
 			vPathway.redrawDirtyRect();
+		}
+	}
+	
+	public static class TextFormattingAction extends AbstractAction 
+	{	
+		Engine engine;
+		KeyStroke key;
+
+		public TextFormattingAction(Engine engine, KeyStroke key) {
+			this.engine = engine;
+			this.key = key;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			VPathway vp = engine.getActiveVPathway();
+			Set<VPathwayElement> changeTextFormat = new HashSet<VPathwayElement>();
+			changeTextFormat = vp.getSelectedPathwayElements();
+			for(VPathwayElement velt : changeTextFormat) {
+				if (velt instanceof Graphics){
+					PathwayElement o = ((Graphics)velt).getPathwayElement();
+					if(key.equals (VPathway.KEY_BOLD)) {
+                    				if(o.isBold()) o.setBold(false);
+                    				else o.setBold(true);
+                    }
+					else if(key.equals (VPathway.KEY_ITALIC)) {
+						if(o.isItalic()) o.setItalic(false);
+						else o.setItalic(true);						
+					}
+				}
+			}
+			
+			vp.redraw();
 		}
 	}
 }

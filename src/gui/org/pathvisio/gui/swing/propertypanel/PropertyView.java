@@ -16,8 +16,10 @@
 //
 package org.pathvisio.gui.swing.propertypanel;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
@@ -37,6 +39,7 @@ public class PropertyView implements Comparable<PropertyView> {
 	Collection<PathwayElement> elements;
 	private Object value;
 	private Object type;
+	private int counter = 0;
 	boolean different;
 	private TableCellRenderer propertyLabelRenderer = new PropertyLabelRenderer();
 
@@ -77,19 +80,33 @@ public class PropertyView implements Comparable<PropertyView> {
 	 * This notifies the PropertyView that one of the PathwayElements has changed
 	 * or that the PathwayElement list has been changed, and a new value should be cached.
 	 */
+	
 	public void refreshValue() {
-		boolean first = true;
-		for(PathwayElement e : elements) {
-			Object o = e.getPropertyEx(type);
-			if(!first && (o == null || !o.equals(value))) {
-				different = true;
-				return;
+		if(elements.size() == 1) {
+			value = elements.iterator().next().getPropertyEx(type);
+		}
+		else {
+			List<Object> SelectionValues = new ArrayList<Object>();
+			for(PathwayElement e : elements) {
+				Object o = e.getPropertyEx(type);
+				if(o != null){
+					SelectionValues.add(o);
+					value = o;
+					different = false;
+				}
 			}
-			value = o;
-			first = false;
+			if(!SelectionValues.isEmpty()) {
+				while(SelectionValues.size()-2 >= counter) {
+					if(!SelectionValues.get(counter).equals(SelectionValues.get(counter+1))) {
+						different = true;
+					}
+					counter ++;
+				}
+				counter = 0;		
+			}
 		}
 	}
-
+	
 	/**
 	 * Number of PathwayElement's being edited / viewed
 	 */

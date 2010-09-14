@@ -647,8 +647,16 @@ public class KeggFormat {
 		if (graphics.size() == 1)
 		{
 			Graphics dg = graphics.get(0);
+			String label = null;
 			String name = map.getName();
-			String label = dg.getName();
+			
+			if (dg.getName() == null) //Some map links have graphics with missing names
+			{
+				label = name;
+			}
+			else {
+				label = dg.getName();
+			}
 			
 			if(label.startsWith("TITLE:")) {
 			return; //This is the title of this map, skip it

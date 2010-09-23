@@ -194,6 +194,9 @@ public class PreferenceManager
 
 	static PreferenceManager preferences = null;
 
+	/**
+	@Deprecated use SwingEngine.getPreferenceManager() instead
+	*/ 
 	public static PreferenceManager getCurrent()
 	{
 		return preferences;

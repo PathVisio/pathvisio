@@ -50,7 +50,6 @@ import org.pathvisio.model.PathwayImporter;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.Compat;
 import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.swing.VPathwaySwing;
@@ -651,4 +650,10 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		return popupDlgHandler;
 	}
+	
+	public PreferenceManager getPreferenceManager()
+	{
+		return PreferenceManager.getCurrent();
+	}
+	
 }

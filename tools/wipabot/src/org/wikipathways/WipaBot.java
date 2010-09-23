@@ -44,7 +44,7 @@ public class WipaBot extends PircBot
 				{
 					WSHistoryRow history[] = client.getPathwayHistory(info.getId(), last).getHistory();
 					
-					for (WSHistoryRow hist : history)
+					if (history != null) for (WSHistoryRow hist : history)
 					{
 						String msg = info.getName() + " - " + info.getSpecies() + " updated by " + hist.getUser() + " with comment " + hist.getComment();
 						System.out.println (msg);					
@@ -64,6 +64,10 @@ public class WipaBot extends PircBot
 			catch (RemoteException e)
 			{
 				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (NullPointerException e)
+			{
 				e.printStackTrace();
 			}
 		}

@@ -17,7 +17,9 @@
 package org.pathvisio.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.AbstractListModel;
 
@@ -43,6 +45,7 @@ public class GdbManager extends AbstractListModel
 	private final IDMapperStack currentGdb = new IDMapperStack();
 	private IDMapper metabolites;
 	private IDMapper genes;
+	private Map<IDMapper, String> connectionStrings = new HashMap<IDMapper, String>();
 
 	public GdbManager()
 	{
@@ -90,15 +93,22 @@ public class GdbManager extends AbstractListModel
 			if (metabolites != null)
 			{
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_METADB, (connectString));
-				addMapper(metabolites);
+				addMapper(metabolites, connectString);
 			}
 		}
 	}
 
-	public void addMapper(IDMapper mapper) throws IDMapperException
+	public void addMapper(String connectionString) throws IDMapperException
+	{
+		IDMapper mapper = BridgeDb.connect (connectionString);
+		addMapper (mapper, connectionString);
+	}
+
+	public void addMapper(IDMapper mapper, String connectionString) throws IDMapperException
 	{
 		if (mapper == null) throw new NullPointerException();
 		currentGdb.addIDMapper(mapper);
+		connectionStrings.put(mapper, connectionString);
 		GdbEvent e = new GdbEvent (this, GdbEvent.Type.ADDED, mapper.toString());
 		fireGdbEvent (e);
 		Logger.log.trace("Added database: " + mapper.toString());
@@ -108,6 +118,7 @@ public class GdbManager extends AbstractListModel
 	{
 		if (mapper == null) return; // ignore
 		currentGdb.removeIDMapper(mapper);
+		connectionStrings.remove(mapper);
 		if (mapper == metabolites) metabolites = null;
 		if (mapper == genes) genes = null;
 		GdbEvent e = new GdbEvent (this, GdbEvent.Type.REMOVED, mapper.toString());
@@ -164,7 +175,7 @@ public class GdbManager extends AbstractListModel
 			if (genes != null)
 			{
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_GDB, (connectString));
-				addMapper(genes);
+				addMapper(genes, connectString);
 			}
 		}
 	}
@@ -214,6 +225,11 @@ public class GdbManager extends AbstractListModel
 		return currentGdb.getIDMapperAt(arg0);
 	}
 
+	public String getConnectionStringAt(int arg0)
+	{
+		return connectionStrings.get(currentGdb.getIDMapperAt(arg0));
+	}
+	
 	public int getSize()
 	{
 		return currentGdb.getSize();

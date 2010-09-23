@@ -162,6 +162,11 @@ public class Engine
 		}
 	}
 
+	public void openPathwayFromMemory(Pathway pathway) throws ConverterException
+	{
+		newPathwayHelper(pathway);
+	}
+	
 	/**
 	 * Open a pathway from a gpml file
 	 */

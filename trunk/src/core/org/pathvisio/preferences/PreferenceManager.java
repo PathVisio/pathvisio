@@ -137,7 +137,10 @@ public class PreferenceManager
 		}
 		else
 		{
-			properties.setProperty(p.name(), newVal);
+			if (newVal == null)
+				properties.remove(p.name());
+			else
+				properties.setProperty(p.name(), newVal);
 			fireEvent(p);
 			dirty = true;
 		}

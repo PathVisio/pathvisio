@@ -72,6 +72,9 @@ public abstract class GraphLink
 		String getGraphRef();
 		void linkTo(GraphIdContainer idc, double relX, double relY);
 		void unlink();
+		
+		double getRelX();
+		double getRelY();
 
 		/**
 		 * return the parent Pathway object,

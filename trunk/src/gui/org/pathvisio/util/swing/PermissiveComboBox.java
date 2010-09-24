@@ -46,12 +46,44 @@ public class PermissiveComboBox extends JComboBox {
 		Object newSelectedItem = mod.getSelectedItem();
 		if (selectedItemReminder == null) {
 			if (newSelectedItem != null)
+			{
 				selectedItemChanged();
+				if (!selectingItem)
+					fireActionEvent();
+			}
 		} else {
-			if (!selectedItemReminder.equals(newSelectedItem)) {
+			if (!selectedItemReminder.equals(newSelectedItem)) 
+			{
 				selectedItemChanged();
+				if (!selectingItem)
+					fireActionEvent();
 			}
 		}
+	}
+	
+	private boolean selectingItem;
+	
+	@Override
+	public void setSelectedItem(Object anObject)
+	{
+        Object oldSelection = selectedItemReminder;
+        Object objectToSelect = anObject;
+        if (oldSelection == null || !oldSelection.equals(anObject)) {
+
+            // Must toggle the state of this flag since this method
+            // call may result in ListDataEvents being fired.
+            selectingItem = true;
+            dataModel.setSelectedItem(objectToSelect);
+            selectingItem = false;
+
+            if (selectedItemReminder != dataModel.getSelectedItem()) {
+                // in case a users implementation of ComboBoxModel
+                // doesn't fire a ListDataEvent when the selection
+                // changes.
+                selectedItemChanged();
+            }
+        }
+        fireActionEvent();
 	}
 
 }

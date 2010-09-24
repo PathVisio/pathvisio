@@ -88,13 +88,13 @@ public class DataNodeDialog extends PathwayElementDialog {
 		super.refresh();
 		symText.setText(getInput().getTextLabel());
 		idText.setText(getInput().getGeneID());
+		dsm.setSelectedItem(input.getDataSource());
 		String dnType = getInput().getDataNodeType();
 		typeCombo.setSelectedItem(DataNodeType.byName(dnType));
 		String[] dsType = null; // null is default: no filtering
 		if (DataSourceHandler.DSTYPE_BY_DNTYPE.containsKey(dnType)) dsType = 
 			DataSourceHandler.DSTYPE_BY_DNTYPE.get(dnType);
 		dsm.setTypeFilter(dsType);
-		dsm.setSelectedItem(input.getDataSource());
 		pack();
 	}
 

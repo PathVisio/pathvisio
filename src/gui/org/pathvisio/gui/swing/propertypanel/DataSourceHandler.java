@@ -15,50 +15,48 @@
 // limitations under the License.
 package org.pathvisio.gui.swing.propertypanel;
 
+import java.awt.Component;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.awt.Component;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
-import javax.swing.BorderFactory;
 import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
+import org.bridgedb.DataSource;
+import org.bridgedb.bio.Organism;
+import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.DataNodeType;
+import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.StaticPropertyType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.gui.swing.SwingEngine;
-import org.bridgedb.DataSource;
-import org.bridgedb.bio.Organism;
+import org.pathvisio.util.swing.PermissiveComboBox;
 
 /**
  * This class knows how to handle a datasource, which is context sensitive and needs to be updated before use.
  */
 public class DataSourceHandler extends DefaultCellEditor implements ContextSensitiveEditor, TableCellRenderer,
 		TypeHandler {
-	private JComboBox renderer;
+	private PermissiveComboBox renderer;
 	private JComboBox editor;
-	private Map<Object, Object> label2value = new HashMap<Object, Object>();
-	private Map<Object, Object> value2label = new HashMap<Object, Object>();
-
 
 	public DataSourceHandler() {
 		super(new JComboBox(new String[0]));
 		editor = (JComboBox)getComponent();
 		editor.setBorder(BorderFactory.createEmptyBorder());
-		renderer = new JComboBox();
+		renderer = new PermissiveComboBox();
 	}
 
 	//-- ContextSensitiveEditor methods --//
@@ -135,18 +133,29 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		if (isDifferent(dataSources)) {
 			renderer.removeAllItems();
 			editor.removeAllItems();
-			label2value.clear();
-			value2label.clear();
 			for (DataSource s : dataSources) {
-				String name = s.getFullName() == null ? s.getSystemCode() : s.getFullName();
+				String name = value2label (s);
 				renderer.addItem(name);
 				editor.addItem(name);
-				label2value.put(name, s);
-				value2label.put(s, name);
 			}
 		}
 	}
+	
+	private DataSource label2value(String label)
+	{
+		if (DataSource.getFullNames().contains(label))
+			return DataSource.getByFullName(label);
+		else
+			return DataSource.getBySystemCode(label);
+	}
 
+	private String value2label(DataSource value)
+	{
+		String result = value.getFullName();
+		if (result == null) result = value.getSystemCode();
+		return result;
+	}
+	
 	private boolean isDifferent(SortedSet<DataSource> dataSources) {
 
 		if (editor.getItemCount() != dataSources.size()) {
@@ -195,7 +204,8 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 			renderer.setBackground(table.getBackground());
 		}
 
-		renderer.setSelectedItem(value2label.get(value));
+		Object o = value2label((DataSource)value);
+		renderer.setSelectedItem(o);
 		return renderer;
 	}
 
@@ -204,12 +214,12 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 
 	public Object getCellEditorValue() {
 
-		return label2value.get(editor.getSelectedItem());
+		return label2value((String)editor.getSelectedItem());
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 
-		editor.setSelectedItem(value2label.get(value));
+		editor.setSelectedItem(value2label((DataSource)value));
 		return editor;
 	}
 

@@ -36,8 +36,8 @@ import org.pathvisio.preferences.GlobalPreference;
  * be added to a Pathway, including default values.
  */
 public abstract class DefaultTemplates {
-	final static Color COLOR_METABOLITE = Color.BLUE;
-	final static Color COLOR_PATHWAY = new Color(20,150,30);
+	public final static Color COLOR_METABOLITE = Color.BLUE;
+	public final static Color COLOR_PATHWAY = new Color(20,150,30);
 
 	/**
 	 * Abstract base for templates that only add a single PathwayElement

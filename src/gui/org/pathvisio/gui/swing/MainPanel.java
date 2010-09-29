@@ -92,7 +92,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	protected JMenuBar menuBar;
 	
-	protected GraphicsChoiceButton itemsDropDown;
+	private GraphicsChoiceButton itemsDropDown;
 	
 	private ObjectsPane objectsPane;
 
@@ -303,6 +303,62 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	}
 
+	protected void addCommonToolbarActions(final SwingEngine swingEngine, JToolBar tb)
+	{
+		// copy, paste and undo buttons
+		tb.addSeparator();
+		addToToolbar(actions.copyAction);
+		addToToolbar(actions.pasteAction);
+		tb.addSeparator();
+		addToToolbar(actions.undoAction);
+		tb.addSeparator();
+
+		// zoom drop-down
+		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));
+		JComboBox combo = new JComboBox(actions.zoomActions);
+		combo.setMaximumSize(combo.getPreferredSize());
+		combo.setEditable(true);
+		combo.setSelectedIndex(5); // 100%
+		combo.addActionListener(new ZoomComboListener());
+		addToToolbar(combo, TB_GROUP_SHOW_IF_VPATHWAY);
+		tb.addSeparator();
+		
+		// define the drop-down menu for data nodes 
+		GraphicsChoiceButton datanodeButton = new GraphicsChoiceButton();
+		datanodeButton.setToolTipText("Select a data node to draw");
+		datanodeButton.addButtons("Data Nodes", actions.newDatanodeActions);		
+		datanodeButton.addButtons("Annotations", actions.newAnnotationActions);
+		addToToolbar(datanodeButton, TB_GROUP_SHOW_IF_EDITMODE);
+		tb.addSeparator(new Dimension(2,0));
+		
+		// define the drop-down menu for shapes 
+		GraphicsChoiceButton shapeButton = new GraphicsChoiceButton();
+		shapeButton.setToolTipText("Select a shape to draw");		
+		itemsDropDown = shapeButton;		
+		shapeButton.addButtons("Basic shapes", actions.newShapeActions);
+		shapeButton.addButtons("MIM shapes", actions.newMIMShapeActions);
+		shapeButton.addButtons("Cellular components", actions.newCellularComponentActions);		
+		addToToolbar(shapeButton, TB_GROUP_SHOW_IF_EDITMODE);
+		tb.addSeparator(new Dimension(2,0));
+		
+		// define the drop-down menu for interactions
+		GraphicsChoiceButton lineButton = new GraphicsChoiceButton();
+		lineButton.setToolTipText("Select an interaction to draw");
+		lineButton.addButtons("Basic interactions", actions.newInteractionActions);
+		lineButton.addButtons("MIM interactions", actions.newMIMInteractionActions);
+		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
+		tb.addSeparator(new Dimension(2,0));
+		
+		// define the drop-down menu for templates
+		GraphicsChoiceButton templateButton = new GraphicsChoiceButton();
+		templateButton.setToolTipText("Select a template to draw");		
+		templateButton.addButtons("Templates", actions.newTemplateActions);	
+		addToToolbar(templateButton, TB_GROUP_SHOW_IF_EDITMODE);
+		tb.addSeparator();
+
+		// layout actions
+		addToToolbar(actions.layoutActions);
+	}
 
 	protected void addToolBarActions(final SwingEngine swingEngine, JToolBar tb)
 	{
@@ -310,89 +366,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		addToToolbar(actions.importAction);
 		addToToolbar(actions.exportAction);
-		tb.addSeparator();
-		addToToolbar(actions.copyAction);
-		addToToolbar(actions.pasteAction);
-
-		tb.addSeparator();
-
-		addToToolbar(actions.undoAction);
-
-		tb.addSeparator();
-
-		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));
-		JComboBox combo = new JComboBox(actions.zoomActions);
-		combo.setMaximumSize(combo.getPreferredSize());
-		combo.setEditable(true);
-		combo.setSelectedIndex(5); // 100%
-		combo.addActionListener(new ZoomComboListener());
-
-		addToToolbar(combo, TB_GROUP_SHOW_IF_VPATHWAY);
-
-		tb.addSeparator();
-
-		// define the drop-down menu for data nodes 
-		String tooltip = "Select a data node to draw";
-		GraphicsChoiceButton datanodeButton = new GraphicsChoiceButton();
-		datanodeButton.setToolTipText(tooltip);
 		
-		int numItemsPerRow = 6;
-		datanodeButton.addLabel("Data Nodes");
-		datanodeButton.addButtons(actions.newDatanodeActions, numItemsPerRow);		
-
-		datanodeButton.addLabel("Annotations");
-		datanodeButton.addButtons(actions.newAnnotationActions, numItemsPerRow);
-		
-		addToToolbar(datanodeButton, TB_GROUP_SHOW_IF_EDITMODE);
-		tb.addSeparator(new Dimension(2,0));
-		
-		// define the drop-down menu for shapes 
-		tooltip = "Select a shape to draw";
-		GraphicsChoiceButton shapeButton = new GraphicsChoiceButton();
-		shapeButton.setToolTipText(tooltip);		
-		itemsDropDown = shapeButton;
-		
-		numItemsPerRow = 6;
-		shapeButton.addLabel("Basic shapes");
-		shapeButton.addButtons(actions.newShapeActions, numItemsPerRow);		
-
-		shapeButton.addLabel("MIM shapes");
-		shapeButton.addButtons(actions.newMIMShapeActions, numItemsPerRow);
-
-		shapeButton.addLabel("Cellular components");
-		shapeButton.addButtons(actions.newCellularComponentActions, numItemsPerRow);
-		
-		addToToolbar(shapeButton, TB_GROUP_SHOW_IF_EDITMODE);
-		tb.addSeparator(new Dimension(2,0));
-		
-		// define the drop-down menu for interactions
-		tooltip = "Select an interaction to draw";
-		GraphicsChoiceButton lineButton = new GraphicsChoiceButton();
-		lineButton.setToolTipText(tooltip);		
-		
-		numItemsPerRow = 6;		
-		lineButton.addLabel("Basic interactions");
-		lineButton.addButtons(actions.newInteractionActions, numItemsPerRow);
-		
-		lineButton.addLabel("MIM interactions");
-		lineButton.addButtons(actions.newMIMInteractionActions, numItemsPerRow);		
-		
-		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
-		tb.addSeparator(new Dimension(2,0));
-		
-		// define the drop-down menu for templates
-		tooltip = "Select a template to draw";
-		GraphicsChoiceButton templateButton = new GraphicsChoiceButton();
-		templateButton.setToolTipText(tooltip);		
-		
-		numItemsPerRow = 6;		
-		templateButton.addLabel("Templates");
-		templateButton.addButtons(actions.newTemplateActions, numItemsPerRow);	
-		
-		addToToolbar(templateButton, TB_GROUP_SHOW_IF_EDITMODE);
-		tb.addSeparator();
-		
-		addToToolbar(actions.layoutActions);
+		addCommonToolbarActions(swingEngine, tb);
 	}
 
 	public static final String TB_GROUP_SHOW_IF_EDITMODE = "edit";

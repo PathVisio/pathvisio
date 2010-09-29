@@ -45,6 +45,7 @@ import javax.swing.JPopupMenu;
  */
 public class GraphicsChoiceButton extends DropDownButton
 {
+	
 	public GraphicsChoiceButton()
 	{
 		// set icon to null for now, we'll use the icon 
@@ -52,6 +53,17 @@ public class GraphicsChoiceButton extends DropDownButton
 		super(null);
 	}
 	
+	private int numItemPerRow = 6;
+
+	/**
+	 * Set the number of actions per row in the pop-up.
+	 * Default is 6.
+	 */
+	public void setNumItemsPerRow(int value)
+	{
+		numItemPerRow = value;
+	}
+
 	// remember if we already set an action
 	private boolean noIconSet = true;
 	
@@ -59,7 +71,7 @@ public class GraphicsChoiceButton extends DropDownButton
 	 * Add a group of actions, which will be displayed in the pop-up.
 	 * This can be invoked multiple times.
 	 */
-	public void addButtons(Action [] aa, int numItemPerRow)
+	public void addButtons(Action [] aa)
 	{
 		JPanel pane = new JPanel();
 		pane.setBackground(Color.white);
@@ -137,8 +149,8 @@ public class GraphicsChoiceButton extends DropDownButton
 	/**
 	 * add item buttons and section label to the drop-down menu
 	 */
-	public void addButtons(Action [] aa, int numItemPerRow, String label){
+	public void addButtons(String label, Action [] aa){
 		addLabel(label);
-		addButtons(aa,numItemPerRow);
+		addButtons(aa);
 	}
 }

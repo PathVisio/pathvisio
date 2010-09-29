@@ -22,9 +22,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
@@ -37,7 +34,6 @@ import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
-import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -45,9 +41,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -55,7 +49,6 @@ import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
@@ -66,11 +59,9 @@ import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.BackpageTextProvider.BackpageAttributes;
 import org.pathvisio.gui.BackpageTextProvider.BackpageXrefs;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
-import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.util.Resources;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.Label;
@@ -79,9 +70,6 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
-
-
-
 
 
 /**
@@ -104,7 +92,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	protected JMenuBar menuBar;
 	
-	protected DropDownButton itemsDropDown;
+	protected GraphicsChoiceButton itemsDropDown;
 	
 	private ObjectsPane objectsPane;
 
@@ -343,97 +331,63 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		tb.addSeparator();
 
-		String submenu = "line";
-
-//		for(Action[] aa : actions.newElementActions) {
-//			if(aa.length == 1) {
-//				addToToolbar(aa[0]);
-//			} else { //This is the line/receptor sub-menu
-//				String icon = "newlinemenu.gif";
-//				String tooltip = "Select a line to draw";
-//				
-//				if(submenu.equals("receptors")) { //Next one is receptors
-//					icon = "newlineshapemenu.gif";
-//					tooltip = "Select a receptor/ligand to draw";
-//				} else {
-//					submenu = "receptors";
-//				}				
-//				DropDownButton lineButton = new DropDownButton(
-//						new ImageIcon(Resources.getResourceURL(icon)));
-//				lineButton.setToolTipText(tooltip);
-//				for(Action a : aa) {
-//					lineButton.addComponent(new JMenuItem(a));
-//				}
-//				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
-//				lineButton.setEnabled(false);
-//			}
-//		}
-		
 		// define the drop-down menu for data nodes 
-		String icon = "newdatanodemenu.gif";
 		String tooltip = "Select a data node to draw";
-		DropDownButton datanodeButton = new DropDownButton(
-				new ImageIcon(Resources.getResourceURL(icon)));
-		datanodeButton.setToolTipText(tooltip);		
+		GraphicsChoiceButton datanodeButton = new GraphicsChoiceButton();
+		datanodeButton.setToolTipText(tooltip);
 		
 		int numItemsPerRow = 6;
-		addLabel(datanodeButton, "Data Nodes");
-		addButtons(actions.newDatanodeActions, datanodeButton, numItemsPerRow);		
+		datanodeButton.addLabel("Data Nodes");
+		datanodeButton.addButtons(actions.newDatanodeActions, numItemsPerRow);		
 
-		addLabel(datanodeButton, "Annotations");
-		addButtons(actions.newAnnotationActions, datanodeButton, numItemsPerRow);
+		datanodeButton.addLabel("Annotations");
+		datanodeButton.addButtons(actions.newAnnotationActions, numItemsPerRow);
 		
 		addToToolbar(datanodeButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator(new Dimension(2,0));
 		
 		// define the drop-down menu for shapes 
-		icon = "newitemmenu.gif";
 		tooltip = "Select a shape to draw";
-		DropDownButton shapeButton = new DropDownButton(
-				new ImageIcon(Resources.getResourceURL(icon)));
+		GraphicsChoiceButton shapeButton = new GraphicsChoiceButton();
 		shapeButton.setToolTipText(tooltip);		
 		itemsDropDown = shapeButton;
 		
 		numItemsPerRow = 6;
-		addLabel(shapeButton, "Basic shapes");
-		addButtons(actions.newShapeActions, shapeButton, numItemsPerRow);		
+		shapeButton.addLabel("Basic shapes");
+		shapeButton.addButtons(actions.newShapeActions, numItemsPerRow);		
 
-		addLabel(shapeButton, "MIM shapes");
-		addButtons(actions.newMIMShapeActions, shapeButton, numItemsPerRow);
+		shapeButton.addLabel("MIM shapes");
+		shapeButton.addButtons(actions.newMIMShapeActions, numItemsPerRow);
 
-		addLabel(shapeButton, "Cellular components");
-		addButtons(actions.newCellularComponentActions, shapeButton, numItemsPerRow);
+		shapeButton.addLabel("Cellular components");
+		shapeButton.addButtons(actions.newCellularComponentActions, numItemsPerRow);
 		
 		addToToolbar(shapeButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator(new Dimension(2,0));
 		
 		// define the drop-down menu for interactions
-		icon = "newinteractionmenu.gif";
 		tooltip = "Select an interaction to draw";
-		DropDownButton lineButton = new DropDownButton(
-				new ImageIcon(Resources.getResourceURL(icon)));
+		GraphicsChoiceButton lineButton = new GraphicsChoiceButton();
 		lineButton.setToolTipText(tooltip);		
 		
 		numItemsPerRow = 6;		
-		addLabel(lineButton, "Basic interactions");
-		addButtons(actions.newInteractionActions, lineButton, numItemsPerRow);
+		lineButton.addLabel("Basic interactions");
+		lineButton.addButtons(actions.newInteractionActions, numItemsPerRow);
 		
-		addLabel(lineButton, "MIM interactions");
-		addButtons(actions.newMIMInteractionActions, lineButton, numItemsPerRow);		
+		lineButton.addLabel("MIM interactions");
+		lineButton.addButtons(actions.newMIMInteractionActions, numItemsPerRow);		
 		
 		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator(new Dimension(2,0));
 		
 		// define the drop-down menu for templates
-		icon = "newtemplatemenu.gif";
 		tooltip = "Select a template to draw";
-		DropDownButton templateButton = new DropDownButton(
-				new ImageIcon(Resources.getResourceURL(icon)));
+		GraphicsChoiceButton templateButton = new GraphicsChoiceButton();
 		templateButton.setToolTipText(tooltip);		
 		
 		numItemsPerRow = 6;		
-		addLabel(templateButton, "Templates");
-		addButtons(actions.newTemplateActions, templateButton, numItemsPerRow);	
+		templateButton.addLabel("Templates");
+		templateButton.addButtons(actions.newTemplateActions, numItemsPerRow);	
 		
 		addToToolbar(templateButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator();
@@ -610,77 +564,9 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	/**
 	 * hook of the drop-down menu
 	 */
-	public DropDownButton getItemsDropDown()
+	public GraphicsChoiceButton getItemsDropDown()
 	{
 		return itemsDropDown;
-	}
-	
-	/**
-	 * add section label to the drop-down menu
-	 */
-	public void addLabel(DropDownButton lineButton, String s)
-	{
-		JLabel title = new JLabel(s);
-		title.setForeground(new Color(50,21,110));
-		title.setFont(new Font("sansserif", Font.BOLD, 12));
-		JPanel titlePanel = new JPanel();
-		titlePanel.setBackground(new Color(221,231,238));
-		titlePanel.add(title);		
-		lineButton.addComponent(titlePanel);
-	}
-	
-	/**
-	 * add item buttons to the drop-down menu, multiple items per row
-	 */
-	public void addButtons(Action [] aa, DropDownButton lineButton, int numItemPerRow)
-	{
-		JPanel pane = new JPanel();
-		pane.setBackground(Color.white);
-		pane.setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridheight = 1;
-		c.gridwidth = 1;
-		c.fill = c.NONE;
-		c.weightx = 1.0;
-		c.weighty = 1.0;
-		
-		final JPopupMenu popup = lineButton.getPopupMenu();
-
-		int i=0;
-		for(Action a : aa) {
-			c.gridx = i%numItemPerRow;
-			c.gridy = i/numItemPerRow;		
-			// clicking a button should cause the popupmenu disappear, any better way to do it?
-			final ImageButton button= new ImageButton(a);
-			button.addActionListener(new ActionListener() { 
-				  public void actionPerformed(ActionEvent e) {
-					  button.setContentAreaFilled(false);
-					  popup.setVisible(false);
-				  } 
-			});
-			pane.add(button,c);
-			i++;
-		}
-
-		// fill the rest spaces using dummy button when there are less than numItemPerRow items, any better way?
-		for(;i < numItemPerRow;i++){
-			c.gridx = i;
-			JButton dummy = new JButton();
-			Dimension dim = new Dimension(25,0);
-			dummy.setPreferredSize(dim);
-			dummy.setContentAreaFilled(false);
-			pane.add(dummy,c);
-		}
-		
-		lineButton.addComponent(pane);
-	}
-	
-	/**
-	 * add item buttons and section label to the drop-down menu
-	 */
-	public void addButtons(Action [] aa, DropDownButton lineButton, int numItemPerRow, String label){
-		addLabel(lineButton,label);
-		addButtons(aa,lineButton,numItemPerRow);
 	}
 	
 	/**

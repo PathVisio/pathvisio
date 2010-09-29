@@ -22,6 +22,7 @@ import javax.swing.Action;
 
 import org.pathvisio.Engine;
 import org.pathvisio.gui.swing.CommonActions;
+import org.pathvisio.gui.swing.GraphicsChoiceButton;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.LineStyle;
@@ -54,10 +55,10 @@ public class TestDropDownPlugin implements Plugin
 		};		
 		
 		// the drop-down memu
-		DropDownButton lineButton = desktop.getSwingEngine().getApplicationPanel().getItemsDropDown();
+		GraphicsChoiceButton lineButton = desktop.getSwingEngine().getApplicationPanel().getItemsDropDown();
 
 		// add buttons to the drop-down menu
-		desktop.getSwingEngine().getApplicationPanel().addButtons(aa, lineButton, 6, "User Defined");
+		lineButton.addButtons(aa, 6, "User Defined");
 		
 		// add buttons to the objects tab
 		desktop.getSwingEngine().getApplicationPanel().getObjectsPane().addButtons(aa, "User Defined", 10);

@@ -239,16 +239,16 @@ public class MainPanelStandalone extends MainPanel
 		// define the drop-down menu for data nodes 
 		String icon = "newdatanodemenu.gif";
 		String tooltip = "Select a data node to draw";
-		DropDownButton datanodeButton = new DropDownButton(
-				new ImageIcon(Resources.getResourceURL(icon)));
+		GraphicsChoiceButton datanodeButton = new GraphicsChoiceButton();
+//				new ImageIcon(Resources.getResourceURL(icon)));
 		datanodeButton.setToolTipText(tooltip);		
 		
 		int numItemsPerRow = 6;
-		addLabel(datanodeButton, "Data Nodes");
-		addButtons(actions.newDatanodeActions, datanodeButton, numItemsPerRow);		
+		datanodeButton.addLabel("Data Nodes");
+		datanodeButton.addButtons(actions.newDatanodeActions, numItemsPerRow);		
 
-		addLabel(datanodeButton, "Annotations");
-		addButtons(actions.newAnnotationActions, datanodeButton, numItemsPerRow);
+		datanodeButton.addLabel("Annotations");
+		datanodeButton.addButtons(actions.newAnnotationActions, numItemsPerRow);
 		
 		addToToolbar(datanodeButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator(new Dimension(2,0));
@@ -256,20 +256,20 @@ public class MainPanelStandalone extends MainPanel
 		// define the drop-down menu for shapes 
 		icon = "newitemmenu.gif";
 		tooltip = "Select a shape to draw";
-		DropDownButton shapeButton = new DropDownButton(
-				new ImageIcon(Resources.getResourceURL(icon)));
+		GraphicsChoiceButton shapeButton = new GraphicsChoiceButton();
+//				new ImageIcon(Resources.getResourceURL(icon)));
 		shapeButton.setToolTipText(tooltip);		
 		itemsDropDown = shapeButton;
 		
 		numItemsPerRow = 6;
-		addLabel(shapeButton, "Basic shapes");
-		addButtons(actions.newShapeActions, shapeButton, numItemsPerRow);		
+		shapeButton.addLabel("Basic shapes");
+		shapeButton.addButtons(actions.newShapeActions, numItemsPerRow);		
 
-		addLabel(shapeButton, "MIM shapes");
-		addButtons(actions.newMIMShapeActions, shapeButton, numItemsPerRow);
+		shapeButton.addLabel("MIM shapes");
+		shapeButton.addButtons(actions.newMIMShapeActions, numItemsPerRow);
 
-		addLabel(shapeButton, "Cellular components");
-		addButtons(actions.newCellularComponentActions, shapeButton, numItemsPerRow);
+		shapeButton.addLabel("Cellular components");
+		shapeButton.addButtons(actions.newCellularComponentActions, numItemsPerRow);
 		
 		addToToolbar(shapeButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator(new Dimension(2,0));
@@ -277,16 +277,15 @@ public class MainPanelStandalone extends MainPanel
 		// define the drop-down menu for interactions
 		icon = "newinteractionmenu.gif";
 		tooltip = "Select an interaction to draw";
-		DropDownButton lineButton = new DropDownButton(
-				new ImageIcon(Resources.getResourceURL(icon)));
-		lineButton.setToolTipText(tooltip);		
+		GraphicsChoiceButton lineButton = new GraphicsChoiceButton();
+		lineButton.setToolTipText(tooltip);
 		
 		numItemsPerRow = 6;		
-		addLabel(lineButton, "Basic interactions");
-		addButtons(actions.newInteractionActions, lineButton, numItemsPerRow);
+		lineButton.addLabel("Basic interactions");
+		lineButton.addButtons(actions.newInteractionActions, numItemsPerRow);
 		
-		addLabel(lineButton, "MIM interactions");
-		addButtons(actions.newMIMInteractionActions, lineButton, numItemsPerRow);		
+		lineButton.addLabel("MIM interactions");
+		lineButton.addButtons(actions.newMIMInteractionActions, numItemsPerRow);		
 		
 		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator(new Dimension(2,0));
@@ -294,13 +293,12 @@ public class MainPanelStandalone extends MainPanel
 		// define the drop-down menu for templates
 		icon = "newtemplatemenu.gif";
 		tooltip = "Select a template to draw";
-		DropDownButton templateButton = new DropDownButton(
-				new ImageIcon(Resources.getResourceURL(icon)));
+		GraphicsChoiceButton templateButton = new GraphicsChoiceButton();
 		templateButton.setToolTipText(tooltip);		
 		
 		numItemsPerRow = 6;		
-		addLabel(templateButton, "Templates");
-		addButtons(actions.newTemplateActions, templateButton, numItemsPerRow);	
+		templateButton.addLabel("Templates");
+		templateButton.addButtons(actions.newTemplateActions, numItemsPerRow);	
 		
 		addToToolbar(templateButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator();

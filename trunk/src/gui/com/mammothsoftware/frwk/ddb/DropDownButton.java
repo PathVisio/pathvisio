@@ -31,7 +31,6 @@ import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.border.Border;
@@ -43,21 +42,14 @@ import javax.swing.border.CompoundBorder;
  * @author m. bangham
  * Copyright 2005 Mammoth Software LLC
  */
-public class DropDownButton extends JButton implements ActionListener {
-
+public class DropDownButton extends JButton implements ActionListener 
+{
 	private JPopupMenu popup = new JPopupMenu();
 	private JToolBar tb = new ToolBar();
 	private JButton mainButton;
 	private JButton arrowButton;
-	private ActionListener mainButtonListener = new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-			Component component = popup.getComponent(0);
-			if (component instanceof JMenuItem) {
-				JMenuItem item = (JMenuItem)component;
-				item.doClick(0);
-			}
-		}
-	};
+	private boolean directActionEnabled = true;
+	private ActionListener directAction = null;
 
 	public DropDownButton(Icon icon) {
 		this();
@@ -186,25 +178,33 @@ public class DropDownButton extends JButton implements ActionListener {
 	}
 
 	/**
-	 * Indicates that the first item in the menu should be executed
-	 * when the main button is clicked
-	 * @param isRunFirstItem True for on, false for off
+	 * If true, the direct action will be executed
+	 * when the left button is clicked.
+	 * If false, both the left and the right part of the button
+	 * work the same way 
+	 * @param value set toggle behaviour
 	 */
-	public void setRunFirstItem(boolean isRunFirstItem) {
-		mainButton.removeActionListener(this);
-		if (!isRunFirstItem) {
-			mainButton.addActionListener(this);
-		}
-		else
-			mainButton.addActionListener(mainButtonListener);
+	public void setDirectActionEnabled(boolean value) 
+	{
+		this.directActionEnabled = value;
 	}
 
-   /*------------------------------[ ActionListener ]---------------------------------------------------*/
-
-   public void actionPerformed(ActionEvent ae){
-        JPopupMenu popup = getPopupMenu();
-        popup.show(this, 0, this.getHeight());
-    }
+	public void actionPerformed(ActionEvent ae)
+	{
+		// if the directAction behaviour is enabled, and a directAction is set, and
+		// the source of the event is the left part,
+		if (directActionEnabled && directAction != null && ae.getSource() == mainButton)
+		{
+			ae.setSource(this);
+			directAction.actionPerformed(ae);
+		}
+		else
+		{
+			// otherwise just show the drop-down.
+			JPopupMenu popup = getPopupMenu();
+			popup.show(this, 0, this.getHeight());
+		}
+	}
    
    public JPopupMenu getPopupMenu() { return popup; }
 
@@ -245,7 +245,6 @@ public class DropDownButton extends JButton implements ActionListener {
 
    private static class ToolBar extends JToolBar
    {
-
 	   public void updateUI()
 	   {
 		   super.updateUI();
@@ -253,4 +252,28 @@ public class DropDownButton extends JButton implements ActionListener {
 	   }
    }
 
+   /**
+    * Set the Action that will be executed when the main part of the dropdown button is clicked.
+    * This value is only used if set
+    * @param defaultAction A menuitem, action or other actionListener that will get invoked
+    */
+   public void setDirectAction(ActionListener defaultAction)
+   {
+	   directAction = defaultAction;
+
+   }
+
+   @Override
+   /** sets the icon for the left part only */
+   public void setIcon(Icon icon)
+   {
+	   mainButton.setIcon(icon);
+   }
+
+   @Override
+   /** get the icon for the left part */
+   public Icon getIcon()
+   {
+	   return mainButton.getIcon();
+   }
 }

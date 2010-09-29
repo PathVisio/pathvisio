@@ -151,6 +151,7 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 
 	private String value2label(DataSource value)
 	{
+		if (value == null) return null;
 		String result = value.getFullName();
 		if (result == null) result = value.getSystemCode();
 		return result;

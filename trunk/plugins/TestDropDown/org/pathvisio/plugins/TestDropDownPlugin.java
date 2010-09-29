@@ -58,7 +58,7 @@ public class TestDropDownPlugin implements Plugin
 		GraphicsChoiceButton lineButton = desktop.getSwingEngine().getApplicationPanel().getItemsDropDown();
 
 		// add buttons to the drop-down menu
-		lineButton.addButtons(aa, 6, "User Defined");
+		lineButton.addButtons("User Definied", aa);
 		
 		// add buttons to the objects tab
 		desktop.getSwingEngine().getApplicationPanel().getObjectsPane().addButtons(aa, "User Defined", 10);

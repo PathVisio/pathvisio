@@ -26,9 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -39,9 +36,6 @@ import org.pathvisio.ApplicationEvent;
 import org.pathvisio.gex.BackpageExpression;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.Resources;
-
-import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 /**
  * the mainPanel for the standalone (non-applet) version of PathVisio.
@@ -189,121 +183,9 @@ public class MainPanelStandalone extends MainPanel
 		addToToolbar(standaloneActions.newAction);
 		addToToolbar(standaloneActions.openAction);
 		addToToolbar(actions.standaloneSaveAction);
-		tb.addSeparator();
-		addToToolbar(actions.copyAction);
-		addToToolbar(actions.pasteAction);
 
-		tb.addSeparator();
-
-		addToToolbar(actions.undoAction);
-
-		tb.addSeparator();
-
-		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));
-		JComboBox combo = new JComboBox(actions.zoomActions);
-		combo.setMaximumSize(combo.getPreferredSize());
-		combo.setEditable(true);
-		combo.setSelectedIndex(5); // 100%
-		combo.addActionListener(new ZoomComboListener());
-		addToToolbar(combo, TB_GROUP_SHOW_IF_VPATHWAY);
-
-		tb.addSeparator();
-
-		String submenu = "line";
-
-//		for(Action[] aa : actions.newElementActions) {
-//			if(aa.length == 1) {
-//				addToToolbar(aa[0]);
-//			} else { //This is the line/receptor sub-menu
-//				String icon = "newlinemenu.gif";
-//				String tooltip = "Select a line to draw";
-//				
-//				if(submenu.equals("receptors")) { //Next one is receptors
-//					icon = "newlineshapemenu.gif";
-//					tooltip = "Select a receptor/ligand to draw";
-//				} else {
-//					submenu = "receptors";
-//				}
-//				DropDownButton lineButton = new DropDownButton(new ImageIcon(
-//						Resources.getResourceURL(icon)));
-//				lineButton.setToolTipText(tooltip);
-//				
-//				for(Action a : aa) {
-//					lineButton.addComponent(new JMenuItem(a));
-//				}
-//				addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
-//				//lineButton.setEnabled(false);
-//			}
-//		}
-		
-		// define the drop-down menu for data nodes 
-		String icon = "newdatanodemenu.gif";
-		String tooltip = "Select a data node to draw";
-		GraphicsChoiceButton datanodeButton = new GraphicsChoiceButton();
-//				new ImageIcon(Resources.getResourceURL(icon)));
-		datanodeButton.setToolTipText(tooltip);		
-		
-		int numItemsPerRow = 6;
-		datanodeButton.addLabel("Data Nodes");
-		datanodeButton.addButtons(actions.newDatanodeActions, numItemsPerRow);		
-
-		datanodeButton.addLabel("Annotations");
-		datanodeButton.addButtons(actions.newAnnotationActions, numItemsPerRow);
-		
-		addToToolbar(datanodeButton, TB_GROUP_SHOW_IF_EDITMODE);
-		tb.addSeparator(new Dimension(2,0));
-		
-		// define the drop-down menu for shapes 
-		icon = "newitemmenu.gif";
-		tooltip = "Select a shape to draw";
-		GraphicsChoiceButton shapeButton = new GraphicsChoiceButton();
-//				new ImageIcon(Resources.getResourceURL(icon)));
-		shapeButton.setToolTipText(tooltip);		
-		itemsDropDown = shapeButton;
-		
-		numItemsPerRow = 6;
-		shapeButton.addLabel("Basic shapes");
-		shapeButton.addButtons(actions.newShapeActions, numItemsPerRow);		
-
-		shapeButton.addLabel("MIM shapes");
-		shapeButton.addButtons(actions.newMIMShapeActions, numItemsPerRow);
-
-		shapeButton.addLabel("Cellular components");
-		shapeButton.addButtons(actions.newCellularComponentActions, numItemsPerRow);
-		
-		addToToolbar(shapeButton, TB_GROUP_SHOW_IF_EDITMODE);
-		tb.addSeparator(new Dimension(2,0));
-		
-		// define the drop-down menu for interactions
-		icon = "newinteractionmenu.gif";
-		tooltip = "Select an interaction to draw";
-		GraphicsChoiceButton lineButton = new GraphicsChoiceButton();
-		lineButton.setToolTipText(tooltip);
-		
-		numItemsPerRow = 6;		
-		lineButton.addLabel("Basic interactions");
-		lineButton.addButtons(actions.newInteractionActions, numItemsPerRow);
-		
-		lineButton.addLabel("MIM interactions");
-		lineButton.addButtons(actions.newMIMInteractionActions, numItemsPerRow);		
-		
-		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);
-		tb.addSeparator(new Dimension(2,0));
-		
-		// define the drop-down menu for templates
-		icon = "newtemplatemenu.gif";
-		tooltip = "Select a template to draw";
-		GraphicsChoiceButton templateButton = new GraphicsChoiceButton();
-		templateButton.setToolTipText(tooltip);		
-		
-		numItemsPerRow = 6;		
-		templateButton.addLabel("Templates");
-		templateButton.addButtons(actions.newTemplateActions, numItemsPerRow);	
-		
-		addToToolbar(templateButton, TB_GROUP_SHOW_IF_EDITMODE);
-		tb.addSeparator();
-
-		addToToolbar(actions.layoutActions);
+		// do the common part that is shared between applet and standalone version.
+		addCommonToolbarActions(swingEngine, tb);
 	}
 
 	public void putInRecentPathwayList(File pwf)

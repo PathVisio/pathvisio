@@ -63,8 +63,8 @@ public class AttributeMapperPanel extends JPanel {
 		List<String> propNames = new ArrayList<String>();
 		for(StaticProperty prop : StaticProperty.values()) {
 			if(!mapper.isProtected(prop)) {
-				desc2prop.put(prop.desc(), prop);
-				propNames.add(prop.desc());
+				desc2prop.put(prop.getDescription(), prop);
+				propNames.add(prop.getDescription());
 			}
 		}
 		propNames.add(NONE);
@@ -100,7 +100,7 @@ public class AttributeMapperPanel extends JPanel {
 			} else {
 				StaticProperty prop = mapper.getMapping(attributeNames[rowIndex]);
 				if(prop != null) {
-					return prop.desc();
+					return prop.getDescription();
 				} else {
 					return null;
 				}

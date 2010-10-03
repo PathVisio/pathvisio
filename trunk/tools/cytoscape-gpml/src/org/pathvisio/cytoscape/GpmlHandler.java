@@ -157,7 +157,7 @@ public class GpmlHandler {
 	public void addNode(CyNode n, PathwayElement pwElm) {
 		addNode(new GpmlNode(n, pwElm, getAttributeMapper()));
 	}
-
+	
 	public void addAnchorNode(CyNode n, PathwayElement line) {
 		addNode(new GpmlAnchorNode(n, line, getAttributeMapper()));
 	}
@@ -226,11 +226,6 @@ public class GpmlHandler {
     	VisualStyle gpmlStyle = catalog.getVisualStyle(GpmlVisualStyle.NAME);
     	if(gpmlStyle == null) { //Create the GPML visual style
     		Logger.log.trace("VisualStyle: creating GPML style");
-//    		gpmlStyle = new VisualStyle(vmm.getVisualStyle());
-//    		gpmlStyle.setName("GPML");
-//    		gpmlStyle.setNodeAppearanceCalculator(new GpmlNodeAppearanceCalculator(this));
-//    		gpmlStyle.setEdgeAppearanceCalculator(new GpmlEdgeAppearanceCalculator(this));
-
     		gpmlStyle = new GpmlVisualStyle(this, vmm.getVisualStyle());
     		catalog.addVisualStyle(gpmlStyle);
     	} else {

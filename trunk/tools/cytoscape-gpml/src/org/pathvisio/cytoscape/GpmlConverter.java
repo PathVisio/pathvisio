@@ -361,12 +361,13 @@ public class GpmlConverter {
 		}
 	}
 
-	public void layout(GraphView view) {
-//		String viewerName = "metaNode";
-//		Logger.log.trace(CyGroupManager.getGroupViewers() + "");
-//		if(CyGroupManager.getGroupViewer(viewerName) != null) {
-//			setGroupViewer((CyNetworkView)view, viewerName);
-//		}
+	/**
+	 * Add annotations, layout nodes, then create and apply visual style.
+	 * 
+	 * @param view
+	 */
+	public void layout(GraphView view)
+	{
 		gpmlHandler.addAnnotations(view, nodeMap.values());
 		gpmlHandler.applyGpmlLayout(view, nodeMap.values());
 		gpmlHandler.applyGpmlVisualStyle();

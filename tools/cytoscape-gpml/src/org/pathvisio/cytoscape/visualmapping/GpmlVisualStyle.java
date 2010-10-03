@@ -16,20 +16,6 @@
 //
 package org.pathvisio.cytoscape.visualmapping;
 
-import cytoscape.Cytoscape;
-import cytoscape.visual.ArrowShape;
-import cytoscape.visual.EdgeAppearanceCalculator;
-import cytoscape.visual.NodeAppearance;
-import cytoscape.visual.NodeAppearanceCalculator;
-import cytoscape.visual.NodeShape;
-import cytoscape.visual.VisualMappingManager;
-import cytoscape.visual.VisualPropertyType;
-import cytoscape.visual.VisualStyle;
-import cytoscape.visual.calculators.BasicCalculator;
-import cytoscape.visual.mappings.DiscreteMapping;
-import cytoscape.visual.mappings.ObjectMapping;
-import cytoscape.visual.mappings.PassThroughMapping;
-
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +29,22 @@ import org.pathvisio.model.LineType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.StaticProperty;
 
+import cytoscape.Cytoscape;
+import cytoscape.visual.ArrowShape;
+import cytoscape.visual.EdgeAppearanceCalculator;
+import cytoscape.visual.GlobalAppearanceCalculator;
+import cytoscape.visual.NodeAppearance;
+import cytoscape.visual.NodeAppearanceCalculator;
+import cytoscape.visual.NodeShape;
+import cytoscape.visual.VisualMappingManager;
+import cytoscape.visual.VisualPropertyDependency;
+import cytoscape.visual.VisualPropertyType;
+import cytoscape.visual.VisualStyle;
+import cytoscape.visual.calculators.BasicCalculator;
+import cytoscape.visual.mappings.DiscreteMapping;
+import cytoscape.visual.mappings.ObjectMapping;
+import cytoscape.visual.mappings.PassThroughMapping;
+
 /**
  * Defines a @link VisualStyle that renders a GPML network
  * as it would in Pathway programs.
@@ -53,6 +55,7 @@ public class GpmlVisualStyle extends VisualStyle {
 	GpmlHandler gpmlHandler;
 	AttributeMapper attrMapper;
 
+	GlobalAppearanceCalculator gac;
 	NodeAppearanceCalculator nac;
 	EdgeAppearanceCalculator eac;
 
@@ -71,12 +74,17 @@ public class GpmlVisualStyle extends VisualStyle {
 		this.gpmlHandler = gh;
 		attrMapper = gpmlHandler.getAttributeMapper();
 
+		gac = getGlobalAppearanceCalculator();
 		nac = getNodeAppearanceCalculator();
 		eac = getEdgeAppearanceCalculator();
 		
 		VisualMappingManager vm = Cytoscape.getVisualMappingManager();
 		VisualStyle currentStyle = vm.getVisualStyle();
 		
+		if(gac == null) {
+			gac = new GlobalAppearanceCalculator(currentStyle.getGlobalAppearanceCalculator());
+			setGlobalAppearanceCalculator(gac);
+		}
 		if(nac == null) {
 			nac = new NodeAppearanceCalculator(currentStyle.getNodeAppearanceCalculator());
 			setNodeAppearanceCalculator(nac);
@@ -85,7 +93,8 @@ public class GpmlVisualStyle extends VisualStyle {
 			eac = new EdgeAppearanceCalculator(currentStyle.getEdgeAppearanceCalculator());
 			setEdgeAppearanceCalculator(eac);
 		}
-
+		
+		setGlobalMapping();
 		setColorMapping();
 		setLabelMapping();
 		setTypeMapping();
@@ -93,28 +102,23 @@ public class GpmlVisualStyle extends VisualStyle {
 		setLineTypeMapping();
 		setNodeShapeMapping();
 	}
+	
+	void setGlobalMapping(){
+		getGlobalAppearanceCalculator().setDefaultBackgroundColor(Color.WHITE);
+		getDependency().set(VisualPropertyDependency.Definition.NODE_SIZE_LOCKED,false);
+	}
 
 	void setNodeShapeMapping() {
-		getNodeAppearanceCalculator().setNodeSizeLocked(false);
 		NodeAppearance nd = nac.getDefaultAppearance();
 		nd.set(VisualPropertyType.NODE_SHAPE, NodeShape.RECT);
-		nd.set(VisualPropertyType.NODE_WIDTH, 80);
-		nd.set(VisualPropertyType.NODE_HEIGHT, 20);
+		
+		PassThroughMapping widthMapping = new PassThroughMapping(
+				nac.getDefaultAppearance().get(VisualPropertyType.NODE_WIDTH), 
+				StaticProperty.WIDTH.getName());
 
-		DiscreteMapping widthMapping = new DiscreteMapping(
-				nac.getDefaultAppearance().get(VisualPropertyType.NODE_WIDTH),
-				GpmlNetworkElement.ATTR_TYPE,
-				ObjectMapping.NODE_MAPPING
-		);
-		widthMapping.putMapValue(ObjectType.GROUP.ordinal(), 5);
-		widthMapping.putMapValue(GpmlAnchorNode.TYPE_ANCHOR, 5);
-		DiscreteMapping heightMapping = new DiscreteMapping(
-				nac.getDefaultAppearance().get(VisualPropertyType.NODE_HEIGHT),
-				GpmlNetworkElement.ATTR_TYPE,
-				ObjectMapping.NODE_MAPPING
-		);
-		heightMapping.putMapValue(ObjectType.GROUP.ordinal(), 5);
-		heightMapping.putMapValue(GpmlAnchorNode.TYPE_ANCHOR, 5);
+		PassThroughMapping heightMapping = new PassThroughMapping(
+				nac.getDefaultAppearance().get(VisualPropertyType.NODE_HEIGHT), 
+				StaticProperty.HEIGHT.getName());
 
 		nac.setCalculator(
 				new BasicCalculator("Node width", widthMapping, VisualPropertyType.NODE_WIDTH)

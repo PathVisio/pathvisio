@@ -16,8 +16,6 @@
 //
 package org.pathvisio.cytoscape;
 
-import cytoscape.data.CyAttributes;
-
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,7 +25,11 @@ import java.util.Set;
 import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.StaticProperty;
+import org.pathvisio.model.StaticPropertyType;
+
+import cytoscape.data.CyAttributes;
 
 /**
  * Default for mapping cytoscape attributes to GPML properties.
@@ -215,13 +217,43 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	//					Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
 					//Don't transfer the attribute, if it's not a supported type
 					}
-					Logger.log.trace("Setting property " + prop + " to " + value);
-					if(value != null) {
-						elm.setStaticProperty(prop, value);
-					}
-				} catch(Exception e) {
-	//				Logger.log.error("Unable to parse value for " + prop, e);
+					
+				//TODO: resolve deprecation
+				// But this doesn't work. GeneID not handled properly...
+					
+//				// Found a property, try to set it
+//				Object value = null;
+//				PropertyType pt = prop.getType();
+//				if (pt.equals(StaticPropertyType.BOOLEAN))
+//					value = attr.getBooleanAttribute(id, aname);
+//				else if (pt.equals(StaticPropertyType.INTEGER))
+//					value = attr.getIntegerAttribute(id, aname);
+//				else if (pt.equals(StaticPropertyType.DOUBLE))
+//					value = attr.getDoubleAttribute(id, aname);
+//				else if (pt.equals(StaticPropertyType.COLOR))
+//					value = Color.decode("" + attr.getIntegerAttribute(id, aname));
+//				else if (pt.equals(StaticPropertyType.DATASOURCE))
+//					value = attr.getAttribute(id, aname);
+//				else if (pt.equals(StaticPropertyType.DB_SYMBOL))
+//				{
+//				} else if (pt.equals(StaticPropertyType.STRING))
+//				{
+//				} else if (pt.equals(StaticPropertyType.DB_ID))
+//				{
+//				} else
+//				{
+//					// Don't transfer the attribute, if it's not a
+//					// supported type
+//				}
+
+				Logger.log.trace("Setting property " + prop + " to " + value);
+				if (value != null)
+				{
+					elm.setStaticProperty(prop, value);
 				}
+				} catch(Exception e) {
+					//				Logger.log.error("Unable to parse value for " + prop, e);
+								}
 			}
 		}
 	}
@@ -259,6 +291,22 @@ public class DefaultAttributeMapper implements AttributeMapper {
 				default:
 					attr.setAttribute(id, aname, value.toString());
 				}
+				//TODO: resolve deprecation
+				// But this doesn't work. GeneID is not set??
+//				PropertyType pt = prop.getType();
+//				if (pt.equals(StaticPropertyType.BOOLEAN))
+//					attr.setAttribute(id, aname, (Boolean) value);
+//				else if (pt.equals(StaticPropertyType.INTEGER))
+//					attr.setAttribute(id, aname, (Integer) value);
+//				else if (pt.equals(StaticPropertyType.DOUBLE))
+//					attr.setAttribute(id, aname, (Double) value);
+//				else if (pt.equals(StaticPropertyType.COLOR))
+//					attr.setAttribute(id, aname, ((Color) value).getRGB());
+//				else if (pt.equals(StaticPropertyType.STRING)){}
+//				else if (pt.equals(StaticPropertyType.DB_SYMBOL)){}
+//				else if (pt.equals(StaticPropertyType.DB_ID)){}
+//				else
+//					attr.setAttribute(id, aname, value.toString());
 			}
 		}
 //TODO needs more testing

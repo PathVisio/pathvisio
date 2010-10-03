@@ -193,6 +193,14 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		drop(e.getTransferable());
 	}
 
+	/**
+	 * Used to load pathways when pulled from web service or dropped onto
+	 * canvas.
+	 * 
+	 * @param p
+	 * @param newNetwork
+	 * @return
+	 */
 	public CyNetwork load(Pathway p, boolean newNetwork) {
 		try {
 			GpmlConverter converter = new GpmlConverter(gpmlHandler, p);
@@ -217,8 +225,8 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			CyNetworkView view = Cytoscape.getNetworkView(network.getIdentifier());
 			if(view == Cytoscape.getNullNetworkView()) {
 				view = Cytoscape.createNetworkView(network);
-				Cytoscape.firePropertyChange(CytoscapeDesktop.NETWORK_VIEW_FOCUS,
-						null, view.getIdentifier());
+				Cytoscape.firePropertyChange(CytoscapeDesktop.NETWORK_VIEW_CREATED,
+						null, view);
 			} else {
 				view = Cytoscape.getCurrentNetworkView();
 			}

@@ -16,27 +16,24 @@
 //
 package org.pathvisio.cytoscape;
 
-import cytoscape.data.readers.AbstractGraphReader;
-import cytoscape.layout.CyLayoutAlgorithm;
-import cytoscape.layout.LayoutAdapter;
-import cytoscape.task.TaskMonitor;
-import cytoscape.view.CyNetworkView;
-
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
 import org.pathvisio.model.Pathway;
+
+import cytoscape.CyNetwork;
+import cytoscape.Cytoscape;
+import cytoscape.data.readers.AbstractGraphReader;
 
 /**
  * An AbstractGraphReader that uses Pathway.readFromXml to read GPML
  * and then uses @{link GpmlConverter} to turn it into a real
  * network with nodes and edges.
  * <p>
- * Can handle files and URLs.
+ * Can handle files and URLs. AbstracGraphReader handles firing 
+ * appropriate Cytoscape Events, such as NETWORK_LOADED.
  */
 public class GpmlReader extends AbstractGraphReader {
 	GpmlConverter converter;
@@ -70,12 +67,13 @@ public class GpmlReader extends AbstractGraphReader {
 		}
 	}
 
-	public CyLayoutAlgorithm getLayoutAlgorithm() {
-		return new LayoutAdapter() {
-			public void doLayout(CyNetworkView networkView, TaskMonitor monitor) {
-				converter.layout(networkView);
-			}
-		};
+	/*
+	 * Calling layout after background/foreground canvas is ready to receive
+	 * annotations
+	 */
+	public void doPostProcessing(CyNetwork network)
+	{
+		converter.layout(Cytoscape.getCurrentNetworkView());
 	}
 
 	public int[] getEdgeIndicesArray() {

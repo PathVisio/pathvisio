@@ -136,6 +136,7 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 			break;
 		}
 		if(a != null) {
+			// TODO: NEED TO FIX FOR 2.8!
 			aLayer.add(a);
 			view.hideGraphObject(nv);
 			annotations.put(view, a);

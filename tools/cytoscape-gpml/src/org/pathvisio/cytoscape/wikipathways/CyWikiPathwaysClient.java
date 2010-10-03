@@ -450,8 +450,11 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 				CyNetwork network = gpmlPlugin.load(pathway, true);
 				if(network != null) {
 					Cytoscape.getNetworkAttributes().setAttribute(
-							network.getIdentifier(), ATTR_PATHWAY_URL, r.getUrl()
-					);
+							network.getIdentifier(), ATTR_PATHWAY_URL, r.getUrl());
+							
+					// and let the world know
+					Cytoscape.firePropertyChange(Cytoscape.NETWORK_LOADED,
+							null, network.getIdentifier());
 				}
 			} catch (Exception e) {
 				Logger.log.error("Error while opening pathway", e);

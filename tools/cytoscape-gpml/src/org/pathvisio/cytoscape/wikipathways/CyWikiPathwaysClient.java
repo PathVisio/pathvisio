@@ -452,9 +452,13 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 					Cytoscape.getNetworkAttributes().setAttribute(
 							network.getIdentifier(), ATTR_PATHWAY_URL, r.getUrl());
 							
-					// and let the world know
+					// and let the world know...
+					// the Object[2] is Cytoscape convention
+					Object[] new_value = new Object[2];
+					new_value[0] = network;
+					new_value[1] = network.getIdentifier();
 					Cytoscape.firePropertyChange(Cytoscape.NETWORK_LOADED,
-							null, network.getIdentifier());
+							null, new_value);
 				}
 			} catch (Exception e) {
 				Logger.log.error("Error while opening pathway", e);

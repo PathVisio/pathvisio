@@ -194,66 +194,34 @@ public class DefaultAttributeMapper implements AttributeMapper {
 				//Found a property, try to set it
 				try {
 					Object value = null;
-					switch(prop.type()) {
-					case BOOLEAN:
-						value = attr.getBooleanAttribute(id, aname);
-						break;
-					case INTEGER:
-						value = attr.getIntegerAttribute(id, aname);
-						break;
-					case DOUBLE:
-						value = attr.getDoubleAttribute(id, aname);
-						break;
-					case COLOR:
-						value = Color.decode("" + attr.getIntegerAttribute(id, aname));
-						break;
-					case STRING:
-					case DB_ID:
-					case DB_SYMBOL:
-					case DATASOURCE:
-						value = attr.getAttribute(id, aname);
-						break;
-					default:
-	//					Logger.log.trace("\tUnsupported type: attribute " + aname + " to property " + prop);
-					//Don't transfer the attribute, if it's not a supported type
-					}
-					
-				//TODO: resolve deprecation
-				// But this doesn't work. GeneID not handled properly...
-					
-//				// Found a property, try to set it
-//				Object value = null;
-//				PropertyType pt = prop.getType();
-//				if (pt.equals(StaticPropertyType.BOOLEAN))
-//					value = attr.getBooleanAttribute(id, aname);
-//				else if (pt.equals(StaticPropertyType.INTEGER))
-//					value = attr.getIntegerAttribute(id, aname);
-//				else if (pt.equals(StaticPropertyType.DOUBLE))
-//					value = attr.getDoubleAttribute(id, aname);
-//				else if (pt.equals(StaticPropertyType.COLOR))
-//					value = Color.decode("" + attr.getIntegerAttribute(id, aname));
-//				else if (pt.equals(StaticPropertyType.DATASOURCE))
-//					value = attr.getAttribute(id, aname);
-//				else if (pt.equals(StaticPropertyType.DB_SYMBOL))
-//				{
-//				} else if (pt.equals(StaticPropertyType.STRING))
-//				{
-//				} else if (pt.equals(StaticPropertyType.DB_ID))
-//				{
-//				} else
-//				{
-//					// Don't transfer the attribute, if it's not a
-//					// supported type
-//				}
-
+				PropertyType pt = prop.getType();
+				if (pt.equals(StaticPropertyType.BOOLEAN))
+					value = attr.getBooleanAttribute(id, aname);
+				else if (pt.equals(StaticPropertyType.INTEGER))
+					value = attr.getIntegerAttribute(id, aname);
+				else if (pt.equals(StaticPropertyType.DOUBLE))
+					value = attr.getDoubleAttribute(id, aname);
+				else if (pt.equals(StaticPropertyType.COLOR))
+					value = Color.decode("" + attr.getIntegerAttribute(id, aname));
+				else if (pt.equals(StaticPropertyType.DATASOURCE))
+					value = attr.getAttribute(id, aname);
+				else if (pt.equals(StaticPropertyType.DB_SYMBOL))
+					value = attr.getAttribute(id, aname);
+				else if (pt.equals(StaticPropertyType.STRING))
+					value = attr.getAttribute(id, aname);
+				else if (pt.equals(StaticPropertyType.DB_ID))
+					value = attr.getAttribute(id, aname);
+				else
+					// Don't transfer the attribute, if it's not a supported type
+				
 				Logger.log.trace("Setting property " + prop + " to " + value);
 				if (value != null)
 				{
 					elm.setStaticProperty(prop, value);
 				}
 				} catch(Exception e) {
-					//				Logger.log.error("Unable to parse value for " + prop, e);
-								}
+					// Logger.log.error("Unable to parse value for " + prop, e);
+				}
 			}
 		}
 	}
@@ -272,41 +240,17 @@ public class DefaultAttributeMapper implements AttributeMapper {
 			Object value = elm.getStaticProperty(prop);
 			if(value != null) {
 				String aname = getAttributeName(prop);
-				switch(prop.type()) {
-				case BOOLEAN:
-					attr.setAttribute(id, aname, (Boolean)value);
-					break;
-				case INTEGER:
-					attr.setAttribute(id, aname, (Integer)value);
-					break;
-				case DOUBLE:
-					attr.setAttribute(id, aname, (Double)value);
-					break;
-				case COLOR:
-					attr.setAttribute(id, aname, ((Color)value).getRGB());
-					break;
-				case STRING:
-				case DB_ID:
-				case DB_SYMBOL:
-				default:
+				PropertyType pt = prop.getType();
+				if (pt.equals(StaticPropertyType.BOOLEAN))
+					attr.setAttribute(id, aname, (Boolean) value);
+				else if (pt.equals(StaticPropertyType.INTEGER))
+					attr.setAttribute(id, aname, (Integer) value);
+				else if (pt.equals(StaticPropertyType.DOUBLE))
+					attr.setAttribute(id, aname, (Double) value);
+				else if (pt.equals(StaticPropertyType.COLOR))
+					attr.setAttribute(id, aname, ((Color) value).getRGB());
+				else //STRING, DB_ID, DB_SYMBOL, default
 					attr.setAttribute(id, aname, value.toString());
-				}
-				//TODO: resolve deprecation
-				// But this doesn't work. GeneID is not set??
-//				PropertyType pt = prop.getType();
-//				if (pt.equals(StaticPropertyType.BOOLEAN))
-//					attr.setAttribute(id, aname, (Boolean) value);
-//				else if (pt.equals(StaticPropertyType.INTEGER))
-//					attr.setAttribute(id, aname, (Integer) value);
-//				else if (pt.equals(StaticPropertyType.DOUBLE))
-//					attr.setAttribute(id, aname, (Double) value);
-//				else if (pt.equals(StaticPropertyType.COLOR))
-//					attr.setAttribute(id, aname, ((Color) value).getRGB());
-//				else if (pt.equals(StaticPropertyType.STRING)){}
-//				else if (pt.equals(StaticPropertyType.DB_SYMBOL)){}
-//				else if (pt.equals(StaticPropertyType.DB_ID)){}
-//				else
-//					attr.setAttribute(id, aname, value.toString());
 			}
 		}
 //TODO needs more testing

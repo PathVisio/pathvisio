@@ -542,12 +542,16 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	private static final int M_INITIAL_SHAPE_SIZE = 30; // initial
-																// Radius for
-																// rect and oval
+	private static final int M_INITIAL_LINE_LENGTH = 30; 
 
 	private static final int M_INITIAL_STATE_SIZE = 15;
 	
+	private static final int M_INITIAL_SHAPE_SIZE = 30;
+	
+	private static final int M_INITIAL_CELLCOMP_HEIGHT = 100;
+
+	private static final int M_INITIAL_CELLCOMP_WIDTH = 200;
+
 	private static final int M_INITIAL_BRACE_HEIGHT = 15;
 
 	private static final int M_INITIAL_BRACE_WIDTH = 60;
@@ -2605,7 +2609,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			{
 				setMWidth(M_INITIAL_BRACE_WIDTH);
 				setMHeight(M_INITIAL_BRACE_HEIGHT);
-			} else
+			} else if (shapeType == ShapeType.DOUBLE_RND_RECT || shapeType == ShapeType.DOUBLE_OVAL || shapeType == ShapeType.COMPLEX_OVAL)
+			{
+				setMWidth(M_INITIAL_CELLCOMP_WIDTH);
+				setMHeight(M_INITIAL_CELLCOMP_HEIGHT);				
+			} else 
 			{
 				setMWidth(M_INITIAL_SHAPE_SIZE);
 				setMHeight(M_INITIAL_SHAPE_SIZE);
@@ -2616,8 +2624,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setMHeight(M_INITIAL_GENEPRODUCT_HEIGHT);
 			break;
 		case LINE:
-			setMEndX(getMStartX() + M_INITIAL_SHAPE_SIZE);
-			setMEndY(getMStartY() + M_INITIAL_SHAPE_SIZE);
+			setMEndX(getMStartX() + M_INITIAL_LINE_LENGTH);
+			setMEndY(getMStartY() + M_INITIAL_LINE_LENGTH);
 			break;
 		case STATE:
 			setMWidth(M_INITIAL_STATE_SIZE);

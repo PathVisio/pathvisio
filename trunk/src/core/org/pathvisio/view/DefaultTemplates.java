@@ -212,8 +212,8 @@ public abstract class DefaultTemplates {
 			e.setShapeType(type);
 			e.setMCenterX(mx);
 			e.setMCenterY(my);
-			e.setMWidth(30);
-			e.setMHeight(30);
+			e.setMWidth(1);
+			e.setMHeight(1);
 			e.setRotation(0);
 			e.setGraphId(p.getUniqueGraphId());
 			addElement(e, p);
@@ -250,8 +250,8 @@ public abstract class DefaultTemplates {
 			e.setShapeType(type);
 			e.setMCenterX(mx);
 			e.setMCenterY(my);
-			e.setMWidth(200);
-			e.setMHeight(100);
+			e.setMWidth(1);
+			e.setMHeight(1);
 			e.setRotation(0);
 			e.setColor(Color.LIGHT_GRAY);
 			e.setLineThickness(3.0);

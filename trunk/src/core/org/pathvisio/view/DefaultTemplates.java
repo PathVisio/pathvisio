@@ -212,8 +212,8 @@ public abstract class DefaultTemplates {
 			e.setShapeType(type);
 			e.setMCenterX(mx);
 			e.setMCenterY(my);
-			e.setMWidth(1);
-			e.setMHeight(1);
+			e.setMWidth(30);
+			e.setMHeight(30);
 			e.setRotation(0);
 			e.setGraphId(p.getUniqueGraphId());
 			addElement(e, p);
@@ -235,7 +235,7 @@ public abstract class DefaultTemplates {
 	}
 
 	/**
-	 * Template for adding a Shape to a Pathway. Pass a ShapeType upon creation.
+	 * Template for adding a Cellular Compartment Shape to a Pathway. Pass a ShapeType upon creation.
 	 */
 	public static class CellularComponentTemplate extends SingleElementTemplate {
 		ShapeType type;
@@ -250,11 +250,13 @@ public abstract class DefaultTemplates {
 			e.setShapeType(type);
 			e.setMCenterX(mx);
 			e.setMCenterY(my);
-			e.setMWidth(1);
-			e.setMHeight(1);
+			e.setMWidth(200);
+			e.setMHeight(100);
 			e.setRotation(0);
 			e.setColor(Color.LIGHT_GRAY);
 			e.setLineThickness(3.0);
+			if (!e.getShapeType().equals(ShapeType.COMPLEX_OVAL))
+				e.setLineStyle(LineStyle.DOUBLE);
 			e.setGraphId(p.getUniqueGraphId());
 			addElement(e, p);
 			return new PathwayElement[] { e };

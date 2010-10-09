@@ -380,7 +380,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	protected Shape getShape(boolean rotate, boolean stroke)
 	{
 		if(stroke) {
-			return getShape(rotate, DEFAULT_STROKE.getLineWidth());
+			return getShape(rotate, (float)gdata.getLineThickness());
 		} else {
 			return getShape(rotate, 0);
 		}

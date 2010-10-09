@@ -23,6 +23,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 
+import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
 
@@ -104,6 +105,8 @@ public class Shape extends GraphicsShape
 		}
 
 		if(sw > 0) {
+			if (gdata.getLineStyle() == LineStyle.DOUBLE)
+				sw = sw * 4; // correction factor for composite stroke
 			Stroke stroke = new BasicStroke(sw);
 			s = stroke.createStrokedShape(s);
 		}

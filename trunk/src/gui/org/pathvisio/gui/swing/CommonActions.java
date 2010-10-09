@@ -314,11 +314,9 @@ public class CommonActions implements ApplicationEventListener {
 		 
 		 // actions for "Cellular Compartment" section
 		 newCellularComponentActions = new Action[] {
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.CELL)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.NUCLEUS)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.MITOCHONDRIA)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ORGANELLE)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.VESICLE))
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.DOUBLE_RND_RECT)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.DOUBLE_OVAL)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.COMPLEX_OVAL))
 		 };
 		
 		 // actions for "Molecular Interaction Map Shapes" section

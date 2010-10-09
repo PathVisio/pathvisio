@@ -21,10 +21,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.pathvisio.biopax.BiopaxEvent;
@@ -287,8 +287,13 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 				  BasicStroke.CAP_SQUARE,
 				  BasicStroke.JOIN_MITER,
 				  10, new float[] {4, 4}, 0));
-		}		
+		} else if (ls == LineStyle.DOUBLE)
+		{
+			g.setStroke( new CompositeStroke( 
+					new BasicStroke( lt * 3 ), new BasicStroke( lt ) ) );
+		}
 	}
+	
 
 	public void addChild(VPathwayElement elt)
 	{
@@ -300,4 +305,21 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		children.remove(elt);
 	}
 
+}
+
+/**
+ * Generates double line stroke, e.g., for cellular compartment shapes.
+ *
+ */
+final class CompositeStroke implements Stroke {
+	private Stroke stroke1, stroke2;
+
+	public CompositeStroke( Stroke stroke1, Stroke stroke2 ) {
+		this.stroke1 = stroke1;
+		this.stroke2 = stroke2;
+	}
+
+	public Shape createStrokedShape( Shape shape ) {
+		return stroke2.createStrokedShape( stroke1.createStrokedShape( shape ) );
+	}
 }

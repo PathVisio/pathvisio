@@ -41,11 +41,10 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("CellA", getPluggableShape (Internal.CELLA));
 		ShapeRegistry.registerShape ("Ribosome", getPluggableShape (Internal.RIBOSOME));
 		ShapeRegistry.registerShape ("ProteinComplex", getPluggableShape (Internal.PROTEINB));
-	    ShapeRegistry.registerShape ("Cell", getCombinedShape (Internal.CELL));
-	    ShapeRegistry.registerShape ("Nucleus", getCombinedShape (Internal.NUCLEUS));
-	    ShapeRegistry.registerShape ("Mitochondria", getPluggableShape (Internal.MITOCHONDRIA));
-	    ShapeRegistry.registerShape ("Organelle", getCombinedShape (Internal.ORGANELLE));
-	    ShapeRegistry.registerShape ("Vesicle", getCombinedShape (Internal.VESICLE));
+	    ShapeRegistry.registerShape ("RectangleMembrane", getComposedShape (Internal.DOUBLE_RND_RECT));
+	    ShapeRegistry.registerShape ("OvalMembrane", getComposedShape (Internal.DOUBLE_OVAL));
+	    ShapeRegistry.registerShape ("ComplexMembrane", getPluggableShape (Internal.COMPLEX_OVAL));
+	    ShapeRegistry.registerShape ("Vesicle", getComposedShape (Internal.VESICLE));
 
 	}
 
@@ -61,11 +60,10 @@ class GenMAPPShapes
 		@Deprecated CELLA,
 		@Deprecated RIBOSOME,
 		@Deprecated	PROTEINB,
-		CELL,
-		NUCLEUS,
-		MITOCHONDRIA,
-		ORGANELLE,
-		VESICLE;
+		DOUBLE_RND_RECT,
+		DOUBLE_OVAL,
+		COMPLEX_OVAL,
+		@Deprecated VESICLE;
 	}
 	/**
 	   Internal,
@@ -189,7 +187,7 @@ class GenMAPPShapes
 			path.curveTo (26, 0, 33, 14, 33, 30);
 			path.closePath();
 			break;
-		case MITOCHONDRIA:
+		case COMPLEX_OVAL:
 			path.moveTo (72.81f, 85.70f);
 			path.curveTo (97.59f, 83.01f, 94.55f, 147.38f, 119.28f, 144.29f);
 			path.curveTo (166.27f, 144.40f, 136.22f, 42.38f, 175.51f, 41.70f);
@@ -223,39 +221,23 @@ class GenMAPPShapes
 	
 	/**
 	 * Internal,
-	 * For shape types composed of multiple basic shapes.
+	 * For shape types composed of basic shapes with custom default settings.
 	 */
-	static private java.awt.Shape getCombinedShape (Internal st)
+	static private java.awt.Shape getComposedShape (Internal st)
 	{
-		Area area = new Area();
+		java.awt.Shape sh;
 		
 		switch (st)
 		{
-		case CELL:
-			RoundRectangle2D.Double c1 = new RoundRectangle2D.Double(0,0,600,600,100, 100);
-			RoundRectangle2D.Double c2 = new RoundRectangle2D.Double(11,11,578,578,100, 100);
-			area.add(new Area(c1));
-			area.exclusiveOr(new Area(c2));
+		case DOUBLE_RND_RECT:
+			sh = new RoundRectangle2D.Double(0,0,600,600,100, 100);
 			break;
-		case NUCLEUS:
-			Ellipse2D.Double n1 = new Ellipse2D.Double (0, 0, 300, 200);
-			Ellipse2D.Double n2 = new Ellipse2D.Double (8, 8, 284, 184);
-			area.add(new Area(n1));
-			area.exclusiveOr(new Area(n2));
+		case DOUBLE_OVAL:
+		default:
+			sh = new Ellipse2D.Double (0, 0, 300, 200);
 			break;
-		case ORGANELLE:
-			RoundRectangle2D.Double g1 = new RoundRectangle2D.Double(0,0,200,100,40, 60);
-			RoundRectangle2D.Double g2 = new RoundRectangle2D.Double(8,8,184,84,40, 60);
-			area.add(new Area(g1));
-			area.exclusiveOr(new Area(g2));
-			break;
-		case VESICLE:
-			Ellipse2D.Double v1 = new Ellipse2D.Double (0, 0, 100, 100);
-			area.add(new Area(v1));
-			break;	
-		
 		}
-		return area;
+		return sh;
 	}
 	
 	static private java.awt.Shape getRegularPolygon (int sides, double w, double h)

@@ -105,8 +105,10 @@ public class Shape extends GraphicsShape
 		}
 
 		if(sw > 0) {
-			if (gdata.getLineStyle() == LineStyle.DOUBLE)
-				sw = sw * 4; // correction factor for composite stroke
+			if (gdata.getLineStyle() == LineStyle.DOUBLE){
+				// correction factor for composite stroke
+				sw = (float) (gdata.getLineThickness() * 4); 
+			}
 			Stroke stroke = new BasicStroke(sw);
 			s = stroke.createStrokedShape(s);
 		}

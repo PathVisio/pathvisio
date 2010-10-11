@@ -33,6 +33,7 @@ import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.ShapeType;
@@ -425,6 +426,10 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 
 		if(sw > 0) {
+			if (gdata.getLineStyle() == LineStyle.DOUBLE){
+				// correction factor for composite stroke
+				sw = (float) (gdata.getLineThickness() * 4); 
+			}
 			Stroke stroke = new BasicStroke(sw);
 			s = stroke.createStrokedShape(s);
 		}

@@ -381,6 +381,11 @@ public class Line extends Graphics implements Adjustable
 		if(he != null) {
 			total.add(new Area(he.getShape()));
 		}
+		
+		if (gdata.getLineStyle() == LineStyle.DOUBLE){
+			// correction factor for composite stroke
+			total.add(new Area((new BasicStroke((float) gdata.getLineThickness() * 4).createStrokedShape(l)))); 
+		}
 		return total;
 	}
 

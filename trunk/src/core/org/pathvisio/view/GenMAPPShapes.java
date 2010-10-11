@@ -35,17 +35,21 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("Pentagon", getRegularPolygon (5, 10, 10) );
 		ShapeRegistry.registerShape ("Hexagon", getRegularPolygon (6, 10, 10) );
 		ShapeRegistry.registerShape ("Triangle", getRegularPolygon (3, 10, 10) );
+	    ShapeRegistry.registerShape ("RectangleMembrane", getComposedShape (Internal.DOUBLE_RND_RECT));
+	    ShapeRegistry.registerShape ("OvalMembrane", getComposedShape (Internal.DOUBLE_OVAL));
+	    ShapeRegistry.registerShape ("ComplexMembrane", getPluggableShape (Internal.COMPLEX_OVAL));
+
 		ShapeRegistry.registerShape ("OrganA", getPluggableShape (Internal.ORGANA));
 		ShapeRegistry.registerShape ("OrganB", getPluggableShape (Internal.ORGANB));
 		ShapeRegistry.registerShape ("OrganC", getPluggableShape (Internal.ORGANC));
 		ShapeRegistry.registerShape ("CellA", getPluggableShape (Internal.CELLA));
 		ShapeRegistry.registerShape ("Ribosome", getPluggableShape (Internal.RIBOSOME));
 		ShapeRegistry.registerShape ("ProteinComplex", getPluggableShape (Internal.PROTEINB));
-	    ShapeRegistry.registerShape ("RectangleMembrane", getComposedShape (Internal.DOUBLE_RND_RECT));
-	    ShapeRegistry.registerShape ("OvalMembrane", getComposedShape (Internal.DOUBLE_OVAL));
-	    ShapeRegistry.registerShape ("ComplexMembrane", getPluggableShape (Internal.COMPLEX_OVAL));
-	    ShapeRegistry.registerShape ("Vesicle", getComposedShape (Internal.VESICLE));
-
+	    ShapeRegistry.registerShape ("Cell", getCombinedShape (Internal.CELL));
+	    ShapeRegistry.registerShape ("Nucleus", getCombinedShape (Internal.NUCLEUS));
+	    ShapeRegistry.registerShape ("Mitochondria", getCombinedShape (Internal.MITOCHONDRIA));
+	    ShapeRegistry.registerShape ("Organelle", getCombinedShape (Internal.ORGANELLE));
+	    ShapeRegistry.registerShape ("Vesicle", getCombinedShape (Internal.VESICLE));
 	}
 
 	/**
@@ -54,16 +58,21 @@ class GenMAPPShapes
 	 */
 	private enum Internal
 	{
+		DOUBLE_RND_RECT,
+		DOUBLE_OVAL,
+		COMPLEX_OVAL,
+		
 		@Deprecated ORGANA,
 		@Deprecated ORGANB,
 		@Deprecated ORGANC,
 		@Deprecated CELLA,
 		@Deprecated RIBOSOME,
 		@Deprecated	PROTEINB,
-		DOUBLE_RND_RECT,
-		DOUBLE_OVAL,
-		COMPLEX_OVAL,
-		@Deprecated VESICLE;
+		@Deprecated	CELL,
+		@Deprecated	NUCLEUS,
+		@Deprecated	MITOCHONDRIA,
+		@Deprecated	ORGANELLE,
+		@Deprecated	VESICLE;
 	}
 	/**
 	   Internal,
@@ -238,6 +247,53 @@ class GenMAPPShapes
 			break;
 		}
 		return sh;
+	}
+	
+	/**
+	 * Internal,
+	 * For shape types composed of multiple basic shapes.
+	 * 
+	 * NOTE: These are all being deprecated. They should be 
+	 * automatically converted to semantic-free shapes.
+	 */
+	static private java.awt.Shape getCombinedShape (Internal st)
+	{
+		Area area = new Area();
+		
+		switch (st)
+		{
+		case CELL:
+			RoundRectangle2D.Double c1 = new RoundRectangle2D.Double(0,0,600,600,100, 100);
+			RoundRectangle2D.Double c2 = new RoundRectangle2D.Double(11,11,578,578,100, 100);
+			area.add(new Area(c1));
+			area.exclusiveOr(new Area(c2));
+			break;
+		case NUCLEUS:
+			Ellipse2D.Double n1 = new Ellipse2D.Double (0, 0, 300, 200);
+			Ellipse2D.Double n2 = new Ellipse2D.Double (8, 8, 284, 184);
+			area.add(new Area(n1));
+			area.exclusiveOr(new Area(n2));
+			break;
+		case MITOCHONDRIA:
+			RoundRectangle2D.Double m1 = new RoundRectangle2D.Double (0, 0, 200, 100, 40, 60);
+			Ellipse2D.Double m2 = new Ellipse2D.Double (4, 4, 192, 92);
+			area.add(new Area(m1));
+			area.exclusiveOr(new Area(m2));
+			break;
+		case ORGANELLE:
+			RoundRectangle2D.Double g1 = new RoundRectangle2D.Double(0,0,200,100,40, 60);
+			RoundRectangle2D.Double g2 = new RoundRectangle2D.Double(8,8,184,84,40, 60);
+			area.add(new Area(g1));
+			area.exclusiveOr(new Area(g2));
+			break;
+		case VESICLE:
+			Ellipse2D.Double v1 = new Ellipse2D.Double (0, 0, 100, 100);
+			area.add(new Area(v1));
+			break;
+			
+		
+		}
+		return area;
 	}
 	
 	static private java.awt.Shape getRegularPolygon (int sides, double w, double h)

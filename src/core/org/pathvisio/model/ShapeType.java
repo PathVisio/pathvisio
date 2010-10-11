@@ -35,10 +35,25 @@ public class ShapeType
 	public static final ShapeType ROUNDED_RECTANGLE = new ShapeType ("RoundedRectangle", "RoundedRectangle");
 	public static final ShapeType OVAL = new ShapeType ("Oval", "Oval");
 	public static final ShapeType ARC = new ShapeType ("Arc", "Arc");
+	public static final ShapeType TRIANGLE = new ShapeType ("Triangle", "Poly"); // poly ;in MAPP
+	public static final ShapeType PENTAGON = new ShapeType ("Pentagon", "Poly"); // poly in MAPP
+	public static final ShapeType HEXAGON = new ShapeType ("Hexagon", "Poly"); // poly in MAPP
+	public static final ShapeType BRACE = new ShapeType ("Brace", "Brace");
+	
 	public static final ShapeType DOUBLE_RND_RECT = new ShapeType ("RectangleMembrane", "RectangleMembrane");
 	public static final ShapeType DOUBLE_OVAL = new ShapeType ("OvalMembrane", "OvalMembrane");
 	public static final ShapeType COMPLEX_OVAL = new ShapeType ("ComplexMembrane", "ComplexMembrane");
 	
+	@Deprecated
+	public static final ShapeType CELL = new ShapeType ("Cell", "Cell");
+	@Deprecated
+	public static final ShapeType NUCLEUS = new ShapeType ("Nucleus", "Nucleus");
+	@Deprecated
+	public static final ShapeType MITOCHONDRIA = new ShapeType ("Mitochondria", "Mitochondria");
+	@Deprecated
+	public static final ShapeType ORGANELLE = new ShapeType ("Organelle", "Organelle");
+	@Deprecated
+	public static final ShapeType VESICLE = new ShapeType ("Vesicle", "Vesicle");
 	@Deprecated
 	public static final ShapeType CELLA = new ShapeType ("CellA", "CellA");
 	@Deprecated
@@ -51,13 +66,6 @@ public class ShapeType
 	public static final ShapeType ORGANC = new ShapeType ("OrganC", "OrganC");
 	@Deprecated
 	public static final ShapeType PROTEINB = new ShapeType ("ProteinComplex", "ProteinB");
-	
-	public static final ShapeType TRIANGLE = new ShapeType ("Triangle", "Poly"); // poly ;in MAPP
-	@Deprecated
-	public static final ShapeType VESICLE = new ShapeType ("Vesicle", "Vesicle");
-	public static final ShapeType PENTAGON = new ShapeType ("Pentagon", "Poly"); // poly in MAPP
-	public static final ShapeType HEXAGON = new ShapeType ("Hexagon", "Poly"); // poly in MAPP
-	public static final ShapeType BRACE = new ShapeType ("Brace", "Brace");
 
 	private String name;
 	private String mappName;

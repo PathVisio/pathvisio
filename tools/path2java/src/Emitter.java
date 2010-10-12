@@ -17,6 +17,10 @@
 
 import java.awt.geom.Point2D;
 
+/**
+ * Implement this to transfer path operations onto any output. The output could 
+ * be for example a file format or graphics device.
+ */
 interface Emitter
 {
 	public void move (Point2D p);

@@ -14,10 +14,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import java.awt.geom.Point2D;
-import java.awt.geom.GeneralPath;
-import java.awt.Shape;
 
+import java.awt.Shape;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Point2D;
+
+/**
+ * Implemenents an graphical operations by putting 
+ * them together into a java.awt.Shape.
+ */
 class ShapeEmitter implements Emitter
 {
 	GeneralPath path;

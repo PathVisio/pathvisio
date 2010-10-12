@@ -1,3 +1,16 @@
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.io.PrintWriter;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
 // Copyright 2006-2009 BiGCaT Bioinformatics
@@ -14,10 +27,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.*;
-import java.io.*;
 
 class Main extends JPanel
 {
@@ -104,7 +113,6 @@ class Main extends JPanel
 			yco = 0;
 			super.paintComponent(g);
 			Graphics2D g2d = (Graphics2D)g;
-			ShapeEmitter em = new ShapeEmitter();
 			g2d.setColor (Color.BLACK);
 			g2d.setStroke (new BasicStroke (2));
 			paintPath (g2d, PATH[0]);

@@ -15,6 +15,8 @@
 //limitations under the License.
 package org.pathvisio.kegg;
 
+import dtd.kegg.Pathway;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,29 +24,27 @@ import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.rpc.ServiceException;
-import java.lang.ClassNotFoundException;
 
+import org.bridgedb.IDMapperException;
 import org.bridgedb.bio.Organism;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.bridgedb.IDMapperException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.ImageExporter;
 import org.pathvisio.model.RasterImageExporter;
 import org.pathvisio.preferences.PreferenceManager;
 import org.xml.sax.SAXException;
 
-import dtd.kegg.Pathway;
-
+/**
+ * Command-line converter for KGML (KEGG pathway format) 
+ */
 public class Converter {
 	private static final Pattern KGML_PATTERN =
 		Pattern.compile("[a-z]{3}([0-9]{5}).(xml|kgml)$", Pattern.CASE_INSENSITIVE);

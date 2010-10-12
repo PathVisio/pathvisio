@@ -33,8 +33,8 @@ import javax.xml.transform.sax.SAXSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.view.LinAlg;
 import org.pathvisio.view.LinAlg.Point;
 import org.xml.sax.InputSource;
@@ -177,7 +177,7 @@ public class Util {
 	}
 
 	//From http://iq80.com/2007/10/disable-dtd-and-xsd-downloading.html
-	public static Object unmarshal(Class type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
+	public static Object unmarshal(Class<?> type, InputStream in) throws ParserConfigurationException, SAXException, JAXBException {
 
 		// create a parser with validation disabled
 		SAXParserFactory factory = SAXParserFactory.newInstance();

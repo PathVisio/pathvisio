@@ -14,10 +14,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import java.io.PrintWriter;
-import java.io.IOException;
 import java.awt.geom.Point2D;
+import java.io.PrintWriter;
 
+/**
+ * Emits drawing operations as a bit of java code, that can be included in a program.
+ */
 class JavaEmitter implements Emitter
 {
 	PrintWriter target;

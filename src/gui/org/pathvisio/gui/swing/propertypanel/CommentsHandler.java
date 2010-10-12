@@ -15,23 +15,23 @@
 // limitations under the License.
 package org.pathvisio.gui.swing.propertypanel;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collection;
 
-import javax.swing.JButton;
 import javax.swing.AbstractCellEditor;
+import javax.swing.JButton;
 import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
+import org.pathvisio.gui.swing.SwingEngine;
+import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
+import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.StaticPropertyType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
-import org.pathvisio.gui.swing.SwingEngine;
 
 /**
  * This class knows how to edit comments.

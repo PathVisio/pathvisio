@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui.swing;
 
+import com.jgoodies.forms.layout.CellConstraints;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,8 +31,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import org.pathvisio.plugin.PluginManager.PluginInfo;
-
-import com.jgoodies.forms.layout.CellConstraints;
 
 /**
  * Creates and displays the Plugin Manager dialog,

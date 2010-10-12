@@ -62,7 +62,6 @@ import org.bridgedb.rdb.construct.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.gui.swing.DataSourceModel;
 import org.pathvisio.gui.swing.PvDesktop;
@@ -80,7 +79,6 @@ import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.plugins.ColorByExpression;
 import org.pathvisio.visualization.plugins.DataNodeLabel;
 

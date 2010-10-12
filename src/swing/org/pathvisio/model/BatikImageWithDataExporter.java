@@ -33,7 +33,6 @@ import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
 import org.bridgedb.IDMapperException;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationManager;

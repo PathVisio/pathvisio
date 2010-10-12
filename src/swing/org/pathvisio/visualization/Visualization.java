@@ -16,11 +16,9 @@
 //
 package org.pathvisio.visualization;
 
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +30,6 @@ import java.util.Map;
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.view.Graphics;
-import org.pathvisio.view.Legend;
 
 /**
  * Represents a set of configured visualization plugins

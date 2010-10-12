@@ -32,23 +32,13 @@ import org.bridgedb.BridgeDb;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.rdb.SimpleGdb;
-import org.bridgedb.rdb.SimpleGdbFactory;
-import org.bridgedb.rdb.construct.DataDerby;
-import org.pathvisio.data.XrefWithSymbol;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
 import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.FileUtils;
-import org.pathvisio.util.PathwayParser;
 import org.pathvisio.util.PathwayParser.ParseException;
 import org.pathvisio.util.Utils;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Checks which genes from a dataset are not mapped in any pathway

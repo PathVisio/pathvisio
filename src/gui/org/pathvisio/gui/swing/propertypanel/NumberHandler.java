@@ -15,23 +15,24 @@
 // limitations under the License.
 package org.pathvisio.gui.swing.propertypanel;
 
+import java.awt.Component;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
-import java.awt.Component;
 
-import javax.swing.table.TableCellRenderer;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-import javax.swing.JTextField;
-import javax.swing.JTable;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.DefaultCellEditor;
-import javax.swing.BorderFactory;
+import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.model.PropertyType;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.model.PropertyType;
+
 
 /**
  * This class knows how to handle numbers.  It renders and edits numbers and validates input based on the current
@@ -43,7 +44,7 @@ public class NumberHandler extends DefaultCellEditor implements TableCellRendere
 	private TableCellRenderer cellRenderer = new DefaultTableCellRenderer();
 	private JTextField textField;
 	private NumberFormat numberFormat;
-	private Class valueClass;
+	private Class<?> valueClass;
 	private PropertyType propertyType;
 
 
@@ -53,7 +54,7 @@ public class NumberHandler extends DefaultCellEditor implements TableCellRendere
 	 * @param valueCls the subclass of {@link Number} expected
 	 * @throws IllegalArgumentException if valueCls is not a subclass of {@link Number}.
 	 */
-	public static NumberHandler buildHandler(PropertyType type, Class valueCls) {
+	public static NumberHandler buildHandler(PropertyType type, Class<?> valueCls) {
 
 		if (!Number.class.isAssignableFrom(valueCls)) {
 			throw new IllegalArgumentException(valueCls.toString() + " is not a subclass of java.lang.Number");
@@ -74,7 +75,7 @@ public class NumberHandler extends DefaultCellEditor implements TableCellRendere
 	 * @param numFormat the number formatter to use to parse/validate the input
 	 * @param valueCls the Class of the value to get back
 	 */
-	NumberHandler(PropertyType type, Class valueCls, NumberFormat numFormat) {
+	NumberHandler(PropertyType type, Class<?> valueCls, NumberFormat numFormat) {
 		super(new JTextField());
 		textField = (JTextField)getComponent();
 		textField.setBorder(BorderFactory.createEmptyBorder());

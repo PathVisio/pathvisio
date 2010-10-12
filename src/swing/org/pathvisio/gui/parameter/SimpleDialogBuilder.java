@@ -18,19 +18,9 @@ package org.pathvisio.gui.parameter;
 
 import java.io.File;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JTextField;
 
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-import org.pathvisio.util.swing.BrowseButtonActionListener;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Utility class for building simple input dialogs.

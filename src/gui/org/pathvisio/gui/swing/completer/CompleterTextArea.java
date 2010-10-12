@@ -27,14 +27,18 @@
  */
 package org.pathvisio.gui.swing.completer;
 
+import com.jroller.completer.CompleterFilter;
+import com.jroller.completer.CompleterFilterWithWindow;
+
 import javax.swing.JTextArea;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 
-import com.jroller.completer.CompleterFilter;
-import com.jroller.completer.CompleterFilterWithWindow;
-
+/**
+ * TextArea that auto-completes while you type, using a pre-defined list of 
+ * possible completions.
+ */
 public class CompleterTextArea extends JTextArea
 {
 	/**

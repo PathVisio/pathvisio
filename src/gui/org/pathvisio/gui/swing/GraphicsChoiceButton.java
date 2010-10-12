@@ -79,7 +79,7 @@ public class GraphicsChoiceButton extends DropDownButton
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridheight = 1;
 		c.gridwidth = 1;
-		c.fill = c.NONE;
+		c.fill = GridBagConstraints.NONE;
 		c.weightx = 1.0;
 		c.weighty = 1.0;
 		

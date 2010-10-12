@@ -100,7 +100,6 @@ public class ShapeType
 			ShapeType s = values.get(i);
 			if (!deprecatedMap.containsKey(s)){
 				list.add(s);
-				s.value = i;
 			}
 		}
 		values = list;
@@ -111,11 +110,6 @@ public class ShapeType
 	private String mappName;
 	private boolean isResizeable;
 	private boolean isRotatable;
-
-    // integer value always equals the index of this item in the
-	// values array.
-	// Warning: may be removed in the future
-	private int value;
 
 	/**
 	   The constructor is private so we have to use the "create"
@@ -143,9 +137,7 @@ public class ShapeType
 		}
 		nameMappings.put (name, this);
 
-		// assign an integer value
-		value = values.size();
-		// and add it to the array list.
+		// add it to the array list.
 		values.add (this);
 	}
 
@@ -221,23 +213,6 @@ public class ShapeType
 	public String getName ()
 	{
 		return name;
-	}
-
-	/**
-	   The ordinal value of this. Not guaranteed to be the same between
-	   application runs, only to be used for temporary lookup such as
-	   in comboboxes.
-	   If you need something that is stable, use the name instead.
-
-	   //TODO: we should make change comboboxes so they don't need
-	   integer values anymore
-	   and get rid of this.
-	 */
-	public int getOrdinal () { return value; }
-
-	public static ShapeType fromOrdinal (int value)
-	{
-		return values.get (value);
 	}
 
 	/**

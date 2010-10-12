@@ -34,6 +34,7 @@ import org.pathvisio.model.ConnectorShape;
 import org.pathvisio.model.ConnectorShape.Segment;
 import org.pathvisio.model.ConnectorShape.WayPoint;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
+import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.PathwayElement;

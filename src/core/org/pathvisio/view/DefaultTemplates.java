@@ -27,9 +27,9 @@ import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.ShapeType;
-import org.pathvisio.util.Resources;
-import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.util.Resources;
 
 /**
  * Contains a set of templates, patterns of PathwayElements that can

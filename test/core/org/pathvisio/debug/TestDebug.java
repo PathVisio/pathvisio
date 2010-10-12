@@ -17,7 +17,6 @@
 package org.pathvisio.debug;
 
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.ListIterator;
 
 import junit.framework.TestCase;

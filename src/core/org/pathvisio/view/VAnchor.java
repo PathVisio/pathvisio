@@ -26,10 +26,10 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 
+import org.pathvisio.model.AnchorType;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.model.AnchorType;
 
 /**
  * VAnchor is the view representation of {@link MAnchor}.

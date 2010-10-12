@@ -15,8 +15,8 @@
 // limitations under the License.
 package org.pathvisio.model;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This PropertyManager handles the registration/lookups of everything related to TypedProperties.

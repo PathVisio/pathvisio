@@ -24,14 +24,10 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElement.MPoint;
 
 /**
  * This represents the view of a PathwayElement with ObjectType.GROUP.

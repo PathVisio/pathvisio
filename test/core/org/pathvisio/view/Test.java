@@ -27,7 +27,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.Engine;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.model.ObjectType;

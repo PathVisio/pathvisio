@@ -33,8 +33,8 @@ import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
 import org.pathvisio.model.GpmlFormatReader;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.StaticProperty;
 import org.pathvisio.model.ShapeType;
+import org.pathvisio.model.StaticProperty;
 
 /**
  * A patch contains a series of deletions, insertions and modifications
@@ -85,7 +85,7 @@ class Patch
 					result.setStaticProperty(pt, ch.newValue);
 					break;
 				default:
-					Logger.log.error (ch.attr + " of type " + pt.type() + " not supported");
+					Logger.log.error (ch.attr + " of type " + pt.getType() + " not supported");
 					assert (false);
 				}
 			}

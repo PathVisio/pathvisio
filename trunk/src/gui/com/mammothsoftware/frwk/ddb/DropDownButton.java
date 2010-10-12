@@ -270,10 +270,4 @@ public class DropDownButton extends JButton implements ActionListener
 	   mainButton.setIcon(icon);
    }
 
-   @Override
-   /** get the icon for the left part */
-   public Icon getIcon()
-   {
-	   return mainButton.getIcon();
-   }
 }

@@ -16,12 +16,12 @@
 //
 package org.pathvisio.gui.parameter;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
 
 public class BooleanEditor implements Editor, ActionListener
 {

@@ -16,8 +16,6 @@
 //
 package org.pathvisio.plugins;
 
-import com.mammothsoftware.frwk.ddb.DropDownButton;
-
 import javax.swing.Action;
 
 import org.pathvisio.Engine;

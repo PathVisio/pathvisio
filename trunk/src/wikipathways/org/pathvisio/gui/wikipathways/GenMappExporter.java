@@ -19,7 +19,6 @@ package org.pathvisio.gui.wikipathways;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.FileChannel;

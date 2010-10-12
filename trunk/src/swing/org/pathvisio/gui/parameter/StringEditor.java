@@ -16,14 +16,11 @@
 //
 package org.pathvisio.gui.parameter;
 
-import java.io.File;
+import com.jgoodies.forms.builder.DefaultFormBuilder;
 
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.JTextComponent;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
 
 public class StringEditor implements Editor, DocumentListener
 {

@@ -16,14 +16,13 @@
 //
 package org.pathvisio.gui.parameter;
 
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-
-import com.jgoodies.forms.builder.DefaultFormBuilder;
 
 public class EnumEditor implements Editor, ActionListener
 {

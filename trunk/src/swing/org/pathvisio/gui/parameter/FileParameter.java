@@ -16,8 +16,6 @@
 //
 package org.pathvisio.gui.parameter;
 
-import java.io.File;
-
 import javax.swing.JFileChooser;
 
 public class FileParameter

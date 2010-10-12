@@ -50,12 +50,12 @@ import org.pathvisio.view.DefaultTemplates;
 import org.pathvisio.view.Graphics;
 import org.pathvisio.view.Handle;
 import org.pathvisio.view.LayoutType;
+import org.pathvisio.view.MIMShapes;
 import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.Template;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.ViewActions;
-import org.pathvisio.view.MIMShapes; //lb
 
 /**
  * A collection of {@link Action}s that may be used throughout the program (e.g. in

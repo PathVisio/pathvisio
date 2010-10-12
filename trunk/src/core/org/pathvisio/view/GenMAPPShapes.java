@@ -16,7 +16,6 @@
 //
 package org.pathvisio.view;
 
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.RoundRectangle2D;

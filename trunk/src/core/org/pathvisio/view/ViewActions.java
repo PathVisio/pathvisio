@@ -16,8 +16,6 @@
 //
 package org.pathvisio.view;
 
-import static org.pathvisio.model.ObjectType.STATE;
-
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -46,11 +44,13 @@ import org.pathvisio.model.MLine;
 import org.pathvisio.model.MState;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.model.ShapeType;
 import org.pathvisio.util.Resources;
 import org.pathvisio.view.SelectionBox.SelectionEvent;
 import org.pathvisio.view.SelectionBox.SelectionListener;
+
+import static org.pathvisio.model.ObjectType.STATE;
 
 /**
  * A collection of {@link Action}s related to the pathway view. An instance of this class contains

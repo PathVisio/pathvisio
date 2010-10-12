@@ -31,7 +31,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
 
-import org.jdom.Attribute;
 import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;

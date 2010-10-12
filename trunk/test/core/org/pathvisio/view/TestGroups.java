@@ -18,14 +18,18 @@ package org.pathvisio.view;
 
 import java.awt.geom.Point2D;
 
+import junit.framework.TestCase;
+
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.PreferenceManager;
 
-import junit.framework.TestCase;
-
+/**
+ * Test various operations related to groups, such as 
+ * adding to / removing from them, selecting them, etc. 
+ */
 public class TestGroups extends TestCase
 {
 	static final int DATANODE_COUNT = 10;

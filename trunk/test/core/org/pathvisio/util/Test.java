@@ -16,10 +16,11 @@
 //
 package org.pathvisio.util;
 
-import java.io.File;
-
 import junit.framework.TestCase;
 
+/**
+ * Test various utility functions in org.pathvisio.util package.
+ */
 public class Test extends TestCase {
 
 	public void testConverter() {

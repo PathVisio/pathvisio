@@ -40,7 +40,6 @@ import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.view.Graphics;
 
 /**
 * This class is the model for pathway data. It is responsible for

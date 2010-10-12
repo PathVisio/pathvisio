@@ -24,7 +24,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.data.XrefWithSymbol;

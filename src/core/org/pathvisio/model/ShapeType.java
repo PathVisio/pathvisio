@@ -44,6 +44,7 @@ public class ShapeType
 	public static final ShapeType DOUBLE_OVAL = new ShapeType ("OvalMembrane", null);
 	public static final ShapeType COMPLEX_OVAL = new ShapeType ("ComplexMembrane", null);
 	
+	// BEGIN DEPRECATION MANAGEMENT CODE
 	@Deprecated
 	public static final ShapeType CELL = new ShapeType ("Cell", null);
 	@Deprecated
@@ -54,6 +55,8 @@ public class ShapeType
 	public static final ShapeType ORGANELLE = new ShapeType ("Organelle", null);
 	@Deprecated
 	public static final ShapeType VESICLE = new ShapeType ("Vesicle", "Vesicle");
+	@Deprecated
+	public static final ShapeType MEMBRANE = new ShapeType ("Membrane", "Membrane");
 	@Deprecated
 	public static final ShapeType CELLA = new ShapeType ("CellA", "CellA");
 	@Deprecated
@@ -67,6 +70,43 @@ public class ShapeType
 	@Deprecated
 	public static final ShapeType PROTEINB = new ShapeType ("ProteinComplex", "ProteinB");
 
+	
+	//This map is used to track deprecated shapetypes for conversion and exclusion from gui
+	public static final Map<ShapeType, ShapeType> deprecatedMap = new HashMap<ShapeType, ShapeType>();
+	static { 
+		deprecatedMap.put(CELL, DOUBLE_RND_RECT);
+		deprecatedMap.put(ORGANELLE, DOUBLE_RND_RECT);
+		deprecatedMap.put(MEMBRANE, DOUBLE_RND_RECT);
+		deprecatedMap.put(CELLA, DOUBLE_OVAL);
+		deprecatedMap.put(NUCLEUS, DOUBLE_OVAL);
+		deprecatedMap.put(ORGANA, DOUBLE_OVAL);
+		deprecatedMap.put(ORGANB, DOUBLE_OVAL);
+		deprecatedMap.put(ORGANC, DOUBLE_OVAL);
+		deprecatedMap.put(VESICLE, DOUBLE_OVAL);
+		deprecatedMap.put(MITOCHONDRIA, COMPLEX_OVAL);   	
+		deprecatedMap.put(PROTEINB, OVAL);
+		deprecatedMap.put(RIBOSOME, OVAL);
+		// exclude from list for gui
+		pruneValues();
+	}
+	
+	/**
+	 * Prunes values list for deprecated shapes
+	 */
+	private static void pruneValues() {
+		List<ShapeType> list = new ArrayList<ShapeType>();
+		for (int i = 0; i < values.size(); ++i)
+		{
+			ShapeType s = values.get(i);
+			if (!deprecatedMap.containsKey(s)){
+				list.add(s);
+				s.value = i;
+			}
+		}
+		values = list;
+	}
+	// END DEPRECATION MANAGEMENT CODE
+   
 	private String name;
 	private String mappName;
 	private boolean isResizeable;

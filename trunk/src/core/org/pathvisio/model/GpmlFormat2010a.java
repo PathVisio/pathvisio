@@ -16,6 +16,7 @@
 //
 package org.pathvisio.model;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -242,7 +243,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		mapFontData(o, e); // TextLabel. FontName, -Weight, -Style, -Decoration, -StrikeThru, -Size.
 		mapGraphId(o, e);
 		mapShapeType(o, e); // ShapeType
-		mapLineStyle(o, e); // LineStyle
 	}
 
 	public Element createJdomElement(PathwayElement o) throws ConverterException
@@ -430,12 +430,36 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
     	o.setRotation (result);
 	}
 	
+	/**
+	 * Converts deprecated shapes to contemporary analogs. This allows us to
+	 * maintain backward compatibility while at the same time cleaning up old
+	 * shape usages.
+	 * 
+	 */ 
 	protected void mapShapeType(PathwayElement o, Element e) throws ConverterException
 	{
 		String base = e.getName();
     	Element graphics = e.getChild("Graphics", e.getNamespace());
-
-		o.setShapeType (ShapeType.fromGpmlName(getAttribute(base + ".Graphics", "ShapeType", graphics)));
+    	ShapeType s= ShapeType.fromGpmlName(getAttribute(base + ".Graphics", "ShapeType", graphics));
+    	if (ShapeType.deprecatedMap.containsKey(s)){
+    		s = ShapeType.deprecatedMap.get(s);
+    		o.setShapeType(s);
+       		if (s.equals(ShapeType.DOUBLE_OVAL) 
+       				|| s.equals(ShapeType.DOUBLE_RND_RECT)){
+    			o.setLineStyle(LineStyle.DOUBLE);
+    			o.setLineThickness(3.0);
+    			o.setColor(Color.LIGHT_GRAY);
+    		} else if (s.equals(ShapeType.COMPLEX_OVAL)) 
+    		{
+    			o.setLineThickness(3.0);
+    			o.setColor(Color.LIGHT_GRAY);
+    		}
+    	} 
+    	else 
+    	{
+    	o.setShapeType (s);
+		mapLineStyle(o, e); // LineStyle
+    	}
 	}
 
 	protected void updateRotation(PathwayElement o, Element e) throws ConverterException

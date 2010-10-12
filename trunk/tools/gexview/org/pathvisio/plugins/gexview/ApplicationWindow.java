@@ -26,7 +26,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.rdb.construct.DataDerby;

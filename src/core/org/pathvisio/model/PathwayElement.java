@@ -1459,6 +1459,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		{
 			lineStyle = value;
 			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINESTYLE));
+			
+			//handle LineStyle.DOUBLE until GPML is updated
+			//TODO: remove after next GPML update
+			if (lineStyle == LineStyle.DOUBLE)
+				setDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY, "Double");
 		}
 	}
 
@@ -2593,7 +2598,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * the drawing with a click.
 	 */
 	public void setInitialSize()
-	{
+	{	
 		switch (objectType)
 		{
 		case SHAPE:
@@ -2601,11 +2606,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			{
 				setMWidth(M_INITIAL_BRACE_WIDTH);
 				setMHeight(M_INITIAL_BRACE_HEIGHT);
-			} else if (shapeType == ShapeType.DOUBLE_RND_RECT || shapeType == ShapeType.DOUBLE_OVAL || shapeType == ShapeType.COMPLEX_OVAL)
+			} 
+			else if (shapeType == ShapeType.COMPLEX_OVAL || lineStyle == LineStyle.DOUBLE)
 			{
 				setMWidth(M_INITIAL_CELLCOMP_WIDTH);
 				setMHeight(M_INITIAL_CELLCOMP_HEIGHT);				
-			} else 
+			} 
+			else 
 			{
 				setMWidth(M_INITIAL_SHAPE_SIZE);
 				setMHeight(M_INITIAL_SHAPE_SIZE);

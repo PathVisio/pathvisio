@@ -36,6 +36,7 @@ import org.pathvisio.biopax.reflect.PublicationXref;
 import org.pathvisio.gui.swing.dialogs.AboutDlg;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
+import org.pathvisio.model.CellularComponentType;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
@@ -314,9 +315,20 @@ public class CommonActions implements ApplicationEventListener {
 		 
 		 // actions for "Cellular Compartment" section
 		 newCellularComponentActions = new Action[] {
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.DOUBLE_RND_RECT)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.DOUBLE_OVAL)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.COMPLEX_OVAL))
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.CELL)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.NUCLEUS)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.COMPLEX_OVAL, CellularComponentType.MITOCHONDRIA)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.GOLGI)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.ER)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.SR)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.ORGANELLE)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.LYSOSOME)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.NUCLEOLUS)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.VACUOLE)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.VESICLE)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.CYTOSOL)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.EXTRACELLULAR)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.MEMBRANE))
 		 };
 		
 		 // actions for "Molecular Interaction Map Shapes" section

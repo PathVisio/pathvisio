@@ -444,8 +444,8 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
     	if (ShapeType.deprecatedMap.containsKey(s)){
     		s = ShapeType.deprecatedMap.get(s);
     		o.setShapeType(s);
-       		if (s.equals(ShapeType.DOUBLE_OVAL) 
-       				|| s.equals(ShapeType.DOUBLE_RND_RECT)){
+       		if (s.equals(ShapeType.ROUNDED_RECTANGLE) 
+       				|| s.equals(ShapeType.OVAL)){
     			o.setLineStyle(LineStyle.DOUBLE);
     			o.setLineThickness(3.0);
     			o.setColor(Color.LIGHT_GRAY);
@@ -622,6 +622,12 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
     	String base = e.getName();
 		String style = getAttribute (base + ".Graphics", "LineStyle", graphics);
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
+    	
+    	//Check for LineStyle.DOUBLE via arbitrary attribute
+    	//TODO: remove after next GPML update
+    	if (o.getDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY) != null)
+    		if (o.getDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY).equals("Double"))
+    			o.setLineStyle(LineStyle.DOUBLE);
     	
     	String lt = getAttribute(base + ".Graphics", "LineThickness", graphics);
     	o.setLineThickness(lt == null ? 1.0 : Double.parseDouble(lt));

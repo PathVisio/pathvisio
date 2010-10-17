@@ -18,6 +18,7 @@ package org.pathvisio.view;
 import java.awt.Color;
 import java.net.URL;
 
+import org.pathvisio.model.CellularComponentType;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.LineStyle;
@@ -239,10 +240,12 @@ public abstract class DefaultTemplates {
 	 */
 	public static class CellularComponentTemplate extends SingleElementTemplate {
 		ShapeType type;
+		CellularComponentType ccType;
 
-		public CellularComponentTemplate(ShapeType type)
+		public CellularComponentTemplate(ShapeType type, CellularComponentType ccType)
 		{
 			this.type = type;
+			this.ccType = ccType;
 		}
 
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
@@ -255,9 +258,23 @@ public abstract class DefaultTemplates {
 			e.setRotation(0);
 			e.setColor(Color.LIGHT_GRAY);
 			e.setLineThickness(3.0);
-			if (!e.getShapeType().equals(ShapeType.COMPLEX_OVAL))
+			if (!type.equals(ShapeType.COMPLEX_OVAL) && ( ccType.equals(CellularComponentType.CELL) 
+					|| ccType.equals(CellularComponentType.NUCLEUS) 
+					|| ccType.equals(CellularComponentType.MITOCHONDRIA) 
+					|| ccType.equals(CellularComponentType.GOLGI) 
+					|| ccType.equals(CellularComponentType.ER) 
+					|| ccType.equals(CellularComponentType.SR) 
+					|| ccType.equals(CellularComponentType.ORGANELLE)))
+			{
 				e.setLineStyle(LineStyle.DOUBLE);
+			} else if (ccType.equals(CellularComponentType.CYTOSOL) || ccType.equals(CellularComponentType.EXTRACELLULAR)
+					|| ccType.equals(CellularComponentType.MEMBRANE))
+			{
+				e.setLineStyle(LineStyle.DASHED);
+				e.setLineThickness(1.0);
+			}
 			e.setGraphId(p.getUniqueGraphId());
+			e.setDynamicProperty(CellularComponentType.CELL_COMPONENT_KEY, ccType.toString());
 			addElement(e, p);
 			return new PathwayElement[] { e };
 		}
@@ -268,7 +285,7 @@ public abstract class DefaultTemplates {
 		}
 
 		public String getName() {
-			return type.toString();
+			return ccType.getGpmlName();
 		}
 	}
 

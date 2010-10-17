@@ -35,8 +35,6 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("Pentagon", getRegularPolygon (5, 10, 10) );
 		ShapeRegistry.registerShape ("Hexagon", getRegularPolygon (6, 10, 10) );
 		ShapeRegistry.registerShape ("Triangle", getRegularPolygon (3, 10, 10) );
-	    ShapeRegistry.registerShape ("RectangleMembrane", getComposedShape (Internal.DOUBLE_RND_RECT));
-	    ShapeRegistry.registerShape ("OvalMembrane", getComposedShape (Internal.DOUBLE_OVAL));
 	    ShapeRegistry.registerShape ("ComplexMembrane", getPluggableShape (Internal.COMPLEX_OVAL));
 
 		ShapeRegistry.registerShape ("OrganA", getPluggableShape (Internal.ORGANA));
@@ -58,8 +56,6 @@ class GenMAPPShapes
 	 */
 	private enum Internal
 	{
-		DOUBLE_RND_RECT,
-		DOUBLE_OVAL,
 		COMPLEX_OVAL,
 		
 		@Deprecated ORGANA,
@@ -226,27 +222,6 @@ class GenMAPPShapes
 			break;
 		}
 		return path;
-	}
-	
-	/**
-	 * Internal,
-	 * For shape types composed of basic shapes with custom default settings.
-	 */
-	static private java.awt.Shape getComposedShape (Internal st)
-	{
-		java.awt.Shape sh;
-		
-		switch (st)
-		{
-		case DOUBLE_RND_RECT:
-			sh = new RoundRectangle2D.Double(0,0,600,600,100, 100);
-			break;
-		case DOUBLE_OVAL:
-		default:
-			sh = new Ellipse2D.Double (0, 0, 300, 200);
-			break;
-		}
-		return sh;
 	}
 	
 	/**

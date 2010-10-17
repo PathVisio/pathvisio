@@ -38,10 +38,7 @@ public class ShapeType
 	public static final ShapeType TRIANGLE = new ShapeType ("Triangle", "Poly"); // poly ;in MAPP
 	public static final ShapeType PENTAGON = new ShapeType ("Pentagon", "Poly"); // poly in MAPP
 	public static final ShapeType HEXAGON = new ShapeType ("Hexagon", "Poly"); // poly in MAPP
-	public static final ShapeType BRACE = new ShapeType ("Brace", "Brace");
-	
-	public static final ShapeType DOUBLE_RND_RECT = new ShapeType ("RectangleMembrane", null);
-	public static final ShapeType DOUBLE_OVAL = new ShapeType ("OvalMembrane", null);
+	public static final ShapeType BRACE = new ShapeType ("Brace", "Brace");	
 	public static final ShapeType COMPLEX_OVAL = new ShapeType ("ComplexMembrane", null);
 	
 	// BEGIN DEPRECATION MANAGEMENT CODE
@@ -74,18 +71,18 @@ public class ShapeType
 	//This map is used to track deprecated shapetypes for conversion and exclusion from gui
 	public static final Map<ShapeType, ShapeType> deprecatedMap = new HashMap<ShapeType, ShapeType>();
 	static { 
-		deprecatedMap.put(CELL, DOUBLE_RND_RECT);
-		deprecatedMap.put(ORGANELLE, DOUBLE_RND_RECT);
-		deprecatedMap.put(MEMBRANE, DOUBLE_RND_RECT);
-		deprecatedMap.put(CELLA, DOUBLE_OVAL);
-		deprecatedMap.put(NUCLEUS, DOUBLE_OVAL);
-		deprecatedMap.put(ORGANA, DOUBLE_OVAL);
-		deprecatedMap.put(ORGANB, DOUBLE_OVAL);
-		deprecatedMap.put(ORGANC, DOUBLE_OVAL);
-		deprecatedMap.put(VESICLE, DOUBLE_OVAL);
+		deprecatedMap.put(CELL, ROUNDED_RECTANGLE);
+		deprecatedMap.put(ORGANELLE, ROUNDED_RECTANGLE);
+		deprecatedMap.put(MEMBRANE, ROUNDED_RECTANGLE);
+		deprecatedMap.put(CELLA, OVAL);
+		deprecatedMap.put(NUCLEUS, OVAL);
+		deprecatedMap.put(ORGANA, OVAL);
+		deprecatedMap.put(ORGANB, OVAL);
+		deprecatedMap.put(ORGANC, OVAL);
+		deprecatedMap.put(VESICLE, OVAL);
 		deprecatedMap.put(MITOCHONDRIA, COMPLEX_OVAL);   	
-		deprecatedMap.put(PROTEINB, OVAL);
-		deprecatedMap.put(RIBOSOME, OVAL);
+		deprecatedMap.put(PROTEINB, HEXAGON);
+		deprecatedMap.put(RIBOSOME, HEXAGON);
 		// exclude from list for gui
 		pruneValues();
 	}

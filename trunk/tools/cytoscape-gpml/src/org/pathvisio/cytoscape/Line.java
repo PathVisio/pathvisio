@@ -64,7 +64,7 @@ public class Line extends Annotation {
 		Color c = pwElm.getColor();
 		g2d.setColor(c);
 
-		Rectangle b = relativeToBounds(viewportTransform(getVLine())).getBounds();
+		Rectangle b = viewportTransform(getVLine()).getBounds();
 		Line2D l = getVLine();
 		Point2D start = l.getP1();
 		Point2D end = l.getP2();

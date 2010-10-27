@@ -65,7 +65,7 @@ public class Shape extends Annotation implements ViewportChangeListener {
 		
 	public void doPaint(Graphics2D g2d) {
 		//Rectangle b = relativeToBounds(getUnrotatedBounds()).getBounds();
-		Rectangle b = relativeToBounds(viewportTransform(getVRectangle())).getBounds();
+		Rectangle b = viewportTransform(getVRectangle()).getBounds();
 		
 		Color fillcolor = pwElm.getFillColor();
 		Color linecolor = pwElm.getColor();

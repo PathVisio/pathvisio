@@ -54,7 +54,7 @@ public class Label extends Annotation {
 		g2d.setFont(getVFont());
 		g2d.setColor(pwElm.getColor());
 		
-		g2d.drawString(pwElm.getTextLabel(), 0, b.height / 2);
+		g2d.drawString(pwElm.getTextLabel(), b.x, b.y + b.height / 2);
 		
 		g2d.dispose();
 	}

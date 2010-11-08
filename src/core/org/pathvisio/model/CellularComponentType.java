@@ -20,9 +20,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pathvisio.gui.swing.propertypanel.ComboHandler;
-import org.pathvisio.gui.swing.propertypanel.PropertyDisplayManager;
-
 public enum CellularComponentType 
 { 
 	NONE("None"), CELL("Cell"), NUCLEUS("Nucleus"), MITOCHONDRIA("Mitochondria"), 
@@ -37,7 +34,7 @@ public enum CellularComponentType
 	//TODO: refactor as Static Property with next GPML update
 	public final static String CELL_COMPONENT_KEY = "org.pathvisio.CellularComponentProperty";
 	
-	static final Property CELL_COMPONENT_PROPERTY = new Property () {
+	public static final Property CELL_COMPONENT_PROPERTY = new Property () {
 		public String getId() {
 			return CELL_COMPONENT_KEY;
 		}
@@ -63,7 +60,7 @@ public enum CellularComponentType
 	//TODO: remove after next GPML update
 	final static String DOUBLE_LINE_KEY = "org.pathvisio.DoubleLineProperty";
 	
-	static final Property DOUBLE_LINE_PROPERTY = new Property () {
+	public static final Property DOUBLE_LINE_PROPERTY = new Property () {
 		public String getId() {
 			return DOUBLE_LINE_KEY;
 		}
@@ -88,27 +85,7 @@ public enum CellularComponentType
 
 	static {
 		for (CellularComponentType t : values()) byGpmlName.put (t.gpmlName, t);
-		
-		//Register specific dynamic property
-		//TODO: refactor as Static Property with next GPML update
-		PropertyManager.registerProperty(CELL_COMPONENT_PROPERTY);
-		//PropertyDisplayManager.registerTypeHandler(new ComboHandler(CELL_COMPONENT_PROPERTY.getType(), CellularComponentType.getNames(), false));
-		PropertyDisplayManager.registerProperty(CELL_COMPONENT_PROPERTY, true);
-		PropertyDisplayManager.setPropertyScope(
-				CELL_COMPONENT_PROPERTY, 
-				EnumSet.of(ObjectType.SHAPE)
-		);
-		
-		//Register another dynamic property to handle double line styles
-		//TODO: remove after next GPML update
-		PropertyManager.registerProperty(DOUBLE_LINE_PROPERTY);
-		PropertyDisplayManager.registerProperty(DOUBLE_LINE_PROPERTY, false);
-		PropertyDisplayManager.setVisible(DOUBLE_LINE_PROPERTY, false);
 	}
-	
-	
-	
-
 	
 	private CellularComponentType(String gpmlName)
 	{

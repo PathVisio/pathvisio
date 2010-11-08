@@ -21,6 +21,7 @@ import java.awt.Container;
 import java.io.File;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
@@ -41,9 +42,13 @@ import org.pathvisio.Globals;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.PopupDialogHandler;
+import org.pathvisio.gui.swing.propertypanel.PropertyDisplayManager;
+import org.pathvisio.model.CellularComponentType;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PropertyManager;
 import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayExporter;
 import org.pathvisio.model.PathwayImporter;
@@ -655,5 +660,23 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		return PreferenceManager.getCurrent();
 	}
-	
+
+	static
+	{
+		//Register specific dynamic property
+		//TODO: refactor as Static Property with next GPML update
+		PropertyManager.registerProperty(CellularComponentType.CELL_COMPONENT_PROPERTY);
+		//PropertyDisplayManager.registerTypeHandler(new ComboHandler(CELL_COMPONENT_PROPERTY.getType(), CellularComponentType.getNames(), false));
+		PropertyDisplayManager.registerProperty(CellularComponentType.CELL_COMPONENT_PROPERTY, true);
+		PropertyDisplayManager.setPropertyScope(
+				CellularComponentType.CELL_COMPONENT_PROPERTY, 
+				EnumSet.of(ObjectType.SHAPE)
+		);
+		
+		//Register another dynamic property to handle double line styles
+		//TODO: remove after next GPML update
+		PropertyManager.registerProperty(CellularComponentType.DOUBLE_LINE_PROPERTY);
+		PropertyDisplayManager.registerProperty(CellularComponentType.DOUBLE_LINE_PROPERTY, false);
+		PropertyDisplayManager.setVisible(CellularComponentType.DOUBLE_LINE_PROPERTY, false);
+	}
 }

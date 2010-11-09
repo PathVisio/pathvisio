@@ -318,16 +318,16 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.CELL)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.NUCLEUS)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.COMPLEX_OVAL, CellularComponentType.MITOCHONDRIA)),
-				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.GOLGI)),
-				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.ER)),
-				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.SR)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.GOLGI)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.ER)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.SR)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.ORGANELLE)),
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.LYSOSOME)),
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.NUCLEOLUS)),
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.VACUOLE)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.VESICLE)),
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.CYTOSOL)),
-				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.EXTRACELLULAR)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.EXTRACELLULAR)),
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.MEMBRANE))
 		 };
 		

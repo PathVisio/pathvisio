@@ -624,7 +624,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		String style = getAttribute (base + ".Graphics", "LineStyle", graphics);
 		
 		//Check for LineStyle.DOUBLE via arbitrary attribute
-		if ("Double".equals (o.getDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY)))
+		if ("Double".equals (o.getDynamicProperty(LineStyle.DOUBLE_LINE_KEY)))
 		{
 			o.setLineStyle(LineStyle.DOUBLE);
 		}

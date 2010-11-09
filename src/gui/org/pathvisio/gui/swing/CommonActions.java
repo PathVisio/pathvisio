@@ -317,7 +317,7 @@ public class CommonActions implements ApplicationEventListener {
 		 newCellularComponentActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.CELL)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.NUCLEUS)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.COMPLEX_OVAL, CellularComponentType.MITOCHONDRIA)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.MITOCHONDRIA, CellularComponentType.MITOCHONDRIA)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.GOLGI)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.ER)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.SR)),

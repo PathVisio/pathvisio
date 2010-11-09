@@ -258,7 +258,7 @@ public abstract class DefaultTemplates {
 			e.setRotation(0);
 			e.setColor(Color.LIGHT_GRAY);
 			e.setLineThickness(3.0);
-			if (!type.equals(ShapeType.COMPLEX_OVAL) && ( ccType.equals(CellularComponentType.CELL) 
+			if (!type.equals(ShapeType.MITOCHONDRIA) && ( ccType.equals(CellularComponentType.CELL) 
 					|| ccType.equals(CellularComponentType.NUCLEUS) 
 					|| ccType.equals(CellularComponentType.MITOCHONDRIA) 
 					|| ccType.equals(CellularComponentType.GOLGI) 

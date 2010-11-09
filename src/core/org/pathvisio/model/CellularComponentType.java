@@ -56,33 +56,6 @@ public enum CellularComponentType
 		}
 	};
 
-	//dynamic property key for LineStyle.DOUBLE, until GPML is updated
-	//TODO: remove after next GPML update
-	final static String DOUBLE_LINE_KEY = "org.pathvisio.DoubleLineProperty";
-	
-	public static final Property DOUBLE_LINE_PROPERTY = new Property () {
-		public String getId() {
-			return DOUBLE_LINE_KEY;
-		}
-		
-		public String getDescription() {
-			return "";
-		}
-		
-		public String getName() {
-			return "";
-		}
-		
-		public PropertyType getType() {
-			return StaticPropertyType.STRING;
-		}
-		
-		public boolean isCollection() {
-			return false;
-		}
-	};
-
-
 	static {
 		for (CellularComponentType t : values()) byGpmlName.put (t.gpmlName, t);
 	}

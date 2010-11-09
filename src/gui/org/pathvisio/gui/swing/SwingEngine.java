@@ -671,12 +671,6 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		PropertyDisplayManager.setPropertyScope(
 				CellularComponentType.CELL_COMPONENT_PROPERTY, 
 				EnumSet.of(ObjectType.SHAPE)
-		);
-		
-		//Register another dynamic property to handle double line styles
-		//TODO: remove after next GPML update
-		PropertyManager.registerProperty(CellularComponentType.DOUBLE_LINE_PROPERTY);
-		PropertyDisplayManager.registerProperty(CellularComponentType.DOUBLE_LINE_PROPERTY, false);
-		PropertyDisplayManager.setVisible(CellularComponentType.DOUBLE_LINE_PROPERTY, false);
+		);		
 	}
 }

@@ -27,4 +27,9 @@ public class LineStyle {
 	public static String[] getNames() {
 		return new String[] {"Solid", "Dashed", "Double"};
 	}
+	
+	//dynamic property key for LineStyle.DOUBLE, until GPML is updated
+	//TODO: remove after next GPML update
+	final static String DOUBLE_LINE_KEY = "org.pathvisio.DoubleLineProperty";
+
 }

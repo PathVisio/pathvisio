@@ -1461,9 +1461,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			//handle LineStyle.DOUBLE until GPML is updated
 			//TODO: remove after next GPML update
 			if (lineStyle == LineStyle.DOUBLE)
-				setDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY, "Double");
+				setDynamicProperty(LineStyle.DOUBLE_LINE_KEY, "Double");
 			else
-				setDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY, null);
+				setDynamicProperty(LineStyle.DOUBLE_LINE_KEY, null);
 			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINESTYLE));
 		}
 	}

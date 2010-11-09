@@ -37,6 +37,7 @@ import org.jdom.output.XMLOutputter;
 import org.pathvisio.model.GpmlFormatAbstract.ByElementName;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.util.Utils;
 
 class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, GpmlFormatWriter 
 {
@@ -621,13 +622,16 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 
     	String base = e.getName();
 		String style = getAttribute (base + ".Graphics", "LineStyle", graphics);
-    	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
-    	
-    	//Check for LineStyle.DOUBLE via arbitrary attribute
-    	//TODO: remove after next GPML update
-    	if (o.getDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY) != null)
-    		if (o.getDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY).equals("Double"))
-    			o.setLineStyle(LineStyle.DOUBLE);
+		
+		//Check for LineStyle.DOUBLE via arbitrary attribute
+		if ("Double".equals (o.getDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY)))
+		{
+			o.setLineStyle(LineStyle.DOUBLE);
+		}
+		else
+		{
+			o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
+		}
     	
     	String lt = getAttribute(base + ".Graphics", "LineThickness", graphics);
     	o.setLineThickness(lt == null ? 1.0 : Double.parseDouble(lt));
@@ -701,8 +705,8 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 	protected void updateLineStyle(PathwayElement o, Element e) throws ConverterException
 	{
 		String base = e.getName();
-    	Element graphics = e.getChild("Graphics", e.getNamespace());
-		setAttribute(base + ".Graphics", "LineStyle", graphics, o.getLineStyle() == LineStyle.SOLID ? "Solid" : "Broken");    	
+		Element graphics = e.getChild("Graphics", e.getNamespace());
+		setAttribute(base + ".Graphics", "LineStyle", graphics, o.getLineStyle() != LineStyle.DASHED ? "Solid" : "Broken");
 		setAttribute (base + ".Graphics", "LineThickness", graphics, "" + o.getLineThickness());
 		updateColor(o, e);
 	}

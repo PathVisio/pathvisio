@@ -1458,12 +1458,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (lineStyle != value)
 		{
 			lineStyle = value;
-			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINESTYLE));
-			
 			//handle LineStyle.DOUBLE until GPML is updated
 			//TODO: remove after next GPML update
 			if (lineStyle == LineStyle.DOUBLE)
 				setDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY, "Double");
+			else
+				setDynamicProperty(CellularComponentType.DOUBLE_LINE_KEY, null);
+			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.LINESTYLE));
 		}
 	}
 

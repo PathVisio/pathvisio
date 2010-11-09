@@ -35,7 +35,8 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("Pentagon", getRegularPolygon (5, 10, 10) );
 		ShapeRegistry.registerShape ("Hexagon", getRegularPolygon (6, 10, 10) );
 		ShapeRegistry.registerShape ("Triangle", getRegularPolygon (3, 10, 10) );
-	    ShapeRegistry.registerShape ("ComplexMembrane", getPluggableShape (Internal.COMPLEX_OVAL));
+	    ShapeRegistry.registerShape ("Mitochondria", getPluggableShape (Internal.MITOCHONDRIA));
+	    ShapeRegistry.registerShape ("Sacroplasmic Reticulum", getPluggableShape (Internal.SARCORET));
 
 		ShapeRegistry.registerShape ("OrganA", getPluggableShape (Internal.ORGANA));
 		ShapeRegistry.registerShape ("OrganB", getPluggableShape (Internal.ORGANB));
@@ -45,7 +46,7 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("ProteinComplex", getPluggableShape (Internal.PROTEINB));
 	    ShapeRegistry.registerShape ("Cell", getCombinedShape (Internal.CELL));
 	    ShapeRegistry.registerShape ("Nucleus", getCombinedShape (Internal.NUCLEUS));
-	    ShapeRegistry.registerShape ("Mitochondria", getCombinedShape (Internal.MITOCHONDRIA));
+//	    ShapeRegistry.registerShape ("Mitochondria", getCombinedShape (Internal.MITOCHONDRIA));
 	    ShapeRegistry.registerShape ("Organelle", getCombinedShape (Internal.ORGANELLE));
 	    ShapeRegistry.registerShape ("Vesicle", getCombinedShape (Internal.VESICLE));
 	}
@@ -56,7 +57,8 @@ class GenMAPPShapes
 	 */
 	private enum Internal
 	{
-		COMPLEX_OVAL,
+		MITOCHONDRIA,
+		SARCORET,
 		
 		@Deprecated ORGANA,
 		@Deprecated ORGANB,
@@ -66,7 +68,6 @@ class GenMAPPShapes
 		@Deprecated	PROTEINB,
 		@Deprecated	CELL,
 		@Deprecated	NUCLEUS,
-		@Deprecated	MITOCHONDRIA,
 		@Deprecated	ORGANELLE,
 		@Deprecated	VESICLE;
 	}
@@ -192,7 +193,7 @@ class GenMAPPShapes
 			path.curveTo (26, 0, 33, 14, 33, 30);
 			path.closePath();
 			break;
-		case COMPLEX_OVAL:
+		case MITOCHONDRIA:
 			path.moveTo (72.81f, 85.70f);
 			path.curveTo (97.59f, 83.01f, 94.55f, 147.38f, 119.28f, 144.29f);
 			path.curveTo (166.27f, 144.40f, 136.22f, 42.38f, 175.51f, 41.70f);
@@ -249,12 +250,12 @@ class GenMAPPShapes
 			area.add(new Area(n1));
 			area.exclusiveOr(new Area(n2));
 			break;
-		case MITOCHONDRIA:
-			RoundRectangle2D.Double m1 = new RoundRectangle2D.Double (0, 0, 200, 100, 40, 60);
-			Ellipse2D.Double m2 = new Ellipse2D.Double (4, 4, 192, 92);
-			area.add(new Area(m1));
-			area.exclusiveOr(new Area(m2));
-			break;
+//		case MITOCHONDRIA:
+//			RoundRectangle2D.Double m1 = new RoundRectangle2D.Double (0, 0, 200, 100, 40, 60);
+//			Ellipse2D.Double m2 = new Ellipse2D.Double (4, 4, 192, 92);
+//			area.add(new Area(m1));
+//			area.exclusiveOr(new Area(m2));
+//			break;
 		case ORGANELLE:
 			RoundRectangle2D.Double g1 = new RoundRectangle2D.Double(0,0,200,100,40, 60);
 			RoundRectangle2D.Double g2 = new RoundRectangle2D.Double(8,8,184,84,40, 60);

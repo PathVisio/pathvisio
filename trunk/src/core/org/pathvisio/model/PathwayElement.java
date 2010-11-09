@@ -2607,7 +2607,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				setMWidth(M_INITIAL_BRACE_WIDTH);
 				setMHeight(M_INITIAL_BRACE_HEIGHT);
 			} 
-			else if (shapeType == ShapeType.COMPLEX_OVAL || lineStyle == LineStyle.DOUBLE)
+			else if (shapeType == ShapeType.MITOCHONDRIA || lineStyle == LineStyle.DOUBLE)
 			{
 				setMWidth(M_INITIAL_CELLCOMP_WIDTH);
 				setMHeight(M_INITIAL_CELLCOMP_HEIGHT);				

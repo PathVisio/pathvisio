@@ -39,15 +39,14 @@ public class ShapeType
 	public static final ShapeType PENTAGON = new ShapeType ("Pentagon", "Poly"); // poly in MAPP
 	public static final ShapeType HEXAGON = new ShapeType ("Hexagon", "Poly"); // poly in MAPP
 	public static final ShapeType BRACE = new ShapeType ("Brace", "Brace");	
-	public static final ShapeType COMPLEX_OVAL = new ShapeType ("ComplexMembrane", null);
+	public static final ShapeType MITOCHONDRIA = new ShapeType ("Mitochondria", null);
+	public static final ShapeType SARCORET = new ShapeType ("Sarcoplasmic Reticulum", null);
 	
 	// BEGIN DEPRECATION MANAGEMENT CODE
 	@Deprecated
 	public static final ShapeType CELL = new ShapeType ("Cell", null);
 	@Deprecated
 	public static final ShapeType NUCLEUS = new ShapeType ("Nucleus", null);
-	@Deprecated
-	public static final ShapeType MITOCHONDRIA = new ShapeType ("Mitochondria", null);
 	@Deprecated
 	public static final ShapeType ORGANELLE = new ShapeType ("Organelle", null);
 	@Deprecated
@@ -79,8 +78,7 @@ public class ShapeType
 		deprecatedMap.put(ORGANA, OVAL);
 		deprecatedMap.put(ORGANB, OVAL);
 		deprecatedMap.put(ORGANC, OVAL);
-		deprecatedMap.put(VESICLE, OVAL);
-		deprecatedMap.put(MITOCHONDRIA, COMPLEX_OVAL);   	
+		deprecatedMap.put(VESICLE, OVAL);   	
 		deprecatedMap.put(PROTEINB, HEXAGON);
 		deprecatedMap.put(RIBOSOME, HEXAGON);
 		// exclude from list for gui

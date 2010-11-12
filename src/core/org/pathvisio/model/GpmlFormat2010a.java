@@ -450,10 +450,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
     			o.setLineStyle(LineStyle.DOUBLE);
     			o.setLineThickness(3.0);
     			o.setColor(Color.LIGHT_GRAY);
-    		} else if (s.equals(ShapeType.MITOCHONDRIA)) 
-    		{
-    			o.setLineThickness(3.0);
-    			o.setColor(Color.LIGHT_GRAY);
     		}
     	} 
     	else 

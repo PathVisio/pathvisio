@@ -40,7 +40,9 @@ public class ShapeType
 	public static final ShapeType HEXAGON = new ShapeType ("Hexagon", "Poly"); // poly in MAPP
 	public static final ShapeType BRACE = new ShapeType ("Brace", "Brace");	
 	public static final ShapeType MITOCHONDRIA = new ShapeType ("Mitochondria", null);
-	public static final ShapeType SARCORET = new ShapeType ("Sarcoplasmic Reticulum", null);
+	public static final ShapeType SARCOPLASMICRETICULUM = new ShapeType ("Sarcoplasmic Reticulum", null);
+	public static final ShapeType ENDOPLASMICRETICULUM = new ShapeType ("Endoplasmic Reticulum", null);
+	public static final ShapeType GOLGIAPPARATUS = new ShapeType ("Golgi Apparatus", null);
 	
 	// BEGIN DEPRECATION MANAGEMENT CODE
 	@Deprecated

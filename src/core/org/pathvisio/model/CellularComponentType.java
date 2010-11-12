@@ -23,7 +23,7 @@ import java.util.Map;
 public enum CellularComponentType 
 { 
 	NONE("None"), CELL("Cell"), NUCLEUS("Nucleus"), MITOCHONDRIA("Mitochondria"), 
-		GOLGI("Golgi Apparatus"), ER("Endoplasmic Reticulum"), SR("Sarcoplasmic Reticulum"), VESICLE("Vesicle"), 
+		GOLGIAPPARATUS("Golgi Apparatus"), ENDOPLASMICRETICULUM("Endoplasmic Reticulum"), SARCOPLASMICRETICULUM("Sarcoplasmic Reticulum"), VESICLE("Vesicle"), 
 		ORGANELLE("Organelle"), NUCLEOLUS("Nucleolus"), VACUOLE("Vacuole"), LYSOSOME("Lysosome"), CYTOSOL("Cytosol region"), 
 		EXTRACELLULAR("Extracellular region"), MEMBRANE("Membrane region");
 

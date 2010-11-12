@@ -258,13 +258,9 @@ public abstract class DefaultTemplates {
 			e.setRotation(0);
 			e.setColor(Color.LIGHT_GRAY);
 			e.setLineThickness(3.0);
-			if (!type.equals(ShapeType.MITOCHONDRIA) && ( ccType.equals(CellularComponentType.CELL) 
+			if (ccType.equals(CellularComponentType.CELL) 
 					|| ccType.equals(CellularComponentType.NUCLEUS) 
-					|| ccType.equals(CellularComponentType.MITOCHONDRIA) 
-					|| ccType.equals(CellularComponentType.GOLGI) 
-					|| ccType.equals(CellularComponentType.ER) 
-					|| ccType.equals(CellularComponentType.SR) 
-					|| ccType.equals(CellularComponentType.ORGANELLE)))
+					|| ccType.equals(CellularComponentType.ORGANELLE))
 			{
 				e.setLineStyle(LineStyle.DOUBLE);
 			} else if (ccType.equals(CellularComponentType.CYTOSOL) || ccType.equals(CellularComponentType.EXTRACELLULAR)

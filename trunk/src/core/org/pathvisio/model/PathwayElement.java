@@ -2613,6 +2613,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				setMWidth(M_INITIAL_CELLCOMP_WIDTH);
 				setMHeight(M_INITIAL_CELLCOMP_HEIGHT);				
 			} 
+			else if (shapeType == ShapeType.SARCOPLASMICRETICULUM 
+					|| shapeType == ShapeType.ENDOPLASMICRETICULUM
+					|| shapeType == ShapeType.GOLGIAPPARATUS)
+			{
+				setMWidth(M_INITIAL_CELLCOMP_HEIGHT);
+				setMHeight(M_INITIAL_CELLCOMP_WIDTH);				
+			} 
 			else 
 			{
 				setMWidth(M_INITIAL_SHAPE_SIZE);

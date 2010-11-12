@@ -36,7 +36,9 @@ class GenMAPPShapes
 		ShapeRegistry.registerShape ("Hexagon", getRegularPolygon (6, 10, 10) );
 		ShapeRegistry.registerShape ("Triangle", getRegularPolygon (3, 10, 10) );
 	    ShapeRegistry.registerShape ("Mitochondria", getPluggableShape (Internal.MITOCHONDRIA));
-	    ShapeRegistry.registerShape ("Sacroplasmic Reticulum", getPluggableShape (Internal.SARCORET));
+	    ShapeRegistry.registerShape ("Sarcoplasmic Reticulum", getPluggableShape (Internal.SARCOPLASMICRETICULUM));
+	    ShapeRegistry.registerShape ("Endoplasmic Reticulum", getPluggableShape (Internal.ENDOPLASMICRETICULUM));
+	    ShapeRegistry.registerShape ("Golgi Apparatus", getPluggableShape (Internal.GOLGIAPPARATUS));
 
 		ShapeRegistry.registerShape ("OrganA", getPluggableShape (Internal.ORGANA));
 		ShapeRegistry.registerShape ("OrganB", getPluggableShape (Internal.ORGANB));
@@ -58,7 +60,9 @@ class GenMAPPShapes
 	private enum Internal
 	{
 		MITOCHONDRIA,
-		SARCORET,
+		SARCOPLASMICRETICULUM,
+		ENDOPLASMICRETICULUM,
+		GOLGIAPPARATUS,
 		
 		@Deprecated ORGANA,
 		@Deprecated ORGANB,
@@ -219,6 +223,191 @@ class GenMAPPShapes
 			path.curveTo (544.58f, 275.18f, 381.50f, 342.19f, 274.84f, 342.28f);
 			path.curveTo (166.69f, 342.36f, 0.84f, 274.66f, 2.10f, 166.51f);
 			path.curveTo (3.33f, 60.72f, 167.03f, 0.56f, 272.82f, 0.84f);
+			path.closePath();
+			break;
+		case SARCOPLASMICRETICULUM:
+			path.moveTo (83.84f, 11.06f);
+			path.curveTo (55.38f, 11.53f, 34.05f , 35.28f, 27.55f , 
+			59.42f);
+			path.curveTo (21.34f, 79.07f, 24.23f , 100.01f, 31.18f , 
+			119.12f);
+			path.curveTo (36.92f, 139.13f, 39.24f , 152.44f, 29.02f , 
+			171.33f);
+			path.curveTo (17.17f, 196.63f, 16.73f , 237.34f, 36.28f , 
+			259.06f);
+			path.curveTo (51.15f, 276.87f, 78.30f , 283.82f, 101.03f , 
+			276.18f);
+			path.curveTo (121.32f, 270.59f, 135.08f , 253.36f, 139.86f 
+			, 234.78f);
+			path.curveTo (144.60f, 217.86f, 141.76f , 191.06f, 133.71f 
+			, 174.98f);
+			path.curveTo (125.19f, 156.63f, 126.34f , 137.76f, 133.32f 
+			, 118.69f);
+			path.curveTo (142.15f, 94.73f, 147.49f , 74.12f, 138.15f , 
+			49.55f);
+			path.curveTo (131.47f, 29.83f, 112.90f , 13.08f, 90.17f , 
+			11.34f);
+			path.curveTo (88.07f, 11.13f, 85.95f , 11.04f, 83.84f , 
+			11.06f);
+			path.lineTo (83.84f, 11.06f);
+			path.closePath();
+			break;
+		case ENDOPLASMICRETICULUM:
+			path.moveTo (117.65f, 173.00f);
+			path.curveTo (111.77f, 135.92f, 125.48f , 98.47f, 146.23f 
+			, 66.69f);
+			path.curveTo (151.89f, 55.92f, 160.75f , 45.46f, 160.84f , 
+			33.16f);
+			path.curveTo (160.30f, 18.31f, 138.48f , 9.17f, 125.67f , 
+			19.03f);
+			path.curveTo (114.97f, 28.67f, 106.07f , 40.84f, 102.50f , 
+			54.17f);
+			path.curveTo (96.72f, 85.23f, 99.58f , 117.17f, 92.40f , 
+			148.05f);
+			path.curveTo (91.84f, 159.08f, 80.85f , 155.60f, 80.24f , 
+			146.57f);
+			path.curveTo (77.74f, 135.64f, 78.88f , 124.33f, 78.47f , 
+			113.28f);
+			path.curveTo (80.31f, 94.13f, 96.96f , 76.32f, 89.59f , 
+			56.67f);
+			path.curveTo (87.26f, 44.36f, 70.19f , 43.28f, 62.75f , 
+			52.40f);
+			path.curveTo (50.92f, 61.79f, 46.77f , 75.95f, 46.31f , 
+			89.59f);
+			path.curveTo (45.11f, 108.24f, 46.91f , 127.30f, 54.97f , 
+			144.71f);
+			path.curveTo (76.04f, 186.21f, 51.55f , 219.27f, 44.39f , 
+			192.05f);
+			path.curveTo (37.12f, 175.84f, 53.90f , 158.19f, 43.13f , 
+			142.63f);
+			path.curveTo (33.49f, 136.38f, 21.53f , 143.47f, 17.78f , 
+			152.08f);
+			path.curveTo (10.80f, 165.14f, 12.97f , 180.15f, 11.50f , 
+			194.16f);
+			path.curveTo (10.56f, 215.22f, 14.93f , 236.91f, 27.06f , 
+			255.12f);
+			path.curveTo (31.46f, 261.52f, 43.73f , 274.00f, 51.82f , 
+			262.00f);
+			path.curveTo (56.61f, 253.46f, 46.74f , 235.42f, 57.95f , 
+			232.67f);
+			path.curveTo (69.97f, 234.28f, 64.92f , 252.09f, 68.86f , 
+			261.37f);
+			path.curveTo (72.48f, 273.75f, 76.44f , 286.90f, 85.75f , 
+			296.88f);
+			path.curveTo (93.26f, 304.63f, 109.74f , 303.34f, 112.06f 
+			, 290.90f);
+			path.curveTo (113.01f, 281.64f, 108.20f , 273.22f, 102.95f 
+			, 264.08f);
+			path.curveTo (99.06f, 255.85f, 95.56f , 246.93f, 94.32f , 
+			237.86f);
+			path.curveTo (90.75f, 223.98f, 82.55f , 201.60f, 95.29f , 
+			195.34f);
+			path.curveTo (109.69f, 194.21f, 112.63f , 209.12f, 111.48f 
+			, 218.85f);
+			path.curveTo (111.42f, 229.31f, 112.01f , 239.46f, 114.31f 
+			, 250.45f);
+			path.curveTo (115.12f, 263.89f, 119.84f , 278.60f, 133.43f 
+			, 286.05f);
+			path.curveTo (148.33f, 292.25f, 158.77f , 284.87f, 156.66f 
+			, 273.73f);
+			path.curveTo (154.44f, 264.05f, 148.78f , 255.16f, 144.56f 
+			, 245.97f);
+			path.curveTo (137.70f, 233.33f, 129.80f , 220.91f, 126.99f 
+			, 206.95f);
+			path.curveTo (123.04f, 195.67f, 116.81f , 184.58f, 117.50f 
+			, 172.46f);
+			path.lineTo (117.65f, 173.00f);
+			path.closePath();
+			break;
+		case GOLGIAPPARATUS:
+			path.moveTo (127.96f, 49.53f);
+			path.curveTo (121.66f, 31.27f, 138.80f , 7.66f, 156.31f , 
+			9.53f);
+			path.curveTo (173.25f, 7.39f, 191.42f , 27.16f, 188.92f , 
+			46.11f);
+			path.curveTo (186.48f, 61.46f, 179.96f , 70.14f, 178.51f , 
+			85.78f);
+			path.curveTo (177.21f, 106.34f, 175.10f , 125.37f, 174.43f 
+			, 146.77f);
+			path.curveTo (174.05f, 177.43f, 171.66f , 209.04f, 176.42f 
+			, 239.53f);
+			path.curveTo (180.30f, 258.62f, 191.10f , 275.62f, 192.45f 
+			, 295.81f);
+			path.curveTo (192.54f, 311.66f, 182.11f , 325.50f, 166.59f 
+			, 324.58f);
+			path.curveTo (152.14f, 325.43f, 133.44f , 325.03f, 126.49f 
+			, 309.03f);
+			path.curveTo (121.02f, 295.74f, 125.62f , 281.07f, 131.05f 
+			, 267.86f);
+			path.curveTo (136.98f, 249.17f, 140.34f , 231.09f, 143.04f 
+			, 212.10f);
+			path.curveTo (146.20f, 178.60f, 144.97f , 149.47f, 144.04f 
+			, 115.92f);
+			path.curveTo (142.28f, 93.04f, 135.66f , 70.93f, 127.96f , 
+			49.53f);
+			path.lineTo (127.96f, 49.53f);
+			path.closePath();
+			path.moveTo (77.73f, 59.23f);
+			path.curveTo (82.35f, 48.65f, 94.32f , 42.79f, 105.18f , 
+			45.62f);
+			path.curveTo (113.70f, 47.00f, 119.21f , 52.21f, 122.69f , 
+			61.49f);
+			path.curveTo (124.37f, 78.66f, 115.43f , 93.85f, 114.27f , 
+			110.08f);
+			path.curveTo (110.14f, 136.19f, 112.49f , 161.25f, 113.20f 
+			, 185.45f);
+			path.curveTo (115.01f, 204.12f, 116.77f , 217.45f, 122.31f 
+			, 232.89f);
+			path.curveTo (125.70f, 241.82f, 126.02f , 246.57f, 127.21f 
+			, 254.37f);
+			path.curveTo (127.05f, 264.38f, 124.03f , 270.98f, 115.53f 
+			, 276.21f);
+			path.curveTo (103.11f, 280.30f, 93.64f , 277.95f, 83.72f , 
+			270.17f);
+			path.curveTo (77.55f, 261.61f, 77.64f , 258.92f, 78.22f , 
+			247.63f);
+			path.curveTo (78.86f, 241.37f, 80.77f , 237.00f, 83.86f , 
+			227.01f);
+			path.curveTo (89.30f, 212.69f, 87.64f , 201.97f, 88.23f , 
+			186.83f);
+			path.curveTo (88.38f, 166.69f, 87.57f , 132.05f, 86.93f , 
+			111.58f);
+			path.curveTo (83.54f, 83.34f, 74.05f , 78.83f, 77.73f , 
+			59.23f);
+			path.lineTo (77.73f, 59.23f);
+			path.closePath();
+			path.moveTo (48.72f, 76.28f);
+			path.curveTo (56.17f, 78.12f, 61.95f , 84.59f, 66.18f , 
+			90.83f);
+			path.curveTo (70.48f, 98.11f, 73.15f , 105.72f, 75.01f , 
+			113.81f);
+			path.curveTo (76.93f, 121.92f, 76.68f , 130.38f, 77.54f , 
+			138.66f);
+			path.curveTo (78.48f, 156.39f, 78.11f , 174.59f, 72.59f , 
+			191.57f);
+			path.curveTo (70.55f, 198.47f, 66.87f , 205.48f, 64.48f , 
+			212.26f);
+			path.curveTo (60.37f, 220.77f, 55.64f , 228.48f, 49.21f , 
+			235.35f);
+			path.curveTo (42.93f, 240.92f, 33.51f , 241.52f, 25.97f , 
+			238.69f);
+			path.curveTo (16.43f, 235.33f, 12.78f , 222.68f, 16.90f , 
+			213.66f);
+			path.curveTo (19.81f, 205.01f, 23.19f , 198.84f, 33.22f , 
+			191.68f);
+			path.curveTo (41.60f, 182.17f, 42.95f , 177.91f, 44.24f , 
+			169.15f);
+			path.curveTo (45.39f, 158.97f, 44.29f , 149.60f, 43.45f , 
+			137.43f);
+			path.curveTo (42.26f, 127.62f, 40.71f , 118.07f, 30.98f , 
+			110.34f);
+			path.curveTo (24.67f, 103.68f, 20.99f , 97.09f, 22.55f , 
+			88.91f);
+			path.curveTo (25.77f, 75.28f, 36.38f , 74.84f, 43.84f , 
+			75.16f);
+			path.curveTo (45.65f, 75.20f, 47.53f , 75.46f, 49.08f , 
+			76.49f);
+			path.lineTo (48.72f, 76.28f);
 			path.closePath();
 			break;
 		}

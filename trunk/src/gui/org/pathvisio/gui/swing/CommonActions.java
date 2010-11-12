@@ -317,10 +317,10 @@ public class CommonActions implements ApplicationEventListener {
 		 newCellularComponentActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.CELL)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.NUCLEUS)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ENDOPLASMICRETICULUM, CellularComponentType.ENDOPLASMICRETICULUM)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.GOLGIAPPARATUS, CellularComponentType.GOLGIAPPARATUS)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.MITOCHONDRIA, CellularComponentType.MITOCHONDRIA)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.GOLGI)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.ER)),
-				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.SR)),
+				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.SARCOPLASMICRETICULUM, CellularComponentType.SARCOPLASMICRETICULUM)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.ORGANELLE)),
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.LYSOSOME)),
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.OVAL, CellularComponentType.NUCLEOLUS)),

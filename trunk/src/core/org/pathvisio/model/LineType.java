@@ -72,7 +72,6 @@ public class LineType
 			LineType s = values.get(i);
 			if (!deprecatedMap.containsKey(s.getName())){
 				list.add(s);
-				s.value = i;
 			}
 		}
 		values = list;
@@ -96,8 +95,6 @@ public class LineType
 		}
 		nameMappings.put (name, this);
 
-		// assign an integer value
-		value = values.size();
 		// and add it tot hte array list.
 		values.add (this);
 	}
@@ -122,8 +119,6 @@ public class LineType
 	private String mappName;
 	private String name;
 
-	private int value;
-
 	public String getMappName() { return mappName; }
 
 	/** @deprecated, use getName instead. */
@@ -142,23 +137,6 @@ public class LineType
 	public static LineType fromName(String value)
 	{
 		return nameMappings.get (value);
-	}
-
-	/**
-	   The ordinal value of this. Not guaranteed to be the same between
-	   application runs, only to be used for temporary lookup such as
-	   in comboboxes.
-	   If you need something that is stable, use the name instead.
-
-	   //TODO: we should make change comboboxes so they don't need
-	   integer values anymore
-	   and get rid of this.
-	 */
-	public int getOrdinal () { return value; }
-
-	public static LineType fromOrdinal (int value)
-	{
-		return values.get (value);
 	}
 
 	static public String[] getNames()

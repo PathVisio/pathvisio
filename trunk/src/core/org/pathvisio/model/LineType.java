@@ -32,57 +32,34 @@ public class LineType
 	private static Map<String, LineType> mappMappings = new HashMap<String, LineType>();
 	private static Map<String, LineType> nameMappings = new HashMap<String, LineType>();
 	private static List<LineType> values = new ArrayList<LineType>();
+	private static List<LineType> visible = new ArrayList<LineType>();
 
 	/** LineType LINE means the absence of an arrowhead */
 	public static final LineType LINE = new LineType("Line", "Line");
 	public static final LineType ARROW = new LineType("Arrow", "Arrow");
 	public static final LineType TBAR = new LineType("TBar", "TBar");
 	
-	// BEGIN DEPRECATION MANAGEMENT CODE
 	@Deprecated
-	public static final LineType RECEPTOR = new LineType("Receptor", "Receptor");
+	public static final LineType RECEPTOR = new LineType("Receptor", "Receptor", true);
 	@Deprecated
-	public static final LineType LIGAND_SQUARE = new LineType("LigandSquare","LigandSq");
+	public static final LineType LIGAND_SQUARE = new LineType("LigandSquare","LigandSq", true);
 	@Deprecated
-	public static final LineType RECEPTOR_SQUARE = new LineType("ReceptorSquare", "ReceptorSq");
+	public static final LineType RECEPTOR_SQUARE = new LineType("ReceptorSquare", "ReceptorSq", true);
 	@Deprecated
-	public static final LineType LIGAND_ROUND = new LineType("LigandRound", "LigandRd");
+	public static final LineType LIGAND_ROUND = new LineType("LigandRound", "LigandRd", true);
 	@Deprecated
-	public static final LineType RECEPTOR_ROUND = new LineType("ReceptorRound", "ReceptorRd");
-	
-	//This map is used to track deprecated line types for conversion and exclusion from gui
-	public static final Map<String, String> deprecatedMap = new HashMap<String, String>();
-	static { 
-		deprecatedMap.put(RECEPTOR.getName(), LINE.getName());
-		deprecatedMap.put(LIGAND_SQUARE.getName(), LINE.getName());
-		deprecatedMap.put(RECEPTOR_SQUARE.getName(), LINE.getName());
-		deprecatedMap.put(LIGAND_ROUND.getName(), LINE.getName());
-		deprecatedMap.put(RECEPTOR_ROUND.getName(), LINE.getName());
-		// exclude from list for gui
-		pruneValues();
-	}
-	
-	/**
-	 * Prunes values list for deprecated line types
-	 */
-	private static void pruneValues() {
-		List<LineType> list = new ArrayList<LineType>();
-		for (int i = 0; i < values.size(); ++i)
-		{
-			LineType s = values.get(i);
-			if (!deprecatedMap.containsKey(s.getName())){
-				list.add(s);
-			}
-		}
-		values = list;
-	}
-	// END DEPRECATION MANAGEMENT CODE
-
+	public static final LineType RECEPTOR_ROUND = new LineType("ReceptorRound", "ReceptorRd", true);
+		
 	/**
 	   mappName may be null for new shapes that don't have a .mapp
 	   equivalent.
 	 */
 	private LineType (String name, String mappName)
+	{
+		this (name, mappName, false);
+	}
+
+	private LineType (String name, String mappName, boolean hidden)
 	{
 		if (name == null) { throw new NullPointerException(); }
 
@@ -95,10 +72,10 @@ public class LineType
 		}
 		nameMappings.put (name, this);
 
-		// and add it tot hte array list.
-		values.add (this);
+		values.add (this);		
+		if (!hidden) visible.add (this);
 	}
-
+	
 	/**
 	   Create an object and add it to the list.
 
@@ -142,7 +119,6 @@ public class LineType
 	static public String[] getNames()
 	{
 		String[] result = new String [values.size()];
-
 		for (int i = 0; i < values.size(); ++i)
 		{
 			result[i] = values.get(i).getName();
@@ -150,9 +126,24 @@ public class LineType
 		return result;
 	}
 
+	static public String[] getVisibleNames()
+	{
+		String[] result = new String [visible.size()];
+		for (int i = 0; i < visible.size(); ++i)
+		{
+			result[i] = visible.get(i).getName();
+		}
+		return result;
+	}
+
 	static public LineType[] getValues()
 	{
 		return values.toArray (new LineType[0]);
+	}
+
+	static public LineType[] getVisibleValues()
+	{
+		return visible.toArray (new LineType[0]);
 	}
 
 	public String toString()

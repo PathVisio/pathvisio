@@ -196,7 +196,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		int numItemsPerRow = 10;
 		objectsPane.addButtons(actions.newDatanodeActions, "Data Nodes", numItemsPerRow);
 		objectsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
-		objectsPane.addButtons(actions.newMIMShapeActions, "MIM shapes", numItemsPerRow);
 		objectsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
 		//objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
 		objectsPane.addButtons(actions.newMIMInteractionActions, "MIM interactions", numItemsPerRow);
@@ -336,7 +335,6 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		shapeButton.setToolTipText("Select a shape to draw");		
 		itemsDropDown = shapeButton;		
 		shapeButton.addButtons("Basic shapes", actions.newShapeActions);
-		shapeButton.addButtons("MIM shapes", actions.newMIMShapeActions);
 		shapeButton.addButtons("Cellular components", actions.newCellularComponentActions);		
 		addToToolbar(shapeButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator(new Dimension(2,0));

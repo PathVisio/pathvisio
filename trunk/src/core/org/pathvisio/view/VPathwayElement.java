@@ -19,6 +19,7 @@ package org.pathvisio.view;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -85,6 +86,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 		//Prevent element from drawing outside its bounds
 		g.clip(getVBounds());
 		g.setStroke(DEFAULT_STROKE);
+
 		//Perform the drawing
 		doDraw(g);
 

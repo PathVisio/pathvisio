@@ -964,16 +964,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setMEndY((Double) value);
 			break;
 		case ENDLINETYPE:
-			if(value instanceof LineType)
-				setEndLineType((LineType)value);
-			else
-				setEndLineType(LineType.fromOrdinal ((Integer) value));
+			setEndLineType((LineType)value);
 			break;
 		case STARTLINETYPE:
-			if(value instanceof LineType)
-				setStartLineType((LineType)value);
-			else
-				setStartLineType(LineType.fromOrdinal ((Integer) value));
+			setStartLineType((LineType)value);
 			break;
 		case LINESTYLE:
 			setLineStyle((Integer) value);

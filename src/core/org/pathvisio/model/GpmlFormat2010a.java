@@ -667,12 +667,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
     			endType = getAttribute("Line.Graphics.Point", "ArrowHead", pe);
         	}
     	}
-    	
-    	//handle deprecated line types
-    	if (LineType.deprecatedMap.containsKey(startType))
-    		startType = LineType.deprecatedMap.get(startType);
-    	if (LineType.deprecatedMap.containsKey(endType))
-    		endType = LineType.deprecatedMap.get(endType);
 
     	o.setMPoints(mPoints);
 		o.setStartLineType (LineType.fromName(startType));

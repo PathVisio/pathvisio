@@ -661,16 +661,4 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return PreferenceManager.getCurrent();
 	}
 
-	static
-	{
-		//Register specific dynamic property
-		//TODO: refactor as Static Property with next GPML update
-		PropertyManager.registerProperty(CellularComponentType.CELL_COMPONENT_PROPERTY);
-		//PropertyDisplayManager.registerTypeHandler(new ComboHandler(CELL_COMPONENT_PROPERTY.getType(), CellularComponentType.getNames(), false));
-		PropertyDisplayManager.registerProperty(CellularComponentType.CELL_COMPONENT_PROPERTY, true);
-		PropertyDisplayManager.setPropertyScope(
-				CellularComponentType.CELL_COMPONENT_PROPERTY, 
-				EnumSet.of(ObjectType.SHAPE)
-		);		
-	}
 }

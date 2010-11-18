@@ -34,6 +34,15 @@ public enum CellularComponentType
 	//TODO: refactor as Static Property with next GPML update
 	public final static String CELL_COMPONENT_KEY = "org.pathvisio.CellularComponentProperty";
 	
+	public static final PropertyType CELL_COMPONENT_TYPE = new PropertyType()
+	{
+		@Override
+		public String getId()
+		{
+			return "core.CellularComponentType";
+		}
+	};
+	
 	public static final Property CELL_COMPONENT_PROPERTY = new Property () {
 		public String getId() {
 			return CELL_COMPONENT_KEY;
@@ -48,7 +57,7 @@ public enum CellularComponentType
 		}
 		
 		public PropertyType getType() {
-			return StaticPropertyType.STRING;
+			return CELL_COMPONENT_TYPE;
 		}
 		
 		public boolean isCollection() {
@@ -80,6 +89,11 @@ public enum CellularComponentType
 		String[] result = new String[values().length];
 		for (int i = 0; i < values().length; ++i) result[i] = values()[i].gpmlName;
 		return result;
+	}
+	
+	public String toString()
+	{
+		return gpmlName;
 	}
 
 }

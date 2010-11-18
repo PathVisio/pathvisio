@@ -25,6 +25,7 @@ import java.util.Set;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.AlignType;
+import org.pathvisio.model.CellularComponentType;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.GroupStyle;
 import org.pathvisio.model.LineStyle;
@@ -33,6 +34,7 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.OrientationType;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.Property;
+import org.pathvisio.model.PropertyManager;
 import org.pathvisio.model.PropertyType;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.StaticProperty;
@@ -80,11 +82,20 @@ public class PropertyDisplayManager {
 		registerTypeHandler(new ComboHandler(StaticPropertyType.SHAPETYPE, ShapeType.getNames(), ShapeType.getValues()));
 		registerTypeHandler(new ComboHandler(StaticPropertyType.VALIGNTYPE, ValignType.getNames(), ValignType.values()));
 		registerTypeHandler(new ComboHandler(StaticPropertyType.ALIGNTYPE, AlignType.getNames(), AlignType.values()));
-		
+		registerTypeHandler(new ComboHandler(CellularComponentType.CELL_COMPONENT_TYPE, CellularComponentType.getNames(), false));
+
 		// register core properties
 		for (StaticProperty p : StaticProperty.values()) {
 			registerProperty(p);
 		}
+
+		//Register specific dynamic property
+		//TODO: refactor as Static Property with next GPML update
+		registerProperty(CellularComponentType.CELL_COMPONENT_PROPERTY);
+		setPropertyScope(
+				CellularComponentType.CELL_COMPONENT_PROPERTY, 
+				EnumSet.of(ObjectType.SHAPE)
+		);
 	}
 
 

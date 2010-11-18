@@ -44,8 +44,11 @@ public class MIMShapes
     public static final LineType MIM_TRANSLATION = LineType.create ("mim-transcription-translation", "Arrow");
     public static final LineType MIM_GAP = LineType.create ("mim-gap", null);
 
+    @Deprecated
     public static final ShapeType MIM_PHOSPHORYLATED_SHAPE = ShapeType.create ("mim-phosphorylated", null);
+    @Deprecated
     public static final ShapeType MIM_DEGRADATION_SHAPE = ShapeType.create ("mim-degradation", null);
+    @Deprecated
     public static final ShapeType MIM_INTERACTION_SHAPE = ShapeType.create ("mim-interaction", null);
      
     public static void registerShapes()

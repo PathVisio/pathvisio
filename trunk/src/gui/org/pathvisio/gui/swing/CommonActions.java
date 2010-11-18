@@ -122,8 +122,6 @@ public class CommonActions implements ApplicationEventListener {
 	
 	public final Action[] newCellularComponentActions;
 	
-	public final Action[] newMIMShapeActions;
-	
 	public final Action[] newInteractionActions;
 	
 	public final Action[] newRLInteractionActions;
@@ -329,14 +327,6 @@ public class CommonActions implements ApplicationEventListener {
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.CYTOSOL)),
 				 new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.EXTRACELLULAR)),
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.MEMBRANE))
-		 };
-		
-		 // actions for "Molecular Interaction Map Shapes" section
-		 newMIMShapeActions = new Action[] {
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_PHOSPHORYLATED_SHAPE)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_INTERACTION_SHAPE)),
-				 
 		 };
 		 
 		 // actions for "Molecular Interaction Map Interactions" section

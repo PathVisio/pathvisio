@@ -19,13 +19,10 @@ package org.pathvisio.view;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
+import java.awt.RenderingHints;
 import java.awt.geom.Area;
 
-import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 
 /**
  * This class represents a GMMLShape, which can be a
@@ -52,6 +49,9 @@ public class Shape extends GraphicsShape
 		setLineStyle(g);
 		drawShape(g);
 		
+		// return to normal stroke
+		g.setStroke (new BasicStroke ());
+		
 		g.setFont(getVFont());
 		drawTextLabel(g);
 		
@@ -75,43 +75,5 @@ public class Shape extends GraphicsShape
 			a.add(new Area(fill));
 		}
 		return a;
-	}
-
-	protected java.awt.Shape getShape(boolean rotate, float sw) {
-		double x = getVLeft();
-		double y = getVTop();
-		double w = getVWidth();
-		double h = getVHeight();
-		double cx = getVCenterX();
-		double cy = getVCenterY();
-
-		java.awt.Shape s = null;
-
-		if (gdata.getShapeType() == null || gdata.getShapeType() == ShapeType.NONE)
-		{
-			s = ShapeRegistry.getShape ("Default", x, y, w, h);
-		}
-		else
-		{
-			s = ShapeRegistry.getShape (
-					gdata.getShapeType().getName(),
-					x, y, w, h);
-		}
-
-		if(rotate) {
-			AffineTransform t = new AffineTransform();
-			t.rotate(gdata.getRotation(), cx, cy);
-			s = t.createTransformedShape(s);
-		}
-
-		if(sw > 0) {
-			if (gdata.getLineStyle() == LineStyle.DOUBLE){
-				// correction factor for composite stroke
-				sw = (float) (gdata.getLineThickness() * 4); 
-			}
-			Stroke stroke = new BasicStroke(sw);
-			s = stroke.createStrokedShape(s);
-		}
-		return s;
 	}
 }

@@ -17,7 +17,8 @@
 package org.pathvisio.model;
 
 /**
- * LineStyle, either solid or Dashed. Not to be confused with LineType.
+ * LineStyle, either Solid, dashed or double. Not to be confused with LineType, 
+ * which defines the appearance of the arrow head.
  */
 public class LineStyle {
 	public static final int SOLID = 0;

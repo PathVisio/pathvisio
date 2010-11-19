@@ -509,7 +509,7 @@ public class Revision
 				<include name="lib/resources.jar"/>
 				<include name="lib/swing-worker-1.1.jar"/>
 				<include name="lib/licenses/*"/>
-				<include name="GPML.xsd"/>
+				<include name="GPML*.xsd"/>
 				<include name="LICENSE-2.0.txt"/>
 				<include name="NOTICE.txt"/>
 				<include name="readme.txt"/>

@@ -16,7 +16,6 @@
 //
 package org.pathvisio.model;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +35,6 @@ public enum CellularComponentType
 	
 	public static final PropertyType CELL_COMPONENT_TYPE = new PropertyType()
 	{
-		@Override
 		public String getId()
 		{
 			return "core.CellularComponentType";

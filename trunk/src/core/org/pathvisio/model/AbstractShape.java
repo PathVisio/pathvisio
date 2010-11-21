@@ -32,9 +32,9 @@ public class AbstractShape implements IShape
 	}
 
 	@Override
-	public Shape getShape(double x, double y, double w, double h)
+	public Shape getShape(double mw, double mh)
 	{
-		return ShapeRegistry.getShape(name, x, y, w, h);		
+		return ShapeRegistry.getShape(name, 0, 0, mw, mh);		
 	}
 
 	@Override

@@ -415,9 +415,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		else
 		{
-			s = ShapeRegistry.getShape (
-					gdata.getShapeType().getName(),
-					x, y, w, h);
+			s = gdata.getShapeType().getShape(x, y, w, h);
 		}
 
 		if(rotate) {

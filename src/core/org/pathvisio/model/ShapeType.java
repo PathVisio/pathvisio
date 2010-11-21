@@ -17,6 +17,7 @@
 package org.pathvisio.model;
 
 import java.awt.Shape;
+import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,14 @@ public class ShapeType implements IShape
 
 	public static final ShapeType NONE = new ShapeType ("None", "None");
 	public static final ShapeType RECTANGLE = new ShapeType ("Rectangle", "Rectangle");
-	public static final ShapeType ROUNDED_RECTANGLE = new ShapeType ("RoundedRectangle", "RoundedRectangle");
+	public static final ShapeType ROUNDED_RECTANGLE = new ShapeType ("RoundedRectangle", "RoundedRectangle")
+	{
+		public Shape getShape (double mw, double mh)
+		{
+			return new RoundRectangle2D.Double (0, 0, mw, mh, 20, 20);
+		}	
+	};
+	
 	public static final ShapeType OVAL = new ShapeType ("Oval", "Oval");
 	public static final ShapeType ARC = new ShapeType ("Arc", "Arc");
 	public static final ShapeType TRIANGLE = new ShapeType ("Triangle", "Poly"); // poly ;in MAPP

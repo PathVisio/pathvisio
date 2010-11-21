@@ -86,9 +86,7 @@ public class Shape extends Annotation implements ViewportChangeListener {
 		}
 		else
 		{
-			s = ShapeRegistry.getShape (
-					pwElm.getShapeType().getName(),
-					x, y, w, h);
+			s = pwElm.getShapeType().getShape (x, y, w, h);
 		}
 
 		AffineTransform t = new AffineTransform();

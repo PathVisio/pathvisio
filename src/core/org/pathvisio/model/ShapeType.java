@@ -16,15 +16,18 @@
 //
 package org.pathvisio.model;
 
+import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pathvisio.view.ShapeRegistry;
+
 /**
    Extensible enum
  */
-public class ShapeType
+public class ShapeType implements IShape
 {
 	private static Map<String, ShapeType> mappMappings = new HashMap<String, ShapeType>();
 	private static Map<String, ShapeType> nameMappings = new HashMap<String, ShapeType>();
@@ -247,6 +250,12 @@ public class ShapeType
 	public boolean isRotatable()
 	{
 		return isRotatable;
+	}
+
+	@Override
+	public Shape getShape(double x, double y, double w, double h)
+	{
+		return ShapeRegistry.getShape(name, x, y, w, h);
 	}
 
 }

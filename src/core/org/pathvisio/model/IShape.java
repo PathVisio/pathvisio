@@ -6,5 +6,5 @@ public interface IShape
 	public String getName();
 	public boolean isResizeable();
 	public boolean isRotatable();
-	public java.awt.Shape getShape(double x, double y, double w, double h);
+	public java.awt.Shape getShape(double mw, double mh);
 }

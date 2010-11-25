@@ -314,7 +314,7 @@ public class Line extends Graphics implements Adjustable
 	}
 
 	protected Shape calculateVOutline() {
-		return new BasicStroke(5).createStrokedShape(getVShape(true));
+		return getVShape(true);
 	}
 
 	/**
@@ -372,19 +372,15 @@ public class Line extends Graphics implements Adjustable
 		ArrowShape[] heads = getVHeadsAdjusted();
 		ArrowShape hs = heads[0];
 		ArrowShape he = heads[1];
-
-		Area total = new Area(new BasicStroke(1).createStrokedShape(l));
-		if(hs != null) {
-			total.add(new Area(hs.getShape()));
-		}
-		if(he != null) {
-			total.add(new Area(he.getShape()));
-		}
 		
-		if (gdata.getLineStyle() == LineStyle.DOUBLE){
-			// correction factor for composite stroke
-			total.add(new Area((new BasicStroke((float) gdata.getLineThickness() * 4).createStrokedShape(l)))); 
-		}
+		float thickness = (float)gdata.getLineThickness();
+		if (gdata.getLineStyle() == LineStyle.DOUBLE) thickness *= 4;
+		BasicStroke bs = new BasicStroke (thickness);
+		
+		Area total = new Area(bs.createStrokedShape(l));
+		if (hs != null) total.add (new Area (bs.createStrokedShape(hs.getShape())));
+		if (he != null) total.add (new Area (bs.createStrokedShape(he.getShape())));
+		
 		return total;
 	}
 

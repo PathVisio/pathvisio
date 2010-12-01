@@ -20,6 +20,8 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
+import org.pathvisio.view.ShapeRegistry;
+
 public class AbstractShape implements IShape
 {
 	private String name;
@@ -35,6 +37,7 @@ public class AbstractShape implements IShape
 		this.mappName = mappName;
 		this.isRotatable = isRotatable;
 		this.isResizeable = isResizeable;
+		ShapeRegistry.registerShape(this);
 	}
 
 	public AbstractShape (Shape sh, String name)

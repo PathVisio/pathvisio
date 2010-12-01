@@ -28,6 +28,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
+import org.pathvisio.view.ShapeRegistry;
 
 /**
  * GpmlFormat reader / writer for version 2007 and 2008A.
@@ -305,7 +306,7 @@ class GpmlFormat200X extends GpmlFormatAbstract implements GpmlFormatReader
 
 	protected void mapShapeType(PathwayElement o, Element e) throws ConverterException
 	{
-		o.setShapeType (ShapeType.fromGpmlName(getAttribute("Shape", "Type", e)));
+		o.setShapeType (ShapeRegistry.fromName(getAttribute("Shape", "Type", e)));
 		String style = getAttribute ("Shape", "Style", e);
     	o.setLineStyle ((style.equals("Solid")) ? LineStyle.SOLID : LineStyle.DASHED);
     	Element graphics = e.getChild("Graphics", e.getNamespace());

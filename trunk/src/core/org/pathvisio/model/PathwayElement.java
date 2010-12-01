@@ -1832,14 +1832,14 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
 	}
 
-	protected ShapeType shapeType = ShapeType.RECTANGLE;
+	protected IShape shapeType = ShapeType.RECTANGLE;
 
-	public ShapeType getShapeType()
+	public IShape getShapeType()
 	{
 		return shapeType;
 	}
 
-	public void setShapeType(ShapeType v)
+	public void setShapeType(IShape v)
 	{
 		if (shapeType != v)
 		{

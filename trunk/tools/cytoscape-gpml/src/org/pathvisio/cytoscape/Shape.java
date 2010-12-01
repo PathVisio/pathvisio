@@ -82,7 +82,7 @@ public class Shape extends Annotation implements ViewportChangeListener {
 
 		if (pwElm.getShapeType() == null || pwElm.getShapeType() == ShapeType.NONE)
 		{
-			s = ShapeRegistry.getShape ("Default", 0, 0, w, h);
+			s = ShapeRegistry.DEFAULT_SHAPE.getShape(w, h);
 		}
 		else
 		{

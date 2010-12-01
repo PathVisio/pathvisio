@@ -37,6 +37,7 @@ import java.util.Map;
 import org.bridgedb.DataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
+import org.pathvisio.view.ShapeRegistry;
 
 /**
  * The class MappFormat is responsible for all interaction with
@@ -437,7 +438,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 					break;
 				case SHAPE:
 					unmapNotesAndComments (o, row);
-					ShapeType s = o.getShapeType();
+					IShape s = o.getShapeType();
 					if (s == ShapeType.BRACE)
 					{
 						unmapBraceType(o, row);
@@ -876,7 +877,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	private static PathwayElement mapShapeType(String[] mappObject)
     {
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
-    	ShapeType shapeType = ShapeType.fromMappName(mappObject[COL_TYPE]);
+    	IShape shapeType = ShapeRegistry.fromMappName(mappObject[COL_TYPE]);
     	o.setShapeType(shapeType);
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
     		mapShapeHalf (o, mappObject);
@@ -907,7 +908,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
     private static void unmapShapeType (PathwayElement o, String[] mappObject)
     {
-    	ShapeType shapeType = o.getShapeType();
+    	IShape shapeType = o.getShapeType();
     	mappObject[COL_TYPE] = shapeType.getMappName();
     	if (shapeType == ShapeType.ARC || shapeType == ShapeType.OVAL)
     		unmapShapeHalf (o, mappObject);
@@ -930,7 +931,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
     private static PathwayElement mapFixedShapeType(String[] mappObject)
     {
     	PathwayElement o = PathwayElement.createPathwayElement(ObjectType.SHAPE);
-        o.setShapeType(ShapeType.fromMappName(mappObject[COL_TYPE]));
+        o.setShapeType(ShapeRegistry.fromMappName(mappObject[COL_TYPE]));
         mapCenter (o, mappObject);
 
         if (o.shapeType == ShapeType.CELLA)
@@ -964,7 +965,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
     private static void unmapFixedShapeType (PathwayElement o, String[] mappObject)
     {
-    	ShapeType shapeType = o.getShapeType();
+    	IShape shapeType = o.getShapeType();
     	mappObject[COL_TYPE] = shapeType.getMappName();
 
     	if (shapeType == ShapeType.CELLA)
@@ -995,7 +996,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
         }
     	else
     	{
-    		o.setShapeType(ShapeType.fromMappName(mappObject[COL_TYPE]));
+    		o.setShapeType(ShapeRegistry.fromMappName(mappObject[COL_TYPE]));
     	}
 
     	mapCenter(o, mappObject);
@@ -1008,7 +1009,7 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 
     private static void unmapComplexShapeType (PathwayElement o, String[] mappObject)
     {
-    	ShapeType shapeType = o.getShapeType();
+    	IShape shapeType = o.getShapeType();
     	mappObject[COL_TYPE] = shapeType.getMappName();
 
     	if (shapeType == ShapeType.TRIANGLE)

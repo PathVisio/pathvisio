@@ -35,6 +35,7 @@ import org.pathvisio.model.GpmlFormatReader;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.model.StaticProperty;
+import org.pathvisio.view.ShapeRegistry;
 
 /**
  * A patch contains a series of deletions, insertions and modifications
@@ -73,7 +74,7 @@ class Patch
 					break;
 				case SHAPETYPE:
 					// setProperty expects to get ShapeType for this Shape.
-					result.setStaticProperty(pt, ShapeType.fromName(ch.newValue));
+					result.setStaticProperty(pt, ShapeRegistry.fromName(ch.newValue));
 					break;
 				case DATASOURCE:
 					result.setStaticProperty(pt, DataSource.getByFullName(ch.newValue));

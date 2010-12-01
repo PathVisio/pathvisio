@@ -18,8 +18,9 @@ package org.pathvisio.plugins;
 
 import java.awt.geom.GeneralPath;
 
+import org.pathvisio.model.AbstractShape;
+import org.pathvisio.model.IShape;
 import org.pathvisio.model.LineType;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.view.ArrowShape;
 import org.pathvisio.view.ShapeRegistry;
 
@@ -29,11 +30,10 @@ import org.pathvisio.view.ShapeRegistry;
 public class MyShapes
 {
 	public static final LineType MY_LINE = LineType.create ("my-line", "Arrow");
-    public static final ShapeType MY_SHAPE = ShapeType.create ("my-shape", null);
-
+	public static final IShape MY_SHAPE = new AbstractShape (getMyShape(), "my-shape");
+	
     public static void registerShapes()
 	{
-		ShapeRegistry.registerShape ("my-shape", getMyShape());
 		ShapeRegistry.registerArrow (MY_LINE.getName(), getMyLine(), ArrowShape.FillType.OPEN, 9);
 	}
     

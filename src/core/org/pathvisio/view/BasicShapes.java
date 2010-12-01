@@ -17,13 +17,11 @@
 package org.pathvisio.view;
 
 import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 
 import org.pathvisio.model.AnchorType;
 
@@ -40,25 +38,6 @@ class BasicShapes
 {
 	static void registerShapes()
 	{
-		ShapeRegistry.registerShape (
-			"Arc", new Arc2D.Double (0, 0, 10, 10, 0, -180, Arc2D.OPEN));
-
-		GeneralPath p = new GeneralPath();
-		p.moveTo(0, 4);
-		p.quadTo(0, 2, 3, 2);
-		p.quadTo(6, 2, 6, 0);
-		p.quadTo(6, 2, 9, 2);
-		p.quadTo(12, 2, 12, 4);
-		ShapeRegistry.registerShape (
-			"Brace", p);
-
-		ShapeRegistry.registerShape (
-			"Oval", new Ellipse2D.Double (0, 0, 10, 10));
-		ShapeRegistry.registerShape (
-			"Rectangle", new Rectangle (0, 0, 10, 10));
-		ShapeRegistry.registerShape (
-			"RoundedRectangle", new RoundRectangle2D.Double(0, 0, 10, 10, 3, 5));
-
 		ShapeRegistry.registerArrow ("Arrow", getArrowHead(), ArrowShape.FillType.CLOSED);
 		ShapeRegistry.registerArrow ("TBar", getTBar(), ArrowShape.FillType.OPEN, TBARWIDTH + TBAR_GAP);
 		ShapeRegistry.registerArrow ("LigandRound", getLRound(), ArrowShape.FillType.CLOSED);

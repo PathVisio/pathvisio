@@ -411,7 +411,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 
 		if (gdata.getShapeType() == null || gdata.getShapeType() == ShapeType.NONE)
 		{
-			s = ShapeRegistry.getShape ("Rectangle", 0, 0, mw, mh);
+			s = ShapeRegistry.DEFAULT_SHAPE.getShape (mw, mh);
 		}
 		else
 		{

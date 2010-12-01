@@ -21,8 +21,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 
+import org.pathvisio.model.AbstractShape;
+import org.pathvisio.model.IShape;
 import org.pathvisio.model.LineType;
-import org.pathvisio.model.ShapeType;
 
 /**
  * Collection of Shapes and ArrowHeads used in
@@ -44,19 +45,19 @@ public class MIMShapes
     public static final LineType MIM_TRANSLATION = LineType.create ("mim-transcription-translation", "Arrow");
     public static final LineType MIM_GAP = LineType.create ("mim-gap", null);
 
+    private static final int MIM_PHOSPHORYLATED = 0;
+	private static final int MIM_DEGRADATION = 1;
+	private static final int MIM_INTERACTION = 2;
+
+	@Deprecated
+    public static final IShape MIM_PHOSPHORYLATED_SHAPE = new AbstractShape (getPluggableShape (MIM_PHOSPHORYLATED), "mim-phosphorylated");
     @Deprecated
-    public static final ShapeType MIM_PHOSPHORYLATED_SHAPE = ShapeType.create ("mim-phosphorylated", null);
+    public static final IShape MIM_DEGRADATION_SHAPE = new AbstractShape (getPluggableShape (MIM_DEGRADATION), "mim-degradation");
     @Deprecated
-    public static final ShapeType MIM_DEGRADATION_SHAPE = ShapeType.create ("mim-degradation", null);
-    @Deprecated
-    public static final ShapeType MIM_INTERACTION_SHAPE = ShapeType.create ("mim-interaction", null);
+    public static final IShape MIM_INTERACTION_SHAPE = new AbstractShape (getPluggableShape (MIM_INTERACTION), "mim-interaction");
      
     public static void registerShapes()
 	{
-		ShapeRegistry.registerShape ("mim-phosphorylated", getPluggableShape (MIM_PHOSPHORYLATED));
-		ShapeRegistry.registerShape ("mim-degradation", getPluggableShape (MIM_DEGRADATION));
-		ShapeRegistry.registerShape ("mim-interaction", getPluggableShape (MIM_INTERACTION));
-
 		ShapeRegistry.registerArrow (MIM_NECESSARY_STIMULATION.getName(), getMIMNecessary(), ArrowShape.FillType.OPEN, ARROWWIDTH);
 		ShapeRegistry.registerArrow (MIM_BINDING.getName(), getMIMBinding(), ArrowShape.FillType.CLOSED);
 		ShapeRegistry.registerArrow (MIM_CONVERSION.getName(), getMIMConversion(), ArrowShape.FillType.CLOSED, ARROWWIDTH);
@@ -70,15 +71,7 @@ public class MIMShapes
         ShapeRegistry.registerArrow (MIM_COVALENT_BOND.getName(), getMIMCovalentBond(), ArrowShape.FillType.OPEN);
         ShapeRegistry.registerArrow (MIM_TRANSLATION.getName(), getMIMTranslation(), ArrowShape.FillType.WIRE, ARROWWIDTH + ARROWHEIGHT);
         ShapeRegistry.registerArrow (MIM_GAP.getName(), getMIMGap(), ArrowShape.FillType.OPEN, 10);
-
-        //ShapeType.create ("mim-phosphorylated", null);
-		//ShapeType.create ("mim-degradation", null);
-		//ShapeType.create ("mim-interaction", null);
 	}
-
-    private static final int MIM_PHOSPHORYLATED = 0;
-	private static final int MIM_DEGRADATION = 1;
-	private static final int MIM_INTERACTION = 2;
 
     private static final int BOND_SIZE = 8;
 

@@ -16,14 +16,13 @@
 //
 package org.pathvisio.view;
 
-import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.model.AbstractShape;
+import org.pathvisio.model.IShape;
 
 /**
    The Shape registry stores all arrow heads and shapes
@@ -35,12 +34,14 @@ import org.pathvisio.debug.Logger;
 public class ShapeRegistry
 {
 	private static Shape defaultShape = null;
+	public static final IShape DEFAULT_SHAPE;
 	private static ArrowShape defaultArrow = null;
 	private static AnchorShape defaultAnchor = null;
 
-	private static Map <String, Shape> shapeMap = new HashMap <String, Shape>();
+	private static Map <String, IShape> shapeMap = new HashMap <String, IShape>();
 	private static Map <String, ArrowShape> arrowMap = new HashMap <String, ArrowShape>();
 	private static Map <String, AnchorShape> anchorMap = new HashMap <String, AnchorShape>();
+	private static Map<String, IShape> mappMappings = new HashMap<String, IShape>();
 
 	static
 	{
@@ -67,17 +68,38 @@ public class ShapeRegistry
 		temp.moveTo (2,8);
 		temp.lineTo (8,2);
 		defaultShape = temp;
+		DEFAULT_SHAPE = new AbstractShape(defaultShape, "default");
 
 		BasicShapes.registerShapes();
 		GenMAPPShapes.registerShapes();
 	}
 
-     /**
-	   Add a shape to the registry.
+	/**
+	   looks up the ShapeType corresponding to that name.
 	 */
-	static public void registerShape (String key, Shape sh)
+	public static IShape fromName (String value)
 	{
-		shapeMap.put (key, sh);
+		return shapeMap.get(value);
+	}
+
+    /*
+	 * Warning when using fromMappName: in case value == Poly, 
+	 * this will return Triangle. The caller needs to check for
+	 * this special
+	 * case.
+	 */
+	public static IShape fromMappName (String value)
+	{
+		return mappMappings.get(value);
+	}
+
+	public static void registerShape(IShape ish)
+	{
+		shapeMap.put(ish.getName(), ish);
+		if (ish.getMappName() != null)
+		{
+			mappMappings.put (ish.getMappName(), ish);
+		}
 	}
 
 	/**
@@ -139,25 +161,4 @@ public class ShapeRegistry
 		return sh;
 	}
 
-	/**
-	   Returns a named shape, scaled in such a way that it has a
-	   bounding rect equal to x, y, w, h.
-	 */
-	public static Shape getShape (String name, double x, double y, double w, double h)
-	{
-		Shape sh = shapeMap.get (name);
-		if (sh == null)
-		{
-			sh = defaultShape;
-			// This is probably not what the user wants.
-			// log this as an error
-			Logger.log.error ("Unknown Shape " + name + " was requested");
-		}
-		// now scale the path so it has proper w and h.
-		Rectangle r = sh.getBounds();
-		AffineTransform at = new AffineTransform();
-		at.translate (x - r.x, y - r.y);
-		at.scale (w / r.width, h / r.height);
-		return at.createTransformedShape (sh);
-	}
 }

@@ -28,41 +28,23 @@ import java.awt.geom.RoundRectangle2D;
  *
  * Shapes are defined and registered in the static section of this class.
  */
-class GenMAPPShapes
+public class GenMAPPShapes
 {
 	static void registerShapes()
 	{
-		ShapeRegistry.registerShape ("Pentagon", getRegularPolygon (5, 10, 10) );
-		ShapeRegistry.registerShape ("Hexagon", getRegularPolygon (6, 10, 10) );
-		ShapeRegistry.registerShape ("Triangle", getRegularPolygon (3, 10, 10) );
-	    ShapeRegistry.registerShape ("Mitochondria", getPluggableShape (Internal.MITOCHONDRIA));
-	    ShapeRegistry.registerShape ("Sarcoplasmic Reticulum", getPluggableShape (Internal.SARCOPLASMICRETICULUM));
-	    ShapeRegistry.registerShape ("Endoplasmic Reticulum", getPluggableShape (Internal.ENDOPLASMICRETICULUM));
-	    ShapeRegistry.registerShape ("Golgi Apparatus", getPluggableShape (Internal.GOLGIAPPARATUS));
-
-		ShapeRegistry.registerShape ("OrganA", getPluggableShape (Internal.ORGANA));
-		ShapeRegistry.registerShape ("OrganB", getPluggableShape (Internal.ORGANB));
-		ShapeRegistry.registerShape ("OrganC", getPluggableShape (Internal.ORGANC));
-		ShapeRegistry.registerShape ("CellA", getPluggableShape (Internal.CELLA));
-		ShapeRegistry.registerShape ("Ribosome", getPluggableShape (Internal.RIBOSOME));
-		ShapeRegistry.registerShape ("ProteinComplex", getPluggableShape (Internal.PROTEINB));
-	    ShapeRegistry.registerShape ("Cell", getCombinedShape (Internal.CELL));
-	    ShapeRegistry.registerShape ("Nucleus", getCombinedShape (Internal.NUCLEUS));
-//	    ShapeRegistry.registerShape ("Mitochondria", getCombinedShape (Internal.MITOCHONDRIA));
-	    ShapeRegistry.registerShape ("Organelle", getCombinedShape (Internal.ORGANELLE));
-	    ShapeRegistry.registerShape ("Vesicle", getCombinedShape (Internal.VESICLE));
 	}
 
 	/**
 	   these constants are internal, only for the switch statement below.
 	   There is no relation with the constants defined in ShapeType.
 	 */
-	private enum Internal
+	public enum Internal
 	{
 		MITOCHONDRIA,
 		SARCOPLASMICRETICULUM,
 		ENDOPLASMICRETICULUM,
 		GOLGIAPPARATUS,
+		BRACE,
 		
 		@Deprecated ORGANA,
 		@Deprecated ORGANB,
@@ -81,7 +63,7 @@ class GenMAPPShapes
 	   The shapes are constructed as a general path with arbitrary size
 	   and then resized to fit w and h parameters.
 	 */
-	static private java.awt.Shape getPluggableShape (Internal st)
+	static public java.awt.Shape getPluggableShape (Internal st)
 	{
 		GeneralPath path = new GeneralPath();
 		switch (st)
@@ -197,6 +179,13 @@ class GenMAPPShapes
 			path.curveTo (26, 0, 33, 14, 33, 30);
 			path.closePath();
 			break;
+		case BRACE:
+			path.moveTo(0, 4);
+			path.quadTo(0, 2, 3, 2);
+			path.quadTo(6, 2, 6, 0);
+			path.quadTo(6, 2, 9, 2);
+			path.quadTo(12, 2, 12, 4);
+			break;
 		case MITOCHONDRIA:
 			path.moveTo (72.81f, 85.70f);
 			path.curveTo (97.59f, 83.01f, 94.55f, 147.38f, 119.28f, 144.29f);
@@ -295,7 +284,7 @@ class GenMAPPShapes
 	 * NOTE: These are all being deprecated. They should be 
 	 * automatically converted to semantic-free shapes.
 	 */
-	static private java.awt.Shape getCombinedShape (Internal st)
+	static public java.awt.Shape getCombinedShape (Internal st)
 	{
 		Area area = new Area();
 		
@@ -335,7 +324,7 @@ class GenMAPPShapes
 		return area;
 	}
 	
-	static private java.awt.Shape getRegularPolygon (int sides, double w, double h)
+	public static java.awt.Shape getRegularPolygon (int sides, double w, double h)
 	{
 		GeneralPath path = new GeneralPath();
 		for (int i = 0; i < sides; ++i)

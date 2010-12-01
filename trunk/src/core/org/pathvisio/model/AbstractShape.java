@@ -16,9 +16,9 @@
 //
 package org.pathvisio.model;
 
+import java.awt.Rectangle;
 import java.awt.Shape;
-
-import org.pathvisio.view.ShapeRegistry;
+import java.awt.geom.AffineTransform;
 
 public class AbstractShape implements IShape
 {
@@ -26,15 +26,22 @@ public class AbstractShape implements IShape
 	private String mappName;
 	private boolean isResizeable;
 	private boolean isRotatable;
+	private Shape sh;
 	
-	public AbstractShape (String name, String mappName, boolean isResizeable, boolean isRotatable)
+	public AbstractShape (Shape sh, String name, String mappName, boolean isResizeable, boolean isRotatable)
 	{
 		this.name = name;
+		this.sh = sh;
 		this.mappName = mappName;
 		this.isRotatable = isRotatable;
 		this.isResizeable = isResizeable;
 	}
-	
+
+	public AbstractShape (Shape sh, String name)
+	{
+		this (sh, name, name, true, true);
+	}
+
 	@Override
 	public String getMappName()
 	{
@@ -50,7 +57,12 @@ public class AbstractShape implements IShape
 	@Override
 	public Shape getShape(double mw, double mh)
 	{
-		return ShapeRegistry.getShape(name, 0, 0, mw, mh);		
+		// now scale the path so it has proper w and h.
+		Rectangle r = sh.getBounds();
+		AffineTransform at = new AffineTransform();
+		at.translate ( - r.x,  - r.y);
+		at.scale (mw / r.width, mh / r.height);
+		return at.createTransformedShape (sh);
 	}
 
 	@Override

@@ -403,7 +403,7 @@ for my $i ( 0 .. $#linkArray ) {
 }
 print OUTFILE "|#default=".$oleft."\n}}\n";
 
-print OUTFILE "|Location=left\n|Description=".$pathway."  [[http:\/\/www.wikipathways.org\/index.php\/Pathway:$WPID edit]]\n}}\n</div><noinclude>{{reflist}}</noinclude>";
+print OUTFILE "|Location=left\n|Description=".$pathway."  [[http:\/\/www.wikipathways.org\/index.php\/Pathway:$WPID edit]]\n}}\n</div><noinclude>{{reflist}}[[Category:WikiPathways]]</noinclude>";
 close OUTFILE;
 close HTML;
 

@@ -319,7 +319,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		out.close();
 
 		if (finalFile.exists()) finalFile.delete();
-		if (!tempFile.renameTo(finalFile)) throw new IOException ("Couldn't rename temporary file");
+		if (!tempFile.renameTo(finalFile)) throw new IOException ("Couldn't rename temporary file " + tempFile);
 	}
 
 

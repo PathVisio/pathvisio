@@ -243,7 +243,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 
 	public void vPathwayEvent(VPathwayEvent e) {
 		switch(e.getType()) {
-		case VPathwayEvent.ELEMENT_CLICKED_DOWN:
+		case ELEMENT_CLICKED_DOWN:
 			if(e.getAffectedElement() instanceof Citation) {
 				Citation c = (Citation)e.getAffectedElement();
 				PathwayElementDialog d = swingEngine.getPopupDialogHandler().getInstance(
@@ -253,7 +253,7 @@ public class PathwayElementMenuListener implements VPathwayListener {
 				d.setVisible(true);
 				break;
 			}
-		case VPathwayEvent.ELEMENT_CLICKED_UP:
+		case ELEMENT_CLICKED_UP:
 			assert(e.getVPathway() != null);
 			assert(e.getVPathway().getWrapper() instanceof VPathwaySwing);
 			

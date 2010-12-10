@@ -258,11 +258,11 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		VPathway vp = (VPathway)e.getSource();
 		//Don't refresh at object redraw / move
 		switch(e.getType()) {
-		case VPathwayEvent.EDIT_MODE_OFF:
-		case VPathwayEvent.EDIT_MODE_ON:
-		case VPathwayEvent.ELEMENT_ADDED:
-		case VPathwayEvent.MODEL_LOADED:
-		case VPathwayEvent.ELEMENT_CLICKED_UP:
+		case EDIT_MODE_OFF:
+		case EDIT_MODE_ON:
+		case ELEMENT_ADDED:
+		case MODEL_LOADED:
+		case ELEMENT_CLICKED_UP:
 			resetGroupStates(vp);
 		}
 	}

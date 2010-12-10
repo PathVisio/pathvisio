@@ -227,7 +227,7 @@ public abstract class DefaultTemplates {
 		}
 
 		public VPathwayElement getDragElement(VPathway vp) {
-			Shape s = (Shape)super.getDragElement(vp);
+			GraphicsShape s = (GraphicsShape)super.getDragElement(vp);
 			return s.handleSE;
 		}
 

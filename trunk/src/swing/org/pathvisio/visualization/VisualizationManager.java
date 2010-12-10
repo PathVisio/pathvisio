@@ -44,6 +44,7 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
+import org.pathvisio.view.VPathwayEvent.VPathwayEventType;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
 /**
@@ -368,7 +369,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 
 
 	public void vPathwayEvent(VPathwayEvent e) {
-		if(e.getType() == VPathwayEvent.ELEMENT_DRAWN) {
+		if(e.getType() == VPathwayEventType.ELEMENT_DRAWN) {
 			Visualization v = getActiveVisualization();
 			VPathwayElement elm = e.getAffectedElement();
 			if(v != null && elm instanceof Graphics) {

@@ -449,7 +449,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public void vPathwayEvent(VPathwayEvent e) {
 		VPathway vp = (VPathway)e.getSource();
 		switch(e.getType()) {
-		case VPathwayEvent.ELEMENT_DOUBLE_CLICKED:
+		case ELEMENT_DOUBLE_CLICKED:
 			VPathwayElement pwe = e.getAffectedElement();
 			if(pwe instanceof Handle)
 			{
@@ -463,17 +463,17 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				}
 			}
 			break;
-		case VPathwayEvent.EDIT_MODE_ON:
+		case EDIT_MODE_ON:
 			for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_EDITMODE)) {
 				b.setEnabled(true);
 			}
 			break;
-		case VPathwayEvent.EDIT_MODE_OFF:
+		case EDIT_MODE_OFF:
 			for(Component b : getToolbarGroup(TB_GROUP_SHOW_IF_EDITMODE)) {
 				b.setEnabled(false);
 			}
 			break;
-		case VPathwayEvent.HREF_ACTIVATED:
+		case HREF_ACTIVATED:
 			if(e.getAffectedElement() instanceof Label) {
 				try {
 					hyperlinkUpdate(new HyperlinkEvent(e.getSource(), HyperlinkEvent.EventType.ACTIVATED, new URL(((Label)e.getAffectedElement()).getPathwayElement().getHref())));

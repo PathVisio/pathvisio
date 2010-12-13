@@ -155,12 +155,6 @@ public enum ShapeType implements IShape
 		return name;
 	}
 
-	/**
-	   Returns the names of all registered Shape types, in such a way that the index
-	   is equal to it's ordinal value.
-
-	   i.e. ShapeType.fromName(ShapeType.getNames[n]).getOrdinal() == n
-	 */
 	static public String[] getVisibleNames()
 	{
 		String[] result = new String[visibleValues.size()];

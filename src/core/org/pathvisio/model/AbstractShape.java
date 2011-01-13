@@ -45,19 +45,16 @@ public class AbstractShape implements IShape
 		this (sh, name, name, true, true);
 	}
 
-	@Override
 	public String getMappName()
 	{
 		return mappName;
 	}
 
-	@Override
 	public String getName()
 	{
 		return name;
 	}
 
-	@Override
 	public Shape getShape(double mw, double mh)
 	{
 		// now scale the path so it has proper w and h.
@@ -68,13 +65,11 @@ public class AbstractShape implements IShape
 		return at.createTransformedShape (sh);
 	}
 
-	@Override
 	public boolean isResizeable()
 	{
 		return isResizeable;
 	}
 
-	@Override
 	public boolean isRotatable()
 	{
 		return isRotatable;

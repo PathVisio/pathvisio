@@ -186,7 +186,6 @@ public enum ShapeType implements IShape
 		return isRotatable;
 	}
 
-	@Override
 	public Shape getShape(double mw, double mh)
 	{
 		// now scale the path so it has proper w and h.

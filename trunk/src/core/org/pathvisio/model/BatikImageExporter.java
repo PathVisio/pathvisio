@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.io.Writer;
 
 import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGeneratorContext;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.transcoder.Transcoder;
 import org.apache.batik.transcoder.TranscoderInput;
@@ -54,7 +55,9 @@ public class BatikImageExporter extends ImageExporter {
 		DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);
 
-		SVGGraphics2D svgG2d = new SVGGraphics2D(svg);
+		SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(svg);
+		SVGGraphics2D svgG2d = new SVGGraphics2D(ctx, true);
+		
 		vPathway.draw(svgG2d);
 
 		//Force recalculation of size after drawing once, this allows size of text

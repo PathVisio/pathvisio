@@ -28,6 +28,7 @@ import java.awt.Stroke;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.IllegalPathStateException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
@@ -427,14 +428,16 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		t.translate(mx, my);
 		s = t.createTransformedShape(s);
 
-		if(sw > 0) {
-			if (gdata.getLineStyle() == LineStyle.DOUBLE){
-				// correction factor for composite stroke
-				sw = (float) (gdata.getLineThickness() * 4); 
+		if(sw > 0) 
+			if (mw * mh > 0) // Workaround, batik balks if the shape is zero sized.  
+			{
+				if (gdata.getLineStyle() == LineStyle.DOUBLE){
+					// correction factor for composite stroke
+					sw = (float) (gdata.getLineThickness() * 4); 
+				}
+				Stroke stroke = new BasicStroke(sw);
+				s = stroke.createStrokedShape(s);
 			}
-			Stroke stroke = new BasicStroke(sw);
-			s = stroke.createStrokedShape(s);
-		}
 		return s;
 	}
 

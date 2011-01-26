@@ -178,8 +178,9 @@ public class BackpageTextProvider
 				for(Xref cr : sortedRefs) {
 					String idtxt = cr.getId();
 					String url = cr.getUrl();
+					url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
 					if(url != null) {
-						idtxt = "<a href='" + url + "'>" + idtxt + "</a>";
+						idtxt = "<a href=\"" + url + "\">" + idtxt + "</a>";
 					}
 					String dbName = cr.getDataSource().getFullName();
 					crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");

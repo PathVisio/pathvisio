@@ -114,7 +114,6 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 					{
 						setText(txt);
 						setCaretPosition(0); // scroll to top.
-						System.out.println (getText());
 					}
 				});
 			}

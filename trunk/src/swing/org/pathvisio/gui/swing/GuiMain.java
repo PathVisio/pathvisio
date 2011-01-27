@@ -60,6 +60,7 @@ import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.MIMShapes;
 import org.pathvisio.visualization.VisualizationManager;
+import org.pathvisio.gui.swing.AutoSave;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -78,6 +79,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 
 	private PvDesktop pvDesktop;
 	private SwingEngine swingEngine;
+	public AutoSave auto;  // needs to be here for the same timer to be available always
 
 	private static void initLog(Engine engine)
 	{
@@ -351,6 +353,9 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		swingEngine.getEngine().dispose();
 		swingEngine.dispose();
 		Logger.log.info ("PathVisio was shut down cleanly");
+		
+		// stop the timer and clean out the files on a successful shutdown
+		auto.stopTimer();
 	}
 
 	public MainPanel getMainPanel() { return mainPanel; }
@@ -406,6 +411,10 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		MIMShapes.registerShapes();
 		swingEngine.setFrame(frame);
 		swingEngine.setApplicationPanel(mainPanel);
+		
+		// start the autosave timer
+		auto = new AutoSave(swingEngine);
+		auto.startTimer(300);
 
 		// load plugins from the default plugin dir
 		File pluginDir = new File (GlobalPreference.getApplicationDir(), "plugins");

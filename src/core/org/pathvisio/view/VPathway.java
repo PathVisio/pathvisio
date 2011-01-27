@@ -74,6 +74,7 @@ import org.pathvisio.view.ViewActions.TextFormattingAction;
  */
 public class VPathway implements PathwayListener, PathwayElementListener
 {
+	private static final double FUZZY_SIZE = 8; // fuzz-factor around mouse cursor
 	static final int ZORDER_SELECTIONBOX = Integer.MAX_VALUE;
 	static final int ZORDER_HANDLE = Integer.MAX_VALUE - 1;
 	
@@ -804,7 +805,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 */
 	public void mouseDown(MouseEvent e)
 	{
-		
 		VPathwayElement vpe = getObjectAt(e.getLocation());
 		if(!openHref(e, vpe)) {
 			// setFocus();
@@ -815,11 +815,12 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			{
 				if (newTemplate != null)
 				{
-					newObject(new Point(e.getX(), e.getY()));
+					newObject(e.getLocation());
 					// SwtGui.getCurrent().getWindow().deselectNewItemActions();
 				} else
 				{
-					editObject(new Point(e.getX(), e.getY()), e);
+					pressedObject = vpe;
+					editObject(e);
 				}
 			} else
 			{
@@ -1063,12 +1064,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	/**
 	 * Called by MouseDown, when we're in editting mode and we're not adding new
 	 * objects prepares for dragging the object
+	 * @param pressedObject 
 	 */
-	private void editObject(Point p, MouseEvent e)
+	private void editObject(MouseEvent e)
 	{
-		Point2D p2d = new Point2D.Double(p.x, p.y);
-
-		pressedObject = getObjectAt(p2d);
 		// if we clicked on an object
 		if (pressedObject != null)
 		{
@@ -1082,27 +1081,27 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				//Special treatment for anchor
 				if(parent instanceof VAnchor)
 				{
-					doClickSelect(p2d, modifierPressed);
+					doClickSelect(e.getLocation(), modifierPressed);
 				}
 			}
 			else
 			{
-				doClickSelect(p2d, modifierPressed);
+				doClickSelect(e.getLocation(), modifierPressed);
 			}
 
 			// start dragging
-			vPreviousX = p.x;
-			vPreviousY = p.y;
+			vPreviousX = e.getX();
+			vPreviousY = e.getY();
 
 			isDragging = true;
 			dragUndoState = DRAG_UNDO_CHANGE_START;
 		} else
 		{
 			// start dragging selectionbox
-			startSelecting(p2d);
+			startSelecting(e.getLocation());
 		}
 	}
-
+	
 	/**
 	 * Find the object at a particular location on the drawing
 	 *
@@ -1112,13 +1111,30 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 */
 	public VPathwayElement getObjectAt(Point2D p2d)
 	{
-		Collections.sort(drawingObjects);
+		int zmax = Integer.MIN_VALUE; 
 		VPathwayElement probj = null;
 		for (VPathwayElement o : drawingObjects)
 		{
-			if (o.vContains(p2d))
+			// first we use vContains, which is good for detecting (non-transparent) shapes
+			if (o.vContains(p2d) && o.getZOrder() > zmax)
 			{
 				probj = o;
+				zmax = o.getZOrder();
+			}
+		}
+		if (probj == null)
+		{
+			// if there is nothing at that point, we use vIntersects with a fuzz area,
+			// which is good for detecting lines and transparent shapes.
+			Rectangle2D fuzz = new Rectangle2D.Double (
+					p2d.getX() - FUZZY_SIZE, p2d.getY() - FUZZY_SIZE, FUZZY_SIZE * 2, FUZZY_SIZE * 2);
+			for (VPathwayElement o : drawingObjects)
+			{
+				if (o.vIntersects(fuzz) && o.getZOrder() > zmax)
+				{
+					probj = o;
+					zmax = o.getZOrder();
+				}
 			}
 		}
 		return probj;

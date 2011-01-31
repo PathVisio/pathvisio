@@ -36,6 +36,8 @@ public class PathwayEvent
 	 */
 	public static final int ADDED = 3;
 
+	public static final int RESIZED = 4;
+
 	private PathwayElement affectedData;
 	public PathwayElement getAffectedData () { return affectedData; }
 

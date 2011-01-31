@@ -2253,7 +2253,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	 * @return The drawing size
 	 */
 	public double[] getMBoardSize() {
-		return parent.calculateMBoardSize();
+		return parent.getMBoardSize();
 	}
 
 	public double getMBoardWidth()

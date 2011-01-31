@@ -34,11 +34,10 @@ public abstract interface VPathwayWrapper
 {
 	public void redraw();
 	public void redraw(Rectangle r);
-	public void setVSize(Dimension size);
-	public void setVSize(int w, int h);
-	public Dimension getVSize();
-	public Rectangle getVBounds();
 	public Dimension getViewportSize();
+	
+	/** signal to indicate that the pathway changed size */
+	public void resized();
 
 	public VPathway createVPathway();
 

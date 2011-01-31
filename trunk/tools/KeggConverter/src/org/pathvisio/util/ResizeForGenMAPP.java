@@ -29,7 +29,6 @@ import org.pathvisio.view.Graphics;
 import org.pathvisio.view.LayoutType;
 import org.pathvisio.view.MIMShapes;
 import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayWrapperBase;
 
 public class ResizeForGenMAPP {
 	static final double MAX_WIDTH = 35000;
@@ -91,7 +90,7 @@ public class ResizeForGenMAPP {
 				pwe.setMCenterY(pwe.getMCenterY() * zoom);
 			}
 
-			VPathway vp = new VPathway(new VPathwayWrapperBase());
+			VPathway vp = new VPathway(null);
 			vp.fromModel(pathway);
 
 			//Restack complexes

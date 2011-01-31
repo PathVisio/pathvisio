@@ -41,7 +41,6 @@ import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
 import org.pathvisio.view.VPathwayEvent;
 import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.VPathwayWrapperBase;
 import org.pathvisio.view.VPathwayEvent.VPathwayEventType;
 
 /**
@@ -55,7 +54,7 @@ public class ColorExporter implements VPathwayListener {
 
 	public ColorExporter(Pathway pathway, Map<PathwayElement, List<Color>> colors) {
 		this.colors = colors;
-		vPathway = new VPathway(new VPathwayWrapperBase());
+		vPathway = new VPathway(null);
 		vPathway.fromModel(pathway);
 	}
 

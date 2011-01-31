@@ -56,7 +56,6 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		gdata = o;
 		gdata.addListener(canvas);
 		gdata.getBiopaxReferenceManager().addBiopaxListener(this);
-		canvas.checkBoardSize(gdata);
 		checkCitation();
 	}
 

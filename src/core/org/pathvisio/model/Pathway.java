@@ -279,6 +279,7 @@ public class Pathway
 			addGraphRef(o.getGraphRef(), (GraphRefContainer)o);
 		}
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.ADDED));
+		checkMBoardSize(o);
 	}
 
 	/**
@@ -336,6 +337,7 @@ public class Pathway
 				group.fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(group));
 			}
 
+			checkMBoardSize(e.getModifiedPathwayElement());
 		}
 	}
 
@@ -649,26 +651,45 @@ public class Pathway
 		return result;
 	}
 
-	protected double[] calculateMBoardSize() {
-		double mw = 0;
-		double mh = 0;
+	double mBoardWidth = 0;
+	double mBoardHeight = 0;
 
-		for(PathwayElement e : dataObjects) {
-			switch(e.getObjectType()) {
-			case LINE:
-				mw = Math.max(mw, Math.max(e.getMStartX(), e.getMEndX()));
-				mh = Math.max(mh, Math.max(e.getMStartY(), e.getMEndY()));
-				break;
-			default:
-				mw = Math.max(mw, e.getMLeft() + e.getMWidth());
-				mh = Math.max(mh, e.getMTop() + e.getMHeight());
-				break;
-			}
+	private static final int BORDER_SIZE = 30;
+
+	/**
+	 * Checks whether the board size is still large enough for the given {@link PathwayElement}
+	 * and increases the size if not
+	 * @param elm The element to check the board size for
+	 */
+	private void checkMBoardSize(PathwayElement e)
+	{
+		double mw = mBoardWidth;
+		double mh = mBoardHeight;
+
+		switch(e.getObjectType()) {
+		case LINE:
+			mw = Math.max(mw, BORDER_SIZE + Math.max(e.getMStartX(), e.getMEndX()));
+			mh = Math.max(mh, BORDER_SIZE + Math.max(e.getMStartY(), e.getMEndY()));
+			break;
+		default:
+			mw = Math.max(mw, BORDER_SIZE + e.getMLeft() + e.getMWidth());
+			mh = Math.max(mh, BORDER_SIZE + e.getMTop() + e.getMHeight());
+			break;
 		}
 
-		return new double[] { mw + 0.1 * mw, mh + 0.1 * mh };
+		if (Math.abs (mBoardWidth - mw) + Math.abs (mBoardHeight - mh) > 0.01)
+		{
+			mBoardWidth = mw;
+			mBoardHeight = mh;
+			fireObjectModifiedEvent(new PathwayEvent(mappInfo, PathwayEvent.RESIZED));
+		}
 	}
 
+	public double[] getMBoardSize()
+	{
+		return new double[] {mBoardWidth, mBoardHeight};
+	}
+	
 	private File sourceFile = null;
 
 	/**

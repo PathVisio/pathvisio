@@ -106,14 +106,6 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		return child;
 	}
 
-	public Rectangle getVBounds() {
-		return getBounds();
-	}
-
-	public Dimension getVSize() {
-		return getPreferredSize();
-	}
-
 	public Dimension getViewportSize() {
 		if (container instanceof JScrollPane) {
 			return ((JScrollPane) container).getViewport().getExtentSize();
@@ -132,15 +124,6 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 
 	public void redraw(Rectangle r) {
 		repaint(r);
-	}
-
-	public void setVSize(Dimension size) {
-		setPreferredSize(size);
-		revalidate();
-	}
-
-	public void setVSize(int w, int h) {
-		setVSize(new Dimension(w, h));
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -229,10 +212,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						container.setViewportView(VPathwaySwing.this);
-						double[] mSize = child.getPathwayModel().getMappInfo().getMBoardSize();
-						int w = (int)child.vFromM(mSize[0]);
-						int h = (int)child.vFromM(mSize[1]);
-						setVSize(w, h);
+						resized();
 						VPathwaySwing.this.requestFocus();
 					}
 				});
@@ -470,5 +450,25 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 
 		child = null; // free VPathway for GC
 		disposed = true;
+	}
+
+	private int oldVWidth = 0;
+	private int oldVHeight = 0;
+
+	@Override
+	public void resized()
+	{		
+		int vw = (int)child.getVWidth();
+		int vh = (int)child.getVHeight();
+
+		if (vw != oldVWidth || vh != oldVHeight)
+		{
+			oldVWidth = vw;
+			oldVHeight = vh;
+			setPreferredSize(new Dimension(vw, vh));
+			revalidate();
+			repaint();
+		}
+		
 	}
 }

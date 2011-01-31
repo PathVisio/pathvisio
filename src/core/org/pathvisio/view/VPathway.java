@@ -186,7 +186,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 					"Please call PreferenceManager.init() before instantiating a VPathway"
 			);
 		}
-		this.parent = parent == null ? new VPathwayWrapperBase() : parent;
+		this.parent = parent;
 
 		drawingObjects = new ArrayList<VPathwayElement>();
 
@@ -288,10 +288,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		{
 			fromModelElement(o);
 		}
-		double[] calcSize = data.getMappInfo().getMBoardSize();
-		int width = (int) vFromM(calcSize[0]);
-		int height = (int) vFromM(calcSize[1]);
-		parent.setVSize(width, height);
 
 		// data.fireObjectModifiedEvent(new PathwayEvent(null,
 		// PathwayEvent.MODIFIED_GENERAL));
@@ -477,16 +473,10 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public void setPctZoom(double pctZoomFactor)
 	{
 		zoomFactor = pctZoomFactor / 100.0;
-		int width = getVWidth();
-		int height = getVHeight();
 		for(VPathwayElement vpe : drawingObjects) {
 			vpe.zoomChanged();
 		}
-		if (parent != null)
-		{
-			parent.setVSize(width, height);
-			redraw();
-		}
+		if (parent != null) parent.resized();
 	}
 
 	/**
@@ -496,7 +486,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public double getFitZoomFactor()
 	{
 		double result;
-		Dimension drawingSize = getWrapper().getVSize();
+		Dimension drawingSize = new Dimension (getVWidth(), getVHeight());
 		Dimension viewportSize = getWrapper().getViewportSize();
 		result = (int) Math.min(getPctZoom()
 				* (double) viewportSize.width / drawingSize.width,
@@ -933,7 +923,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				area = g2d.getClipBounds();
 				if (area == null)
 				{
-					Dimension size = parent.getViewportSize(); //Draw the visible area
+					Dimension size = parent == null ? 
+							new Dimension(getVWidth(), getVHeight()) : 
+								parent.getViewportSize(); //Draw the visible area
 					area = new Rectangle(0, 0, size.width, size.height);
 				}
 			}
@@ -1545,6 +1537,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	// Convenience method to register an action that has an accelerator key
 	private void registerKeyboardAction(Action a)
 	{
+		if (parent == null) return;
 		KeyStroke key = (KeyStroke) a.getValue(Action.ACCELERATOR_KEY);
 		if (key == null)
 			throw new RuntimeException("Action " + a
@@ -1556,53 +1549,56 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	{
 		viewActions = new ViewActions(engine, this);
 
-		registerKeyboardAction(viewActions.copy);
-		registerKeyboardAction(viewActions.paste);
-		parent.registerKeyboardAction(KEY_SELECT_DATA_NODES,
-				viewActions.selectDataNodes);
-		registerKeyboardAction(viewActions.toggleGroup);
-		registerKeyboardAction(viewActions.toggleComplex);
-		registerKeyboardAction(viewActions.selectAll);
-		registerKeyboardAction(viewActions.delete1);
-		registerKeyboardAction(viewActions.delete2);
-		registerKeyboardAction(viewActions.undo);
-		registerKeyboardAction(viewActions.addAnchor);
-		registerKeyboardAction(viewActions.orderBringToFront);
-		registerKeyboardAction(viewActions.orderSendToBack);
-		registerKeyboardAction(viewActions.orderUp);
-		registerKeyboardAction(viewActions.orderDown);
-		registerKeyboardAction(viewActions.showUnlinked);
-		parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(
-				engine,
-				KEY_MOVERIGHT));
-		parent.registerKeyboardAction(KEY_MOVERIGHT_SHIFT, new KeyMoveAction(
-				engine,
-				KEY_MOVERIGHT_SHIFT));
-		parent.registerKeyboardAction(KEY_MOVELEFT, new KeyMoveAction(
-				engine,
-				KEY_MOVELEFT));
-		parent.registerKeyboardAction(KEY_MOVELEFT_SHIFT, new KeyMoveAction(
-				engine,
-				KEY_MOVELEFT_SHIFT));
-		parent
-				.registerKeyboardAction(KEY_MOVEUP, new KeyMoveAction(
-						engine,
-						KEY_MOVEUP));
-		parent.registerKeyboardAction(KEY_MOVEUP_SHIFT, new KeyMoveAction(
-				engine,
-				KEY_MOVEUP_SHIFT));
-		parent.registerKeyboardAction(KEY_MOVEDOWN, new KeyMoveAction(
-				engine,
-				KEY_MOVEDOWN));
-		parent.registerKeyboardAction(KEY_MOVEDOWN_SHIFT, new KeyMoveAction(
-				engine,
-				KEY_MOVEDOWN_SHIFT));
-		parent.registerKeyboardAction(KEY_BOLD, new TextFormattingAction(
-				engine,
-				KEY_BOLD));
-		parent.registerKeyboardAction(KEY_ITALIC, new TextFormattingAction(
-				engine,
-				KEY_ITALIC));
+		if (parent != null)
+		{
+			registerKeyboardAction(viewActions.copy);
+			registerKeyboardAction(viewActions.paste);
+			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES,
+					viewActions.selectDataNodes);
+			registerKeyboardAction(viewActions.toggleGroup);
+			registerKeyboardAction(viewActions.toggleComplex);
+			registerKeyboardAction(viewActions.selectAll);
+			registerKeyboardAction(viewActions.delete1);
+			registerKeyboardAction(viewActions.delete2);
+			registerKeyboardAction(viewActions.undo);
+			registerKeyboardAction(viewActions.addAnchor);
+			registerKeyboardAction(viewActions.orderBringToFront);
+			registerKeyboardAction(viewActions.orderSendToBack);
+			registerKeyboardAction(viewActions.orderUp);
+			registerKeyboardAction(viewActions.orderDown);
+			registerKeyboardAction(viewActions.showUnlinked);
+			parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(
+					engine,
+					KEY_MOVERIGHT));
+			parent.registerKeyboardAction(KEY_MOVERIGHT_SHIFT, new KeyMoveAction(
+					engine,
+					KEY_MOVERIGHT_SHIFT));
+			parent.registerKeyboardAction(KEY_MOVELEFT, new KeyMoveAction(
+					engine,
+					KEY_MOVELEFT));
+			parent.registerKeyboardAction(KEY_MOVELEFT_SHIFT, new KeyMoveAction(
+					engine,
+					KEY_MOVELEFT_SHIFT));
+			parent
+					.registerKeyboardAction(KEY_MOVEUP, new KeyMoveAction(
+							engine,
+							KEY_MOVEUP));
+			parent.registerKeyboardAction(KEY_MOVEUP_SHIFT, new KeyMoveAction(
+					engine,
+					KEY_MOVEUP_SHIFT));
+			parent.registerKeyboardAction(KEY_MOVEDOWN, new KeyMoveAction(
+					engine,
+					KEY_MOVEDOWN));
+			parent.registerKeyboardAction(KEY_MOVEDOWN_SHIFT, new KeyMoveAction(
+					engine,
+					KEY_MOVEDOWN_SHIFT));
+			parent.registerKeyboardAction(KEY_BOLD, new TextFormattingAction(
+					engine,
+					KEY_BOLD));
+			parent.registerKeyboardAction(KEY_ITALIC, new TextFormattingAction(
+					engine,
+					KEY_ITALIC));
+		}
 	}
 
 	public void keyReleased(KeyEvent e)
@@ -1687,13 +1683,18 @@ public class VPathway implements PathwayListener, PathwayElementListener
 					lastAdded.markDirty();
 				}
 				break;
+			case PathwayEvent.RESIZED:
+				if (parent != null)
+				{	
+					parent.resized();
+				}
+				break;
 		}
 		redrawDirtyRect();
 	}
 
 	public void gmmlObjectModified(PathwayElementEvent e)
 	{
-		checkBoardSize(e.getModifiedPathwayElement());
 		redrawDirtyRect();
 	}
 
@@ -1744,47 +1745,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			bounds.add(e.getVBounds());
 		}
 		return new Dimension((int)bounds.getWidth() + 10, (int)bounds.getHeight() + 10);
-	}
-
-	/**
-	 * Checks whether the board size is still large enough for the given {@link PathwayElement}
-	 * and increases the size if not
-	 * @param elm The element to check the board size for
-	 */
-	void checkBoardSize(PathwayElement elm)
-	{
-		double increase = mFromV(25);
-		Dimension size = parent.getVSize();
-		double mw = mFromV(size.width);
-		double mh = mFromV(size.height);
-
-		double mx = mw;
-		double my = mh;
-
-		switch (elm.getObjectType())
-		{
-		case LINE:
-			mx = Math.max(elm.getMEndX(), elm.getMStartX());
-			my = Math.max(elm.getMEndY(), elm.getMStartY());
-			break;
-		case MAPPINFO:
-			mx = elm.getMLeft() + mFromV(200); //Initial size for mappinfo (has zero size in model);
-			my = elm.getMTop() + mFromV(200);
-			break;
-		default:
-			mx = elm.getMLeft() + elm.getMWidth();
-			my = elm.getMTop() + elm.getMHeight();
-			break;
-		}
-
-		if (mw < mx || mh < my)
-		{
-			if (mw < mx)
-				mw = mx + increase;
-			if (mh < my)
-				mh = my + increase;
-			parent.setVSize(new Dimension((int) vFromM(mw), (int) vFromM(mh)));
-		}
 	}
 
 	/**
@@ -2439,7 +2399,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	{
 		if (isEditMode())
 		{ // Only paste in edit mode
-			parent.pasteFromClipboard();
+			if (parent != null) parent.pasteFromClipboard();
 		}
 	}
 	
@@ -2447,9 +2407,9 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	 * paste from clip board at the current cursor position
 	 */
 	public void positionPasteFromClipboard(Point cursorPosition) {
-		if(isEditMode()) {
-			
-			parent.positionPasteFromClipboard(cursorPosition);
+		if(isEditMode()) 
+		{
+			if (parent != null) parent.positionPasteFromClipboard(cursorPosition);
 		}
 	}
 
@@ -2644,7 +2604,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		listeners.clear();
 		selection.getListeners().clear();
 		viewActions = null;
-		parent.dispose();
+		if (parent != null) parent.dispose();
 		parent = null; // disconnect from VPathwaySwing
 		undoManager.dispose();
 		undoManager = null;

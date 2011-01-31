@@ -252,16 +252,17 @@ public class ColorByExpression extends VisualizationMethod {
 
 	void drawArea(final GeneProduct gp, Rectangle area, Graphics2D g2d) {
 		int nr = useSamples.size();
-		int left = area.width % nr; //Space left after dividing, give to last rectangle
-		int w = area.width / nr;
 		java.awt.Shape origClip = g2d.getClip();
 		g2d.clip(gp.getShape());
-		for(int i = 0; i < nr; i++) {
+		double xf = area.x;
+		double wf = (double)area.width / nr;
+		for(int i = 0; i < nr; i++) 
+		{
 			Rectangle r = new Rectangle(
-					area.x + w * i,
-					area.y,
-					w + ((i == nr - 1) ? left : 0), area.height);
-			ConfiguredSample s = (ConfiguredSample)useSamples.get(i);
+					(int)xf, area.y,
+					(int)(xf + wf), area.height);
+			xf += wf;
+			ConfiguredSample s = useSamples.get(i);
 			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
 			CachedData cache = gexManager.getCachedData();
 			if(cache == null) continue;
@@ -338,13 +339,14 @@ public class ColorByExpression extends VisualizationMethod {
 	void drawSampleBar(ConfiguredSample s, List<ReporterData> refdata, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		int n = refdata.size();
-		int left = area.height % n;
-		int h = area.height / n;
+		double hf = (double)area.height / n;
+		double yf = area.y;
 		for(int i = 0; i < n; i++) {
 			Color rgb = cs.getColor(refdata.get(i), s.getSample());
 			Rectangle r = new Rectangle(
-					area.x, area.y + i*h,
-					area.width, h + (i == n-1 ? left : 0));
+					area.x, (int)yf,
+					area.width, (int)(yf + hf));
+			yf += hf;
 			drawColoredRectangle(r, rgb, g2d);
 		}
 	}

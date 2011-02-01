@@ -63,7 +63,8 @@ public abstract class SegmentedConnector extends AbstractConnector {
 		//Find the location on the segment
 		double slength = Math.abs(segment.getMLength());
 		double leftover = (l - (end - slength) / length) * length;
-		double relative = leftover / slength;
+		double relative = slength == 0 ? 0 : leftover / slength;
+		
 		Point2D s = segment.getMStart();
 		Point2D e = segment.getMEnd();
 

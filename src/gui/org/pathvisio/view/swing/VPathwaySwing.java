@@ -455,7 +455,6 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 	private int oldVWidth = 0;
 	private int oldVHeight = 0;
 
-	@Override
 	public void resized()
 	{		
 		int vw = (int)child.getVWidth();

@@ -517,7 +517,20 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		handles = new Handle[] {};
 	}
 
-	protected void doDraw(Graphics2D g2d) {
+	protected void doDraw(Graphics2D g2d) 
+	{
+		g2d.setColor(getLineColor());
+		setLineStyle(g2d);
+		drawShape(g2d);
+		
+		// return to normal stroke
+		g2d.setStroke (new BasicStroke ());
+		
+		g2d.setFont(getVFont());
+		drawTextLabel(g2d);
+
+		drawHighlight(g2d);
+
 		if(showLinkAnchors) {
 			for(LinkAnchor la : getLinkAnchors()) {
 				la.draw((Graphics2D)g2d.create());
@@ -578,7 +591,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 	}
 
-	AttributedString getVAttributedString(String text) {
+	private AttributedString getVAttributedString(String text) {
 		AttributedString ats = new AttributedString(text);
 		if(gdata.isStrikethru()) {
 			ats.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
@@ -591,24 +604,18 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		return ats;
 	}
 
-	Font getVFont() {
+	protected Font getVFont() {
 		String name = gdata.getFontName();
 		int style = getVFontStyle();
-		int size = (int)getVFontSize();
+		int size = (int)vFromM(gdata.getMFontSize());
 		return new Font(name, style, size);
-	}
-
-	double getVFontSize()
-	{
-		return vFromM(gdata.getMFontSize());
 	}
 
 	protected void drawShape(Graphics2D g)
 	{
 		Color fillcolor = gdata.getFillColor();
 
-		if (gdata.getShapeType() == null ||
-			gdata.getShapeType() == ShapeType.NONE) return; // nothing to draw.
+		if (!hasOutline()) return; // nothing to draw.
 
 		java.awt.Shape shape = getShape(true, false);
 
@@ -632,4 +639,67 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		g.setColor(getLineColor());
 		g.draw(shape);
 	}
+
+	private boolean hasOutline()
+	{
+		return (!(gdata.getShapeType() == null ||
+				gdata.getShapeType() == ShapeType.NONE));
+	}
+	
+	/**
+	 * Draw a translucent marker around the shape so that it stands out.
+	 * Used e.g. to indicate search results. Highlightcolor is customizeable. 
+	 */
+	protected void drawHighlight(Graphics2D g)
+	{
+		if(isHighlighted())
+		{
+			Color hc = getHighlightColor();
+			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
+	
+			if (hasOutline())
+			{
+				// highlight the outline
+				java.awt.Shape shape = getShape(true, false);
+				g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
+				g.draw (shape);
+			}
+			else
+			{	
+				// outline invisible, fill the entire area
+				g.setStroke (new BasicStroke());
+				Rectangle2D r = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
+				g.fill(r);
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * GraphicsShape overrides vContains, because the base implementation only considers a 
+	 * hit with the outline, which makes it hard to grab with the mouse.
+	 */
+	@Override
+	protected boolean vContains(Point2D point)
+	{
+		// first use getVBounds as a rough approximation
+		if (getVBounds().contains(point))
+		{
+			// if the shape is transparent, only check against the outline
+			if (gdata.isTransparent())
+			{
+				return getVOutline().contains(point);
+			}
+			else
+			{
+				// otherwise check against the whole shape
+				return getVShape(true).contains(point);
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 }

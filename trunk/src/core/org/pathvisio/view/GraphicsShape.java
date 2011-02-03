@@ -40,6 +40,7 @@ import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.LinAlg.Point;
+import org.pathvisio.view.LinkAnchor.LinkAnchorSet;
 
 /**
  * This is an {@link Graphics} class representing shapelike forms,
@@ -439,13 +440,11 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		if (handles.length > 0) setHandleLocation();
 	}
 
-	List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
+	LinkAnchorSet linkAnchorDelegate = new LinkAnchorSet(this);
 
 	private static final int MIN_SIZE_LA = 25;
-	private int numLinkanchorsH = -1;
-	private int numLinkanchorsV = -1;
 
-	public List<LinkAnchor> getLinkAnchors() {
+	public void showLinkAnchors() {
 		//Number of link anchors depends on the size of the object
 		//If the width/height is large enough, there will be three link anchors per side,
 		//Otherwise there will be only one link anchor per side
@@ -456,50 +455,17 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
         }
         int numH = gdata.getMWidth() < MIN_SIZE_LA ? 1 : numAnchors;
 		int numV = gdata.getMHeight() < MIN_SIZE_LA ? 1 : numAnchors;
-		if(numH != numLinkanchorsH || numV != numLinkanchorsV) {
-			createLinkAnchors(numH, numV);
-		}
-		return linkAnchors;
-	}
-
-	private void createLinkAnchors(int numH, int numV) {
-		linkAnchors.clear();
-		double deltaH = 2.0/(numH + 1);
-		for(int i = 1; i <= numH; i++) {
-			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1 + i * deltaH, -1));
-			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1 + i * deltaH, 1));
-		}
-		double deltaV = 2.0/(numV + 1);
-		for(int i = 1; i <= numV; i++) {
-			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1, -1 + i * deltaV));
-			linkAnchors.add(new LinkAnchor(canvas, this, gdata, 1, -1 + i * deltaV));
-		}
-		numLinkanchorsH = numH;
-		numLinkanchorsV = numV;
-	}
-
-	public void showLinkAnchors() {
-		getLinkAnchors();
+		linkAnchorDelegate.createLinkAnchors(numH, numV);
 	}
 
 	public void hideLinkAnchors() 
 	{
-		for (LinkAnchor la : linkAnchors)
-		{
-			la.destroy();
-		}
-		linkAnchors.clear();
-		numLinkanchorsH = -1;
-		numLinkanchorsV = -1;
+		linkAnchorDelegate.hideLinkAnchors();
 	}
 
-	public LinkAnchor getLinkAnchorAt(Point2D p) {
-		for(LinkAnchor la : getLinkAnchors()) {
-			if(la.getMatchArea().contains(p)) {
-				return la;
-			}
-		}
-		return null;
+	public LinkAnchor getLinkAnchorAt(Point2D p) 
+	{
+		return linkAnchorDelegate.getLinkAnchorAt(p);
 	}
 
 	@Override protected void destroyHandles()

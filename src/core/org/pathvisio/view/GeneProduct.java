@@ -16,13 +16,7 @@
 //
 package org.pathvisio.view;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 
 import org.pathvisio.model.PathwayElement;
 
@@ -41,60 +35,5 @@ public class GeneProduct extends GraphicsShape
 	public GeneProduct (VPathway canvas, PathwayElement o) {
 		super(canvas, o);
 	}
-
-	/**
-	 * {@inheritDoc}
-	 * GeneProduct overrides vContains, because the base implementation only considers a 
-	 * hit with the outline, which makes it hard to grab with the mouse.
-	 */
-	@Override
-	protected boolean vContains(Point2D point)
-	{
-		// first use getVBounds as a rough approximation
-		if (getVBounds().contains(point))
-		{
-			return getVShape(false).contains(point);
-		}
-		else
-		{
-			return false;
-		}
-	}
 	
-	
-	public void doDraw(Graphics2D g)
-	{
-		java.awt.Shape origClip = g.getClip();
-
-		RectangularShape area = getShape(false, false).getBounds();
-
-		setLineStyle(g);
-		g.setColor(getLineColor());
-		drawShape(g);
-
-		//Label
-		//Don't draw label outside gene box
-		g.clip (new Rectangle2D.Double (area.getX() - 1, area.getY() - 1, area.getWidth() + 1, area.getHeight()+ 1));
-
-		Font f = getVFont();
-		g.setFont(f);
-
-		drawTextLabel(g);
-
-		g.setClip(origClip); //Reset clipping
-		drawHighlight(g);
-		super.doDraw((Graphics2D)g.create());
-	}
-
-	public void drawHighlight(Graphics2D g)
-	{
-		if(isHighlighted())
-		{
-			Color hc = getHighlightColor();
-			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
-			g.setStroke (new BasicStroke (HIGHLIGHT_STROKE_WIDTH));
-			Rectangle2D r = new Rectangle2D.Double(getVLeft(), getVTop(), getVWidth(), getVHeight());
-			g.draw(r);
-		}
-	}
 }

@@ -542,22 +542,18 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
+	/* Some default values */
+	private static final int M_INITIAL_FONTSIZE = 10;
+	private static final int M_INITIAL_LABEL_WIDTH = 80;
+	private static final int M_INITIAL_LABEL_HEIGHT = 20;
 	private static final int M_INITIAL_LINE_LENGTH = 30; 
-
 	private static final int M_INITIAL_STATE_SIZE = 15;
-	
 	private static final int M_INITIAL_SHAPE_SIZE = 30;
-	
 	private static final int M_INITIAL_CELLCOMP_HEIGHT = 100;
-
 	private static final int M_INITIAL_CELLCOMP_WIDTH = 200;
-
 	private static final int M_INITIAL_BRACE_HEIGHT = 15;
-
 	private static final int M_INITIAL_BRACE_WIDTH = 60;
-
 	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 80;
-
 	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20;
 
 	// groups should be behind other graphics
@@ -2052,7 +2048,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 
-	protected double mFontSize = 10;
+	protected double mFontSize = M_INITIAL_FONTSIZE;
 
 	public double getMFontSize()
 	{
@@ -2632,6 +2628,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setMWidth(M_INITIAL_STATE_SIZE);
 			setMHeight(M_INITIAL_STATE_SIZE);
 			break;
+		case LABEL:
+			setMWidth(M_INITIAL_LABEL_WIDTH);
+			setMHeight(M_INITIAL_LABEL_HEIGHT);
 		}
 	}
 

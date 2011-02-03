@@ -359,12 +359,6 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	{
 		//Include rotation and stroke
 		Area a = new Area(getShape(true, true));
-		//Include link anchors
-		if(showLinkAnchors) {
-			for(LinkAnchor la : getLinkAnchors()) {
-				a.add(new Area(la.getShape()));
-			}
-		}
 		return a;
 	}
 
@@ -472,32 +466,31 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		linkAnchors.clear();
 		double deltaH = 2.0/(numH + 1);
 		for(int i = 1; i <= numH; i++) {
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1 + i * deltaH, -1));
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1 + i * deltaH, 1));
+			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1 + i * deltaH, -1));
+			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1 + i * deltaH, 1));
 		}
 		double deltaV = 2.0/(numV + 1);
 		for(int i = 1; i <= numV; i++) {
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1, -1 + i * deltaV));
-			linkAnchors.add(new LinkAnchor(canvas, gdata, 1, -1 + i * deltaV));
+			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1, -1 + i * deltaV));
+			linkAnchors.add(new LinkAnchor(canvas, this, gdata, 1, -1 + i * deltaV));
 		}
 		numLinkanchorsH = numH;
 		numLinkanchorsV = numV;
 	}
 
-	boolean showLinkAnchors = false;
-
 	public void showLinkAnchors() {
-		if(!showLinkAnchors) {
-			showLinkAnchors = true;
-			markDirty();
-		}
+		getLinkAnchors();
 	}
 
-	public void hideLinkAnchors() {
-		if(showLinkAnchors) {
-			showLinkAnchors = false;
-			markDirty();
+	public void hideLinkAnchors() 
+	{
+		for (LinkAnchor la : linkAnchors)
+		{
+			la.destroy();
 		}
+		linkAnchors.clear();
+		numLinkanchorsH = -1;
+		numLinkanchorsV = -1;
 	}
 
 	public LinkAnchor getLinkAnchorAt(Point2D p) {
@@ -530,12 +523,6 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		drawTextLabel(g2d);
 
 		drawHighlight(g2d);
-
-		if(showLinkAnchors) {
-			for(LinkAnchor la : getLinkAnchors()) {
-				la.draw((Graphics2D)g2d.create());
-			}
-		}
 	}
 
 	protected void drawTextLabel(Graphics2D g)

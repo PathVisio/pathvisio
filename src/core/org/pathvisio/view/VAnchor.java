@@ -49,9 +49,6 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 		super(parent.getDrawing());
 		this.mAnchor = mAnchor;
 		this.line = parent;
-
-		linkAnchor = new LinkAnchor(canvas, mAnchor, 0, 0);
-
 		updatePosition();
 	}
 
@@ -162,9 +159,6 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 				g.draw(arrowShape.getShape());
 		}
 
-		if(showLinkAnchors) {
-			linkAnchor.draw((Graphics2D)g.create());
-		}
 		if(isHighlighted()) {
 			Color hc = getHighlightColor();
 			g.setColor(new Color (hc.getRed(), hc.getGreen(), hc.getBlue(), 128));
@@ -188,33 +182,27 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 					MIN_OUTLINE, MIN_OUTLINE
 			);
 		}
-		if(showLinkAnchors) {
-			Area a = new Area(s);
-			a.add(new Area(linkAnchor.getShape()));
-			return a;
-		} else {
-			return s;
-		}
+		return s;
 	}
 
-	LinkAnchor linkAnchor;
-	boolean showLinkAnchors = false;
+	LinkAnchor linkAnchor = null;
 
 	public LinkAnchor getLinkAnchorAt(Point2D p) {
-		if(linkAnchor.getMatchArea().contains(p)) {
+		if(linkAnchor != null && linkAnchor.getMatchArea().contains(p)) {
 			return linkAnchor;
 		}
 		return null;
 	}
 
-	public void hideLinkAnchors() {
-		showLinkAnchors = false;
-		markDirty();
+	public void hideLinkAnchors() 
+	{
+		if (linkAnchor != null) linkAnchor.destroy();
+		linkAnchor = null;
 	}
 
-	public void showLinkAnchors() {
-		showLinkAnchors = true;
-		markDirty();
+	public void showLinkAnchors() 
+	{
+		linkAnchor = new LinkAnchor(canvas, this, mAnchor, 0, 0);
 	}
 
 	/**

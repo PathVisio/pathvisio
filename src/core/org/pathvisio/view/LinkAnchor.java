@@ -32,20 +32,23 @@ import org.pathvisio.model.GraphLink.GraphRefContainer;
  * only when you drag a line end around. If the line end is near a LinkAnchor,
  * the line end "connects" to the Shape or Line.
  */
-public class LinkAnchor {
+public class LinkAnchor extends VPathwayElement 
+{
 	static final double DRAW_RADIUS = 5;
 	static final double MATCH_RADIUS = DRAW_RADIUS + 5;
 	static final int HINT_STROKE_SIZE = 10;
 
 	double relX, relY;
 	GraphIdContainer idContainer;
-	VPathway canvas;
-
-	public LinkAnchor(VPathway canvas, GraphIdContainer idc, double relX, double relY) {
+	VPathwayElement parent;
+	
+	public LinkAnchor(VPathway canvas, VPathwayElement parent, GraphIdContainer idc, double relX, double relY) 
+	{
+		super (canvas);
 		this.relX = relX;
 		this.relY = relY;
 		this.idContainer = idc;
-		this.canvas = canvas;
+		this.parent = parent;
 	}
 
 	public Shape getMatchArea() {
@@ -83,7 +86,9 @@ public class LinkAnchor {
 		return getShape(true);
 	}
 
-	public void draw(Graphics2D g2d) {
+	@Override
+	public void doDraw(Graphics2D g2d) 
+	{
 		if(drawHighlight) {
 			g2d.setColor(new Color(0, 255, 0, 128));
 			g2d.fill(getShape());
@@ -142,11 +147,27 @@ public class LinkAnchor {
 	 * Display a visual hint to show that this is the anchor that is
 	 * being linked to.
 	 */
-	public void highlight() {
+	public void highlight() 
+	{
 		drawHighlight = true;
+		markDirty();
 	}
 
-	public void unhighlight() {
+	public void unhighlight() 
+	{
 		drawHighlight = false;
+		markDirty();
+	}
+
+	@Override
+	protected Shape calculateVOutline()
+	{
+		return getShape();
+	}
+
+	@Override
+	protected int getZOrder()
+	{
+		return parent.getZOrder() + 1;
 	}
 }

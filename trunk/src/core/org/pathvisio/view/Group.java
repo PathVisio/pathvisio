@@ -263,13 +263,6 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		//Draw the group style appearance
 		GroupPainter p = GroupPainterRegistry.getPainter(gdata.getGroupStyle().toString());
 		p.drawGroup(g2d, this, flags);
-
-		//anchors
-		if(showLinkAnchors) {
-			for(LinkAnchor la : getLinkAnchors()) {
-				la.draw((Graphics2D)g2d.create());
-			}
-		}
 	}
 
 	boolean mouseover = false;
@@ -300,12 +293,6 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	protected Shape calculateVOutline() {
 		//Include rotation and stroke
 		Area a = new Area(getVShape(true));
-		//Include link anchors
-		if(showLinkAnchors) {
-			for(LinkAnchor la : getLinkAnchors()) {
-				a.add(new Area(la.getShape()));
-			}
-		}
 		return a;
 	}
 
@@ -351,13 +338,13 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		linkAnchors.clear();
 		double deltaH = 2.0/(numH + 1);
 		for(int i = 1; i <= numH; i++) {
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1 + i * deltaH, -1));
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1 + i * deltaH, 1));
+			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1 + i * deltaH, -1));
+			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1 + i * deltaH, 1));
 		}
 		double deltaV = 2.0/(numV + 1);
 		for(int i = 1; i <= numV; i++) {
-			linkAnchors.add(new LinkAnchor(canvas, gdata, -1, -1 + i * deltaV));
-			linkAnchors.add(new LinkAnchor(canvas, gdata, 1, -1 + i * deltaV));
+			linkAnchors.add(new LinkAnchor(canvas, this, gdata, -1, -1 + i * deltaV));
+			linkAnchors.add(new LinkAnchor(canvas, this, gdata, 1, -1 + i * deltaV));
 		}
 		numLinkanchorsH = numH;
 		numLinkanchorsV = numV;
@@ -366,17 +353,17 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	boolean showLinkAnchors = false;
 
 	public void showLinkAnchors() {
-		if(!showLinkAnchors) {
-			showLinkAnchors = true;
-			markDirty();
-		}
+		getLinkAnchors();
 	}
 
 	public void hideLinkAnchors() {
-		if(showLinkAnchors) {
-			showLinkAnchors = false;
-			markDirty();
+		for (LinkAnchor la : linkAnchors)
+		{
+			la.destroy();
 		}
+		linkAnchors.clear();
+		numLinkanchorsV = -1;
+		numLinkanchorsH = -1;
 	}
 
 	public LinkAnchor getLinkAnchorAt(Point2D p) {

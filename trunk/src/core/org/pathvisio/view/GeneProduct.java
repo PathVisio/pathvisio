@@ -43,16 +43,6 @@ public class GeneProduct extends GraphicsShape
 	}
 
 	/**
-	 * @deprecated get this info from PathwayElement directly
-	 */
-	public String getID()
-	{
-		//Looks like the wrong way around, but in gpml the ID is attribute 'Name'
-		//NOTE: maybe change this in gpml?
-		return gdata.getGeneID();
-	}
-
-	/**
 	 * {@inheritDoc}
 	 * GeneProduct overrides vContains, because the base implementation only considers a 
 	 * hit with the outline, which makes it hard to grab with the mouse.

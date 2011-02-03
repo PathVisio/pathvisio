@@ -99,13 +99,6 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	}
 
 	/**
-	 * @deprecated use {@link #getPathwayElement()} instead
-	 */
-	public PathwayElement getGmmlData() {
-		return gdata;
-	}
-
-	/**
 	 * Gets the model representation (PathwayElement) of this class
 	 * @return
 	 */

@@ -19,6 +19,9 @@ package org.pathvisio.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Enumeration of vertical alignments.
+ */
 public enum ValignType 
 { 
 	TOP("Top"), MIDDLE("Middle"), BOTTOM("Bottom");

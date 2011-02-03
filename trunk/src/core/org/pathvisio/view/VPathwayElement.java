@@ -40,7 +40,7 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 
 	protected VPathway canvas;
 
-	VPathwayElement(VPathway canvas)
+	protected VPathwayElement(VPathway canvas)
 	{
 		this.canvas = canvas;
 		canvas.addObject(this);

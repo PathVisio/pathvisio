@@ -23,6 +23,8 @@ import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GraphLink.GraphRefContainer;
@@ -42,12 +44,12 @@ public class LinkAnchor extends VPathwayElement
 	GraphIdContainer idContainer;
 	VPathwayElement parent;
 	
-	public LinkAnchor(VPathway canvas, VPathwayElement parent, GraphIdContainer idc, double relX, double relY) 
+	public LinkAnchor(VPathway canvas, VPathwayElement parent, GraphIdContainer idContainer, double relX, double relY) 
 	{
 		super (canvas);
 		this.relX = relX;
 		this.relY = relY;
-		this.idContainer = idc;
+		this.idContainer = idContainer;
 		this.parent = parent;
 	}
 
@@ -170,4 +172,72 @@ public class LinkAnchor extends VPathwayElement
 	{
 		return parent.getZOrder() + 1;
 	}
+
+	/**
+	 * Utility class for creating and destroying LinkAnchors around a rectangular element.
+	 */
+	static class LinkAnchorSet
+	{
+		private final Graphics parent;
+		private final VPathway canvas;
+		
+		LinkAnchorSet(Graphics parent)
+		{
+			this.parent = parent;
+			this.canvas = parent.getDrawing();
+		}
+
+		private boolean isShowing = false;
+		private int numLinkanchorsH = -1;
+		private int numLinkanchorsV = -1;
+		private List<LinkAnchor> linkAnchors = new ArrayList<LinkAnchor>();
+		
+		public void createLinkAnchors(int numH, int numV) 
+		{
+			isShowing = true;
+			if(numH != numLinkanchorsH || numV != numLinkanchorsV) 
+			{
+				linkAnchors.clear();
+				double deltaH = 2.0/(numH + 1);
+				for(int i = 1; i <= numH; i++) {
+					linkAnchors.add(new LinkAnchor(canvas, parent, parent.gdata, -1 + i * deltaH, -1));
+					linkAnchors.add(new LinkAnchor(canvas, parent, parent.gdata, -1 + i * deltaH, 1));
+				}
+				double deltaV = 2.0/(numV + 1);
+				for(int i = 1; i <= numV; i++) {
+					linkAnchors.add(new LinkAnchor(canvas, parent, parent.gdata, -1, -1 + i * deltaV));
+					linkAnchors.add(new LinkAnchor(canvas, parent, parent.gdata, 1, -1 + i * deltaV));
+				}
+				numLinkanchorsH = numH;
+				numLinkanchorsV = numV;
+			}
+		}
+		
+		public void hideLinkAnchors() {
+			for (LinkAnchor la : linkAnchors)
+			{
+				la.destroy();
+			}
+			linkAnchors.clear();
+			numLinkanchorsV = -1;
+			numLinkanchorsH = -1;
+			isShowing = false;
+		}
+
+		public LinkAnchor getLinkAnchorAt(Point2D p) {
+			for(LinkAnchor la : linkAnchors) {
+				if(la.getMatchArea().contains(p)) {
+					return la;
+				}
+			}
+			return null;
+		}
+
+		public boolean isShowing()
+		{
+			return isShowing;
+		}
+
+	}
+	
 }

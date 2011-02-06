@@ -111,6 +111,8 @@ public class GpmlVisualStyle extends VisualStyle {
 	void setNodeShapeMapping() {
 		NodeAppearance nd = nac.getDefaultAppearance();
 		nd.set(VisualPropertyType.NODE_SHAPE, NodeShape.RECT);
+		nd.set(VisualPropertyType.NODE_WIDTH, 5.0);
+		nd.set(VisualPropertyType.NODE_HEIGHT, 5.0);
 		
 		PassThroughMapping widthMapping = new PassThroughMapping(
 				nac.getDefaultAppearance().get(VisualPropertyType.NODE_WIDTH), 

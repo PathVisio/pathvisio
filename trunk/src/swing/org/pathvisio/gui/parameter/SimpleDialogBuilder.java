@@ -20,6 +20,8 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
+import org.bridgedb.gui.ParameterPanel;
+import org.bridgedb.gui.SimpleParameterModel;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 
 /**

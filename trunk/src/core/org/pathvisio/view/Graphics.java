@@ -54,7 +54,6 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		super(canvas);
 		o.addListener(this);
 		gdata = o;
-		gdata.addListener(canvas);
 		gdata.getBiopaxReferenceManager().addBiopaxListener(this);
 		checkCitation();
 	}
@@ -83,8 +82,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		{
 			// already exists, no need to create / destroy
 			// just redraw...
-			citation.refresh();
-			canvas.redrawDirtyRect();
+			citation.markDirty();
 		}
 	}
 
@@ -227,7 +225,6 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 
 	protected void destroy() {
 		super.destroy();
-		gdata.removeListener(canvas);
 		gdata.removeListener(this);
 		for (VPathwayElement child : children)
 		{

@@ -113,16 +113,27 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		return getSize();
 	}
 
-	public void redraw() {
+	/**
+	 * Schedule redraw of the entire visible area
+	 */
+	public void redraw() 
+	{
 		repaint();
 	}
 
+	/**
+	 * Draw immediately
+	 */
 	protected void paintComponent(Graphics g)
 	{
 		child.draw((Graphics2D) g);
 	}
 
-	public void redraw(Rectangle r) {
+	/**
+	 * Schedule redraw of a certain part of the pathway
+	 */
+	public void redraw(Rectangle r) 
+	{
 		repaint(r);
 	}
 

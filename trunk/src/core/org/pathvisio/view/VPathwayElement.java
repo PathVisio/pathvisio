@@ -96,7 +96,9 @@ public abstract class VPathwayElement implements Comparable<VPathwayElement>
 	protected abstract void doDraw(Graphics2D g2d);
 
 	/**
-	 * mark both the area currently and previously occupied by this object for redraw
+	 * mark both the area currently and previously occupied by this object for redraw.
+	 * The redraw will not happen immediately, but will be scheduled in 
+	 * the event dispatch thread.
 	 */
 	protected void markDirty()
 	{

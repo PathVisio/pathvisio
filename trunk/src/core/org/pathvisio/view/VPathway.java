@@ -52,8 +52,6 @@ import org.pathvisio.model.Pathway.StatusFlagEvent;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.model.PathwayElementEvent;
-import org.pathvisio.model.PathwayElementListener;
 import org.pathvisio.model.PathwayEvent;
 import org.pathvisio.model.PathwayListener;
 import org.pathvisio.preferences.GlobalPreference;
@@ -72,7 +70,7 @@ import org.pathvisio.view.ViewActions.TextFormattingAction;
  * It's necessary to call PreferenceManager.init() before you can instantiate
  * this class.
  */
-public class VPathway implements PathwayListener, PathwayElementListener
+public class VPathway implements PathwayListener
 {
 	private static final double FUZZY_SIZE = 8; // fuzz-factor around mouse cursor
 	static final int ZORDER_SELECTIONBOX = Integer.MAX_VALUE;
@@ -197,6 +195,15 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		//registerKeyboardActions();
 	}
 
+	/**
+	 * This will cause a complete redraw of the 
+	 * pathway to be scheduled. 
+	 * The redraw will happen as soon as all other swing 
+	 * events are processed.
+	 * <p>
+	 * Use this only after large changes (e.g. loading a new pathway, 
+	 * applying a new visualization method) as it is quite slow.
+	 */
 	public void redraw()
 	{
 		if (parent != null)
@@ -310,31 +317,23 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		newTemplate = t;
 	}
 
-	private Rectangle dirtyRect = null;
-
 	/**
-	 * Adds object boundaries to the 'dirty rectangle', which marks the area
-	 * that needs to be redrawn.
+	 * Adds object boundaries to the "dirty" area, the area which needs to be redrawn. 
+	 * The redraw will not happen immediately, but
+	 * will be scheduled on the event dispatch thread.
 	 */
 	void addDirtyRect(Rectangle2D ar)
 	{
-		Rectangle r = ar.getBounds();
-		if (dirtyRect == null)
-			dirtyRect = r;
-		else
-			dirtyRect.add(r);
+		if (parent != null) parent.redraw(ar.getBounds());
 	}
 
 	/**
-	 * Redraw parts marked dirty reset dirty rect afterwards
+	 * Deprecated: Does nothing, redraws are now scheduled by Swing.
+	 * call addDirtyRect() or redraw() instead, or remove calls to this altogether
 	 */
+	@Deprecated 
 	public void redrawDirtyRect()
 	{
-		if (dirtyRect != null && parent != null)
-			parent.redraw(dirtyRect);
-		dirtyRect = null;
-		addScheduled();
-		cleanUp();
 	}
 
 	/**
@@ -345,7 +344,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 	public void setMappInfo(InfoBox mappInfo)
 	{
 		this.infoBox = mappInfo;
-		infoBox.getPathwayElement().addListener(this);
 	}
 
 	/**
@@ -644,8 +642,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				linkPointToObject(new Point2D.Double(ve.getX(), ve.getY()),
 						(Handle) pressedObject);
 			}
-
-			redrawDirtyRect();
 		} else {
 			List<VPathwayElement> objects = getObjectsAt(new Point2D.Double(ve.getX(), ve.getY()));
 			
@@ -769,7 +765,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				selection.vMoveBy(0, increment);
 			}
 		}
-		redrawDirtyRect();
 	}
 
 	public void selectObject(VPathwayElement o)
@@ -866,7 +861,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 			}
 			newObject = null;
 			setNewTemplate(null);
-			redrawDirtyRect();
 		}
 		isDragging = false;
 		dragUndoState = DRAG_UNDO_NOT_RECORDING;
@@ -894,47 +888,34 @@ public class VPathway implements PathwayListener, PathwayElementListener
 		}
 	}
 
-	public void draw(Graphics2D g2d)
-	{
-		draw(g2d, null, true);
-	}
-
 	/**
 	 * Paints all components in the drawing. This method is called automatically
-	 * in the painting process
-	 *
-	 * @param g2d
-	 *            Graphics2D object the pathway should be drawn onto
-	 * @param area
-	 *            area that should be updated, null if you want to update the
-	 *            entire pathway
-	 * @param erase
-	 *            true if the background should be erased
+	 * in the painting process. This method will draw opaquely, meaning it will erase the background. 
+	 * @param g2d the graphics device to draw on. The method will not draw outside the clipping area. 
 	 */
-	public void draw(Graphics2D g2d, Rectangle area, boolean erase)
+	public void draw(Graphics2D g2d)
 	{
+		addScheduled();
+		cleanUp();
+
 		try
 		{
 			//save original, non-clipped, to pass on to VPathwayEvent
 			Graphics2D g2dFull = (Graphics2D)g2d.create();
 
+			// we only redraw the part within the clipping area.
+			Rectangle area = g2d.getClipBounds();
 			if (area == null)
 			{
-				area = g2d.getClipBounds();
-				if (area == null)
-				{
-					Dimension size = parent == null ? 
-							new Dimension(getVWidth(), getVHeight()) : 
-								parent.getViewportSize(); //Draw the visible area
-					area = new Rectangle(0, 0, size.width, size.height);
-				}
+				Dimension size = parent == null ? 
+						new Dimension(getVWidth(), getVHeight()) : 
+							parent.getViewportSize(); //Draw the visible area
+				area = new Rectangle(0, 0, size.width, size.height);
 			}
 
-			if (erase)
-			{
-				g2d.setColor(java.awt.Color.WHITE);
-				g2d.fillRect(area.x, area.y, area.width, area.height);
-			}
+			// erase the background
+			g2d.setColor(java.awt.Color.WHITE);
+			g2d.fillRect(area.x, area.y, area.width, area.height);
 
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -1265,6 +1246,7 @@ public class VPathway implements PathwayListener, PathwayElementListener
 
 		PathwayElement[] newObjects = newTemplate.addElements(data, mx, my);
 
+		addScheduled();
 		if (newObjects != null && newObjects.length > 0) {
 			isDragging = true;
 			dragUndoState = DRAG_UNDO_NOT_RECORDING;
@@ -1690,11 +1672,6 @@ public class VPathway implements PathwayListener, PathwayElementListener
 				}
 				break;
 		}
-		redrawDirtyRect();
-	}
-
-	public void gmmlObjectModified(PathwayElementEvent e)
-	{
 		redrawDirtyRect();
 	}
 

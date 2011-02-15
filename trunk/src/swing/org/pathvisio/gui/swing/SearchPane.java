@@ -299,7 +299,6 @@ public class SearchPane extends JPanel
 		}
 		if (interestingRect != null)
 			vpy.getWrapper().scrollTo (interestingRect.getBounds());
-		vpy.redrawDirtyRect();
 	}
 
 	private void removeHighlight() {

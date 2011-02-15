@@ -38,11 +38,11 @@ import javax.swing.JTable;
 import javax.swing.KeyStroke;
 
 import org.bridgedb.IDMapperException;
+import org.bridgedb.gui.SimpleFileFilter;
 import org.bridgedb.rdb.construct.DataDerby;
 import org.pathvisio.Revision;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.util.Resources;
-import org.pathvisio.util.swing.SimpleFileFilter;
 
 public class ApplicationWindow
 {

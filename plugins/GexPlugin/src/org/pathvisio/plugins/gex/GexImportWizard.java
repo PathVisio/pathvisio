@@ -58,6 +58,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import org.bridgedb.IDMapperException;
+import org.bridgedb.gui.SimpleFileFilter;
 import org.bridgedb.rdb.construct.DBConnector;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.data.DBConnectorSwing;
@@ -73,7 +74,6 @@ import org.pathvisio.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.util.ProgressKeeper.ProgressListener;
 import org.pathvisio.util.rowheader.RowNumberHeader;
 import org.pathvisio.util.swing.PermissiveComboBox;
-import org.pathvisio.util.swing.SimpleFileFilter;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorGradient;

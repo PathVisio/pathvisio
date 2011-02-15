@@ -455,9 +455,15 @@ public class Revision
 			<packageset dir="src/gui"/>
 			<packageset dir="src/swing"/>
 			<packageset dir="src/wikipathways"/>
+			<packageset dir="plugins/GexPlugin/src"/>
+			<packageset dir="plugins/visualization"/>
+			<packageset dir="plugins/zscore"/>
 			<packageset dir="src/wikipathways-client"/>
 			<sourcepath>
 				<pathelement location="${src.dir}/core"/>
+				<pathelement location="plugins/GexPlugin/src"/>
+				<pathelement location="plugins/visualization"/>
+				<pathelement location="plugins/zscore"/>
 				<pathelement location="${src.dir}/gui"/>
 				<pathelement location="${src.dir}/swing"/>
 				<pathelement location="${src.dir}/wikipathways"/>

@@ -53,7 +53,7 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 		this.parent = parent;
 		this.rPosition = rPosition;
 //		getRefMgr().addBiopaxListener(this);
-		refresh();
+		markDirty();
 		canvas.addVElementMouseListener(this);
 	}
 
@@ -68,7 +68,6 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 			} else if(e.getType() == VElementMouseEvent.TYPE_MOUSEEXIT) {
 				unhighlight();
 			}
-			canvas.redrawDirtyRect();
 		}
 	}
 	public void setRPosition(Point2D rPosition) {
@@ -217,11 +216,6 @@ public class Citation extends VPathwayElement implements VElementMouseListener {
 
 	protected int getZOrder() {
 		return parent.getZOrder() + 1;
-	}
-
-	protected void refresh() {
-		resetShapeCache();
-		markDirty();
 	}
 
 //	public void biopaxEvent(BiopaxEvent e) {

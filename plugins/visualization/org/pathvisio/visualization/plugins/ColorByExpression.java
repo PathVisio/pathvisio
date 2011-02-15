@@ -291,7 +291,6 @@ public class ColorByExpression extends VisualizationMethod {
 					public void callback()
 					{
 						gp.markDirty();
-						gp.getDrawing().redraw();
 					}
 				});
 			}

@@ -21,6 +21,7 @@
 		 <jar href="lib/org.bridgedb.jar"/>
 		 <jar href="lib/org.bridgedb.bio.jar"/>
 		 <jar href="lib/org.bridgedb.rdb.jar"/>
+		 <jar href="lib/org.bridgedb.gui.jar"/>
 		 <jar href="lib/org.bridgedb.rdb.construct.jar"/>
 		 <jar href="lib/swing-worker-1.1.jar"/>
 		 <jar href="lib/BrowserLauncher.jar"/>

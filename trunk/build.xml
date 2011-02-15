@@ -102,6 +102,7 @@
 		<pathelement location="${build.swing.dir}"/>
 		<fileset dir="lib">
 			<include name="org.bridgedb.rdb.construct.jar"/>
+			<include name="org.bridgedb.gui.jar"/>
 			<include name="BrowserLauncher.jar"/>
 			<include name="commons-math-2.0.jar"/>
 		</fileset>

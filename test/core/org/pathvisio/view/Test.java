@@ -160,9 +160,7 @@ public class Test extends TestCase {
     	VPathwayElement h = ((GeneProduct)vDn).getHandles()[0];
 //    	VPoint pnt = ((Line)vLi).getEnd();
 
-    	// this call is necessary for the vDn handles to get added to the drawingObjects
-    	// TODO: unsatisfactory solution...
-    	vPwy.redrawDirtyRect();
+    	vPwy.addScheduled();
     	List<VPathwayElement> elements = vPwy.getDrawingObjects();
 
     	//Test natural / z order
@@ -207,7 +205,7 @@ public class Test extends TestCase {
     	assertTrue (pwy.getDataObjects().contains(eltLi));
 
     	vPwy.removeDrawingObjects (Arrays.asList(new VPathwayElement[] { vLa, vLi } ), true);
-
+    	
     	assertFalse (vPwy.getDrawingObjects().contains(vLa));
     	assertFalse (pwy.getDataObjects().contains(eltLa));
     	assertFalse (vPwy.getDrawingObjects().contains(vLi));
@@ -217,7 +215,7 @@ public class Test extends TestCase {
     	assertTrue (pwy.getDataObjects().contains(eltDn));
 
     	vPwy.removeDrawingObjects (Arrays.asList(new VPathwayElement[] { vDn } ));
-
+    	
     	assertFalse (vPwy.getDrawingObjects().contains(vDn));
     	assertTrue (pwy.getDataObjects().contains(eltDn));
     }

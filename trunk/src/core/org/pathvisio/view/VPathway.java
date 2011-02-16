@@ -1673,7 +1673,8 @@ public class VPathway implements PathwayListener
 				}
 				break;
 		}
-		redrawDirtyRect();
+		addScheduled();
+		cleanUp();
 	}
 
     /*

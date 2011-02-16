@@ -498,13 +498,11 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		
 	}
 
-	@Override
 	public Rectangle getViewRect()
 	{
 		return container.getViewport().getViewRect();
 	}
 
-	@Override
 	public void scrollCenterTo(int x, int y)
 	{
 		int w = container.getViewport().getWidth();

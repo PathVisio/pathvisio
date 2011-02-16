@@ -37,11 +37,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.Action;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -51,6 +55,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.UIManager;
 
+import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.model.Pathway;
 import org.pathvisio.model.PathwayElement;
@@ -72,7 +77,7 @@ import org.pathvisio.view.VPathwayWrapper;
  * swing-dependent implementation of VPathway.
  */
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
-MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener {
+MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener, MouseWheelListener {
 
 	VPathway child;
 
@@ -86,6 +91,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
+		addMouseWheelListener(this);
 
 		setFocusable(true);
 		setRequestFocusEnabled(true);
@@ -206,6 +212,14 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		child.mouseMove(new SwingMouseEvent(e));
 	}
 
+	public void mouseWheelMoved(MouseWheelEvent e) {
+	    int notches = e.getWheelRotation();
+	    child.setPctZoom(child.getPctZoom() + notches * 5);
+		int comboIndex = 10;
+		DecimalFormat df = new DecimalFormat("###.#");
+		((JComboBox)((MainPanel)container.getParent().getParent()).getToolBar().getComponentAtIndex(comboIndex)).setSelectedItem(df.format(child.getPctZoom())+"%");
+	}
+	
 	public void registerKeyboardAction(KeyStroke k, Action a) {
 		super.registerKeyboardAction(a, k, WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 		//super.registerKeyboardAction(a, k, WHEN_IN_FOCUSED_WINDOW);

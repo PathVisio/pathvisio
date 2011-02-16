@@ -1622,6 +1622,7 @@ public class VPathway implements PathwayListener
 			removeDrawingObject(o, removeFromModel);
 		}
 		selection.fitToSelection();
+		cleanUp();
 	}
 
 	public void removeDrawingObject(VPathwayElement toRemove,
@@ -1638,7 +1639,7 @@ public class VPathway implements PathwayListener
 					data.remove(((Graphics) toRemove).getPathwayElement());
 				}
 			}
-			redrawDirtyRect();
+			cleanUp();
 		}
 	}
 
@@ -1741,7 +1742,7 @@ public class VPathway implements PathwayListener
 		}
 		if (result.size() > 0)
 		{
-			getWrapper().copyToClipboard(getPathwayModel(), result);
+			if (parent != null) parent.copyToClipboard(getPathwayModel(), result);
 		}
 	}
 
@@ -2589,7 +2590,13 @@ public class VPathway implements PathwayListener
 		disposed = true;
 	}
 
-	private void addScheduled()
+	/**
+	 * When adding elements to a pathway, they are not added immediately
+	 * but placed in a temporary array. This to prevent concurrent 
+	 * modification of the main elements array. 
+	 * This method adds the elements that are scheduled to be added.
+	 */
+	void addScheduled()
 	{
 		for (VPathwayElement elt : toAdd)
 		{

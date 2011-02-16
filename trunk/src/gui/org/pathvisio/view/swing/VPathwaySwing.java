@@ -214,7 +214,21 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
 	    int notches = e.getWheelRotation();
-	    child.setPctZoom(child.getPctZoom() + notches * 5);
+	    //child.setPctZoom(child.getPctZoom() + notches * 5);	
+	    int oldx = container.getViewport().getViewPosition().x;
+	    int oldy = container.getViewport().getViewPosition().y;
+	    int newx, newy;
+	    if(notches > 0) {
+	    	child.setPctZoom(child.getPctZoom() * 21 / 20);
+	    	newx = oldx + e.getPoint().x / 20; 
+	    	newy = oldy + e.getPoint().y / 20; 
+	    } else { 
+	    	child.setPctZoom(child.getPctZoom() * 20 / 21);
+	    	newx = oldx - e.getPoint().x / 21; 
+	    	newy = oldy - e.getPoint().y / 21; 
+	    }
+	    container.getViewport().setViewPosition(new Point (newx, newy));
+	    
 		int comboIndex = 10;
 		DecimalFormat df = new DecimalFormat("###.#");
 		((JComboBox)((MainPanel)container.getParent().getParent()).getToolBar().getComponentAtIndex(comboIndex)).setSelectedItem(df.format(child.getPctZoom())+"%");

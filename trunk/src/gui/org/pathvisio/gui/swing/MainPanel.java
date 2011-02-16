@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +98,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	private ObjectsPane objectsPane;
 
 	private JTable propertyTable;
-
+	private JComboBox zoomCombo;
 	protected BackpagePane backpagePane;
 	protected BackpageTextProvider bpt;
 
@@ -263,6 +264,17 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		this(swingEngine, null);
 	}
 
+	/** update the value in the zoom combo to the actual zoom percentage of the active pathway */
+	public void updateZoomCombo()
+	{
+		VPathway vpwy = swingEngine.getEngine().getActiveVPathway();
+		if (vpwy != null)
+		{
+			DecimalFormat df = new DecimalFormat("###.#");
+			zoomCombo.setSelectedItem(df.format(vpwy.getPctZoom())+"%");
+		}
+	}
+	
 	/**
 	 * {@link ActionListener} for the Zoom combobox on the toolbar. The user can select one
 	 * of the predefined ZoomActions (50%, 100%, 200%, Zoom to fit, etc.),
@@ -280,9 +292,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				// after the selection of "fit to window" the new calculated zoom 
 				// percentage is displayed 
 				if(s instanceof CommonActions.ZoomToFitAction) {
-					double pct = swingEngine.getEngine().getActiveVPathway().getPctZoom();
-					double rpct = Math.round(pct);
-					combo.setSelectedItem(rpct + "%");
+					updateZoomCombo();
 				}
 			} else if (s instanceof String) {
 				String zs = (String) s;
@@ -314,12 +324,12 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		// zoom drop-down
 		addToToolbar(new JLabel("Zoom:", JLabel.LEFT));
-		JComboBox combo = new JComboBox(actions.zoomActions);
-		combo.setMaximumSize(combo.getPreferredSize());
-		combo.setEditable(true);
-		combo.setSelectedIndex(5); // 100%
-		combo.addActionListener(new ZoomComboListener());
-		addToToolbar(combo, TB_GROUP_SHOW_IF_VPATHWAY);
+		zoomCombo = new JComboBox(actions.zoomActions);
+		zoomCombo.setMaximumSize(zoomCombo.getPreferredSize());
+		zoomCombo.setEditable(true);
+		zoomCombo.setSelectedIndex(5); // 100%
+		zoomCombo.addActionListener(new ZoomComboListener());
+		addToToolbar(zoomCombo, TB_GROUP_SHOW_IF_VPATHWAY);
 		tb.addSeparator();
 		
 		// define the drop-down menu for data nodes 

@@ -471,11 +471,27 @@ public class VPathway implements PathwayListener
 	 */
 	public void setPctZoom(double pctZoomFactor)
 	{
-		zoomFactor = pctZoomFactor / 100.0;
+		zoomFactor = pctZoomFactor / 100.0;		
 		for(VPathwayElement vpe : drawingObjects) {
 			vpe.zoomChanged();
 		}
 		if (parent != null) parent.resized();
+	}
+
+	public void centeredZoom(double pctZoomFactor)
+	{
+		if (parent != null)
+		{
+			Rectangle vr = parent.getViewRect();
+			double mx = mFromV(vr.getCenterX());
+			double my = mFromV(vr.getCenterY());
+			Logger.log.info ("center: " + mx + ", " + my);
+			setPctZoom(pctZoomFactor);
+			parent.scrollCenterTo(
+					(int)vFromM(mx), (int)vFromM(my));
+		}
+		else
+			setPctZoom(pctZoomFactor);
 	}
 
 	/**
@@ -486,7 +502,7 @@ public class VPathway implements PathwayListener
 	{
 		double result;
 		Dimension drawingSize = new Dimension (getVWidth(), getVHeight());
-		Dimension viewportSize = getWrapper().getViewportSize();
+		Dimension viewportSize = getWrapper().getViewRect().getSize();
 		result = (int) Math.min(getPctZoom()
 				* (double) viewportSize.width / drawingSize.width,
 				getPctZoom() * (double) viewportSize.height
@@ -910,7 +926,7 @@ public class VPathway implements PathwayListener
 			{
 				Dimension size = parent == null ? 
 						new Dimension(getVWidth(), getVHeight()) : 
-							parent.getViewportSize(); //Draw the visible area
+							parent.getViewRect().getSize(); //Draw the visible area
 				area = new Rectangle(0, 0, size.width, size.height);
 			}
 

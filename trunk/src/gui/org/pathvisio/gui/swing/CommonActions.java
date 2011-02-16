@@ -56,6 +56,7 @@ import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.Template;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
+import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.ViewActions;
 
 /**
@@ -438,7 +439,7 @@ public class CommonActions implements ApplicationEventListener {
 		public void actionPerformed(ActionEvent e) {
 			VPathway vPathway = engine.getActiveVPathway();
 			if(vPathway != null) {
-				vPathway.setPctZoom(zoomFactor);
+				vPathway.centeredZoom(zoomFactor);
 			}
 		}
 

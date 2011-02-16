@@ -34,7 +34,7 @@ public abstract interface VPathwayWrapper
 {
 	public void redraw();
 	public void redraw(Rectangle r);
-	public Dimension getViewportSize();
+	public Rectangle getViewRect();
 	
 	/** signal to indicate that the pathway changed size */
 	public void resized();
@@ -48,6 +48,7 @@ public abstract interface VPathwayWrapper
 
 	/** make sure r is visible */
 	public void scrollTo(Rectangle r);
+	public void scrollCenterTo(int x, int y);	
 
 	/** called by VPathway.dispose() */
 	public void dispose();

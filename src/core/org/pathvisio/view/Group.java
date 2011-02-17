@@ -278,7 +278,6 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 			}
 			if(old != mouseover) {
 				markDirty();
-				canvas.redrawDirtyRect();
 			}
 		}
 	}

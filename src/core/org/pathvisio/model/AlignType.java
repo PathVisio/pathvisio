@@ -19,6 +19,7 @@ package org.pathvisio.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/** possible values for the (horizontal) text alignment property */
 public enum AlignType 
 { 
 	LEFT("Left"), CENTER("Center"), RIGHT("Right");

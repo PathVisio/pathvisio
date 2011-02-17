@@ -443,8 +443,8 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		String base = e.getName();
     	Element graphics = e.getChild("Graphics", e.getNamespace());
     	IShape s= ShapeRegistry.fromName(getAttribute(base + ".Graphics", "ShapeType", graphics));
-    	if (ShapeType.deprecatedMap.containsKey(s)){
-    		s = ShapeType.deprecatedMap.get(s);
+    	if (ShapeType.DEPRECATED_MAP.containsKey(s)){
+    		s = ShapeType.DEPRECATED_MAP.get(s);
     		o.setShapeType(s);
        		if (s.equals(ShapeType.ROUNDED_RECTANGLE) 
        				|| s.equals(ShapeType.OVAL)){

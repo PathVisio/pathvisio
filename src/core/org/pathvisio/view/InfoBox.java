@@ -130,7 +130,6 @@ public class InfoBox extends Graphics {
 			sizeX = newSizeX;
 			sizeY = newSizeY;
 			markDirty();
-			canvas.redrawDirtyRect();
 		}
 	}
 

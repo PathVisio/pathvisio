@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- comments on everything -->
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="New Pathway" Version="20100331">
+  <Comment Source="test">a</Comment>
+  <Comment>Type your comment here</Comment>
+  <Graphics BoardWidth="122.1" BoardHeight="58.3" />
+  <DataNode TextLabel="GeneProduct" GraphId="a8a81" Type="GeneProduct">
+    <Comment>c</Comment>
+    <Comment>d</Comment>
+    <Comment Source="unknown">Type your comment here</Comment>
+    <Graphics CenterX="69.0" CenterY="42.75" Width="84.0" Height="20.5" ZOrder="32768" FontSize="10" Valign="Middle" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <Line GraphId="b7b72">
+    <Comment Source="manual">This is a line</Comment>
+    <Graphics ConnectorType="Elbow" ZOrder="12288" LineThickness="1.0">
+      <Point X="224.0" Y="107.0" />
+      <Point X="319.0" Y="69.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

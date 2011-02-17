@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Extra attribute on Pathway/Graphics-->
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Fail 6" Version="20110217">
+  <Graphics BoardWidth="125.0" BoardHeight="71.0" ExtraAttribute=""/>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

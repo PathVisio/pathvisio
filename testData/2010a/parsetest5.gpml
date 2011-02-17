@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Sax Test 5" Version="20100331">
+  <Graphics BoardWidth="290.4" BoardHeight="178.75" />
+  <DataNode TextLabel="Pyruvate" GraphId="a8a81" Type="Metabolite">
+    <Graphics CenterX="69.0" CenterY="42.75" Width="84.0" Height="20.5" ZOrder="32768" FontSize="10"/>
+    <Xref Database="EC Number" ID="" />
+  </DataNode>
+  <DataNode TextLabel="" GraphId="ec886" Type="GeneProduct">
+    <Graphics CenterX="168.0" CenterY="124.25" Width="62.0" Height="43.5" ZOrder="32767" FontSize="10" Valign="Middle" Align="Left" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="Fructose" GraphId="f7f5c">
+    <Graphics CenterX="64.0" CenterY="124.5" Width="76.0" Height="61.0" ZOrder="32768" FontName="Comic Sans MS" FontWeight="Bold" FontSize="12" Valign="Middle" />
+    <Xref Database="" ID="id" />
+  </DataNode>
+  <DataNode TextLabel="multi-&#xA;line" GraphId="fbbac" Type="GeneProduct">
+    <Graphics CenterX="213.5" CenterY="53.5" Width="101.0" Height="37.0" ZOrder="32768" FillColor="0000ff" FontSize="10" Valign="Middle" ShapeType="RoundedRectangle" LineStyle="Broken" />
+    <Xref Database="Entrez Gene" ID="3643" />
+  </DataNode>
+  <State GraphRef="f7f5c" TextLabel="" GraphId="be269">
+    <Graphics RelX="-1.0" RelY="1.0" Width="15.0" Height="15.0" ShapeType="Oval" />
+    <Xref Database="Entrez Gene" ID="1234" />
+  </State>
+  <State GraphRef="f7f5c" TextLabel="P" GraphId="ca5fa">
+    <Graphics RelX="1.0" RelY="1.0" Width="15.0" Height="15.0" />
+    <Xref Database="" ID="" />
+  </State>
+  <InfoBox CenterX="12.0" CenterY="7.0" />
+</Pathway>
+

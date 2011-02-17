@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="" Data-Source="GenMAPP 2.0" Version="20060601">
+  <Comment Source="GenMAPP notes"></Comment>
+  <Comment Source="GenMAPP remarks"></Comment>
+  <Graphics BoardWidth="396.9166666666667" BoardHeight="355.1166666666667" />
+  <Label TextLabel="Default" GraphId="e2a">
+    <Graphics CenterX="76.66666666666667" CenterY="30.033333333333335" Width="59.333333333333336" Height="19.0" ZOrder="28672" FillColor="ffffff" FontWeight="Bold" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Regular" GraphId="cc0">
+    <Graphics CenterX="76.66666666666667" CenterY="76.66666666666667" Width="59.333333333333336" Height="18.0" ZOrder="28672" FillColor="ffffff" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Italic" GraphId="e7a">
+    <Graphics CenterX="76.66666666666667" CenterY="123.36666666666666" Width="38.333333333333336" Height="19.0" ZOrder="28672" FillColor="ffffff" FontStyle="Italic" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Bold Italic" GraphId="c51">
+    <Graphics CenterX="83.33333333333333" CenterY="223.33333333333334" Width="78.33333333333333" Height="18.0" ZOrder="28672" FillColor="ffffff" FontWeight="Bold" FontStyle="Italic" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Bold" GraphId="bb6">
+    <Graphics CenterX="76.66666666666667" CenterY="173.33333333333334" Width="41.333333333333336" Height="19.0" ZOrder="28672" FillColor="ffffff" FontWeight="Bold" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Label" GraphId="e6c">
+    <Graphics CenterX="305.0724637681155" CenterY="28.364389233954448" Width="47.333333333333336" Height="19.0" ZOrder="28672" FillColor="ffffff" FontWeight="Bold" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Regular Strikeout" GraphId="f1e">
+    <Graphics CenterX="193.33333333333334" CenterY="30.0" Width="125.33333333333333" Height="18.0" ZOrder="28672" FillColor="ffffff" FontStrikethru="Strikethru" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Italic Strikeout" GraphId="aa5">
+    <Graphics CenterX="183.33333333333334" CenterY="73.33333333333333" Width="105.33333333333333" Height="19.0" ZOrder="28672" FillColor="ffffff" FontStyle="Italic" FontStrikethru="Strikethru" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Bold Strikeout" GraphId="b97">
+    <Graphics CenterX="193.33333333333334" CenterY="120.03333333333333" Width="114.33333333333333" Height="19.0" ZOrder="28672" FillColor="ffffff" FontWeight="Bold" FontStrikethru="Strikethru" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Bold Italic Strikeout" GraphId="aa3">
+    <Graphics CenterX="213.33333333333334" CenterY="176.66666666666666" Width="151.33333333333334" Height="18.0" ZOrder="28672" FillColor="ffffff" FontWeight="Bold" FontStyle="Italic" FontStrikethru="Strikethru" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Regular Strikeout Underline" GraphId="b33">
+    <Graphics CenterX="260.0" CenterY="260.0" Width="195.33333333333334" Height="18.0" ZOrder="28672" FillColor="ffffff" FontDecoration="Underline" FontStrikethru="Strikethru" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Regular Underline" GraphId="c21">
+    <Graphics CenterX="83.33333333333333" CenterY="256.6666666666667" Width="129.33333333333334" Height="18.0" ZOrder="28672" FillColor="ffffff" FontDecoration="Underline" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Bold underline" GraphId="f2d">
+    <Graphics CenterX="80.0" CenterY="306.6666666666667" Width="117.33333333333333" Height="19.0" ZOrder="28672" FillColor="ffffff" FontWeight="Bold" FontDecoration="Underline" FontSize="12" Valign="Middle" />
+  </Label>
+  <Label TextLabel="Bold strikeout underline" GraphId="bcf">
+    <Graphics CenterX="266.6666666666667" CenterY="313.3333333333333" Width="188.33333333333334" Height="19.0" ZOrder="28672" FillColor="ffffff" FontWeight="Bold" FontDecoration="Underline" FontStrikethru="Strikethru" FontSize="12" Valign="Middle" />
+  </Label>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+  <Legend CenterX="0.0" CenterY="113.4" />
+</Pathway>
+

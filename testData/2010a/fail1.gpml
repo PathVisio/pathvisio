@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fail: line must have two or more points -->
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Fail 1" Version="20100331">
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="224.0" Y="107.0" />
+    </Graphics>
+  </Line>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

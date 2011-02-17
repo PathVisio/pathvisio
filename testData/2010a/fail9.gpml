@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- float value where integer expected for Pathway/DataNode/Graphics attribute ZOrder -->
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Fail 9" Version="20110217">
+  <Graphics BoardWidth="125.0" BoardHeight="71.0" />
+  <DataNode TextLabel="Insrr" GraphId="c1d06" Type="GeneProduct">
+    <Graphics CenterX="55.0" CenterY="31.0" Width="80.0" Height="20.0" ZOrder="10.0" FontSize="10" Valign="Middle" />
+    <Xref Database="Ensembl Mouse" ID="ENSMUSG00000005640" />
+  </DataNode>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>

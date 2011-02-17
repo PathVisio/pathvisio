@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fail: ID type must start with alphanumeric-->
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Fail 3" Version="20100331">
+  <Label TextLabel="Label 1" GraphId="12">
+    <Graphics CenterX="70" CenterY="30" Width="60" Height="19.0" ZOrder="28672"/>
+  </Label>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>

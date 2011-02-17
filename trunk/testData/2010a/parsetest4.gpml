@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Sax Test 4" Version="20100331">
+  <Graphics BoardWidth="619.3" BoardHeight="346.5" />
+  <DataNode TextLabel="GeneProduct" GraphId="b6665" Type="GeneProduct">
+    <Graphics CenterX="523.0" CenterY="90.0" Width="80.0" Height="20.0" ZOrder="32768" FontSize="10" Valign="Middle" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <Line GraphId="id37eeec26">
+    <Graphics ZOrder="12288" LineStyle="Broken" LineThickness="1.0">
+      <Point X="229.0" Y="173.0" />
+      <Point X="304.0" Y="183.0" />
+    </Graphics>
+  </Line>
+  <Line GraphId="ida7a6255a">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="180.0" Y="97.0" />
+      <Point X="112.0" Y="57.0" ArrowHead="Arrow" />
+      <Anchor Position="0.4" Shape="None" />
+      <Anchor Position="0.6" Shape="Circle" />
+    </Graphics>
+  </Line>
+  <Line GraphId="idb5761669">
+    <Graphics ConnectorType="Elbow" ZOrder="12288" LineThickness="1.0">
+      <Point X="224.0" Y="71.0" />
+      <Point X="319.0" Y="33.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="64.0" Y="173.0" ArrowHead="Arrow" />
+      <Point X="164.0" Y="173.0" />
+    </Graphics>
+  </Line>
+  <Line GraphId="a3686">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="56.0" Y="255.0" ArrowHead="TBar" />
+      <Point X="156.0" Y="255.0" ArrowHead="Receptor" />
+    </Graphics>
+  </Line>
+  <Line GraphId="d6034">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="59.249481201171875" Y="193.0" ArrowHead="LigandSquare" />
+      <Point X="159.24948120117188" Y="193.0" ArrowHead="ReceptorSquare" />
+    </Graphics>
+  </Line>
+  <Line GraphId="c4eb9">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="63.5" Y="233.0" ArrowHead="LigandRound" />
+      <Point X="163.5" Y="233.0" ArrowHead="ReceptorRound" />
+    </Graphics>
+  </Line>
+  <Line GraphId="a6d48">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="63.75006103515625" Y="213.0" ArrowHead="mim-necessary-stimulation" />
+      <Point X="163.75006103515625" Y="213.0" ArrowHead="mim-binding" />
+    </Graphics>
+  </Line>
+  <Line GraphId="ec31c">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="63.75006103515625" Y="275.0" ArrowHead="mim-conversion" />
+      <Point X="163.75006103515625" Y="275.0" ArrowHead="mim-stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="dfcd3">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="63.75006103515625" Y="295.0" ArrowHead="mim-modification" />
+      <Point X="163.75006103515625" Y="295.0" ArrowHead="mim-catalysis" />
+    </Graphics>
+  </Line>
+  <Line GraphId="c89d2">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="63.75006103515625" Y="315.0" ArrowHead="mim-cleavage" />
+      <Point X="163.75006103515625" Y="315.0" ArrowHead="mim-inhibition" />
+    </Graphics>
+  </Line>
+  <Line GraphId="deee9">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="47.0" Y="66.0" />
+      <Point X="77.0" Y="96.0" />
+    </Graphics>
+  </Line>
+  <Line GraphId="b3573">
+    <Graphics ZOrder="12288" LineThickness="0.5">
+      <Point X="231.0" Y="189.0" />
+      <Point X="295.0" Y="189.0" />
+    </Graphics>
+  </Line>
+  <Line GraphId="afd19">
+    <Graphics ZOrder="12288" LineThickness="1.5">
+      <Point X="232.0" Y="207.0" />
+      <Point X="296.0" Y="207.0" />
+    </Graphics>
+  </Line>
+  <Line GraphId="ef9d5">
+    <Graphics ZOrder="12288" LineThickness="1.0" Color="ff0000">
+      <Point X="232.0" Y="220.0" />
+      <Point X="296.0" Y="220.0" />
+    </Graphics>
+  </Line>
+  <Line GraphId="d3f58">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="444.0" Y="89.0" />
+      <Point X="376.0" Y="49.0" ArrowHead="Arrow" />
+      <Anchor Position="0.4" Shape="None" GraphId="f68db" />
+    </Graphics>
+  </Line>
+  <Line GraphId="id123456789">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="396.0" Y="100.0" />
+      <Point X="416.8" Y="73.0" GraphRef="f68db" RelX="0.0" RelY="0.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line GraphId="e8ff5">
+    <Graphics ConnectorType="Elbow" ZOrder="12288" LineThickness="1.0">
+      <Point X="523.0" Y="100.0" GraphRef="b6665" RelX="0.0" RelY="1.0" />
+      <Point X="568.5" Y="136.0" />
+      <Point X="614.0" Y="89.0" />
+      <Point X="568.5" Y="42.0" />
+      <Point X="523.0" Y="80.0" GraphRef="b6665" RelX="0.0" RelY="-1.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Line GraphId="c42c6">
+    <Graphics ConnectorType="Curved" ZOrder="12288" LineThickness="1.0">
+      <Point X="225.0" Y="123.0" />
+      <Point X="320.0" Y="85.0" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

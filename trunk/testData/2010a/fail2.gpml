@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fail: InfoBox must be present-->
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Fail 1" Version="20100331">
+</Pathway>
+

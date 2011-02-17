@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Groups" Version="20100705">
+  <Graphics BoardWidth="287.1" BoardHeight="198.0" />
+  <DataNode TextLabel="GeneProduct" GraphId="b5733" Type="GeneProduct" GroupRef="fb6cc">
+    <Graphics CenterX="79.0" CenterY="99.0" Width="80.0" Height="20.0" ZOrder="32768" FontSize="10" Valign="Middle" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="GeneProduct" GraphId="af2ec" Type="GeneProduct" GroupRef="fb6cc">
+    <Graphics CenterX="79.0" CenterY="79.0" Width="80.0" Height="20.0" ZOrder="32768" FontSize="10" Valign="Middle" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <DataNode TextLabel="GeneProduct" GraphId="fd2b8" Type="GeneProduct">
+    <Graphics CenterX="221.0" CenterY="76.0" Width="80.0" Height="20.0" ZOrder="32768" FontSize="10" Valign="Middle" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="181.0" Y="76.0" GraphRef="fd2b8" RelX="-1.0" RelY="0.0" />
+      <Point X="127.0" Y="75.0" GraphRef="d8370" RelX="1.0" RelY="-0.5" ArrowHead="Arrow" />
+    </Graphics>
+  </Line>
+  <Label TextLabel="Label" GraphId="a8d1a" GroupRef="e79b2">
+    <Graphics CenterX="78.0" CenterY="162.0" Width="80.0" Height="20.0" ZOrder="28672" FillColor="ffffff" FontSize="10" Valign="Middle" />
+  </Label>
+  <Group GroupId="fb6cc" GraphId="d8370" Style="Group" />
+  <Group GroupId="e79b2" GraphId="d8371" Style="Complex" GroupRef="fb6cc" TextLabel="Blah">
+    <Comment>Blah comment</Comment>
+    <BiopaxRef>a7a</BiopaxRef>
+  </Group>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+  <Biopax>
+    <bp:PublicationXref xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:id="a7a">
+      <bp:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">18651794</bp:ID>
+      <bp:DB rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PubMed</bp:DB>
+      <bp:TITLE rdf:datatype="http://www.w3.org/2001/XMLSchema#string">WikiPathways: pathway editing for the people.</bp:TITLE>
+      <bp:SOURCE rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PLoS Biol</bp:SOURCE>
+      <bp:YEAR rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2008</bp:YEAR>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Pico AR</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Kelder T</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">van Iersel MP</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Hanspers K</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Conklin BR</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Evelo C</bp:AUTHORS>
+    </bp:PublicationXref>
+  </Biopax>
+</Pathway>
+

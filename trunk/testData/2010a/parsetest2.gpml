@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Just Pathway, as many attributes as possible -->
+<Pathway xmlns="http://genmapp.org/GPML/2010a" 
+	Name="Test 2" 
+	Version="20100401"
+	Organism="Caenorhabditis elegans"
+	Data-Source="Manual"
+	Author="Martijn van Iersel"
+	Maintainer="Thomas Kelder"
+	Email="a@b.com"
+	License="CC-BY"
+	Last-Modified="20100618"
+	BiopaxRef="dummyref">
+  <Graphics BoardWidth="122.1" BoardHeight="58.3" />
+  <InfoBox CenterX="19.0" CenterY="31.0" />
+</Pathway>

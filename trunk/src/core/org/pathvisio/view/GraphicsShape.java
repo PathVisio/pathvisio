@@ -30,8 +30,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.PathwayElement;

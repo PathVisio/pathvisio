@@ -83,26 +83,26 @@ public enum ShapeType implements IShape
 	;
 
 	//This map is used to track deprecated shapetypes for conversion and exclusion from gui
-	public static final Map<ShapeType, ShapeType> deprecatedMap = new HashMap<ShapeType, ShapeType>();
-	private static final List<ShapeType> visibleValues = new ArrayList<ShapeType>();
+	public static final Map<ShapeType, ShapeType> DEPRECATED_MAP = new HashMap<ShapeType, ShapeType>();
+	private static final List<ShapeType> VISIBLE_VALUES = new ArrayList<ShapeType>();
 	static { 
-		deprecatedMap.put(CELL, ROUNDED_RECTANGLE);
-		deprecatedMap.put(ORGANELLE, ROUNDED_RECTANGLE);
-		deprecatedMap.put(MEMBRANE, ROUNDED_RECTANGLE);
-		deprecatedMap.put(CELLA, OVAL);
-		deprecatedMap.put(NUCLEUS, OVAL);
-		deprecatedMap.put(ORGANA, OVAL);
-		deprecatedMap.put(ORGANB, OVAL);
-		deprecatedMap.put(ORGANC, OVAL);
-		deprecatedMap.put(VESICLE, OVAL);   	
-		deprecatedMap.put(PROTEINB, HEXAGON);
-		deprecatedMap.put(RIBOSOME, HEXAGON);
+		DEPRECATED_MAP.put(CELL, ROUNDED_RECTANGLE);
+		DEPRECATED_MAP.put(ORGANELLE, ROUNDED_RECTANGLE);
+		DEPRECATED_MAP.put(MEMBRANE, ROUNDED_RECTANGLE);
+		DEPRECATED_MAP.put(CELLA, OVAL);
+		DEPRECATED_MAP.put(NUCLEUS, OVAL);
+		DEPRECATED_MAP.put(ORGANA, OVAL);
+		DEPRECATED_MAP.put(ORGANB, OVAL);
+		DEPRECATED_MAP.put(ORGANC, OVAL);
+		DEPRECATED_MAP.put(VESICLE, OVAL);   	
+		DEPRECATED_MAP.put(PROTEINB, HEXAGON);
+		DEPRECATED_MAP.put(RIBOSOME, HEXAGON);
 		
 		// prune from list for gui
 		for (ShapeType s : values())
 		{
-			if (!deprecatedMap.containsKey(s)){
-				visibleValues.add(s);
+			if (!DEPRECATED_MAP.containsKey(s)){
+				VISIBLE_VALUES.add(s);
 			}
 		}
 	}
@@ -157,18 +157,18 @@ public enum ShapeType implements IShape
 
 	static public String[] getVisibleNames()
 	{
-		String[] result = new String[visibleValues.size()];
+		String[] result = new String[VISIBLE_VALUES.size()];
 
-		for (int i = 0; i < visibleValues.size(); ++i)
+		for (int i = 0; i < VISIBLE_VALUES.size(); ++i)
 		{
-			result[i] = visibleValues.get(i).getName();
+			result[i] = VISIBLE_VALUES.get(i).getName();
 		}
 		return result;
 	}
 
 	static public ShapeType[] getVisibleValues()
 	{
-		return visibleValues.toArray(new ShapeType[0]);
+		return VISIBLE_VALUES.toArray(new ShapeType[0]);
 	}
 
 	public String toString()

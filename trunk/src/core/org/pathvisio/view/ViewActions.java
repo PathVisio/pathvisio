@@ -458,7 +458,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 						} else {
 							removeWaypoint((MLine)l.getPathwayElement());
 						}
-						vPathway.redrawDirtyRect();
 					}
 				}
 			}
@@ -468,7 +467,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			//TODO: Instead of removing the last point, it would be better to adjust the context
 			//menu to remove a specific point (like with anchors). This could be done by making 
 			//VPoint extend VPathwayElement so we can directly get the selected waypoint here.
-			ArrayList<MPoint> newPoints = new ArrayList<MPoint>(l.getMPoints());
+			List<MPoint> newPoints = new ArrayList<MPoint>(l.getMPoints());
 			newPoints.remove(newPoints.size() - 2);
 			l.setMPoints(newPoints);
 		}
@@ -531,7 +530,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 						l.gdata.addMAnchor(0.4);
 					}
 				}
-				vPathway.redrawDirtyRect();
 			}
 		}
 	}
@@ -559,7 +557,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 						elt.setGeneratedGraphId();
 					}
 				}
-				vPathway.redrawDirtyRect();
 			}			
 		}
 	}
@@ -582,7 +579,6 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 						toRemove.add(g);
 					}
 				}
-				vPathway.redrawDirtyRect();
 			}			
 			if (toRemove.size() > 0)
 			{
@@ -870,10 +866,12 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 						}
 					}
 				}
-			vPathway.redrawDirtyRect();
 		}
 	}
 	
+	/**
+	 * Action for toggling bold or italic flags on selected elements.
+	 */
 	public static class TextFormattingAction extends AbstractAction 
 	{	
 		Engine engine;

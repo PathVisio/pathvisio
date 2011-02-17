@@ -16,7 +16,6 @@
 //
 package org.pathvisio.view;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;

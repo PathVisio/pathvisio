@@ -56,7 +56,6 @@ import org.pathvisio.view.SelectionBox;
 import org.pathvisio.view.Template;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.view.ViewActions;
 
 /**

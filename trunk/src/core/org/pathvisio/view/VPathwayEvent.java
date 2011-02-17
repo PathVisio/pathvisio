@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class VPathwayEvent extends EventObject {
 
+	/** Possible event types */
 	public static enum VPathwayEventType
 	{
 		ELEMENT_ADDED,

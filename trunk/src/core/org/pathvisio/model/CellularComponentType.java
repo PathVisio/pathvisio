@@ -19,6 +19,10 @@ package org.pathvisio.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/** Possible values for the cellular component property. 
+ * These values describe the biological meaning of an element, it does
+ * not have to correlate with a particular appearance.
+ */
 public enum CellularComponentType 
 { 
 	NONE("None"), CELL("Cell"), NUCLEUS("Nucleus"), MITOCHONDRIA("Mitochondria"), 

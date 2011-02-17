@@ -19,8 +19,6 @@ package org.pathvisio.model;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 
-import org.pathvisio.model.ConnectorShape.Segment;
-
 /**
  * Abstract connectorshape implementation that deals
  * with cached shapes, segments and waypoints.

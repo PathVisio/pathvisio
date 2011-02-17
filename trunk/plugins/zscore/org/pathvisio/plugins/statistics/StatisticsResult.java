@@ -41,6 +41,7 @@ public class StatisticsResult
 	File pwDir;
 	CachedData gex;
 	IDMapper gdb;
+	String methodDesc;
 
 	public void save (File f) throws IOException
 	{
@@ -51,8 +52,9 @@ public class StatisticsResult
 		out.println ("Pathway directory: " + pwDir);
 		out.println ("Gene database: " + gdb);
 		out.println ("Criterion: " + crit.getExpression());
-		out.println ("Rows in data (N): " + bigN);
-		out.println ("Rows meeting criterion (R): " + bigR);
+		out.println (methodDesc);
+		out.println ("Total data points (N): " + bigN);
+		out.println ("Data points meeting criterion (R): " + bigR);
 		out.println();
 
 		stm.printData(out);

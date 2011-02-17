@@ -94,6 +94,9 @@ public class ZScoreCalculator
 		 * dataMap should already have been initialized
 		 */
 		public abstract StatisticsPathwayResult calculatePathway(PathwayInfo pi);
+		
+		
+		public abstract String getDescription();
 	}
 
 	/**
@@ -277,6 +280,9 @@ public class ZScoreCalculator
 					cPwyMeasured, cPwyPositive, cPwyTotal, zscore);
 			return spr;
 		}
+		
+		public String getDescription() 
+		{	return "Calculation method: data-centric. Calculations are performed before mapping data to pathways."; }
 	}
 
 	/**
@@ -360,6 +366,9 @@ public class ZScoreCalculator
 			}
 		}
 
+		public String getDescription() 
+		{	return "Calculation method: pathway-centric. Calculations are performed after mapping data to pathways."; }
+
 		/**
 		 * calculate bigN and bigR. This only takes the part of the dataset
 		 * that maps to pathways, which leads to a calculation very similar to
@@ -419,6 +428,8 @@ public class ZScoreCalculator
 
 	private StatisticsResult calculate(Method m) throws IDMapperException
 	{
+		result.methodDesc = m.getDescription();
+
 		// read all pathways
 		if (pk != null)
 		{

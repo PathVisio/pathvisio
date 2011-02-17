@@ -50,6 +50,7 @@ import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.gui.swing.PreferencesDlg;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.gui.swing.SwingEngine;
@@ -105,6 +106,14 @@ public class StatisticsPlugin implements Plugin
 
 		Logger.log.info ("Initializing statistics plugin");
 		desktop.registerMenuAction ("Data", statisticsAction);
+		
+		PreferencesDlg pdlg = desktop.getPreferencesDlg();
+		
+		pdlg.addPanel("Statistics plugin", pdlg.builder().
+				booleanField(StatisticsPreference.MAPPFINDER_COMPATIBILITY, 
+						"Perform statistical calculation after mapping rows to pathways (similar to MAPPFinder)")
+				.build()
+				);
 	}
 
 	public void done() {};

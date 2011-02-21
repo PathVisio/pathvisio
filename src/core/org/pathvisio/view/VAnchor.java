@@ -211,7 +211,4 @@ public class VAnchor extends VPathwayElement implements LinkProvider, Adjustable
 		return line.getPathwayElement().getZOrder() + 1;
 	}
 	
-	public double getVWidth() { return vFromM(my-mx);  }
-
-	public double getVHeight() { return 0;  }
 }

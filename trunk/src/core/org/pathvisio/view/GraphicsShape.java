@@ -37,6 +37,7 @@ import org.pathvisio.model.PathwayElementEvent;
 import org.pathvisio.model.ShapeType;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.view.Handle.Freedom;
 import org.pathvisio.view.LinAlg.Point;
 import org.pathvisio.view.LinkAnchor.LinkAnchorSet;
 
@@ -88,9 +89,9 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		}
 		else if (this instanceof State)
 		{
-			handleNE = new Handle(Handle.Freedom.FREER, this, this);
+			handleNE = new Handle(Handle.Freedom.NEGFREE, this, this);
 			handleSE = new Handle(Handle.Freedom.FREE, this, this);
-			handleSW = new Handle(Handle.Freedom.FREER, this, this);
+			handleSW = new Handle(Handle.Freedom.NEGFREE, this, this);
 			handleNW = new Handle(Handle.Freedom.FREE, this, this);
 			
 			handleNE.setAngle(315);
@@ -111,9 +112,9 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			handleS = new Handle(Handle.Freedom.Y, this, this);
 			handleW = new Handle(Handle.Freedom.X, this, this);
 
-			handleNE = new Handle(Handle.Freedom.FREER, this, this);
+			handleNE = new Handle(Handle.Freedom.NEGFREE, this, this);
 			handleSE = new Handle(Handle.Freedom.FREE, this, this);
-			handleSW = new Handle(Handle.Freedom.FREER, this, this);
+			handleSW = new Handle(Handle.Freedom.NEGFREE, this, this);
 			handleNW = new Handle(Handle.Freedom.FREE, this, this);
 
 			handleN.setAngle(270);
@@ -226,7 +227,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 
 			double rotation = Math.atan2(cur.y, cur.x);
 			if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
-					canvas.isSnapToAngle())
+					canvas.isSnapModifierPressed())
 			{
 				//Snap the rotation angle
 				double snapStep = PreferenceManager.getCurrent().getInt(
@@ -235,6 +236,40 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 			}
 			setRotation (rotation);
 			return;
+		}
+		
+		/* if point is restricted to a certain range of movement,
+		 * project handle to the closest point in that range.
+		 * 
+		 * This is true for all handles, except for 
+		 * Freedom.FREE and Freedom.NEGFREE when the snap modifier is not pressed.
+		 */
+		Freedom freedom = h.getFreedom();		
+		if (!(freedom == Freedom.FREE || freedom == Freedom.NEGFREE) 
+				|| canvas.isSnapModifierPressed())
+		{
+			Point v = new Point(0,0);
+			Rectangle2D b = getVBounds();
+			Point base = new Point (b.getCenterX(), b.getCenterY());
+			if (freedom == Freedom.X)
+			{
+				v = new Point (1, 0);
+			}
+			else if	(freedom == Freedom.Y)
+			{
+				v = new Point (0, 1);
+			}
+			if (freedom == Freedom.FREE)
+			{
+				v = new Point (getVWidth(), getVHeight());
+			}
+			else if (freedom == Freedom.NEGFREE)
+			{
+				v = new Point (getVWidth(), -getVHeight());
+			}
+			Point yr = LinAlg.rotate(v, -gdata.getRotation());
+			Point prj = LinAlg.project(base, new Point(vnewx, vnewy), yr);
+			vnewx = prj.x; vnewy = prj.y;
 		}
 
 		// Transformation

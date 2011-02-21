@@ -419,7 +419,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 						return getXYCursorPosition(degrees);
 					case FREE:
 						return getFREECursorPosition(degrees);
-					case FREER:
+					case NEGFREE:
 						return getFREECursorPosition(degrees);
 				}
 			}

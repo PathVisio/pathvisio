@@ -103,7 +103,7 @@ public class VPoint implements Adjustable
 		double mcy = canvas.mFromV (vnewy);
 
 		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.SNAP_TO_ANGLE) ||
-			canvas.isSnapToAngle())
+			canvas.isSnapModifierPressed())
 		{
 			// get global preference and convert to radians.
 			double lineSnapStep = PreferenceManager.getCurrent().getInt(

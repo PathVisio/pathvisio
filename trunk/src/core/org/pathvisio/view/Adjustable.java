@@ -16,8 +16,6 @@
 //
 package org.pathvisio.view;
 
-import java.awt.geom.Rectangle2D;
-
 /**
  * Any object that has handles and can be adjusted by them
  */
@@ -29,12 +27,4 @@ public interface Adjustable
 	 * @param h	The Handle to adjust to
 	 */
 	public void adjustToHandle(Handle h, double vx, double vy);
-
-	/** only needs to be implemented for Handles that are not type Handle.DIRECTION_FREE */
-	public Rectangle2D getVBounds();
-	
-	/** only needs to be implemented for Handles that are not type Handle.DIRECTION_FREE */
-	public double getVWidth();
-	
-	public double getVHeight();
 }

@@ -16,8 +16,6 @@
 //
 package org.pathvisio.view;
 
-import java.awt.geom.Rectangle2D;
-
 import org.pathvisio.model.PathwayElement.MPoint;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;
@@ -31,16 +29,10 @@ public class VPoint implements Adjustable
 	// the handle that goes with this VPoint.
 	// This Handle is created, destroyed and generally managed by Line, not by VPoint
 	Handle handle;
-	Line line;
-	MPoint mPoint;
-	final VPathway canvas;
-
-	public Rectangle2D getVBounds()
-	{
-		return null;
-		// this method does not need to be implemented, because the Handle of a
-		// VPoint is always DIRECTION_FREE
-	}
+	
+	private Line line;
+	private MPoint mPoint;
+	private final VPathway canvas;
 
 	private boolean isHighlighted = false;
 

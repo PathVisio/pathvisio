@@ -231,6 +231,8 @@ public class SearchPane extends JPanel
 
 	private void showSelectedPwy()
 	{
+		if (!swingEngine.canDiscardPathway()) return;
+
 		int row = tblResult.getSelectedRow();
 		final MatchResult mr = srs.getRow(row);
 

@@ -2362,10 +2362,11 @@ public class VPathway implements PathwayListener
 			lastAdded = null;
 
 			if(o.getObjectType() == ObjectType.LINE) {
-				o.setMStartX(o.getMStartX() + xShift);
-				o.setMStartY(o.getMStartY() + yShift);
-				o.setMEndX(o.getMEndX() + xShift);
-				o.setMEndY(o.getMEndY() + yShift);
+				for (MPoint mp : o.getMPoints())
+				{
+					mp.setX(mp.getX() + xShift);
+					mp.setY(mp.getY() + yShift);
+				}
 			} else {
 				o.setMLeft(o.getMLeft() + xShift);
 				o.setMTop(o.getMTop() + yShift);

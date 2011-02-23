@@ -268,6 +268,7 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.HEXAGON)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
 		 };
 		
 		// actions for "Basic interactions" section

@@ -51,8 +51,7 @@ public class MIMShapes
 
 	@Deprecated
     public static final IShape MIM_PHOSPHORYLATED_SHAPE = new AbstractShape (getPluggableShape (MIM_PHOSPHORYLATED), "mim-phosphorylated");
-    @Deprecated
-    public static final IShape MIM_DEGRADATION_SHAPE = new AbstractShape (getPluggableShape (MIM_DEGRADATION), "mim-degradation");
+	public static final IShape MIM_DEGRADATION_SHAPE = new AbstractShape (getPluggableShape (MIM_DEGRADATION), "mim-degradation");
     @Deprecated
     public static final IShape MIM_INTERACTION_SHAPE = new AbstractShape (getPluggableShape (MIM_INTERACTION), "mim-interaction");
      

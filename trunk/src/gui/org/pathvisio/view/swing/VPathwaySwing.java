@@ -77,9 +77,9 @@ import org.pathvisio.view.VPathwayWrapper;
 public class VPathwaySwing extends JPanel implements VPathwayWrapper,
 MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouseListener, MouseWheelListener {
 
-	VPathway child;
+	protected VPathway child;
 
-	JScrollPane container;
+	protected JScrollPane container;
 
 	public VPathwaySwing(JScrollPane parent) {
 		super();
@@ -218,7 +218,8 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 	    	child.centeredZoom(child.getPctZoom() * 20 / 21);
 	    }
 	    
-		((MainPanel)container.getParent().getParent()).updateZoomCombo();
+	    Component comp = container.getParent().getParent();
+	    if (comp instanceof MainPanel) ((MainPanel)comp).updateZoomCombo();
 	}
 	
 	public void registerKeyboardAction(KeyStroke k, Action a) {

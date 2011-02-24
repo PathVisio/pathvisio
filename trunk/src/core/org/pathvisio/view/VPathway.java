@@ -482,6 +482,7 @@ public class VPathway implements PathwayListener
 		if (parent != null)
 		{
 			Rectangle vr = parent.getViewRect();
+
 			double mx = mFromV(vr.getCenterX());
 			double my = mFromV(vr.getCenterY());
 			Logger.log.info ("center: " + mx + ", " + my);
@@ -493,6 +494,26 @@ public class VPathway implements PathwayListener
 			setPctZoom(pctZoomFactor);
 	}
 
+	public void zoomToCursor(double pctZoomFactor, Point cursor)
+	{
+		if (parent == null) return;
+		
+		// offset between mouse and center of the viewport
+		double vDeltax = cursor.getX() - parent.getViewRect().getCenterX();
+		double vDeltay = cursor.getY() - parent.getViewRect().getCenterY();;
+		
+		// model coordinates where the mouse is pointing at
+		double mx = mFromV(cursor.getX());
+		double my = mFromV(cursor.getY());
+		
+		// adjust zoom
+		setPctZoom(pctZoomFactor);
+		
+		// put mx, my back under the mouse
+		parent.scrollCenterTo((int)(vFromM(mx) - vDeltax), 
+				(int)(vFromM(my) - vDeltay));
+	}
+	
 	/**
 	 * Calculate the zoom factor that would
 	 * make the pathway fit in the viewport.

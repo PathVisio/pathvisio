@@ -130,7 +130,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 	 */
 	protected void paintComponent(Graphics g)
 	{
-		child.draw((Graphics2D) g);
+		if(child != null) child.draw((Graphics2D) g);
 	}
 
 	/**

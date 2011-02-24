@@ -18,12 +18,14 @@ package org.pathvisio.gpmldiff;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -36,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.RootPaneContainer;
 
+import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.WrapLayout;
 import org.pathvisio.view.VPathway;
 import org.pathvisio.view.VPathwayEvent;
@@ -53,7 +56,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 	public static final int PWY_OLD = 0;
 	public static final int PWY_NEW = 1;
 
-	private VPathwaySwing[] wrapper = { null, null };
+	private VPathwayDiffViewer[] wrapper = { null, null };
 	private VPathway[] view = { null, null };
 	private PwyDoc[] doc = { null, null };
 
@@ -70,7 +73,7 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 		doc[pwyType] = PwyDoc.read (f);
 		assert (doc[pwyType] != null);
 
-		wrapper[pwyType] = new VPathwaySwing(pwyPane[pwyType]);
+		wrapper[pwyType] = new VPathwayDiffViewer(pwyPane[pwyType], this);
 
 		view[pwyType] = wrapper[pwyType].createVPathway();
 		view[pwyType].setEditMode(false);
@@ -350,4 +353,47 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 			}
 		}
 	}
+	
+	int oldw = 0;
+	int oldh = 0;
+	
+	public void updatePreferredSize()
+	{
+		int v0w = (view[0] == null) ? 0 : view[0].getVWidth(); 
+		int v1w = (view[1] == null) ? 0 : view[1].getVWidth();
+		int v0h = (view[0] == null) ? 0 : view[0].getVHeight();
+		int v1h = (view[1] == null) ? 0 : view[1].getVHeight();
+		
+		int maxVw = Math.max(v0w, v1w);
+		int maxVh = Math.max(v0h, v1h);
+		
+		if (oldw == maxVw && oldh == maxVh) return;
+		
+		oldw = maxVw;
+		oldh = maxVh;
+	
+		for (int i = 0; i < 2; ++i)
+		{
+			wrapper[i].setPreferredSize(new Dimension(maxVw, maxVh));
+			wrapper[i].revalidate(); // causes scrollbars to be added / removed when appropriate
+		}		
+	}
+	
+	public void mouseWheelMoved(int notches)
+	{
+		double newZoom;
+	    if(notches > 0) {
+	    	newZoom = (view[0].getPctZoom() * 21 / 20);
+	    } else { 
+	    	newZoom = (view[0].getPctZoom() * 20 / 21);
+	    }
+	    
+	    setZoomFactor(newZoom);
+	    wrapper[0].redraw();
+	    wrapper[1].redraw();
+	   
+		DecimalFormat df = new DecimalFormat("###.#");
+		zoomCombo.setSelectedItem(df.format(newZoom)+"%");
+	}
+	
 }

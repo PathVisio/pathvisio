@@ -212,7 +212,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
 	    int notches = e.getWheelRotation();
-	    if(notches > 0) {
+	    if(notches < 0) {
 	    	child.zoomToCursor(child.getPctZoom() * 21 / 20, e.getPoint());
 	    } else { 
 	    	child.zoomToCursor(child.getPctZoom() * 20 / 21, e.getPoint());

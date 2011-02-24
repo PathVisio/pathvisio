@@ -213,9 +213,9 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 	public void mouseWheelMoved(MouseWheelEvent e) {
 	    int notches = e.getWheelRotation();
 	    if(notches > 0) {
-	    	child.centeredZoom(child.getPctZoom() * 21 / 20);
+	    	child.zoomToCursor(child.getPctZoom() * 21 / 20, e.getPoint());
 	    } else { 
-	    	child.centeredZoom(child.getPctZoom() * 20 / 21);
+	    	child.zoomToCursor(child.getPctZoom() * 20 / 21, e.getPoint());
 	    }
 	    
 	    Component comp = container.getParent().getParent();
@@ -501,7 +501,7 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 	{
 		return container.getViewport().getViewRect();
 	}
-
+	
 	public void scrollCenterTo(int x, int y)
 	{
 		int w = container.getViewport().getWidth();
@@ -509,4 +509,5 @@ MouseMotionListener, MouseListener, KeyListener, VPathwayListener, VElementMouse
 		Rectangle r = new Rectangle(x - (w / 2), y - (h / 2), w - 1, h - 1);
 		scrollRectToVisible(r);
 	}
+
 }

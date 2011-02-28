@@ -201,6 +201,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 			info.setMapInfoName(getPwName());
 			info.setAuthor(getUser());
 			info.setOrganism(getPwSpecies());
+			info.setVersion(null);
 		} else { //Download and open the pathway
 			Logger.log.trace("WIKIPATHWAYS INIT: open pathway");
 			getEngine().openPathway(new URL(getPwURL()));

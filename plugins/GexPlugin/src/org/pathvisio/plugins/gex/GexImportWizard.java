@@ -79,6 +79,7 @@ import org.pathvisio.visualization.VisualizationManager;
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.plugins.ColorByExpression;
 import org.pathvisio.visualization.plugins.DataNodeLabel;
 
@@ -1012,8 +1013,8 @@ public class GexImportWizard extends Wizard
 		
 		double lowerbound = makeRoundNumber (info.getMinimum() - info.getMinimum() / 10); 
 		double upperbound = makeRoundNumber (info.getMaximum() + info.getMaximum() / 10);
-		gradient.addColorValuePair(gradient.new ColorValuePair(Color.YELLOW, lowerbound));
-		gradient.addColorValuePair(gradient.new ColorValuePair(Color.BLUE, upperbound));
+		gradient.addColorValuePair(new ColorValuePair(Color.YELLOW, lowerbound));
+		gradient.addColorValuePair(new ColorValuePair(Color.BLUE, upperbound));
 		
 		Visualization v = new Visualization("auto-generated");
 		

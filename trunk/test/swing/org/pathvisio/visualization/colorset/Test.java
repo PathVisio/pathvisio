@@ -25,6 +25,7 @@ import junit.framework.TestCase;
 
 import org.pathvisio.debug.Logger;
 import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
 public class Test extends TestCase
@@ -44,11 +45,11 @@ public class Test extends TestCase
 		ColorGradient cg = new ColorGradient (cs);
 		assertEquals (cg.getColorValuePairs().size(), 0);
 		cg.addColorValuePair(
-				cg.new ColorValuePair (
+				new ColorValuePair (
 						new Color (0,0,255), -1.0)
 				);
 		cg.addColorValuePair(
-				cg.new ColorValuePair (
+				new ColorValuePair (
 						new Color (255,0,0), 1.0)
 				);
 		assertEquals (cg.getColorValuePairs().size(), 2);

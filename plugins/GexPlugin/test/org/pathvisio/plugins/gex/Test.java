@@ -53,7 +53,7 @@ public class Test extends TestCase
 
 	public void setUp() throws ClassNotFoundException
 	{
-		gexManager = GexManager.getCurrent();
+		gexManager = new GexManager();
 		Class.forName ("org.bridgedb.rdb.IDMapperRdb");
 	}
 

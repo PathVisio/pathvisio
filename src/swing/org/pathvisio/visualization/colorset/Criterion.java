@@ -64,6 +64,20 @@ public class Criterion
 		return expression;
 	}
 
+	/** parse and set the expression, without checking that the sample names are correct */
+	public String setExpression(String expression)
+	{
+		if (expression == null) throw new NullPointerException();
+		this.expression = expression;
+		
+		try {
+			parsed = parse();
+			return null;
+		} catch(CriterionException e) {
+			return e.getMessage();
+		}
+	}
+	
 	/**
 	 * set and expression and available symbols.
 	 * The symbols do not need to be mapped to values at this point.

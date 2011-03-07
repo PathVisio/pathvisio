@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.jdom.Element;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
 import org.pathvisio.util.ColorConverter;
@@ -93,8 +92,7 @@ public class ColorRule extends ColorSetObject
 		try {
 			String expression = xml.getAttributeValue(XML_ATTR_EXPRESSION);
 			criterion = new Criterion();
-			List<String> sampleNames = GexManager.getCurrent().getCurrentGex().getSampleNames();
-			criterion.setExpression(expression, sampleNames);
+			criterion.setExpression(expression);
 			Element ce = xml.getChild(XML_ELM_COLOR);
 			if(ce != null) color = ColorConverter.parseColorElement(ce);
 		} catch(Exception e) {

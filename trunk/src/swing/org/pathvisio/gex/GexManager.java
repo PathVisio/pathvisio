@@ -38,14 +38,6 @@ import org.pathvisio.preferences.PreferenceManager;
  */
 public class GexManager
 {
-	private static GexManager gexManager = new GexManager();
-
-	@Deprecated
-	public static GexManager getCurrent()
-	{
-		return gexManager;
-	}
-
 	private SimpleGex currentGex = null;
 	public SimpleGex getCurrentGex() { return currentGex; }
 

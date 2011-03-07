@@ -79,7 +79,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		this.swingEngine = swingEngine;
 		swingEngine.getEngine().addApplicationEventListener(this);
 		swingEngine.getGdbManager().addGdbEventListener(this);
-		gexManager = GexManager.getCurrent();
+		gexManager = new GexManager();
 		visualizationManager = new VisualizationManager(
 				swingEngine.getEngine(), gexManager);
 		visualizationManager.addListener(this);

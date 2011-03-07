@@ -20,7 +20,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jdom.Element;
@@ -63,7 +62,8 @@ public class ColorSet
 	private String name;
 	private ColorSetManager colorSetMgr;
 
-	private List<ColorSetObject> colorSetObjects = new ArrayList<ColorSetObject>();
+	private final List<ColorRule> colorRules = new ArrayList<ColorRule>();
+	private ColorGradient gradient;
 
 	public ColorSetManager getColorSetManager() { return colorSetMgr; }
 
@@ -126,34 +126,29 @@ public class ColorSet
 		default: return null;
 		}
 	}
-
-	/**
-	 * Adds a new {@link ColorSetObject} to this colorset
-	 * @param o the {@link ColorSetObject} to add
-	 */
-	public void addObject(ColorSetObject o)
+	
+	/** Add a ColorRule, assigning color based on a boolean expression. */
+	public void addRule(ColorRule o)
 	{
-		if(o == null) throw new IllegalArgumentException("tying to add null");
-		colorSetObjects.add(o);
+		colorRules.add(o);
+		fireModifiedEvent();
+	}
+
+	/** Remove a ColorRule. If the rule was not present, there is no effect. */
+	public void removeRule(ColorRule o)
+	{
+		colorRules.remove(o);
 		fireModifiedEvent();
 	}
 
 	/**
-	 * Remove a ColorSetObject from this ColorSet.
-	 * @param o
-	 */
-	public void removeObject(ColorSetObject o)
-	{
-		colorSetObjects.remove(o);
-		fireModifiedEvent();
-	}
-
-	/**
-	 * Obtain all ColorSetObjects (Rules / Gradients) in this ColorSet.
+	 * Obtain all ColorSetObjects (Rules + optional Gradient) in this ColorSet.
 	 */
 	public List<ColorSetObject> getObjects()
 	{
-		return colorSetObjects;
+		List<ColorSetObject> result = new ArrayList<ColorSetObject>(colorRules);
+		if (gradient != null) result.add(gradient);
+		return result;
 	}
 
 	/**
@@ -169,11 +164,9 @@ public class ColorSet
 		if(value == null || value.equals(Double.NaN)) return colorNoDataFound;
 
 		Color rgb = colorNoCriteriaMet; //The color to return
-		Iterator<ColorSetObject> it = colorSetObjects.iterator();
 		//Evaluate all ColorSet objects, return when a valid color is found
-		while(it.hasNext())
+		for (ColorSetObject gc : getObjects())
 		{
-			ColorSetObject gc = it.next();
 			try{
 				Color gcRgb = gc.getColor(data, key);
 				if(gcRgb != null) {
@@ -187,10 +180,9 @@ public class ColorSet
 	}
 
 	public void paintPreview(Graphics2D g, Rectangle bounds) {
-		double gSpace = colorSetObjects.size() > 1 ? 0.8 : 1; //80% to gradient
 
-		ColorGradient gradient = getGradient();
 		if(gradient != null) {
+			double gSpace = colorRules.size() > 0 ? 0.8 : 1; //80% to gradient
 			Rectangle gBounds = new Rectangle(
 					bounds.x, bounds.y, (int)(bounds.width * gSpace), bounds.height
 			);
@@ -200,14 +192,12 @@ public class ColorSet
 			);
 		}
 		int x = bounds.x;
-		int nr = gradient == null ? colorSetObjects.size() : colorSetObjects.size() - 1;
+		int nr = colorRules.size();
 		if(nr > 0) {
 			int w = bounds.width / nr;
-			for(ColorSetObject cso : colorSetObjects) {
-				if(cso != gradient) {
-					cso.paintPreview((Graphics2D)g.create(), new Rectangle(x, bounds.y, w, bounds.height));
-					x = x + w;
-				}
+			for(ColorSetObject cso : colorRules) {
+				cso.paintPreview((Graphics2D)g.create(), new Rectangle(x, bounds.y, w, bounds.height));
+				x = x + w;
 			}
 		} else {
 			g.setColor(new Color(255, 255, 255, 128));
@@ -216,35 +206,19 @@ public class ColorSet
 	}
 
 	/**
-	 * Get the gradient of this colorset. If the colorset contains
-	 * multiple gradients, the first is returned.
+	 * Get the gradient of this colorset.
 	 */
 	public ColorGradient getGradient() {
-		for(ColorSetObject cso : colorSetObjects) {
-			if(cso instanceof ColorGradient) {
-				return (ColorGradient)cso;
-			}
-		}
-		return null;
+		return gradient;
 	}
 
 	/**
-	 * Set the gradient for this colorset. All existing gradients will
-	 * be replaced. If the argument is null, all gradients will be removed.
+	 * Set the gradient for this colorset. 
+	 * If the argument is null, the gradient will be removed.
 	 */
 	public void setGradient(ColorGradient gradient) {
-		List<ColorGradient> rm = new ArrayList<ColorGradient>();
-		for(ColorSetObject cso : colorSetObjects) {
-			if(cso instanceof ColorGradient) {
-				rm.add((ColorGradient)cso);
-			}
-		}
-		Logger.log.trace("remove: " + rm);
-		for(ColorGradient g : rm) colorSetObjects.remove(g);
-		if(gradient != null) {
-			addObject(gradient);
-		}
-		Logger.log.trace("" + colorSetObjects);
+		this.gradient = gradient;
+		fireModifiedEvent();
 	}
 
 	final static String XML_ELEMENT = "ColorSet";
@@ -261,7 +235,7 @@ public class ColorSet
 		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NGF, colorNoGeneFound));
 		elm.addContent(ColorConverter.createColorElement(XML_ELM_COLOR_NDF, colorNoDataFound));
 
-		for(ColorSetObject cso : colorSetObjects)
+		for(ColorSetObject cso : getObjects())
 			elm.addContent(cso.toXML());
 		return elm;
 	}
@@ -274,9 +248,9 @@ public class ColorSet
 				Element elm = (Element) o;
 				String name = elm.getName();
 				if(name.equals(ColorGradient.XML_ELEMENT_NAME))
-					cs.addObject(new ColorGradient(cs, elm));
+					cs.setGradient(new ColorGradient(cs, elm));
 				else if(name.equals(ColorRule.XML_ELEMENT_NAME))
-					cs.addObject(new ColorRule(cs, elm));
+					cs.addRule(new ColorRule(cs, elm));
 				else if(name.equals(XML_ELM_COLOR_NCM))
 					cs.setColor(ID_COLOR_NO_CRITERIA_MET, ColorConverter.parseColorElement(elm));
 				else if(name.equals(XML_ELM_COLOR_NGF))
@@ -295,5 +269,11 @@ public class ColorSet
 			colorSetMgr.fireColorSetEvent(
 					new ColorSetEvent (this, ColorSetEvent.COLORSET_MODIFIED));
 		}
+	}
+
+	/** @returns list of all color rules in this set */
+	public List<ColorRule> getColorRules()
+	{
+		return colorRules;
 	}
 }

@@ -63,12 +63,12 @@ public class ColorRule extends ColorSetObject
 	public String getExpression() { return criterion.getExpression(); }
 
 	public ColorRule() {
-		super("rule");
+		setName("rule");
 		criterion = new Criterion();
 	}
 
 	public ColorRule(Element xml) {
-		super(xml);
+		loadXML(xml);
 	}
 
 	@Override Color getColor(ReporterData data, Sample key) throws CriterionException
@@ -89,7 +89,7 @@ public class ColorRule extends ColorSetObject
 	}
 
 	protected void loadXML(Element xml) {
-		super.loadXML(xml);
+		setName(xml.getAttributeValue(XML_ATTR_NAME));
 		try {
 			String expression = xml.getAttributeValue(XML_ATTR_EXPRESSION);
 			criterion = new Criterion();

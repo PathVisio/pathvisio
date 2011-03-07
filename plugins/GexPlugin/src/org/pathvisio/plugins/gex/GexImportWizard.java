@@ -1008,7 +1008,7 @@ public class GexImportWizard extends Wizard
 		ColorSet cs = new ColorSet(csmgr);
 		csmgr.addColorSet(cs);
 		
-		ColorGradient gradient = new ColorGradient(cs);
+		ColorGradient gradient = new ColorGradient();
 		cs.setGradient(gradient);
 		
 		double lowerbound = makeRoundNumber (info.getMinimum() - info.getMinimum() / 10); 

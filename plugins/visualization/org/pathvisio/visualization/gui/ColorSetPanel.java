@@ -298,8 +298,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		Logger.log.info(action);
 		if(ACTION_ADD_RULE.equals(action))
 		{
-			ColorRule cso = new ColorRule(colorSet);
-			colorSet.addRule(cso);
+			colorSet.addRule(new ColorRule());
 			int selected = crtm.getRowCount() - 1;
 			rulesTable.getSelectionModel().setSelectionInterval(selected, selected);
 		}

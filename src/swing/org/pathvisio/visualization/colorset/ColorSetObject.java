@@ -30,8 +30,8 @@ import org.pathvisio.visualization.colorset.Criterion.CriterionException;
  */
 public abstract class ColorSetObject {
 
-	/**
-	 * The parent colorset, that this colorSetObject is a part of.
+	/** 
+	 * The colorset that this colorSetObject is a part of.
 	 */
 	private ColorSet parent;
 
@@ -49,27 +49,31 @@ public abstract class ColorSetObject {
 		this.name = aName;
 	}
 
+	/** may only be called by ColorSet.addRule or ColorSet.setGradient */
+	void setParent(ColorSet value)
+	{
+		if (parent != null) throw new IllegalStateException("Trying to set parent, but ColorSetObject already has a parent");
+		parent = value;
+	}
+	
 	/**
 	 * setter for name, the name of this colorSetObject
 	 * The name does not need to be unique.
 	 */
 	public String getName() { return name; }
 
-	public ColorSet getColorSet() { return parent; }
-
 	/**
 	 * Constructor for this class
 	 * @param parent 		colorset this gradient belongs to
 	 * @param name 			name of the gradient
 	 */
-	public ColorSetObject(ColorSet parent, String name)
+	public ColorSetObject(String name)
 	{
-		this.parent = parent;
 		this.name = name;
 	}
 
-	public ColorSetObject(ColorSet parent, Element xml) {
-		this.parent = parent;
+	public ColorSetObject(Element xml) 
+	{
 		loadXML(xml);
 	}
 
@@ -82,14 +86,6 @@ public abstract class ColorSetObject {
 	 * @throws Exception
 	 */
 	abstract Color getColor(ReporterData data, Sample key) throws CriterionException;
-
-	/**
-	 * Returns the parent colorset
-	 */
-	public ColorSet getParent()
-	{
-		return parent;
-	}
 
 	public abstract void paintPreview(Graphics2D g, Rectangle bounds);
 

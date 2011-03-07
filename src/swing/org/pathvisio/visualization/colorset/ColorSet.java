@@ -131,6 +131,7 @@ public class ColorSet
 	public void addRule(ColorRule o)
 	{
 		colorRules.add(o);
+		o.setParent(this);
 		fireModifiedEvent();
 	}
 
@@ -218,6 +219,7 @@ public class ColorSet
 	 */
 	public void setGradient(ColorGradient gradient) {
 		this.gradient = gradient;
+		if (gradient != null) gradient.setParent(this);
 		fireModifiedEvent();
 	}
 
@@ -248,9 +250,9 @@ public class ColorSet
 				Element elm = (Element) o;
 				String name = elm.getName();
 				if(name.equals(ColorGradient.XML_ELEMENT_NAME))
-					cs.setGradient(new ColorGradient(cs, elm));
+					cs.setGradient(new ColorGradient(elm));
 				else if(name.equals(ColorRule.XML_ELEMENT_NAME))
-					cs.addRule(new ColorRule(cs, elm));
+					cs.addRule(new ColorRule(elm));
 				else if(name.equals(XML_ELM_COLOR_NCM))
 					cs.setColor(ID_COLOR_NO_CRITERIA_MET, ColorConverter.parseColorElement(elm));
 				else if(name.equals(XML_ELM_COLOR_NGF))

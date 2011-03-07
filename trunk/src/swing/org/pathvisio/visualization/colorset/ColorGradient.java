@@ -47,7 +47,7 @@ public class ColorGradient extends ColorSetObject {
 	 */
 	public ColorGradient()
 	{
-		super("gradient");
+		setName("gradient");
 		colorValuePairs = new ArrayList<ColorValuePair>();
 	}
 
@@ -81,7 +81,7 @@ public class ColorGradient extends ColorSetObject {
 
 	public ColorGradient(Element xml)
 	{
-		super(xml);
+		loadXML(xml);
 	}
 
 	/**
@@ -231,8 +231,8 @@ public class ColorGradient extends ColorSetObject {
 		return elm;
 	}
 
-	protected void loadXML(Element xml) {
-		super.loadXML(xml);
+	private void loadXML(Element xml) {
+		setName(xml.getAttributeValue(XML_ATTR_NAME));
 		colorValuePairs = new ArrayList<ColorValuePair>();
 		for(Object o : xml.getChildren(ColorValuePair.XML_ELEMENT))
 			colorValuePairs.add(new ColorValuePair((Element) o));

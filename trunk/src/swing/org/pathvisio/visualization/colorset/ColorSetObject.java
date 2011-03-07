@@ -38,10 +38,10 @@ public abstract class ColorSetObject {
 	/**
 	 * The display name of this colorSetObject
 	 */
-	private String name;
+	private String name = "unnamed";
 
 	/**
-	 * getter for name, the name of this colorSetObject
+	 * setter for name, the name of this colorSetObject
 	 * the Name does not need to be unique
 	 */
 	public void setName(String aName)
@@ -57,25 +57,10 @@ public abstract class ColorSetObject {
 	}
 	
 	/**
-	 * setter for name, the name of this colorSetObject
+	 * getter for name, the display name of this colorSetObject
 	 * The name does not need to be unique.
 	 */
 	public String getName() { return name; }
-
-	/**
-	 * Constructor for this class
-	 * @param parent 		colorset this gradient belongs to
-	 * @param name 			name of the gradient
-	 */
-	public ColorSetObject(String name)
-	{
-		this.name = name;
-	}
-
-	public ColorSetObject(Element xml) 
-	{
-		loadXML(xml);
-	}
 
 	/**
 	 * get the color defined by the colorset object for the given data
@@ -107,10 +92,6 @@ public abstract class ColorSetObject {
 		Element elm = new Element(getXmlElementName());
 		elm.setAttribute(XML_ATTR_NAME, name);
 		return elm;
-	}
-
-	protected void loadXML(Element xml) {
-		name = xml.getAttributeValue(XML_ATTR_NAME);
 	}
 
 }

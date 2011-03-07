@@ -42,7 +42,7 @@ public class Test extends TestCase
 	{
 		PreferenceManager.init();
 		ColorSet cs = new ColorSet("Test");
-		ColorGradient cg = new ColorGradient (cs);
+		ColorGradient cg = new ColorGradient ();
 		assertEquals (cg.getColorValuePairs().size(), 0);
 		cg.addColorValuePair(
 				new ColorValuePair (

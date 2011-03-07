@@ -62,13 +62,13 @@ public class ColorRule extends ColorSetObject
 
 	public String getExpression() { return criterion.getExpression(); }
 
-	public ColorRule(ColorSet parent) {
-		super(parent, "rule");
+	public ColorRule() {
+		super("rule");
 		criterion = new Criterion();
 	}
 
-	public ColorRule(ColorSet parent, Element xml) {
-		super(parent, xml);
+	public ColorRule(Element xml) {
+		super(xml);
 	}
 
 	@Override Color getColor(ReporterData data, Sample key) throws CriterionException

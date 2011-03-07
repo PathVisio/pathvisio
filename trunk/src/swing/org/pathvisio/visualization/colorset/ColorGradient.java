@@ -45,33 +45,33 @@ public class ColorGradient extends ColorSetObject {
 	 * This will generate an empty gradient. Call generateDefault() if you
 	 * want to fill the gradient with some default values.
 	 */
-	public ColorGradient(ColorSet parent)
+	public ColorGradient()
 	{
-		super(parent, "gradient");
+		super("gradient");
 		colorValuePairs = new ArrayList<ColorValuePair>();
 	}
 
 	public static List<ColorGradient> createDefaultGradients() {
 		List<ColorGradient> gradients = new ArrayList<ColorGradient>();
-		ColorGradient g = new ColorGradient(null);
+		ColorGradient g = new ColorGradient();
 		g.addColorValuePair(new ColorValuePair(Color.BLUE, -1));
 		g.addColorValuePair(new ColorValuePair(Color.YELLOW, 1));
 		gradients.add(g);
-		g = new ColorGradient(null);
+		g = new ColorGradient();
 		g.addColorValuePair(new ColorValuePair(Color.GREEN, -1));
 		g.addColorValuePair(new ColorValuePair(Color.YELLOW, 0));
 		g.addColorValuePair(new ColorValuePair(Color.RED, 1));
 		gradients.add(g);
-		g = new ColorGradient(null);
+		g = new ColorGradient();
 		g.addColorValuePair(new ColorValuePair(Color.GREEN, -1));
 		g.addColorValuePair(new ColorValuePair(Color.WHITE, 0));
 		g.addColorValuePair(new ColorValuePair(Color.RED, 1));
 		gradients.add(g);
-		g = new ColorGradient(null);
+		g = new ColorGradient();
 		g.addColorValuePair(new ColorValuePair(Color.BLUE, -1));
 		g.addColorValuePair(new ColorValuePair(Color.RED, 1));
 		gradients.add(g);
-		g = new ColorGradient(null);
+		g = new ColorGradient();
 		g.addColorValuePair(new ColorValuePair(Color.BLUE, -1));
 		g.addColorValuePair(new ColorValuePair(Color.WHITE, 0));
 		g.addColorValuePair(new ColorValuePair(Color.RED, 1));
@@ -79,9 +79,9 @@ public class ColorGradient extends ColorSetObject {
 		return gradients;
 	}
 
-	public ColorGradient(ColorSet parent, Element xml)
+	public ColorGradient(Element xml)
 	{
-		super(parent, xml);
+		super(xml);
 	}
 
 	/**

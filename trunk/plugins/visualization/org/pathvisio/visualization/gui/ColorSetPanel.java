@@ -183,33 +183,19 @@ public class ColorSetPanel extends JPanel implements ActionListener
 
 	private static class ColorRuleTableModel extends AbstractTableModel implements ColorSetListener
 	{
-
-		private ColorSet cs;
+		private final ColorSet cs;
 		private List<ColorRule> colorRules;
 
 		ColorRuleTableModel (ColorSet cs)
 		{
 			this.cs = cs;
 			cs.getColorSetManager().addListener(this);
-			refresh();
+			colorRules = cs.getColorRules();
 		}
 
 		ColorRule getRule (int index)
 		{
 			return colorRules.get (index);
-		}
-
-		/**
-		 * May be called whenever the number of colorRules has changed
-		 */
-		void refresh()
-		{
-			colorRules = new ArrayList<ColorRule>();
-			for (ColorSetObject o : cs.getObjects())
-			{
-				if (o instanceof ColorRule) colorRules.add ((ColorRule)o);
-			}
-			fireTableDataChanged();
 		}
 
 		public int getColumnCount() { return 2; }
@@ -251,7 +237,8 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		// TODO: distinghuish changes in # of rows and changes in row data
 		public void colorSetEvent(ColorSetEvent e)
 		{
-			fireTableRowsUpdated(0, getRowCount());
+			fireTableDataChanged();
+//			fireTableRowsUpdated(0, getRowCount());
 		}
 	}
 
@@ -311,9 +298,8 @@ public class ColorSetPanel extends JPanel implements ActionListener
 		Logger.log.info(action);
 		if(ACTION_ADD_RULE.equals(action))
 		{
-			ColorSetObject cso = new ColorRule(colorSet);
-			colorSet.addObject(cso);
-			crtm.refresh();
+			ColorRule cso = new ColorRule(colorSet);
+			colorSet.addRule(cso);
 			int selected = crtm.getRowCount() - 1;
 			rulesTable.getSelectionModel().setSelectionInterval(selected, selected);
 		}
@@ -323,9 +309,8 @@ public class ColorSetPanel extends JPanel implements ActionListener
 			for (int index : rulesTable.getSelectedRows())
 			{
 				ColorRule cr = crtm.getRule(index);
-				colorSet.removeObject(cr);
+				colorSet.removeRule(cr);
 			}
-			crtm.refresh();
 			if (lead > crtm.getRowCount()) lead = crtm.getRowCount() - 1;
 			rulesTable.getSelectionModel().setSelectionInterval (lead, lead);
 		}

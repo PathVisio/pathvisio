@@ -155,57 +155,59 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 			yco += g.getFontMetrics().getHeight();
 		}
 
-		for (ColorSetObject cso : cs.getObjects())
+		ColorGradient gradient = cs.getGradient();
+		if (gradient != null) yco = drawGradient(g, gradient, left, top, zoomFactor);
+		for (ColorRule cr : cs.getColorRules())
 		{
-			yco = drawColorsetObject (g, cso, xco, yco, zoomFactor);
+			yco = drawColorRule (g, cr, xco, yco, zoomFactor);
 		}
 
 		return (int) (yco + (INNER_MARGIN * zoomFactor));
 	}
 
-	private static double drawColorsetObject (Graphics2D g, ColorSetObject cso, double left, double top, double zoomFactor)
+	private static double drawColorRule (Graphics2D g, ColorRule cr, double left, double top, double zoomFactor)
 	{
 		int height = g.getFontMetrics().getHeight();
 		int base = height - g.getFontMetrics().getDescent();
 		double xco = left + (zoomFactor * COLOR_GRADIENT_MARGIN);
 		double yco = top;
-		if (cso instanceof ColorGradient)
-		{
-			Rectangle bounds = new Rectangle ((int)xco, (int)yco, (int)(COLOR_GRADIENT_WIDTH * zoomFactor), (int)(COLOR_BOX_SIZE * zoomFactor));
-			ColorGradient cg = (ColorGradient)cso;
-			cg.paintPreview(g, bounds);
-			g.setColor (Color.BLACK); // paintPreview will change pen Color
-			yco += zoomFactor * COLOR_BOX_SIZE;
+		Rectangle2D bounds2 = new Rectangle2D.Double (xco, yco, zoomFactor * COLOR_BOX_SIZE, zoomFactor * COLOR_BOX_SIZE);
+		Rectangle2D bounds = new Rectangle2D.Double (xco + 1, yco + 1, COLOR_BOX_SIZE-2, COLOR_BOX_SIZE-2);
+		g.drawString (cr.getExpression(), (int)(xco + (zoomFactor * (COLOR_BOX_SIZE + INNER_MARGIN))), (int)(yco + base));
+		g.setColor(cr.getColor());
+		g.fill(bounds);
+		g.setColor (Color.WHITE);
+		g.draw (bounds);
+		g.setColor (Color.BLACK);
+		g.draw (bounds2);
+		return top + height + INNER_MARGIN;
+	}
 
-			int num = cg.getColorValuePairs().size();
-			double w = (zoomFactor * COLOR_GRADIENT_WIDTH) / (num - 1);
-			for (int i = 0; i < num; ++i)
-			{
-				ColorValuePair cvp = cg.getColorValuePairs().get (i);
-				double labelLeft = xco + i * w;
-				double labelTop = yco + (INNER_MARGIN * zoomFactor);
-				String label = "" + cvp.getValue();
-				int labelWidth = (int)g.getFontMetrics().getStringBounds(label, g).getWidth();
-				g.drawString (label, (int)(labelLeft - labelWidth / 2), (int)(labelTop + base));
-				g.drawLine ((int)labelLeft, (int)yco, (int)labelLeft, (int)labelTop);
-			}
+	private static double drawGradient (Graphics2D g, ColorGradient cg, double left, double top, double zoomFactor)
+	{
+		int height = g.getFontMetrics().getHeight();
+		int base = height - g.getFontMetrics().getDescent();
+		double xco = left + (zoomFactor * COLOR_GRADIENT_MARGIN);
+		double yco = top;
+		Rectangle bounds = new Rectangle ((int)xco, (int)yco, (int)(COLOR_GRADIENT_WIDTH * zoomFactor), (int)(COLOR_BOX_SIZE * zoomFactor));
+		cg.paintPreview(g, bounds);
+		g.setColor (Color.BLACK); // paintPreview will change pen Color
+		yco += zoomFactor * COLOR_BOX_SIZE;
 
-			return yco + height + (zoomFactor * (INNER_MARGIN + INNER_MARGIN));
-		}
-		else
+		int num = cg.getColorValuePairs().size();
+		double w = (zoomFactor * COLOR_GRADIENT_WIDTH) / (num - 1);
+		for (int i = 0; i < num; ++i)
 		{
-			Rectangle2D bounds2 = new Rectangle2D.Double (xco, yco, zoomFactor * COLOR_BOX_SIZE, zoomFactor * COLOR_BOX_SIZE);
-			Rectangle2D bounds = new Rectangle2D.Double (xco + 1, yco + 1, COLOR_BOX_SIZE-2, COLOR_BOX_SIZE-2);
-			ColorRule cr = (ColorRule)cso;
-			g.drawString (cr.getExpression(), (int)(xco + (zoomFactor * (COLOR_BOX_SIZE + INNER_MARGIN))), (int)(yco + base));
-			g.setColor(cr.getColor());
-			g.fill(bounds);
-			g.setColor (Color.WHITE);
-			g.draw (bounds);
-			g.setColor (Color.BLACK);
-			g.draw (bounds2);
-			return top + height + INNER_MARGIN;
+			ColorValuePair cvp = cg.getColorValuePairs().get (i);
+			double labelLeft = xco + i * w;
+			double labelTop = yco + (INNER_MARGIN * zoomFactor);
+			String label = "" + cvp.getValue();
+			int labelWidth = (int)g.getFontMetrics().getStringBounds(label, g).getWidth();
+			g.drawString (label, (int)(labelLeft - labelWidth / 2), (int)(labelTop + base));
+			g.drawLine ((int)labelLeft, (int)yco, (int)labelLeft, (int)labelTop);
 		}
+
+		return yco + height + (zoomFactor * (INNER_MARGIN + INNER_MARGIN));
 	}
 
 	/**

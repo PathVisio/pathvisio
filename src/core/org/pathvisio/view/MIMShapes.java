@@ -76,10 +76,17 @@ public class MIMShapes
 
     static private java.awt.Shape getMIMCovalentBond ()
     {
-        return new Rectangle2D.Double(
-            -BOND_SIZE + 1, -BOND_SIZE/2,
-            BOND_SIZE, BOND_SIZE
-        );
+        GeneralPath path = new GeneralPath();
+        path.moveTo (0, -7);
+        path.lineTo (0, 7);
+
+        path.moveTo (0, -7);
+        path.lineTo (8, -7);
+
+        path.moveTo (0, 7);
+        path.lineTo (8, 7);
+
+        return path;
     }
 
 	//Cleavage line ending constants

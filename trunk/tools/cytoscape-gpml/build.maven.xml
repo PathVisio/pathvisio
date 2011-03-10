@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+<project name="CytoscapeGpml" default="jar" basedir="." 
+	xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	
+	 <!-- =================================================================== -->
+	 <!-- Project Settings                                                    -->
+	 <!--                                                                     -->
+	 <!-- Adjust each property listed in this target with the appropriate     -->
+	 <!-- information for this project.                                       -->
+	 <!-- =================================================================== -->
+	  <target name="settings">
+
+	    <!-- The name of your plugin and resulting jar file -->
+	    <property name="name" value="gpml"/>
+
+	    <!-- The package that contains your plugin class. -->
+	    <property name="plugin.class.package" value="org.pathvisio.cytoscape"/>
+
+	    <!-- The name of your plugin class, i.e. the one that extends Cytoscape plugin. -->
+	    <property name="plugin.class.name" value="${plugin.class.package}.GpmlPlugin"/>
+
+	    <!-- The version of your plugin. To support plugin.props, make sure the 
+	         version is expressed in decimal notation, e.g. 3.0, 3.1, 3.14, etc. -->
+	    <property name="version" value="1.3"/>
+
+	    <!-- The version of Cytoscape that you depend on. -->
+	    <property name="cytoscape.version" value="2.8.1"/>
+
+	 	<!-- always be java 1.5 compatible -->
+	 	<property name="ant.build.javac.target" value="1.5" />
+		<property name="ant.build.javac.source" value="1.5" />
+
+	  	<!-- User-specific directory paths -->
+	  	<property name="cytoscape.plugin.dir" value="/Applications/Cytoscape_v2.8.1/plugins/" />
+		<property name="pathvisio.dir" value="/eclipse/bigcat/PathVisio" />
+		<property name="pathvisio.lib.dir" value="${pathvisio.dir}/lib" />
+		<property name="axis.lib.dir" value="${pathvisio.lib.dir}/axis-1_4/lib" />
+
+	  </target>
+	
+	  <!-- =================================================================== -->
+	  <!-- Project initialization settings                                     -->
+	  <!-- Most developers shouldn't *need* to adjust any settings here.       -->
+	  <!-- =================================================================== -->
+	  <target name="init"
+	          depends="settings" >
+	    <tstamp/>
+	    <echo message="Building ${name} version ${version} ..."/>
+	  	
+	    <!-- Inheritable properties -->
+	    <property name="debug" value="on"/>
+	    <property name="optimize" value="off"/>
+	    <property name="deprecation" value="on"/>
+	    <property name="fork" value="false"/>
+
+	    <!-- Define the directories -->
+	    <property name="root.dir" value="."/>
+	    <property name="resources.dir" value="${root.dir}/resources"/>
+	    <property name="src.dir" value="${root.dir}/src"/>
+	    <property name="tests.dir" value="${root.dir}/tests"/>
+	    <property name="build.dir" value="${root.dir}/build"/>
+	    <property name="lib.dir" value="${root.dir}/lib"/>
+	    <property name="javadoc.dir" value="${build.dir}/API"/>
+	    <property name="log.dir" value="${build.dir}/logs" />
+	    <property name="junit.report.dir" value="${log.dir}/junit-reports" />
+
+	    <!-- Define the relevant files -->
+	    <property name="project.jar" value="${name}-${version}.jar"/>
+	    <property name="test.jar" value="${name}-${version}-tests.jar"/>
+
+	    <!-- Define external dependencies -->
+	    <artifact:remoteRepository 
+	       id="cytoscape_releases" 
+	       url="http://cytoscape.wodaklab.org/nexus/content/repositories/releases/" />
+	    <artifact:remoteRepository 
+	       id="cytoscape_snapshots" 
+	       url="http://cytoscape.wodaklab.org/nexus/content/repositories/snapshots/" />
+	    <artifact:dependencies pathId="dependency.classpath">
+	      <dependency groupId="cytoscape" 
+	                  artifactId="application" 
+	                  version="${cytoscape.version}"/>
+	      <dependency groupId="junit" 
+	                  artifactId="junit" 
+	                  version="3.8.1"/>
+	    </artifact:dependencies>
+
+	    <!-- Define the class path -->
+	    <path id="project.class.path">
+		  <path location="${build.dir}" />
+		  <fileset dir="${axis.lib.dir}" includes="*.jar" />
+		  
+	      <pathelement location="${pathvisio.lib.dir}/jdom.jar" />
+		  <pathelement location="${pathvisio.lib.dir}/org.bridgedb.jar" />
+		  <pathelement location="${pathvisio.lib.dir}/org.bridgedb.bio.jar" />
+		  <pathelement location="${pathvisio.lib.dir}/resources.jar" />
+		  <pathelement location="${pathvisio.lib.dir}/BrowserLauncher.jar" />
+		  <pathelement location="${pathvisio.dir}/pathvisio.jar" />
+		  <pathelement location="${pathvisio.dir}/wikipathways-client.jar" />
+
+	      <fileset dir="${lib.dir}">
+	        <include name="*.jar"/>
+	      </fileset>
+	      <path refid="dependency.classpath"/>
+	    </path>
+	   
+	    <!-- Define the junit class path - It needs to find what we just built --> 
+	    <path id="junit.class.path" >
+	      <fileset dir="${root.dir}">
+	        <include name="*.jar"/>
+	      </fileset>
+	      <fileset dir="${lib.dir}">
+	        <include name="*.jar"/>
+	      </fileset>
+	      <path refid="dependency.classpath"/>
+	    </path>
+
+	    <!-- Make sure tests is in the right place -->
+	    <condition property="tests.ok">
+	      <and>
+	        <available file="${tests.dir}" />
+	      </and>
+	    </condition>
+
+	  </target>
+
+	 <!-- =================================================================== -->
+	  <!-- Compiles the project                                                -->
+	  <!-- =================================================================== -->
+	  <target name="compile" 
+	          depends="init" >
+	    <mkdir dir="${build.dir}"/>
+	    <mkdir dir="${log.dir}"/>
+	    <javac srcdir="${src.dir}"
+	           classpathref="project.class.path"
+	           destdir="${build.dir}"
+	           debug="${debug}"
+	           deprecation="${deprecation}" 
+	           optimize="${optimize}"
+	           fork="${fork}">
+	       <compilerarg line="-Xlint:all -Xlint:-path"/>
+	     </javac>
+	     <echo message="Successfully ran compile task!"/>
+	  </target>
+
+
+	  <!-- =================================================================== -->
+	  <!-- Creates the project jar file                                        -->
+	  <!-- =================================================================== -->
+	  <target name="jar" 
+	          depends="compile" >
+	    <filter token="version" value="${version}"/>
+	    <copy file="${resources.dir}/plugin.props" 
+	          todir="${build.dir}/${plugin.class.package}"
+	          filtering="true"
+	          overwrite="true"/>
+	    <unjar dest="${build.dir}">
+	      <fileset dir="${lib.dir}">
+	        <include name="*.jar" />
+	      </fileset>
+	    </unjar>
+
+	    <jar destfile="${project.jar}" >
+	      <fileset dir="${build.dir}" includes="**"/>
+	      <manifest>
+	        <attribute name="Cytoscape-Plugin" value="${plugin.class.name}"/>
+	      </manifest>
+	    </jar>
+	    <echo message="Successfully ran jar task!"/>
+	  </target>
+
+	  <!-- =================================================================== -->
+	  <!-- Compiles the tests                                                  -->
+	  <!-- Note that this compilation occurs AFTER the distribution jar has    -->
+	  <!-- been created, so that the tests aren't distributed.                 -->
+	  <!-- =================================================================== -->
+	  <target name="compile-tests"
+	          depends="jar" 
+	          if="tests.ok">
+	    <javac srcdir="${tests.dir}"
+	           classpathref="project.class.path"
+	           destdir="${build.dir}"
+	           debug="${debug}"
+	           deprecation="${deprecation}" 
+	           optimize="${optimize}"
+	           source="1.5"
+	           target="1.5"
+	           fork="${fork}">
+	      <compilerarg line="-Xlint:all -Xlint:-path"/>
+	    </javac>
+	    <echo message="Successfully ran compile-tests task!"/>
+	  </target>
+
+	  <!-- =================================================================== -->
+	  <!-- Creates the project-tests.jar file                                  -->
+	  <!-- =================================================================== -->
+	  <target name="jar-tests"
+	          depends="compile-tests"
+	          if="tests.ok">
+	    <jar jarfile="${test.jar}"
+	         basedir="${build.dir}" >
+	    </jar>
+	    <echo message="Successfully ran jar-tests task!"/>
+	  </target>
+
+	  <!-- =================================================================== -->
+	  <!-- Runs the unit tests.                                                --> 
+	  <!-- =================================================================== -->
+	  <target name="test"
+	          depends="jar-tests"
+	          if="tests.ok">
+	    <junit printsummary="yes"
+	           haltonfailure="no"
+	           maxmemory="256m" >
+	      <classpath refid="junit.class.path"/>
+	      <formatter type="plain" 
+	                 usefile="true" />
+	      <formatter type="xml" 
+	                 usefile="true" />
+	      <batchtest fork="yes" 
+	                 todir="${log.dir}" 
+	                 failureProperty="junit.test.failure"
+	                 errorProperty="junit.test.failure">
+	        <fileset dir="${tests.dir}"
+	                 includes="**/*Test.java"
+	                 excludes="**/AllTests.java" />
+	      </batchtest> 
+	    </junit>
+	    <mkdir dir="${junit.report.dir}"/>
+	    <junitreport todir="${junit.report.dir}">
+	      <fileset dir="${log.dir}">
+	        <include name="TEST-*.xml"/>
+	      </fileset>
+	      <report format="frames" todir="${junit.report.dir}"/>
+	    </junitreport>
+	    <fail message="TEST FAILURE!!! Details: ${junit.report.dir}/index.html"
+	          if="junit.test.failure"/>
+	    <echo message="Successfully ran test task!"/>
+	  </target>
+
+	  <!-- =================================================================== -->
+	  <!-- Creates the API documentation                                       -->
+	  <!-- =================================================================== -->
+	  <target name="docs" 
+	          depends="init" > 
+	    <mkdir dir="${javadoc.dir}"/>
+	    <javadoc sourcepath="${src.dir}"
+	             destdir="${javadoc.dir}"
+	             packagenames="*"
+	             classpathref="project.class.path"
+	             author="true"
+	             version="true"
+	             use="true"
+	             splitindex="true"
+	             noindex="false"
+	             windowtitle="${name} API"
+	             doctitle="${name}" />
+	    <echo message="Successfully ran docs task!"/>
+	  </target>
+
+	  <!-- =================================================================== -->
+	  <!-- Do everything                                                       --> 
+	  <!-- =================================================================== -->
+	  <target name="all" depends="jar,test,docs" /> 
+
+	  <!-- =================================================================== -->
+	  <!-- Clean up, get back to original state                                -->
+	  <!-- =================================================================== -->
+	  <target name="clean" 
+	          depends="init">
+	    <delete dir="${build.dir}"/>
+	    <delete file="${project.jar}"/>
+	    <delete file="${test.jar}"/>
+	    <echo message="Successfully ran clean task!"/>
+	  </target>
+
+
+	<target name="dest" depends="jar" description="Copy the jars to the Cytoscape plugin directory">
+		<copy file="${name}.jar" todir="${cytoscape.plugin.dir}" />
+	</target>
+
+	<target name="webstart" depends="jar" description="Sign and copy the jars to the Cytoscape webstart directory">
+		<signjar jar="${plugin.name}.jar" lazy="true" alias="PV" storepass="PathVisio" keystore="${pathvisio.lib.dir}/visioKeyStore" />
+		<copy file="${plugin.name}.jar" todir="${cytoscape.webstart.dir}" />
+	</target>
+</project>

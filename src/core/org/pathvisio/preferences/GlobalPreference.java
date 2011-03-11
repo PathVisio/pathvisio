@@ -111,6 +111,9 @@ public enum GlobalPreference implements Preference
 
 	MAX_NR_CITATIONS ("" + 5),
 
+	//Whether to convert text to paths in SVG export
+	//Default to false, better performance in SVG renderers
+	SVG_TEXT_AS_PATH ("" + false)
 	;
 	GlobalPreference(String defaultValue) {
 		this.defaultValue = defaultValue;

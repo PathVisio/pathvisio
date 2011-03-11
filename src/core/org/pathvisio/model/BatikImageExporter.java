@@ -33,6 +33,8 @@ import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
+import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.VPathway;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
@@ -56,7 +58,9 @@ public class BatikImageExporter extends ImageExporter {
 		Document svg = domImpl.createDocument ("http://www.w3.org/2000/svg", "svg", null);
 
 		SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(svg);
-		SVGGraphics2D svgG2d = new SVGGraphics2D(ctx, true);
+		
+		boolean textAsPath = PreferenceManager.getCurrent().getBoolean(GlobalPreference.SVG_TEXT_AS_PATH);
+		SVGGraphics2D svgG2d = new SVGGraphics2D(ctx, textAsPath);
 		
 		vPathway.draw(svgG2d);
 

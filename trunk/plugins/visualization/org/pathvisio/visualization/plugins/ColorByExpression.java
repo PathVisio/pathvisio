@@ -160,7 +160,7 @@ public class ColorByExpression extends VisualizationMethod {
 	 * Get the configured sample for the given sample. Returns
 	 * null when no configured sample is found.
 	 */
-	protected ConfiguredSample getConfiguredSample(Sample s) {
+	public ConfiguredSample getConfiguredSample(Sample s) {
 		for(ConfiguredSample cs : useSamples) {
 			if(cs.getSample() != null && cs.getSample() == s) {
 				return cs;
@@ -483,7 +483,7 @@ public class ColorByExpression extends VisualizationMethod {
 	 * visualization. In this implementation, a color-set to use for visualization is stored.
 	 * Extend this class to store additional configuration data.
 	 */
-	class ConfiguredSample {
+	public class ConfiguredSample {
 		public static final int AMBIGIOUS_AVG = 0;
 		public static final int AMBIGIOUS_BARS = 1;
 
@@ -604,7 +604,7 @@ public class ColorByExpression extends VisualizationMethod {
 		/**
 		 * Set the color-set to use for visualization of this sample
 		 */
-		protected void setColorSet(ColorSet cs) {
+		public void setColorSet(ColorSet cs) {
 			colorSet = cs;
 			modified();
 		}

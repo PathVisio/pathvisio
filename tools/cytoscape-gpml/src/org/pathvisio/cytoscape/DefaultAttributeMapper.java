@@ -41,6 +41,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	private Map<String, StaticProperty> attr2prop;
 
 	private Set<StaticProperty> protectedProps;
+	private Set<StaticProperty> hiddenAttrs;
 
 	public DefaultAttributeMapper() {
 		prop2attr = new HashMap<StaticProperty, String>();
@@ -113,6 +114,35 @@ public class DefaultAttributeMapper implements AttributeMapper {
 		return protectedProps;
 	}
 
+	protected Set<StaticProperty> getHiddenAttrs() {
+		if(hiddenAttrs == null) {
+			hiddenAttrs = new HashSet<StaticProperty>();
+			hiddenAttrs.add(StaticProperty.CENTERX);
+			hiddenAttrs.add(StaticProperty.CENTERY);
+			hiddenAttrs.add(StaticProperty.STARTX);
+			hiddenAttrs.add(StaticProperty.STARTY);
+			hiddenAttrs.add(StaticProperty.ENDX);
+			hiddenAttrs.add(StaticProperty.ENDY);
+			hiddenAttrs.add(StaticProperty.GRAPHID);
+			hiddenAttrs.add(StaticProperty.ALIGN);
+			hiddenAttrs.add(StaticProperty.BIOPAXREF);
+			hiddenAttrs.add(StaticProperty.ENDGRAPHREF);
+			hiddenAttrs.add(StaticProperty.FONTNAME);
+			hiddenAttrs.add(StaticProperty.FONTSIZE);
+			hiddenAttrs.add(StaticProperty.FONTSTYLE);
+			hiddenAttrs.add(StaticProperty.FONTWEIGHT);
+			hiddenAttrs.add(StaticProperty.LINETHICKNESS);
+			hiddenAttrs.add(StaticProperty.HREF);
+			hiddenAttrs.add(StaticProperty.ROTATION);
+			hiddenAttrs.add(StaticProperty.SHAPETYPE);
+			hiddenAttrs.add(StaticProperty.STARTGRAPHREF);
+			hiddenAttrs.add(StaticProperty.TRANSPARENT);
+			hiddenAttrs.add(StaticProperty.VALIGN);
+			hiddenAttrs.add(StaticProperty.ZORDER);
+		}
+		return hiddenAttrs;
+	}
+
 	protected void setInitialMappings() {
 		setMapping("canonicalName", StaticProperty.TEXTLABEL);
 		setDefaultValue(StaticProperty.DATASOURCE, BioDataSource.UNIPROT);
@@ -128,6 +158,10 @@ public class DefaultAttributeMapper implements AttributeMapper {
 
 	public void unprotect(StaticProperty prop) {
 		getProtectedProps().remove(prop);
+	}
+
+	public boolean isHidden(StaticProperty prop) {
+		return getHiddenAttrs().contains(prop);
 	}
 
 	public void attributesToProperties(String id, PathwayElement elm, CyAttributes attr) {
@@ -251,6 +285,11 @@ public class DefaultAttributeMapper implements AttributeMapper {
 					attr.setAttribute(id, aname, ((Color) value).getRGB());
 				else //STRING, DB_ID, DB_SYMBOL, default
 					attr.setAttribute(id, aname, value.toString());
+				
+				//set hidden state; default is visible
+				if(isHidden(prop)) {
+					attr.setUserVisible(aname, false);
+				}
 			}
 		}
 //TODO needs more testing

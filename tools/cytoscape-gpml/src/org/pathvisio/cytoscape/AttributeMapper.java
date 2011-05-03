@@ -59,6 +59,7 @@ public interface AttributeMapper {
 	 * be mapped to and from this property.
 	 */
 	public boolean isProtected(StaticProperty prop);
+	
 	/**
 	 * Protect a property. If a property is protected, no attributes should
 	 * be mapped to and from this property.
@@ -70,4 +71,11 @@ public interface AttributeMapper {
 	 * will map attribute value from and to this property
 	 */
 	public void unprotect(StaticProperty prop);
+	
+	/**
+	 * Check whether a prop is to be a hidden attribute. If a property is to be hidden, the its 
+	 * associated attribute should be set to isVisible(false).
+	 */
+	public boolean isHidden(StaticProperty prop);
+	
 }

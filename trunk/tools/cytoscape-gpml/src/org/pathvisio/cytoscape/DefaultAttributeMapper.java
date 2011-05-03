@@ -51,7 +51,7 @@ public class DefaultAttributeMapper implements AttributeMapper {
 	}
 
 	public String getMapping(StaticProperty prop) {
-		//First check if a mapping is explicitely set
+		//First check if a mapping is explicitly set
 		String name = prop2attr.get(prop);
 		if(name == null && prop != null) { //If not, use the property tag name
 			name = prop.tag();

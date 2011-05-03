@@ -37,8 +37,8 @@ import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
 
 /**
- * Class that holds a Cytoscape edge that has a GPML representation, which is stored
- * as edge attributes
+ * Class that holds a Cytoscape node that has a GPML representation, which is stored
+ * as node attributes
  * @author thomas
  *
  */

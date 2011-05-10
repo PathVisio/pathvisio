@@ -15,18 +15,6 @@
 //limitations under the License.
 package org.pathvisio.kegg;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-
-import dtd.kegg.Entry;
-import dtd.kegg.Graphics;
-import dtd.kegg.Pathway;
-import dtd.kegg.Product;
-import dtd.kegg.Reaction;
-import dtd.kegg.Relation;
-import dtd.kegg.Substrate;
-import dtd.kegg.Subtype;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
@@ -48,24 +36,36 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConnectorShape.Segment;
-import org.pathvisio.model.ConnectorShape.WayPoint;
 import org.pathvisio.model.ConnectorType;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.DataNodeType;
 import org.pathvisio.model.GpmlFormatAbstract;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.LineStyle;
 import org.pathvisio.model.LineType;
 import org.pathvisio.model.MLine;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;
+import org.pathvisio.model.ShapeType;
+import org.pathvisio.model.ConnectorShape.Segment;
+import org.pathvisio.model.ConnectorShape.WayPoint;
+import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.PathwayElement.MAnchor;
 import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.view.LinAlg;
-import org.pathvisio.view.LinAlg.Point;
 import org.pathvisio.view.MIMShapes;
+import org.pathvisio.view.LinAlg.Point;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
+import dtd.kegg.Entry;
+import dtd.kegg.Graphics;
+import dtd.kegg.Pathway;
+import dtd.kegg.Product;
+import dtd.kegg.Reaction;
+import dtd.kegg.Relation;
+import dtd.kegg.Substrate;
+import dtd.kegg.Subtype;
 
 /**
  * File converter for the KGML, the kegg pathway format.
@@ -698,6 +698,9 @@ public class KeggFormat {
 		
 			Graphics dg = graphics.get(0);
 			String label = dg.getName();
+			if(label.contains(", ")) {
+				label = label.split(", ")[0]; //Only use first synonym
+			}
 			String name = entry.getName();
 			String[] ids = name.split(" ");
 
@@ -716,8 +719,6 @@ public class KeggFormat {
 								Util.getKeggOrganism(organism) + ":" + gene
 						);
 					}
-					
-					
 
 					//Create gpml element
 					PathwayElement pwElm = createDataNode(

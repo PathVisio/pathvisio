@@ -16,12 +16,15 @@
 //
 package org.pathvisio.wikipathways.server;
 
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -29,15 +32,19 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.swing.Action;
+import javax.swing.KeyStroke;
+
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.Pathway;
+import org.pathvisio.model.PathwayElement;
 import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayWrapperBase;
+import org.pathvisio.view.VPathwayWrapper;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.client.SearchException;
 import org.pathvisio.wikipathways.client.SearchService;
@@ -248,7 +255,81 @@ public class ImageManager {
 //		}
 
 		PreferenceManager.init();
-		VPathway vpathway = new VPathway(new VPathwayWrapperBase());
+		VPathway vpathway = new VPathway(new VPathwayWrapper() {
+			
+			@Override
+			public void scrollTo(Rectangle r) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void scrollCenterTo(int x, int y) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void resized() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void registerKeyboardAction(KeyStroke k, Action a) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void redraw(Rectangle r) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void redraw() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void positionPasteFromClipboard(Point cursorPosition) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void pasteFromClipboard() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public Rectangle getViewRect() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public void dispose() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public VPathway createVPathway() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public void copyToClipboard(Pathway source,
+					List<PathwayElement> copyElements) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		vpathway.fromModel(pathway);
 
 		//Uncomment this to enable highlighting of the

@@ -685,6 +685,14 @@ public class KeggFormat {
 		}
 	}
 
+	private String processLabel(String label) {
+		if(label.contains(", ")) {
+			label = label.split(", ")[0]; //Only use first synonym
+		}
+		if(label.endsWith("...")) label.substring(0, label.length() - 3);
+		return label;
+	}
+	
 	private void convertDataNode(Entry entry) throws RemoteException, ConverterException {
 		List<Graphics> graphics = entry.getGraphics();
 		
@@ -698,9 +706,7 @@ public class KeggFormat {
 		
 			Graphics dg = graphics.get(0);
 			String label = dg.getName();
-			if(label.contains(", ")) {
-				label = label.split(", ")[0]; //Only use first synonym
-			}
+			label = processLabel(label);
 			String name = entry.getName();
 			String[] ids = name.split(" ");
 
@@ -719,6 +725,7 @@ public class KeggFormat {
 								Util.getKeggOrganism(organism) + ":" + gene
 						);
 					}
+					geneName = processLabel(geneName);
 
 					//Create gpml element
 					PathwayElement pwElm = createDataNode(

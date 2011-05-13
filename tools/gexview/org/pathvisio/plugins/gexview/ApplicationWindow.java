@@ -40,7 +40,7 @@ import javax.swing.KeyStroke;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.gui.SimpleFileFilter;
 import org.bridgedb.rdb.construct.DataDerby;
-import org.pathvisio.Revision;
+import org.pathvisio.core.Revision;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.util.Resources;
 

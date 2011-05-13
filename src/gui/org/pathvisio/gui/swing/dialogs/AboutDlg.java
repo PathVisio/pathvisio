@@ -30,8 +30,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.pathvisio.Globals;
-import org.pathvisio.Revision;
+import org.pathvisio.core.Globals;
+import org.pathvisio.core.Revision;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.util.Resources;
 

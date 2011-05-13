@@ -53,8 +53,8 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.BackpageTextProvider.BackpageAttributes;

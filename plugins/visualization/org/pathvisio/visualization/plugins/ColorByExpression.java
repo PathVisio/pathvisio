@@ -46,7 +46,7 @@ import javax.swing.JPanel;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.jdom.Element;
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.CachedData.Callback;

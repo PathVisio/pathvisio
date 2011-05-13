@@ -35,10 +35,10 @@ import javax.swing.filechooser.FileFilter;
 
 import org.bridgedb.bio.Organism;
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
-import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.Globals;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Engine;
+import org.pathvisio.core.Globals;
+import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.PopupDialogHandler;

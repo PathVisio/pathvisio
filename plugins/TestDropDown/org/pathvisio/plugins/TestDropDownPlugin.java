@@ -18,7 +18,7 @@ package org.pathvisio.plugins;
 
 import javax.swing.Action;
 
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.GraphicsChoiceButton;
 import org.pathvisio.gui.swing.PvDesktop;

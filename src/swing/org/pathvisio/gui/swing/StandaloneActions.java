@@ -29,7 +29,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.Globals;
+import org.pathvisio.core.Globals;
 import org.pathvisio.util.Resources;
 
 /**

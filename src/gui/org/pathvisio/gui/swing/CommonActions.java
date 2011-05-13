@@ -27,12 +27,12 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
-import org.pathvisio.Engine.ApplicationEventListener;
-import org.pathvisio.Globals;
 import org.pathvisio.biopax.BiopaxReferenceManager;
 import org.pathvisio.biopax.reflect.PublicationXref;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Engine;
+import org.pathvisio.core.Globals;
+import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.gui.swing.dialogs.AboutDlg;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;

@@ -48,7 +48,7 @@ import javax.swing.border.Border;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.data.XrefWithSymbol;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.ConverterException;

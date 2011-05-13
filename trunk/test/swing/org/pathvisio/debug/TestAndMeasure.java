@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.debug.StopWatch;
 import org.pathvisio.model.ConverterException;
 import org.pathvisio.model.ObjectType;

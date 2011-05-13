@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.plugins.gex;
+package org.pathvisio.gexplugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +38,8 @@ import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.gex.SimpleGex;
+import org.pathvisio.gexplugin.GexTxtImporter;
+import org.pathvisio.gexplugin.ImportInformation;
 
 public class Test extends TestCase
 {

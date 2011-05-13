@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.plugins.statistics;
+package org.pathvisio.statistics;
 
 import java.awt.Component;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.desktop.util.ListWithPropertiesTableModel;
-import org.pathvisio.plugins.statistics.StatisticsPlugin.StatisticsPreference;
+import org.pathvisio.statistics.StatisticsPlugin.StatisticsPreference;
 
 /**
  * Table Model for showing statistics results

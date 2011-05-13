@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.plugins.statistics;
+package org.pathvisio.statistics;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,7 +38,7 @@ import org.pathvisio.core.util.PathwayParser.ParseException;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.gex.SimpleGex;
-import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
+import org.pathvisio.statistics.PathwayMap.PathwayInfo;
 
 /**
  * Checks which genes from a dataset are not mapped in any pathway

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.plugins.gex;
+package org.pathvisio.gexplugin;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,7 +38,7 @@ import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.SimpleGex;
-import org.pathvisio.plugins.gex.ImportInformation.ColumnType;
+import org.pathvisio.gexplugin.ImportInformation.ColumnType;
 
 /**
  * Functions to create a new Gex database

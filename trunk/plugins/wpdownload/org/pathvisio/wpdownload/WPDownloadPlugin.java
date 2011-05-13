@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.plugins;
+package org.pathvisio.wpdownload;
 
 import java.awt.event.ActionEvent;
 import java.io.File;

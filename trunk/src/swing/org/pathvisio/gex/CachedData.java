@@ -33,9 +33,9 @@ import org.bridgedb.DataSource;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.debug.ThreadSafe;
-import org.pathvisio.debug.WorkerThreadOnly;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.debug.ThreadSafe;
+import org.pathvisio.core.debug.WorkerThreadOnly;
 
 /**
  * This class represents cached expression data for a pathway.

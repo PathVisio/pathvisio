@@ -34,11 +34,11 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
 import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.cytoscape.GpmlConverter;
 import org.pathvisio.cytoscape.GpmlHandler;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.preferences.GlobalPreference;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;

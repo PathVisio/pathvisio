@@ -28,9 +28,9 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.util.FileUtils;
 
 /**
  * This class loads and maintains a collection of plugins

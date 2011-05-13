@@ -26,10 +26,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jdom.Element;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
-import org.pathvisio.util.ColorConverter;
 
 /**
  * This class represent a color gradient used for data visualization

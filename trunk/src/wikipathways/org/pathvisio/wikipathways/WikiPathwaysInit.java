@@ -19,16 +19,16 @@ package org.pathvisio.wikipathways;
 import java.net.URL;
 
 import org.pathvisio.core.Engine;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.ImageExporter;
-import org.pathvisio.model.MappFormat;
-import org.pathvisio.model.RasterImageExporter;
-import org.pathvisio.model.StaticProperty;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.Utils;
-import org.pathvisio.view.MIMShapes;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.GpmlFormat;
+import org.pathvisio.core.model.ImageExporter;
+import org.pathvisio.core.model.MappFormat;
+import org.pathvisio.core.model.RasterImageExporter;
+import org.pathvisio.core.model.StaticProperty;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.Utils;
+import org.pathvisio.core.view.MIMShapes;
 
 /**
  * Static utility class that contains a collection of global methods for {@link WikiPathways}.

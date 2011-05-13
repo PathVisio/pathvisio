@@ -26,10 +26,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.wikipathways.PathwayPageApplet;
-import org.pathvisio.util.ProgressKeeper;
 
 public class UserInterfaceHandler {
 	public static final int Q_CANCEL = -1;

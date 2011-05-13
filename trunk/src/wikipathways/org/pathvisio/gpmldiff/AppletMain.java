@@ -23,9 +23,9 @@ import javax.swing.JApplet;
 import javax.swing.JOptionPane;
 
 import org.pathvisio.core.Engine;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.FileUtils;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.FileUtils;
 
 /**
  * Applet class for the GpmlDiff Applet.

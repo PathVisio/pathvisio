@@ -9,7 +9,7 @@ import java.net.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 
 /**
  * This class implements a basic wizard dialog, where the programmer can

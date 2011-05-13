@@ -53,22 +53,26 @@ import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.UIManager;
 
+import org.pathvisio.core.gui.PathwayTransferable;
+import org.pathvisio.core.gui.SwingKeyEvent;
+import org.pathvisio.core.gui.SwingMouseEvent;
+import org.pathvisio.core.gui.ToolTipProvider;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.view.GraphicsShape;
+import org.pathvisio.core.view.Handle;
+import org.pathvisio.core.view.Label;
+import org.pathvisio.core.view.VElementMouseEvent;
+import org.pathvisio.core.view.VElementMouseListener;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayElement;
+import org.pathvisio.core.view.VPathwayEvent;
+import org.pathvisio.core.view.VPathwayListener;
+import org.pathvisio.core.view.VPathwayWrapper;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.view.GraphicsShape;
-import org.pathvisio.view.Handle;
-import org.pathvisio.view.Label;
-import org.pathvisio.view.VElementMouseEvent;
-import org.pathvisio.view.VElementMouseListener;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.view.VPathwayEvent;
-import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.VPathwayWrapper;
 
 
 /**

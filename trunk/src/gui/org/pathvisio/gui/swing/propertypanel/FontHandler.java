@@ -25,8 +25,8 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.model.PropertyType;
-import org.pathvisio.model.StaticPropertyType;
+import org.pathvisio.core.model.PropertyType;
+import org.pathvisio.core.model.StaticPropertyType;
 import org.pathvisio.util.swing.FontNameRenderer;
 
 /**

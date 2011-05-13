@@ -26,9 +26,12 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.bridgedb.IDMapperException;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.ImageExporter;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.view.VPathway;
 import org.pathvisio.gex.GexManager;
-import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationManager;
 
 /**

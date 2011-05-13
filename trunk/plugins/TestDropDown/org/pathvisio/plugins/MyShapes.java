@@ -18,11 +18,11 @@ package org.pathvisio.plugins;
 
 import java.awt.geom.GeneralPath;
 
-import org.pathvisio.model.AbstractShape;
-import org.pathvisio.model.IShape;
-import org.pathvisio.model.LineType;
-import org.pathvisio.view.ArrowShape;
-import org.pathvisio.view.ShapeRegistry;
+import org.pathvisio.core.model.AbstractShape;
+import org.pathvisio.core.model.IShape;
+import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.view.ArrowShape;
+import org.pathvisio.core.view.ShapeRegistry;
 
 /**
  * User-defined shapes example

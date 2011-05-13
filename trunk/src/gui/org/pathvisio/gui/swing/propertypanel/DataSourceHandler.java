@@ -36,12 +36,12 @@ import javax.swing.table.TableCellRenderer;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.bio.Organism;
+import org.pathvisio.core.model.DataNodeType;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.PropertyType;
+import org.pathvisio.core.model.StaticPropertyType;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.model.DataNodeType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
-import org.pathvisio.model.StaticPropertyType;
 import org.pathvisio.util.swing.PermissiveComboBox;
 
 /**

@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bridgedb.bio.BioDataSource;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PropertyType;
-import org.pathvisio.model.StaticProperty;
-import org.pathvisio.model.StaticPropertyType;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.PropertyType;
+import org.pathvisio.core.model.StaticProperty;
+import org.pathvisio.core.model.StaticPropertyType;
 
 import cytoscape.data.CyAttributes;
 

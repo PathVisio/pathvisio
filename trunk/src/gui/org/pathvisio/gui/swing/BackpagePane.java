@@ -27,17 +27,17 @@ import org.bridgedb.Xref;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.Engine.ApplicationEventListener;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.PathwayElementEvent;
+import org.pathvisio.core.model.PathwayElementListener;
+import org.pathvisio.core.model.StaticProperty;
+import org.pathvisio.core.view.GeneProduct;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayElement;
+import org.pathvisio.core.view.SelectionBox.SelectionEvent;
+import org.pathvisio.core.view.SelectionBox.SelectionListener;
 import org.pathvisio.gui.BackpageTextProvider;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElementEvent;
-import org.pathvisio.model.PathwayElementListener;
-import org.pathvisio.model.StaticProperty;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.SelectionBox.SelectionEvent;
-import org.pathvisio.view.SelectionBox.SelectionListener;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
 
 /**
  * The backpage panel for the Swing version of PathVisio. This pane shows annotation

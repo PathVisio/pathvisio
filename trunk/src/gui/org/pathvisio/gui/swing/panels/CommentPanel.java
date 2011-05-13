@@ -39,8 +39,8 @@ import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.pathvisio.model.PathwayElement.Comment;
-import org.pathvisio.util.Resources;
+import org.pathvisio.core.model.PathwayElement.Comment;
+import org.pathvisio.core.util.Resources;
 
 public class CommentPanel extends PathwayElementPanel implements ActionListener {
 

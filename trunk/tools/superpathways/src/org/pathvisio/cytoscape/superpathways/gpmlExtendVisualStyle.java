@@ -22,15 +22,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.pathvisio.core.model.LineStyle;
+import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.StaticProperty;
 import org.pathvisio.cytoscape.AttributeMapper;
 import org.pathvisio.cytoscape.GpmlAnchorNode;
 import org.pathvisio.cytoscape.GpmlHandler;
 import org.pathvisio.cytoscape.GpmlNetworkElement;
 import org.pathvisio.cytoscape.visualmapping.GpmlColorMapper;
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.LineType;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.StaticProperty;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;

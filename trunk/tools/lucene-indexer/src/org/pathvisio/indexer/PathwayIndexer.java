@@ -22,8 +22,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.wikipathways.WikiPathways;
 
 /**

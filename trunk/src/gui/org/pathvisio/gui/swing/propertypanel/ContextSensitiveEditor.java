@@ -17,9 +17,9 @@ package org.pathvisio.gui.swing.propertypanel;
 
 import java.util.Collection;
 
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
 
 /**
  * This interface indicates that the {@link TypeHandler}'s editor is context sensitive and needs to have additional

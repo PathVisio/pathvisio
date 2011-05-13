@@ -33,11 +33,11 @@ import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.util.FileUtils;
-import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.util.FileUtils;
+import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 

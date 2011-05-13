@@ -27,10 +27,10 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.bridgedb.rdb.GdbProvider;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.util.FileUtils;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.util.FileUtils;
 
 /**
  * Maintains an index for a collection of GPML files

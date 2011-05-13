@@ -22,7 +22,7 @@ import java.io.File;
 
 import javax.swing.JFrame;
 
-import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.core.preferences.PreferenceManager;
 
 
 /**

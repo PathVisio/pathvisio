@@ -29,9 +29,9 @@ import javax.swing.JOptionPane;
 import javax.swing.ProgressMonitor;
 import javax.swing.filechooser.FileFilter;
 
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.view.MIMShapes;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.view.MIMShapes;
 
 public class GenMappExporter {
 	static final int WORK_MIN = 0;

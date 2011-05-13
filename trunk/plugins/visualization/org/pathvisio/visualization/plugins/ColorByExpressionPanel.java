@@ -61,9 +61,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.bridgedb.gui.SimpleFileFilter;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.Resources;
 import org.pathvisio.gex.Sample;
-import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 import org.pathvisio.visualization.gui.ColorSetChooser;

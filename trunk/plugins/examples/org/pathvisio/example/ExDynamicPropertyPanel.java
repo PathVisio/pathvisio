@@ -18,13 +18,13 @@ package org.pathvisio.example;
 
 import java.util.EnumSet;
 
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Property;
+import org.pathvisio.core.model.PropertyManager;
+import org.pathvisio.core.model.PropertyType;
+import org.pathvisio.core.model.StaticPropertyType;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.gui.swing.propertypanel.PropertyDisplayManager;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Property;
-import org.pathvisio.model.PropertyManager;
-import org.pathvisio.model.PropertyType;
-import org.pathvisio.model.StaticPropertyType;
 import org.pathvisio.plugin.Plugin;
 
 /**

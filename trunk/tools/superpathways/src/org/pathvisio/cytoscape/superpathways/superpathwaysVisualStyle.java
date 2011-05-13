@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.pathvisio.core.model.PropertyType;
 import org.pathvisio.cytoscape.visualmapping.GpmlColorMapper;
-import org.pathvisio.model.PropertyType;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;

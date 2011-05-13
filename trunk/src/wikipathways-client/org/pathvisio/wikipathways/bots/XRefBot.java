@@ -31,10 +31,10 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
 import org.bridgedb.rdb.GdbProvider;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 /**

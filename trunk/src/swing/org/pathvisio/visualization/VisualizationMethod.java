@@ -22,7 +22,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import org.jdom.Element;
-import org.pathvisio.view.Graphics;
+import org.pathvisio.core.view.Graphics;
 
 /**
  * The VisualizationMethod class can be extended to create a visualization method for

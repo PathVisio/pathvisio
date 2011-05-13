@@ -25,7 +25,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.bridgedb.rdb.GdbProvider;
-import org.pathvisio.model.Pathway;
+import org.pathvisio.core.model.Pathway;
 
 /**
  * Abstract base class that can be implement to add information

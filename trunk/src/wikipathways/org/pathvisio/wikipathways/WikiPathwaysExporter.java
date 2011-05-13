@@ -28,10 +28,10 @@ import org.apache.xmlrpc.client.XmlRpcSunHttpTransportFactory;
 import org.apache.xmlrpc.client.XmlRpcTransportFactory;
 import org.jdom.Document;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.ImageExporter;
-import org.pathvisio.model.Pathway;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.GpmlFormat;
+import org.pathvisio.core.model.ImageExporter;
+import org.pathvisio.core.model.Pathway;
 
 /**
  * Special exporter that uses the WikiPathways XMLRPC interface to

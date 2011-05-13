@@ -31,16 +31,16 @@ import junit.framework.TestCase;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.Engine;
-import org.pathvisio.debug.StopWatch;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.Line;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
+import org.pathvisio.core.debug.StopWatch;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.view.GeneProduct;
+import org.pathvisio.core.view.Line;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.view.swing.VPathwaySwing;
 
 /**

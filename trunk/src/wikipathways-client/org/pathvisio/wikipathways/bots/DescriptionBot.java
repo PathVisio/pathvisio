@@ -21,9 +21,9 @@ import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement.Comment;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.WikiPathways;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 

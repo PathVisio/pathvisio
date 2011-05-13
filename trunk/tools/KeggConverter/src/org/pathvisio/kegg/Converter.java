@@ -34,12 +34,12 @@ import org.bridgedb.bio.Organism;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.ImageExporter;
-import org.pathvisio.model.RasterImageExporter;
-import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.GpmlFormat;
+import org.pathvisio.core.model.ImageExporter;
+import org.pathvisio.core.model.RasterImageExporter;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.xml.sax.SAXException;
 
 /**
@@ -158,7 +158,7 @@ public class Converter {
 		Pathway pathway = (Pathway)Util.unmarshal(Pathway.class,
 				new BufferedInputStream(new FileInputStream(file)));
 
-		org.pathvisio.model.Pathway gpmlPathway = null;
+		org.pathvisio.core.model.Pathway gpmlPathway = null;
 
 		if(useMap && (!file.getName().startsWith(map))) {
 			//Try to find the corresponding map file
@@ -199,14 +199,14 @@ public class Converter {
 		}
 	}
 
-	private org.pathvisio.model.Pathway convert(Pathway pathway) throws RemoteException, ConverterException, ServiceException, ClassNotFoundException, IDMapperException {
+	private org.pathvisio.core.model.Pathway convert(Pathway pathway) throws RemoteException, ConverterException, ServiceException, ClassNotFoundException, IDMapperException {
 		KeggFormat kf = new KeggFormat(pathway, getOrganism());
 		kf.setUseWebservice(!offline);
 		kf.setSpacing(spacing);
 		return kf.convert();
 	}
 
-	private org.pathvisio.model.Pathway convert(Pathway map, Pathway ko) throws RemoteException, ConverterException, ServiceException, ClassNotFoundException, IDMapperException {
+	private org.pathvisio.core.model.Pathway convert(Pathway map, Pathway ko) throws RemoteException, ConverterException, ServiceException, ClassNotFoundException, IDMapperException {
 		KeggFormat kf = new KeggFormat(map, ko, getOrganism());
 		kf.setUseWebservice(!offline);
 		kf.setSpacing(spacing);

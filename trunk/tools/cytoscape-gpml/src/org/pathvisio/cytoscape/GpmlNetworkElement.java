@@ -20,8 +20,8 @@ import cytoscape.data.CyAttributes;
 
 import giny.view.GraphView;
 
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.PathwayElement;
 
 public abstract class GpmlNetworkElement<T> {
 	public static final String ATTR_TYPE = "gpml-type";

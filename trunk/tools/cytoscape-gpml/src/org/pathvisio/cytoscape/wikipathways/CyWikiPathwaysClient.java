@@ -60,9 +60,9 @@ import javax.swing.SwingUtilities;
 import javax.xml.rpc.ServiceException;
 
 import org.bridgedb.bio.Organism;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.Pathway;
 import org.pathvisio.cytoscape.GpmlPlugin;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Pathway;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSIndexField;
 import org.pathvisio.wikipathways.webservice.WSPathway;

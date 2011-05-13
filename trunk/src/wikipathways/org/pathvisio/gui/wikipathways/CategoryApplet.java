@@ -42,9 +42,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElement.Comment;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.Parameter;
 import org.pathvisio.wikipathways.WikiPathways;
 

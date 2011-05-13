@@ -24,11 +24,11 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.pathvisio.biopax.BiopaxElementManager;
-import org.pathvisio.biopax.BiopaxReferenceManager;
-import org.pathvisio.biopax.reflect.PublicationXref;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.biopax.BiopaxElementManager;
+import org.pathvisio.core.biopax.BiopaxReferenceManager;
+import org.pathvisio.core.biopax.reflect.PublicationXref;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
 
 /**
  * Indexes literature references for a pathway

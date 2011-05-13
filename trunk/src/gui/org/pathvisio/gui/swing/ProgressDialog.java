@@ -33,9 +33,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
-import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.util.ProgressKeeper.ProgressEvent;
-import org.pathvisio.util.ProgressKeeper.ProgressListener;
+import org.pathvisio.core.util.ProgressKeeper;
+import org.pathvisio.core.util.ProgressKeeper.ProgressEvent;
+import org.pathvisio.core.util.ProgressKeeper.ProgressListener;
 
 /**
  * Similar to the swing progress dialog, but this has the option to

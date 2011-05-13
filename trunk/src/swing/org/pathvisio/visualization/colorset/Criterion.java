@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 
 /**
  * A criterion is a simple boolean expression that can

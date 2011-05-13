@@ -32,8 +32,8 @@ import javax.swing.JPanel;
 
 import org.pathvisio.core.Globals;
 import org.pathvisio.core.Revision;
+import org.pathvisio.core.util.Resources;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.util.Resources;
 
 /**
  * Creates and displays the About dialog,

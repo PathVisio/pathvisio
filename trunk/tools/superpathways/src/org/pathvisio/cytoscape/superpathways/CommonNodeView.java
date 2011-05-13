@@ -36,12 +36,12 @@ import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.bio.Organism;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 

@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.bridgedb.Xref;
-import org.pathvisio.data.XrefWithSymbol;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.util.FileUtils;
-import org.pathvisio.util.PathwayParser;
-import org.pathvisio.util.PathwayParser.ParseException;
+import org.pathvisio.core.data.XrefWithSymbol;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.FileUtils;
+import org.pathvisio.core.util.PathwayParser;
+import org.pathvisio.core.util.PathwayParser.ParseException;
 
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;

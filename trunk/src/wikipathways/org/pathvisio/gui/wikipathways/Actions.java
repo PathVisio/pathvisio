@@ -28,14 +28,14 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Globals;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.Pathway.StatusFlagEvent;
+import org.pathvisio.core.model.Pathway.StatusFlagListener;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.Resources;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.Pathway.StatusFlagEvent;
-import org.pathvisio.model.Pathway.StatusFlagListener;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.Resources;
 import org.pathvisio.wikipathways.UserInterfaceHandler;
 import org.pathvisio.wikipathways.WikiPathways;
 

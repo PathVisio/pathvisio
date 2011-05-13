@@ -39,11 +39,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.rdb.GdbProvider;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.indexer.GpmlIndexer;
 import org.pathvisio.indexer.SourceProvider;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.util.FileUtils;
 import org.pathvisio.wikipathways.WikiPathwaysCache;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 

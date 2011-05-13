@@ -35,8 +35,8 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.util.swing.FontChooser;
 
 /**

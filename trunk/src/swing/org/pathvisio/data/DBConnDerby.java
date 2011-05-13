@@ -22,8 +22,8 @@ import javax.swing.JFileChooser;
 
 import org.bridgedb.gui.SimpleFileFilter;
 import org.bridgedb.rdb.construct.DataDerby;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
 
 /**
  * user interface functions for single-file Derby databases.

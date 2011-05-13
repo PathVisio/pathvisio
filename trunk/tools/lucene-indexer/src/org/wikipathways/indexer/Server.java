@@ -11,7 +11,7 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.bridgedb.bio.BioDataSource;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.pathvisio.model.ConverterException;
+import org.pathvisio.core.model.ConverterException;
 import org.restlet.Component;
 import org.restlet.data.Protocol;
 

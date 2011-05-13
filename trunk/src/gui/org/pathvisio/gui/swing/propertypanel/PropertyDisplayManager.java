@@ -23,26 +23,26 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bridgedb.bio.Organism;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.AlignType;
-import org.pathvisio.model.CellularComponentType;
-import org.pathvisio.model.DataNodeType;
-import org.pathvisio.model.GroupStyle;
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.LineType;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.OrientationType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.Property;
-import org.pathvisio.model.PropertyManager;
-import org.pathvisio.model.PropertyType;
-import org.pathvisio.model.ShapeType;
-import org.pathvisio.model.StaticProperty;
-import org.pathvisio.model.StaticPropertyType;
-import org.pathvisio.model.ValignType;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.Preference;
-import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.AlignType;
+import org.pathvisio.core.model.CellularComponentType;
+import org.pathvisio.core.model.DataNodeType;
+import org.pathvisio.core.model.GroupStyle;
+import org.pathvisio.core.model.LineStyle;
+import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.OrientationType;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.Property;
+import org.pathvisio.core.model.PropertyManager;
+import org.pathvisio.core.model.PropertyType;
+import org.pathvisio.core.model.ShapeType;
+import org.pathvisio.core.model.StaticProperty;
+import org.pathvisio.core.model.StaticPropertyType;
+import org.pathvisio.core.model.ValignType;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.Preference;
+import org.pathvisio.core.preferences.PreferenceManager;
 
 /**
  * This class manages how properties should be displayed.  It keeps track of TypeHandlers, which properties should be

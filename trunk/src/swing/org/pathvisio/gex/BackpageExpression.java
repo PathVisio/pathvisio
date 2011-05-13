@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
-import org.pathvisio.model.PathwayElement;
 
 /**
  * Backpage hook to show gene expression data in tabular format.

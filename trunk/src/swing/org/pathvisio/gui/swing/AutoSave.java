@@ -26,11 +26,11 @@ import javax.swing.SwingUtilities;
 
 
 import org.pathvisio.core.Engine;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GpmlFormat;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.GpmlFormat;
+import org.pathvisio.core.model.Pathway;
 
-import org.pathvisio.model.Pathway;
 
 /**
  *  Collection of methods for autosave and recovery of PathVisio files

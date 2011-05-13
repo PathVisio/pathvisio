@@ -33,7 +33,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
-import org.pathvisio.model.StaticProperty;
+import org.pathvisio.core.model.StaticProperty;
 
 /**
  * Panel to configure attribute to GPML property mappings

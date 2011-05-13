@@ -34,7 +34,7 @@ import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.bridgedb.rdb.construct.DBConnector;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 
 /**
  * Responsible for creating and querying a pgex database.

@@ -26,8 +26,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.KeyStroke;
 import javax.swing.event.MenuEvent;
 
+import org.pathvisio.core.debug.Logger;
 import org.pathvisio.cytoscape.GpmlHandler;
-import org.pathvisio.debug.Logger;
 
 /**
  * Toggle visibility of graphical annotations (Shape, Label, unconnected Line).

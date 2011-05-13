@@ -22,9 +22,9 @@ import java.util.Set;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.rdb.construct.DBConnector;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
 
 /**
  * Manage the centralized SimpleGex

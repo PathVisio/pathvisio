@@ -31,12 +31,12 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
 
 import org.bridgedb.bio.Organism;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.view.LinAlg;
-import org.pathvisio.view.LinAlg.Point;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.GraphLink.GraphIdContainer;
+import org.pathvisio.core.view.LinAlg;
+import org.pathvisio.core.view.LinAlg.Point;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;

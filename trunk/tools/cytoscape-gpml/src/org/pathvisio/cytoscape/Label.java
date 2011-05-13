@@ -23,7 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.model.PathwayElement;
 
 /**
  * Cytoscape rendering of a GPML Label.

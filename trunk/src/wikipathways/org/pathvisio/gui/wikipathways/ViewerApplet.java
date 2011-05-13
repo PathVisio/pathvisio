@@ -23,11 +23,11 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.SwingUtilities;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.swing.MainPanel;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.ProgressKeeper;
 
 public class ViewerApplet extends PathwayPageApplet {
 	private MainPanel mainPanel;

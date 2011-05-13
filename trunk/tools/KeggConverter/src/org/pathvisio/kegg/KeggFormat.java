@@ -35,25 +35,25 @@ import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConnectorType;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.DataNodeType;
-import org.pathvisio.model.GpmlFormatAbstract;
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.LineType;
-import org.pathvisio.model.MLine;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
-import org.pathvisio.model.ConnectorShape.Segment;
-import org.pathvisio.model.ConnectorShape.WayPoint;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
-import org.pathvisio.model.PathwayElement.MAnchor;
-import org.pathvisio.model.PathwayElement.MPoint;
-import org.pathvisio.view.LinAlg;
-import org.pathvisio.view.MIMShapes;
-import org.pathvisio.view.LinAlg.Point;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConnectorType;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.DataNodeType;
+import org.pathvisio.core.model.GpmlFormatAbstract;
+import org.pathvisio.core.model.LineStyle;
+import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.model.MLine;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.ShapeType;
+import org.pathvisio.core.model.ConnectorShape.Segment;
+import org.pathvisio.core.model.ConnectorShape.WayPoint;
+import org.pathvisio.core.model.GraphLink.GraphIdContainer;
+import org.pathvisio.core.model.PathwayElement.MAnchor;
+import org.pathvisio.core.model.PathwayElement.MPoint;
+import org.pathvisio.core.view.LinAlg;
+import org.pathvisio.core.view.MIMShapes;
+import org.pathvisio.core.view.LinAlg.Point;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -90,7 +90,7 @@ public class KeggFormat {
 	private Pathway pathway; //Main pathway
 	private Pathway map; //Used only to improve species specific pathway
 
-	private org.pathvisio.model.Pathway gpmlPathway;
+	private org.pathvisio.core.model.Pathway gpmlPathway;
 
 	private Map<String, PathwayElement> id2gpml = new HashMap<String, PathwayElement>();
 	private Map<String, PathwayElement> reaction2gpml = new HashMap<String, PathwayElement>();
@@ -136,10 +136,10 @@ public class KeggFormat {
 		return keggService != null;
 	}
 
-	public org.pathvisio.model.Pathway convert() throws RemoteException, ConverterException, ClassNotFoundException, IDMapperException {
+	public org.pathvisio.core.model.Pathway convert() throws RemoteException, ConverterException, ClassNotFoundException, IDMapperException {
 		id2gpml.clear();
 		addedMapLinks.clear();
-		gpmlPathway = new org.pathvisio.model.Pathway();
+		gpmlPathway = new org.pathvisio.core.model.Pathway();
 		reaction2entry.clear();
 		ecrelEnzyme2Compound.clear();
 		entriesById.clear();

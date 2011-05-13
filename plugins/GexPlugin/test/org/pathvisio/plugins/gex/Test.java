@@ -32,12 +32,12 @@ import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.rdb.construct.DBConnector;
 import org.bridgedb.rdb.construct.DataDerby;
 import org.bridgedb.rdb.construct.DataDerbyDirectory;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
 import org.pathvisio.gex.SimpleGex;
-import org.pathvisio.preferences.PreferenceManager;
 
 public class Test extends TestCase
 {

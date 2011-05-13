@@ -37,9 +37,9 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.bridgedb.IDMapperException;
-import org.pathvisio.Engine;
-import org.pathvisio.Globals;
-import org.pathvisio.Revision;
+import org.pathvisio.core.Engine;
+import org.pathvisio.core.Globals;
+import org.pathvisio.core.Revision;
 import org.pathvisio.data.GdbEvent;
 import org.pathvisio.data.GdbManager;
 import org.pathvisio.data.GdbManager.GdbEventListener;

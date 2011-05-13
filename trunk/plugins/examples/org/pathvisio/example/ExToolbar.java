@@ -23,8 +23,8 @@ import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Engine;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;
 

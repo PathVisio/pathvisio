@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.debug.Logger;
 
 /**

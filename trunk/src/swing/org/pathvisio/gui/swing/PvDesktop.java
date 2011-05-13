@@ -27,8 +27,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import org.bridgedb.IDMapperException;
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.data.DBConnDerby;
 import org.pathvisio.data.DBConnectorSwing;
 import org.pathvisio.data.GdbEvent;

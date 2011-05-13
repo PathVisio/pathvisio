@@ -29,8 +29,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.PathwayElement;
 import org.pathvisio.model.PathwayElementEvent;

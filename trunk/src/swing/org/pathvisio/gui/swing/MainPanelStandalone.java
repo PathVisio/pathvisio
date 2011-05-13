@@ -31,7 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.ApplicationEvent;
+import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.gex.BackpageExpression;
 import org.pathvisio.preferences.GlobalPreference;
 import org.pathvisio.preferences.PreferenceManager;

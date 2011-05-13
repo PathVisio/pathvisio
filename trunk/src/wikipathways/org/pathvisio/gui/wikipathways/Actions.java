@@ -26,8 +26,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Globals;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Globals;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.model.Pathway;

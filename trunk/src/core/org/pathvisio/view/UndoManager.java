@@ -19,7 +19,7 @@ package org.pathvisio.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.model.Pathway;
 
 /** Manages a stack of undo actions */

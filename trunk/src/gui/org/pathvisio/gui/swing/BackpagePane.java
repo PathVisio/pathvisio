@@ -24,9 +24,9 @@ import javax.swing.JEditorPane;
 import javax.swing.SwingUtilities;
 
 import org.bridgedb.Xref;
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
-import org.pathvisio.Engine.ApplicationEventListener;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Engine;
+import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.model.ObjectType;
 import org.pathvisio.model.PathwayElement;

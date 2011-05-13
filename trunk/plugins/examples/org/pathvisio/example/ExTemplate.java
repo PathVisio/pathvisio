@@ -21,8 +21,8 @@ import java.net.URL;
 
 import javax.swing.Action;
 
-import org.pathvisio.ApplicationEvent;
-import org.pathvisio.Engine;
+import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.Engine;
 import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.model.ObjectType;

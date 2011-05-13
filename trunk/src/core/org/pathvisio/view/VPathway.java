@@ -41,7 +41,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.GraphLink.GraphIdContainer;
 import org.pathvisio.model.GroupStyle;

@@ -30,7 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 
 /**
  * A side panel which displays all objects.

@@ -24,7 +24,7 @@ package org.pathvisio.util;
 
 import java.io.File;
 
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.model.BatikImageExporter;
 import org.pathvisio.model.ConverterException;

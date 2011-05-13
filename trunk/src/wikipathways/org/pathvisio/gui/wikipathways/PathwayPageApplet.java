@@ -30,7 +30,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
-import org.pathvisio.Engine;
+import org.pathvisio.core.Engine;
 import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.SwingEngine;

@@ -35,8 +35,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.pathvisio.core.util.Resources;
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationManager;
+import org.pathvisio.desktop.visualization.Visualization;
+import org.pathvisio.desktop.visualization.VisualizationManager;
 
 /**
  * Main component of the {@link VisualizationDialog}. Has capabilities to

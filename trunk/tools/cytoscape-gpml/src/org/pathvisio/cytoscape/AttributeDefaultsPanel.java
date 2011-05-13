@@ -31,7 +31,7 @@ import javax.swing.table.TableCellRenderer;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.model.StaticProperty;
-import org.pathvisio.gui.swing.propertypanel.PropertyView;
+import org.pathvisio.gui.handler.PropertyView;
 
 /**
  * Panel to configure attribute to GPML property mappings

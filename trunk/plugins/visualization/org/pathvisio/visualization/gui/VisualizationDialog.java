@@ -23,9 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationManager;
+import org.pathvisio.desktop.visualization.Visualization;
+import org.pathvisio.desktop.visualization.VisualizationManager;
+import org.pathvisio.gui.dialogs.OkCancelDialog;
 
 /**
  * Dialog for editing dataset visualization options.

@@ -30,11 +30,11 @@ import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.Preference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ProgressKeeper;
-import org.pathvisio.gui.swing.ProgressDialog;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.plugin.Plugin;
-import org.pathvisio.wikipathways.WikiPathwaysCache;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.plugin.Plugin;
+import org.pathvisio.gui.ProgressDialog;
+import org.wikipathways.client.WikiPathwaysCache;
+import org.wikipathways.client.WikiPathwaysClient;
 
 /**
  * A plugin that let's PathVisio download a set of Pathways from WikiPathways

@@ -11,9 +11,9 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
+import org.wikipathways.client.WikiPathwaysClient;
 
 
 public class InferatorLabelFix {

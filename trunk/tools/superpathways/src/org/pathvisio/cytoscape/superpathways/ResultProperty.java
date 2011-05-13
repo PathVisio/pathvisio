@@ -17,7 +17,7 @@
 
 package org.pathvisio.cytoscape.superpathways;
 
-import org.pathvisio.util.swing.PropertyColumn;
+import org.pathvisio.desktop.util.PropertyColumn;
 
 public enum ResultProperty implements PropertyColumn {
 		NAME("Name"),

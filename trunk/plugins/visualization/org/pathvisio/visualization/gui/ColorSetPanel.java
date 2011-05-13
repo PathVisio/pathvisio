@@ -41,13 +41,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.visualization.colorset.ColorGradient;
-import org.pathvisio.visualization.colorset.ColorRule;
-import org.pathvisio.visualization.colorset.ColorSet;
-import org.pathvisio.visualization.colorset.ColorSetEvent;
-import org.pathvisio.visualization.colorset.ColorSetManager.ColorSetListener;
-import org.pathvisio.visualization.colorset.ColorSetObject;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.visualization.ColorGradient;
+import org.pathvisio.desktop.visualization.ColorRule;
+import org.pathvisio.desktop.visualization.ColorSet;
+import org.pathvisio.desktop.visualization.ColorSetEvent;
+import org.pathvisio.desktop.visualization.ColorSetObject;
+import org.pathvisio.desktop.visualization.ColorSetManager.ColorSetListener;
 
 /**
  * Panel for editing a color set, a combination of

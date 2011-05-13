@@ -25,8 +25,8 @@ import javax.swing.JOptionPane;
 
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.plugin.Plugin;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.plugin.Plugin;
 
 /**
  * Example plugin, adds action to toolbar

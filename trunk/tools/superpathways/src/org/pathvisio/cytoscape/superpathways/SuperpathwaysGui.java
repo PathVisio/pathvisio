@@ -46,11 +46,11 @@ import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.cytoscape.GpmlHandler;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.FindPathwaysByTextParameters;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysClient.GetPathwayParameters;
-import org.pathvisio.util.swing.ListWithPropertiesTableModel;
-import org.pathvisio.util.swing.RowWithProperties;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.pathvisio.desktop.util.ListWithPropertiesTableModel;
+import org.pathvisio.desktop.util.RowWithProperties;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
+import org.wikipathways.client.WikiPathwaysClient;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;

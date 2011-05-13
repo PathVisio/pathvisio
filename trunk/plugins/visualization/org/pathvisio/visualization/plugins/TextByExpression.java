@@ -53,13 +53,13 @@ import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.VPathway;
-import org.pathvisio.gex.CachedData;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.ReporterData;
-import org.pathvisio.gex.Sample;
-import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-import org.pathvisio.util.swing.FontChooser;
-import org.pathvisio.visualization.VisualizationMethod;
+import org.pathvisio.desktop.gex.CachedData;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.ReporterData;
+import org.pathvisio.desktop.gex.Sample;
+import org.pathvisio.desktop.visualization.VisualizationMethod;
+import org.pathvisio.gui.dialogs.OkCancelDialog;
+import org.pathvisio.gui.util.FontChooser;
 
 /**
  * Visialization method where expression values are represented by text,

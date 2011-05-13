@@ -12,10 +12,10 @@ import javax.xml.rpc.ServiceException;
 
 import org.jibble.pircbot.IrcException;
 import org.jibble.pircbot.PircBot;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSHistoryRow;
 import org.pathvisio.wikipathways.webservice.WSPathwayHistory;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
+import org.wikipathways.client.WikiPathwaysClient;
 
 public class WipaBot extends PircBot
 {

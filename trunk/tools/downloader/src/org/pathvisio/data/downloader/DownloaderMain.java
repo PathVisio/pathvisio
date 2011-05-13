@@ -40,7 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.ProgressMonitorInputStream;
 
-import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
+import org.pathvisio.gui.dialogs.OkCancelDialog;
 
 public class DownloaderMain {
 	static void downloadFile(URL url, File toFile) throws Exception {

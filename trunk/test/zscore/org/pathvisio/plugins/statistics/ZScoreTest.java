@@ -24,8 +24,8 @@ import org.bridgedb.BridgeDb;
 import org.bridgedb.IDMapper;
 import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.preferences.PreferenceManager;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.visualization.colorset.Criterion;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.visualization.Criterion;
 
 public class ZScoreTest extends TestCase {
 	static final File PATHWAY_DIR = new File("testData/zscore/gpml");

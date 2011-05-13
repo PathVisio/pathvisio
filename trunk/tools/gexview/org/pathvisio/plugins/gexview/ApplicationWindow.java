@@ -42,7 +42,7 @@ import org.bridgedb.gui.SimpleFileFilter;
 import org.bridgedb.rdb.construct.DataDerby;
 import org.pathvisio.core.Revision;
 import org.pathvisio.core.util.Resources;
-import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.desktop.gex.SimpleGex;
 
 public class ApplicationWindow
 {

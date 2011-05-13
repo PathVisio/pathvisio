@@ -33,11 +33,11 @@ import org.bridgedb.rdb.construct.DBConnector;
 import org.bridgedb.rdb.construct.DataDerby;
 import org.bridgedb.rdb.construct.DataDerbyDirectory;
 import org.pathvisio.core.preferences.PreferenceManager;
-import org.pathvisio.gex.CachedData;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.ReporterData;
-import org.pathvisio.gex.Sample;
-import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.desktop.gex.CachedData;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.ReporterData;
+import org.pathvisio.desktop.gex.Sample;
+import org.pathvisio.desktop.gex.SimpleGex;
 
 public class Test extends TestCase
 {

@@ -20,7 +20,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.bridgedb.IDMapperException;
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.desktop.gex.SimpleGex;
 
 public class HeatmapTableModel extends AbstractTableModel
 {

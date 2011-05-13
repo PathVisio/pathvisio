@@ -30,9 +30,9 @@ import org.pathvisio.core.model.ShapeType;
 import org.pathvisio.core.view.Template;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
-import org.pathvisio.gui.swing.CommonActions;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.plugin.Plugin;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.plugin.Plugin;
+import org.pathvisio.gui.CommonActions;
 
 /**
  * Example plugin, adds action to toolbar

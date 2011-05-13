@@ -16,7 +16,7 @@
 //
 package org.pathvisio.cytoscape.wikipathways;
 
-import org.pathvisio.util.swing.PropertyColumn;
+import org.pathvisio.desktop.util.PropertyColumn;
 
 /**
  * Columns for use in the WikiPathways query result table.

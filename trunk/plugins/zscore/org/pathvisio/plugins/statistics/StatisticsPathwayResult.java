@@ -18,7 +18,7 @@ package org.pathvisio.plugins.statistics;
 
 import java.io.File;
 
-import org.pathvisio.util.swing.RowWithProperties;
+import org.pathvisio.desktop.util.RowWithProperties;
 
 /**
  * Statistics calculation for a single pathway,

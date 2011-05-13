@@ -47,8 +47,8 @@ import org.bridgedb.bio.Organism;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.FindPathwaysByTextParameters;
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient.GetPathwayParameters;
-import org.pathvisio.util.swing.ListWithPropertiesTableModel;
-import org.pathvisio.util.swing.RowWithProperties;
+import org.pathvisio.desktop.util.ListWithPropertiesTableModel;
+import org.pathvisio.desktop.util.RowWithProperties;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
 
 /**

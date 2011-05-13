@@ -22,9 +22,9 @@ import java.awt.Frame;
 
 import javax.swing.JScrollPane;
 
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-import org.pathvisio.visualization.colorset.ColorSet;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.visualization.ColorSet;
+import org.pathvisio.gui.dialogs.OkCancelDialog;
 
 /**
  * Use this class to pop up a colorset dialog

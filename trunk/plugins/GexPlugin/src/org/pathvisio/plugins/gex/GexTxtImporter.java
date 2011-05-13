@@ -36,8 +36,8 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.debug.StopWatch;
 import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.core.util.ProgressKeeper;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.plugins.gex.ImportInformation.ColumnType;
 
 /**

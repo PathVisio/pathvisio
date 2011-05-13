@@ -22,11 +22,11 @@ import javax.swing.event.DocumentListener;
 
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
-import org.pathvisio.gui.swing.dialogs.PopupDialogHandler.PopupDialogHook;
-import org.pathvisio.gui.swing.panels.PathwayElementPanel;
-import org.pathvisio.plugin.Plugin;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.plugin.Plugin;
+import org.pathvisio.gui.dialogs.PathwayElementDialog;
+import org.pathvisio.gui.dialogs.PopupDialogHandler.PopupDialogHook;
+import org.pathvisio.gui.panels.PathwayElementPanel;
 
 /**
  * Example of how to add tabs to the pathway element dialog, 

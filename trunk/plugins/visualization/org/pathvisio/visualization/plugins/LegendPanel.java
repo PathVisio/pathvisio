@@ -29,17 +29,17 @@ import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationEvent;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationManager.VisualizationListener;
-import org.pathvisio.visualization.VisualizationMethod;
-import org.pathvisio.visualization.colorset.ColorGradient;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
-import org.pathvisio.visualization.colorset.ColorRule;
-import org.pathvisio.visualization.colorset.ColorSet;
-import org.pathvisio.visualization.colorset.ColorSetManager;
-import org.pathvisio.visualization.colorset.ColorSetObject;
+import org.pathvisio.desktop.visualization.ColorGradient;
+import org.pathvisio.desktop.visualization.ColorRule;
+import org.pathvisio.desktop.visualization.ColorSet;
+import org.pathvisio.desktop.visualization.ColorSetManager;
+import org.pathvisio.desktop.visualization.ColorSetObject;
+import org.pathvisio.desktop.visualization.Visualization;
+import org.pathvisio.desktop.visualization.VisualizationEvent;
+import org.pathvisio.desktop.visualization.VisualizationManager;
+import org.pathvisio.desktop.visualization.VisualizationMethod;
+import org.pathvisio.desktop.visualization.ColorGradient.ColorValuePair;
+import org.pathvisio.desktop.visualization.VisualizationManager.VisualizationListener;
 import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 
 /**

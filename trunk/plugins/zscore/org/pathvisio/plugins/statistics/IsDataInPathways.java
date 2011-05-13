@@ -35,9 +35,9 @@ import org.bridgedb.Xref;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.util.PathwayParser.ParseException;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.ReporterData;
-import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.ReporterData;
+import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
 
 /**

@@ -39,7 +39,6 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.client.IdSearchPanel;
 import org.pathvisio.wikipathways.client.Query;
 import org.pathvisio.wikipathways.client.Result;
@@ -48,6 +47,7 @@ import org.pathvisio.wikipathways.client.SearchException;
 import org.pathvisio.wikipathways.client.SearchService;
 import org.pathvisio.wikipathways.webservice.WSIndexField;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
+import org.wikipathways.client.WikiPathwaysClient;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

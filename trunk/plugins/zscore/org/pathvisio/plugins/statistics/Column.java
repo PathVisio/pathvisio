@@ -16,7 +16,7 @@
 //
 package org.pathvisio.plugins.statistics;
 
-import org.pathvisio.util.swing.PropertyColumn;
+import org.pathvisio.desktop.util.PropertyColumn;
 
 /**
  * Enum for possible columns in the statistics result table

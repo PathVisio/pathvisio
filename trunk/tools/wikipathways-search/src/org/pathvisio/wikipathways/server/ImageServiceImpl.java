@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.client.ResultsTable;
+import org.wikipathways.client.WikiPathwaysClient;
 
 /**
  * A servlet that provides image data for the preview

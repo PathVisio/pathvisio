@@ -43,11 +43,11 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.biopax.reflect.PublicationXref;
-import org.pathvisio.data.PubMedQuery;
-import org.pathvisio.data.PubMedResult;
+import org.pathvisio.core.biopax.reflect.PublicationXref;
+import org.pathvisio.core.data.PubMedQuery;
+import org.pathvisio.core.data.PubMedResult;
+import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.swing.ProgressDialog;
-import org.pathvisio.util.ProgressKeeper;
 import org.xml.sax.SAXException;
 
 /**

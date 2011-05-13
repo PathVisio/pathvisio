@@ -26,8 +26,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.KeyStroke;
 
+import org.pathvisio.core.gui.PathwayTransferable;
 import org.pathvisio.cytoscape.GpmlPlugin;
-import org.pathvisio.view.swing.PathwayTransferable;
 
 /**
  * Paste a GPML fragment and convert it into a network.

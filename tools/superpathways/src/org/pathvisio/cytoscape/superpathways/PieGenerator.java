@@ -29,7 +29,7 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
-import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.GlobalPreference;
 
 public class PieGenerator{ // extends ApplicationFrame {
 

@@ -20,8 +20,8 @@ import javax.swing.JOptionPane;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.bio.BioDataSource;
-import org.pathvisio.data.GdbEvent;
-import org.pathvisio.data.GdbManager.GdbEventListener;
+import org.pathvisio.core.data.GdbEvent;
+import org.pathvisio.core.data.GdbManager.GdbEventListener;
 import org.pathvisio.gex.GexManager.GexManagerEvent;
 import org.pathvisio.gex.GexManager.GexManagerListener;
 import org.pathvisio.gui.swing.PvDesktop;

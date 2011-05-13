@@ -19,8 +19,8 @@ package org.pathvisio.gui.wikipathways;
 import java.awt.BorderLayout;
 import java.awt.Container;
 
+import org.pathvisio.core.model.Pathway;
 import org.pathvisio.gui.swing.panels.LitReferencePanel;
-import org.pathvisio.model.Pathway;
 
 public class BibliographyApplet extends PathwayPageApplet
 {

@@ -29,7 +29,7 @@ import java.awt.geom.Point2D;
 
 import javax.swing.JComponent;
 
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.model.PathwayElement;
 
 /**
  * Base class for Shape, Label, unconnected Lines, i.e. everything that

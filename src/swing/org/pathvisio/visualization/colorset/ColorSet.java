@@ -23,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jdom.Element;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.ColorConverter;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
 /**

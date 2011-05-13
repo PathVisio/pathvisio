@@ -22,7 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.model.PathwayElement;
 
 public abstract class PathwayElementPanel extends JPanel {
 	private PathwayElement input;

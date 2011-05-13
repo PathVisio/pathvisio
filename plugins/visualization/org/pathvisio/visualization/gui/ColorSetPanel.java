@@ -40,7 +40,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.visualization.colorset.ColorGradient;
 import org.pathvisio.visualization.colorset.ColorRule;

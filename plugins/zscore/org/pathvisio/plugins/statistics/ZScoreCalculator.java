@@ -28,12 +28,12 @@ import java.util.Set;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.ProgressKeeper;
+import org.pathvisio.core.util.Stats;
 import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
-import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.util.Stats;
 import org.pathvisio.visualization.colorset.Criterion;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 

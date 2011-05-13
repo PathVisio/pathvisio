@@ -21,11 +21,11 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JFileChooser;
 
+import org.pathvisio.core.preferences.Preference;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.gui.swing.PreferencesDlg;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;
-import org.pathvisio.preferences.Preference;
-import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * Example of how to use Preference Manager and Preferences Dlg

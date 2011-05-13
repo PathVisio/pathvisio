@@ -21,10 +21,10 @@ import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.pathvisio.biopax.reflect.BiopaxElement;
-import org.pathvisio.biopax.reflect.PublicationXref;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Pathway;
+import org.pathvisio.core.biopax.reflect.BiopaxElement;
+import org.pathvisio.core.biopax.reflect.PublicationXref;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.Pathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 /**

@@ -22,7 +22,7 @@ import java.awt.Frame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
 import org.pathvisio.visualization.Visualization;
 import org.pathvisio.visualization.VisualizationManager;

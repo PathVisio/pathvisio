@@ -32,9 +32,9 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.gex.BackpageExpression;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
 
 /**
  * the mainPanel for the standalone (non-applet) version of PathVisio.

@@ -19,8 +19,8 @@ package org.pathvisio.gui.swing;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
-import org.pathvisio.model.PathwayExporter;
-import org.pathvisio.model.PathwayImporter;
+import org.pathvisio.core.model.PathwayExporter;
+import org.pathvisio.core.model.PathwayImporter;
 
 /**
  * A filefilter that filters files for a given {@link PathwayImporter} or {@link PathwayExporter}.

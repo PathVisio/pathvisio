@@ -31,9 +31,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
+import org.pathvisio.core.util.Resources;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.Sample;
-import org.pathvisio.util.Resources;
 
 /**
  * A SampleCheckList with buttons on the right side to

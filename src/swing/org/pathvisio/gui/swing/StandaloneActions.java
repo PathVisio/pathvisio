@@ -30,7 +30,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.core.Globals;
-import org.pathvisio.util.Resources;
+import org.pathvisio.core.util.Resources;
 
 /**
  * collection of menu / toolbar Actions that are only needed

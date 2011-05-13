@@ -39,14 +39,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.pathvisio.biopax.BiopaxElementManager;
-import org.pathvisio.biopax.BiopaxReferenceManager;
-import org.pathvisio.biopax.reflect.PublicationXref;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.biopax.BiopaxElementManager;
+import org.pathvisio.core.biopax.BiopaxReferenceManager;
+import org.pathvisio.core.biopax.reflect.PublicationXref;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.util.Resources;
 import org.pathvisio.gui.swing.SwingEngine;
 import org.pathvisio.gui.swing.dialogs.PublicationXRefDialog;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.util.Resources;
 
 public class LitReferencePanel extends PathwayElementPanel implements ActionListener {
 	private static final String ADD = "New reference";

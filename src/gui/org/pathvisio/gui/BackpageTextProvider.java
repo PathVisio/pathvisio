@@ -29,12 +29,12 @@ import org.bridgedb.AttributeMapper;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.debug.WorkerThreadOnly;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.util.Resources;
-import org.pathvisio.util.Utils;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.debug.WorkerThreadOnly;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.util.Resources;
+import org.pathvisio.core.util.Utils;
 
 /**
  * BackpageTextProvider knows how to generate a html "backpage" for a given PathwayElement.

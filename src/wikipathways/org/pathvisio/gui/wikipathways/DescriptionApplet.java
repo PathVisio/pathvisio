@@ -34,11 +34,11 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElement.Comment;
-import org.pathvisio.model.PathwayElementEvent;
-import org.pathvisio.model.PathwayElementListener;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.PathwayElementEvent;
+import org.pathvisio.core.model.PathwayElementListener;
+import org.pathvisio.core.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.WikiPathways;
 
 public class DescriptionApplet extends PathwayPageApplet {

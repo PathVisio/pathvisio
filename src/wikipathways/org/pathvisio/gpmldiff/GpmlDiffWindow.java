@@ -38,12 +38,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.RootPaneContainer;
 
+import org.pathvisio.core.gpmldiff.BasicCost;
+import org.pathvisio.core.gpmldiff.BetterSim;
+import org.pathvisio.core.gpmldiff.GlassPane;
+import org.pathvisio.core.gpmldiff.PanelOutputter;
+import org.pathvisio.core.gpmldiff.PwyDoc;
+import org.pathvisio.core.gpmldiff.SearchNode;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayEvent;
+import org.pathvisio.core.view.VPathwayListener;
+import org.pathvisio.core.view.VPathwayEvent.VPathwayEventType;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.WrapLayout;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayEvent;
-import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.VPathwayEvent.VPathwayEventType;
 import org.pathvisio.view.swing.VPathwaySwing;
 
 class GpmlDiffWindow extends JPanel implements VPathwayListener
@@ -333,16 +339,16 @@ class GpmlDiffWindow extends JPanel implements VPathwayListener
 				PanelOutputter.ModData mod = outputter.modsByElt.get (e.getAffectedElement());
 				if (mod != null)
 				{
-					switch (mod.type)
+					switch (mod.getType())
 					{
 					case CHANGED:
-						glassPane.setModifyHint (mod.hints, mod.x1, mod.y1, mod.x2, mod.y2);
+						glassPane.setModifyHint (mod.getHints(), mod.getX1(), mod.getY1(), mod.getX2(), mod.getY2());
 						break;
 					case ADDED:
-						glassPane.setAddHint (mod.hints, mod.x2, mod.y2);
+						glassPane.setAddHint (mod.getHints(), mod.getX2(), mod.getY2());
 						break;
 					case REMOVED:
-						glassPane.setRemoveHint (mod.hints, mod.x1, mod.y1);
+						glassPane.setRemoveHint (mod.getHints(), mod.getX1(), mod.getY1());
 						break;
 					}
 				}

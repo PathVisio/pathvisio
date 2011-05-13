@@ -22,11 +22,11 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
+import org.pathvisio.core.view.Graphics;
+import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.view.VPathwayElement;
 
 /**
  * This plugin adds the ability to attach a phone number to each

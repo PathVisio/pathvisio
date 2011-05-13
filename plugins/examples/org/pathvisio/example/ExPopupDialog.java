@@ -20,12 +20,12 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.gui.swing.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.swing.dialogs.PopupDialogHandler.PopupDialogHook;
 import org.pathvisio.gui.swing.panels.PathwayElementPanel;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement;
 import org.pathvisio.plugin.Plugin;
 
 /**

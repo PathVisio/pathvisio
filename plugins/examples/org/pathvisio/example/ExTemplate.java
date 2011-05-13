@@ -23,16 +23,16 @@ import javax.swing.Action;
 
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.ShapeType;
+import org.pathvisio.core.view.Template;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
 import org.pathvisio.plugin.Plugin;
-import org.pathvisio.view.Template;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
 
 /**
  * Example plugin, adds action to toolbar

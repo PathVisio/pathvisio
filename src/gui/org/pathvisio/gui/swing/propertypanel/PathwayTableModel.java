@@ -31,14 +31,14 @@ import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine.ApplicationEventListener;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.PathwayElementEvent;
+import org.pathvisio.core.model.PathwayElementListener;
+import org.pathvisio.core.view.Graphics;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.SelectionBox.SelectionEvent;
+import org.pathvisio.core.view.SelectionBox.SelectionListener;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElementEvent;
-import org.pathvisio.model.PathwayElementListener;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.view.SelectionBox.SelectionEvent;
-import org.pathvisio.view.SelectionBox.SelectionListener;
-import org.pathvisio.view.VPathway;
 
 /**
  * The model for the table in the Properties side panel.

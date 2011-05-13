@@ -28,10 +28,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.StaticProperty;
 import org.pathvisio.gui.swing.propertypanel.PropertyView;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.StaticProperty;
 
 /**
  * Panel to configure attribute to GPML property mappings

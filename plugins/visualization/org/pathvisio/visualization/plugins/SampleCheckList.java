@@ -27,7 +27,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 
 import org.bridgedb.IDMapperException;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.Sample;
 import org.pathvisio.gex.SimpleGex;

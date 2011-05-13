@@ -16,7 +16,7 @@
 //
 package org.pathvisio.wikipathways;
 
-import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.core.util.ProgressKeeper;
 
 public abstract class RunnableWithProgress<T> implements Runnable {
 	ProgressKeeper p;

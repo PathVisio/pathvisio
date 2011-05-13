@@ -28,8 +28,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import org.pathvisio.core.util.Resources;
 import org.pathvisio.gex.GexManager;
-import org.pathvisio.util.Resources;
 import org.pathvisio.visualization.colorset.ColorSet;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 

@@ -31,10 +31,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 
 /**
  * Class that holds a Cytoscape node that has a GPML representation, which is stored

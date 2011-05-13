@@ -56,9 +56,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import org.pathvisio.preferences.Preference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.ColorConverter;
+import org.pathvisio.core.preferences.Preference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.ColorConverter;
 
 /**
  * Global dialog for setting the user preferences.

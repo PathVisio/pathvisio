@@ -39,13 +39,13 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.jdom.Element;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.ColorConverter;
+import org.pathvisio.core.util.Utils;
+import org.pathvisio.core.view.GeneProduct;
+import org.pathvisio.core.view.Graphics;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-import org.pathvisio.util.ColorConverter;
-import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.FontChooser;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.Graphics;
 import org.pathvisio.visualization.VisualizationMethod;
 
 /**

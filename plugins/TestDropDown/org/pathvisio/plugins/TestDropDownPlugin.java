@@ -19,14 +19,14 @@ package org.pathvisio.plugins;
 import javax.swing.Action;
 
 import org.pathvisio.core.Engine;
+import org.pathvisio.core.model.ConnectorType;
+import org.pathvisio.core.model.LineStyle;
+import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.view.DefaultTemplates;
 import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.GraphicsChoiceButton;
 import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.model.ConnectorType;
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.LineType;
 import org.pathvisio.plugin.Plugin;
-import org.pathvisio.view.DefaultTemplates;
 
 
 /**

@@ -18,7 +18,7 @@ package org.pathvisio.gui.swing.propertypanel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.model.PropertyType;
+import org.pathvisio.core.model.PropertyType;
 
 /**
  * This interface defines a handler that knows how to display/edit a {@link PropertyType}.

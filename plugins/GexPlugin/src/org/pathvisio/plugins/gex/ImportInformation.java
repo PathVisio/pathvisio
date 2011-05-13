@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.DataSourcePatterns;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 
 /**
  * This class contains the information needed to start importing a delimited

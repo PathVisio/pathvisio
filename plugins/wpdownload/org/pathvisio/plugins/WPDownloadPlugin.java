@@ -25,14 +25,14 @@ import javax.swing.JOptionPane;
 import javax.xml.rpc.ServiceException;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.Preference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.model.ConverterException;
 import org.pathvisio.plugin.Plugin;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.Preference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.wikipathways.WikiPathwaysCache;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 

@@ -33,14 +33,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.model.GpmlFormat;
-import org.pathvisio.model.GraphLink.GraphIdContainer;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.PathwayElement.MAnchor;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.GpmlFormat;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.GraphLink.GraphIdContainer;
+import org.pathvisio.core.model.PathwayElement.MAnchor;
 
 /**
  * Converts GPML or fragments of GPML to a network.

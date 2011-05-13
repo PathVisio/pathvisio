@@ -26,8 +26,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
+import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.cytoscape.GpmlPlugin;
-import org.pathvisio.model.ConverterException;
 
 /**
  * Export current network as GPML

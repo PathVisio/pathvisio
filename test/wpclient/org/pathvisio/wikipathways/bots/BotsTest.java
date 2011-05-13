@@ -25,10 +25,10 @@ import java.util.Properties;
 import junit.framework.TestCase;
 
 import org.bridgedb.bio.Organism;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ObjectType;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.bots.Bot.BotException;
 import org.pathvisio.wikipathways.bots.Bot.Result;

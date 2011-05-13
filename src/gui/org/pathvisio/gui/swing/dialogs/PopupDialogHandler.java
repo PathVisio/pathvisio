@@ -21,8 +21,8 @@ import java.awt.Frame;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.model.PathwayElement;
 
 /**
  * This is a factory class for the PathwayElement Popup dialog, which pops up after double-clicking an element in the pathway.

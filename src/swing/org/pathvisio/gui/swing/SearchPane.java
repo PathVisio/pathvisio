@@ -49,21 +49,21 @@ import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.core.Engine;
-import org.pathvisio.data.XrefWithSymbol;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.ConverterException;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.ProgressKeeper;
+import org.pathvisio.core.data.XrefWithSymbol;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.ProgressKeeper;
+import org.pathvisio.core.view.GeneProduct;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.util.swing.MatchResult;
 import org.pathvisio.util.swing.SearchMethods;
 import org.pathvisio.util.swing.SearchMethods.ByPatternMatcher;
 import org.pathvisio.util.swing.SearchMethods.ByXrefMatcher;
 import org.pathvisio.util.swing.SearchMethods.SearchException;
 import org.pathvisio.util.swing.SearchTableModel;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
 
 /**
  * A side panel which displays search results.

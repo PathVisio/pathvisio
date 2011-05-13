@@ -48,17 +48,17 @@ import javax.swing.event.ListDataListener;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.jdom.Element;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.Utils;
+import org.pathvisio.core.view.GeneProduct;
+import org.pathvisio.core.view.Graphics;
+import org.pathvisio.core.view.VPathway;
 import org.pathvisio.gex.CachedData;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.ReporterData;
 import org.pathvisio.gex.Sample;
 import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-import org.pathvisio.util.Utils;
 import org.pathvisio.util.swing.FontChooser;
-import org.pathvisio.view.GeneProduct;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.view.VPathway;
 import org.pathvisio.visualization.VisualizationMethod;
 
 /**

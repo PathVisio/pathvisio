@@ -18,8 +18,8 @@ package org.pathvisio.cytoscape;
 
 import cytoscape.data.CyAttributes;
 
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.StaticProperty;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.StaticProperty;
 
 /**
  * Interface for classes that keep track of mapping from

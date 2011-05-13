@@ -32,13 +32,13 @@ import org.bridgedb.DataSource;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.debug.StopWatch;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.debug.StopWatch;
+import org.pathvisio.core.util.FileUtils;
+import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.SimpleGex;
 import org.pathvisio.plugins.gex.ImportInformation.ColumnType;
-import org.pathvisio.util.FileUtils;
-import org.pathvisio.util.ProgressKeeper;
 
 /**
  * Functions to create a new Gex database

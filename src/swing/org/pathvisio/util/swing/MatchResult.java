@@ -19,9 +19,9 @@ package org.pathvisio.util.swing;
 import java.io.File;
 import java.util.List;
 
-import org.pathvisio.data.XrefWithSymbol;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.util.Utils;
+import org.pathvisio.core.data.XrefWithSymbol;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.util.Utils;
 
 /**
  * The result of a pathway search.

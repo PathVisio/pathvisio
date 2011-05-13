@@ -19,7 +19,7 @@ package org.pathvisio.util.swing;
 import javax.swing.JTextField;
 import javax.swing.text.BadLocationException;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 
 /**
  * Contains a utility function to insert a piece of text at the cursor in a TextField.

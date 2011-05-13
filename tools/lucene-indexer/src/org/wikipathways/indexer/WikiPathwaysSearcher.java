@@ -21,7 +21,7 @@ import org.apache.lucene.search.Searcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.bridgedb.Xref;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
 import org.pathvisio.indexer.DataNodeIndexer;
 
 public class WikiPathwaysSearcher {

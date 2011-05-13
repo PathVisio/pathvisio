@@ -55,22 +55,22 @@ import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine.ApplicationEventListener;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.view.Graphics;
+import org.pathvisio.core.view.Handle;
+import org.pathvisio.core.view.Label;
+import org.pathvisio.core.view.SelectionBox;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayElement;
+import org.pathvisio.core.view.VPathwayEvent;
+import org.pathvisio.core.view.VPathwayListener;
 import org.pathvisio.gui.BackpageTextProvider;
 import org.pathvisio.gui.BackpageTextProvider.BackpageAttributes;
 import org.pathvisio.gui.BackpageTextProvider.BackpageXrefs;
 import org.pathvisio.gui.swing.CommonActions.ZoomAction;
 import org.pathvisio.gui.swing.dnd.PathwayImportHandler;
 import org.pathvisio.gui.swing.propertypanel.PathwayTableModel;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.view.Handle;
-import org.pathvisio.view.Label;
-import org.pathvisio.view.SelectionBox;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.view.VPathwayEvent;
-import org.pathvisio.view.VPathwayListener;
 
 
 /**

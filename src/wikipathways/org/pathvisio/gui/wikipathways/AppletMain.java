@@ -24,15 +24,15 @@ import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.ProgressKeeper;
+import org.pathvisio.core.view.Graphics;
+import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.gui.swing.CommonActions;
 import org.pathvisio.gui.swing.MainPanel;
 import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
-import org.pathvisio.preferences.GlobalPreference;
-import org.pathvisio.preferences.PreferenceManager;
-import org.pathvisio.util.ProgressKeeper;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.view.VPathwayElement;
 
 public class AppletMain extends PathwayPageApplet {
 

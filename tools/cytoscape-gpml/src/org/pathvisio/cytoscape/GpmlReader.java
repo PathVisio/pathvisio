@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.pathvisio.model.Pathway;
+import org.pathvisio.core.model.Pathway;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;

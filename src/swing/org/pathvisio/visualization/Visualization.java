@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jdom.Element;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.view.Graphics;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.view.Graphics;
 
 /**
  * Represents a set of configured visualization plugins

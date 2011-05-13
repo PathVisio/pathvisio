@@ -35,16 +35,16 @@ import org.jdom.output.XMLOutputter;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.Engine.ApplicationEventListener;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.view.Graphics;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayElement;
+import org.pathvisio.core.view.VPathwayEvent;
+import org.pathvisio.core.view.VPathwayListener;
+import org.pathvisio.core.view.VPathwayEvent.VPathwayEventType;
 import org.pathvisio.gex.GexManager;
 import org.pathvisio.gex.GexManager.GexManagerEvent;
 import org.pathvisio.gex.GexManager.GexManagerListener;
-import org.pathvisio.view.Graphics;
-import org.pathvisio.view.VPathway;
-import org.pathvisio.view.VPathwayElement;
-import org.pathvisio.view.VPathwayEvent;
-import org.pathvisio.view.VPathwayListener;
-import org.pathvisio.view.VPathwayEvent.VPathwayEventType;
 import org.pathvisio.visualization.colorset.ColorSetManager;
 
 /**

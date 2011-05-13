@@ -25,8 +25,8 @@ import java.util.Comparator;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.plugins.statistics.StatisticsPlugin.StatisticsPreference;
-import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 
 /**

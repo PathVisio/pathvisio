@@ -52,8 +52,11 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
 import org.bridgedb.Xref;
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.data.XrefWithSymbol;
-import org.pathvisio.debug.Logger;
+import org.pathvisio.core.data.XrefWithSymbol;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.DataNodeType;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.swing.DataSourceModel;
 import org.pathvisio.gui.swing.ProgressDialog;
 import org.pathvisio.gui.swing.SwingEngine;
@@ -61,9 +64,6 @@ import org.pathvisio.gui.swing.completer.CompleterQueryTextArea;
 import org.pathvisio.gui.swing.completer.CompleterQueryTextField;
 import org.pathvisio.gui.swing.completer.OptionProvider;
 import org.pathvisio.gui.swing.propertypanel.DataSourceHandler;
-import org.pathvisio.model.DataNodeType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.util.ProgressKeeper;
 import org.pathvisio.util.swing.PermissiveComboBox;
 
 /**

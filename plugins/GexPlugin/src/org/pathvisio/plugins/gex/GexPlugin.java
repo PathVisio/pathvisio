@@ -22,8 +22,8 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import org.bridgedb.rdb.construct.DBConnector;
+import org.pathvisio.core.debug.Logger;
 import org.pathvisio.data.DBConnectorSwing;
-import org.pathvisio.debug.Logger;
 import org.pathvisio.gui.swing.PvDesktop;
 import org.pathvisio.plugin.Plugin;
 

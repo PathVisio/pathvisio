@@ -32,7 +32,7 @@ import java.util.Vector;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.pathvisio.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.GlobalPreference;
 
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;

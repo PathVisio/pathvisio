@@ -34,10 +34,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.cytoscape.visualmapping.GpmlVisualStyle;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.model.Pathway;
-import org.pathvisio.model.PathwayElement;
 
 /**
  * Class that handles the GPML representation of nodes and edges, stored

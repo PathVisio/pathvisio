@@ -27,11 +27,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.LineType;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.view.ArrowShape;
-import org.pathvisio.view.ShapeRegistry;
+import org.pathvisio.core.model.LineStyle;
+import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.view.ArrowShape;
+import org.pathvisio.core.view.ShapeRegistry;
 
 /**
  * Cytoscape rendering of a GPML Line.

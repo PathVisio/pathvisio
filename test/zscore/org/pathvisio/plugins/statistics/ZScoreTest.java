@@ -23,8 +23,8 @@ import junit.framework.TestCase;
 import org.bridgedb.BridgeDb;
 import org.bridgedb.IDMapper;
 import org.bridgedb.bio.BioDataSource;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.gex.GexManager;
-import org.pathvisio.preferences.PreferenceManager;
 import org.pathvisio.visualization.colorset.Criterion;
 
 public class ZScoreTest extends TestCase {

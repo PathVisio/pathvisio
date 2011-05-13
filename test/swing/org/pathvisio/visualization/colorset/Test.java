@@ -23,8 +23,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.debug.Logger;
-import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
 import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 

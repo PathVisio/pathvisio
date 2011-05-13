@@ -26,10 +26,10 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
-import org.pathvisio.model.LineStyle;
-import org.pathvisio.model.PathwayElement;
-import org.pathvisio.model.ShapeType;
-import org.pathvisio.view.ShapeRegistry;
+import org.pathvisio.core.model.LineStyle;
+import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.ShapeType;
+import org.pathvisio.core.view.ShapeRegistry;
 
 /**
  * Cytoscape rendering of a GPML Shape.

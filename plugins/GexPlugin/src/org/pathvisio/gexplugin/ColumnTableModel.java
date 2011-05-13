@@ -17,7 +17,7 @@
 /**
  *
  */
-package org.pathvisio.plugins.gex;
+package org.pathvisio.gexplugin;
 
 
 import java.awt.Color;
@@ -28,7 +28,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import org.pathvisio.plugins.gex.ImportInformation.ColumnType;
+import org.pathvisio.gexplugin.ImportInformation.ColumnType;
 
 /**
  * Table model used in the column page of the Gex Import Wizard.

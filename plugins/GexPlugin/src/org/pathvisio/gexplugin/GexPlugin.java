@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.plugins.gex;
+package org.pathvisio.gexplugin;
 
 import java.awt.event.ActionEvent;
 

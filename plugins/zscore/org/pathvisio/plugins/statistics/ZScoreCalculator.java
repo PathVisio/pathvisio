@@ -31,11 +31,11 @@ import org.bridgedb.Xref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.core.util.Stats;
-import org.pathvisio.gex.CachedData;
-import org.pathvisio.gex.ReporterData;
+import org.pathvisio.desktop.gex.CachedData;
+import org.pathvisio.desktop.gex.ReporterData;
+import org.pathvisio.desktop.visualization.Criterion;
+import org.pathvisio.desktop.visualization.Criterion.CriterionException;
 import org.pathvisio.plugins.statistics.PathwayMap.PathwayInfo;
-import org.pathvisio.visualization.colorset.Criterion;
-import org.pathvisio.visualization.colorset.Criterion.CriterionException;
 
 /**
  * Calculates statistics on a set of Pathways, either step by step with intermediate results,

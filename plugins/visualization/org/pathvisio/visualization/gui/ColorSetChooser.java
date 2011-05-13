@@ -29,9 +29,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.pathvisio.core.util.Resources;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.visualization.colorset.ColorSet;
-import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.visualization.ColorSet;
+import org.pathvisio.desktop.visualization.ColorSetManager;
 
 /**
  * A panel containing a colorset combo + button to add/remove/modify colorsets.

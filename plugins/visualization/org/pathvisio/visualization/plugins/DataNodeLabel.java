@@ -44,9 +44,9 @@ import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
-import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
-import org.pathvisio.util.swing.FontChooser;
-import org.pathvisio.visualization.VisualizationMethod;
+import org.pathvisio.desktop.visualization.VisualizationMethod;
+import org.pathvisio.gui.dialogs.OkCancelDialog;
+import org.pathvisio.gui.util.FontChooser;
 
 /**
  * Visualization method to put the label pack on a DataNode. Since

@@ -44,8 +44,8 @@ import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.indexer.GpmlIndexer;
 import org.pathvisio.indexer.SourceProvider;
-import org.pathvisio.wikipathways.WikiPathwaysCache;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
+import org.wikipathways.client.WikiPathwaysCache;
+import org.wikipathways.client.WikiPathwaysClient;
 
 /**
  * Creates an index of all WikiPathways pathways, after

@@ -38,9 +38,9 @@ import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.cytoscape.superpathways.SuperpathwaysGui.ResultRow;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
+import org.wikipathways.client.WikiPathwaysClient;
 
 import cytoscape.task.Task;
 import cytoscape.task.TaskMonitor;

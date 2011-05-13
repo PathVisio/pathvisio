@@ -24,17 +24,17 @@ import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTabbedPane;
 
-import org.pathvisio.gex.GexManager.GexManagerEvent;
-import org.pathvisio.gex.GexManager.GexManagerListener;
-import org.pathvisio.gui.swing.MainPanel;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.plugin.Plugin;
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationEvent;
-import org.pathvisio.visualization.VisualizationManager;
-import org.pathvisio.visualization.VisualizationMethod;
-import org.pathvisio.visualization.VisualizationMethodProvider;
-import org.pathvisio.visualization.VisualizationMethodRegistry;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.gex.GexManager.GexManagerEvent;
+import org.pathvisio.desktop.gex.GexManager.GexManagerListener;
+import org.pathvisio.desktop.plugin.Plugin;
+import org.pathvisio.desktop.visualization.Visualization;
+import org.pathvisio.desktop.visualization.VisualizationEvent;
+import org.pathvisio.desktop.visualization.VisualizationManager;
+import org.pathvisio.desktop.visualization.VisualizationMethod;
+import org.pathvisio.desktop.visualization.VisualizationMethodProvider;
+import org.pathvisio.desktop.visualization.VisualizationMethodRegistry;
+import org.pathvisio.gui.MainPanel;
 import org.pathvisio.visualization.gui.VisualizationDialog;
 
 /**

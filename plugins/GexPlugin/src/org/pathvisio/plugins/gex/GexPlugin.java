@@ -23,9 +23,9 @@ import javax.swing.JOptionPane;
 
 import org.bridgedb.rdb.construct.DBConnector;
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.data.DBConnectorSwing;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.plugin.Plugin;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.data.DBConnectorSwing;
+import org.pathvisio.desktop.plugin.Plugin;
 
 /**
  * This plugin enables Gex functionality. Currently only adds menu items

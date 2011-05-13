@@ -26,8 +26,8 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.desktop.util.ListWithPropertiesTableModel;
 import org.pathvisio.plugins.statistics.StatisticsPlugin.StatisticsPreference;
-import org.pathvisio.util.swing.ListWithPropertiesTableModel;
 
 /**
  * Table Model for showing statistics results

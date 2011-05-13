@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.bridgedb.IDMapper;
-import org.pathvisio.gex.CachedData;
-import org.pathvisio.visualization.colorset.Criterion;
+import org.pathvisio.desktop.gex.CachedData;
+import org.pathvisio.desktop.visualization.Criterion;
 
 /**
  * Result of a statistics calculation on a whole Pathway set.

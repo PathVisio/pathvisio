@@ -23,9 +23,9 @@ import javax.swing.JFileChooser;
 
 import org.pathvisio.core.preferences.Preference;
 import org.pathvisio.core.preferences.PreferenceManager;
-import org.pathvisio.gui.swing.PreferencesDlg;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.plugin.Plugin;
+import org.pathvisio.desktop.PreferencesDlg;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.plugin.Plugin;
 
 /**
  * Example of how to use Preference Manager and Preferences Dlg

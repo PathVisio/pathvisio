@@ -51,16 +51,16 @@ import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.Preference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ProgressKeeper;
-import org.pathvisio.gex.CachedData;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.SimpleGex;
-import org.pathvisio.gui.swing.PreferencesDlg;
-import org.pathvisio.gui.swing.ProgressDialog;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.gui.swing.SwingEngine;
-import org.pathvisio.plugin.Plugin;
-import org.pathvisio.util.swing.TextFieldUtils;
-import org.pathvisio.visualization.colorset.Criterion;
+import org.pathvisio.desktop.PreferencesDlg;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.gex.CachedData;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.SimpleGex;
+import org.pathvisio.desktop.plugin.Plugin;
+import org.pathvisio.desktop.util.TextFieldUtils;
+import org.pathvisio.desktop.visualization.Criterion;
+import org.pathvisio.gui.ProgressDialog;
+import org.pathvisio.gui.SwingEngine;
 
 /**
  * A PathVisio plugin that lets you do simple overrepresentation analysis on pathways.

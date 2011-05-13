@@ -28,8 +28,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.pathvisio.visualization.Visualization;
-import org.pathvisio.visualization.VisualizationMethod;
+import org.pathvisio.desktop.visualization.Visualization;
+import org.pathvisio.desktop.visualization.VisualizationMethod;
 
 /**
  * Wraps around the configuration panel of a VisualizationMethod

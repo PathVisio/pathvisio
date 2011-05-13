@@ -26,8 +26,8 @@ import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.model.PathwayImporter;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.plugin.Plugin;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.plugin.Plugin;
 
 /**
  * Example of how to create and register a Pathway importer.

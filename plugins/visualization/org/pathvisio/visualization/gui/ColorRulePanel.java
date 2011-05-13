@@ -38,11 +38,11 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.SimpleGex;
-import org.pathvisio.util.swing.TextFieldUtils;
-import org.pathvisio.visualization.colorset.ColorRule;
-import org.pathvisio.visualization.colorset.Criterion;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.SimpleGex;
+import org.pathvisio.desktop.util.TextFieldUtils;
+import org.pathvisio.desktop.visualization.ColorRule;
+import org.pathvisio.desktop.visualization.Criterion;
 
 /**
  * A panel for editing a color rule

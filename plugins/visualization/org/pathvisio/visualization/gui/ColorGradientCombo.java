@@ -36,7 +36,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import org.pathvisio.visualization.colorset.ColorGradient;
+import org.pathvisio.desktop.visualization.ColorGradient;
 
 /**
  * A JComboBox that renders gradients.

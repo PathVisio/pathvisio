@@ -45,12 +45,12 @@ import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayWrapper;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.client.SearchException;
 import org.pathvisio.wikipathways.client.SearchService;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
+import org.wikipathways.client.WikiPathwaysClient;
 
 /**
  * Manages the cache of the GPML files and preview images

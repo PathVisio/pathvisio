@@ -24,7 +24,7 @@ import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.wikipathways.WikiPathways;
+import org.wikipathways.applet.WikiPathways;
 
 /**
  * Class that indexes several metadata for a pathway.

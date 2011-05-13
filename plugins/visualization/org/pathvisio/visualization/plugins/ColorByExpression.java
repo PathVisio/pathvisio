@@ -53,15 +53,15 @@ import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.Legend;
-import org.pathvisio.gex.CachedData;
-import org.pathvisio.gex.CachedData.Callback;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.ReporterData;
-import org.pathvisio.gex.Sample;
-import org.pathvisio.visualization.VisualizationManager.VisualizationException;
-import org.pathvisio.visualization.VisualizationMethod;
-import org.pathvisio.visualization.colorset.ColorSet;
-import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.desktop.gex.CachedData;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.ReporterData;
+import org.pathvisio.desktop.gex.Sample;
+import org.pathvisio.desktop.gex.CachedData.Callback;
+import org.pathvisio.desktop.visualization.ColorSet;
+import org.pathvisio.desktop.visualization.ColorSetManager;
+import org.pathvisio.desktop.visualization.VisualizationMethod;
+import org.pathvisio.desktop.visualization.VisualizationManager.VisualizationException;
 
 /**
  * Visualization method for coloring by expression: can color a datanode by one or more

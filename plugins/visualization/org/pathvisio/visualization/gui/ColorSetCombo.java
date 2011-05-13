@@ -33,8 +33,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import org.pathvisio.visualization.colorset.ColorSet;
-import org.pathvisio.visualization.colorset.ColorSetManager;
+import org.pathvisio.desktop.visualization.ColorSet;
+import org.pathvisio.desktop.visualization.ColorSetManager;
 
 /**
  * Drop-down box that lets you select one of the existing renderers from a list.

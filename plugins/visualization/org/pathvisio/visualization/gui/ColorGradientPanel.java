@@ -28,8 +28,8 @@ import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.pathvisio.visualization.colorset.ColorGradient;
-import org.pathvisio.visualization.colorset.ColorGradient.ColorValuePair;
+import org.pathvisio.desktop.visualization.ColorGradient;
+import org.pathvisio.desktop.visualization.ColorGradient.ColorValuePair;
 
 /**
  * A panel for selecting and editing color gradients

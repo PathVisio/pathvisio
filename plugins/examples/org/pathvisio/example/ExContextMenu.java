@@ -23,9 +23,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 import org.pathvisio.core.view.VPathwayElement;
-import org.pathvisio.gui.swing.PathwayElementMenuListener.PathwayElementMenuHook;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.plugin.Plugin;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.plugin.Plugin;
+import org.pathvisio.gui.PathwayElementMenuListener.PathwayElementMenuHook;
 
 /**
  * Example on how you can modify the context menu of the Pathway view.

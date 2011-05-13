@@ -27,7 +27,7 @@ import javax.swing.JTabbedPane;
 import org.pathvisio.cytoscape.AttributeDefaultsPanel;
 import org.pathvisio.cytoscape.AttributeMapperPanel;
 import org.pathvisio.cytoscape.GpmlPlugin;
-import org.pathvisio.gui.swing.dialogs.OkCancelDialog;
+import org.pathvisio.gui.dialogs.OkCancelDialog;
 
 /**
  * Action to show AttributeMapperPanel, where

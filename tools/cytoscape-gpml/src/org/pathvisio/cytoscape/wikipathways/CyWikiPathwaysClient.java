@@ -63,10 +63,10 @@ import org.bridgedb.bio.Organism;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.cytoscape.GpmlPlugin;
-import org.pathvisio.wikipathways.WikiPathwaysClient;
 import org.pathvisio.wikipathways.webservice.WSIndexField;
 import org.pathvisio.wikipathways.webservice.WSPathway;
 import org.pathvisio.wikipathways.webservice.WSSearchResult;
+import org.wikipathways.client.WikiPathwaysClient;
 
 /**
  * WebserviceClient implementation, for accessing the

@@ -23,9 +23,9 @@ import org.pathvisio.core.model.Property;
 import org.pathvisio.core.model.PropertyManager;
 import org.pathvisio.core.model.PropertyType;
 import org.pathvisio.core.model.StaticPropertyType;
-import org.pathvisio.gui.swing.PvDesktop;
-import org.pathvisio.gui.swing.propertypanel.PropertyDisplayManager;
-import org.pathvisio.plugin.Plugin;
+import org.pathvisio.desktop.PvDesktop;
+import org.pathvisio.desktop.plugin.Plugin;
+import org.pathvisio.gui.handler.PropertyDisplayManager;
 
 /**
  * Example that shows how to make a dynamic property available in the

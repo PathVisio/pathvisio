@@ -28,9 +28,9 @@ import javax.swing.JCheckBox;
 
 import org.bridgedb.IDMapperException;
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.gex.GexManager;
-import org.pathvisio.gex.Sample;
-import org.pathvisio.gex.SimpleGex;
+import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.Sample;
+import org.pathvisio.desktop.gex.SimpleGex;
 
 /**
  * List of samples, with a checkbox in front of each so the user can select

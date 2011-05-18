@@ -124,7 +124,7 @@ public class BiopaxElement extends Element {
 			className = "PublicationXref";
 			xml.setName("PublicationXref");
 		}
-		Class<?> c = Class.forName("org.pathvisio.biopax.reflect." + className);
+		Class<?> c = Class.forName("org.pathvisio.core.biopax.reflect." + className);
 		BiopaxElement elm = (BiopaxElement)c.newInstance();
 		elm.loadXML(xml);
 		return elm;

@@ -31,9 +31,9 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.bridgedb.rdb.GdbProvider;
-import org.pathvisio.data.GdbManager;
-import org.pathvisio.debug.Logger;
-import org.pathvisio.preferences.PreferenceManager;
+import org.pathvisio.core.data.GdbManager;
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.PreferenceManager;
 
 public class Search extends TestCase {
 	static final File pathwayDir = new File("tools/lucene-indexer/test-data");

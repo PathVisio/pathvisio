@@ -535,7 +535,7 @@ public class Revision
 	
 	
 	<target name="test" depends="compile-swing">
-		<javac srcdir="test/core" debug="${debug.mode}"
+		<javac srcdir="modules/org.pathvisio.core/test" debug="${debug.mode}"
 					includes="**"
 					destdir="${build.core.dir}"
 					source="1.5">
@@ -545,13 +545,13 @@ public class Revision
 			<formatter type="brief" usefile="false"/>
 			<classpath refid="project.core.class.path"/>
 			<batchtest>
-				<fileset dir="test/core">
+				<fileset dir="modules/org.pathvisio.core/test">
 					<include name="**/*Test*.java"/>
 				</fileset>
 			</batchtest>
 		</junit>
 
-		<javac srcdir="test/swing" debug="${debug.mode}"
+		<javac srcdir="modules/org.pathvisio.desktop/test" debug="${debug.mode}"
 					includes="**"
 					destdir="${build.swing.dir}"
 					source="1.5">
@@ -567,7 +567,7 @@ public class Revision
 				<pathelement location="lib-build/measure.jar"/>
 			</classpath>
 			<batchtest>
-				<fileset dir="test/swing">
+				<fileset dir="modules/org.pathvisio.desktop/test">
 					<include name="**/*Test*.java"/>
 				</fileset>
 			</batchtest>

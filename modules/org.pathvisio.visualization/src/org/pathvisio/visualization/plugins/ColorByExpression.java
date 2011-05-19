@@ -54,14 +54,14 @@ import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.Legend;
 import org.pathvisio.desktop.gex.CachedData;
+import org.pathvisio.desktop.gex.CachedData.Callback;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.gex.Sample;
-import org.pathvisio.desktop.gex.CachedData.Callback;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetManager;
-import org.pathvisio.desktop.visualization.VisualizationMethod;
 import org.pathvisio.desktop.visualization.VisualizationManager.VisualizationException;
+import org.pathvisio.desktop.visualization.VisualizationMethod;
 
 /**
  * Visualization method for coloring by expression: can color a datanode by one or more

@@ -47,8 +47,8 @@ import org.pathvisio.desktop.util.StandaloneCompat;
 import org.pathvisio.desktop.visualization.Visualization;
 import org.pathvisio.desktop.visualization.VisualizationEvent;
 import org.pathvisio.desktop.visualization.VisualizationManager;
-import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.PathwayElementMenuListener.PathwayElementMenuHook;
+import org.pathvisio.gui.SwingEngine;
 
 /**
  * PvDesktop ties together several

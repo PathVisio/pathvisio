@@ -25,13 +25,6 @@ import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.preferences.PreferenceManager;
-import org.pathvisio.core.view.GeneProduct;
-import org.pathvisio.core.view.Graphics;
-import org.pathvisio.core.view.Group;
-import org.pathvisio.core.view.LayoutType;
-import org.pathvisio.core.view.Line;
-import org.pathvisio.core.view.VPathway;
-import org.pathvisio.core.view.VPathwayElement;
 
 /**
  * Test various operations related to groups, such as 

@@ -16,8 +16,6 @@
 //
 package org.pathvisio.desktop.visualization;
 
-import org.pathvisio.desktop.visualization.Visualization;
-
 import junit.framework.TestCase;
 
 public class Test extends TestCase

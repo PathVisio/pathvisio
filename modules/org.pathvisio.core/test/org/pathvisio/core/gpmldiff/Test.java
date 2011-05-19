@@ -22,12 +22,6 @@ import java.io.StringReader;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.core.gpmldiff.BasicCost;
-import org.pathvisio.core.gpmldiff.BetterSim;
-import org.pathvisio.core.gpmldiff.DiffOutputter;
-import org.pathvisio.core.gpmldiff.Patch;
-import org.pathvisio.core.gpmldiff.PwyDoc;
-import org.pathvisio.core.gpmldiff.SearchNode;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;

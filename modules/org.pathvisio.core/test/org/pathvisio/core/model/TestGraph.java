@@ -20,10 +20,6 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.core.model.ConverterException;
-import org.pathvisio.core.model.ObjectType;
-import org.pathvisio.core.model.Pathway;
-import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.model.PathwayElement.MPoint;
 
 /**

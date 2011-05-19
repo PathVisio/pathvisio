@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
@@ -46,8 +47,8 @@ public class BotReport {
 	private Date date = new Date();
 	private String[] defaultColumns;
 	private String[] columns;
-	private HashMap<WSPathwayInfo, String[]> data;
-	private HashMap<String, String> comments;
+	private Map<WSPathwayInfo, String[]> data;
+	private Map<String, String> comments;
 
 	public BotReport(String[] columns) {
 		this.columns = columns;

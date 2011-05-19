@@ -20,11 +20,6 @@ import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.pathvisio.core.preferences.GlobalPreference;
-import org.pathvisio.core.preferences.PreferenceEvent;
-import org.pathvisio.core.preferences.PreferenceListener;
-import org.pathvisio.core.preferences.PreferenceManager;
-
 import junit.framework.TestCase;
 
 public class Test extends TestCase implements PreferenceListener {

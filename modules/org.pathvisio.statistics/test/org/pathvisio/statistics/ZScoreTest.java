@@ -26,10 +26,6 @@ import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.visualization.Criterion;
-import org.pathvisio.statistics.Column;
-import org.pathvisio.statistics.StatisticsPathwayResult;
-import org.pathvisio.statistics.StatisticsResult;
-import org.pathvisio.statistics.ZScoreCalculator;
 
 public class ZScoreTest extends TestCase {
 	static final File PATHWAY_DIR = new File("testData/zscore/gpml");

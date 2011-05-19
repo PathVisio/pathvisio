@@ -1,8 +1,8 @@
 package com.nexes.wizard;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Component;
 
+import javax.swing.JPanel;
 
 /**
  * A base descriptor class used to reference a Component panel for the Wizard, as

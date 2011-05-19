@@ -24,7 +24,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -46,7 +45,6 @@ import org.pathvisio.desktop.visualization.ColorGradient;
 import org.pathvisio.desktop.visualization.ColorRule;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetEvent;
-import org.pathvisio.desktop.visualization.ColorSetObject;
 import org.pathvisio.desktop.visualization.ColorSetManager.ColorSetListener;
 
 /**

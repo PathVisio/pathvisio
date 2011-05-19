@@ -31,16 +31,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.core.model.ConnectorShape;
+import org.pathvisio.core.model.ConnectorShape.Segment;
+import org.pathvisio.core.model.ConnectorShape.WayPoint;
+import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.LineType;
 import org.pathvisio.core.model.MLine;
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.core.model.PathwayElementEvent;
-import org.pathvisio.core.model.ConnectorShape.Segment;
-import org.pathvisio.core.model.ConnectorShape.WayPoint;
-import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
+import org.pathvisio.core.model.PathwayElementEvent;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 

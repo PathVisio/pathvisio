@@ -1,2 +1,2 @@
 #!/bin/sh
-java -ea -cp pathvisio.jar org.pathvisio.gpmldiff.PatchMain "$@" 
+java -ea -cp pathvisio.jar org.pathvisio.core.gpmldiff.PatchMain "$@" 

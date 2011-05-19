@@ -14,15 +14,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.plugins;
+package org.pathvisio.example;
+
+import java.awt.geom.GeneralPath;
 
 import javax.swing.Action;
 
 import org.pathvisio.core.Engine;
+import org.pathvisio.core.model.AbstractShape;
 import org.pathvisio.core.model.ConnectorType;
+import org.pathvisio.core.model.IShape;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.view.ArrowShape;
 import org.pathvisio.core.view.DefaultTemplates;
+import org.pathvisio.core.view.ShapeRegistry;
 import org.pathvisio.desktop.PvDesktop;
 import org.pathvisio.desktop.plugin.Plugin;
 import org.pathvisio.gui.CommonActions;
@@ -30,10 +36,48 @@ import org.pathvisio.gui.GraphicsChoiceButton;
 
 
 /**
- * A example of adding user-defined shapes (in MyShapes.java) to the drop-down menu.
+ * A example of adding user-defined shapes to the drop-down menu.
  */
-public class TestDropDownPlugin implements Plugin
+public class ExShapeDropDown implements Plugin
 {
+	/**
+	 * User-defined shapes example
+	 */
+	public static class MyShapes
+	{
+		public static final LineType MY_LINE = LineType.create ("my-line", "Arrow");
+		public static final IShape MY_SHAPE = new AbstractShape (getMyShape(), "my-shape");
+		
+	    public static void registerShapes()
+		{
+			ShapeRegistry.registerArrow (MY_LINE.getName(), getMyLine(), ArrowShape.FillType.OPEN, 9);
+		}
+	    
+	    static private java.awt.Shape getMyLine ()
+	    {
+	    	GeneralPath path = new GeneralPath();
+			path.moveTo (0, 0);
+			path.lineTo (15, -10);
+			path.lineTo (30, 0);
+			path.lineTo (15, 10);
+			path.closePath();
+	    	return path;
+	    	
+	    }
+
+		static private java.awt.Shape getMyShape ()
+		{
+			GeneralPath path = new GeneralPath();
+			path.moveTo(30, 0);
+			path.lineTo(50, 60);
+			path.lineTo(0, 20);
+			path.lineTo(60, 20);
+			path.lineTo(10, 60);
+			path.closePath();
+			return path;
+		}
+	}
+
 	private PvDesktop desktop;
 
 	public void init(PvDesktop desktop)

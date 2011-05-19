@@ -25,9 +25,6 @@ import junit.framework.TestCase;
 
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.preferences.PreferenceManager;
-import org.pathvisio.desktop.visualization.ColorGradient;
-import org.pathvisio.desktop.visualization.ColorSet;
-import org.pathvisio.desktop.visualization.Criterion;
 import org.pathvisio.desktop.visualization.ColorGradient.ColorValuePair;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;
 

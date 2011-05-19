@@ -16,6 +16,8 @@
 //
 package org.pathvisio.gui;
 
+import com.mammothsoftware.frwk.ddb.DropDownButton;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -68,8 +70,6 @@ import org.pathvisio.gui.BackpageTextProvider.BackpageXrefs;
 import org.pathvisio.gui.CommonActions.ZoomAction;
 import org.pathvisio.gui.dnd.PathwayImportHandler;
 import org.pathvisio.gui.handler.PathwayTableModel;
-
-import com.mammothsoftware.frwk.ddb.DropDownButton;
 
 
 /**

@@ -1,9 +1,11 @@
 package com.nexes.wizard;
 
-import java.beans.*;
-import java.util.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.Icon;
 
 /**
  * The model for the Wizard component, which tracks the text, icons, and enabled state

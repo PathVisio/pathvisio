@@ -24,9 +24,6 @@ import junit.framework.TestCase;
 
 import org.pathvisio.core.biopax.BiopaxElementManager;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
-import org.pathvisio.core.biopax.reflect.BiopaxProperty;
-import org.pathvisio.core.biopax.reflect.PropertyType;
-import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;

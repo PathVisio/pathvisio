@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.core.view.GenMAPPShapes;
-import org.pathvisio.core.view.ShapeRegistry;
 import org.pathvisio.core.view.GenMAPPShapes.Internal;
+import org.pathvisio.core.view.ShapeRegistry;
 
 /**
    Extensible enum

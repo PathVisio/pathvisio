@@ -33,7 +33,6 @@ import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.GpmlFormat;
 import org.pathvisio.core.model.GpmlFormatReader;
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.core.model.ShapeType;
 import org.pathvisio.core.model.StaticProperty;
 import org.pathvisio.core.view.ShapeRegistry;
 

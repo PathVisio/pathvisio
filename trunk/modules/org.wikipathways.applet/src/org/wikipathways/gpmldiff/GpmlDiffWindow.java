@@ -18,7 +18,6 @@ package org.wikipathways.gpmldiff;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -46,11 +45,9 @@ import org.pathvisio.core.gpmldiff.PwyDoc;
 import org.pathvisio.core.gpmldiff.SearchNode;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayEvent;
-import org.pathvisio.core.view.VPathwayListener;
 import org.pathvisio.core.view.VPathwayEvent.VPathwayEventType;
-import org.pathvisio.gui.MainPanel;
+import org.pathvisio.core.view.VPathwayListener;
 import org.pathvisio.gui.WrapLayout;
-import org.pathvisio.gui.view.VPathwaySwing;
 
 class GpmlDiffWindow extends JPanel implements VPathwayListener
 {

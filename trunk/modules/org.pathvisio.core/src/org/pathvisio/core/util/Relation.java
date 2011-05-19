@@ -20,11 +20,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.model.LineType;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
 

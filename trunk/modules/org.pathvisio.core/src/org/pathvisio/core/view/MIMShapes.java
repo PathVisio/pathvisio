@@ -72,8 +72,6 @@ public class MIMShapes
         ShapeRegistry.registerArrow (MIM_GAP.getName(), getMIMGap(), ArrowShape.FillType.OPEN, 10);
 	}
 
-    private static final int BOND_SIZE = 8;
-
     static private java.awt.Shape getMIMCovalentBond ()
     {
         GeneralPath path = new GeneralPath();

@@ -40,8 +40,8 @@ import org.pathvisio.core.view.MIMShapes;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.core.view.VPathwayEvent;
-import org.pathvisio.core.view.VPathwayListener;
 import org.pathvisio.core.view.VPathwayEvent.VPathwayEventType;
+import org.pathvisio.core.view.VPathwayListener;
 
 /**
  * Utility that takes a set of graphId/Color pairs and exports a pathway

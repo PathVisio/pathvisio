@@ -16,9 +16,6 @@
 //
 package org.pathvisio.core.data;
 
-import org.pathvisio.core.data.PubMedQuery;
-import org.pathvisio.core.data.PubMedResult;
-
 import junit.framework.TestCase;
 
 public class TestOnline extends TestCase

@@ -30,16 +30,15 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import org.pathvisio.desktop.visualization.ColorGradient;
+import org.pathvisio.desktop.visualization.ColorGradient.ColorValuePair;
 import org.pathvisio.desktop.visualization.ColorRule;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetManager;
-import org.pathvisio.desktop.visualization.ColorSetObject;
 import org.pathvisio.desktop.visualization.Visualization;
 import org.pathvisio.desktop.visualization.VisualizationEvent;
 import org.pathvisio.desktop.visualization.VisualizationManager;
-import org.pathvisio.desktop.visualization.VisualizationMethod;
-import org.pathvisio.desktop.visualization.ColorGradient.ColorValuePair;
 import org.pathvisio.desktop.visualization.VisualizationManager.VisualizationListener;
+import org.pathvisio.desktop.visualization.VisualizationMethod;
 import org.pathvisio.visualization.plugins.ColorByExpression.ConfiguredSample;
 
 /**

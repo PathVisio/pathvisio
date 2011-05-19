@@ -19,12 +19,6 @@ package org.pathvisio.core.model;
 import java.io.File;
 import java.io.IOException;
 
-import org.pathvisio.core.model.ConverterException;
-import org.pathvisio.core.model.GpmlFormat;
-import org.pathvisio.core.model.GpmlFormat2010a;
-import org.pathvisio.core.model.Pathway;
-import org.pathvisio.core.model.PathwayElement;
-
 import junit.framework.TestCase;
 
 public class TestGpml extends TestCase 

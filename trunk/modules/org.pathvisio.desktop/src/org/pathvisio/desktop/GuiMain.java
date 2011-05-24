@@ -72,7 +72,7 @@ import org.pathvisio.gui.SwingEngine.Browser;
  */
 public class GuiMain implements GdbEventListener, GexManagerListener
 {
-	private GuiMain()
+	GuiMain()
 	{
 	}
 
@@ -373,10 +373,10 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		);
 	}
 
-	private void init()
+	void init(PvDesktop pvDesktop)
 	{
 		PreferenceManager.init();
-		Engine engine = new Engine();
+		Engine engine = pvDesktop.getSwingEngine().getEngine();
 		initLog(engine);
 		engine.setApplicationName("PathVisio " + Revision.VERSION);
 		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
@@ -389,7 +389,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			}
 		}
 
-		swingEngine = new SwingEngine(engine);
+		swingEngine = pvDesktop.getSwingEngine();
 		swingEngine.setUrlBrowser(new Browser() {
 			public void openUrl(URL url) {
 				try {
@@ -400,7 +400,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 				}
 			}
 		});
-		pvDesktop = new PvDesktop (swingEngine);
+
 		swingEngine.getGdbManager().initPreferred();
 
 		mainPanel = new MainPanelStandalone(pvDesktop);
@@ -425,18 +425,18 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		processOptions();
 	}
 
-	public static void main(String[] args) {
-		final GuiMain gui = new GuiMain();
-		gui.parseArgs (args);
-
-		javax.swing.SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				gui.init();
-			}
-		});
-	}
+//	public static void main(String[] args) {
+//		final GuiMain gui = new GuiMain();
+//		gui.parseArgs (args);
+//
+//		javax.swing.SwingUtilities.invokeLater(new Runnable()
+//		{
+//			public void run()
+//			{
+//				gui.init();
+//			}
+//		});
+//	}
 
 	private void initImporters(Engine engine)
 	{

@@ -48,6 +48,11 @@ public class GroupStyle implements Comparable<GroupStyle> {
 	 */
 	public static final GroupStyle COMPLEX = new GroupStyle ("Complex", false, COMPLEX_M_MARGIN);
 
+	/**
+	 * Style used to represent a group of objects that belong to a pathway.
+	 */
+	public static final GroupStyle PATHWAY = new GroupStyle ("Pathway");
+	
 	private String name;
     private boolean disallowLinks;
     private double mMargin;

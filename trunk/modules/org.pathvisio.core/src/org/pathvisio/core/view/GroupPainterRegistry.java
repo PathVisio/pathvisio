@@ -18,6 +18,7 @@ package org.pathvisio.core.view;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
@@ -184,10 +185,53 @@ public class GroupPainterRegistry {
 		}
 	};
 
+		
+	private static GroupPainter pathwayPainter = new GroupPainter() {
+		public void drawGroup(Graphics2D g, Group group, int flags) {
+			boolean mouseover = (flags & Group.FLAG_MOUSEOVER) != 0;
+			boolean anchors = (flags & Group.FLAG_ANCHORSVISIBLE) != 0;
+			boolean selected = (flags & Group.FLAG_SELECTED) != 0;
+
+			Rectangle2D rect = group.getVBounds();
+			
+			String label = group.getPathwayElement().getTextLabel();
+
+			int size = (int)group.vFromM(32);
+			g.setFont(new Font("Times",0,size));			
+			Rectangle2D tb = g.getFontMetrics().getStringBounds(label, g);
+
+			// different alpha when selected and mouse over
+			int alpha = (mouseover || anchors || selected) ? TRANSLUCENCY_LEVEL : (int)(255 * .05);
+
+			if(tb.getWidth() <= rect.getWidth()) {
+				int yoffset = (int)rect.getY();
+				int xoffset = (int)rect.getX() + (int)(rect.getWidth() / 2) - (int)(tb.getWidth() / 2);
+				yoffset += (int)(rect.getHeight() / 2) + (int)(tb.getHeight() / 2);
+				g.setColor(Color.GRAY);
+				g.drawString(label, xoffset, yoffset);
+			}
+
+			int sw = 1;			
+			Color c = Color.GREEN;
+										
+			//fill
+			g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha));
+			g.fillRect((int) rect.getX(), (int) rect.getY(),
+					(int) rect.getWidth(), (int) rect.getHeight() );
+			//border
+			g.setColor(Color.GRAY);
+			g.setStroke(new BasicStroke(sw, BasicStroke.CAP_SQUARE,
+					BasicStroke.JOIN_MITER, 1, new float[] { 4, 2 }, 0));
+			g.drawRect((int) rect.getX() , (int) rect.getY() ,
+					(int) rect.getWidth() - sw, (int) rect.getHeight() - sw);
+		}
+	};
+	
 	//Register default painters
 	static {
 		registerPainter(GroupStyle.COMPLEX.toString(), complexPainter);
 		registerPainter(GroupStyle.NONE.toString(), defaultPainter);
 		registerPainter(GroupStyle.GROUP.toString(), groupPainter);
+		registerPainter(GroupStyle.PATHWAY.toString(), pathwayPainter);
 	}
 }

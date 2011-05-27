@@ -30,7 +30,12 @@ import java.util.TreeSet;
 public class GroupStyle implements Comparable<GroupStyle> {
 	private static Map<String, GroupStyle> nameMappings = new HashMap<String, GroupStyle>();
 	private static Set<GroupStyle> values = new TreeSet<GroupStyle>();
-
+	
+	public static final double DEFAULT_M_MARGIN = 8; //Make the bounds slightly
+	  //larger than the summed bounds
+	  //of the containing elements
+	public static final double COMPLEX_M_MARGIN = 12;
+	
 	public static final GroupStyle NONE = new GroupStyle ("None");
 
 	/**
@@ -41,22 +46,29 @@ public class GroupStyle implements Comparable<GroupStyle> {
 	/**
 	 * Style used to represent a group of objects that belong to a complex.
 	 */
-	public static final GroupStyle COMPLEX = new GroupStyle ("Complex");
+	public static final GroupStyle COMPLEX = new GroupStyle ("Complex", false, COMPLEX_M_MARGIN);
 
 	private String name;
     private boolean disallowLinks;
-
+    private double mMargin;
+    
 	private GroupStyle (String name)
     {
-        this(name, false);
+        this(name, false, DEFAULT_M_MARGIN);
     }    
 
     private GroupStyle (String name, boolean disallowLinks)
+	{
+    	this (name, disallowLinks, DEFAULT_M_MARGIN);
+	}
+
+    private GroupStyle (String name, boolean disallowLinks, double mMargin)
 	{
 		if (name == null) { throw new NullPointerException(); }
 
 		this.name  = name;
         this.disallowLinks = disallowLinks;
+        this.mMargin = mMargin;
         values.add(this);
 		nameMappings.put (name, this);
 	}
@@ -134,5 +146,11 @@ public class GroupStyle implements Comparable<GroupStyle> {
 
 	public int compareTo(GroupStyle o) {
 		return toString().compareTo(o.toString());
+	}
+
+	/** Margin of group bounding-box around contained elements */
+	public double getMMargin() 
+	{
+		return mMargin;
 	}
 }

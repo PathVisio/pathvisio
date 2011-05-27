@@ -114,9 +114,6 @@ public class MGroup extends PathwayElement {
 		}
 	}
 
-	static final double BOUNDS_SPACING = 8; //Make the bounds slightly
-											  //larger than the summed bounds
-											  //of the containing elements
 	/**
 	 * Iterates over all group elements to find
 	 * the total rectangular bounds.
@@ -131,11 +128,12 @@ public class MGroup extends PathwayElement {
 			else bounds.add(e.getMBounds());
 		}
 		if(bounds != null) {
+			double margin = groupStyle.getMMargin();
 			return new Rectangle2D.Double(
-				bounds.getX() - BOUNDS_SPACING,
-				bounds.getY() - BOUNDS_SPACING,
-				bounds.getWidth() + 2*BOUNDS_SPACING,
-				bounds.getHeight() + 2*BOUNDS_SPACING
+				bounds.getX() - margin,
+				bounds.getY() - margin,
+				bounds.getWidth() + 2*margin,
+				bounds.getHeight() + 2*margin
 			);
 		} else {
 			return new Rectangle2D.Double();
@@ -155,11 +153,12 @@ public class MGroup extends PathwayElement {
 			else bounds.add(e.getRBounds());
 		}
 		if(bounds != null) {
+			double margin = groupStyle.getMMargin();
 			return new Rectangle2D.Double(
-				bounds.getX() - BOUNDS_SPACING,
-				bounds.getY() - BOUNDS_SPACING,
-				bounds.getWidth() + 2 * BOUNDS_SPACING,
-				bounds.getHeight() + 2 * BOUNDS_SPACING
+				bounds.getX() - margin,
+				bounds.getY() - margin,
+				bounds.getWidth() + 2 * margin,
+				bounds.getHeight() + 2 * margin
 			);
 		} else {
 			return new Rectangle2D.Double();

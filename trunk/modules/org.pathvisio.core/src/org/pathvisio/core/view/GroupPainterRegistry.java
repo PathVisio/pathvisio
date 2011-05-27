@@ -19,6 +19,7 @@ package org.pathvisio.core.view;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,6 +94,57 @@ public class GroupPainterRegistry {
 		}
 	};
 
+	private static GroupPainter complexPainter = new GroupPainter() {
+		public void drawGroup(Graphics2D g, Group group, int flags) {
+			boolean mouseover = (flags & Group.FLAG_MOUSEOVER) != 0;
+			boolean anchors = (flags & Group.FLAG_ANCHORSVISIBLE) != 0;
+			boolean selected = (flags & Group.FLAG_SELECTED) != 0;
+
+			// Draw group outline
+			int sw = 1;
+			Rectangle2D vRect = group.getVBounds();
+			double vTop = vRect.getMinY();
+			double vLeft = vRect.getMinX();
+			double vBottom = vRect.getMaxY() - sw;
+			double vRight = vRect.getMaxX() - sw;
+			
+			double vMargin = Math.min (
+					Math.min(vRect.getWidth() / 2.5, vRect.getHeight() / 2.5), 
+					group.vFromM (GroupStyle.COMPLEX_M_MARGIN * 1.5)); 
+		
+			GeneralPath outline = new GeneralPath();
+			outline.moveTo(vLeft + vMargin, vTop);
+			outline.lineTo(vRight - vMargin, vTop);
+			outline.lineTo(vRight, vTop + vMargin);
+			outline.lineTo(vRight, vBottom - vMargin);
+			outline.lineTo(vRight - vMargin, vBottom);
+			outline.lineTo(vLeft + vMargin, vBottom);
+			outline.lineTo(vLeft, vBottom - vMargin);
+			outline.lineTo(vLeft, vTop + vMargin);
+			outline.closePath();
+			
+			//fill
+			g.setColor(new Color(180, 180, 100, TRANSLUCENCY_LEVEL));
+			g.fill(outline);
+			//border
+			g.setColor(Color.GRAY);
+			g.setStroke(new BasicStroke());
+			g.draw(outline);
+
+			//Group highlight, on mouseover, linkanchors display and selection
+			if(mouseover || anchors || selected) {
+				//fill
+				g.setColor(new Color(255, 0, 0, (int)(255 * .05)));
+				g.fill(outline);
+				
+				//border
+				g.setColor(Color.GRAY);
+				g.setStroke(new BasicStroke());
+				g.draw(outline);
+			}
+		}
+	};
+
 	private static GroupPainter groupPainter = new GroupPainter() {
 		public void drawGroup(Graphics2D g, Group group, int flags) {
 			boolean mouseover = (flags & Group.FLAG_MOUSEOVER) != 0;
@@ -134,7 +186,7 @@ public class GroupPainterRegistry {
 
 	//Register default painters
 	static {
-		registerPainter(GroupStyle.COMPLEX.toString(), defaultPainter);
+		registerPainter(GroupStyle.COMPLEX.toString(), complexPainter);
 		registerPainter(GroupStyle.NONE.toString(), defaultPainter);
 		registerPainter(GroupStyle.GROUP.toString(), groupPainter);
 	}

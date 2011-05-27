@@ -375,6 +375,8 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 
 	void init(PvDesktop pvDesktop)
 	{
+		this.pvDesktop = pvDesktop;
+		
 		PreferenceManager.init();
 		Engine engine = pvDesktop.getSwingEngine().getEngine();
 		initLog(engine);
@@ -425,18 +427,28 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		processOptions();
 	}
 
-//	public static void main(String[] args) {
-//		final GuiMain gui = new GuiMain();
-//		gui.parseArgs (args);
-//
-//		javax.swing.SwingUtilities.invokeLater(new Runnable()
-//		{
-//			public void run()
-//			{
-//				gui.init();
-//			}
-//		});
-//	}
+	public static void main(String[] args) {
+
+		Engine engine = new Engine();
+		System.out.println("new engine: " + engine);
+		
+		SwingEngine swingEngine = new SwingEngine(engine);
+		System.out.println("new swingengine: " + swingEngine);
+		
+		final PvDesktop pvDesktop = new PvDesktop(swingEngine);
+		System.out.println("new pvdesktop: " + pvDesktop);
+//		context.registerService(PvDesktop.class.getName(), pvDesktop, null);
+		
+		final GuiMain gui = new GuiMain();
+
+		javax.swing.SwingUtilities.invokeLater(new Runnable()
+		{
+			public void run()
+			{
+				gui.init(pvDesktop);
+			}
+		});
+	}
 
 	private void initImporters(Engine engine)
 	{

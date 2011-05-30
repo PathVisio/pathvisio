@@ -324,15 +324,11 @@ public class Revision
 			</fileset>
 			<fileset dir="${build.gui.dir}" includes="**/*.class"/>
 			<fileset dir="${build.core.dir}" includes="**/*.class"/>
+			<fileset dir="${src.dir}/org.pathvisio.core/resources" excludes="logo-*, *.bmp, *.ai"/>
+			<fileset dir="." includes="MAPPTmpl.gtp"/>
 		</jar>
 		<jar jarfile="preloader.jar" index="true">
 			<fileset dir="${build.wikipathways.dir}" includes="org/wikipathways/applet/Preloader.class"/>
-		</jar>
-		<!-- different resources.jar, only with minimal data -->
-		<jar jarfile="${build.wpi.applet}/lib/resources.jar" index="true">
-			<fileset dir="resources" excludes="logo-*, *.bmp, *.ai"/>
-			<fileset dir="." includes="GPML*.xsd"/>
-			<fileset dir="." includes="MAPPTmpl.gtp"/>
 		</jar>
 	</target>
 

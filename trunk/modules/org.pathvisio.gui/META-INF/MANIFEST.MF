@@ -1,10 +1,21 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Gui
-Bundle-SymbolicName: Gui
-Bundle-Version: 1.0.0.qualifier
+Bundle-Name: org.pathvisio.gui
+Bundle-SymbolicName: org.pathvisio.gui
+Bundle-Version: 2.0.11
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: Core2;bundle-version="1.0.0"
+Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
+ swing-worker-1.1;bundle-version="0.0.0",
+ BrowserLauncher;bundle-version="0.0.0",
+ forms-1.2.0;bundle-version="0.0.0",
+ org.bridgedb;bundle-version="0.0.0",
+ org.bridgedb.bio;bundle-version="0.0.0",
+ org.bridgedb.gui;bundle-version="0.0.0",
+ org.bridgedb.rdb;bundle-version="0.0.0",
+ org.bridgedb.rdb.construct;bundle-version="0.0.0",
+ org.bridgedb.webservice.bridgerest;bundle-version="0.0.0",
+ derby;bundle-version="10.4.2000000",
+ com.springsource.org.jdom;bundle-version="1.1.0"
 Export-Package: com.jroller.completer,
  com.mammothsoftware.frwk.ddb,
  org.pathvisio.gui,

@@ -53,6 +53,7 @@
 		<include name="swing-worker-1.1.jar"/>
 		<include name="BrowserLauncher.jar"/>
 		<include name="commons-math-2.0.jar"/>
+		<include name="felix.jar"/>
 	  </fileset>
 	</path>
 
@@ -105,6 +106,7 @@
 			<include name="org.bridgedb.gui.jar"/>
 			<include name="BrowserLauncher.jar"/>
 			<include name="commons-math-2.0.jar"/>
+			<include name="felix.jar"/>
 		</fileset>
 	</path>
 
@@ -614,7 +616,7 @@ public class Revision
 		<delete dir="${release.dir}/PathVisio.app"/>
 	</target>
 
-	<target name="wpclient-axis" depends="jar">
+	<target name="wpclient-axis" depends="prepare">
         <condition property="wsdl.url" value="http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl">
             <not> <isset property="wsdl.url"/> </not>
         </condition>

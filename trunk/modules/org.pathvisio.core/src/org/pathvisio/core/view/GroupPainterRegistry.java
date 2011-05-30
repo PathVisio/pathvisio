@@ -104,12 +104,12 @@ public class GroupPainterRegistry {
 			// Draw group outline
 			int sw = 1;
 			Rectangle2D vRect = group.getVBounds();
-			double vTop = vRect.getMinY();
-			double vLeft = vRect.getMinX();
-			double vBottom = vRect.getMaxY() - sw;
-			double vRight = vRect.getMaxX() - sw;
+			float vTop = (float)vRect.getMinY();
+			float vLeft = (float)vRect.getMinX();
+			float vBottom = (float)vRect.getMaxY() - sw;
+			float vRight = (float)vRect.getMaxX() - sw;
 			
-			double vMargin = Math.min (
+			float vMargin = (float)Math.min (
 					Math.min(vRect.getWidth() / 2.5, vRect.getHeight() / 2.5), 
 					group.vFromM (GroupStyle.COMPLEX_M_MARGIN * 1.5)); 
 		

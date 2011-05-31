@@ -5,17 +5,16 @@ Bundle-SymbolicName: org.pathvisio.gui
 Bundle-Version: 2.0.11
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
- swing-worker-1.1;bundle-version="0.0.0",
- BrowserLauncher;bundle-version="0.0.0",
- forms-1.2.0;bundle-version="0.0.0",
- org.bridgedb;bundle-version="0.0.0",
- org.bridgedb.bio;bundle-version="0.0.0",
- org.bridgedb.gui;bundle-version="0.0.0",
- org.bridgedb.rdb;bundle-version="0.0.0",
- org.bridgedb.rdb.construct;bundle-version="0.0.0",
- org.bridgedb.webservice.bridgerest;bundle-version="0.0.0",
  derby;bundle-version="10.4.2000000",
- com.springsource.org.jdom;bundle-version="1.1.0"
+ com.springsource.org.jdom;bundle-version="1.1.0",
+ org.pathvisio.swingworker;bundle-version="1.1.0",
+ org.pathvisio.browserlauncher;bundle-version="1.0.0",
+ org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
+ org.pathvisio.bridgedb;bundle-version="1.0.3",
+ org.pathvisio.bridgedb.bio;bundle-version="1.0.3",
+ org.pathvisio.bridgedb.gui;bundle-version="1.0.3",
+ org.pathvisio.bridgedb.rdb;bundle-version="1.0.3",
+ org.pathvisio.bridgedb.rdb.construct;bundle-version="1.0.3"
 Export-Package: com.jroller.completer,
  com.mammothsoftware.frwk.ddb,
  org.pathvisio.gui,

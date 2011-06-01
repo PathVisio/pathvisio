@@ -59,11 +59,11 @@ public class GpmlVisualStyle extends VisualStyle {
 	NodeAppearanceCalculator nac;
 	EdgeAppearanceCalculator eac;
 
-	public GpmlVisualStyle(GpmlHandler gpmlHandler, VisualStyle toCopy) {
-		super(toCopy);
-		setName(NAME);
-		init(gpmlHandler);
-	}
+//	public GpmlVisualStyle(GpmlHandler gpmlHandler, VisualStyle toCopy) {
+//		super(toCopy);
+//		setName(NAME);
+//		init(gpmlHandler);
+//	}
 
 	public GpmlVisualStyle(GpmlHandler gpmlHandler) {
 		super(NAME);

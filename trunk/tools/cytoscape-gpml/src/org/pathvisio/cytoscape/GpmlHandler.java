@@ -223,15 +223,17 @@ public class GpmlHandler {
     public void applyGpmlVisualStyle() {
     	VisualMappingManager vmm = Cytoscape.getVisualMappingManager();
     	CalculatorCatalog catalog = vmm.getCalculatorCatalog();
-    	VisualStyle gpmlStyle = catalog.getVisualStyle(GpmlVisualStyle.NAME);
-    	if(gpmlStyle == null) { //Create the GPML visual style
-    		Logger.log.trace("VisualStyle: creating GPML style");
-    		gpmlStyle = new GpmlVisualStyle(this, vmm.getVisualStyle());
-    		catalog.addVisualStyle(gpmlStyle);
-    	} else {
-    		Logger.log.trace("VisualStyle: reusing GPML style");
-    	}
-    	vmm.setVisualStyle(gpmlStyle);
+		VisualStyle gpmlStyle;
+		Set<String> styles = catalog.getVisualStyleNames();
+		if (styles.contains(GpmlVisualStyle.NAME)){
+			Logger.log.trace("VisualStyle: reusing GPML style");
+			gpmlStyle = catalog.getVisualStyle(GpmlVisualStyle.NAME);
+		} else {
+			Logger.log.trace("VisualStyle: creating GPML style");
+			gpmlStyle = new GpmlVisualStyle(this);
+			catalog.addVisualStyle(gpmlStyle);
+		}
+    	vmm.setVisualStyle(gpmlStyle);	
     }
 
     /**

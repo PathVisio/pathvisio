@@ -33,6 +33,7 @@ import giny.view.NodeView;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.Pathway;

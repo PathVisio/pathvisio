@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<project name="pathvisio-gui" basedir=".">
+
+	<target name="jar-gui"> 
+		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="lib/bnd.jar"/> 
+		<bnd classpath="src" output="../org.pathvisio.launcher/modules/org.pathvisio.gui.jar" eclipse="true" failok="false" exceptions="true" files="org.pathvisio.gui.bnd"/> 
+	</target>
+	
+</project>

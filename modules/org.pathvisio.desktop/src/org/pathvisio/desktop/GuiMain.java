@@ -182,10 +182,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	public void processOptions()
 	{
 		//Create a plugin manager that loads the plugins
-		if(pluginLocations.size() > 0) {
-			pvDesktop.initPlugins(pluginLocations);
-		}
-
+		pvDesktop.initPlugins(pluginLocations);
 
 		if (pathwayFile != null)
 		{
@@ -419,35 +416,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		auto = new AutoSave(swingEngine);
 		auto.startTimer(300);
 
-		// load plugins from the default plugin dir
-		File pluginDir = new File (GlobalPreference.getApplicationDir(), "plugins");
-		if (pluginDir.exists()) {
-			pluginLocations.add("" + pluginDir);
-		}
 		processOptions();
-	}
-
-	public static void main(String[] args) {
-
-		Engine engine = new Engine();
-		System.out.println("new engine: " + engine);
-		
-		SwingEngine swingEngine = new SwingEngine(engine);
-		System.out.println("new swingengine: " + swingEngine);
-		
-		final PvDesktop pvDesktop = new PvDesktop(swingEngine);
-		System.out.println("new pvdesktop: " + pvDesktop);
-//		context.registerService(PvDesktop.class.getName(), pvDesktop, null);
-		
-		final GuiMain gui = new GuiMain();
-
-		javax.swing.SwingUtilities.invokeLater(new Runnable()
-		{
-			public void run()
-			{
-				gui.init(pvDesktop);
-			}
-		});
 	}
 
 	private void initImporters(Engine engine)

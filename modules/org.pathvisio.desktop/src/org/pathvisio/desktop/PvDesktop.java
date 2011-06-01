@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import org.bridgedb.IDMapperException;
+import org.osgi.framework.BundleContext;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.data.GdbEvent;
@@ -70,12 +71,22 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	private final StandaloneCompat compat;
 	private final PreferencesDlg preferencesDlg;
 
+	private BundleContext context;
+	
+	public BundleContext getContext() {
+		return context;
+	}
+	
 	/**
 	 * During construction, visualizationManager and gexManager will be initialized.
 	 * SwingEngine needs to have been initialized already.
+	 * 
+	 * BundleContext is an OSGi class with contains the ServiceRegistry, this is 
+	 * needed in the PluginManager to get the registered Plugins
 	 */
-	public PvDesktop(SwingEngine swingEngine)
+	public PvDesktop(SwingEngine swingEngine, BundleContext context)
 	{
+		this.context = context;
 		if (swingEngine == null) throw new NullPointerException();
 		this.swingEngine = swingEngine;
 		swingEngine.getEngine().addApplicationEventListener(this);

@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.desktop.PvDesktop;
@@ -85,9 +87,24 @@ public class PluginManager {
 
 		this.pluginLocations = pluginLocations;
 
-		for(String s : pluginLocations) {
-			loadFromParameter(s);
+		// plugin manager gets all registered plugins and starts them
+		try {
+			if(standaloneEngine.getContext() != null) {
+				ServiceReference[] refs = standaloneEngine.getContext().getServiceReferences(Plugin.class.getName(), null);
+				for(int i = 0; i < refs.length; i++) {
+					Plugin plugin = (Plugin) standaloneEngine.getContext().getService(refs[i]);
+					plugin.init(standaloneEngine);
+				}
+			}
+		} catch (InvalidSyntaxException e) {
+			// TODO: exception handling
+			e.printStackTrace();
 		}
+		
+		// TODO: this will part of the launcher where all the plugins get registered
+//		for(String s : pluginLocations) {
+//			loadFromParameter(s);
+//		}
 	}
 
 	/**

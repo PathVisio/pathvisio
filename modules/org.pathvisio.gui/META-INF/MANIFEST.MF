@@ -14,7 +14,8 @@ Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
  org.pathvisio.bridgedb.bio;bundle-version="1.0.3",
  org.pathvisio.bridgedb.gui;bundle-version="1.0.3",
  org.pathvisio.bridgedb.rdb;bundle-version="1.0.3",
- org.pathvisio.bridgedb.rdb.construct;bundle-version="1.0.3"
+ org.pathvisio.bridgedb.rdb.construct;bundle-version="1.0.3",
+ org.pathvisio.bridgedb.webservice.bridgerest;bundle-version="1.0.3"
 Export-Package: com.jroller.completer,
  com.mammothsoftware.frwk.ddb,
  org.pathvisio.gui,

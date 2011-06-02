@@ -87,7 +87,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 				new ClientType[] { ClientType.NETWORK },
 				null, null, null
 		);
-		Logger.log.setLogLevel(true, true, true, true, true, true);
+		Logger.log.setLogLevel(false, false, false, false, true, true);
 		setProperties();
 		getStub();
 		this.gpmlPlugin = gpmlPlugin;

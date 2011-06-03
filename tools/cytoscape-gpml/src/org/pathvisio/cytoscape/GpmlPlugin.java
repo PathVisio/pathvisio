@@ -125,7 +125,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		}
 		instance = this;
 
-		Logger.log.setLogLevel(true, false, true, true, true, true);
+		Logger.log.setLogLevel(false, false, false, false, true, true);
 		MIMShapes.registerShapes();
 
 		gpmlHandler = new GpmlHandler();

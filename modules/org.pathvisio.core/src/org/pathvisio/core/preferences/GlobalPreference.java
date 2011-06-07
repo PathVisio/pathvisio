@@ -45,7 +45,8 @@ public enum GlobalPreference implements Preference
 
 	DATANODES_ROUNDED(Boolean.toString(false)),
 
-	DB_ENGINE_GEX("org.pathvisio.desktop.data.DBConnDerby"),
+	// TODO: this should be changed to org.pathvisio.desktop.data.DBConnDerby, 2 releases after 2.0.11
+	DB_ENGINE_GEX("org.pathvisio.data.DBConnDerby"),
 
 	@Deprecated
 	DB_GDB_CURRENT("none"),

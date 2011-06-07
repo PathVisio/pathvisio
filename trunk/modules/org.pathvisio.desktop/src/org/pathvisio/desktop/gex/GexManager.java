@@ -111,8 +111,11 @@ public class GexManager
 
 		String className = null;
 		className = PreferenceManager.getCurrent().get(GlobalPreference.DB_ENGINE_GEX);
-
 		if(className == null) return null;
+		
+		// backwards compatibility fix after package refactoring.
+		// TODO: the preference itself should be updated, 2 releases after 2.0.11
+		if ("org.pathvisio.data.DBConnDerby".equals(className)) className = "org.pathvisio.desktop.data.DBConnDerby";
 
 		Class<?> dbc = Class.forName(className);
 		Object o = dbc.newInstance();

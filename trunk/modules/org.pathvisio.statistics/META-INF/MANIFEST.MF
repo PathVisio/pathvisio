@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Statistics
+Bundle-SymbolicName: org.pathvisio.statistics
+Bundle-Version: 2.0.11
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-Activator: org.pathvisio.statistics.Activator
+Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
+ org.pathvisio.desktop;bundle-version="2.0.11",
+ org.pathvisio.gui;bundle-version="2.0.11",
+ org.pathvisio.bridgedb;bundle-version="1.0.3",
+ org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
+ org.pathvisio.bridgedb.gui;bundle-version="1.0.3",
+ org.pathvisio.swingworker;bundle-version="1.1.0"

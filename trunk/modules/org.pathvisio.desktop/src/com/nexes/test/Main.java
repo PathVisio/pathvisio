@@ -10,13 +10,13 @@ public class Main {
         wizard.getDialog().setTitle("Test Wizard Dialog");
 
         WizardPanelDescriptor descriptor1 = new TestPanel1Descriptor();
-        wizard.registerWizardPanel(TestPanel1Descriptor.IDENTIFIER, descriptor1);
+        wizard.registerWizardPanel(descriptor1);
 
         WizardPanelDescriptor descriptor2 = new TestPanel2Descriptor();
-        wizard.registerWizardPanel(TestPanel2Descriptor.IDENTIFIER, descriptor2);
+        wizard.registerWizardPanel(descriptor2);
 
         WizardPanelDescriptor descriptor3 = new TestPanel3Descriptor();
-        wizard.registerWizardPanel(TestPanel3Descriptor.IDENTIFIER, descriptor3);
+        wizard.registerWizardPanel(descriptor3);
 
         wizard.setCurrentPanel(TestPanel1Descriptor.IDENTIFIER);
 

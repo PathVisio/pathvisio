@@ -2,16 +2,12 @@ package com.nexes.wizard;
 
 import java.awt.Component;
 
-import javax.swing.JPanel;
-
 /**
  * A base descriptor class used to reference a Component panel for the Wizard, as
  * well as provide general rules as to how the panel should behave.
  */
-public abstract class WizardPanelDescriptor {
-
-    private static final String DEFAULT_PANEL_IDENTIFIER = "defaultPanelIdentifier";
-
+public abstract class WizardPanelDescriptor 
+{
 
     /**
      * Identifier returned by getNextPanelDescriptor() to indicate that this is the
@@ -21,15 +17,7 @@ public abstract class WizardPanelDescriptor {
 
     private Wizard wizard;
     private Component targetPanel;
-    private Object panelIdentifier;
-
-    /**
-     * Default constructor. The id and the Component panel must be set separately.
-     */
-    public WizardPanelDescriptor() {
-        panelIdentifier = DEFAULT_PANEL_IDENTIFIER;
-        targetPanel = new JPanel();
-    }
+    private final Object panelIdentifier;
 
     /**
      * Constructor which accepts both the Object-based identifier and a reference to
@@ -68,15 +56,6 @@ public abstract class WizardPanelDescriptor {
      */
     public final Object getPanelDescriptorIdentifier() {
         return panelIdentifier;
-    }
-
-    /**
-     * Sets the Object-based identifier for this panel. The identifier must be unique
-     * from all the other identifiers in the panel.
-     * @param id Object-based identifier for this panel.
-     */
-    public final void setPanelDescriptorIdentifier(Object id) {
-        panelIdentifier = id;
     }
 
     final void setWizard(Wizard w) {

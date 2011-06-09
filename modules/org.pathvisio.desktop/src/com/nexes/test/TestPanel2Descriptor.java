@@ -14,10 +14,10 @@ public class TestPanel2Descriptor extends WizardPanelDescriptor implements Actio
 
     public TestPanel2Descriptor() {
 
+    	super(IDENTIFIER);
         panel2 = new TestPanel2();
         panel2.addCheckBoxActionListener(this);
 
-        setPanelDescriptorIdentifier(IDENTIFIER);
         setPanelComponent(panel2);
 
     }

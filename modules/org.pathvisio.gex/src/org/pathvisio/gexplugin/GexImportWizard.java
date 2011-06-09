@@ -104,10 +104,10 @@ public class GexImportWizard extends Wizard
 
 		getDialog().setTitle ("Expression data import wizard");
 
-        this.registerWizardPanel(FilePage.IDENTIFIER, fpd);
-        this.registerWizardPanel(HeaderPage.IDENTIFIER, hpd);
-        this.registerWizardPanel(ColumnPage.IDENTIFIER, cpd);
-        this.registerWizardPanel(ImportPage.IDENTIFIER, ipd);
+        registerWizardPanel(fpd);
+        registerWizardPanel(hpd);
+        registerWizardPanel(cpd);
+        registerWizardPanel(ipd);
 
         setCurrentPanel(FilePage.IDENTIFIER);
 	}

@@ -10,12 +10,11 @@ public class TestPanel3Descriptor extends WizardPanelDescriptor {
 
     TestPanel3 panel3;
 
-    public TestPanel3Descriptor() {
-
+    public TestPanel3Descriptor() 
+    {
+    	super(IDENTIFIER);
         panel3 = new TestPanel3();
-        setPanelDescriptorIdentifier(IDENTIFIER);
         setPanelComponent(panel3);
-
     }
 
     public Object getNextPanelDescriptor() {

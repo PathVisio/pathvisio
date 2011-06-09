@@ -212,18 +212,15 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
 
     /**
      * Add a Component as a panel for the wizard dialog by registering its
-     * WizardPanelDescriptor object. Each panel is identified by a unique Object-based
-     * identifier (often a String), which can be used by the setCurrentPanel()
-     * method to display the panel at runtime.
-     * @param id An Object-based identifier used to identify the WizardPanelDescriptor object.
+     * WizardPanelDescriptor object.
      * @param panel The WizardPanelDescriptor object which contains helpful information about the panel.
      */
-    public void registerWizardPanel(Object id, WizardPanelDescriptor panel) {
+    public void registerWizardPanel(WizardPanelDescriptor panel) {
 
         //  Add the incoming panel to our JPanel display that is managed by
         //  the CardLayout layout manager.
 
-        cardPanel.add(panel.getPanelComponent(), id);
+        cardPanel.add(panel.getPanelComponent(), panel.getPanelDescriptorIdentifier());
 
         //  Set a callback to the current wizard.
 
@@ -231,7 +228,7 @@ public class Wizard extends WindowAdapter implements PropertyChangeListener {
 
         //  Place a reference to it in the model.
 
-        wizardModel.registerPanel(id, panel);
+        wizardModel.registerPanel(panel.getPanelDescriptorIdentifier(), panel);
 
     }
 

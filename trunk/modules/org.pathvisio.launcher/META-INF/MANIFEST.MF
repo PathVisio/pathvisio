@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Launcher
 Bundle-SymbolicName: org.pathvisio.launcher
-Bundle-Version: 2.0.11.qualifier
+Bundle-Version: 2.0.11
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.osgi.framework, org.osgi.framework.launch
 

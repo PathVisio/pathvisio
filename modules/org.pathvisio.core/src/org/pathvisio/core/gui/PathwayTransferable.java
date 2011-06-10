@@ -30,10 +30,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.pathvisio.core.Engine;
-import org.pathvisio.core.biopax.BiopaxElementManager;
+import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.biopax.reflect.BiopaxElement;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
@@ -101,6 +102,14 @@ public class PathwayTransferable implements Transferable {
 			}
 		}
 
+		//Create  dummy parent so we can copy over
+		//the referenced biopax elements
+		PathwayElement biopax = pathway.getBiopax();
+		Pathway dummyParent = new Pathway();
+		if(biopax != null) {
+			dummyParent.add(biopax.copy());
+		}
+		
 		for(PathwayElement e : elements) {
 			//Check for valid graphRef (with respect to other copied elements)
 			PathwayElement enew = e.copy();
@@ -111,25 +120,32 @@ public class PathwayTransferable implements Transferable {
 				enew.setEndGraphRef(null);
 			}
 			pnew.add(enew);
-		}
-
-		//Process biopax references
-		//Start by adding all biopax information
-		PathwayElement biopax = pathway.getBiopax();
-		if(biopax != null) {
-			pnew.add(biopax.copy());
-		}
-
-		//Remove unreferenced biopax elements
-		BiopaxElementManager bpm = new BiopaxElementManager(pnew);
-		Set<BiopaxElement> toRemove = new HashSet<BiopaxElement>();
-		for(BiopaxElement bpe : bpm.getElements()) {
-			if(!bpm.hasReferences(bpe)) {
-				toRemove.add(bpe);
+			
+			if(biopax != null) {
+				if(e.getObjectType() == ObjectType.MAPPINFO) {
+					dummyParent.getMappInfo().copyValuesFrom(e);
+				} else {
+					dummyParent.add(e);
+				}
+				
+				//Copy over biopax references
+				for(String ref : new ArrayList<String>(enew.getBiopaxRefs())) 
+					enew.removeBiopaxRef(ref); //Rest original refs
+				
+				BiopaxReferenceManager bpr = e.getBiopaxReferenceManager();
+				BiopaxReferenceManager bprnew = enew.getBiopaxReferenceManager();
+				for(BiopaxElement bpe : bpr.getReferences()) {
+					try {
+						bprnew.addElementReference(BiopaxElement.fromXML((Element)bpe.clone()));
+					} catch (ClassNotFoundException e1) {
+						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
+					} catch (InstantiationException e1) {
+						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
+					} catch (IllegalAccessException e1) {
+						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
+					}
+				}
 			}
-		}
-		for(BiopaxElement bpe : toRemove) {
-			bpm.removeElement(bpe);
 		}
 
 		//If no mappinfo, create a dummy one that we can recognize lateron

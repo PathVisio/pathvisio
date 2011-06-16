@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JEditorPane;
 import javax.swing.SwingUtilities;
+import javax.swing.text.html.HTMLEditorKit;
 
 import org.bridgedb.Xref;
 import org.pathvisio.core.ApplicationEvent;
@@ -33,10 +34,10 @@ import org.pathvisio.core.model.PathwayElementEvent;
 import org.pathvisio.core.model.PathwayElementListener;
 import org.pathvisio.core.model.StaticProperty;
 import org.pathvisio.core.view.GeneProduct;
-import org.pathvisio.core.view.SelectionBox.SelectionEvent;
-import org.pathvisio.core.view.SelectionBox.SelectionListener;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
+import org.pathvisio.core.view.SelectionBox.SelectionEvent;
+import org.pathvisio.core.view.SelectionBox.SelectionListener;
 
 /**
  * The backpage panel for the Swing version of PathVisio. This pane shows annotation
@@ -73,6 +74,21 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 		this.bpt = bpt;
 
 		executor = Executors.newSingleThreadExecutor();
+
+		//Workaround for #1313
+		//Cause is java bug: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6993691
+		setEditorKit(new HTMLEditorKit() {
+			protected Parser getParser() {
+				try {
+					Class c = Class
+							.forName("javax.swing.text.html.parser.ParserDelegator");
+					Parser defaultParser = (Parser) c.newInstance();
+					return defaultParser;
+				} catch (Throwable e) {
+				}
+				return null;
+			}
+		});
 	}
 
 	private PathwayElement input;

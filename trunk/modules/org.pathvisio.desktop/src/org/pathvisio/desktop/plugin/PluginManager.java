@@ -152,6 +152,10 @@ public class PluginManager {
 		inf.param = param;
 		try
 		{
+			//Disable security manager, so we can load plugin jars from
+			//the .PathVisio folder, while using webstart
+			System.setSecurityManager(null);
+			
 			JarFile jarFile = new JarFile(file);
 			Logger.log.trace("\tLoading from jar file " + jarFile);
 			String pluginClasses = jarFile.getManifest().getMainAttributes().getValue("PathVisio-Plugin-Class");

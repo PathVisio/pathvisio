@@ -1,9 +1,29 @@
 <?xml version="1.0"?>
-<project name="pathvisio-desktop" basedir=".">
+<project name="pathvisio-desktop" default="jar" basedir=".">
 
-	<target name="jar-desktop"> 
-		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="lib/bnd.jar"/> 
-		<bnd classpath="src" output="../org.pathvisio.launcher/modules/org.pathvisio.desktop.jar" eclipse="true" failok="false" exceptions="true" files="org.pathvisio.desktop.bnd"/> 
-	</target>
-	
+	<property name="jar.name" value="org.pathvisio.desktop.jar"/>
+
+	<path id="project.class.path">
+	  <fileset dir="../../lib">
+		<include name="batik/*.jar"/>
+		<include name="jdom.jar"/>
+		<include name="org.bridgedb.jar"/>
+		<include name="org.bridgedb.bio.jar"/>
+		<include name="org.bridgedb.rdb.jar"/>
+		<include name="org.bridgedb.rdb.construct.jar"/>
+		<include name="org.bridgedb.gui.jar"/>
+		<include name="forms-1.2.0.jar"/>
+		<include name="BrowserLauncher.jar"/>
+		<include name="commons-math-2.0.jar"/>
+		<include name="swing-worker-1.1.jar"/>
+		<include name="felix.jar"/>
+	  </fileset>
+	  <fileset dir="../org.pathvisio.launcher/modules">
+		<include name="org.pathvisio.core.jar"/>
+		<include name="org.pathvisio.gui.jar"/>
+	  </fileset>
+	</path>
+
+	<import file="../../build-common.xml" />
+
 </project>

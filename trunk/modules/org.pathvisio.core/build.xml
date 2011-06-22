@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
-<project name="pathvisio-core" basedir=".">
+<project name="pathvisio-core" default="jar" basedir=".">
 
-	<property name="ant.build.javac.target" value="1.5"/>
-	<property name="ant.build.javac.source" value="1.5"/>
 	<property name="pathvisio.version" value="2.0.11"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
+	<property name="jar.name" value="org.pathvisio.core.jar"/>
 	
 	<target name="svnversion">
 		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
@@ -24,10 +23,24 @@ public class Revision
 }
 		</echo>
 	</target>
-	
-	<target name="jar-core" depends="prepare"> 
-		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="lib/bnd.jar"/> 
-		<bnd classpath="src" output="../org.pathvisio.launcher/modules/org.pathvisio.core.jar" eclipse="true" failok="false" exceptions="true" files="org.pathvisio.core.bnd"/> 
-	</target>
-	
+
+	<path id="project.class.path">
+	  <fileset dir="../../lib">
+		<include name="batik/*.jar"/>
+		<include name="jdom.jar"/>
+		<include name="org.bridgedb.jar"/>
+		<include name="org.bridgedb.bio.jar"/>
+		<include name="org.bridgedb.rdb.jar"/>
+	  </fileset>
+	</path>
+
+	<path id="test.class.path">
+	  <fileset dir="../../lib">
+		<include name="junit.jar"/>
+	    <include name="derby.jar"/>
+	  </fileset>
+	</path>
+
+	<import file="../../build-common.xml" />
+
 </project>

@@ -1,9 +1,23 @@
 <?xml version="1.0"?>
-<project name="pathvisio-gui" basedir=".">
+<project name="pathvisio-gui" default="jar" basedir=".">
 
-	<target name="jar-gui"> 
-		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="lib/bnd.jar"/> 
-		<bnd classpath="src" output="../org.pathvisio.launcher/modules/org.pathvisio.gui.jar" eclipse="true" failok="false" exceptions="true" files="org.pathvisio.gui.bnd"/> 
-	</target>
-	
+	<property name="jar.name" value="org.pathvisio.gui.jar"/>
+
+	<path id="project.class.path">
+	  <fileset dir="../../lib">
+		<include name="batik/*.jar"/>
+		<include name="jdom.jar"/>
+		<include name="org.bridgedb.jar"/>
+		<include name="org.bridgedb.bio.jar"/>
+		<include name="org.bridgedb.rdb.jar"/>
+		<include name="forms-1.2.0.jar"/>
+		<include name="swing-worker-1.1.jar"/>
+	  </fileset>
+	  <fileset dir="../org.pathvisio.launcher/modules">
+		<include name="org.pathvisio.core.jar"/>
+	  </fileset>
+	</path>
+
+	<import file="../../build-common.xml" />
+
 </project>

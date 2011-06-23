@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project name="PathVisio-common" basedir=".">
+
+	<property name="ant.build.javac.target" value="1.5"/>
+	<property name="ant.build.javac.source" value="1.5"/>
+
+	<target name="prepare-common">
+		<mkdir dir="build"/>
+	</target>
+	
+	<target name="prepare">
+	</target>
+	
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+
+	<target name="compile" depends="prepare,prepare-common">
+		<javac srcdir="src"
+			   includes="**"
+			   destdir="build"
+			   debug="${debug.mode}"
+			   source="1.5">
+		  <classpath refid="project.class.path"/>
+		</javac>
+		<copy todir="build">
+			<fileset dir="resources" erroronmissingdir="false">
+				<include name="*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="jar" depends="compile"> 
+		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="../../lib-build/biz.aQute.bnd.jar"/> 
+		<bnd classpath="build" 
+			output="../org.pathvisio.launcher/modules/${jar.name}" 
+			eclipse="true" failok="false" exceptions="true" 
+			files="package.bnd"/> 
+	</target>
+
+</project>

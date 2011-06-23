@@ -314,6 +314,9 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			public void windowClosed(WindowEvent we)
 			{
 				GuiMain.this.shutdown(swingEngine);
+				
+				// added system exit, so the application closes after the window is closed
+				System.exit(0);
 			}
 		});
 

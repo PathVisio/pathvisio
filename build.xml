@@ -9,11 +9,6 @@
 	<property name="pathvisio.version" value="2.0.11"/>
 	<property name="debug.mode" value="true"/>
 
-	<!-- WikiPathways client -->
-	<property name="axis.wpclient.dir" value="src-axis-wpclient"/>
-	<property name="build.wpclient.dir" value="build/wpclient" />
-	<property name="lib.axis.dir" value="lib/axis-1_4/lib" />
-
 	<property name="build.core.dir" value="modules/org.pathvisio.core/build"/>
 	<property name="build.gui.dir" value="modules/org.pathvisio.gui/build"/>
 	<property name="build.swing.dir" value="modules/org.pathvisio.desktop/build"/>
@@ -40,6 +35,7 @@
 					<file name="modules/org.pathvisio.core/build.xml"/>
 					<file name="modules/org.pathvisio.gui/build.xml"/>
 					<file name="modules/org.pathvisio.desktop/build.xml"/>
+					<file name="modules/org.wikipathways.client/build.xml"/>
 				</filelist>
 			</subant>
 		</sequential>
@@ -124,16 +120,6 @@
 		</fileset>
 	</path>
 
-	<path id="wpclient.class.path">
-		<path location="${build.wpclient.dir}"/>
-		<fileset dir="${lib.axis.dir}" includes="*.jar" />
-		<pathelement location="lib/jdom.jar" />
-		<pathelement location="lib/resources.jar" />
-		<pathelement location="lib/derby.jar" />
-		<pathelement location="pathvisio.jar" />
-		<pathelement location="wikipathways.jar" />
-	</path>
-
 	<path id="project.wikipathways.class.path">
 		<path refid="project.gui.class.path"/>
 		<pathelement location="${build.wikipathways.dir}"/>
@@ -156,7 +142,6 @@
 
 	<target name="prepare" depends="svnversion">
 		<mkdir dir="${build.wikipathways.dir}"/>
-		<mkdir dir="${build.wpclient.dir}"/>
 		<mkdir dir="${build.visplugins.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 		<mkdir dir="${build.wpi.bin}"/>
@@ -172,7 +157,6 @@
 		<delete dir="${webstart.dir}/www"/>
 		<delete dir="${build.wpi.bin}"/>
 		<delete dir="${build.wpi.applet}"/>
-		<delete dir="${build.wpclient.dir}" />
 		<iterate target="clean"/>
 	</target>
 
@@ -585,39 +569,31 @@
 		<delete dir="${release.dir}/PathVisio.app"/>
 	</target>
 
-	<target name="wpclient-axis" depends="prepare">
-        <condition property="wsdl.url" value="http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl">
-            <not> <isset property="wsdl.url"/> </not>
-        </condition>
-		<java classpathref="wpclient.class.path" fork="true" failonerror="true" classname="org.apache.axis.wsdl.WSDL2Java">
-			<arg value="-o" />
-			<arg value="${axis.wpclient.dir}" />
-			<arg value="-p" />
-			<arg value="org.pathvisio.wikipathways.webservice" />
-			<arg value="${wsdl.url}" />
-		</java>
+	<!-- deprecated -->
+	<target name="wpclient-axis">
+		<subant target="wpclient-axis">
+			<filelist dir=".">
+				<file name="modules/org.wikipathways.client/build.xml"/>
+			</filelist>
+		</subant>
 	</target>
 
-	<target name="compile-wpclient" depends="wpclient-axis,wikipathways-jar,jar">
-		<javac srcdir="${axis.wpclient.dir}" debug="${debug.mode}" destdir="${build.wpclient.dir}">
-			<classpath refid="wpclient.class.path" />
-		</javac>
-		<javac srcdir="${src.dir}/org.wikipathways.client/src" debug="${debug.mode}" destdir="${build.wpclient.dir}">
-			<classpath refid="wpclient.class.path" />
-		</javac>
+	<!-- deprecated -->
+	<target name="compile-wpclient">
+		<subant target="compile">
+			<filelist dir=".">
+				<file name="modules/org.wikipathways.client/build.xml"/>
+			</filelist>
+		</subant>
 	</target>
 
-	<target name="jar-wpclient" depends="compile-wpclient" description="Generate wikipathways-client jar file">
-		<pathconvert refid="wpclient.class.path" property="class.path.manifest" pathsep=" ">
-			<map from="${basedir}/" to="./" />
-		</pathconvert>
-
-		<jar jarfile="wikipathways-client.jar">
-			<fileset dir="${build.wpclient.dir}" includes="**/*.class" />
-			<manifest>
-				<attribute name="Class-Path" value="${class.path.manifest}"/>
-			</manifest>
-		</jar>
+	<!-- deprecated -->
+	<target name="jar-wpclient" description="Generate wikipathways-client jar file">
+		<subant target="jar">
+			<filelist dir=".">
+				<file name="modules/org.wikipathways.client/build.xml"/>
+			</filelist>
+		</subant>
 	</target>
 
 	<target name="tarbin-wpclient" depends="jar-wpclient" description="Create a binary tarball for the WikiPathways client">
@@ -628,8 +604,8 @@
 				<include name="wikipathways-client.jar" />
 				<include name="lib/jdom.jar" />
 				<include name="lib/derby.jar" />
-				<include name="pathvisio.jar" />
-				<include name="wikipathways.jar" />
+				<include name="modules/org.pathvisio.launcher/modules/org.pathvisio.core.jar" />
+				<include name="modules/org.pathvisio.launcher/modules/org.wikipathways.applet.jar" />
 				<include name="${lib.axis.dir}/*.jar" />
 				<include name="lib/resources.jar"/>
 				<include name="resources/botresult.css" />

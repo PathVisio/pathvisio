@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="pathvisio-gui" default="jar" basedir=".">
 
+	<import file="../../build-common.xml" />
+
 	<property name="jar.name" value="org.pathvisio.gui.jar"/>
 
 	<path id="project.class.path">
@@ -13,11 +15,10 @@
 		<include name="forms-1.2.0.jar"/>
 		<include name="swing-worker-1.1.jar"/>
 	  </fileset>
-	  <fileset dir="../org.pathvisio.launcher/modules">
+	  <fileset dir="${bundle.dest}">
 		<include name="org.pathvisio.core.jar"/>
 	  </fileset>
 	</path>
 
-	<import file="../../build-common.xml" />
-
+	
 </project>

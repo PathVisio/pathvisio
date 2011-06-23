@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="pathvisio-core" default="jar" basedir=".">
 
+	<import file="../../build-common.xml" />
+
 	<property name="pathvisio.version" value="2.0.11"/>
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="jar.name" value="org.pathvisio.core.jar"/>
@@ -40,7 +42,5 @@ public class Revision
 	    <include name="derby.jar"/>
 	  </fileset>
 	</path>
-
-	<import file="../../build-common.xml" />
 
 </project>

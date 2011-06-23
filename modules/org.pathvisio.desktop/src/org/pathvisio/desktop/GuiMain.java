@@ -317,17 +317,13 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			{
 				GuiMain.this.shutdown(swingEngine);
 			
-				// uninstalls all bundles, if exception occurs, it is 
-				// noted as an info in the log file 
-				// however this is no real problem because System.exit(0)
-				// should stop everything anyway
+				// stops all bundles, exceptions are no real problem
+				// because System.exit(0) should stop everything anyway
 				for(Bundle bundle : pvDesktop.getContext().getBundles()) {
 					if(bundle.getState() == Bundle.ACTIVE) {
 						try {
-							bundle.uninstall();
-						} catch (BundleException e) {
-							Logger.log.info("Could not uninstall " + bundle.getSymbolicName());
-						}
+							bundle.stop();
+						} catch (BundleException e) {}
 					}
 				}
 				// added system exit, so the application closes after the window is closed

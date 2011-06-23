@@ -12,12 +12,10 @@ Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
  org.pathvisio.gui;bundle-version="2.0.11",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
  com.springsource.org.jdom;bundle-version="1.1.0",
- org.pathvisio.bridgedb;bundle-version="1.0.3",
- org.pathvisio.bridgedb.bio;bundle-version="1.0.3",
- org.pathvisio.bridgedb.gui;bundle-version="1.0.3",
- org.pathvisio.bridgedb.rdb;bundle-version="1.0.3",
- org.pathvisio.bridgedb.rdb.construct;bundle-version="1.0.3",
  derby;bundle-version="10.4.2000000",
- org.pathvisio.bridgedb.webservice.bridgerest;bundle-version="1.0.3"
+ org.bridgedb;bundle-version="1.1.0",
+ org.bridgedb.bio;bundle-version="1.1.0",
+ org.bridgedb.gui;bundle-version="1.1.0",
+ org.bridgedb.rdb;bundle-version="1.1.0"
 Export-Package: org.pathvisio.visualization.gui,
  org.pathvisio.visualization.plugins

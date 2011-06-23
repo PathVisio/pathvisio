@@ -7,9 +7,9 @@ Bundle-Activator: org.pathvisio.statistics.Activator
 Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
  org.pathvisio.desktop;bundle-version="2.0.11",
  org.pathvisio.gui;bundle-version="2.0.11",
- org.pathvisio.bridgedb;bundle-version="1.0.3",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
- org.pathvisio.bridgedb.gui;bundle-version="1.0.3",
- org.pathvisio.swingworker;bundle-version="1.1.0"
+ org.pathvisio.swingworker;bundle-version="1.1.0",
+ org.bridgedb;bundle-version="1.1.0",
+ org.bridgedb.gui;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.osgi.framework;version="1.5.0"

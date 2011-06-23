@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<project name="wikipathways-client" default="jar" basedir=".">
+
+	<import file="../../build-common.xml" />
+
+	<property name="jar.name" value="wikipathways-client.jar"/>
+
+	<!-- WikiPathways client -->
+	<property name="axis.wpclient.dir" value="gen-src"/>
+	<property name="lib.axis.dir" value="../../lib/axis-1_4/lib" />
+
+	<path id="project.class.path">
+<!--		<path location="build"/> -->
+		<fileset dir="${lib.axis.dir}" includes="*.jar" />
+		<fileset dir="../../lib">
+			<include name="jdom.jar" />
+			<include name="derby.jar" />
+			<include name="org.bridgedb.jar" />
+			<include name="org.bridgedb.rdb.jar" />
+			<include name="org.bridgedb.bio.jar" />
+<!--			<include name="wikipathways.jar" /> -->
+		</fileset>
+		<fileset dir="${bundle.dest}">
+			<include name="org.pathvisio.core.jar"/>
+			<include name="org.wikipathways.applet.jar"/>
+		</fileset>
+	</path>
+
+	<target name="compile" depends="wpclient-axis,prepare-common">
+		<javac srcdir="${axis.wpclient.dir}" debug="${debug.mode}" destdir="build">
+			<classpath refid="project.class.path" />
+		</javac>
+		<javac srcdir="src" debug="${debug.mode}" destdir="build">
+			<classpath refid="project.class.path" />
+		</javac>
+	</target>
+	
+	<target name="wpclient-axis" depends="prepare">
+        <condition property="wsdl.url" value="http://www.wikipathways.org/wpi/webservice/webservice.php?wsdl">
+            <not> <isset property="wsdl.url"/> </not>
+        </condition>
+		<java classpathref="project.class.path" fork="true" failonerror="true" classname="org.apache.axis.wsdl.WSDL2Java">
+			<arg value="-o" />
+			<arg value="${axis.wpclient.dir}" />
+			<arg value="-p" />
+			<arg value="org.pathvisio.wikipathways.webservice" />
+			<arg value="${wsdl.url}" />
+		</java>
+	</target>
+
+</project>

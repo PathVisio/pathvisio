@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <project name="pathvisio-desktop" default="jar" basedir=".">
 
+	<import file="../../build-common.xml" />
+
 	<property name="jar.name" value="org.pathvisio.desktop.jar"/>
 
 	<path id="project.class.path">
@@ -23,7 +25,5 @@
 		<include name="org.pathvisio.gui.jar"/>
 	  </fileset>
 	</path>
-
-	<import file="../../build-common.xml" />
 
 </project>

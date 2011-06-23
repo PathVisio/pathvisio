@@ -4,6 +4,8 @@
 	<property name="ant.build.javac.target" value="1.5"/>
 	<property name="ant.build.javac.source" value="1.5"/>
 
+	<property name="bundle.dest" value="../org.pathvisio.launcher/modules"/>
+
 	<target name="prepare-common">
 		<mkdir dir="build"/>
 	</target>
@@ -13,6 +15,10 @@
 	
 	<target name="clean">
 		<delete dir="build"/>
+	</target>
+
+	<target name="dist-clean" depends="clean">
+		<delete file="${bundle.dest}/${jar.name}"/>
 	</target>
 
 	<target name="compile" depends="prepare,prepare-common">
@@ -33,7 +39,7 @@
 	<target name="jar" depends="compile"> 
 		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="../../lib-build/biz.aQute.bnd.jar"/> 
 		<bnd classpath="build" 
-			output="../org.pathvisio.launcher/modules/${jar.name}" 
+			output="${bundle.dest}/${jar.name}" 
 			eclipse="true" failok="false" exceptions="true" 
 			files="package.bnd"/> 
 	</target>

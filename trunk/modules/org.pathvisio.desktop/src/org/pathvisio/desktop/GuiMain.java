@@ -37,6 +37,8 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.bridgedb.IDMapperException;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.Globals;
 import org.pathvisio.core.Revision;
@@ -314,7 +316,20 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 			public void windowClosed(WindowEvent we)
 			{
 				GuiMain.this.shutdown(swingEngine);
-				
+			
+				// uninstalls all bundles, if exception occurs, it is 
+				// noted as an info in the log file 
+				// however this is no real problem because System.exit(0)
+				// should stop everything anyway
+				for(Bundle bundle : pvDesktop.getContext().getBundles()) {
+					if(bundle.getState() == Bundle.ACTIVE) {
+						try {
+							bundle.uninstall();
+						} catch (BundleException e) {
+							Logger.log.info("Could not uninstall " + bundle.getSymbolicName());
+						}
+					}
+				}
 				// added system exit, so the application closes after the window is closed
 				System.exit(0);
 			}

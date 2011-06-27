@@ -89,8 +89,8 @@ public class PluginManager {
 
 		// plugin manager gets all registered plugins and starts them
 		try {
-			if(standaloneEngine.getContext() != null) {
-				ServiceReference[] refs = standaloneEngine.getContext().getServiceReferences(Plugin.class.getName(), null);
+			ServiceReference[] refs = standaloneEngine.getContext().getServiceReferences(Plugin.class.getName(), null);
+			if(refs != null) {
 				for(int i = 0; i < refs.length; i++) {
 					Plugin plugin = (Plugin) standaloneEngine.getContext().getService(refs[i]);
 					plugin.init(standaloneEngine);

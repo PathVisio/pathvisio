@@ -35,6 +35,8 @@
 					<file name="modules/org.pathvisio.core/build.xml"/>
 					<file name="modules/org.pathvisio.gui/build.xml"/>
 					<file name="modules/org.pathvisio.desktop/build.xml"/>
+					<file name="modules/org.pathvisio.launcher/build.xml"/>
+					<file name="modules/org.wikipathways.applet/build.xml"/>
 					<file name="modules/org.wikipathways.client/build.xml"/>
 				</filelist>
 			</subant>
@@ -313,19 +315,27 @@
 		<!-- Update latest version file -->
 		<echo file="${webstart.dir}/www/latestversion">${subversion_revision}</echo>
 		<!-- Copy files needed for webstart !-->
-		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
-		<copy file="visplugins.jar" toDir="${webstart.dir}/www"/>
+		<copy toDir="${webstart.dir}/www">
+			<fileset dir="modules">
+				<include name="org.pathvisio.core.jar"/>
+				<include name="org.pathvisio.gui.jar"/>
+				<include name="org.pathvisio.desktop.jar"/>
+				<include name="org.pathvisio.launcher.jar"/>
+				<include name="org.pathvisio.statistics.jar"/>
+				<include name="org.pathvisio.visualization.jar"/>
+				<include name="org.pathvisio.gex.jar"/>
+			</fileset>
+		</copy>
+		<copy toDir="${webstart.dir}/www/lib">
+			<fileset dir="modules/org.pathvisio.launcher/lib" includes="*.jar"/>
+		</copy>
 		<signjar jar="pathvisio.jar"
 			alias="PV" storepass="${keystore.password}" keystore="lib/visioKeyStore"/>
-		<copy toDir="${webstart.dir}/www/lib">
-			<fileset dir="lib" includes="**/*.jar"/>
-		</copy>
 		<signjar alias="PV"
 			storepass="${keystore.password}" keystore="lib/visioKeyStore">
 			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>
 		</signjar>
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
-		<copy file="${webstart.dir}/pathvisio_with_plugins.jnlp" toDir="${webstart.dir}/www"/>
 	</target>
 
 	<target name="prepare-wpi" depends="jar, wikipathways-jar, diffview-jar" description="Prepare all applets and utilities needed by WikiPathways">
@@ -604,8 +614,8 @@
 				<include name="wikipathways-client.jar" />
 				<include name="lib/jdom.jar" />
 				<include name="lib/derby.jar" />
-				<include name="modules/org.pathvisio.launcher/modules/org.pathvisio.core.jar" />
-				<include name="modules/org.pathvisio.launcher/modules/org.wikipathways.applet.jar" />
+				<include name="modules/org.pathvisio.core.jar" />
+				<include name="modules/org.wikipathways.applet.jar" />
 				<include name="${lib.axis.dir}/*.jar" />
 				<include name="lib/resources.jar"/>
 				<include name="resources/botresult.css" />

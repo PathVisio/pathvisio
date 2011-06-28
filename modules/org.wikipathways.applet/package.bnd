@@ -1,0 +1,5 @@
+Export-Package: *
+Bundle-Version: 2.0.11
+Bundle-Name: org.wikipathways.applet
+Bundle-SymbolicName: org.wikipathways.applet
+Require-Bundle: com.springsource.org.jdom;bundle-version="1.1.0",org.bridgedb;bundle-version="1.1.0",org.bridgedb.bio;bundle-version="1.1.0",org.bridgedb.gui;bundle-version="1.1.0"

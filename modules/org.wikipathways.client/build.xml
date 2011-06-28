@@ -10,7 +10,6 @@
 	<property name="lib.axis.dir" value="../../lib/axis-1_4/lib" />
 
 	<path id="project.class.path">
-<!--		<path location="build"/> -->
 		<fileset dir="${lib.axis.dir}" includes="*.jar" />
 		<fileset dir="../../lib">
 			<include name="jdom.jar" />
@@ -18,7 +17,6 @@
 			<include name="org.bridgedb.jar" />
 			<include name="org.bridgedb.rdb.jar" />
 			<include name="org.bridgedb.bio.jar" />
-<!--			<include name="wikipathways.jar" /> -->
 		</fileset>
 		<fileset dir="${bundle.dest}">
 			<include name="org.pathvisio.core.jar"/>

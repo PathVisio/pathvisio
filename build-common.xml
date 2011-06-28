@@ -3,8 +3,9 @@
 
 	<property name="ant.build.javac.target" value="1.5"/>
 	<property name="ant.build.javac.source" value="1.5"/>
+	<property name="debug.mode" value="true"/>
 
-	<property name="bundle.dest" value="../org.pathvisio.launcher/modules"/>
+	<property name="bundle.dest" value=".."/>
 
 	<target name="prepare-common">
 		<mkdir dir="build"/>

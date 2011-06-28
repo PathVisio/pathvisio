@@ -102,12 +102,14 @@ public class PathVisioMain {
     	List<Bundle> bundles = new ArrayList<Bundle>();
     	
     	for(String s : libs) {
-			Bundle b = context.installBundle(new File(s).toURI().toString());
+    		System.out.println ("Installing " + new File(s).toURI());
+			Bundle b = context.installBundle("" + new File(s).toURI());
 			bundles.add(b);
 		}
     	
     	for(String s : coreModules) {
-			Bundle b = context.installBundle(new File(s).toURI().toString());
+    		System.out.println ("Installing " + new File(s).toURI());
+    		Bundle b = context.installBundle("" + new File(s).toURI());
 			bundles.add(b);
 		}
     	

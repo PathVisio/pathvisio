@@ -20,7 +20,7 @@
 		<include name="swing-worker-1.1.jar"/>
 		<include name="felix.jar"/>
 	  </fileset>
-	  <fileset dir="../org.pathvisio.launcher/modules">
+	  <fileset dir="${bundle.dest}">
 		<include name="org.pathvisio.core.jar"/>
 		<include name="org.pathvisio.gui.jar"/>
 	  </fileset>

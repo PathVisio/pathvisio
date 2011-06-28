@@ -65,8 +65,8 @@ public class PluginManager {
 	 */
 	public static class PluginInfo
 	{
-		public Class<Plugin> plugin;
-		public File jar; // may be null if it wasn't a jar
+		public Class<? extends Plugin> plugin;
+		public String jar; // may be null if it wasn't a jar
 		public Throwable error; // null if there was no error
 		public String param; // parameter that caused this plugin to be loaded
 	}
@@ -93,7 +93,19 @@ public class PluginManager {
 			if(refs != null) {
 				for(int i = 0; i < refs.length; i++) {
 					Plugin plugin = (Plugin) standaloneEngine.getContext().getService(refs[i]);
-					plugin.init(standaloneEngine);
+					PluginInfo pi = new PluginInfo();
+					pi.plugin = plugin.getClass();
+					pi.param = "";
+					pi.jar = refs[i].getBundle().getLocation();
+					try
+					{
+						plugin.init(standaloneEngine);
+					}
+					catch (Exception ex)
+					{
+						pi.error = ex;
+					}
+					info.add(pi);
 				}
 			}
 		} catch (InvalidSyntaxException e) {
@@ -148,7 +160,7 @@ public class PluginManager {
 	void loadFromJar(File file, String param)
 	{
 		PluginInfo inf = new PluginInfo();
-		inf.jar = file;
+		inf.jar = file.getAbsolutePath();
 		inf.param = param;
 		try
 		{
@@ -176,7 +188,7 @@ public class PluginManager {
 						// start building a new pluginInfo, it is possible that there
 						// are multiple plugin classes in a single jar
 						inf = new PluginInfo();
-						inf.jar = file;
+						inf.jar = file.getAbsolutePath();
 						inf.param = param;
 					}
 				}

@@ -85,7 +85,7 @@ public class PluginManagerDlg
 				plugin.add (new DefaultMutableTreeNode ("Param: " + inf.param));
 
 				if (inf.jar != null)
-					plugin.add (new DefaultMutableTreeNode ("Jar: " + inf.jar.getAbsolutePath()));
+					plugin.add (new DefaultMutableTreeNode ("Jar: " + inf.jar));
 				active.add(plugin);
 			}
 			else
@@ -98,7 +98,7 @@ public class PluginManagerDlg
 				error.add (new DefaultMutableTreeNode ("Param: " + inf.param));
 
 				if (inf.jar != null)
-					error.add (new DefaultMutableTreeNode ("Jar: " + inf.jar.getAbsolutePath()));
+					error.add (new DefaultMutableTreeNode ("Jar: " + inf.jar));
 				errors.add (error);
 			}
 		}

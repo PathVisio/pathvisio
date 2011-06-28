@@ -17,8 +17,6 @@
 
 package org.pathvisio.desktop;
 
-import java.util.List;
-
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -48,8 +46,8 @@ import org.pathvisio.desktop.util.StandaloneCompat;
 import org.pathvisio.desktop.visualization.Visualization;
 import org.pathvisio.desktop.visualization.VisualizationEvent;
 import org.pathvisio.desktop.visualization.VisualizationManager;
-import org.pathvisio.gui.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.gui.SwingEngine;
+import org.pathvisio.gui.PathwayElementMenuListener.PathwayElementMenuHook;
 
 /**
  * PvDesktop ties together several
@@ -360,10 +358,10 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 
 	private PluginManager manager = null;
 
-	public void initPlugins(List<String> locations)
+	public void initPlugins()
 	{
 		if (manager != null) throw new IllegalStateException ("Can't initialize plugin manager twice!");
-		manager = new PluginManager(locations, this);
+		manager = new PluginManager(this);
 	}
 
 	public PluginManager getPluginManager()

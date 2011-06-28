@@ -88,6 +88,10 @@
 		<subant target="jar" buildpath="modules/org.pathvisio.desktop/build.xml"/>
 	</target>
 
+	<target name="launcher.jar" depends="core.jar">
+		<subant target="jar" buildpath="modules/org.pathvisio.launcher/build.xml"/>
+	</target>
+
 	<target name="applet.jar" depends="gui.jar">
 		<subant target="jar" buildpath="modules/org.wikipathways.applet/build.xml"/>
 	</target>
@@ -96,7 +100,7 @@
 		<subant target="jar" buildpath="modules/org.wikipathways.applet/build.xml"/>
 	</target>
 
-	<target name="visualization.jar" depends="desktop.jar">
+	<target name="visualization.jar" depends="launcher.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.visualization/build.xml"/>
 	</target>
 

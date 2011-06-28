@@ -9,12 +9,6 @@
 	<property name="pathvisio.version" value="2.0.11"/>
 	<property name="debug.mode" value="true"/>
 
-	<property name="build.core.dir" value="modules/org.pathvisio.core/build"/>
-	<property name="build.gui.dir" value="modules/org.pathvisio.gui/build"/>
-	<property name="build.swing.dir" value="modules/org.pathvisio.desktop/build"/>
-	<property name="build.wikipathways.dir" value="build/wikipathways"/>
-	<property name="build.visplugins.dir" value="build/visplugins"/>
-
     <property name="apidoc.dir" value="apidoc"/>
 	<property name="webstart.dir" value="webstart"/>
 	<property name="release.dir" value="release"/>
@@ -31,110 +25,19 @@
 		<sequential>
 			<subant target="@{target}">
 				<filelist dir=".">
-					<!-- NOTE: order is important! -->
 					<file name="modules/org.pathvisio.core/build.xml"/>
 					<file name="modules/org.pathvisio.gui/build.xml"/>
 					<file name="modules/org.pathvisio.desktop/build.xml"/>
 					<file name="modules/org.pathvisio.launcher/build.xml"/>
+					<file name="modules/org.pathvisio.gex/build.xml"/>
+					<file name="modules/org.pathvisio.statistics/build.xml"/>
+					<file name="modules/org.pathvisio.visualization/build.xml"/>
 					<file name="modules/org.wikipathways.applet/build.xml"/>
 					<file name="modules/org.wikipathways.client/build.xml"/>
 				</filelist>
 			</subant>
 		</sequential>
 	</macrodef>
-
-	<!-- libraries used by pathvisio-core.jar -->
-	<path id="core.libs">
-	  <fileset dir="lib">
-		<include name="batik/*.jar"/>
-		<include name="jdom.jar"/>
-		<include name="org.bridgedb.jar"/>
-		<include name="org.bridgedb.bio.jar"/>
-		<include name="org.bridgedb.rdb.jar"/>
-	    <include name="resources.jar"/> <!-- TODO: this is not necessary, only GPML.xsd !-->
-	  </fileset>
-	</path>
-
-	<!-- libraries used by pathvisio.jar -->
-	<path id="standalone.libs">
-	  <path refid="core.libs"/>
-	  <fileset dir="lib">
-		<include name="org.bridgedb.rdb.construct.jar"/>
-	    <include name="derby.jar"/>
-		<include name="forms-1.2.0.jar"/>
-		<include name="swing-worker-1.1.jar"/>
-		<include name="BrowserLauncher.jar"/>
-		<include name="commons-math-2.0.jar"/>
-		<include name="felix.jar"/>
-	  </fileset>
-	</path>
-
-	<!-- libraries used by diffapplet.jar !-->
-	<path id="diffview.libs">
-	  <fileset dir="lib">
-		<include name="jdom.jar"/>
-		<include name="org.bridgedb.jar"/>
-		<include name="org.bridgedb.bio.jar"/>
-		<include name="swing-worker-1.1.jar"/>
-	    <include name="resources.jar"/>
-	  </fileset>
-	</path>
-
-	<!-- libraries used by wikipathways.jar !-->
-	<path id="wikipathways.libs">
-	  <path refid="diffview.libs"/>
-	  <fileset dir="lib">
-		<include name="org.bridgedb.webservice.bridgerest.jar"/>
-		<include name="apache/*.jar"/>
-		<include name="forms-1.2.0.jar"/>
-		<include name="derbyclient.jar" />
-		<include name="org.bridgedb.rdb.jar"/>
-	  </fileset>
-	</path>
-
-	<path id="project.core.class.path">
-      <pathelement location="${build.core.dir}"/>
-	  <path refid="core.libs"/>
-	  <fileset dir="lib">
-		<include name="junit.jar"/>
-	    <include name="derby.jar"/>
-	  </fileset>
-	</path>
-
-	<path id="project.gui.class.path">
-		<path refid="project.core.class.path"/>
-		<pathelement location="${build.gui.dir}"/>
-		<fileset dir="lib">
-			<include name="forms-1.2.0.jar"/>
-			<include name="swing-worker-1.1.jar"/>
-		</fileset>
-	</path>
-
-	<path id="project.swing.class.path">
-		<path refid="project.gui.class.path"/>
-		<pathelement location="${build.swing.dir}"/>
-		<fileset dir="lib">
-			<include name="org.bridgedb.rdb.construct.jar"/>
-			<include name="org.bridgedb.gui.jar"/>
-			<include name="BrowserLauncher.jar"/>
-			<include name="commons-math-2.0.jar"/>
-			<include name="felix.jar"/>
-		</fileset>
-	</path>
-
-	<path id="project.wikipathways.class.path">
-		<path refid="project.gui.class.path"/>
-		<pathelement location="${build.wikipathways.dir}"/>
-		<fileset dir="lib">
-			<include name="apache/**/*.jar"/>
-		</fileset>
-	</path>
-
-	<path id="project.all.class.path">
-		<fileset dir=".">
-			<include name="lib/**/*.jar"/>
-		</fileset>
-	</path>
 
 	<target name="svnversion">
 		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
@@ -143,8 +46,6 @@
 	</target>
 
 	<target name="prepare" depends="svnversion">
-		<mkdir dir="${build.wikipathways.dir}"/>
-		<mkdir dir="${build.visplugins.dir}"/>
 		<mkdir dir="${apidoc.dir}"/>
 		<mkdir dir="${build.wpi.bin}"/>
 		<mkdir dir="${build.wpi.applet}/lib"/>
@@ -152,8 +53,6 @@
 	</target>
 
 	<target name="clean" description="Remove all intermediate files.">
-		<delete dir="${build.wikipathways.dir}"/>
-		<delete dir="${build.visplugins.dir}"/>
 		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
@@ -174,138 +73,41 @@
 		<delete file="wikipathways-client.jar"/>
 		<delete dir="${release.dir}" />
 		<delete dir="${axis.wpclient.dir}" />
+		<iterate target="dist-clean"/>
 	</target>
 
-	<target name="compile-core-gui-swing" depends="prepare,resources-jar">
-		<iterate target="compile"/>
+	<target name="core.jar" depends="prepare">
+		<subant target="jar" buildpath="modules/org.pathvisio.core/build.xml"/>
 	</target>
 
-	<target name="compile-wikipathways" depends="compile-core-gui-swing" description="Compile wikipathways version">
-		<!-- compile applet -->
-		<javac srcdir="${src.dir}/org.wikipathways.applet/src/"
-			includes="**"
-			destdir="${build.wikipathways.dir}"
-			debug="${debug.mode}"
-			source="1.5">
-			<classpath refid="project.wikipathways.class.path"/>
-		</javac>
+	<target name="gui.jar" depends="core.jar">
+		<subant target="jar" buildpath="modules/org.pathvisio.gui/build.xml"/>
 	</target>
 
-	<target name="compile-visplugins" depends="compile-core-gui-swing" description="Compile visualization plugin sources">
-		<javac srcdir="${src.dir}/org.pathvisio.visualization/src/"
-			   includes="**"
-			   destdir="${build.visplugins.dir}"
-			   debug="${debug.mode}"
-			   source="1.5">
-			<classpath refid="project.swing.class.path"/>
-		</javac>
-		<javac srcdir="${src.dir}/org.pathvisio.statistics/src/"
-			   includes="**"
-			   destdir="${build.visplugins.dir}"
-			   debug="${debug.mode}"
-			   source="1.5">
-			<classpath refid="project.swing.class.path"/>
-		</javac>
-		<javac srcdir="${src.dir}/org.pathvisio.gex/src/"
-			   includes="**"
-			   destdir="${build.visplugins.dir}"
-			   debug="${debug.mode}"
-			   source="1.5">
-			<classpath refid="project.swing.class.path"/>
-		</javac>
+	<target name="desktop.jar" depends="gui.jar">
+		<subant target="jar" buildpath="modules/org.pathvisio.desktop/build.xml"/>
 	</target>
 
-	<target name="all" depends="jar,visplugins-jar,compile-wikipathways" description="Compile all versions of this project" />
-
-	<target name="resources-jar" depends="prepare" description="Generates lib/resources.jar containing resource files">
-		<jar jarfile="lib/resources.jar">
-			<fileset dir="modules/org.pathvisio.core/resources" includes="**"/>
-			<fileset dir="." includes="GPML*.xsd"/>
-			<fileset dir="." includes="MAPPTmpl.gtp"/>
-		</jar>
+	<target name="applet.jar" depends="gui.jar">
+		<subant target="jar" buildpath="modules/org.wikipathways.applet/build.xml"/>
 	</target>
 
-	<target name="jar" depends="compile-core-gui-swing" description="Generates pathvisio.jar and pathvisio_core.jar">
-		<manifestclasspath property="manifest.cp" jarfile="pathvisio.jar">
-			<classpath>
-				<path refid="standalone.libs" />
-			<!--extra transient dependencies for biopax conversion -->
-				<pathelement location="Biopax3GPML.jar"/>
-			</classpath>
-		</manifestclasspath>
-
-		<jar jarfile="pathvisio.jar">
-			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.desktop.GuiMain"/>
-				<attribute name="Class-Path" value="${manifest.cp}"/>
-			</manifest>
-			<fileset dir="${build.core.dir}" includes="**/*.class"/>
-			<fileset dir="${build.gui.dir}" includes="**/*.class"/>
-			<fileset dir="${build.swing.dir}">
-				<include name="**/*.class"/>
-			</fileset>
-			<fileset dir="${src.dir}/org.pathvisio.desktop/">
-				<include name="**/*.properties"/>
-				<include name="**/*.gif"/>
-			</fileset>
-			<fileset dir="." includes="GPML.xsd"/>
-		</jar>
-		<jar jarfile="pathvisio_core.jar">
-			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.core.util.Converter"/>
-				<attribute name="Class-Path" value="${manifest.cp}"/>
-			</manifest>
-			<fileset dir="${build.core.dir}" includes="**/*.class"/>
-			<fileset dir="." includes="GPML.xsd"/>
-		</jar>
-    </target>
-
-	<target name="visplugins-jar" depends="compile-visplugins" description="Generates jar with visualization plugins">
-		<jar jarfile="visplugins.jar">
-			<manifest>
-				<attribute name="PathVisio-Plugin-Class"
-					value="org.pathvisio.gexplugin.GexPlugin, org.pathvisio.statistics.StatisticsPlugin, org.pathvisio.visualization.plugins.VisualizationPlugin"/>
-			</manifest>
-			<fileset dir="${build.visplugins.dir}" includes="**/*.class"/>
-		</jar>
+	<target name="wpclient.jar" depends="applet.jar">
+		<subant target="jar" buildpath="modules/org.wikipathways.applet/build.xml"/>
 	</target>
 
-	<target name="wikipathways-jar" depends="compile-core-gui-swing, compile-wikipathways" description="Generate wikipathways jar file">
-		<!-- Include packages					Exceptions
-			src/gui
-			src/core
-				org.pathvisio.model				BatikImageExporter, SvgFormat
-			src/wikipathways
-		-->
-		<jar jarfile="wikipathways.jar" index="true">
-			<fileset dir="${build.wikipathways.dir}" includes="**/*.class">
-				<exclude name="org/wikipathways/applet/Preloader.class"/>
-			</fileset>
-			<fileset dir="${build.gui.dir}" includes="**/*.class"/>
-			<fileset dir="${build.core.dir}" includes="**/*.class"/>
-			<fileset dir="${src.dir}/org.pathvisio.core/resources" excludes="logo-*, *.bmp, *.ai"/>
-			<fileset dir="." includes="MAPPTmpl.gtp"/>
-		</jar>
-		<jar jarfile="preloader.jar" index="true">
-			<fileset dir="${build.wikipathways.dir}" includes="org/wikipathways/applet/Preloader.class"/>
-		</jar>
+	<target name="visualization.jar" depends="desktop.jar">
+		<subant target="jar" buildpath="modules/org.pathvisio.visualization/build.xml"/>
 	</target>
 
-	<target name="diffview-jar" depends="compile-core-gui-swing, compile-wikipathways" description="Generate diffview.jar, the diffviewer applet">
-		<manifestclasspath property="manifest.cp.diffview" jarfile="diffview.jar">
-		<classpath refid="diffview.libs" />
-		</manifestclasspath>
-		<jar jarfile="${build.wpi.applet}/diffview.jar">
-			<fileset dir="${build.core.dir}" includes="**/*.class"/>
-			<fileset dir="${build.gui.dir}" includes="**/*.class"/>
-			<fileset dir="${build.wikipathways.dir}" includes="**/*.class"/>
-            <manifest>
-            	 <attribute name="Class-Path" value="${manifest.cp.diffview}"/>
-            </manifest>
-		</jar>
+	<target name="plugins.jar" depends="visualization.jar">
+		<subant target="jar" buildpath="modules/org.pathvisio.gex/build.xml"/>
+		<subant target="jar" buildpath="modules/org.pathvisio.statistics/build.xml"/>
 	</target>
 
-	<target name="prepare-webstart" depends="jar,resources-jar,visplugins-jar" description="prepares webstart">
+	<target name="all" depends="plugins.jar" description="Compile all versions of this project" />
+
+	<target name="prepare-webstart" depends="plugins.jar" description="prepares webstart">
 		<fail message="You must specify a keystore password for opening visioKeyStore: ant -Dkeystore.password=***** [ant target]">
 			<condition>
 				<not> <isset property="keystore.password"/> </not>
@@ -338,7 +140,7 @@
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
 	</target>
 
-	<target name="prepare-wpi" depends="jar, wikipathways-jar, diffview-jar" description="Prepare all applets and utilities needed by WikiPathways">
+	<target name="prepare-wpi" depends="applet.jar" description="Prepare all applets and utilities needed by WikiPathways">
 		<!-- Copy converter jar with modified main class -->
 		<copy tofile="${build.wpi.bin}/pathvisio_color_exporter.jar"
 			file="pathvisio_core.jar"/>
@@ -437,7 +239,7 @@
 		</javadoc>
 	</target>
 
-	<target name="tarsrc" depends="svnversion" description="create source tarball and zip">
+	<target name="zip.src" depends="svnversion" description="create source tarball and zip">
 		<property name="srcbase" value="pathvisio_src-${pathvisio.version}-r${subversion_revision}"/>
 		<zip destfile="${release.dir}/${srcbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
@@ -453,6 +255,7 @@
 				<include name="example-data/**/*"/>
 				<include name="testData/**/*"/>
 				<include name="build.xml"/>
+				<include name="build-common.xml"/>
 				<include name="pathvisio.sh"/>
 				<include name="pathvisio.bat"/>
 			</zipfileset>
@@ -462,7 +265,7 @@
 		</tar>
 	</target>
 	
-	<target name="tarbin" depends="jar,visplugins-jar" description="create binary tarball and zip">
+	<target name="zip.bin" depends="plugins.jar" description="create binary tarball and zip">
 		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
 		<zip destfile="${release.dir}/${binbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
@@ -495,11 +298,9 @@
 		</tar>
 	</target>
 	
+	<target name="zip" depends="zip.src,zip.bin" description="create both source and binary tarballs and zips"/>
 	
-	<target name="tar" depends="tarsrc,tarbin" description="create both source and binary tarballs and zips"/>
-	
-	
-	<target name="test" depends="compile-core-gui-swing">
+	<target name="test" depends="desktop.jar">
 		<javac srcdir="modules/org.pathvisio.core/test" debug="${debug.mode}"
 					includes="**"
 					destdir="${build.core.dir}"
@@ -556,7 +357,7 @@
 
 	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="lib-build/jarbundler-2.1.0.jar" />
 
-	<target name="jarbundler" depends="jar" description="Generate OS X Bundle">
+	<target name="jarbundler" depends="plugins.jar" description="Generate OS X Bundle">
 		<!-- On operating systems other than Mac OS you have to set the stubfile property with -Dstubfile=/path/to/JavaApplicationStub.
 		You can find JavaApplicationStub on any Mac OS X installation and copy it from there. !-->
 		<jarbundler dir="${release.dir}" name="PathVisio" mainclass="org.pathvisio.desktop.GuiMain"
@@ -579,34 +380,7 @@
 		<delete dir="${release.dir}/PathVisio.app"/>
 	</target>
 
-	<!-- deprecated -->
-	<target name="wpclient-axis">
-		<subant target="wpclient-axis">
-			<filelist dir=".">
-				<file name="modules/org.wikipathways.client/build.xml"/>
-			</filelist>
-		</subant>
-	</target>
-
-	<!-- deprecated -->
-	<target name="compile-wpclient">
-		<subant target="compile">
-			<filelist dir=".">
-				<file name="modules/org.wikipathways.client/build.xml"/>
-			</filelist>
-		</subant>
-	</target>
-
-	<!-- deprecated -->
-	<target name="jar-wpclient" description="Generate wikipathways-client jar file">
-		<subant target="jar">
-			<filelist dir=".">
-				<file name="modules/org.wikipathways.client/build.xml"/>
-			</filelist>
-		</subant>
-	</target>
-
-	<target name="tarbin-wpclient" depends="jar-wpclient" description="Create a binary tarball for the WikiPathways client">
+	<target name="tarbin-wpclient" depends="wpclient.jar" description="Create a binary tarball for the WikiPathways client">
 		<property name="binbase2" value="wikipathways_client_bin-${pathvisio.version}-r${subversion_revision}" />
 
 		<zip destfile="${release.dir}/${binbase2}.zip">
@@ -631,6 +405,6 @@
 		</tar>
 	</target>
 
-	<target name="dist" depends="tarbin-wpclient,tar,jarbundler"/>
+	<target name="dist" depends="tarbin-wpclient,zip,jarbundler"/>
 
 </project>

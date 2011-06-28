@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<project name="org.pathvisio.visualization" default="jar" basedir=".">
+<project name="org.pathvisio.statistics" default="jar" basedir=".">
 
 	<import file="../../build-common.xml" />
 
-	<property name="jar.name" value="org.pathvisio.visualization.jar"/>
+	<property name="jar.name" value="org.pathvisio.statistics.jar"/>
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
@@ -24,7 +24,8 @@
 		<include name="org.pathvisio.core.jar"/>
 		<include name="org.pathvisio.gui.jar"/>
 		<include name="org.pathvisio.desktop.jar"/>
+		<include name="org.pathvisio.visualization.jar"/>
 	  </fileset>
 	</path>
-	
+
 </project>

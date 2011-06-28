@@ -16,8 +16,6 @@
 //
 package org.pathvisio.desktop;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -26,8 +24,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import javax.swing.BoxLayout;
@@ -55,15 +51,17 @@ import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.view.MIMShapes;
 import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.desktop.gex.GexManager.GexManagerEvent;
 import org.pathvisio.desktop.gex.GexManager.GexManagerListener;
-import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.desktop.model.BatikImageWithDataExporter;
 import org.pathvisio.desktop.model.RasterImageWithDataExporter;
 import org.pathvisio.desktop.visualization.VisualizationManager;
 import org.pathvisio.gui.MainPanel;
 import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.SwingEngine.Browser;
+
+import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -74,8 +72,8 @@ import org.pathvisio.gui.SwingEngine.Browser;
  */
 public class GuiMain implements GdbEventListener, GexManagerListener
 {
-	GuiMain()
-	{
+	GuiMain() { 
+		
 	}
 
 	private MainPanelStandalone mainPanel;
@@ -96,116 +94,49 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 					" java.version: " + System.getProperty ("java.version"));
 		Logger.log.info ("Locale: " + Locale.getDefault().getDisplayName());
 	}
-
-	// plugin files specified at command line
-	private List<String> pluginLocations = new ArrayList<String>();
-
-	// pathway specified at command line
-	private URL pathwayUrl = null;
-	private File pathwayFile = null;
-	private String pgexFile = null;
-
-	public void parseArgs(String [] args)
-	{
-		for(int i = 0; i < args.length; i++)
-		{
-			if("-p".equals(args[i]))
-			{
-				i++;
-				if (i < args.length)
-					pluginLocations.add(args[i]);
-				else
-				{
-					System.out.println ("Missing plugin location after -p option");
-					printHelp();
-					System.exit(-1);
-				}
-			}
-			else if ("-d".equals(args[i]))
-			{
-				i++;
-				if (i < args.length)
-				{
-					pgexFile = args[i];
-					if (!new File(pgexFile).exists())
-					{
-						System.out.println ("Data file '" + pgexFile + "' not found");
-						printHelp();
-						System.exit(-1);
-					}
-				}
-				else
-				{
-					System.out.println ("Missing data file location after -d option");
-					printHelp();
-					System.exit(-1);
-				}
-			}
-			else if ("-o".equals(args[i]))
-			{
-				// ignore, -o option is deprecated
-			}
-			else if ("-v".equals(args[i]))
-			{
-				System.out.println("PathVisio v" + Revision.VERSION + ", build " + Revision.REVISION);
-				System.exit(0);
-			}
-			else if ("-h".equals(args[i])) {
-				printHelp();
-				System.exit(0);
-			}
-			else
-			{
-				String pws = args[i];
-				File f = new File(pws);
-				//Assume the argument is a file
-				if(f.exists())
-				{
-					pathwayFile = f;
-				}
-				else //If it doesn't exist, assume it's an url
-				{
-					try {
-						pathwayUrl = new URL(pws);
-					} catch(MalformedURLException e)
-					{
-						System.out.println ("Pathway '" + args[i] + "' not a valid file or URL");
-						printHelp();
-						System.exit(-1);
-					}
-				}
+	
+	private void openPathwayFile(String pathwayFile) {
+		File f = new File(pathwayFile);
+		URL url;
+		//Assume the argument is a file
+		if(f.exists()) {
+			swingEngine.openPathway(f);
+		} else {
+			//If it doesn't exist, assume it's an url
+			try {
+				url = new URL(pathwayFile);
+				swingEngine.openPathway(url);
+			} catch(MalformedURLException e) {
+				Logger.log.error("Couldn't open pathway url " + pathwayFile);
 			}
 		}
 	}
 
+	// this is only a workaround to hand over the pathway and pgex file
+	// from the command line when using the launcher
+	// TODO: find better solution
+	public static final String ARG_PROPERTY_PGEX = "pathvisio.pgex";
+	public static final String ARG_PROPERTY_PATHWAYFILE = "pathvisio.pathwayfile";
 	/**
 	 * Act upon the command line arguments
 	 */
-	public void processOptions()
-	{
+	public void processOptions() {
 		//Create a plugin manager that loads the plugins
-		pvDesktop.initPlugins(pluginLocations);
+		pvDesktop.initPlugins();
 
-		if (pathwayFile != null)
-		{
-			swingEngine.openPathway (pathwayFile);
+		String str = System.getProperty(ARG_PROPERTY_PATHWAYFILE);
+		if (str != null) {
+			openPathwayFile(str);
 		}
-		else if(pathwayUrl != null) {
-			swingEngine.openPathway(pathwayUrl);
-		}
-
-		if (pgexFile != null)
-		{
-			try
-			{
-
-				pvDesktop.getGexManager().setCurrentGex(pgexFile, false);
+		
+		str = System.getProperty(ARG_PROPERTY_PGEX);
+		if(str != null) {
+			try {
+				pvDesktop.getGexManager().setCurrentGex(str, false);
 				pvDesktop.loadGexCache();
-				Logger.log.info ("Loaded pgex " + pgexFile);
-			}
-			catch (IDMapperException e)
-			{
-				Logger.log.error ("Couldn't open pgex " + pgexFile, e);
+				Logger.log.info ("Loaded pgex " + str);
+			} catch (IDMapperException e) {
+				Logger.log.error ("Couldn't open pgex " + str, e);
 			}
 		}
 	}
@@ -372,20 +303,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 
 	public MainPanel getMainPanel() { return mainPanel; }
 
-
-	static void printHelp() {
-		System.out.println(
-				"pathvisio [options] [pathway file]\n" +
-				"Valid options are:\n" +
-				"-p: A plugin file/directory to load\n" +
-				"-d: A pgex data file to load\n" +
-				"-v: displays PathVisio version\n" +
-				"-h: displays this help message"
-		);
-	}
-
-	void init(PvDesktop pvDesktop)
-	{
+	public void init(PvDesktop pvDesktop) {
 		this.pvDesktop = pvDesktop;
 		
 		PreferenceManager.init();
@@ -433,6 +351,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		processOptions();
 	}
 
+	
 	private void initImporters(Engine engine)
 	{
 		engine.addPathwayImporter(new MappFormat());

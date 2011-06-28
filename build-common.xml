@@ -23,6 +23,7 @@
 	</target>
 
 	<target name="compile" depends="prepare,prepare-common">
+		<echo>Compiling: ${jar.name}</echo>
 		<javac srcdir="src"
 			   includes="**"
 			   destdir="build"
@@ -38,6 +39,7 @@
 	</target>
 
 	<target name="jar" depends="compile"> 
+		<echo>Creating JAR: ${jar.name}</echo>
 		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="../../lib-build/biz.aQute.bnd.jar"/> 
 		<bnd classpath="build" 
 			output="${bundle.dest}/${jar.name}" 

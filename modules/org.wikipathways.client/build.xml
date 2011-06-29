@@ -12,7 +12,7 @@
 	<path id="project.class.path">
 		<fileset dir="${lib.axis.dir}" includes="*.jar" />
 		<fileset dir="../../lib">
-			<include name="jdom.jar" />
+			<include name="com.springsource.org.jdom-1.1.0.jar" />
 			<include name="derby.jar" />
 			<include name="org.bridgedb.jar" />
 			<include name="org.bridgedb.rdb.jar" />

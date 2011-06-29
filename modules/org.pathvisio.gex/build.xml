@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<project name="org.pathvisio.gex" default="jar" basedir=".">
+<project name="org.pathvisio.gexplugin" default="jar" basedir=".">
 
 	<import file="../../build-common.xml" />
 
-	<property name="jar.name" value="org.pathvisio.gex.jar"/>
+	<property name="jar.name" value="org.pathvisio.gexplugin.jar"/>
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">

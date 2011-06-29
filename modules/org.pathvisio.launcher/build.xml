@@ -6,7 +6,7 @@
 	<property name="jar.name" value="org.pathvisio.launcher.jar"/>
 
 	<path id="project.class.path">
-	  <fileset dir="lib">
+	  <fileset dir="../../lib">
 		<include name="org.eclipse.osgi.jar"/>
 	  </fileset>
 	  <fileset dir="${bundle.dest}">

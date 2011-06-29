@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
 import org.pathvisio.core.Revision;
+import org.pathvisio.core.debug.Logger;
 
 
 public class PathVisioMain {
@@ -101,19 +104,37 @@ public class PathVisioMain {
 		context = framework.getBundleContext();
     	List<Bundle> bundles = new ArrayList<Bundle>();
     	
+    	Logger.log.info("Installing third party library bundles.");
     	for(String s : libs) {
-    		System.out.println ("Installing " + new File(s).toURI());
-			Bundle b = context.installBundle("" + new File(s).toURI());
-			bundles.add(b);
+    		File file = new File(s);
+    		if(!file.exists()) {
+    			Logger.log.error("Could not find bundle " + s + ". PathVisio was shut down.");
+    			JOptionPane.showMessageDialog(null, "Could not load bundle: " + s + ".", 
+    					"Bundle Loading Error", JOptionPane.ERROR_MESSAGE);
+    			System.exit(0);
+    		} else {
+				Bundle b = context.installBundle("" + file.toURI());
+				bundles.add(b);
+    		}
 		}
     	
+    	Logger.log.info("Installing core bundles.");
     	for(String s : coreModules) {
-    		System.out.println ("Installing " + new File(s).toURI());
-    		Bundle b = context.installBundle("" + new File(s).toURI());
-			bundles.add(b);
+    		File file = new File(s);
+    		if(!file.exists()) {
+    			Logger.log.error("Could not find bundle " + s + ". PathVisio was shut down.");
+    			JOptionPane.showMessageDialog(null, "Could not load bundle: " + s + ".", 
+    					"Bundle Loading Error", JOptionPane.ERROR_MESSAGE);
+    			System.exit(0);
+    		} else {
+	    		Bundle b = context.installBundle("" + file.toURI());
+				bundles.add(b);
+    		}
 		}
     	
     	startBundles(context, bundles);
+    	
+    	Logger.log.info("Installing plug-in bundles.");
     	new PluginLoader().installPlugins(pluginLocations, context);
 	}
 	
@@ -123,6 +144,7 @@ public class PathVisioMain {
     		try {
     			b.start();
     			success = true;
+    			Logger.log.info("Bundle " + b.getSymbolicName() + " started");
     		}
     		finally {
     			if (!success) {

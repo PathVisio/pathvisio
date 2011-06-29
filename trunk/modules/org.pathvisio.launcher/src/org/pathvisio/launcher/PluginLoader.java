@@ -18,7 +18,6 @@ public class PluginLoader {
 	public void installPlugins(List<String> pluginLocations, BundleContext context) {
 		this.context = context;
 		for(String s : pluginLocations) {
-			System.out.println(s);
 			loadFromParameter(s);
 		}
 	}
@@ -29,7 +28,6 @@ public class PluginLoader {
 	 * If argument is a class name, load that class from current class path
 	 */
 	void loadFromParameter(String param) {
-		System.out.println(param);
 		//See if the plugin is a file
 		File file = new File(param);
 		if(file.exists()) {
@@ -48,10 +46,9 @@ public class PluginLoader {
 				loadFromJar(file, param);
 				return;
 			}
+		} else {
+			Logger.log.error("Plug-in was not installed. Could not find plug-in bundle " + param + ".");
 		}
-		//It's not a directory or a jar file. 
-		//not valid!
-		Logger.log.info("No jar or dir found, assuming plugin argument is not valid.");
 	}
 	
 	/**

@@ -144,10 +144,24 @@
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
 	</target>
 
+	<path id="wikipathways.libs">
+		<fileset dir="lib">
+			<include name="org.bridgedb.jar"/>
+			<include name="org.bridgedb.bio.jar"/>
+			<include name="org.bridgedb.rdb.jar"/>
+			<include name="derbyclient.jar"/>
+			<include name="org.pathvisio.jgoodies.forms.jar"/>
+			<include name="org.pathvisio.swingworker.jar"/>
+			<include name="org.pathvisio.xmlrpc.client.jar"/>
+			<include name="org.pathvisio.xmlrpc.common.jar"/>
+			<include name="com.springsource.org.jdom-1.1.0.jar"/>
+		</fileset>
+	</path>
+	
 	<target name="prepare-wpi" depends="applet.jar" description="Prepare all applets and utilities needed by WikiPathways">
 		<!-- Copy converter jar with modified main class -->
 		<copy tofile="${build.wpi.bin}/pathvisio_color_exporter.jar"
-			file="pathvisio_core.jar"/>
+			file="modules/org.pathvisio.core.jar"/>
 		<jar file="${build.wpi.bin}/pathvisio_color_exporter.jar" update="true">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.core.util.ColorExporter"/>
@@ -155,37 +169,25 @@
 		</jar>
 
 		<!-- Copy necessary libraries -->
-	    <mkdir dir="${build.wpi.applet}/lib"/>
 		<copy toDir="${build.wpi.applet}">
 			<fileset dir=".">
-				<include name="wikipathways.jar"/>
 				<include name="preloader.jar"/>
 			</fileset>
-		</copy>
-		<copy toDir="${build.wpi.applet}/lib">
+			<fileset dir="modules">
+				<include name="org.pathvisio.core.jar"/>
+				<include name="org.pathvisio.gui.jar"/>
+				<include name="org.wikipathways.applet.jar"/>
+			</fileset>
 			<path refid="wikipathways.libs"/>
-			<path refid="diffview.libs"/>
-		</copy>
-		<mkdir dir="${build.wpi.bin}/lib"/>
-		<copy toDir="${build.wpi.bin}">
-			<fileset dir=".">
-				<include name="pathvisio_core.jar"/>
-				<include name="GPML*.xsd"/>
-			</fileset>
-		</copy>
-		<copy toDir="${build.wpi.bin}/lib">
-			<fileset dir="lib">
-				<include name="**/*.jar"/>
-			</fileset>
 		</copy>
 
 		<!-- Copy preloader class -->
 		<copy toDir="${build.wpi.applet}/org/wikipathways"
-			file="${build.wikipathways.dir}/org/wikipathways/applet/Preloader.class"/>
-		<manifestclasspath property="wikipathways.class.path" jarfile="wikiapathways.jar">
+			file="modules/org.wikipathways.applet/build/org/wikipathways/applet/Preloader.class"/>
+		<manifestclasspath property="wikipathways.class.path" jarfile="org.wikipathways.applet.jar">
 			<classpath refid="wikipathways.libs"/>
 		</manifestclasspath>
-		<echo file="${build.wpi.applet}/cache_archive" message="wikipathways.jar ${wikipathways.class.path}" />
+		<echo file="${build.wpi.applet}/cache_archive" message="org.wikipathways.applet.jar ${wikipathways.class.path}" />
 	</target>
 
 	<target name="install-wpi" depends="prepare-wpi" description="Install applets and utilities in the WikiPathways www directory">

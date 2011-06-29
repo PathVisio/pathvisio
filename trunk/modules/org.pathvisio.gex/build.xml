@@ -15,6 +15,7 @@
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
 		<include name="org.pathvisio.swingworker.jar"/>
 		<include name="org.eclipse.osgi.jar"/>
+		<include name="com.springsource.org.jdom-1.1.0.jar"/>
 	  </fileset>
 	  <fileset dir="${bundle.dest}">
 		<include name="org.pathvisio.core.jar"/>

@@ -48,7 +48,6 @@
 	<target name="prepare" depends="svnversion">
 		<mkdir dir="${apidoc.dir}"/>
 		<mkdir dir="${build.wpi.bin}"/>
-		<mkdir dir="${build.wpi.applet}/lib"/>
 		<mkdir dir="${release.dir}" />
 	</target>
 
@@ -145,6 +144,11 @@
 	</target>
 
 	<path id="wikipathways.libs">
+		<fileset dir="modules">
+			<include name="org.pathvisio.core.jar"/>
+			<include name="org.pathvisio.gui.jar"/>
+			<include name="org.wikipathways.applet.jar"/>
+		</fileset>
 		<fileset dir="lib">
 			<include name="org.bridgedb.jar"/>
 			<include name="org.bridgedb.bio.jar"/>
@@ -173,23 +177,21 @@
 			<fileset dir=".">
 				<include name="preloader.jar"/>
 			</fileset>
-			<fileset dir="modules">
-				<include name="org.pathvisio.core.jar"/>
-				<include name="org.pathvisio.gui.jar"/>
-				<include name="org.wikipathways.applet.jar"/>
-			</fileset>
 		</copy>
-		<mkdir dir="${build.wpi.applet}/lib"/>
-		<copy toDir="${build.wpi.applet}/lib">
+		<copy toDir="${build.wpi.applet}">
 			<path refid="wikipathways.libs"/>
 		</copy>
 
 		<!-- Copy preloader class -->
 		<copy toDir="${build.wpi.applet}/org/wikipathways"
 			file="modules/org.wikipathways.applet/build/org/wikipathways/applet/Preloader.class"/>
-		<manifestclasspath property="wikipathways.class.path" jarfile="org.wikipathways.applet.jar">
-			<classpath refid="wikipathways.libs"/>
-		</manifestclasspath>
+
+		<!-- generate cache_archive, which will be used to determine which jars are needed for the applet -->
+		<pathconvert property="wikipathways.class.path"
+					 pathsep=" ">
+		  <path refid="wikipathways.libs"/>
+		  <flattenmapper/>
+		</pathconvert>
 		<echo file="${build.wpi.applet}/cache_archive" message="org.wikipathways.applet.jar ${wikipathways.class.path}" />
 	</target>
 

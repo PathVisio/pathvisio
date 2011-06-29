@@ -183,7 +183,7 @@
 		</copy>
 
 		<!-- Copy preloader class -->
-		<copy toDir="${build.wpi.applet}/org/wikipathways"
+		<copy toDir="${build.wpi.applet}/org/wikipathways/applet"
 			file="modules/org.wikipathways.applet/build/org/wikipathways/applet/Preloader.class"/>
 
 		<!-- generate cache_archive, which will be used to determine which jars are needed for the applet -->

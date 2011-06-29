@@ -7,18 +7,14 @@
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-		<include name="batik/*.jar"/>
-		<include name="jdom.jar"/>
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.bio.jar"/>
 		<include name="org.bridgedb.rdb.jar"/>
 		<include name="org.bridgedb.rdb.construct.jar"/>
 		<include name="org.bridgedb.gui.jar"/>
-		<include name="forms-1.2.0.jar"/>
-		<include name="BrowserLauncher.jar"/>
-		<include name="commons-math-2.0.jar"/>
-		<include name="swing-worker-1.1.jar"/>
-		<include name="felix.jar"/>
+		<include name="org.pathvisio.jgoodies.forms.jar"/>
+		<include name="org.pathvisio.swingworker.jar"/>
+		<include name="org.eclipse.osgi.jar"/>
 	  </fileset>
 	  <fileset dir="${bundle.dest}">
 		<include name="org.pathvisio.core.jar"/>

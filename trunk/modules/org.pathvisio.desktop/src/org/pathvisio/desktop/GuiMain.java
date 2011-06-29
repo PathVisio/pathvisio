@@ -87,7 +87,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		Logger.log.setDest (logDest);
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
 		Logger.log.info("Application name: " + engine.getApplicationName() +
-				" revision: " + engine.getRevision());
+				" revision: " + Engine.getRevision());
 		Logger.log.info("os.name: " + System.getProperty("os.name") +
 					" os.version: " + System.getProperty("os.version") +
 					" java.version: " + System.getProperty ("java.version"));
@@ -308,7 +308,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		PreferenceManager.init();
 		Engine engine = pvDesktop.getSwingEngine().getEngine();
 		initLog(engine);
-		engine.setApplicationName("PathVisio " + engine.getVersion());
+		engine.setApplicationName("PathVisio " + Engine.getVersion());
 		if (PreferenceManager.getCurrent().getBoolean(GlobalPreference.USE_SYSTEM_LOOK_AND_FEEL))
 		{
 			try {

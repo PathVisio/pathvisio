@@ -177,7 +177,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		WikiPathwaysInit.init(getEngine(), PreferenceManager.getCurrent());
 		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), getEngine());
 
-		Logger.log.trace("Code revision: " + getEngine().getRevision());
+		Logger.log.trace("Code revision: " + Engine.getRevision());
 
 		loadCookies(base);
 

@@ -31,8 +31,10 @@
 			   source="1.5">
 		  <classpath refid="project.class.path"/>
 		</javac>
+		<!-- workaround: make an empty directory so that the next step doesn't fail -->
+		<mkdir dir="resources"/>
 		<copy todir="build">
-			<fileset dir="resources" erroronmissingdir="false">
+			<fileset dir="resources">
 				<include name="*"/>
 			</fileset>
 		</copy>

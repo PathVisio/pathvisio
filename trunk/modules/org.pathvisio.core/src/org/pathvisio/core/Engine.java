@@ -414,13 +414,13 @@ public class Engine
 	}
 
 	/** return the subversion revision at the time of building */
-	public String getRevision()
+	public static String getRevision()
 	{
 		return Revision.REVISION;
 	}
 
 	/** The current PathVisio version */
-	public String getVersion()
+	public static String getVersion()
 	{
 		return Revision.VERSION;
 	}

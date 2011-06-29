@@ -15,7 +15,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-import org.pathvisio.core.Revision;
+import org.pathvisio.core.Engine;
 import org.pathvisio.core.debug.Logger;
 
 
@@ -176,7 +176,7 @@ public class PathVisioMain {
 		pluginLocations = new ArrayList<String>();
 		for(int i = 0; i < args.length; i++) {
 			if ("-v".equals(args[i])) {
-				System.out.println("PathVisio v" + Revision.VERSION + ", build " + Revision.REVISION);
+				System.out.println("PathVisio v" + Engine.getVersion() + ", build " + Engine.getRevision());
 				System.exit(0);
 			} else if ("-h".equals(args[i])) {
 				printHelp();

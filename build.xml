@@ -100,7 +100,7 @@
 		<subant target="jar" buildpath="modules/org.wikipathways.applet/build.xml"/>
 	</target>
 
-	<target name="visualization.jar" depends="launcher.jar">
+	<target name="visualization.jar" depends="desktop.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.visualization/build.xml"/>
 	</target>
 
@@ -109,7 +109,7 @@
 		<subant target="jar" buildpath="modules/org.pathvisio.statistics/build.xml"/>
 	</target>
 
-	<target name="all" depends="plugins.jar" description="Compile all versions of this project" />
+	<target name="all" depends="plugins.jar,launcher.jar" description="Compile all versions of this project" />
 
 	<target name="prepare-webstart" depends="plugins.jar" description="prepares webstart">
 		<fail message="You must specify a keystore password for opening visioKeyStore: ant -Dkeystore.password=***** [ant target]">

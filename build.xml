@@ -178,6 +178,9 @@
 				<include name="org.pathvisio.gui.jar"/>
 				<include name="org.wikipathways.applet.jar"/>
 			</fileset>
+		</copy>
+		<mkdir dir="${build.wpi.applet}/lib"/>
+		<copy toDir="${build.wpi.applet}/lib">
 			<path refid="wikipathways.libs"/>
 		</copy>
 

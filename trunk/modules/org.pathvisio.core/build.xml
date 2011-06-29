@@ -28,8 +28,11 @@ public class Revision
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-		<include name="batik/*.jar"/>
-		<include name="jdom.jar"/>
+		<include name="org.pathvisio.batik.*.jar"/>
+		<include name="org.pathvisio.pdftranscoder.jar"/>
+		<include name="org.pathvisio.xml.apis.jar"/>
+		<include name="org.pathvisio.xml.apis.ext.jar"/>
+		<include name="com.springsource.org.jdom-1.1.0.jar"/>
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.bio.jar"/>
 		<include name="org.bridgedb.rdb.jar"/>

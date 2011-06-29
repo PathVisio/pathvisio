@@ -31,7 +31,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.pathvisio.core.Globals;
-import org.pathvisio.core.Revision;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.gui.SwingEngine;
 
@@ -57,7 +56,7 @@ public class AboutDlg
 				"4dlu, 200dlu:grow, 4dlu, pref, 4dlu, pref, 4dlu");
 
 		JLabel versionLabel = new JLabel (swingEngine.getEngine().getApplicationName());
-		JLabel revisionLabel = new JLabel (Revision.REVISION);
+		JLabel revisionLabel = new JLabel (swingEngine.getEngine().getRevision());
 		JEditorPane label = new JEditorPane();
 		label.setContentType("text/html");
 		label.setEditable(false);

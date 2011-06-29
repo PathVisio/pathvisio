@@ -50,7 +50,6 @@ import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.Globals;
-import org.pathvisio.core.Revision;
 import org.pathvisio.core.data.GdbManager;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
@@ -178,7 +177,7 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 		WikiPathwaysInit.init(getEngine(), PreferenceManager.getCurrent());
 		WikiPathwaysInit.registerXmlRpcExporters(new URL(getRpcURL()), getEngine());
 
-		Logger.log.trace("Code revision: " + Revision.REVISION);
+		Logger.log.trace("Code revision: " + getEngine().getRevision());
 
 		loadCookies(base);
 

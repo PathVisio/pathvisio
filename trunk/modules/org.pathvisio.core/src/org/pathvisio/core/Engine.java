@@ -413,24 +413,16 @@ public class Engine
 		disposed = true;
 	}
 
+	/** return the subversion revision at the time of building */
+	public String getRevision()
+	{
+		return Revision.REVISION;
+	}
 
-	//TODO:
-	// Constants for swing version.
-	//public static final String APPLICATION_VERSION_NAME = "PathVisio (swing version)";
-//	public static final boolean fUseExperimentalFeatures = false;
-//	public static final boolean IS_APPLET = false;
-
-	// Constants for swt version, v1
-	//public static final String APPLICATION_VERSION_NAME = "PathVisio 1.1 (trunk)";
-//	public static final boolean fUseExperimentalFeatures = false;
-//	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
-
-	// Constants for applet:
-//	public static final String APPLICATION_VERSION_NAME = "PathVisio.WikiPathways";
-//	public static final String HELP_URL = "http://wiki.bigcat.unimaas.nl/pathvisio/Help";
-//	public static final String SERVER_NAME = "WikiPathways.org";
-	// for inclusion in certain error messages.
-//	public static final String DEVELOPER_EMAIL = "wikipathways-discuss@googlegroups.com";
-//	public static final boolean IS_APPLET = true;
+	/** The current PathVisio version */
+	public String getVersion()
+	{
+		return Revision.VERSION;
+	}
 
 }

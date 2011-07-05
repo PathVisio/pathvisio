@@ -133,6 +133,7 @@ public abstract class DefaultTemplates {
 			PathwayElement e = PathwayElement.createPathwayElement(ObjectType.LABEL);
 			e.setMCenterX(mx);
 			e.setMCenterY(my);
+			e.setInitialSize();
 			e.setGraphId(p.getUniqueGraphId());
 			e.setTextLabel("Label");
 			addElement(e, p);

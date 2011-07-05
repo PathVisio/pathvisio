@@ -33,7 +33,10 @@ public class PathVisioMain {
 	private static final String[] coreModules = {
 		"modules/org.pathvisio.core.jar",
 		"modules/org.pathvisio.gui.jar",
-		"modules/org.pathvisio.desktop.jar"
+		"modules/org.pathvisio.desktop.jar",
+		"modules/org.pathvisio.visualization.jar",
+		"modules/org.pathvisio.gex.jar",
+		"modules/org.pathvisio.statistics.jar"
 	};
 	
 	private static final String[] libs = {

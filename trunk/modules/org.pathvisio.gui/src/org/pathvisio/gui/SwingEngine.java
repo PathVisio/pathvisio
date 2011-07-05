@@ -650,10 +650,4 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	{
 		return popupDlgHandler;
 	}
-	
-	public PreferenceManager getPreferenceManager()
-	{
-		return PreferenceManager.getCurrent();
-	}
-
 }

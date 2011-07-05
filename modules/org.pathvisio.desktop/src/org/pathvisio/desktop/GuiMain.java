@@ -305,7 +305,6 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	public void init(PvDesktop pvDesktop) {
 		this.pvDesktop = pvDesktop;
 		
-		PreferenceManager.init();
 		Engine engine = pvDesktop.getSwingEngine().getEngine();
 		initLog(engine);
 		engine.setApplicationName("PathVisio " + Engine.getVersion());

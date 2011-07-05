@@ -3,11 +3,16 @@ package org.pathvisio.desktop;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.pathvisio.core.Engine;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.gui.SwingEngine;
 
 public class Activator implements BundleActivator {
 
 	public void start(BundleContext context) throws Exception {
+		// PreferenceManager needs to be initialized before
+		// Engine object is created
+		PreferenceManager.init();
+		
 		Engine engine = new Engine();
 		SwingEngine swingEngine = new SwingEngine(engine);
 		

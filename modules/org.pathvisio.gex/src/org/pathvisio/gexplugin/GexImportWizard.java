@@ -197,6 +197,7 @@ public class GexImportWizard extends Wizard
 			txtInput = new JTextField(40);
 		    txtOutput = new JTextField(40);
 		    txtGdb = new JTextField(40);
+		    txtGdb.setEditable(false);
 		    btnGdb = new JButton ("Browse");
 		    btnInput = new JButton ("Browse");
 		    btnOutput = new JButton ("Browse");
@@ -261,6 +262,7 @@ public class GexImportWizard extends Wizard
 			String action = e.getActionCommand();
 
 			if(ACTION_GDB.equals(action)) {
+				System.out.println("GDB ACTION");
 				standaloneEngine.selectGdb("Gene");
 				txtGdb.setText(
 						PreferenceManager.getCurrent().get(GlobalPreference.DB_CONNECTSTRING_GDB)

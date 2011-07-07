@@ -197,7 +197,6 @@ public class GexImportWizard extends Wizard
 			txtInput = new JTextField(40);
 		    txtOutput = new JTextField(40);
 		    txtGdb = new JTextField(40);
-		    txtGdb.setEditable(false);
 		    btnGdb = new JButton ("Browse");
 		    btnInput = new JButton ("Browse");
 		    btnOutput = new JButton ("Browse");

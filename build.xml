@@ -143,12 +143,7 @@
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
 	</target>
 
-	<path id="wikipathways.libs">
-		<fileset dir="modules">
-			<include name="org.pathvisio.core.jar"/>
-			<include name="org.pathvisio.gui.jar"/>
-			<include name="org.wikipathways.applet.jar"/>
-		</fileset>
+	<path id="applet.libs">
 		<fileset dir="lib">
 			<include name="org.bridgedb.jar"/>
 			<include name="org.bridgedb.bio.jar"/>
@@ -160,15 +155,57 @@
 			<include name="org.pathvisio.xmlrpc.common.jar"/>
 			<include name="com.springsource.org.jdom-1.1.0.jar"/>
 		</fileset>
+		<fileset dir="modules">
+			<include name="org.pathvisio.core.jar"/>
+			<include name="org.pathvisio.gui.jar"/>
+			<include name="org.wikipathways.applet.jar"/>
+		</fileset>
 	</path>
-	
+
+	<path id="utility.libs">
+		<fileset dir="lib">
+			<include name="org.bridgedb.jar"/>
+			<include name="org.bridgedb.bio.jar"/>
+			<include name="org.bridgedb.rdb.jar"/>
+			<include name="org.pathvisio.batik.*.jar"/>
+			<include name="org.pathvisio.pdftranscoder.jar"/>
+			<include name="org.pathvisio.xml.apis.jar"/>
+			<include name="org.pathvisio.xml.apis.ext.jar"/>
+			<include name="derbyclient.jar"/>
+			<include name="org.pathvisio.jgoodies.forms.jar"/>
+			<include name="org.pathvisio.swingworker.jar"/>
+			<include name="org.pathvisio.xmlrpc.client.jar"/>
+			<include name="org.pathvisio.xmlrpc.common.jar"/>
+			<include name="com.springsource.org.jdom-1.1.0.jar"/>
+		</fileset>
+	</path>
+
 	<target name="prepare-wpi" depends="applet.jar" description="Prepare all applets and utilities needed by WikiPathways">
+		
 		<!-- Copy converter jar with modified main class -->
 		<copy tofile="${build.wpi.bin}/pathvisio_color_exporter.jar"
 			file="modules/org.pathvisio.core.jar"/>
+		
+		<copy toDir="${build.wpi.bin}/lib"><path refid="utility.libs"/></copy>		
+		<manifestclasspath property="jar.class.path" jarfile="${build.wpi.bin}/pathvisio_color_exporter.jar">
+			<classpath>
+				<fileset dir="${build.wpi.bin}/lib"><include name="*.jar"/></fileset>
+			</classpath>
+		</manifestclasspath>
+		
 		<jar file="${build.wpi.bin}/pathvisio_color_exporter.jar" update="true">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.core.util.ColorExporter"/>
+				<attribute name="Class-Path" value="${jar.class.path}"/>
+			</manifest>
+		</jar>
+
+		<copy tofile="${build.wpi.bin}/pathvisio_core.jar"
+			file="modules/org.pathvisio.core.jar"/>
+		<jar file="${build.wpi.bin}/pathvisio_core.jar" update="true">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.core.util.Converter"/>
+				<attribute name="Class-Path" value="${jar.class.path}"/>
 			</manifest>
 		</jar>
 
@@ -179,7 +216,7 @@
 			</fileset>
 		</copy>
 		<copy toDir="${build.wpi.applet}">
-			<path refid="wikipathways.libs"/>
+			<path refid="applet.libs"/>
 		</copy>
 
 		<!-- Copy preloader class -->
@@ -189,7 +226,7 @@
 		<!-- generate cache_archive, which will be used to determine which jars are needed for the applet -->
 		<pathconvert property="wikipathways.class.path"
 					 pathsep=" ">
-		  <path refid="wikipathways.libs"/>
+		  <path refid="applet.libs"/>
 		  <flattenmapper/>
 		</pathconvert>
 		<echo file="${build.wpi.applet}/cache_archive" message="org.wikipathways.applet.jar ${wikipathways.class.path}" />

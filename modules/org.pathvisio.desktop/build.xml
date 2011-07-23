@@ -7,10 +7,13 @@
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-		<include name="org.pathvisio.batik.*.jar"/>
+	  	<include name="org.apache.batik.*.jar"/>
+		<include name="org.apache.xml*.jar"/>
+		<include name="org.apache.xalan*.jar"/>
+		<include name="org.apache.xerces*.jar"/>
+		<include name="org.w3c.*.jar"/>
+		<include name="javax.xml*.jar"/>
 		<include name="org.pathvisio.pdftranscoder.jar"/>
-		<include name="org.pathvisio.xml.apis.jar"/>
-		<include name="org.pathvisio.xml.apis.ext.jar"/>
 		<include name="com.springsource.org.jdom-1.1.0.jar"/>
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.bio.jar"/>

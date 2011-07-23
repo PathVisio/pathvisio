@@ -168,10 +168,13 @@
 			<include name="org.bridgedb.jar"/>
 			<include name="org.bridgedb.bio.jar"/>
 			<include name="org.bridgedb.rdb.jar"/>
-			<include name="org.pathvisio.batik.*.jar"/>
+			<include name="org.apache.batik.*.jar"/>
 			<include name="org.pathvisio.pdftranscoder.jar"/>
-			<include name="org.pathvisio.xml.apis.jar"/>
-			<include name="org.pathvisio.xml.apis.ext.jar"/>
+			<include name="org.apache.xalan*.jar"/>
+			<include name="org.apache.xerces*.jar"/>
+			<include name="org.apache.xml*.jar"/>
+			<include name="org.w3c*.jar"/>
+			<include name="javax.xml*.jar"/>
 			<include name="derbyclient.jar"/>
 			<include name="org.pathvisio.jgoodies.forms.jar"/>
 			<include name="org.pathvisio.swingworker.jar"/>
@@ -315,6 +318,7 @@
 		</tar>
 	</target>
 	
+	<!-- libraries are not yet updated! -->
 	<target name="zip.bin" depends="plugins.jar" description="create binary tarball and zip">
 		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
 		<zip destfile="${release.dir}/${binbase}.zip">

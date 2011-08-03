@@ -220,7 +220,9 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		frame.pack();
 		PreferenceManager preferences = PreferenceManager.getCurrent();
 		frame.setSize(preferences.getInt(GlobalPreference.WIN_W), preferences.getInt(GlobalPreference.WIN_H));
-		frame.setLocation(preferences.getInt(GlobalPreference.WIN_X), preferences.getInt(GlobalPreference.WIN_Y));
+		int x = preferences.getInt(GlobalPreference.WIN_X);
+		int y = preferences.getInt(GlobalPreference.WIN_Y);
+		if(x > 0 && y > 0) frame.setLocation(x, y);
 
 		frame.addWindowListener(new WindowAdapter()
 		{

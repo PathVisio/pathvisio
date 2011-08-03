@@ -1,2 +1,3 @@
 cd /d %~dp0
-java -Xmx1024m -jar pathvisio.jar -p visplugins.jar %*
+
+java -Xmx1024m -jar modules/org.pathvisio.launcher.jar "$@"

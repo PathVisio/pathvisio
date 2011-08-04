@@ -35,7 +35,7 @@
 		<mkdir dir="resources"/>
 		<copy todir="build">
 			<fileset dir="resources">
-				<include name="*"/>
+				<include name="**/*"/>
 			</fileset>
 		</copy>
 	</target>

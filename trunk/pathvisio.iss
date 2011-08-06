@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 ; requires ISPP (InnoSetup Pre-Processor) to be installed.
-#define AppVerStr "2.0.11"
+#define AppVerStr "3.0.Beta"
 
 [Setup]
 AppName=PathVisio

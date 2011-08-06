@@ -6,56 +6,18 @@
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>
 		 <offline-allowed/>
-		<shortcut>
-			<desktop/>
-			<menu submenu="PathVisio"/>
-		</shortcut>
 	</information>
 	<resources>
-		 <j2se version="1.5+" java-vm-args="-Xmx512M"/>
-<!--	<jar href="pathvisio.jar"/>
-		 <jar href="visplugins.jar"/>
-		 <jar href="lib/resources.jar"/>
-		 <jar href="lib/derby.jar"/>
-		 <jar href="lib/jdom.jar"/>
-		 <jar href="lib/org.bridgedb.jar"/>
-		 <jar href="lib/org.bridgedb.bio.jar"/>
-		 <jar href="lib/org.bridgedb.rdb.jar"/>
-		 <jar href="lib/org.bridgedb.gui.jar"/>
-		 <jar href="lib/org.bridgedb.rdb.construct.jar"/>
-		 <jar href="lib/swing-worker-1.1.jar"/>
-		 <jar href="lib/BrowserLauncher.jar"/>
-		 <jar href="lib/commons-math-2.0.jar"/>
-		 <jar href="lib/batik/batik-awt-util.jar"/>
-		 <jar href="lib/batik/batik-bridge.jar"/>
-		 <jar href="lib/batik/batik-css.jar"/>
-		 <jar href="lib/batik/batik-dom.jar"/>
-		 <jar href="lib/batik/batik-ext.jar"/>
-		 <jar href="lib/batik/batik-extension.jar"/>
-		 <jar href="lib/batik/batik-gvt.jar"/>
-		 <jar href="lib/batik/batik-parser.jar"/>
-		 <jar href="lib/batik/batik-script.jar"/>
-		 <jar href="lib/batik/batik-svg-dom.jar"/>
-		 <jar href="lib/batik/batik-svggen.jar"/>
-		 <jar href="lib/batik/batik-transcoder.jar"/>
-		 <jar href="lib/batik/batik-util.jar"/>
-		 <jar href="lib/batik/batik-xml.jar"/>
-		 <jar href="lib/batik/pdf-transcoder.jar"/>
-		 <jar href="lib/batik/xml-apis.jar"/>
-		 <jar href="lib/batik/xml-apis-ext.jar"/>
-	     <jar href="lib/batik/batik-anim.jar"/>
-	     <jar href="lib/forms-1.2.0.jar"/> -->
-		 <jar href="org.eclipse.equinox.launcher.jar"/>
+		<j2se version="1.5+" java-vm-args="-Xmx512M"/>
+		<jar href="org.eclipse.equinox.launcher.jar"/>
+		<extension name="Wrapper feature" href="pathvisio.jnlp"/>
+		<property name="osgi.configuration.area" value="@user.home/.webstart" />
+		<property name="osgi.bundles" value="commons-codec-1.5.jar,commons-math-2.0.jar,com.springsource.org.apache.commons.logging-1.1.1.jar,com.springsource.org.jdom-1.1.0.jar,derby.jar,org.bridgedb.bio.jar,org.bridgedb.gui.jar,org.bridgedb.jar,org.bridgedb.rdb.construct.jar,org.bridgedb.rdb.jar,org.eclipse.osgi.jar,org.pathvisio.batik.anim.jar,org.pathvisio.batik.awt.util.jar,org.pathvisio.batik.bridge.jar,org.pathvisio.batik.codec.jar,org.pathvisio.batik.css.jar,org.pathvisio.batik.dom.jar,org.pathvisio.batik.extension.jar,org.pathvisio.batik.ext.jar,org.pathvisio.batik.gvt.jar,org.pathvisio.batik.parser.jar,org.pathvisio.batik.script.jar,org.pathvisio.batik.svg.dom.jar,org.pathvisio.batik.svggen.jar,org.pathvisio.batik.transcoder.jar,org.pathvisio.batik.util.jar,org.pathvisio.batik.xml.jar,org.pathvisio.browserlauncher.jar,org.pathvisio.core.jar,org.pathvisio.desktop.jar,org.pathvisio.gex.jar,org.pathvisio.gui.jar,org.pathvisio.jgoodies.forms.jar,org.pathvisio.pdftranscoder.jar,org.pathvisio.statistics.jar,org.pathvisio.swingworker.jar,org.pathvisio.visualization.jar,org.pathvisio.ws.commons.util.jar,org.pathvisio.xerces.jar,org.pathvisio.xml.apis.ext.jar,org.pathvisio.xml.apis.jar,org.pathvisio.xmlrpc.client.jar,org.pathvisio.xmlrpc.common.jar" />
+		<property name="osgi.noShutdown" value="true" />
+		<property name="eclipse.ignoreApp" value="true" />
+		<property name="org.osgi.framework.bootdelegation" value="*" />    
 	</resources>
-	<extension
-		name="Wrapper feature" href="pathvisio.jnlp"/>
 	<application-desc main-class="org.eclipse.equinox.launcher.WebStartMain"/>
-    <property 
-        name="osgi.instance.area" 
-        value="@user.home/.PathVisio/webstart"/>
-    <property 
-        name="osgi.configuration.area" 
-        value="@user.home/.PathVisio/webstart"/>	
 	<security>
 		 <all-permissions/>
 	</security>

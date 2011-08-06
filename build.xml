@@ -195,6 +195,8 @@
 		<manifestclasspath property="jar.class.path" jarfile="${build.wpi.bin}/pathvisio_color_exporter.jar">
 			<classpath>
 				<fileset dir="${build.wpi.bin}/lib"><include name="*.jar"/></fileset>
+				<!-- add reference to optional BioPAX converter to classpath -->
+				<pathelement location="${build.wpi.bin}/Biopax3GPML.jar"/>
 			</classpath>
 		</manifestclasspath>
 		

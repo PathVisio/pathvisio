@@ -6,10 +6,6 @@
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>
 		 <offline-allowed/>
-		<shortcut>
-			<desktop/>
-			<menu submenu="PathVisio"/>
-		</shortcut>
 	</information>
 	<resources>
 		 <j2se version="1.5+" java-vm-args="-Xmx512M"/>
@@ -49,8 +45,6 @@
 		 <jar href="org.pathvisio.xml.apis.ext.jar"/>
 	     <jar href="org.pathvisio.jgoodies.forms.jar"/>
 	</resources>
-	<extension
-		name="Wrapper feature" href="pathvisio.jnlp"/>
 	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
 		<argument>-p</argument>
 		<argument>org.pathvisio.visualization.plugins.VisualizationPlugin</argument>

@@ -49,14 +49,13 @@
 	</resources>
 	<extension
 		name="Wrapper feature" href="pathvisio.jnlp"/>
-	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
-		<argument>-p</argument>
-		<argument>org.pathvisio.visualization.plugins.VisualizationPlugin</argument>
-		<argument>-p</argument>
-		<argument>org.pathvisio.plugins.statistics.StatisticsPlugin</argument>
-		<argument>-p</argument>
-		<argument>org.pathvisio.plugins.gex.GexPlugin</argument>
-	</application-desc>
+	<application-desc main-class="org.eclipse.equinox.launcher.WebStartMain"/>
+    <property 
+        name="osgi.instance.area" 
+        value="@user.home/.PathVisio/webstart"/>
+    <property 
+        name="osgi.configuration.area" 
+        value="@user.home/.PathVisio/webstart"/>	
 	<security>
 		 <all-permissions/>
 	</security>

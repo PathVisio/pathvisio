@@ -1,49 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp codebase="http://localhost/webstart" href="pathvisio.jnlp">
+<jnlp codebase="http://www.pathvisio.org/webstart" href="pathvisio.jnlp">
 	<information>
 		 <title>PathVisio 2</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>
 		 <homepage href="index.html"/>
 		 <icon href="bigcateye.gif"/>
 		 <offline-allowed/>
+		<shortcut>
+			<desktop/>
+			<menu submenu="PathVisio"/>
+		</shortcut>
 	</information>
 	<resources>
 		 <j2se version="1.5+" java-vm-args="-Xmx512M"/>
-		 <jar href="org.pathvisio.core.jar"/>
-		 <jar href="org.pathvisio.gui.jar"/>
-		 <jar href="org.pathvisio.desktop.jar"/>
-		 <jar href="org.pathvisio.statistics.jar"/>
-		 <jar href="org.pathvisio.gex.jar"/>
-		 <jar href="org.pathvisio.visualization.jar"/>
-		 <jar href="derby.jar"/>
-		 <jar href="com.springsource.org.jdom-1.1.0.jar"/>
-		 <jar href="org.bridgedb.jar"/>
-		 <jar href="org.bridgedb.bio.jar"/>
-		 <jar href="org.bridgedb.rdb.jar"/>
-		 <jar href="org.bridgedb.gui.jar"/>
-		 <jar href="org.bridgedb.rdb.construct.jar"/>
-		 <jar href="org.pathvisio.swingworker.jar"/>
-		 <jar href="org.pathvisio.browserlauncher.jar"/>
-		 <jar href="commons-math-2.0.jar"/>
-		 <jar href="org.pathvisio.batik.util.jar"/>
-		 <jar href="org.pathvisio.batik.svggen.jar"/>
-		 <jar href="org.pathvisio.batik.xml.jar"/>
-		 <jar href="org.pathvisio.batik.anim.jar"/>
-		 <jar href="org.pathvisio.batik.awt.util.jar"/>
-		 <jar href="org.pathvisio.batik.script.jar"/>
-		 <jar href="org.pathvisio.batik.parser.jar"/>
-		 <jar href="org.pathvisio.batik.bridge.jar"/>
-		 <jar href="org.pathvisio.batik.codec.jar"/>
-		 <jar href="org.pathvisio.batik.css.jar"/>
-		 <jar href="org.pathvisio.batik.dom.jar"/>
-		 <jar href="org.pathvisio.batik.extension.jar"/>
-		 <jar href="org.pathvisio.batik.ext.jar"/>
-		 <jar href="org.pathvisio.batik.gvt.jar"/>
-		 <jar href="org.pathvisio.batik.transcoder.jar"/>
-		 <jar href="org.pathvisio.pdftranscoder.jar"/>
-		 <jar href="org.pathvisio.xml.apis.jar"/>
-		 <jar href="org.pathvisio.xml.apis.ext.jar"/>
-	     <jar href="org.pathvisio.jgoodies.forms.jar"/>
+		 <jar href="pathvisio.jar"/>
+		 <jar href="visplugins.jar"/>
+		 <jar href="lib/resources.jar"/>
+		 <jar href="lib/derby.jar"/>
+		 <jar href="lib/jdom.jar"/>
+		 <jar href="lib/org.bridgedb.jar"/>
+		 <jar href="lib/org.bridgedb.bio.jar"/>
+		 <jar href="lib/org.bridgedb.rdb.jar"/>
+		 <jar href="lib/org.bridgedb.gui.jar"/>
+		 <jar href="lib/org.bridgedb.rdb.construct.jar"/>
+		 <jar href="lib/swing-worker-1.1.jar"/>
+		 <jar href="lib/BrowserLauncher.jar"/>
+		 <jar href="lib/commons-math-2.0.jar"/>
+		 <jar href="lib/batik/batik-awt-util.jar"/>
+		 <jar href="lib/batik/batik-bridge.jar"/>
+		 <jar href="lib/batik/batik-css.jar"/>
+		 <jar href="lib/batik/batik-dom.jar"/>
+		 <jar href="lib/batik/batik-ext.jar"/>
+		 <jar href="lib/batik/batik-extension.jar"/>
+		 <jar href="lib/batik/batik-gvt.jar"/>
+		 <jar href="lib/batik/batik-parser.jar"/>
+		 <jar href="lib/batik/batik-script.jar"/>
+		 <jar href="lib/batik/batik-svg-dom.jar"/>
+		 <jar href="lib/batik/batik-svggen.jar"/>
+		 <jar href="lib/batik/batik-transcoder.jar"/>
+		 <jar href="lib/batik/batik-util.jar"/>
+		 <jar href="lib/batik/batik-xml.jar"/>
+		 <jar href="lib/batik/pdf-transcoder.jar"/>
+		 <jar href="lib/batik/xml-apis.jar"/>
+		 <jar href="lib/batik/xml-apis-ext.jar"/>
+	     <jar href="lib/batik/batik-anim.jar"/>
+	     <jar href="lib/forms-1.2.0.jar"/>
 	</resources>
 	<application-desc main-class="org.pathvisio.gui.swing.GuiMain">
 		<argument>-p</argument>

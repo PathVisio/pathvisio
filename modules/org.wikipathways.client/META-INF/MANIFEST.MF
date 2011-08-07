@@ -5,11 +5,13 @@ Bundle-SymbolicName: org.wikipathways.client
 Bundle-Version: 1.0.0.qualifier
 Export-Package: org.pathvisio.wikipathways.webservice,
  org.wikipathways.bots,
- org.wikipathways.client
+ org.wikipathways.client,
+ javax.xml.rpc
 Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
  org.pathvisio.gui;bundle-version="2.0.11",
  org.bridgedb;bundle-version="1.1.0",
  org.bridgedb.bio;bundle-version="1.1.0",
  org.bridgedb.rdb;bundle-version="1.1.0",
  org.bridgedb.rdb.construct;bundle-version="1.1.0",
- com.springsource.org.jdom;bundle-version="1.1.0"
+ com.springsource.org.jdom;bundle-version="1.1.0",
+ org.wikipathways.applet;bundle-version="1.0.0"

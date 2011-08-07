@@ -96,7 +96,7 @@
 	</target>
 
 	<target name="wpclient.jar" depends="applet.jar">
-		<subant target="jar" buildpath="modules/org.wikipathways.applet/build.xml"/>
+		<subant target="jar" buildpath="modules/org.wikipathways.client/build.xml"/>
 	</target>
 
 	<target name="visualization.jar" depends="desktop.jar">

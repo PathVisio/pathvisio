@@ -40,6 +40,7 @@ public class PathVisioMain {
 	};
 	
 	private static final String[] libs = {
+		"lib/org.apache.felix.bundlerepository-1.6.6.jar",
 		"lib/com.springsource.org.jdom-1.1.0.jar",
 		"lib/org.pathvisio.pdftranscoder.jar",
 		"lib/commons-math-2.0.jar",

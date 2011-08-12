@@ -138,6 +138,7 @@ public enum GlobalPreference implements Preference
 
 	private static File dirApplication = null;
 	private static File dirData = null;
+	private static File dirPlugin = null;
 
 	/**
 	 * Get the working directory of this application
@@ -148,6 +149,17 @@ public enum GlobalPreference implements Preference
 			if(!dirApplication.exists()) dirApplication.mkdir();
 		}
 		return dirApplication;
+	}
+	
+	public static File getPluginDir() {
+		if(dirApplication == null) {
+			getApplicationDir();
+		}
+		if(dirPlugin == null) {
+			dirPlugin = new File(getApplicationDir(),"plugins");
+			if(!dirPlugin.exists()) dirPlugin.mkdir();
+		}
+		return dirPlugin;
 	}
 
 	public static File getDataDir() {

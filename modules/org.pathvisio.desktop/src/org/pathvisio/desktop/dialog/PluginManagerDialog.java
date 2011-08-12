@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JDialog;
@@ -16,6 +17,8 @@ import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.apache.felix.bundlerepository.Resource;
@@ -61,6 +64,8 @@ public class PluginManagerDialog extends JDialog {
 		tree.addTreeSelectionListener(createTreeSelectionListener());
 		
 		createNodes(top);
+		
+		expandAll(tree, new TreePath(top), true);
 		
 		JScrollPane treeView = new JScrollPane(tree);
 		treeView.setBackground(Color.white);
@@ -169,5 +174,24 @@ public class PluginManagerDialog extends JDialog {
 //	    	DefaultMutableTreeNode repoNode = new DefaultMutableTreeNode(repo);
 //	    	repositories.add(repoNode);
 //	    }
+	}
+	
+	private void expandAll(JTree tree, TreePath parent, boolean expand) {
+	    // Traverse children
+	    TreeNode node = (TreeNode)parent.getLastPathComponent();
+	    if (node.getChildCount() >= 0) {
+	        for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+	            TreeNode n = (TreeNode)e.nextElement();
+	            TreePath path = parent.pathByAddingChild(n);
+	            expandAll(tree, path, expand);
+	        }
+	    }
+
+	    // Expansion or collapse must be done bottom-up
+	    if (expand) {
+	        tree.expandPath(parent);
+	    } else {
+	        tree.collapsePath(parent);
+	    }
 	}
 }

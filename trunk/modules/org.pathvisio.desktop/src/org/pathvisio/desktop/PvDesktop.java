@@ -17,10 +17,14 @@
 
 package org.pathvisio.desktop;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
@@ -42,6 +46,7 @@ import org.pathvisio.desktop.data.DBConnectorSwing;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.plugin.PluginManager;
+import org.pathvisio.desktop.plugin.RepositoryManager;
 import org.pathvisio.desktop.util.StandaloneCompat;
 import org.pathvisio.desktop.visualization.Visualization;
 import org.pathvisio.desktop.visualization.VisualizationEvent;
@@ -273,12 +278,33 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			JMenu menuAt = menuBar.getMenu(i);
 			if (menuAt.getText().equals (submenu))
 			{
-				menuAt.add(a);
+				JMenuItem item = menuAt.add(a);
+				registeredActions.put(a, item);
 				break;
 			}
 		}
 	}
-
+	
+	private Map<Action, JMenuItem> registeredActions = new HashMap<Action, JMenuItem>();
+	
+	public void unregisterMenuAction (String submenu, Action a)
+	{
+		JMenuBar menuBar = swingEngine.getApplicationPanel().getMenuBar();
+		if(menuBar != null) {
+			for (int i = 0; i < menuBar.getMenuCount(); ++i)
+			{
+				JMenu menuAt = menuBar.getMenu(i);
+				if (menuAt.getText().equals (submenu))
+				{
+					System.out.println("unregister: " + registeredActions.get(a));
+					menuAt.remove(registeredActions.get(a));
+					registeredActions.remove(a);
+					break;
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Returns the JTabbedPane that corresponds to the side-bar
 	 * shortcut for
@@ -364,11 +390,10 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		manager = new PluginManager(this);
 	}
 
-	public PluginManager getPluginManager()
-	{
+	public PluginManager getPluginManager() {
 		return manager;
 	}
-
+	
 	/**
 	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
 	 * current database type.

@@ -29,7 +29,54 @@ import org.pathvisio.desktop.PvDesktop;
  */
 public class PluginManager {
 
-	final PvDesktop standaloneEngine;
+	private PvDesktop pvDesktop;
+	private List<PluginInfo> plugins;
+	private RepositoryManager repositoryManager;
+	private List<Plugin> startedPlugins;
+	
+	
+	
+	/**
+	 * Create a plugin manager that loads plugins from the given locations
+	 */
+	public PluginManager(PvDesktop pvDesktop) {
+		this.pvDesktop = pvDesktop;
+		startedPlugins = new ArrayList<Plugin>();
+		plugins = new ArrayList<PluginInfo>();
+		repositoryManager = new RepositoryManager(pvDesktop);
+		repositoryManager.loadRepositories();
+		
+		startPlugins();
+	}
+	
+	/**
+	 * 
+	 */
+	public void startPlugins() {
+		try {
+			ServiceReference[] refs = pvDesktop.getContext().getServiceReferences(Plugin.class.getName(), null);
+			if(refs != null) {
+				for(int i = 0; i < refs.length; i++) {
+					Plugin plugin = (Plugin) pvDesktop.getContext().getService(refs[i]);
+					if(!startedPlugins.contains(plugin)) {
+						PluginInfo pi = new PluginInfo();
+						pi.plugin = plugin.getClass();
+						pi.param = "";
+						pi.jar = refs[i].getBundle().getLocation();
+						try {
+							plugin.init(pvDesktop);
+							startedPlugins.add(plugin);
+						} catch (Exception ex) {
+							pi.error = ex;
+						}
+						plugins.add(pi);	
+					}
+				}
+			}
+		} catch (InvalidSyntaxException e) {
+			Logger.log.error("Couldn't load plugins.");
+		}
+	}
 
 	/**
 	 * Info about a plugin (active or non-active).
@@ -52,32 +99,7 @@ public class PluginManager {
 		return info;
 	}
 
-	/**
-	 * Create a plugin manager that loads plugins from the given locations
-	 */
-	public PluginManager(PvDesktop standaloneEngine) {
-		this.standaloneEngine = standaloneEngine;
-		
-		// plugin manager gets all registered plugins and starts them
-		try {
-			ServiceReference[] refs = standaloneEngine.getContext().getServiceReferences(Plugin.class.getName(), null);
-			if(refs != null) {
-				for(int i = 0; i < refs.length; i++) {
-					Plugin plugin = (Plugin) standaloneEngine.getContext().getService(refs[i]);
-					PluginInfo pi = new PluginInfo();
-					pi.plugin = plugin.getClass();
-					pi.param = "";
-					pi.jar = refs[i].getBundle().getLocation();
-					try {
-						plugin.init(standaloneEngine);
-					} catch (Exception ex) {
-						pi.error = ex;
-					}
-					info.add(pi);					
-				}
-			}
-		} catch (InvalidSyntaxException e) {
-			Logger.log.error("Couldn't load plugins.");
-		}	
+	public RepositoryManager getRepositoryManager() {
+		return repositoryManager;
 	}
 }

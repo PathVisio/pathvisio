@@ -31,6 +31,7 @@ import javax.swing.KeyStroke;
 
 import org.pathvisio.core.Globals;
 import org.pathvisio.core.util.Resources;
+import org.pathvisio.desktop.dialog.PluginManagerDialog;
 import org.pathvisio.gui.SwingEngine;
 
 /**
@@ -116,8 +117,10 @@ public class StandaloneActions
 
 		public void actionPerformed(ActionEvent e)
 		{
-			PluginManagerDlg dlg = new PluginManagerDlg (pvDesktop);
+			PluginManagerDialog dlg = new PluginManagerDialog(pvDesktop);
 			dlg.createAndShowGUI();
+//			PluginManagerDlg dlg = new PluginManagerDlg (pvDesktop);
+//			dlg.createAndShowGUI();
 		}
 	}
 

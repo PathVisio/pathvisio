@@ -128,7 +128,7 @@ public class MGroup extends PathwayElement {
 			else bounds.add(e.getMBounds());
 		}
 		if(bounds != null) {
-			double margin = groupStyle.getMMargin();
+			double margin = getGroupStyle().getMMargin();
 			return new Rectangle2D.Double(
 				bounds.getX() - margin,
 				bounds.getY() - margin,

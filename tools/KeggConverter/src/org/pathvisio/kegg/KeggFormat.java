@@ -15,18 +15,6 @@
 //limitations under the License.
 package org.pathvisio.kegg;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-
-import dtd.kegg.Entry;
-import dtd.kegg.Graphics;
-import dtd.kegg.Pathway;
-import dtd.kegg.Product;
-import dtd.kegg.Reaction;
-import dtd.kegg.Relation;
-import dtd.kegg.Substrate;
-import dtd.kegg.Subtype;
-
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.rmi.RemoteException;
@@ -48,24 +36,36 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.core.model.ConnectorShape.Segment;
-import org.pathvisio.core.model.ConnectorShape.WayPoint;
 import org.pathvisio.core.model.ConnectorType;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.DataNodeType;
 import org.pathvisio.core.model.GpmlFormatAbstract;
-import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.LineType;
 import org.pathvisio.core.model.MLine;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.ShapeType;
+import org.pathvisio.core.model.ConnectorShape.Segment;
+import org.pathvisio.core.model.ConnectorShape.WayPoint;
+import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
-import org.pathvisio.core.model.ShapeType;
 import org.pathvisio.core.view.LinAlg;
-import org.pathvisio.core.view.LinAlg.Point;
 import org.pathvisio.core.view.MIMShapes;
+import org.pathvisio.core.view.LinAlg.Point;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+
+import dtd.kegg.Entry;
+import dtd.kegg.Graphics;
+import dtd.kegg.Pathway;
+import dtd.kegg.Product;
+import dtd.kegg.Reaction;
+import dtd.kegg.Relation;
+import dtd.kegg.Substrate;
+import dtd.kegg.Subtype;
 
 /**
  * File converter for the KGML, the kegg pathway format.
@@ -84,9 +84,8 @@ public class KeggFormat {
 	private double spacing = 2;
 
 	private KeggService keggService;
-	private Organism organism;
 	private String species;
-	private String shortName;
+	private String speciesCode;
 	private Pathway pathway; //Main pathway
 	private Pathway map; //Used only to improve species specific pathway
 
@@ -107,17 +106,14 @@ public class KeggFormat {
 
 	private Map<String, Entry> entriesById = new HashMap<String, Entry>();
 
-	public KeggFormat(Pathway pathway, Organism organism) {
+	public KeggFormat(Pathway pathway, String organism) {
 		this.pathway = pathway;
-		this.organism = organism;
-		this.shortName = organism.shortName();
-		this.species = organism.latinName();
+		this.species = organism;
 	}
 
-	public KeggFormat(Pathway map, Pathway ko, Organism organism) {
+	public KeggFormat(Pathway map, Pathway ko, String organism) {
 		this(ko, organism);
 		this.map = map;
-		this.shortName = organism.shortName();
 	}
 
 	public void setSpacing(double spacing) {
@@ -155,7 +151,7 @@ public class KeggFormat {
 				title = title.substring(0, 50);
 			}
 			mappInfo.setMapInfoName(title);
-			mappInfo.setOrganism(species);
+			mappInfo.setOrganism(speciesCode);
 		}
 		mappInfo.setMapInfoDataSource(pathway.getLink()); //KH add url to kgml map
 
@@ -715,14 +711,14 @@ public class KeggFormat {
 
 			for(int i = 0; i < ids.length; i++) {
 				String id = ids[i];
-				String[] genes = getGenes(id, organism, Type.fromString(entry.getType()));
+				String[] genes = getGenes(id, species, Type.fromString(entry.getType()));
 
 				
 				for(String gene : genes) {
 					String geneName = dg.getName();
 					if(isUseWebservice()) { //fetch the real name from the webservice
 						geneName = keggService.getKeggSymbol(
-								Util.getKeggOrganism(organism) + ":" + gene
+								Util.getKeggOrganism(species) + ":" + gene
 						);
 					}
 					geneName = processLabel(geneName);
@@ -933,10 +929,14 @@ public class KeggFormat {
 		return dn;
 	}
 
-	private String[] getGenes(String keggId, Organism organism, Type type) throws RemoteException, ConverterException {
-		if(isUseWebservice() && type != Type.GENE) {
+	private String[] getGenes(String keggId, String organism, Type type) throws RemoteException, ConverterException {
+		boolean isValidGene = type == Type.GENE && keggId.matches("[a-z]{3}:[0-9]+$");
+		
+		if(isUseWebservice() && !isValidGene) {
 			if(type == Type.ORTHOLOG) {
 				return keggService.getGenesForKo(keggId, organism);
+			} else if(type == Type.GENE) {
+				return keggService.getGenes(keggId, organism);
 			} else {
 				return keggService.getGenesForEc(keggId, organism);
 			}

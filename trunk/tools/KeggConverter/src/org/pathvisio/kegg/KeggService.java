@@ -26,7 +26,6 @@ import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
 import keggapi.LinkDBRelation;
 
-import org.bridgedb.bio.Organism;
 import org.pathvisio.core.model.ConverterException;
 
 public class KeggService {
@@ -46,12 +45,22 @@ public class KeggService {
 		keggPortType = keggLocator.getKEGGPort();
 	}
 
+	String[] getGenes(String keggCode, String organism) throws RemoteException {
+		Set<String> genes = new HashSet<String>();
+		//KEGG code --> NCBI code
+		LinkDBRelation[] links = keggPortType.get_linkdb_by_entry(keggCode, "NCBI-GeneID", 1, 1000);
+		for(LinkDBRelation ldb : links) {
+			genes.add(ldb.getEntry_id2().substring(12));
+		}
+		return genes.toArray(new String[genes.size()]);
+	}
+	
 	/**
 	 * Fetches the organism specific NCBI gene identifiers for the enzyme code
 	 * @throws ConverterException
 	 * @throws RemoteException
 	 */
-	String[] getGenesForEc(String ec, Organism organism) throws RemoteException, ConverterException {
+	String[] getGenesForEc(String ec, String organism) throws RemoteException, ConverterException {
 		Set<String> genes = new HashSet<String>();
 
 		//Fetch the kegg gene IDs
@@ -68,7 +77,7 @@ public class KeggService {
 		return genes.toArray(new String[genes.size()]);
 	}
 
-	String[] getGenesForKo(String ko, Organism organism) throws RemoteException, ConverterException {
+	String[] getGenesForKo(String ko, String organism) throws RemoteException, ConverterException {
 		Set<String> genes = new HashSet<String>();
 
 		Definition[] keggGenes = keggPortType.get_genes_by_ko(ko, Util.getKeggOrganism(organism));

@@ -101,7 +101,8 @@ public class Converter {
 	public Converter() {
 	}
 
-	private Organism getOrganism() {
+	private String getOrganism() {
+		//Try to parse Organism class to support short names for common species
 		Organism organism = Organism.fromLatinName(species);
 		if(organism == null) {
 			//try by short name
@@ -111,11 +112,8 @@ public class Converter {
 			//finally, try by code
 			organism = Organism.fromCode(species);
 		}
-		if(organism == null) {
-			//give up and print help
-			throw new IllegalArgumentException("Couldn't find species: " + species);
-		}
-		return organism;
+		if(organism != null) species = organism.latinName();
+		return species;
 	}
 
 	private void recursiveConversion() throws FileNotFoundException, RemoteException, JAXBException, ConverterException, ServiceException,

@@ -19,6 +19,8 @@ import java.awt.geom.Point2D;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -33,8 +35,8 @@ import javax.xml.transform.sax.SAXSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
-import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.view.LinAlg;
 import org.pathvisio.core.view.LinAlg.Point;
 import org.xml.sax.InputSource;
@@ -43,49 +45,36 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 public class Util {
-	static String getKeggOrganism(Organism organism) throws ConverterException {
-		switch(organism) {
-		case HomoSapiens:
-			return "hsa";
-		case RattusNorvegicus:
-			return "rno";
-		case MusMusculus:
-			return "mmu";
-		case SaccharomycesCerevisiae:
-			return "sce";
-		case ArabidopsisThaliana:
-			return "ath";
-		case BosTaurus:
-			return "bta";
-		case CaenorhabditisElegans:
-			return "cel";
-		case CanisFamiliaris:
-			return "cfa";
-		case DanioRerio:
-			return "dre";
-		case DrosophilaMelanogaster:
-			return "dme";
-		case EscherichiaColi:
-			return "eco";
-		case GallusGallus:
-			return "gga";
-		case OryzaSativa:
-			return "osa";
-		case TriticumAestivum:
-			return "etae";
-		case XenopusTropicalis:
-			return "xtr";
-		case ZeaMays:
-			return "ezma";
-		case MycobacteriumTuberculosis:
-			return "mtu";
-		case AnophelesGambiae:
-			return "aga";
-		default:
-			throw new ConverterException("No KEGG code for organism " + organism);
-		}
+	private static Map<String, String> species2code = new HashMap<String, String>();
+	
+	static {
+		species2code.put(Organism.HomoSapiens.latinName(), "hsa");
+		species2code.put(Organism.RattusNorvegicus.latinName(), "rno");
+		species2code.put(Organism.MusMusculus.latinName(), "mmu");
+		species2code.put(Organism.SaccharomycesCerevisiae.latinName(), "sce");
+		species2code.put(Organism.ArabidopsisThaliana.latinName(), "ath");
+		species2code.put(Organism.BosTaurus.latinName(), "bta");
+		species2code.put(Organism.CaenorhabditisElegans.latinName(), "hsa");
+		species2code.put(Organism.CanisFamiliaris.latinName(), "cfa");
+		species2code.put(Organism.DanioRerio.latinName(), "dre");
+		species2code.put(Organism.DrosophilaMelanogaster.latinName(), "dme");
+		species2code.put(Organism.EscherichiaColi.latinName(), "eco");
+		species2code.put(Organism.GallusGallus.latinName(), "gga");
+		species2code.put(Organism.OryzaSativa.latinName(), "osa");
+		species2code.put(Organism.TriticumAestivum.latinName(), "etae");
+		species2code.put(Organism.XenopusTropicalis.latinName(), "xtr");
+		species2code.put(Organism.ZeaMays.latinName(), "ezma");
+		species2code.put(Organism.MycobacteriumTuberculosis.latinName(), "mtu");
+		species2code.put(Organism.AnophelesGambiae.latinName(), "aga");
+		species2code.put("Aspergillus niger", "ang");
 	}
 
+	public static String getKeggOrganism(String organism) throws ConverterException {
+		String code = species2code.get(organism);
+		if(code == null) throw new ConverterException("No KEGG code for organism " + organism);
+		return code;
+	}
+	
 	static String getGraphId(GraphIdContainer gc) {
 		//TK: Quick hack, GraphId is not automatically generated,
 		//so set one explicitly...

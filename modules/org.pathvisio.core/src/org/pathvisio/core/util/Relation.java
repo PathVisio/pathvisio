@@ -16,15 +16,17 @@
 //
 package org.pathvisio.core.util;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.model.LineType;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
 
@@ -84,6 +86,8 @@ public class Relation {
 	private Set<PathwayElement> rights = new HashSet<PathwayElement>();
 	private Set<PathwayElement> mediators = new HashSet<PathwayElement>();
 
+	private Map<PathwayElement, PathwayElement> mediatorLines = new HashMap<PathwayElement, PathwayElement>();
+	
 	/**
 	 * Parse a relation.
 	 * @param relationLine The line that defines the relation.
@@ -121,7 +125,7 @@ public class Relation {
 							addLeft(pathway.getElementById(line.getMStart().getGraphRef()));
 						} else {
 							//Add as 'mediator'
-							addMediator(pathway.getElementById(line.getMStart().getGraphRef()));
+							addMediator(line, pathway.getElementById(line.getMStart().getGraphRef()));
 						}
 					}
 				} else {
@@ -139,23 +143,36 @@ public class Relation {
 		addElement(pwe, rights);
 	}
 
-	void addMediator(PathwayElement pwe) {
-		addElement(pwe, mediators);
+	void addMediator(PathwayElement line, PathwayElement pwe) {
+		Set<PathwayElement> added = addElement(pwe, mediators);
+		for(PathwayElement m : added) mediatorLines.put(m, line);
 	}
 
-	void addElement(PathwayElement pwe, Set<PathwayElement> set) {
+	Set<PathwayElement> addElement(PathwayElement pwe, Set<PathwayElement> set) {
+		Set<PathwayElement> added = new HashSet<PathwayElement>();
+		
 		if(pwe != null) {
 			//If it's a group, add all subelements
 			if(pwe.getObjectType() == ObjectType.GROUP) {
 				for(PathwayElement ge : pwe.getParent().getGroupElements(pwe.getGroupId())) {
-					addElement(ge, set);
+					added.addAll(addElement(ge, set));
 				}
 			}
 			set.add(pwe);
+			added.add(pwe);
 		}
+		return added;
 	}
 
 	public Set<PathwayElement> getLefts() { return lefts; }
 	public Set<PathwayElement> getRights() { return rights; }
 	public Set<PathwayElement> getMediators() { return mediators; }
+	
+	/**
+	 * Get the line that connects the given mediator to the relation. This can be
+	 * used to determine how the mediator influences the relation (e.g. inhibition or activation).
+	 */
+	public PathwayElement getMediatorLine(PathwayElement mediator) {
+		return mediatorLines.get(mediator);
+	}
 }

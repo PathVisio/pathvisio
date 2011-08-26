@@ -9,24 +9,15 @@
 	<property name="doc.dir" value="doc"/>
 	<property name="pathvisio.dir" value="../.."/>
 	
-	<path id="jar.class.path">
+	<path id="class.path">
 	  	<fileset dir="lib">
 			<include name="*.jar"/>
 	  	</fileset>
 		<fileset dir="${pathvisio.dir}">
-			<include name="lib/jdom.jar"/>
+			<include name="lib/com.springsource.org.jdom-1.1.0.jar"/>
 			<include name="lib/org.bridgedb.jar"/>
 			<include name="lib/org.bridgedb.bio.jar"/>
-			<include name="pathvisio_core.jar"/>
-		</fileset>
-	</path>
-
-	<property name="manifest.class.path" value="lib/jsr173_1.0_api.jar lib/args4j-2.0.10.jar lib/google-collect-snapshot-20090211.jar lib/jaxb-api.jar lib/jaxb-impl.jar lib/activation.jar lib/resources.jar lib/jdom.jar lib/axis.jar lib/axis-ant.jar lib/commons-discovery-0.2.jar lib/commons-logging-1.0.4.jar lib/jaxrpc.jar lib/keggapi.jar lib/log4j-1.2.8.jar lib/pathvisio_core.jar lib/saaj.jar lib/wsdl4j-1.5.1.jar lib/org.bridgedb.jar lib/org.bridgedb.bio.jar"/>
-
-	<path id="class.path">
-      	<pathelement location="${build.dir}"/>
-		<fileset dir="lib">
-		        <include name="**/*.jar"/>
+			<include name="modules/org.pathvisio.core.jar"/>
 		</fileset>
 	</path>
 
@@ -67,15 +58,25 @@
 			   includes="**"
 			   destdir="${build.dir}"
 			   source="1.5">
-		  <classpath refid="jar.class.path"/>
+		  <classpath refid="class.path"/>
 		</javac>
 	</target>
 
 	<target name="jar" depends="compile" description="Generates executable jar file">
+		<pathconvert refid="class.path" property="class.path.manifest" pathsep=" ">
+			<mapper>
+				<chainedmapper>
+					<!-- remove absolute path -->
+					<flattenmapper />
+					<!-- add lib/ prefix -->
+					<globmapper from="*" to="lib/*" />
+				</chainedmapper>
+			</mapper>
+		</pathconvert>
 		<jar jarfile="${jar.name}">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.kegg.Converter"/>
-				<attribute name="Class-Path" value="${manifest.class.path}"/>
+				<attribute name="Class-Path" value="${class.path.manifest}"/>
 			</manifest>
 			<fileset dir="${build.dir}" includes="**/*.class"/>			
 		</jar>
@@ -84,10 +85,10 @@
 	<target name="dist" depends="jar" description="Copies jar and external libraries to dist path">
 		<copy file="${jar.name}" toDir="${dist.dir}"/>
 		<copy file="${pathvisio.dir}/lib/resources.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/jdom.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/lib/com.springsource.org.jdom-1.1.0.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/org.bridgedb.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/org.bridgedb.bio.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/pathvisio_core.jar" toDir="${dist.dir}/lib"/>
+		<copy file="${pathvisio.dir}/modules/org.pathvisio.core.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${lib.dir}/axis.jar" toDir="${dist.dir}/lib"/>
 		<copy file="KGML_v0.7.1_.dtd" toDir="${dist.dir}"/>
 		<copy toDir="${dist.dir}/lib">

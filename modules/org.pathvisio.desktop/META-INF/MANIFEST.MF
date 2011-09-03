@@ -4,12 +4,8 @@ Bundle-Name: org.pathvisio.desktop
 Bundle-SymbolicName: org.pathvisio.desktop
 Bundle-Version: 2.0.11
 Bundle-Activator: org.pathvisio.desktop.Activator
-Export-Package: com,
- com.nexes,
- com.nexes.test,
+Export-Package: com.nexes.test,
  com.nexes.wizard,
- org,
- org.pathvisio,
  org.pathvisio.desktop,
  org.pathvisio.desktop.data,
  org.pathvisio.desktop.gex,

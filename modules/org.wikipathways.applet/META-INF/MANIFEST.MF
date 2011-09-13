@@ -1,11 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Applet
+Bundle-Name: org.wikipathways.applet
 Bundle-SymbolicName: org.wikipathways.applet
-Bundle-Version: 1.0.0.qualifier
-Export-Package: org.wikipathways.applet,
- org.wikipathways.applet.gui,
- org.wikipathways.gpmldiff
+Bundle-Version: 2.0.11
+Export-Package: org.wikipathways.applet,org.wikipathways.applet.gui,org.wikipathways.gpmldiff
 Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
  org.pathvisio.desktop;bundle-version="2.0.11",
  org.pathvisio.gui;bundle-version="2.0.11",
@@ -20,3 +18,4 @@ Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",
  org.pathvisio.swingworker;bundle-version="1.1.0",
  org.apache.commons.codec;bundle-version="1.5.0",
  derby;bundle-version="10.4.2000000"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

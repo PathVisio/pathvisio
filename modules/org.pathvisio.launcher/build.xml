@@ -17,17 +17,11 @@
 	<!-- override jar target, because we want to add Main-Class and Class-Path attributes -->
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
-		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="../../lib-build/biz.aQute.bnd.jar"/> 
-		<bnd classpath="build" 
-			output="${bundle.dest}/${jar.name}" 
-			eclipse="false" failok="false" exceptions="true" 
-			files="package.bnd"/> 
 		<manifestclasspath property="jar.class.path" jarfile="${bundle.dest}/${jar.name}">
 			<classpath refid="project.class.path"/>
 		</manifestclasspath>
-		<jar file="${bundle.dest}/${jar.name}" update="true">
+		<jar jarfile="${bundle.dest}/${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF">
 			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.launcher.PathVisioMain"/>
 				<attribute name="Class-Path" value="${jar.class.path}"/>
 			</manifest>
 		</jar>

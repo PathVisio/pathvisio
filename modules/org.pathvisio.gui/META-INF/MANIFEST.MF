@@ -5,5 +5,4 @@ Bundle-SymbolicName: org.pathvisio.gui
 Bundle-Version: 2.0.11
 Export-Package: com.jroller.completer,com.mammothsoftware.frwk.ddb,org.pathvisio.gui,org.pathvisio.gui.completer,org.pathvisio.gui.dialogs,org.pathvisio.gui.dnd,org.pathvisio.gui.handler,org.pathvisio.gui.panels,org.pathvisio.gui.util,org.pathvisio.gui.view
 Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",com.springsource.org.jdom;bundle-version="1.1.0",org.pathvisio.swingworker;bundle-version="1.1.0",org.pathvisio.jgoodies.forms;bundle-version="1.2.0",org.bridgedb;bundle-version="1.1.0",org.bridgedb.bio;bundle-version="1.1.0",org.bridgedb.gui;bundle-version="1.1.0",org.bridgedb.rdb;bundle-version="1.1.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.osgi.framework;version="1.5.0"

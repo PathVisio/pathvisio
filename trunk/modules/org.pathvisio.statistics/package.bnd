@@ -1,6 +1,0 @@
-Export-Package: *
-Bundle-Version: 2.0.11
-Bundle-Name: org.pathvisio.statistics
-Bundle-SymbolicName: org.pathvisio.statistics
-Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",org.pathvisio.gui;bundle-version="2.0.11",org.pathvisio.desktop;bundle-version="2.0.11",org.bridgedb;bundle-version="1.1.0",org.bridgedb.gui;bundle-version="1.1.0",org.pathvisio.jgoodies.forms;bundle-version="1.2.0",org.pathvisio.swingworker;bundle-version="1.1.0"
-Bundle-Activator: org.pathvisio.statistics.Activator

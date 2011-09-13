@@ -272,7 +272,11 @@
 			doctitle="PathVisio"
 			header="Revision ${subversion_revision}"
 			footer="Generated ${TODAY}">
-			<classpath refid="project.all.class.path"/>
+			<classpath>
+				<fileset dir="lib">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
 			<packageset dir="${src.dir}/org.pathvisio.core/src"/>
 			<packageset dir="${src.dir}/org.pathvisio.gui/src"/>
 			<packageset dir="${src.dir}/org.pathvisio.desktop/src"/>
@@ -281,6 +285,7 @@
 			<packageset dir="${src.dir}/org.pathvisio.visualization/src"/>
 			<packageset dir="${src.dir}/org.pathvisio.statistics/src"/>
 			<packageset dir="${src.dir}/org.wikipathways.client/src"/>
+			<packageset dir="${src.dir}/org.wikipathways.client/gen-src"/>
 			<sourcepath>
 				<pathelement location="${src.dir}/org.pathvisio.core/src"/>
 				<pathelement location="${src.dir}/org.pathvisio.gex/src"/>

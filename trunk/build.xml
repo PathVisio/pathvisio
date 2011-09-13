@@ -131,9 +131,6 @@
 				<include name="org.pathvisio.gex.jar"/>
 			</fileset>
 		</copy>
-		<copy toDir="${webstart.dir}/www/lib">
-			<fileset dir="modules/org.pathvisio.launcher/lib" includes="*.jar"/>
-		</copy>
 		<signjar jar="pathvisio.jar"
 			alias="PV" storepass="${keystore.password}" keystore="lib/visioKeyStore"/>
 		<signjar alias="PV"

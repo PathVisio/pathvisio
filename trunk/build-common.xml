@@ -42,11 +42,7 @@
 
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
-		<taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="../../lib-build/biz.aQute.bnd.jar"/> 
-		<bnd classpath="build" 
-			output="${bundle.dest}/${jar.name}" 
-			eclipse="false" failok="false" exceptions="true" 
-			files="package.bnd"/> 
+		<jar jarfile="${bundle.dest}/${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF"/>
 	</target>
 	
 	<target name="test">

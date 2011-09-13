@@ -48,5 +48,30 @@
 			eclipse="false" failok="false" exceptions="true" 
 			files="package.bnd"/> 
 	</target>
+	
+	<target name="test">
+		<javac srcdir="test" debug="${debug.mode}"
+					includes="**"
+					destdir="build"
+					source="1.5">
+			<classpath>
+				<path refid="test.class.path"/>
+				<path refid="project.class.path"/>
+			</classpath>
+		</javac>
+		<junit printsummary="on" haltonfailure="true" fork="true" dir=".">
+			<formatter type="brief" usefile="false"/>
+			<classpath>
+				<pathelement path="build"/>
+				<path refid="project.class.path"/>
+				<path refid="test.class.path"/>
+			</classpath>
+			<batchtest>
+				<fileset dir="test">
+					<include name="**/*Test*.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
 
 </project>

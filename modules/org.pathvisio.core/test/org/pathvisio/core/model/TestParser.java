@@ -32,6 +32,8 @@ import org.pathvisio.core.view.MIMShapes;
 
 public class TestParser extends TestCase 
 {
+	private static final File PATHVISIO_BASEDIR = new File ("../..");
+
 	StopWatch sw;
 	
 	public void setUp()
@@ -51,7 +53,7 @@ public class TestParser extends TestCase
 	
 	public void testParserSpeed() throws ConverterException, FileNotFoundException
 	{
-		File test = new File("testData/WP248_2010a.gpml");
+		File test = new File(PATHVISIO_BASEDIR, "testData/WP248_2010a.gpml");
 		
 		sw = new StopWatch();
 		sw.start();
@@ -107,7 +109,7 @@ public class TestParser extends TestCase
 
 	public void testParser1() throws ConverterException, FileNotFoundException
 	{
-		File test = new File ("testData/2010a/parsetest1.gpml");
+		File test = new File (PATHVISIO_BASEDIR, "testData/2010a/parsetest1.gpml");
 		Pathway data = readHelper (test);
 		
 		assertEquals (ObjectType.INFOBOX, data.getInfoBox().getObjectType());
@@ -129,7 +131,7 @@ public class TestParser extends TestCase
 
 	public void testParser2() throws ConverterException, FileNotFoundException
 	{
-		File test = new File ("testData/2010a/parsetest2.gpml");
+		File test = new File (PATHVISIO_BASEDIR, "testData/2010a/parsetest2.gpml");
 		Pathway data = readHelper (test);
 
 		assertEquals (19.0, data.getInfoBox().getMCenterX(), 0.01);
@@ -149,7 +151,7 @@ public class TestParser extends TestCase
 
 	public void testParser3() throws ConverterException, FileNotFoundException
 	{
-		File test = new File ("testData/2010a/parsetest3.gpml");
+		File test = new File (PATHVISIO_BASEDIR, "testData/2010a/parsetest3.gpml");
 		Pathway data = readHelper (test);
 		
 		PathwayElement elt;
@@ -179,7 +181,7 @@ public class TestParser extends TestCase
 	public void testParser4() throws ConverterException, FileNotFoundException
 	{
 		PreferenceManager.init();
-		File test = new File ("testData/2010a/parsetest4.gpml");
+		File test = new File (PATHVISIO_BASEDIR, "testData/2010a/parsetest4.gpml");
 		Pathway data = readHelper (test);
 
 		PathwayElement elt;
@@ -271,7 +273,7 @@ public class TestParser extends TestCase
 
 	public void testParser5() throws ConverterException, FileNotFoundException
 	{
-		File test = new File ("testData/2010a/parsetest5.gpml");
+		File test = new File (PATHVISIO_BASEDIR, "testData/2010a/parsetest5.gpml");
 		Pathway data = readHelper (test);
 		
 		PathwayElement elt;
@@ -349,13 +351,13 @@ public class TestParser extends TestCase
 
 	public void testParser6() throws ConverterException, FileNotFoundException
 	{
-		File test = new File ("testData/2010a/parsetest6.gpml");
+		File test = new File (PATHVISIO_BASEDIR, "testData/2010a/parsetest6.gpml");
 		Pathway data = readHelper (test);
 	}
 
 	public void testParser7() throws ConverterException, FileNotFoundException
 	{
-		File test = new File ("testData/2010a/parsetest7.gpml");
+		File test = new File (PATHVISIO_BASEDIR, "testData/2010a/parsetest7.gpml");
 		Pathway data = readHelper (test);
 		
 		PathwayElement elt = data.getMappInfo();
@@ -382,7 +384,7 @@ public class TestParser extends TestCase
 
 	public void testParser8() throws ConverterException, FileNotFoundException
 	{
-		Pathway data = readHelper (new File ("testData/2010a/parsetest8.gpml"));
+		Pathway data = readHelper (new File (PATHVISIO_BASEDIR, "testData/2010a/parsetest8.gpml"));
 		
 		PathwayElement elt;
 		elt = data.getElementById("a8d1a");
@@ -418,16 +420,16 @@ public class TestParser extends TestCase
 	public void testFail() throws IOException
 	{
 		File[] fails = new File[] {
-				new File ("testData/2010a/fail1.gpml"),
-				new File ("testData/2010a/fail2.gpml"),
-				new File ("testData/2010a/fail3.gpml"),
-				new File ("testData/2010a/fail4.gpml"),
-				new File ("testData/2010a/fail5.gpml"),
-				new File ("testData/2010a/fail6.gpml"),
-				new File ("testData/2010a/fail7.gpml"),
-				new File ("testData/2010a/fail8.gpml"),
-				new File ("testData/2010a/fail9.gpml"),
-				new File ("testData/2010a/fail10.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail1.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail2.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail3.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail4.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail5.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail6.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail7.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail8.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail9.gpml"),
+				new File (PATHVISIO_BASEDIR, "testData/2010a/fail10.gpml"),
 		};
 		
 		for (File ffail : fails)

@@ -27,6 +27,8 @@ import org.pathvisio.core.model.PathwayElement.MPoint;
  */
 public class TestGraph extends TestCase
 {
+	private static final File PATHVISIO_BASEDIR = new File ("../..");
+
 	Pathway p;
 	PathwayElement l, n1, n2;
 	MPoint start, end;
@@ -129,7 +131,7 @@ public class TestGraph extends TestCase
 	 */
 	public void testAbsRelMPoint() throws ConverterException
 	{
-		File fTest = new File ("testData/mpoint-test.gpml");
+		File fTest = new File (PATHVISIO_BASEDIR, "testData/mpoint-test.gpml");
 		assertTrue (fTest.exists());
 		Pathway q = new Pathway();
 		q.readFromXml(fTest, true);

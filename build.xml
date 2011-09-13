@@ -383,43 +383,8 @@
 	<target name="zip" depends="zip.src,zip.bin" description="create both source and binary tarballs and zips"/>
 	
 	<target name="test" depends="desktop.jar">
-		<javac srcdir="modules/org.pathvisio.core/test" debug="${debug.mode}"
-					includes="**"
-					destdir="${build.core.dir}"
-					source="1.5">
-					<classpath refid="project.core.class.path"/>
-		</javac>
-		<junit printsummary="on" haltonfailure="true" fork="true">
-			<formatter type="brief" usefile="false"/>
-			<classpath refid="project.core.class.path"/>
-			<batchtest>
-				<fileset dir="modules/org.pathvisio.core/test">
-					<include name="**/*Test*.java"/>
-				</fileset>
-			</batchtest>
-		</junit>
-
-		<javac srcdir="modules/org.pathvisio.desktop/test" debug="${debug.mode}"
-					includes="**"
-					destdir="${build.swing.dir}"
-					source="1.5">
-					<classpath> 
-						<path refid="project.swing.class.path"/>
-						<pathelement location="lib-build/measure.jar"/>
-					</classpath>
-		</javac>
-		<junit printsummary="on" haltonfailure="true" fork="true">
-			<formatter type="brief" usefile="false"/>
-			<classpath> 
-				<path refid="project.swing.class.path"/>
-				<pathelement location="lib-build/measure.jar"/>
-			</classpath>
-			<batchtest>
-				<fileset dir="modules/org.pathvisio.desktop/test">
-					<include name="**/*Test*.java"/>
-				</fileset>
-			</batchtest>
-		</junit>
+		<subant target="test" buildpath="modules/org.pathvisio.core/build.xml"/>
+		<subant target="test" buildpath="modules/org.pathvisio.desktop/build.xml"/>
 	</target>
 	
 	<taskdef resource="checkstyletask.properties"

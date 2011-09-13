@@ -23,12 +23,13 @@ import junit.framework.TestCase;
 
 public class TestGpml extends TestCase 
 {
+	private static final File PATHVISIO_BASEDIR = new File ("../..");
 	/**
 	 * Test reading 2010a file, then writing as 2008a
 	 */
 	public static void testWrite2010() throws IOException, ConverterException
 	{
-		File in = new File ("testData/WP248_2008a.gpml");
+		File in = new File (PATHVISIO_BASEDIR, "testData/WP248_2008a.gpml");
 		assertTrue (in.exists());
 		
 		Pathway pwy = new Pathway();
@@ -43,7 +44,7 @@ public class TestGpml extends TestCase
 	 */
 	public static void testRead2010() throws ConverterException, IOException
 	{
-		File in = new File ("testData/WP248_2010a.gpml");
+		File in = new File (PATHVISIO_BASEDIR, "testData/WP248_2010a.gpml");
 		assertTrue (in.exists());
 		
 		Pathway pwy = new Pathway();
@@ -51,7 +52,7 @@ public class TestGpml extends TestCase
 	}
 	
 	private static final File FILE1 = 
-		new File ("testData/2008a-deprecation-test.gpml");
+		new File (PATHVISIO_BASEDIR, "testData/2008a-deprecation-test.gpml");
 	
 	public void testDeprecatedFields() throws ConverterException
 	{

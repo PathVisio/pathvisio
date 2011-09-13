@@ -5,4 +5,3 @@ Bundle-SymbolicName: org.wikipathways.client
 Bundle-Version: 2.0.11
 Export-Package: org.wikipathways.bots,org.wikipathways.client
 Require-Bundle: org.pathvisio.core;bundle-version="2.0.11",org.pathvisio.gui;bundle-version="2.0.11",org.bridgedb;bundle-version="1.1.0",org.bridgedb.bio;bundle-version="1.1.0",org.bridgedb.rdb;bundle-version="1.1.0",org.bridgedb.rdb.construct;bundle-version="1.1.0",com.springsource.org.jdom;bundle-version="1.1.0",org.wikipathways.applet;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6

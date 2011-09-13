@@ -40,9 +40,9 @@ use Data::Dumper;
 #Each namespace has a different schema.
 my %schemas =
 (
-	"http://genmapp.org/GPML/2010a" => "../../GPML.xsd",
-	"http://genmapp.org/GPML/2008a" => "../../GPML2008a.xsd",
-	"http://genmapp.org/GPML/2007" => "../../GPML2007.xsd",
+	"http://genmapp.org/GPML/2010a" => "../../modules/org.pathvisio.core/resources/GPML.xsd",
+	"http://genmapp.org/GPML/2008a" => "../../modules/org.pathvisio.core/resources/GPML2008a.xsd",
+	"http://genmapp.org/GPML/2007" => "../../modules/org.pathvisio.core/resources/GPML2007.xsd",
 );
 
 my $preferredNamespace = "http://genmapp.org/GPML/2008a";

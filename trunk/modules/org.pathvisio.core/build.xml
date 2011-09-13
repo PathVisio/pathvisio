@@ -43,10 +43,7 @@ class Revision
 	</path>
 
 	<path id="test.class.path">
-	  <fileset dir="../../lib">
-		<include name="junit.jar"/>
-	    <include name="derby.jar"/>
-	  </fileset>
+	  <pathelement path="../../lib/junit.jar"/>
 	</path>
 
 </project>

@@ -33,4 +33,9 @@
 	  </fileset>
 	</path>
 
+	<path id="test.class.path">
+	  <pathelement path="../../lib/junit.jar"/>
+	  <pathelement path="../../lib-build/measure.jar"/>
+	</path>
+
 </project>

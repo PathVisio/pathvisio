@@ -39,6 +39,8 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	List<PathwayElementEvent> receivedElementEvents;
 	PathwayElement l;
 
+	private static final File PATHVISIO_BASEDIR = new File ("../..");
+	
 	public void setUp()
 	{
 		PreferenceManager.init();
@@ -373,7 +375,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 
 	public void testXml2007() throws IOException, ConverterException
 	{
-		File testFile = new File ("testData/test.gpml");
+		File testFile = new File (PATHVISIO_BASEDIR, "testData/test.gpml");
 		assertTrue (testFile.exists());
 		data.readFromXml(testFile, false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
@@ -386,14 +388,14 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	public void testWrongFormat()
 	{
 		try {
-			data.readFromXml(new File ("testData/test.mapp"), false);
+			data.readFromXml(new File (PATHVISIO_BASEDIR, "testData/test.mapp"), false);
 			fail ("Loading wrong format, Exception expected");
 		} catch (Exception e) {}
 	}
 
 	public void testXml2008a() throws IOException, ConverterException
 	{
-		File testFile = new File ("testData/test2.gpml");
+		File testFile = new File (PATHVISIO_BASEDIR, "testData/test2.gpml");
 		assertTrue (testFile.exists());
 		data.readFromXml(testFile, false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
@@ -408,7 +410,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	{
 		try
 		{
-			data.readFromXml(new File("testData/nographics-test.gpml"), false);
+			data.readFromXml(new File(PATHVISIO_BASEDIR, "testData/nographics-test.gpml"), false);
 		}
 		catch (ConverterException e)
 		{
@@ -424,14 +426,14 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	{
 		if (Utils.getOS() == Utils.OS_WINDOWS)
 		{
-			data = new MappFormat().doImport(new File("testData/test.mapp"));
+			data = new MappFormat().doImport(new File(PATHVISIO_BASEDIR, "testData/test.mapp"));
 			assertTrue ("Loaded a bunch of objects from mapp", data.getDataObjects().size() > 20);
 			File temp = File.createTempFile ("data.test", ".mapp");
 			temp.deleteOnExit();
 			data.writeToMapp(temp);
 
 			try {
-				data = new MappFormat().doImport(new File ("testData/test.gpml"));
+				data = new MappFormat().doImport(new File (PATHVISIO_BASEDIR, "testData/test.gpml"));
 				fail ("Loading wrong format, Exception expected");
 			} catch (Exception e) {}
 		}
@@ -442,7 +444,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	 */
 	public void testSvg() throws IOException, ConverterException
 	{
-		data.readFromXml(new File("testData/test.gpml"), false);
+		data.readFromXml(new File(PATHVISIO_BASEDIR, "testData/test.gpml"), false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
 		File temp = File.createTempFile ("data.test", ".svg");
 		temp.deleteOnExit();
@@ -455,7 +457,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	 */
 	public void testPng() throws IOException, ConverterException
 	{
-		data.readFromXml(new File("testData/test.gpml"), false);
+		data.readFromXml(new File(PATHVISIO_BASEDIR, "testData/test.gpml"), false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
 		File temp = File.createTempFile ("data.test", ".png");
 		temp.deleteOnExit();
@@ -469,7 +471,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	 */
 	public void testPng2() throws IOException, ConverterException
 	{
-		data.readFromXml(new File("testData/test.gpml"), false);
+		data.readFromXml(new File(PATHVISIO_BASEDIR, "testData/test.gpml"), false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
 		File temp = File.createTempFile ("data.test", ".png");
 		temp.deleteOnExit();
@@ -483,7 +485,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	 */
 	public void testPdf() throws IOException, ConverterException
 	{
-		data.readFromXml(new File("testData/test.gpml"), false);
+		data.readFromXml(new File(PATHVISIO_BASEDIR, "testData/test.gpml"), false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
 		File temp = File.createTempFile ("data.test", ".pdf");
 		temp.deleteOnExit();
@@ -497,7 +499,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	 */
 	public void testTxt() throws IOException, ConverterException
 	{
-		data.readFromXml(new File("testData/test.gpml"), false);
+		data.readFromXml(new File(PATHVISIO_BASEDIR, "testData/test.gpml"), false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
 		File temp = File.createTempFile ("data.test", ".txt");
 		temp.deleteOnExit();
@@ -511,7 +513,7 @@ public class Test extends TestCase implements PathwayListener, PathwayElementLis
 	 */
 	public void testPwf() throws IOException, ConverterException
 	{
-		data.readFromXml(new File("testData/test.gpml"), false);
+		data.readFromXml(new File(PATHVISIO_BASEDIR, "testData/test.gpml"), false);
 		assertTrue ("Loaded a bunch of objects from xml", data.getDataObjects().size() > 20);
 		File temp = File.createTempFile ("data.test", ".pwf");
 		temp.deleteOnExit();

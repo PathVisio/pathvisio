@@ -31,6 +31,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.batik.transcoder.image.PNGTranscoder;
 import org.apache.batik.transcoder.image.TIFFTranscoder;
+import org.apache.fop.svg.PDFTranscoder;
 import org.bridgedb.IDMapperException;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
@@ -115,12 +116,7 @@ public class BatikImageWithDataExporter extends ImageExporter
 		} else if	(getType().equals(TYPE_TIFF)) {
 			t = new TIFFTranscoder();
 		} else if	(getType().equals(TYPE_PDF)) {
-			try {
-                 Class<?> pdfClass = Class.forName("org.apache.fop.svg.PDFTranscoder");
-                 t = (Transcoder)pdfClass.newInstance();
-             } catch(Exception e) {
-            	 noExporterException();
-             }
+			t = new PDFTranscoder();
 		}
 		if(t == null) noExporterException();
 

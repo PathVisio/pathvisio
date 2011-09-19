@@ -21,7 +21,7 @@ use LWP::UserAgent qw();
 #### new text file with imagemap and wiki template syntax, with added extension ".txt"
 
 ## Define links to resources
-my $genewiki = "http://plugins.gnf.org/cgi-bin/wp.cgi?id=";
+my $genewiki = "http://plugins.biogps.org/cgi-bin/wp.cgi?id=";
 my $chebi = "http://www.ebi.ac.uk/chebi/searchId=CHEBI:";
 my $hmdb = "http://www.hmdb.ca/metabolites/";
 my $cas = "http://chem.sis.nlm.nih.gov/chemidplus/direct.jsp?regno=";

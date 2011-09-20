@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp codebase="http://www.pathvisio.org/webstart/" href="pathvisio.jnlp">
+<jnlp codebase="http://www.pathvisio.org/webstart" href="pathvisio.jnlp">
 	<information>
 		 <title>PathVisio 2</title>
 		 <vendor>BiGCaT Bioinformatics, Maastricht University</vendor>

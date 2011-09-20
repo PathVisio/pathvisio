@@ -475,6 +475,6 @@
 		</tar>
 	</target>
 
-	<target name="dist" depends="tarbin-wpclient,zip,jarbundler"/>
+	<target name="dist" depends="tarbin-wpclient,zip"/>
 
 </project>

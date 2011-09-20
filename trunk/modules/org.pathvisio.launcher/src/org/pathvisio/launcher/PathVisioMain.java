@@ -1,12 +1,22 @@
 package org.pathvisio.launcher;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
 
@@ -15,9 +25,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.launch.Framework;
 import org.osgi.framework.launch.FrameworkFactory;
-import org.pathvisio.core.Engine;
-import org.pathvisio.core.debug.Logger;
-
 
 public class PathVisioMain {
 
@@ -29,134 +36,233 @@ public class PathVisioMain {
 		setProgramOptions();
 		new PathVisioMain().start();
 	}
-	
-	private static final String[] coreModules = {
-		"modules/org.pathvisio.core.jar",
-		"modules/org.pathvisio.gui.jar",
-		"modules/org.pathvisio.desktop.jar",
-		"modules/org.pathvisio.visualization.jar",
-		"modules/org.pathvisio.gexplugin.jar",
-		"modules/org.pathvisio.statistics.jar"
-	};
-	
-	private static final String[] libs = {
-		"lib/org.apache.felix.bundlerepository-1.6.6.jar",
-		"lib/com.springsource.org.jdom-1.1.0.jar",
-		"lib/org.pathvisio.pdftranscoder.jar",
-		"lib/commons-math-2.0.jar",
-		"lib/org.apache.xalan_2.7.1.v201005080400.jar",
-		"lib/org.apache.xerces_2.9.0.v201101211617.jar",
-		"lib/org.apache.xml.resolver_1.2.0.v201005080400.jar",
-		"lib/org.apache.xml.serializer_2.7.1.v201005080400.jar",
-		"lib/org.w3c.css.sac_1.3.1.v200903091627.jar",
-		"lib/org.w3c.dom.events_3.0.0.draft20060413_v201105210656.jar",
-		"lib/org.w3c.dom.smil_1.0.1.v200903091627.jar",
-		"lib/org.w3c.dom.svg_1.1.0.v201011041433.jar",
-		"lib/javax.xml_1.3.4.v201005080400.jar",
-		"lib/derby.jar",
-		"lib/org.pathvisio.jgoodies.forms.jar",
-		"lib/org.apache.batik.util_1.7.0.v201011041433.jar",
-		"lib/org.apache.batik.ext.awt_1.7.0.v201011041433.jar",	
-		"lib/org.apache.batik.xml_1.7.0.v201011041433.jar",
-		"lib/org.apache.batik.css_1.7.0.v201011041433.jar",		
-		"lib/org.apache.batik.dom.svg_1.7.0.v201011041433.jar",		
-		"lib/org.apache.batik.dom_1.7.0.v201011041433.jar",		
-		"lib/org.apache.batik.bridge_1.7.0.v201011041433.jar",
-		"lib/org.apache.batik.extension_1.7.0.v201011041433.jar",
-		"lib/org.apache.batik.parser_1.7.0.v201011041433.jar",		
-		"lib/org.apache.batik.svggen_1.7.0.v201011041433.jar",			
-		"lib/org.apache.batik.transcoder_1.7.0.v201011041433.jar",
-		"lib/org.apache.batik.util.gui_1.7.0.v200903091627.jar",	
-		"lib/org.bridgedb.jar",
-		"lib/org.bridgedb.bio.jar",
-		"lib/org.bridgedb.rdb.jar",
-		"lib/org.bridgedb.webservice.bridgerest.jar",
-		"lib/org.bridgedb.gui.jar",
-		"lib/org.bridgedb.rdb.construct.jar",
-		"lib/org.pathvisio.browserlauncher.jar",
-		"lib/org.pathvisio.swingworker.jar",
-	};
-	
-	private Properties launchProperties = new Properties();
+
+	/** 
+	 * The following bundles below must 
+	 * activate without exception.
+	 * If there is an exception while activating one of the 
+	 * bundles below, an error message will be
+	 * reported directly to the user, and PathVisio shuts down.
+	 * Exceptions in other bundles are merely logged. 
+	 */
+	private static final List<String> mustActivate = Arrays.asList (new String[] {
+		"derby.jar",
+		"org.bridgedb.rdb.jar",
+		"org.pathvisio.core.jar",
+		"org.pathvisio.gui.jar",
+		"org.pathvisio.desktop.jar",
+		"org.pathvisio.visualization.jar",
+		"org.pathvisio.gexplugin.jar",
+		"org.pathvisio.statistics.jar"	
+	});	
 	
 	private static final String[][] frameworkProperties = { 
-        {"org.osgi.framework.bootdelegation", "sun.*,com.sun.*,apple.*,com.apple.*"},
+        
+		/* org.osgi.framework.bootdelegation=*, this means that
+		 * all system classes are available to any bundle.
+		 * 
+		 * when running under felix, the following is necessary for batik to work properly,
+		 * otherwise it will throw NoClassDefFoundError's left and right.
+		 */
+		{"org.osgi.framework.bootdelegation", "*"},
+		
         {"org.osgi.framework.system.packages.extra", "javax.xml.parsers,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers"},
-        {"org.osgi.framework.storage.clean", "onFirstInit"}
+        
+        {"org.osgi.framework.storage.clean", "onFirstInit"},
+        
+        /* following property is necessary for Felix: to prevent complaints 
+         * about missing requirements ee=JSE2-1.2 on the javax.xml bundle. */
+        {"org.osgi.framework.executionenvironment", "ee-1.6=JavaSE-1.6,J2SE-1.5,J2SE-1.4,J2SE-1.3,J2SE-1.2,JRE-1.1,JRE-1.0,OSGi/Minimum-1.2,OSGi/Minimum-1.1,OSGi/Minimum-1.0" } 
+
     };
 	
-	private String factoryClass;
-	
-	public PathVisioMain () throws BundleException, InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+	/**
+	 * Determine which FrameWork factory class is available by reading a property in the jar file.
+	 * This makes it easy to switch between felix, equinox or another OSGi implemenation.
+	 * All you have to do is include either felix.jar or org.eclipse.osgi.jar in the classpath. 
+	 * @throws IOException 
+	 */
+	private String getFactoryClass() throws IOException
+	{
 		BufferedReader factoryReader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("META-INF/services/org.osgi.framework.launch.FrameworkFactory")));
-		factoryClass = factoryReader.readLine();
+		String factoryClass = factoryReader.readLine();
 		factoryClass = factoryClass.trim();
 		factoryReader.close();
+		return factoryClass;
 	}
 	
 	private BundleContext context;
 	
-	public void start() throws InstantiationException, IllegalAccessException, ClassNotFoundException, BundleException {
-		FrameworkFactory factory = (FrameworkFactory) Class.forName(factoryClass).newInstance();
-		
+	/**
+	 * An error dialog that is slightly more user-friendly than a stack dump.
+	 */
+	private void reportException(String message, Exception ex)
+	{
+		Throwable cause = ex;
+		// get ultimate cause
+		while (cause.getCause() != null) cause = cause.getCause();
+		JOptionPane.showMessageDialog(null, message + "\n" +
+				"Cause: " + cause.getClass().getName() + ":  " + cause.getMessage() + "\n" +
+				"Please contact PathVisio developers");
+		ex.printStackTrace();
+	}
+	
+	private Properties getLaunchProperties()
+	{	
+		Properties launchProperties = new Properties();
 		for (int i = 0; i < frameworkProperties.length; i++) {
 			launchProperties.setProperty(frameworkProperties[i][0], frameworkProperties[i][1]);
 		}
-	
-		Framework framework = factory.newFramework(launchProperties);
-		framework.start();
-		
-		context = framework.getBundleContext();
-    	List<Bundle> bundles = new ArrayList<Bundle>();
-    	
-    	Logger.log.info("Installing third party library bundles.");
-    	for(String s : libs) {
-    		File file = new File(s);
-    		if(!file.exists()) {
-    			Logger.log.error("Could not find bundle " + s + ". PathVisio was shut down.");
-    			JOptionPane.showMessageDialog(null, "Could not load bundle: " + s + ".", 
-    					"Bundle Loading Error", JOptionPane.ERROR_MESSAGE);
-    			System.exit(0);
-    		} else {
-				Bundle b = context.installBundle("" + file.toURI());
-				bundles.add(b);
-    		}
-		}
-    	
-    	Logger.log.info("Installing core bundles.");
-    	for(String s : coreModules) {
-    		File file = new File(s);
-    		if(!file.exists()) {
-    			Logger.log.error("Could not find bundle " + s + ". PathVisio was shut down.");
-    			JOptionPane.showMessageDialog(null, "Could not load bundle: " + s + ".", 
-    					"Bundle Loading Error", JOptionPane.ERROR_MESSAGE);
-    			System.exit(0);
-    		} else {
-	    		Bundle b = context.installBundle("" + file.toURI());
-				bundles.add(b);
-    		}
-		}
-    	
-    	startBundles(context, bundles);
-    	
-    	Logger.log.info("Installing plug-in bundles.");
-    	new PluginLoader().installPlugins(pluginLocations, context);
+		return launchProperties;
 	}
 	
-	private void startBundles(BundleContext context, List<Bundle> bundles) throws BundleException {
-    	for (Bundle b : bundles) {
-    		boolean success = false;
+	public void start() 
+	{	
+    	try
+    	{
+			String factoryClass = getFactoryClass();
+			FrameworkFactory factory = (FrameworkFactory) Class.forName(factoryClass).newInstance();
+			
+			Framework framework = factory.newFramework(getLaunchProperties());
+			framework.start();
+			
+			context = framework.getBundleContext();
+			Map <Bundle, String> bundles = new HashMap <Bundle, String>();
+	    	
+	       	/* load embedded bundles, i.e. all bundles that are inside pathvisio.jar */ 
+	    	System.out.println("Installing core bundles.");
+	    	Set<String> jarNames = getResourceListing(PathVisioMain.class);
+			for (String s : jarNames) 
+			{
+				if (!s.endsWith(".jar")) continue; // skip non-jar resources.
+				System.out.println ("Detected embedded bundle: " + s);
+				
+				URL locationURL = PathVisioMain.class.getResource('/' + s);
+				if (locationURL != null)
+				{
+					System.out.println ("Loading " + locationURL);
+					try {
+	    				Bundle b = context.installBundle(locationURL.toString());
+	    				bundles.put (b, s);
+					}
+					catch (Exception ex)
+					{
+		    			if (mustActivate.contains (s))
+		    			{
+		    				reportException("Could not install bundle " + s, ex);
+		    				System.exit(1);
+		    			}
+		    			else
+		    			{
+							System.err.println ("Could not install bundle " + s);
+							ex.printStackTrace();
+		    			}
+					}
+	    		}
+			}
+	    	    	
+	    	startBundles(context, bundles);
+	    	
+	    	System.out.println("Installing plug-in bundles.");
+	    	new PluginLoader().installPlugins(pluginLocations, context);
+    	}
+    	catch (Exception ex)
+    	{
+    		reportException("Startup Error", ex);
+    		ex.printStackTrace();
+    	}
+	}
+
+	/**
+	 * List directory contents for the root jar. Not recursive. 
+	 *
+	 * @author Greg Briggs
+	 *    modified LF 02/02/2011 to support java web start
+	 * @param clazz
+	 *            Any java class that lives in the same place as the resources
+	 *            you want.
+	 * @return Just the name of each member item, not the full paths.
+	 * @throws URISyntaxException
+	 * @throws IOException
+	 */
+	private Set<String> getResourceListing(Class<?> clazz)
+			throws URISyntaxException, IOException 
+	{
+		String me = clazz.getName().replace(".", "/") + ".class";
+		URL dirURL = clazz.getClassLoader().getResource(me);
+		
+		if (!dirURL.getProtocol().equals("jar")) throw new AssertionError("Expected URL with jar protocol. " +
+				"Can not list files for " + dirURL);
+
+		/* A JAR path */
+		String protocol = dirURL.getPath().substring(0,	dirURL.getPath().indexOf(":"));
+		if (!protocol.equals("file")) throw new AssertionError("Expected URL with file sub-protocol. " + dirURL); 
+		
+		Set<String> result = new HashSet<String>(); // use set to avoid duplicates.
+
+		String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); 
+		// strip out only the JAR file
+		
+		JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+		Enumeration<JarEntry> entries = jar.entries(); // gives ALL
+		// entries in jar
+		while (entries.hasMoreElements()) 
+		{
+			String entry = entries.nextElement().getName();		
+			int checkSubdir = entry.indexOf("/");
+			if (checkSubdir >= 0) 
+			{
+				// if it is a subdirectory, we just return the directory name
+				entry = entry.substring(0, checkSubdir);
+			}
+			result.add(entry);
+		}
+		if (result.size() == 0)
+		{
+			throw new AssertionError("No files found for URL " + dirURL);
+		}
+		return result;
+	}
+
+	private void startBundles(BundleContext context, Map<Bundle, String> bundles) throws BundleException 
+	{
+    	Set<String> mustActivateLeft = new HashSet<String>();
+    	mustActivateLeft.addAll(mustActivate);
+    	
+		for (Map.Entry<Bundle, String> e : bundles.entrySet()) 
+    	{
+			Bundle b = e.getKey();
     		try {
     			b.start();
-    			success = true;
-    			Logger.log.info("Bundle " + b.getSymbolicName() + " started");
+    			
+    			if (mustActivateLeft.contains (e.getValue()))
+    			{
+    				mustActivateLeft.remove(e.getValue());
+    			}    				
+    			System.out.println("Bundle " + b.getSymbolicName() + " started");
     		}
-    		finally {
-    			if (!success) {
-    				System.out.println("Core Bundle " + b.getBundleId() + " failed to start.");
+    		catch (Exception ex)
+    		{ 
+    			System.out.println("Core Bundle " + b.getBundleId() + " failed to start.");
+    			if (mustActivateLeft.contains (e.getValue()))
+    			{
+    				reportException ("Fatal: could not start bundle " + e.getValue(), ex);
+    				System.exit (1);
+    			}
+    			else
+    			{
+    				/* Non-fatal error */
+    				ex.printStackTrace();
     			}
     		}
     	}
+		if (mustActivateLeft.size() > 0)
+		{
+			StringBuilder missing = new StringBuilder();
+			for (String s : mustActivateLeft) missing.append (" " + s);
+			JOptionPane.showMessageDialog(null, "Fatal: some essential bundles were missing: " + missing);
+			System.exit (1);
+		}
     }
 	
 	public static final String ARG_PROPERTY_PGEX = "pathvisio.pgex";
@@ -181,7 +287,8 @@ public class PathVisioMain {
 		pluginLocations = new ArrayList<String>();
 		for(int i = 0; i < args.length; i++) {
 			if ("-v".equals(args[i])) {
-				System.out.println("PathVisio v" + Engine.getVersion() + ", build " + Engine.getRevision());
+				//TODO: getVersion() / getRevision()
+//				System.out.println("PathVisio v" + Engine.getVersion() + ", build " + Engine.getRevision());
 				System.exit(0);
 			} else if ("-h".equals(args[i])) {
 				printHelp();

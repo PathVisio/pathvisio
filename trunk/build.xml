@@ -57,6 +57,7 @@
 		<delete dir="${webstart.dir}/www"/>
 		<delete dir="${build.wpi.bin}"/>
 		<delete dir="${build.wpi.applet}"/>
+		<delete dir="build/exe"/>
 		<iterate target="clean"/>
 	</target>
 
@@ -108,9 +109,42 @@
 		<subant target="jar" buildpath="modules/org.pathvisio.statistics/build.xml"/>
 	</target>
 
-	<target name="all" depends="plugins.jar,launcher.jar" description="Compile all versions of this project" />
+	<target name="exe" depends="launcher.jar,plugins.jar">
+		<mkdir dir="build/exe"/>
+		<copy toDir="build/exe">
+			<fileset dir="modules">
+				<include name="org.pathvisio.core.jar"/>
+				<include name="org.pathvisio.gui.jar"/>
+				<include name="org.pathvisio.desktop.jar"/>
+				<include name="org.pathvisio.statistics.jar"/>
+				<include name="org.pathvisio.visualization.jar"/>
+				<include name="org.pathvisio.gexplugin.jar"/>
+			</fileset>
+			<fileset dir="lib">
+				<include name="org.apache*.jar"/>
+				<include name="org.w3c*.jar"/>
+				<!-- <include name="org.eclipse.osgi.jar"/> -->
+				<include name="derby.jar"/>
+				<include name="org.bridgedb*.jar"/>
+				<include name="org.pathvisio.*.jar"/>
+				<include name="javax.xml*.jar"/>
+				<include name="commons-math*.jar"/>
+				<include name="com.springsource*.jar"/>
+			</fileset>
+		</copy>
+		<unjar src="modules/org.pathvisio.launcher.jar" dest="build/exe"/>
+		<!-- <unjar src="lib/org.eclipse.osgi.jar" dest="build/exe"/> -->
+		<unjar src="lib/felix.jar" dest="build/exe"/>
+		<jar file="pathvisio.jar" basedir="build/exe">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.launcher.PathVisioMain"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="all" depends="exe" description="Compile all versions of this project" />
 
-	<target name="prepare-webstart" depends="plugins.jar" description="prepares webstart">
+	<target name="prepare-webstart" depends="exe" description="prepares webstart">
 		<fail message="You must specify a keystore password for opening visioKeyStore: ant -Dkeystore.password=***** [ant target]">
 			<condition>
 				<not> <isset property="keystore.password"/> </not>
@@ -120,23 +154,10 @@
 		<!-- Update latest version file -->
 		<echo file="${webstart.dir}/www/latestversion">${subversion_revision}</echo>
 		<!-- Copy files needed for webstart !-->
-		<copy toDir="${webstart.dir}/www">
-			<fileset dir="modules">
-				<include name="org.pathvisio.core.jar"/>
-				<include name="org.pathvisio.gui.jar"/>
-				<include name="org.pathvisio.desktop.jar"/>
-				<include name="org.pathvisio.launcher.jar"/>
-				<include name="org.pathvisio.statistics.jar"/>
-				<include name="org.pathvisio.visualization.jar"/>
-				<include name="org.pathvisio.gex.jar"/>
-			</fileset>
-		</copy>
 		<signjar jar="pathvisio.jar"
 			alias="PV" storepass="${keystore.password}" keystore="lib/visioKeyStore"/>
-		<signjar alias="PV"
-			storepass="${keystore.password}" keystore="lib/visioKeyStore">
-			<fileset dir="${webstart.dir}/www" includes="**/*.jar"/>
-		</signjar>
+
+		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
 	</target>
 

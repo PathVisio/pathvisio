@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -17,6 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
 
 import javax.swing.JOptionPane;
 
@@ -196,26 +199,49 @@ public class PathVisioMain {
 
 		/* A JAR path */
 		String protocol = dirURL.getPath().substring(0,	dirURL.getPath().indexOf(":"));
-		if (!protocol.equals("file")) throw new AssertionError("Expected URL with file sub-protocol. " + dirURL); 
 		
-		Set<String> result = new HashSet<String>(); // use set to avoid duplicates.
+		Set<String> result = new HashSet<String>(); // avoid duplicates in
+		// case it is a
+		// subdirectory
 
-		String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); 
-		// strip out only the JAR file
-		
-		JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-		Enumeration<JarEntry> entries = jar.entries(); // gives ALL
-		// entries in jar
-		while (entries.hasMoreElements()) 
-		{
-			String entry = entries.nextElement().getName();		
-			int checkSubdir = entry.indexOf("/");
-			if (checkSubdir >= 0) 
-			{
-				// if it is a subdirectory, we just return the directory name
-				entry = entry.substring(0, checkSubdir);
+		/* If we run locally, we'll get the file protocol */
+		if ("file".equals(protocol)) {
+			String jarPath = dirURL.getPath().substring(5,
+					dirURL.getPath().indexOf("!")); // strip out only the
+													// JAR
+													// file
+			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+			Enumeration<JarEntry> entries = jar.entries(); // gives ALL
+															// entries
+															// in jar
+			while (entries.hasMoreElements()) {
+				String entry = entries.nextElement().getName();
+				int checkSubdir = entry.indexOf("/");
+				if (checkSubdir >= 0) {
+					// if it is a subdirectory, we just return the
+					// directory
+					// name
+					entry = entry.substring(0, checkSubdir);
+				}
+				result.add(entry);
 			}
-			result.add(entry);
+		}
+		/* If we're running webstart, we'll get http/https */ 
+		if ("http".equals(protocol) || "https".equals(protocol)) {
+			final ProtectionDomain domain = PathVisioMain.class.getProtectionDomain();
+			final CodeSource source = domain.getCodeSource();
+			URL url = source.getLocation();
+			if (url.toExternalForm().endsWith(".jar")) {
+				try {
+					JarInputStream jarStream = new JarInputStream(url.openStream(), false);
+					for (String entry : jarStream.getManifest().getEntries().keySet()) {
+						result.add(entry);
+					}
+				}
+				catch (IOException e) {
+					System.err.println ("error reading manifest" + e.getMessage());
+				}
+			}
 		}
 		if (result.size() == 0)
 		{

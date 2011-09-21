@@ -415,11 +415,9 @@
 
 	<target name="checkstyle">
 		<checkstyle config="tools/dailybuild/pv_checks.xml">
-			<fileset dir="src">
-				<include name="core/**/*.java"/>
-				<include name="gui/**/*.java"/>
-				<include name="swing/**/*.java"/>
-				<include name="wikipathways/**/*.java"/>
+			<fileset dir="modules">
+				<include name="**/*.java"/>
+				<exclude name="org.wikipathways.client/gen-src/**/*.java"/>
 			</fileset>
 			<formatter toFile="${checkstyle.output.file}"/>
 		</checkstyle>

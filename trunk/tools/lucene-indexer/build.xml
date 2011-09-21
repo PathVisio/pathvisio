@@ -14,12 +14,11 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${pathvisio.dir}">
-			<include name="wikipathways-client.jar" />
 			<include name="lib/axis-1_4/lib/*.jar" />
-			<include name="pathvisio.jar"/>
-			<include name="lib/resources.jar"/>
-			<include name="wikipathways.jar"/>
-			<include name="lib/jdom.jar"/>
+			<include name="modules/org.pathvisio.core.jar"/>
+			<include name="modules/wikipathways-client.jar"/>
+			<include name="modules/org.wikipathways.applet.jar"/>
+			<include name="lib/*jdom*.jar"/>
 			<include name="lib/org.bridgedb.bio.jar"/>
 			<include name="lib/org.bridgedb.jar"/>
 			<include name="lib/org.bridgedb.rdb.jar"/>

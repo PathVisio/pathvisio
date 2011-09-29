@@ -79,16 +79,6 @@
 	<target name="dist" depends="jar" description="Copies jar and external libraries to dist path">
 		<copy file="${jar.name}" toDir="${dist.dir}"/>
 		<copy file="${service.jar.name}" toDir="${dist.dir}"/>
-		<copy file="${pathvisio.dir}/lib/jdom.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/derby.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/resources.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/pathvisio.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/wikipathways.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/wikipathways-client.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/org.bridgedb.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/org.bridgedb.bio.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/org.bridgedb.rdb.jar" toDir="${dist.dir}/lib"/>
-		<copy file="${pathvisio.dir}/lib/org.bridgedb.rdb.construct.jar" toDir="${dist.dir}/lib"/>
 		<copy file="bridge.config" toDir="${dist.dir}"/>
 		<copy file="indexer.config" toDir="${dist.dir}"/>
 		<copy toDir="${dist.dir}/lib">
@@ -96,10 +86,11 @@
 				<include name="**/*.jar"/>
 			</fileset>
 		</copy>
-		<copy toDir="${dist.dir}/lib">
-			<fileset dir="${pathvisio.dir}/lib/axis-1_4/lib/">
-				<include name="**/*.jar"/>
-			</fileset>
+		<pathconvert property="class.path.dist" refid="class.path" pathsep=":"/>
+		<copy todir="${dist.dir}/lib" flatten="true">
+			<path>
+    <pathelement path="${class.path.dist}"/>
+  </path>
 		</copy>
 	</target>
 </project>

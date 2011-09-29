@@ -54,6 +54,7 @@ import org.pathvisio.core.model.PathwayElement.MPoint;
 import org.pathvisio.core.view.LinAlg;
 import org.pathvisio.core.view.MIMShapes;
 import org.pathvisio.core.view.LinAlg.Point;
+import org.pathvisio.kegg.KeggService.SymbolInfo;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
@@ -75,7 +76,7 @@ public class KeggFormat {
 		MIMShapes.registerShapes();
 	}
 
-	private static final String COMMENT_SOURCE = "KeggConverter";
+	static final String COMMENT_SOURCE = "KeggConverter";
 	private static final String KEGG_ID = "KeggId";
 	private static final String CONVERSION_DATE = "ConversionDate";
 
@@ -89,6 +90,9 @@ public class KeggFormat {
 	private Pathway pathway; //Main pathway
 	private Pathway map; //Used only to improve species specific pathway
 
+	private int prefSymbolIndex = 0;
+	private boolean symbolByGene = true;
+	
 	private org.pathvisio.core.model.Pathway gpmlPathway;
 
 	private Map<String, PathwayElement> id2gpml = new HashMap<String, PathwayElement>();
@@ -120,6 +124,14 @@ public class KeggFormat {
 		this.spacing = spacing;
 	}
 
+	public void setPrefSymbolIndex(int prefSymbolIndex) {
+		this.prefSymbolIndex = prefSymbolIndex;
+	}
+	
+	public void setSymbolByGene(boolean symbolByGene) {
+		this.symbolByGene = symbolByGene;
+	}
+	
 	public void setUseWebservice(boolean use) throws ServiceException {
 		if(use) {
 			keggService = KeggService.getInstance();
@@ -603,19 +615,20 @@ public class KeggFormat {
 		if (graphics.size() == 1)
 			{
 			Graphics cg = graphics.get(0);
-			String wlabel = null;
 			
+			SymbolInfo sinfo = null;
 			if(isUseWebservice()) { //fetch the real name from the webservice
-				wlabel = keggService.getKeggSymbol("cpd:"+cg.getName());
+				sinfo = keggService.getKeggSymbol("cpd:"+cg.getName());
 			}
 				
 			PathwayElement pwElm = createDataNode(
 				cg,
 				DataNodeType.METABOLITE,
-				wlabel,
+				sinfo.getPreferred(prefSymbolIndex),
 				name.replace("cpd:", ""),
 				BioDataSource.KEGG_COMPOUND);
 
+			sinfo.addToComments(pwElm);
 			gpmlPathway.add(pwElm);
 			pwElm.setGeneratedGraphId();
 			mapConvertedId(compound.getId(), pwElm);
@@ -712,15 +725,18 @@ public class KeggFormat {
 			for(int i = 0; i < ids.length; i++) {
 				String id = ids[i];
 				String[] genes = getGenes(id, species, Type.fromString(entry.getType()));
-
 				
 				for(String gene : genes) {
-					String geneName = dg.getName();
+					SymbolInfo sinfo = null;
+					
 					if(isUseWebservice()) { //fetch the real name from the webservice
-						geneName = keggService.getKeggSymbol(
-								Util.getKeggOrganism(species) + ":" + gene
-						);
+						String query = symbolByGene ? gene : id;
+						if(!query.startsWith(Util.getKeggOrganism(species) + ":")) {
+							query = Util.getKeggOrganism(species) + ":" + query;
+						}
+						sinfo = keggService.getKeggSymbol(query);
 					}
+					String geneName = sinfo == null ? dg.getName() : sinfo.getPreferred(prefSymbolIndex);
 					geneName = processLabel(geneName);
 
 					//Create gpml element
@@ -733,6 +749,8 @@ public class KeggFormat {
 					);
 
 					//Add comments regarding the source on KEGG
+					sinfo.addToComments(pwElm);
+					
 					String e_id = entry.getId();
 					String e_type = entry.getType();
 					String e_name = entry.getName();

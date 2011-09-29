@@ -16,7 +16,9 @@
 package org.pathvisio.kegg;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
@@ -26,7 +28,9 @@ import keggapi.KEGGLocator;
 import keggapi.KEGGPortType;
 import keggapi.LinkDBRelation;
 
+import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
+import org.pathvisio.core.model.PathwayElement;
 
 public class KeggService {
 	private static KEGGLocator keggLocator = new KEGGLocator();
@@ -95,15 +99,43 @@ public class KeggService {
 		return genes.toArray(new String[genes.size()]);
 	}
 
-	String getKeggSymbol(String geneId) throws RemoteException, ConverterException {
+	SymbolInfo getKeggSymbol(String geneId) throws RemoteException, ConverterException {
+		Logger.log.trace("Querying btit:" + geneId);
 		String result = keggPortType.btit(geneId);
+		
+		SymbolInfo parsed = new SymbolInfo();
+		
 		result = result.replaceAll(geneId + " ", ""); //Results starts with query + space, remove
 		String[] data = result.split("; "); //Subsequent results are separated by '; '
 		if(data.length > 1) {
-			result = data[0].substring(0, data[0].length()); //Pick the first synonym
+			for(String s : data) {
+				s = s.replaceAll("^\\[", "");
+				s = s.replaceAll("\\]$","");
+				if(s.contains("[EC:")) {
+					parsed.enzymeCode = s.substring(s.indexOf("[EC:") + 4, s.length());
+				} else {
+					parsed.symbols.add(s);
+				}
+			}
 		} else {
-			result = geneId;
+			parsed.symbols.add(geneId);
 		}
-		return result;
+		return parsed;
+	}
+	
+	static class SymbolInfo {
+		String enzymeCode;
+		List<String> symbols = new ArrayList<String>();
+		
+		String getPreferred(int index) {
+			if(symbols.size() == 0) return "";
+			if(symbols.size() <= index) return symbols.get(0);
+			return symbols.get(index);
+		}
+		
+		void addToComments(PathwayElement pwe) {
+			if(enzymeCode != null) pwe.addComment("EC: " + enzymeCode, KeggFormat.COMMENT_SOURCE);
+			for(String s : symbols) pwe.addComment("Symbol: " + s, KeggFormat.COMMENT_SOURCE);
+		}
 	}
 }

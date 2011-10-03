@@ -236,6 +236,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				pathwayScrollPane, sidebarTabbedPane);
+		
+		// set a small minimum size, to make sure we can keep resizing the side panel 
+		sidebarTabbedPane.setMinimumSize(new Dimension(50,50));
+		
 		splitPane.setResizeWeight(1);
 		splitPane.setOneTouchExpandable(true);
 		add(splitPane, BorderLayout.CENTER);

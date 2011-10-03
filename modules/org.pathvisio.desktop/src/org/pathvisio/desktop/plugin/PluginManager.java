@@ -69,6 +69,7 @@ public class PluginManager {
 						} catch (Exception ex) {
 							pi.error = ex;
 						}
+						info.add(pi);
 						plugins.add(pi);	
 					}
 				}

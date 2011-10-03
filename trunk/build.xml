@@ -347,55 +347,12 @@
 		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
 		<zip destfile="${release.dir}/${binbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
-				<include name="lib/javax.xml_1.3.4.v200902170245.jar"/>
-				<include name="lib/commons-codec-1.5.jar"/>
-				<include name="lib/commons-math-2.0.jar"/>
-				<include name="lib/com.springsource.org.apache.commons.logging-1.1.1.jar"/>
-				<include name="lib/com.springsource.org.jdom-1.1.0.jar"/>
-				<include name="lib/derby.jar"/>
-				<include name="lib/org.apache.batik.bridge_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.css_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.dom_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.dom.svg_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.ext.awt_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.extension_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.parser_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.svggen_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.transcoder_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.util_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.util.gui_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.batik.xml_1.7.0.v200903091627.jar"/>
-				<include name="lib/org.apache.xalan_2.7.1.v200905122109.jar"/>
-				<include name="lib/org.apache.xerces_2.9.0.v200909240008.jar"/>
-				<include name="lib/org.apache.xml.resolver_1.2.0.v200902170519.jar"/>
-				<include name="lib/org.apache.xml.serializer_2.7.1.v200902170519.jar"/>
-				<include name="lib/org.bridgedb.bio.jar"/>
-				<include name="lib/org.bridgedb.gui.jar"/>
-				<include name="lib/org.bridgedb.jar"/>
-				<include name="lib/org.bridgedb.rdb.construct.jar"/>
-				<include name="lib/org.bridgedb.rdb.jar"/>
-				<include name="lib/org.bridgedb.webservice.bridgerest.jar"/>
-				<include name="lib/org.eclipse.equinox.launcher.jar"/>
-				<include name="lib/org.eclipse.osgi.jar"/>
-				<include name="lib/org.pathvisio.browserlauncher.jar"/>
-				<include name="lib/org.pathvisio.jgoodies.forms.jar"/>
-				<include name="lib/org.pathvisio.pdftranscoder.jar"/>
-				<include name="lib/org.pathvisio.swingworker.jar"/>
-				<include name="lib/org.pathvisio.ws.commons.util.jar"/>
-				<include name="lib/org.pathvisio.xerces.jar"/>
-				<include name="lib/org.pathvisio.xmlrpc.client.jar"/>
-				<include name="lib/org.pathvisio.xmlrpc.common.jar"/>
-				<include name="lib/org.w3c.css.sac_1.3.1.v200903091627.jar"/>
-				<include name="lib/org.w3c.dom.events_3.0.0.draft20060413_v200905140418.jar"/>
-				<include name="lib/org.w3c.dom.smil_1.0.1.v200903091627.jar"/>
-				<include name="lib/org.w3c.dom.svg_1.1.0.v200806040011.jar"/>
-				<include name="GPML*.xsd"/>
+				<include name="pathvisio.jar"/>
 				<include name="LICENSE-2.0.txt"/>
 				<include name="NOTICE.txt"/>
 				<include name="readme.txt"/>
 				<include name="pathvisio.sh"/>
 				<include name="pathvisio.bat"/>
-				<include name="modules/*.jar"/>
 			</zipfileset>
 		</zip>
 		<tar destfile="${release.dir}/${binbase}.tar.gz" compression="gzip">

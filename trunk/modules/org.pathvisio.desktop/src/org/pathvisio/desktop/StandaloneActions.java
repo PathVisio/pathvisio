@@ -16,8 +16,6 @@
 //
 package org.pathvisio.desktop;
 
-import edu.stanford.ejalbert.BrowserLauncher;
-
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -30,9 +28,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.core.Globals;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.desktop.dialog.PluginManagerDialog;
+import org.pathvisio.desktop.plugin.PluginDialogSwitch;
 import org.pathvisio.gui.SwingEngine;
+
+import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * collection of menu / toolbar Actions that are only needed
@@ -117,10 +119,15 @@ public class StandaloneActions
 
 		public void actionPerformed(ActionEvent e)
 		{
-			PluginManagerDialog dlg = new PluginManagerDialog(pvDesktop);
-			dlg.createAndShowGUI();
-//			PluginManagerDlg dlg = new PluginManagerDlg (pvDesktop);
-//			dlg.createAndShowGUI();
+			if(PreferenceManager.getCurrent().getBoolean(PluginDialogSwitch.PLUGIN_DIALOG_SWITCH)) {
+				// show new plugin dialog
+				PluginManagerDialog dlg = new PluginManagerDialog(pvDesktop);
+				dlg.createAndShowGUI();
+			} else {
+				// show old plugin dialog (default)
+				PluginManagerDlg dlg = new PluginManagerDlg (pvDesktop);
+				dlg.createAndShowGUI();
+			}
 		}
 	}
 

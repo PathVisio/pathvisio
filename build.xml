@@ -19,6 +19,8 @@
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="checkstyle.output.file" value="warnings.txt"/>
 
+	<property name="webstart.base.url" value="http://www.pathvisio.org/webstart"/>
+	
    <macrodef name="iterate">
 		<attribute name="target"/>
 		<sequential>
@@ -158,6 +160,9 @@
 
 		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
+		
+		<!-- modify the base url in the jnlp-->
+		<replace file="webstart/www/pathvisio.jnlp" token="#BASEURL#" value="${webstart.base.url}"/>
 	</target>
 
 	<path id="applet.libs">

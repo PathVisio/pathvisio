@@ -177,6 +177,9 @@
 		<fileset dir="lib/axis-1_4/lib">
 			<include name="*.jar"/>
 		</fileset>
+		<fileset dir="lib/apache">
+			<include name="*.jar"/>
+		</fileset>
 		<fileset dir="modules">
 			<include name="org.pathvisio.core.jar"/>
 			<include name="org.pathvisio.gui.jar"/>

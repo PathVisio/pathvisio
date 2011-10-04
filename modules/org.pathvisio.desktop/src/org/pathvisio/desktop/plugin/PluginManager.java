@@ -22,6 +22,7 @@ import java.util.List;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.desktop.PvDesktop;
 
 /**
@@ -44,7 +45,10 @@ public class PluginManager {
 		startedPlugins = new ArrayList<Plugin>();
 		plugins = new ArrayList<PluginInfo>();
 		repositoryManager = new RepositoryManager(pvDesktop);
-		repositoryManager.loadRepositories();
+		
+		if(PreferenceManager.getCurrent().getBoolean(PluginDialogSwitch.PLUGIN_DIALOG_SWITCH)) {
+			repositoryManager.loadRepositories();
+		}
 		
 		startPlugins();
 	}

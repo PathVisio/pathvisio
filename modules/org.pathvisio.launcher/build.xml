@@ -4,6 +4,13 @@
 	<import file="../../build-common.xml" />
 
 	<property name="jar.name" value="org.pathvisio.launcher.jar"/>
+	
+	<target name="prepare" depends="svnversion">
+		<echo file="resources/version.props">
+pathvisio.revision = ${subversion_revision}
+pathvisio.version = ${pathvisio.version}
+		</echo>
+	</target>
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">

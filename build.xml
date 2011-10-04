@@ -6,7 +6,6 @@
 	<property name="ant.build.javac.source" value="1.5"/>
 
 	<property name="src.dir" value="modules"/>
-	<property name="pathvisio.version" value="3.0.Beta"/>
 	<property name="debug.mode" value="true"/>
 
     <property name="apidoc.dir" value="apidoc"/>

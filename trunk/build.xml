@@ -174,6 +174,9 @@
 			<include name="org.pathvisio.ws.commons.util.jar"/>
 			<include name="com.springsource.org.jdom-1.1.0.jar"/>
 		</fileset>
+		<fileset dir="lib/axis-1_4/lib">
+			<include name="*.jar"/>
+		</fileset>
 		<fileset dir="modules">
 			<include name="org.pathvisio.core.jar"/>
 			<include name="org.pathvisio.gui.jar"/>

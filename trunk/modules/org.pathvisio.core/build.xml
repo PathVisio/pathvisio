@@ -3,15 +3,7 @@
 
 	<import file="../../build-common.xml" />
 
-	<property name="pathvisio.version" value="2.0.11"/>
-	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="jar.name" value="org.pathvisio.core.jar"/>
-	
-	<target name="svnversion">
-		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
-			<arg line="-n ."/>
-		</exec>
-	</target>
 	
 	<target name="prepare" depends="svnversion">
 		<echo file="src/org/pathvisio/core/Revision.java">

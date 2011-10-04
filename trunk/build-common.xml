@@ -4,7 +4,8 @@
 	<property name="ant.build.javac.target" value="1.5"/>
 	<property name="ant.build.javac.source" value="1.5"/>
 	<property name="debug.mode" value="true"/>
-
+	
+	<property name="pathvisio.version" value="3.0.Beta"/>
 	<property name="bundle.dest" value=".."/>
 
 	<target name="prepare-common">
@@ -68,6 +69,13 @@
 				</fileset>
 			</batchtest>
 		</junit>
+	</target>
+
+	<!-- optional, only used by some modules -->
+	<target name="svnversion">
+		<exec executable="svnversion" outputproperty="subversion_revision" failifexecutionfails="false">
+			<arg line="-n ."/>
+		</exec>
 	</target>
 
 </project>

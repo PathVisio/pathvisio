@@ -18,6 +18,7 @@ package org.pathvisio.launcher;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -328,9 +329,20 @@ public class PathVisioMain {
 	public static void parseArguments(String [] args) {
 		pluginLocations = new ArrayList<String>();
 		for(int i = 0; i < args.length; i++) {
-			if ("-v".equals(args[i])) {
-				//TODO: getVersion() / getRevision()
-//				System.out.println("PathVisio v" + Engine.getVersion() + ", build " + Engine.getRevision());
+			if ("-v".equals(args[i])) 
+			{
+				// read version.props
+				Properties props = new Properties();
+				try
+				{
+					InputStream is = PathVisioMain.class.getClassLoader().getResourceAsStream ("version.props");
+					if (is != null)	props.load(is);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				System.out.println("PathVisio v" + props.getProperty("pathvisio.version") + ", build " + props.getProperty("pathvisio.revision"));
 				System.exit(0);
 			} else if ("-h".equals(args[i])) {
 				printHelp();

@@ -6,6 +6,7 @@
 	<property name="jar.name" value="org.pathvisio.launcher.jar"/>
 	
 	<target name="prepare" depends="svnversion">
+		<mkdir dir="resources"/>
 		<echo file="resources/version.props">
 pathvisio.revision = ${subversion_revision}
 pathvisio.version = ${pathvisio.version}

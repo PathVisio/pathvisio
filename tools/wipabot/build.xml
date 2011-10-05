@@ -11,7 +11,7 @@
 			<include name="**/*.jar"/>
 		</fileset>
 
-		<fileset dir="${pathvisio.dir}">
+		<fileset dir="${pathvisio.dir}/modules">
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="lib">

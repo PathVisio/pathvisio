@@ -63,8 +63,8 @@ public class AttributeMapperPanel extends JPanel {
 		List<String> propNames = new ArrayList<String>();
 		for(StaticProperty prop : StaticProperty.values()) {
 			if(!mapper.isProtected(prop)) {
-				desc2prop.put(prop.getDescription(), prop);
-				propNames.add(prop.getDescription());
+				desc2prop.put(prop.getName(), prop);
+				propNames.add(prop.getName());
 			}
 		}
 		propNames.add(NONE);

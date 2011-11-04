@@ -20,6 +20,7 @@ import cytoscape.CyEdge;
 import cytoscape.CyNetwork;
 import cytoscape.CyNode;
 import cytoscape.Cytoscape;
+import cytoscape.CytoscapeInit;
 import cytoscape.data.CyAttributes;
 import cytoscape.data.ImportHandler;
 import cytoscape.data.attr.MultiHashMap;
@@ -53,7 +54,11 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -87,6 +92,7 @@ import org.pathvisio.cytoscape.actions.AttributeMapperAction;
 import org.pathvisio.cytoscape.actions.CopyAction;
 import org.pathvisio.cytoscape.actions.ExportAction;
 import org.pathvisio.cytoscape.actions.PasteAction;
+import org.pathvisio.cytoscape.actions.SettingsAction;
 import org.pathvisio.cytoscape.actions.ToggleAnnotationAction;
 import org.pathvisio.cytoscape.visualmapping.GpmlVisualStyle;
 import org.pathvisio.cytoscape.wikipathways.CyWikiPathwaysClient;
@@ -100,6 +106,8 @@ import phoebe.PhoebeCanvasDropListener;
 public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListener, PropertyChangeListener {
 	GpmlHandler gpmlHandler;
 	CyWikiPathwaysClient wpclient;
+	
+	private boolean loadAsNetwork = false;
 
 	private static GpmlPlugin instance;
 
@@ -119,6 +127,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 	 * private because it's need by the Cytoscape plugin mechanism.
 	 */
 	public GpmlPlugin() {
+		restoreInitState();
 		if(instance != null) {
 			throw new RuntimeException("GpmlPlugin is already instantiated! Use static" +
 					" method getInstance instead!");
@@ -147,6 +156,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		JMenu pluginMenu = menu.getOperationsMenu();
 		JMenu gpmlMenu = new JMenu("Gpml plugin");
 		gpmlMenu.add(new AttributeMapperAction(this));
+		gpmlMenu.add(new SettingsAction(this));
 		pluginMenu.add(gpmlMenu);
 
 		wpclient = new CyWikiPathwaysClient(this);
@@ -170,7 +180,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		}
 
 		public GraphReader getReader(String fileName) {
-			return new GpmlReader(fileName, gpmlHandler);
+			return new GpmlReader(fileName, gpmlHandler, loadAsNetwork);
 		}
 
 		public boolean accept(URL url, String contentType) {
@@ -178,7 +188,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 		}
 
 		public GraphReader getReader(URL url, URLConnection conn) {
-			return new GpmlReader(conn, url, gpmlHandler);
+			return new GpmlReader(conn, url, gpmlHandler, loadAsNetwork);
 		}
 	}
 
@@ -203,7 +213,7 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 	 */
 	public CyNetwork load(Pathway p, boolean newNetwork) {
 		try {
-			GpmlConverter converter = new GpmlConverter(gpmlHandler, p);
+			GpmlConverter converter = new GpmlConverter(gpmlHandler, p, loadAsNetwork);
 
 			//Get the nodes/edges indexes
 			int[] nodes = converter.getNodeIndicesArray();
@@ -587,5 +597,52 @@ public class GpmlPlugin extends CytoscapePlugin implements PhoebeCanvasDropListe
 			((InnerCanvas)view.getCanvas()).addPhoebeCanvasDropListener(this);
 		}
 		super.propertyChange(e);
+	}
+
+	/**
+	 * Save global state to "tutorial21.props"
+	 */
+	public void onCytoscapeExit() {
+		File propFile = CytoscapeInit.getConfigFile("gpml.props");
+
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(propFile));
+			writer.write("LoadAsNetwork\t" + loadAsNetwork);
+			writer.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	// restore state
+	public void restoreInitState() {
+		File global_prop_file = CytoscapeInit.getConfigFile("gpml.props");
+
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(global_prop_file));
+
+			String firstLine = in.readLine();
+			if(firstLine != null && firstLine.contains("LoadAsNetwork")) {
+				String [] str = firstLine.split("\t");
+				if(str[1] != null) {
+					if(str[1].equals("true")) {
+						setLoadAsNetwork(true);
+					} else {
+						setLoadAsNetwork(false);
+					}
+				}
+			}
+			in.close();
+		} catch (Exception ex) {
+			setLoadAsNetwork(false);
+		}
+	}
+	
+	public boolean isLoadAsNetwork() {
+		return loadAsNetwork;
+	}
+
+	public void setLoadAsNetwork(boolean loadAsNetwork) {
+		this.loadAsNetwork = loadAsNetwork;
 	}
 }

@@ -26,6 +26,7 @@ import org.pathvisio.core.model.Pathway;
 import cytoscape.CyNetwork;
 import cytoscape.Cytoscape;
 import cytoscape.data.readers.AbstractGraphReader;
+import cytoscape.view.CyNetworkView;
 
 /**
  * An AbstractGraphReader that uses Pathway.readFromXml to read GPML
@@ -40,27 +41,34 @@ public class GpmlReader extends AbstractGraphReader {
 	GpmlHandler gpmlHandler;
 
 	URLConnection urlCon;
-
-	public GpmlReader(String fileName, GpmlHandler gpmlHandler) {
+	
+	private boolean loadAsNetwork = false;
+	
+	public GpmlReader(String fileName, GpmlHandler gpmlHandler, boolean loadAsNetwork) {
 		super(fileName);
 		this.gpmlHandler = gpmlHandler;
+		this.loadAsNetwork = loadAsNetwork;
 	}
 
-	public GpmlReader(URLConnection con, URL url, GpmlHandler gpmlHandler) {
+	public GpmlReader(URLConnection con, URL url, GpmlHandler gpmlHandler, boolean loadAsNetwork) {
 		super(url.toString());
 		urlCon = con;
 		this.gpmlHandler = gpmlHandler;
+		this.loadAsNetwork = loadAsNetwork;
 	}
 
 	public void read() throws IOException {
+		
 		try {
 			Pathway pathway = new Pathway();
 			if(urlCon != null) {
 				pathway.readFromXml(urlCon.getInputStream(), true);
 			} else {
+				System.out.println("read pathway from file " + fileName);
 				pathway.readFromXml(new File(fileName), true);
 			}
-			converter = new GpmlConverter(gpmlHandler, pathway);
+			
+			converter = new GpmlConverter(gpmlHandler, pathway, loadAsNetwork);
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			throw new IOException(ex.getMessage());
@@ -71,9 +79,10 @@ public class GpmlReader extends AbstractGraphReader {
 	 * Calling layout after background/foreground canvas is ready to receive
 	 * annotations
 	 */
-	public void doPostProcessing(CyNetwork network)
-	{
-		converter.layout(Cytoscape.getCurrentNetworkView());
+	public void doPostProcessing(CyNetwork network) {
+		CyNetworkView view = Cytoscape.getNetworkView(network.getIdentifier());
+		converter.layout(view);
+		view.redrawGraph(true, false);
 	}
 
 	public int[] getEdgeIndicesArray() {
@@ -86,6 +95,10 @@ public class GpmlReader extends AbstractGraphReader {
 
 	public String getNetworkName() {
 		String pwName = converter.getPathway().getMappInfo().getMapInfoName();
-		return pwName == null ? super.getNetworkName() : pwName;
+		if(pwName == null) pwName = super.getNetworkName();
+		if(loadAsNetwork) {
+			pwName = pwName + "-network";
+		}
+		return pwName;
 	}
 }

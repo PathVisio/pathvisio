@@ -87,6 +87,16 @@ public class GpmlNode extends GpmlNetworkElement<CyNode> {
 		Annotation a = annotations.get(view);
 		if(a != null) {
 			a.setVisible(visible);
+			DGraphView dview = (DGraphView) view;
+			DGraphView.Canvas canvas = DGraphView.Canvas.BACKGROUND_CANVAS;
+			DingCanvas aLayer = dview.getCanvas(canvas);
+			
+			a.setVisible(visible);
+			if(visible) {
+				aLayer.add(a);
+			} else {
+				aLayer.remove(a);
+			}
 		}
 	}
 

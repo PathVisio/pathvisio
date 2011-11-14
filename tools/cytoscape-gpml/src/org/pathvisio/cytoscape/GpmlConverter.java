@@ -347,6 +347,7 @@ public class GpmlConverter {
 				//Create the cytoscape parts of the group
 				for(int i = 0; i < groupElements.length; i++) {
 					PathwayElement peI = groupElements[i];
+					if(peI.getObjectType() == ObjectType.LINE) continue; //Skip grouped lines
 					GpmlNetworkElement neI = gpmlHandler.getNetworkElement(getNodeId(peI));
 					//Only add links to nodes, not to annotations
 					if(neI instanceof GpmlNode) {

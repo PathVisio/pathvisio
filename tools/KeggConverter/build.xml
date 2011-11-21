@@ -63,16 +63,9 @@
 	</target>
 
 	<target name="jar" depends="compile" description="Generates executable jar file">
-		<pathconvert refid="class.path" property="class.path.manifest" pathsep=" ">
-			<mapper>
-				<chainedmapper>
-					<!-- remove absolute path -->
-					<flattenmapper />
-					<!-- add lib/ prefix -->
-					<globmapper from="*" to="lib/*" />
-				</chainedmapper>
-			</mapper>
-		</pathconvert>
+		<manifestclasspath property="class.path.manifest" jarfile="${jar.name}">
+			<classpath refid="class.path"/>
+		</manifestclasspath>
 		<jar jarfile="${jar.name}">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.kegg.Converter"/>

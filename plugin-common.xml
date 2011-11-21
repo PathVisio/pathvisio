@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<project name="Plugins-common" basedir=".">
+
+	<property name="ant.build.javac.target" value="1.5"/>
+	<property name="ant.build.javac.source" value="1.5"/>
+	<property name="debug.mode" value="true"/>
+
+    <property name="jar.name" value="dist/${base.name}.jar"/>
+	<property environment="env"/>
+    <property name="install.dir" value="${env.HOME}/.PathVisio/plugins/"/>
+  
+	<target name="prepare-common">
+		<mkdir dir="build"/>
+		<mkdir dir="dist"/>
+	</target>
+	
+	<target name="prepare">
+	</target>
+	
+	<target name="clean">
+		<delete dir="build"/>
+		<delete dir="dist"/>
+	</target>
+
+	<target name="compile" depends="prepare,prepare-common">
+		<echo>Compiling: ${jar.name}</echo>
+		<javac srcdir="src"
+			   includes="**"
+			   destdir="build"
+			   debug="${debug.mode}"
+			   source="1.5">
+		  <classpath refid="project.class.path"/>
+		</javac>
+		<!-- workaround: make an empty directory so that the next step doesn't fail -->
+		<mkdir dir="resources"/>
+		<copy todir="build">
+			<fileset dir="resources">
+				<include name="**/*"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="jar" depends="compile"> 
+		<echo>Creating JAR: ${jar.name}</echo>
+		<jar jarfile="${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF"/>
+        <jar jarfile="${jar.name}" update="true">
+            <manifest>
+                <attribute name="PathVisio-Plugin-Class" value="${plugin.class}"/>
+            </manifest>
+        </jar>
+	</target>
+
+	  <target name="dist-clean" depends="clean">
+		<delete file="${jar.name}"/>
+	  </target>
+
+	<target name="test">
+		<javac srcdir="test" debug="${debug.mode}"
+					includes="**"
+					destdir="build"
+					source="1.5">
+			<classpath>
+				<path refid="test.class.path"/>
+				<path refid="project.class.path"/>
+			</classpath>
+		</javac>
+		<junit printsummary="on" haltonfailure="true" fork="true" dir=".">
+			<formatter type="brief" usefile="false"/>
+			<classpath>
+				<pathelement path="build"/>
+				<path refid="project.class.path"/>
+				<path refid="test.class.path"/>
+			</classpath>
+			<batchtest>
+				<fileset dir="test">
+					<include name="**/*Test*.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+  <target name="install" depends="jar">
+	<copy file="${jar.name}"
+		  toDir="${install.dir}"/>
+  </target>
+
+</project>

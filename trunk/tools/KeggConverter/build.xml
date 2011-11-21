@@ -84,7 +84,6 @@
 	
 	<target name="dist" depends="jar" description="Copies jar and external libraries to dist path">
 		<copy file="${jar.name}" toDir="${dist.dir}"/>
-		<copy file="${pathvisio.dir}/lib/resources.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/com.springsource.org.jdom-1.1.0.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/org.bridgedb.jar" toDir="${dist.dir}/lib"/>
 		<copy file="${pathvisio.dir}/lib/org.bridgedb.bio.jar" toDir="${dist.dir}/lib"/>

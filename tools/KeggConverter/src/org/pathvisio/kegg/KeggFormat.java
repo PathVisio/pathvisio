@@ -586,6 +586,8 @@ public class KeggFormat {
 
 	private void convertEntry(Entry entry) throws RemoteException, ConverterException, ClassNotFoundException, IDMapperException {
 		Type type = Type.fromString(entry.getType());
+		
+		
 		switch(type) {
 		case MAP:
 			convertMap(entry);
@@ -609,26 +611,32 @@ public class KeggFormat {
 
 	private void convertCompound(Entry compound) throws RemoteException, ConverterException, ClassNotFoundException, IDMapperException {
 		List<Graphics> graphics = compound.getGraphics();
-
 		String name = compound.getName();
-		
+		SymbolInfo sinfo = null;
+				
 		if (graphics.size() == 1)
 			{
 			Graphics cg = graphics.get(0);
 			
-			SymbolInfo sinfo = null;
 			if(isUseWebservice()) { //fetch the real name from the webservice
 				sinfo = keggService.getKeggSymbol("cpd:"+cg.getName());
 			}
-				
+			
+			String compoundname = sinfo == null ? "cpd:"+cg.getName() : sinfo.getPreferred(prefSymbolIndex);
+			
+			//Create gpml element. Modified by KH to use compoundname instead of sinfo
 			PathwayElement pwElm = createDataNode(
-				cg,
-				DataNodeType.METABOLITE,
-				sinfo.getPreferred(prefSymbolIndex),
-				name.replace("cpd:", ""),
-				BioDataSource.KEGG_COMPOUND);
-
-			sinfo.addToComments(pwElm);
+					cg,
+					DataNodeType.METABOLITE,
+					compoundname,
+					name.replace("cpd:", ""),
+					BioDataSource.KEGG_COMPOUND);
+			
+			//Add comments regarding the source on KEGG. Modified by KH to only add if working online (otherwise sinfo is null)
+			if(!(sinfo == null)) {
+				sinfo.addToComments(pwElm);
+			}
+			
 			gpmlPathway.add(pwElm);
 			pwElm.setGeneratedGraphId();
 			mapConvertedId(compound.getId(), pwElm);
@@ -710,6 +718,7 @@ public class KeggFormat {
 			return;
 		}
 		
+		
 		if (graphics.size() == 1)
 		{
 		
@@ -735,21 +744,27 @@ public class KeggFormat {
 							query = Util.getKeggOrganism(species) + ":" + query;
 						}
 						sinfo = keggService.getKeggSymbol(query);
+						
 					}
+			
 					String geneName = sinfo == null ? dg.getName() : sinfo.getPreferred(prefSymbolIndex);
 					geneName = processLabel(geneName);
 
-					//Create gpml element
+					//Create gpml element. Modified by KH to use geneName instead of sinfo.getPreferred
 					PathwayElement pwElm = createDataNode(
-						dg,
-						DataNodeType.GENEPRODUCT,
-						geneName == null ? "" : geneName,
-						gene == null ? "" : gene,
-						BioDataSource.ENTREZ_GENE
-					);
-
-					//Add comments regarding the source on KEGG
-					sinfo.addToComments(pwElm);
+							dg,
+							DataNodeType.GENEPRODUCT,
+							geneName,
+							gene == null ? "" : gene,
+							BioDataSource.ENTREZ_GENE
+						);
+					
+					
+					//Add comments regarding the source on KEGG. Modified by KH to only add if working online (otherwise sinfo is null)
+					if(!(sinfo == null)) {
+						sinfo.addToComments(pwElm);
+					}
+										
 					
 					String e_id = entry.getId();
 					String e_type = entry.getType();
@@ -778,6 +793,7 @@ public class KeggFormat {
 		} //end for loop
 			
 		if(pwElms.size() > 1) {
+			
 			PathwayElement group = createGroup(name, pwElms);  
 			Util.stackElements(pwElms);
 			mapConvertedId(entry.getId(), group);
@@ -854,6 +870,7 @@ public class KeggFormat {
 	}
 
 	private PathwayElement createGroup(String name, Collection<PathwayElement> elements) {
+		
 		PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
 		group.setTextLabel(name);
 		gpmlPathway.add(group);
@@ -932,6 +949,7 @@ public class KeggFormat {
 	}
 
 	private PathwayElement createDataNode(Graphics graphics, DataNodeType type, String label, String id, DataSource source) {
+		
 		PathwayElement dn = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		dn.setDataSource(source);
 		if(id != null && id.length() < 50) dn.setGeneID(id);

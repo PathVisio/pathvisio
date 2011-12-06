@@ -39,7 +39,6 @@ import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.view.Handle.Freedom;
 import org.pathvisio.core.view.LinAlg.Point;
-import org.pathvisio.core.view.LinkAnchor.LinkAnchorSet;
 
 /**
  * This is an {@link Graphics} class representing shapelike forms,
@@ -473,22 +472,20 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 		if (handles.length > 0) setHandleLocation();
 	}
 
-	LinkAnchorSet linkAnchorDelegate = new LinkAnchorSet(this);
+	LinkProvider linkAnchorDelegate = new DefaultLinkAnchorDelegate(this);
 
-	private static final int MIN_SIZE_LA = 25;
-
-	public void showLinkAnchors() {
-		//Number of link anchors depends on the size of the object
-		//If the width/height is large enough, there will be three link anchors per side,
-		//Otherwise there will be only one link anchor per side
-		String anchorsCnt = gdata.getDynamicProperty("NumberOfAnchors");
-        int numAnchors = 3;
-        if (anchorsCnt != null) {
-            numAnchors = Integer.parseInt(anchorsCnt);
-        }
-        int numH = gdata.getMWidth() < MIN_SIZE_LA ? 1 : numAnchors;
-		int numV = gdata.getMHeight() < MIN_SIZE_LA ? 1 : numAnchors;
-		linkAnchorDelegate.createLinkAnchors(numH, numV);
+	/**
+	 * Use this to override default linkAnchorDelegate
+	 */
+	public void setLinkAnchorDelegate (LinkProvider delegate)
+	{
+		if (delegate == null) throw new NullPointerException("passed illegal null value for delegate");
+		linkAnchorDelegate = delegate;
+	}
+	
+	public void showLinkAnchors() 
+	{
+		linkAnchorDelegate.showLinkAnchors();
 	}
 
 	public void hideLinkAnchors() 

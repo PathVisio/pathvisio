@@ -216,7 +216,7 @@ public class VPathway implements PathwayListener
 	}
 
 	/**
-	 * Map the contents of a single data object to this VPathway
+	 * Map the contents of a single data object to this VPathway.
 	 */
 	private Graphics fromModelElement(PathwayElement o)
 	{

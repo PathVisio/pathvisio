@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.core.view.LinkAnchor.LinkAnchorSet;
 
 /**
  * This represents the view of a PathwayElement with ObjectType.GROUP.
@@ -259,7 +258,7 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 		int flags = 0;
 		if(isSelected()) flags += FLAG_SELECTED;
 		if(mouseover) flags += FLAG_MOUSEOVER;
-		if(linkAnchorDelegate.isShowing()) flags += FLAG_ANCHORSVISIBLE;
+		if(anchorsShowing) flags += FLAG_ANCHORSVISIBLE;
 
 		//Draw the group style appearance
 		GroupPainter p = GroupPainterRegistry.getPainter(gdata.getGroupStyle().toString());
@@ -313,24 +312,18 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 
 	}
 
-	private LinkAnchorSet linkAnchorDelegate = new LinkAnchorSet(this);
-
-	private static final int MIN_SIZE_LA = 25;
-
-	public void showLinkAnchors() {
-		//Number of link anchors depends on the size of the object
-		//If the width/height is large enough, there will be three link anchors per side,
-		//Otherwise there will be only one link anchor per side
-        if (gdata.getGroupStyle().isDisallowLinks()) {
-            return;
-        }
-        int numH = gdata.getMWidth() >= MIN_SIZE_LA ? 3 : 1;
-		int numV = gdata.getMHeight() >= MIN_SIZE_LA ? 3 : 1;
-		linkAnchorDelegate.createLinkAnchors(numH, numV);
+	private LinkProvider linkAnchorDelegate = new DefaultLinkAnchorDelegate(this);
+	private boolean anchorsShowing = false;
+	
+	public void showLinkAnchors() 
+	{
+		anchorsShowing = true;
+		linkAnchorDelegate.showLinkAnchors();
 	}
 
 	public void hideLinkAnchors() 
 	{
+		anchorsShowing = false;
 		linkAnchorDelegate.hideLinkAnchors();
 	}
 
@@ -343,5 +336,14 @@ public class Group extends Graphics implements LinkProvider, VElementMouseListen
 	{
 		super.destroy();
 		canvas.removeVElementMouseListener(this);
+	}
+
+	/**
+	 * Use this to override default linkAnchorDelegate
+	 */
+	public void setLinkAnchorDelegate (LinkProvider delegate)
+	{
+		if (delegate == null) throw new NullPointerException("passed illegal null value for delegate");
+		linkAnchorDelegate = delegate;
 	}
 }

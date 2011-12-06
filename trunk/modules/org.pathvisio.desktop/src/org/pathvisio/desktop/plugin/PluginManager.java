@@ -71,8 +71,8 @@ public class PluginManager {
 							plugin.init(pvDesktop);
 							startedPlugins.add(plugin);
 						} catch (Exception ex) {
+							Logger.log.error("Could not initialize plugin", ex);
 							pi.error = ex;
-							ex.printStackTrace();
 						}
 						info.add(pi);
 						plugins.add(pi);	

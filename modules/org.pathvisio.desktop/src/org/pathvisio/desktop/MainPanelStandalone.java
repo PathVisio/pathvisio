@@ -96,15 +96,19 @@ public class MainPanelStandalone extends MainPanel
 		viewMenu.add(zoomMenu);
 		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
 
+		JMenu pluginsMenu = new JMenu("Plugins");//new
+		pluginsMenu.add(standaloneActions.pluginManagerAction);
+		pluginsMenu.addSeparator();
+		
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.add(actions.aboutAction);
-		helpMenu.add(standaloneActions.pluginManagerAction);
 		helpMenu.add(standaloneActions.helpAction);
 
 		mb.add(fileMenu);
 		mb.add(editMenu);
 		mb.add(dataMenu);
 		mb.add(viewMenu);
+		mb.add(pluginsMenu);//new
 		mb.add(helpMenu);
 	}
 

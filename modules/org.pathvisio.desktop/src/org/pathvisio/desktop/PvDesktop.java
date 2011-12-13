@@ -301,9 +301,49 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				JMenu menuAt = menuBar.getMenu(i);
 				if (menuAt.getText().equals (submenu))
 				{
-					System.out.println("unregister: " + registeredActions.get(a));
+					Logger.log.debug("unregister menu action: " + registeredActions.get(a).getText());
 					menuAt.remove(registeredActions.get(a));
 					registeredActions.remove(a);
+					break;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * register a submenu in one of the mainMenus ("File", "Help", "Plugins")
+	 */
+	public void registerSubMenu (String mainMenu, JMenu submenu) {
+		JMenuBar menuBar = swingEngine.getApplicationPanel().getMenuBar();
+		if(menuBar == null) {
+			Logger.log.warn("Trying to register menu while no menubar is available (running in headless mode?)");
+			return;
+		}
+		for (int i = 0; i < menuBar.getMenuCount(); ++i) {
+			JMenu menuAt = menuBar.getMenu(i);
+			if (menuAt.getText().equals (mainMenu)) {
+				JMenuItem item = menuAt.add(submenu);
+				registeredMenus.put(submenu, item);
+				break;
+			} 
+		}
+	}
+	
+	private Map<JMenu, JMenuItem> registeredMenus = new HashMap<JMenu, JMenuItem>();//new
+	
+	/**
+	 * should be called from done method in the plugin class so all 
+	 * created submenus are removed
+	 */
+	public void unregisterSubMenu(String mainMenu, JMenu submenu) {
+		JMenuBar menuBar = swingEngine.getApplicationPanel().getMenuBar();
+		if(menuBar != null) {
+			for (int i = 0; i < menuBar.getMenuCount(); ++i) {
+				JMenu menuAt = menuBar.getMenu(i);
+				if (menuAt.getText().equals (mainMenu)) {
+					Logger.log.debug("unregister submenu: " + registeredMenus.get(submenu).getText());
+					menuAt.remove(registeredMenus.get(submenu));
+					registeredMenus.remove(submenu);
 					break;
 				}
 			}

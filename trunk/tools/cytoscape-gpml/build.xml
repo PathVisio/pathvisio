@@ -8,7 +8,7 @@
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="class.dir" value="class" />
-	<property name="pathvisio.dir" value="/home/martina/workMK/bigcat/workspace/pathvisio/trunk/" />
+	<property name="pathvisio.dir" value="../../" />
 	<property name="pathvisio.lib.dir" value="${pathvisio.dir}/lib" />
 	<property name="axis.lib.dir" value="${pathvisio.lib.dir}/axis-1_4/lib" />
 	<property name="pathvisio.class.dir" value="class.pathvisio" />

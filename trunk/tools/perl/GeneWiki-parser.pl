@@ -32,6 +32,7 @@ my $keggcomp = "http://www.genome.jp/dbget-bin/www_bget?cpd:";
 my $hugo = "http://www.genenames.org/data/hgnc_data.php?hgnc_id=";
 my $ec = "http://www.brenda-enzymes.info/php/result_flat.php4?ecno=";
 my $wikipedia = "http://en.wikipedia.org/wiki/";
+my $wikipathways = "http://www.wikipathways.org/index.php/Pathway:";
 
 #### Find file			
 my $html = <*.html>;
@@ -68,7 +69,7 @@ my %seen = ();
 my @linkArray = ();
 my $color;
 
-print OUTFILE "<noinclude>\n<!--\nChecklist:\n1. Locate appropriate pathway article and update imagemap default link accordingly. Also consider modifying the \"Description\" at the very bottom of the template to provide a more descriptive pathway name.\n2. Check pathway for \"search for\" links when hovering and attempt to locate an appropriate wikipedia article. Update imagemap link, link color, and highlight references accordingly.\n3. Check pathway for external links in green and attempt to locate appropriate wikipedia content instead. Update imagemap link, link color, and highlight references accordingly.\n4. Delete this checklist from the template :)\n-->\n"; 
+print OUTFILE "<noinclude>\n<!--\nChecklist:\n1. Locate appropriate pathway article and update imagemap default link accordingly. Also consider modifying the \"Description\" at the very bottom of the template to provide a more descriptive pathway name.\n2. Check pathway for \"search for\" links when hovering and attempt to locate an appropriate wikipedia article. Update imagemap link, link color, and highlight references accordingly. \n3. Check pathway for external links in green and attempt to locate appropriate wikipedia content instead. Update imagemap link, link color, and highlight references accordingly.\n4. Delete this checklist from the template :)\n-->\n"; 
 print OUTFILE "{{Documentation|Template:Interactive_pathway_maps\/doc}}<\/noinclude>{{{header|\'\'Click on genes, proteins and metabolites below to link to respective articles.\'\' <ref name=\"WikiPathways\">The interactive pathway map can be edited at WikiPathways: {{cite web | url = http:\/\/www.wikipathways.org\/index.php\/Pathway:$WPID | title = $pathway | author =  | date = | work = | publisher = | pages = | accessdate = }}</ref> }}}\n\n<div style=\"overflow:auto\; width:{{{width}}}px\; height:{{{height}}}px\">\n\n"; 
 
 while (my $line = <HTML>)
@@ -79,9 +80,9 @@ while (my $line = <HTML>)
       		{
       		$line =~ s/<HTML><BODY><IMG src="image\/.+?\.png/Image:$pathway\.png/;
       		$line =~ s/" usemap="#pathwaymap" width="(\d+)" height="(\d+)"><\/IMG>/|right|alt=/;
-		$imgWidth = $1;
-		$imgHeight = $2;
-		print OUTFILE "{{Preview Crop\n|Image={{Annotated image |float=none|image-width=".$imgWidth."|annot-color=white|imagemap=<imagemap>\n";
+			$imgWidth = $1;
+			$imgHeight = $2;
+			print OUTFILE "{{Preview Crop\n|Image={{Annotated image |float=none|image-width=".$imgWidth."|annot-color=white|imagemap=<imagemap>\n";
     		chomp $line;
      		$line .= $pathway;
      		$line .="\n";
@@ -105,7 +106,7 @@ while (my $line = <HTML>)
       	my $system = $1;
       	my $newlink = "";
       	my $id = "";
-	$color = 'red';
+		$color = 'red';
       	
       	switch($system)
       		{
@@ -115,15 +116,18 @@ while (my $line = <HTML>)
       			$xref =~ m/L_(.+)/;
       			$id = $1;
          		$newlink = $genewiki.$id;
-			$newlink = FetchArticleURL($newlink);
-			if ($newlink =~ m/Special:Search/){
-				$color = 'red';
-				$newlink =~ s/#Interactive_pathway_map go to/ search for/;
-			} else {
-				$newlink =~ m/wiki\/(.+)#Interactive/;
-				$id = $1;
+				$newlink = FetchArticleURL($newlink);
+				if ($newlink =~ m/Special:Search/)
+					{
+					$color = 'red';
+					$newlink =~ s/#Interactive_pathway_map go to/ search for/;
+					} 
+				else 
+					{
+					$newlink =~ m/wiki\/(.+)#Interactive/;
+					$id = $1;
       				$color = 'blue';
-				}
+					}
       			}
       		case "EnHs"
       			{
@@ -140,15 +144,18 @@ while (my $line = <HTML>)
       				{
       				$id = $entrez;
  	        		$newlink = $genewiki.$id;
-				$newlink = FetchArticleURL($newlink);
-				if ($newlink =~ m/Special:Search/){
-					$color = 'red';
-					$newlink =~ s/#Interactive_pathway_map go to/ search for/;
-				} else {
-					$newlink =~ m/wiki\/(.+)#Interactive/;
-					$id = $1;
+					$newlink = FetchArticleURL($newlink);
+					if ($newlink =~ m/Special:Search/)
+						{
+						$color = 'red';
+						$newlink =~ s/#Interactive_pathway_map go to/ search for/;
+						} 
+					else 
+						{
+						$newlink =~ m/wiki\/(.+)#Interactive/;
+						$id = $1;
        					$color = 'blue';
-					}
+						}
       				}
       			}
       		case "S"
@@ -166,15 +173,18 @@ while (my $line = <HTML>)
       				{
       				$id = $entrez;
  	        		$newlink = $genewiki.$id;
-				$newlink = FetchArticleURL($newlink);
-				if ($newlink =~ m/Special:Search/){
-					$color = 'red';
-					$newlink =~ s/#Interactive_pathway_map go to/ search for/;
-				} else {
+					$newlink = FetchArticleURL($newlink);
+					if ($newlink =~ m/Special:Search/)
+						{
+						$color = 'red';
+						$newlink =~ s/#Interactive_pathway_map go to/ search for/;
+						} 
+					else 
+						{
       					$newlink =~ m/wiki\/(.+)#Interactive/;
-					$id = $1;
- 					$color = 'blue';
-					}
+						$id = $1;
+ 						$color = 'blue';
+						}
       				}
       			}
       		case "U"
@@ -192,15 +202,17 @@ while (my $line = <HTML>)
       				{
       				$id = $entrez;
  	        		$newlink = $genewiki.$id;
-				$newlink = FetchArticleURL($newlink);
-				if ($newlink =~ m/Special:Search/){
-					$color = 'red';
-					$newlink =~ s/#Interactive_pathway_map go to/ search for/;
-				} else {
+					$newlink = FetchArticleURL($newlink);
+					if ($newlink =~ m/Special:Search/){
+						$color = 'red';
+						$newlink =~ s/#Interactive_pathway_map go to/ search for/;
+						} 
+					else 
+						{
       					$newlink =~ m/wiki\/(.+)#Interactive/;
-					$id = $1;
- 					$color = 'blue';
-					}
+						$id = $1;
+ 						$color = 'blue';
+						}
       				}
       			}
       		case "H"
@@ -233,57 +245,65 @@ while (my $line = <HTML>)
       			{
       			#print "system is HMDB\n";
       			$xref =~ /^Ch_(HMDB\d+)$/;
-			$id = $1;
-			my $wp = BackpageLookup($xref, 'Wikipedia');
-			if ($wp eq "null"){
-				$newlink = $hmdb.$id." Go to HMDB";
-				$color = 'green';
+				$id = $1;
+				my $wp = BackpageLookup($xref, 'Wikipedia');
+				if ($wp eq "null"){
+					$newlink = $hmdb.$id." Go to HMDB";
+					$color = 'green';
+					}
+				else {
+					$id = $wp;
+					$newlink = $wikipedia.$wp." Go to article";
+					$color = 'blue';
+					}
 				}
-			else {
-				$id = $wp;
-				$newlink = $wikipedia.$wp." Go to article";
-				$color = 'blue';
-				}
-			}
       		case "Ca"
       			{
       			#print "system is CAS\n";
       			$xref =~ m/Ca_(.+)/;
       			$id = $1;
-			my $wp = BackpageLookup($xref, 'Wikipedia');
-			if ($wp eq "null"){
-				$newlink = $cas.$id." Go to CAS";
-				$color = 'green';
+				my $wp = BackpageLookup($xref, 'Wikipedia');
+				if ($wp eq "null"){
+					$newlink = $cas.$id." Go to CAS";
+					$color = 'green';
+					}
+				else {
+					$id = $wp;
+					$newlink = $wikipedia.$wp." Go to article";
+					$color = 'blue';
+					}
 				}
-			else {
-				$id = $wp;
-				$newlink = $wikipedia.$wp." Go to article";
-				$color = 'blue';
-				}
-			}
       		case "Ck"
       			{
       			#print "system is KEGG compound\n";
       			$xref =~ m/Ck_(.+)/;
       			$id = $1;
-			my $wp = BackpageLookup($xref, 'Wikipedia');
-			if ($wp eq "null"){
-				$newlink = $keggcomp.$id." Go to KEGG";
-				$color = 'green';
-				}
-			else {
-				$id = $wp;
-				$newlink = $wikipedia.$wp." Go to article";
-				$color = 'blue';
-				}
-   			}
+				my $wp = BackpageLookup($xref, 'Wikipedia');
+				if ($wp eq "null"){
+					$newlink = $keggcomp.$id." Go to KEGG";
+					$color = 'green';
+					}
+				else {
+					$id = $wp;
+					$newlink = $wikipedia.$wp." Go to article";
+					$color = 'blue';
+					}
+   				}
       		case "E"
       			{
       			#print "system is EC\n";
       			$xref =~ m/E_(.+)/;
       			$id = $1;
       			$newlink = $ec.$id." Go to BRENDA";	
-			$color = 'green';
+				$color = 'green';
+      			}
+      		case "Wp"
+      			{
+      			#print "system is WikiPathways\n";
+      			$xref =~ m/Wp_(.+)/;
+      			$id = $1;
+      			$newlink = $wikipathways.$id." Go to WikiPathways";	
+				$color = 'green';
       			}
       		case "enzyme"
       			{
@@ -291,7 +311,7 @@ while (my $line = <HTML>)
       			$xref =~ m/enzyme_(.+)/;
       			$id = $1;
       			$newlink = $ec.$id." Go to BRENDA";	
-			$color = 'green';
+				$color = 'green';
       			}
       		else
       			{
@@ -307,14 +327,15 @@ while (my $line = <HTML>)
 		my $alt = $seen{$id} - 1;
 		$id = $id."__alt".$alt;
 	}
-      	$line =~ m/coords="(\d+\.\d+),(\d+\.\d+),(\d+\.\d+),(\d+\.\d+)/;
+	
+    $line =~ m/coords="(\d+\.\d+),(\d+\.\d+),(\d+\.\d+),(\d+\.\d+)/;
 	my @links = ($1, $2, $3, $4, $color, $id);
 	push @linkArray, [@links];
-      	$line =~ s/<AREA shape="rect" coords="/rect /;
-      	$line =~ s/,/ /g;
+    $line =~ s/<AREA shape="rect" coords="/rect /;
+    $line =~ s/,/ /g;
    	$line =~ s/" href=".+AREA>/ [$newlink]/;
-
-      	print OUTFILE "$line";
+   	
+    print OUTFILE "$line";
       	
       	} #end elsif
       } #end while
@@ -326,7 +347,7 @@ desc none
 #color link lines
 for my $i ( 0 .. $#linkArray ) {
 	my $left = $linkArray[$i][0];
-        my $right = $imgWidth - $left + 5;
+    my $right = $imgWidth - $left + 5;
 	my $top = $linkArray[$i][3] -15;# -$i*1;
 	my $width = $linkArray[$i][2] - $linkArray[$i][0];
 	my $color = $linkArray[$i][4];

@@ -19,6 +19,7 @@ package org.pathvisio.desktop;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -48,6 +49,7 @@ import org.pathvisio.core.model.ImageExporter;
 import org.pathvisio.core.model.MappFormat;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.MIMShapes;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.SimpleGex;
@@ -196,6 +198,9 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		final JFrame frame = new JFrame(Globals.APPLICATION_NAME);
 		// dispose on close, otherwise windowClosed event is not called.
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		URL url = Resources.getResourceURL("bigcateye.gif");
+		frame.setIconImage(Toolkit.getDefaultToolkit().createImage(url));
 
 		frame.add(mainPanel, BorderLayout.CENTER);
 

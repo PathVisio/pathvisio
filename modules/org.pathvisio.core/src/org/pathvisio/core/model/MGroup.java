@@ -170,7 +170,7 @@ public class MGroup extends PathwayElement {
 	 * checks for a valid parent and never returns
 	 * null
 	 */
-	private Set<PathwayElement> getGroupElements() {
+	public Set<PathwayElement> getGroupElements() {
 		Set<PathwayElement> result = new HashSet<PathwayElement>();
 		Pathway parent = getParent();
 		if(parent != null) {

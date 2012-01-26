@@ -49,6 +49,7 @@ public class TestGroups extends TestCase
 			dn[i].setMWidth(500);
 			dn[i].setMHeight(500);
 			vDn[i] = (GeneProduct)addElement (vpwy, dn[i]);
+			dn[i].setGeneratedGraphId();
 		}
 		vLn[0] = (Line)addConnector (vpwy, dn[0], dn[1]);
 		vLn[1] = (Line)addConnector (vpwy, dn[0], dn[2]);
@@ -66,6 +67,7 @@ public class TestGroups extends TestCase
 		assertEquals (ref1, dn[1].getGroupRef());
 		grp1 = vpwy.getPathwayModel().getGroupById(ref1);
 		vGrp1 = (Group)vpwy.getPathwayElementView(grp1);
+		grp1.setGeneratedGraphId();
 	}
 
 	private VPathway vpwy;
@@ -161,10 +163,25 @@ public class TestGroups extends TestCase
 	 */
 	public void testDelete()
 	{
+		Line vLn3 = (Line)addConnector (vpwy, dn[0], grp1);
+		
+		double oldEx = vLn3.getVEndX();
+		double oldEy = vLn3.getVEndY();
+		assertEquals (vGrp1.getVCenterX(), oldEx, 0.01);
+		assertEquals (vGrp1.getVCenterY(), oldEy, 0.01);
+		assertEquals (grp1.getGraphId(), vLn3.getPathwayElement().getEndGraphRef());
+		assertNotNull (vLn3.getPathwayElement().getEndGraphRef());
+		
 		vpwy.clearSelection();
 		vGrp1.select();
 		vpwy.toggleGroup(vpwy.getSelectedGraphics());
 		assertNull (dn[0].getGroupRef());
+		
+		// assure that line hasn't moved by deletion of group (bug #1058)
+		assertEquals (oldEx, vLn3.getVEndX(), 0.01);
+		assertEquals (oldEy, vLn3.getVEndY(), 0.01);
+		assertNull (vLn3.getPathwayElement().getEndGraphRef());
+		
 	}
 
 }

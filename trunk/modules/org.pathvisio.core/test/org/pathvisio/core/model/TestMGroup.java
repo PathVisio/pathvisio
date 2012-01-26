@@ -30,8 +30,11 @@ public class TestMGroup extends TestCase
 		node.setMHeight(20);
 		
 		assertEquals (0, group.getGroupElements().size());
+		
+		// add node to group
 		node.setGroupRef(group.getGroupId());
 		
+		// check that now it's really part of group
 		assertEquals (1, group.getGroupElements().size());
 		assertTrue (group.getGroupElements().contains(node));
 		
@@ -49,6 +52,6 @@ public class TestMGroup extends TestCase
 		
 		// check that line points at same position
 		assertEquals (120.0, line.getMEndX());
-		assertEquals (2.0, line.getMEndX());
+		assertEquals (2.0, line.getMEndY());
 	}
 }

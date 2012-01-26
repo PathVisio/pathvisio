@@ -557,8 +557,17 @@ public class Pathway
 		groupIds.put(id, group);
 	}
 
-	void removeGroupId(String id) {
+	void removeGroupId(String id) 
+	{
 		groupIds.remove(id);
+		Set<PathwayElement> elts = groupRefs.get(id);
+		if (elts != null) 
+			for (PathwayElement elt : elts)
+			{
+				elt.groupRef = null;
+				elt.fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(elt, StaticProperty.GROUPREF));
+			}
+		groupRefs.remove(id);
 	}
 
 	public PathwayElement getGroupById(String id) {

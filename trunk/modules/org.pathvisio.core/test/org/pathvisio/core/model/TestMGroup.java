@@ -41,6 +41,7 @@ public class TestMGroup extends TestCase
 		line.setMEndX(group.getMCenterX());
 		line.setMEndY(group.getMTop());
 		line.setEndGraphRef(group.getGraphId());
+		assertEquals (line.getEndGraphRef(), group.getGraphId());
 		
 		assertEquals (8.0, group.getGroupStyle().getMMargin());
 		
@@ -53,5 +54,8 @@ public class TestMGroup extends TestCase
 		// check that line points at same position
 		assertEquals (120.0, line.getMEndX());
 		assertEquals (2.0, line.getMEndY());
+		assertNull (line.getEndGraphRef());
+		assertNull (node.getGroupRef());
 	}
+	
 }

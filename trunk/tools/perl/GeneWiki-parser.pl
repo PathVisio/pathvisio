@@ -33,6 +33,7 @@ my $hugo = "http://www.genenames.org/data/hgnc_data.php?hgnc_id=";
 my $ec = "http://www.brenda-enzymes.info/php/result_flat.php4?ecno=";
 my $wikipedia = "http://en.wikipedia.org/wiki/";
 my $wikipathways = "http://www.wikipathways.org/index.php/Pathway:";
+#my $chembl = "https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/"; ## CHEMBL identifiers are not properly exported by html exporter yet
 
 #### Find file			
 my $html = <*.html>;
@@ -289,6 +290,21 @@ while (my $line = <HTML>)
 					$color = 'blue';
 					}
    				}
+#   			case "ChEMBL"
+#   				{
+#   				$xref =~ /_(CHEMBL\d+)$/;
+#				$id = $1;
+#				my $wp = BackpageLookup($xref, 'Wikipedia');
+#				if ($wp eq "null"){
+#					$newlink = $chembl.$id." Go to ChEMBL";
+#					$color = 'green';
+#					}
+#				else {
+#					$id = $wp;
+#					$newlink = $wikipedia.$wp." Go to article";
+#					$color = 'blue';
+#					}	
+#   				}
       		case "E"
       			{
       			#print "system is EC\n";

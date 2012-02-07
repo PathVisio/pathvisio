@@ -105,6 +105,18 @@
 		<subant target="jar" buildpath="modules/org.pathvisio.visualization/build.xml"/>
 	</target>
 
+	<target name="plugin-dev" depends="plugins.jar">
+		<mkdir dir="plugin-dev"/>
+		<copy toDir="plugin-dev">
+			<fileset dir="lib">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="modules">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+
 	<target name="plugins.jar" depends="visualization.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.gex/build.xml"/>
 		<subant target="jar" buildpath="modules/org.pathvisio.statistics/build.xml"/>

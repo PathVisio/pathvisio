@@ -283,7 +283,7 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		} else if (ls == LineStyle.DOUBLE)
 		{
 			g.setStroke( new CompositeStroke( 
-					new BasicStroke( lt * 3 ), new BasicStroke( lt ) ) );
+					new BasicStroke( lt * 2 ), new BasicStroke( lt ) ) );
 		}
 	}
 	

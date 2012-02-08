@@ -373,7 +373,7 @@ public class Line extends Graphics implements Adjustable
 		ArrowShape hs = heads[0];
 		ArrowShape he = heads[1];
 		
-		float thickness = (float)gdata.getLineThickness();
+		float thickness = (float) vFromM(gdata.getLineThickness());
 		if (gdata.getLineStyle() == LineStyle.DOUBLE) thickness *= 4;
 		BasicStroke bs = new BasicStroke (thickness);
 		

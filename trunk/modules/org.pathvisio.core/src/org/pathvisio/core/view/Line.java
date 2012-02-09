@@ -445,7 +445,7 @@ public class Line extends Graphics implements Adjustable
 		if(head != null)
 		{
 			// reset stroked line to solid, but use given thickness
-			g.setStroke(new BasicStroke((float)gdata.getLineThickness()));
+			g.setStroke(new BasicStroke((float) vFromM(gdata.getLineThickness())));
 			switch (head.getFillType())
 			{
 			case OPEN:
@@ -499,7 +499,7 @@ public class Line extends Graphics implements Adjustable
 		if(h != null)
 		{
 			AffineTransform f = new AffineTransform();
-			double scaleFactor = vFromM (1.0);
+			double scaleFactor = vFromM (1.0 + 0.3 * gdata.getLineThickness());
 			f.rotate(Math.atan2 (ye - ys, xe - xs), xe, ye);
 			f.translate (xe, ye);
 			f.scale (scaleFactor, scaleFactor);

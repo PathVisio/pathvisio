@@ -1,7 +1,7 @@
 R.M.H. Besseling
 S.P.M. Crijns
 I. Kaashoek
-M.M. Palm
+Margriet M. Palm
 E.D Pelgrim
 Thomas Kelder
 Martijn van Iersel
@@ -17,3 +17,4 @@ Ferry Jagers
 Justin Elser
 Martina Kutmon
 Sravanthi Sinha
+Praveen Kumar

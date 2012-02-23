@@ -53,8 +53,8 @@ public class AboutDlg
 		final JFrame aboutDlg = new JFrame();
 
 		FormLayout layout = new FormLayout(
-				"4dlu, pref, 4dlu, fill:120dlu:grow, 4dlu",
-				"4dlu, 200dlu:grow, 4dlu, pref, 4dlu, pref, 4dlu");
+				"4dlu, pref, 4dlu, fill:160dlu:grow, 4dlu",
+				"4dlu, 220dlu:grow, 4dlu, pref, 4dlu, pref, 4dlu");
 
 		JLabel versionLabel = new JLabel (swingEngine.getEngine().getApplicationName());
 		JLabel revisionLabel = new JLabel (Engine.getRevision());
@@ -70,7 +70,8 @@ public class AboutDlg
 				"M.M. Palm, E.D. Pelgrim, E. Neuteboom,\n" +
 				"E.J. Creusen, P. Moeskops, Adem Bilican,\n" +
 				"Margot Sunshine, Mark Woon, Bing Liu,\n" +
-				"Ferry Jagers, Justin Elser, Sravanthi Sinha\n" +
+				"Ferry Jagers, Justin Elser, Sravanthi Sinha,\n" +
+				"Praveen Kumar\n" +
 				"<h3>Visit our website</h3>" +
 				"<p><a href=\"http://www.pathvisio.org\">http://www.pathvisio.org</a>" +
 				"</html>");

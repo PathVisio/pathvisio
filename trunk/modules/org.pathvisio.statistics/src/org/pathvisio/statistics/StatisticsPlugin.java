@@ -387,7 +387,12 @@ public class StatisticsPlugin implements Plugin
 			btnCalc.addActionListener(new ActionListener ()
 			{
 				public void actionPerformed(ActionEvent ae)
-				{
+				{	
+					if(critPanel.getCriterion().getExpression().trim().equals("")){
+						JOptionPane.showMessageDialog(null,
+						"Please enter an expression to calculate");
+						return;
+					}
 					File pwDir = new File (txtDir.getText());
 					btnCalc.setEnabled(false);
 					doCalculate (pwDir, critPanel.getCriterion());

@@ -9,6 +9,7 @@
 	<target name="prepare-common">
 		<mkdir dir="build"/>
 		<mkdir dir="dist"/>
+		<mkdir dir="resources"/> <!-- defensive, to prevent file not found error later on -->
 		<property name="jar.name" value="dist/${base.name}.jar"/>
 		<fail message="Can't find ${pathvisio.dir}/modules/org.pathvisio.core.jar, please specify the path to pathvisio with -Dpathvisio.dir=....">
 			<condition>
@@ -58,9 +59,6 @@
 			</fileset>
             <manifest>
                 <attribute name="PathVisio-Plugin-Class" value="${plugin.class}"/>
-            </manifest>
-			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.sbgn.Script"/>
 				<attribute name="Class-Path" value="${manifest.cp}"/>
 			</manifest>
         </jar>

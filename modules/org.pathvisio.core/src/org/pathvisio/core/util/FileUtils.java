@@ -13,7 +13,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
+
 package org.pathvisio.core.util;
 
 import java.io.BufferedOutputStream;
@@ -100,17 +100,6 @@ public class FileUtils {
 		}
 
 		return fileList;
-	}
-
-	/**
-	 * Think "deltree" or "rm -r"
-	 */
-	public static void deleteRecursive(File file) {
-		if(file.isDirectory()) {
-			for(File f : file.listFiles()) deleteRecursive(f);
-		}
-		boolean deleted = file.delete();
-		Logger.log.trace((deleted ? "Deleted " : "Unable to delete ") + "file " + file);
 	}
 
 	/**

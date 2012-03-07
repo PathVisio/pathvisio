@@ -26,8 +26,12 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
+
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ColorConverter;
+import org.pathvisio.core.util.CommonsFileUtils;
+import org.pathvisio.core.util.Utils;
 
 /**
  * Loads & saves application preferences
@@ -78,15 +82,16 @@ public class PreferenceManager
 	public void load()
 	{
 		properties = new Properties();
-		propFile = new File(System.getProperty("user.home") + File.separator +
-				".PathVisio" + File.separator + ".PathVisio");
+		propFile = new File(GlobalPreference.getApplicationDir(), ".PathVisio");
 
 		try
 		{
 			if(propFile.exists()) {
 				properties.load(new FileInputStream(propFile));
-				compatUpdate();
-			} else {
+				compatUpdate();			
+			} 
+			else 
+			{
 				Logger.log.info("Preferences file " + propFile + " doesn't exist, using defaults");
 			}
 		}
@@ -205,11 +210,44 @@ public class PreferenceManager
 		return preferences;
 	}
 
+	/**
+	 * Compatibility fix.
+	 * The configuration directory used to be always on $HOME/.PathVisio.
+	 * For windows, we changed this to %APPDIR%/PathVisio, which makes more sense on that
+	 * system.
+	 * This function checks for the existence of a config directory on the old location, and moves
+	 * if possible.
+	 */
+	public static void compatMovePvDir()
+	{
+		File oldConfigDir = new File(System.getProperty("user.home"), ".PathVisio");
+		if (Utils.getOS() == Utils.OS_WINDOWS &&  
+				oldConfigDir.exists())
+		{
+			File dest = GlobalPreference.getApplicationDir();
+			JOptionPane.showMessageDialog(null, "Note: Because you updated to a new version of PathVisio, \n" +
+					"the PathVisio configuration directory will be moved to\n" + dest);
+			for (File src : oldConfigDir.listFiles())
+			{
+				try
+				{
+					CommonsFileUtils.moveToDirectory(src, dest, true);
+				}
+				catch (IOException e)
+				{
+					Logger.log.error("Could not move PathVisio directory", e);
+				}
+			}
+			CommonsFileUtils.deleteQuietly(oldConfigDir);
+		}
+	}
+
 	public static void init()
 	{
 		if (preferences == null)
 		{
-			preferences = new PreferenceManager();
+			preferences = new PreferenceManager();			
+			compatMovePvDir();
 			preferences.load();
 		}
 		else

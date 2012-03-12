@@ -2,9 +2,6 @@
 <project name="Plugins-common" basedir=".">
 
 	<property name="debug.mode" value="true"/>
-
-	<property environment="env"/>
-    <property name="install.dir" value="${env.HOME}/.PathVisio/plugins/"/>
   
 	<target name="prepare-common">
 		<mkdir dir="build"/>
@@ -58,7 +55,6 @@
 				<include name="**/*"/>
 			</fileset>
             <manifest>
-                <attribute name="PathVisio-Plugin-Class" value="${plugin.class}"/>
 				<attribute name="Class-Path" value="${manifest.cp}"/>
 			</manifest>
         </jar>
@@ -92,11 +88,6 @@
 			</batchtest>
 		</junit>
 	</target>
-
-  <target name="install" depends="jar">
-	<copy file="${jar.name}"
-		  toDir="${install.dir}"/>
-  </target>
 
 	<target name="exe" depends="jar">
 		<mkdir dir="build/exe"/>

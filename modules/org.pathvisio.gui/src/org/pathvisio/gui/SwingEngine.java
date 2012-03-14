@@ -313,7 +313,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 						engine.exportPathway(f, clone);
 						return true;
 					} catch(ConverterException e) {
-						handleConverterException(e.getMessage(), null, e);
+						handleConverterException(e.getMessage(), frame, e);
 						return false;
 					} finally {
 						pk.finished();

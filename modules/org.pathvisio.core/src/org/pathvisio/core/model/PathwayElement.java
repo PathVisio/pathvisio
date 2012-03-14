@@ -2656,9 +2656,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		return new Point2D.Double(x, y);
 	}
 
-	public Point2D toRelativeCoordinate(Point2D p) {
-		double relX = p.getX();
-		double relY = p.getY();
+	/**
+	 * @param mp a point in absolute model coordinates
+	 * @returns the same point relative to the bounding box of this pathway element: -1,-1 meaning the top-left corner, 1,1 meaning the bottom right corner, and 0,0 meaning the center.
+	 */
+	public Point2D toRelativeCoordinate(Point2D mp) {
+		double relX = mp.getX();
+		double relY = mp.getY();
 		Rectangle2D bounds = getRBounds();
 		//Translate
 		relX -= bounds.getCenterX();

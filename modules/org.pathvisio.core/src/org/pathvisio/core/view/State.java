@@ -45,8 +45,8 @@ public class State extends GraphicsShape
 
 	protected void vMoveBy(double vdx, double vdy)
 	{
-		Point2D newPos = new Point2D.Double (getVCenterX() + vdx, getVCenterY() + vdy); 
-		Point2D newRel = ((MState)gdata).getParentDataNode().toRelativeCoordinate(newPos);
+		Point2D mNewPos = new Point2D.Double (mFromV(getVCenterX() + vdx), mFromV(getVCenterY() + vdy)); 
+		Point2D newRel = ((MState)gdata).getParentDataNode().toRelativeCoordinate(mNewPos);
 		double x = newRel.getX();
 		double y = newRel.getY();
 		if (x > 1) x = 1;

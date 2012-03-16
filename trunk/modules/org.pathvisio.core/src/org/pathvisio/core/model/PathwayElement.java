@@ -39,6 +39,7 @@ import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Utils;
+import org.pathvisio.core.view.State;
 
 /**
  * PathwayElement is responsible for maintaining the data for all the individual
@@ -760,7 +761,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.WIDTH,
 					StaticProperty.HEIGHT,
 					StaticProperty.MODIFICATIONTYPE,
-					StaticProperty.GRAPHREF
+					StaticProperty.GRAPHREF,
+					StaticProperty.ROTATION
 				);
 			propsState.addAll (propsCommon);
 			propsState.addAll (propsCommonStyle);
@@ -1887,8 +1889,16 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public void setRotation(double v)
 	{
 		if (rotation != v)
-		{
+		{			
 			rotation = v;
+			
+			// Rotation is not stored for State, so we use a dynamic property.
+			// TODO: remove after next GPML update.
+			if (objectType == ObjectType.STATE && v != 0)
+			{
+				setDynamicProperty(State.ROTATION_KEY, "" + v);
+			}
+			
 			fireObjectModifiedEvent(PathwayElementEvent.createCoordinatePropertyEvent(this));
 		}
 

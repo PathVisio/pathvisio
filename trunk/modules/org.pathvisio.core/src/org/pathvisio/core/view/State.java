@@ -27,6 +27,8 @@ import org.pathvisio.core.model.PathwayElement;
  */
 public class State extends GraphicsShape
 {	
+	public static final String ROTATION_KEY = "org.pathvisio.core.StateRotation";
+
 	public State (VPathway canvas, PathwayElement o) {
 		super(canvas, o);
 	}

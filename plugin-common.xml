@@ -4,7 +4,7 @@
 	<property name="debug.mode" value="true"/>
   
 	<target name="prepare-common">
-		<mkdir dir="build"/>
+		<mkdir dir="build/classes"/>
 		<mkdir dir="dist"/>
 		<mkdir dir="resources"/> <!-- defensive, to prevent file not found error later on -->
 		<property name="jar.name" value="dist/${base.name}.jar"/>
@@ -27,7 +27,7 @@
 		<echo>Compiling: ${jar.name}</echo>
 		<javac srcdir="src"
 			   includes="**"
-			   destdir="build"
+			   destdir="build/classes"
 			   debug="${debug.mode}"
 			   source="1.5">
 		  <classpath refid="project.class.path"/>
@@ -48,7 +48,7 @@
 			</classpath>
 		</manifestclasspath>
 		<jar jarfile="${jar.name}" manifest="META-INF/MANIFEST.MF">
-		    <fileset dir="build">
+		    <fileset dir="build/classes">
 			    <include name="**/*"/>
 			</fileset>
 		    <fileset dir="resources">
@@ -109,15 +109,15 @@
 			<not> <isset property="keystore.password"/> </not>
 		</condition>
 	</fail>
-  	<mkdir dir="build/webstart"/>
-  	<copy file="${jar.name}" todir="${webstart.dir}"/>
-  	<copy todir="${webstart.dir}">
-		<path ref="${project.class.path}"/>
-  	</copy>
+  	<delete dir="build/webstart"/>
+	<mkdir dir="build/webstart"/>	
+  	<copy todir="build/webstart" file="pathvisio-with-${base.name}.jar"/>
+  	<copy todir="build/webstart" file="${base.name}.jnlp"/>
+	<replace file="build/webstart/${base.name}.jnlp" token="#BASEURL#" value="${webstart.base.url}"/>
     <signjar alias="PV" lazy = "true" 
 		storepass="${keystore.password}" keystore="${pathvisio.dir}/lib/visioKeyStore">
-		<fileset dir="${webstart.dir}" includes="**/*.jar"/>
-	</signjar>	
+		<fileset dir="build/webstart" includes="**/*.jar"/>
+	</signjar>
   </target>
 
 </project>

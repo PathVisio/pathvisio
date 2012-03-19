@@ -1,8 +1,6 @@
 <?xml version="1.0"?>
 <project name="PathVisio-common" basedir=".">
 
-	<property name="ant.build.javac.target" value="1.5"/>
-	<property name="ant.build.javac.source" value="1.5"/>
 	<property name="debug.mode" value="true"/>
 	
 	<property name="pathvisio.version" value="3.0.Beta2"/>

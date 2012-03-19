@@ -2,19 +2,26 @@
 <project name="Plugins-common" basedir=".">
 
 	<property name="debug.mode" value="true"/>
-  
+	
+	<!-- the name of the plug-in jar uses the project name of the calling build file -->
+	<property name="jar.name" value="dist/${ant.project.name}.jar"/>
+	
+	<!-- the name of the executable wrapper jar uses the project name of the calling build file -->
+	<property name="exe.jar" value="pathvisio-with-${ant.project.name}.jar"/>
+
+	<!-- perpare-common should not be overriden -> override prepare instead -->
 	<target name="prepare-common">
 		<mkdir dir="build/classes"/>
 		<mkdir dir="dist"/>
 		<mkdir dir="resources"/> <!-- defensive, to prevent file not found error later on -->
-		<property name="jar.name" value="dist/${base.name}.jar"/>
 		<fail message="Can't find ${pathvisio.dir}/modules/org.pathvisio.core.jar, please specify the path to pathvisio with -Dpathvisio.dir=....">
 			<condition>
 				<not><available file="${pathvisio.dir}/modules/org.pathvisio.core.jar"/></not>
 			</condition>
 		</fail>
 	</target>
-	
+
+	<!-- designed to be overridden -->
 	<target name="prepare">
 	</target>
 	
@@ -43,7 +50,7 @@
 			<classpath>
 				<fileset dir="dist">
 					<include name="*.jar"/>
-					<exclude name="${base.name}.jar"/>
+					<exclude name="${ant.project.name}.jar"/>
 				</fileset>
 			</classpath>
 		</manifestclasspath>
@@ -62,6 +69,7 @@
 
 	  <target name="dist-clean" depends="clean">
 		<delete file="${jar.name}"/>
+		<delete file="${exe.jar}"/>
 	  </target>
 
 	<target name="test">
@@ -89,6 +97,7 @@
 		</junit>
 	</target>
 
+	<!-- create an executable bundle that includes pathvisio bundles and launcher -->
 	<target name="exe" depends="jar">
 		<mkdir dir="build/exe"/>
 		<copy toDir="build/exe" flatten="true">
@@ -96,7 +105,7 @@
 		</copy>
 		<unjar src="${pathvisio.dir}/modules/org.pathvisio.launcher.jar" dest="build/exe"/>
 		<unjar src="${pathvisio.dir}/lib/felix.jar" dest="build/exe"/>
-		<jar file="pathvisio-with-${base.name}.jar" basedir="build/exe">
+		<jar file="${exe.jar}" basedir="build/exe">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.launcher.PathVisioMain"/>
 			</manifest>
@@ -111,9 +120,9 @@
 	</fail>
   	<delete dir="build/webstart"/>
 	<mkdir dir="build/webstart"/>	
-  	<copy todir="build/webstart" file="pathvisio-with-${base.name}.jar"/>
-  	<copy todir="build/webstart" file="${base.name}.jnlp"/>
-	<replace file="build/webstart/${base.name}.jnlp" token="#BASEURL#" value="${webstart.base.url}"/>
+  	<copy todir="build/webstart" file="pathvisio-with-${ant.project.name}.jar"/>
+  	<copy todir="build/webstart" file="${ant.project.name}.jnlp"/>
+	<replace file="build/webstart/${ant.project.name}.jnlp" token="#BASEURL#" value="${webstart.base.url}"/>
     <signjar alias="PV" lazy = "true" 
 		storepass="${keystore.password}" keystore="${pathvisio.dir}/lib/visioKeyStore">
 		<fileset dir="build/webstart" includes="**/*.jar"/>

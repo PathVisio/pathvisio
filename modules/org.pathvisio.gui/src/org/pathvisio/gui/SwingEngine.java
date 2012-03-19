@@ -237,7 +237,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 					engine.getActiveVPathway().setEditMode(editMode);
 					return true;
 				} catch(ConverterException e) {
-					handleConverterException(e.getMessage(), null, e);
+					handleConverterException(e.getMessage(), frame, e);
 					return false;
 				} finally {
 					pk.finished();

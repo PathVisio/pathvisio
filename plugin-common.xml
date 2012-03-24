@@ -3,8 +3,11 @@
 
 	<property name="debug.mode" value="true"/>
 	
+	<!-- location where bundle and its dependencies will be installed -->
+	<property name="bundle.dest" value="dist"/>
+
 	<!-- the name of the plug-in jar uses the project name of the calling build file -->
-	<property name="jar.name" value="dist/${ant.project.name}.jar"/>
+	<property name="jar.name" value="${bundle.dest}/${ant.project.name}.jar"/>
 	
 	<!-- the name of the executable wrapper jar uses the project name of the calling build file -->
 	<property name="exe.jar" value="pathvisio-with-${ant.project.name}.jar"/>
@@ -12,7 +15,7 @@
 	<!-- perpare-common should not be overriden -> override prepare instead -->
 	<target name="prepare-common">
 		<mkdir dir="build/classes"/>
-		<mkdir dir="dist"/>
+		<mkdir dir="${bundle.dest}"/>
 		<mkdir dir="resources"/> <!-- defensive, to prevent file not found error later on -->
 		<fail message="Can't find ${pathvisio.dir}/modules/org.pathvisio.core.jar, please specify the path to pathvisio with -Dpathvisio.dir=....">
 			<condition>
@@ -27,7 +30,7 @@
 	
 	<target name="clean">
 		<delete dir="build"/>
-		<delete dir="dist"/>
+		<delete dir="${bundle.dest}"/>
 	</target>
 
 	<target name="compile" depends="prepare,prepare-common">
@@ -43,12 +46,12 @@
 
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
-		<copy toDir="dist" flatten="true">
+		<copy toDir="${bundle.dest}" flatten="true">
 			<path refid="project.class.path"/>
 		</copy>
 		<manifestclasspath property="manifest.cp" jarfile="${jar.name}">
 			<classpath>
-				<fileset dir="dist">
+				<fileset dir="${bundle.dest}">
 					<include name="*.jar"/>
 					<exclude name="${ant.project.name}.jar"/>
 				</fileset>

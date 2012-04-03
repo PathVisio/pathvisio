@@ -70,8 +70,8 @@ public class AboutDlg
 				"M.M. Palm, E.D. Pelgrim, E. Neuteboom,\n" +
 				"E.J. Creusen, P. Moeskops, Adem Bilican,\n" +
 				"Margot Sunshine, Mark Woon, Bing Liu,\n" +
-				"Ferry Jagers, Justin Elser, Sravanthi Sinha,\n" +
-				"Praveen Kumar\n" +
+				"Ferry Jagers, Justin Elser, Harm Nijveen\n" +
+				"Sravanthi Sinha, Praveen Kumar\n" +
 				"<h3>Visit our website</h3>" +
 				"<p><a href=\"http://www.pathvisio.org\">http://www.pathvisio.org</a>" +
 				"</html>");

@@ -1331,7 +1331,8 @@ public class VPathway implements PathwayListener
 	 * Select all objects of the given class
 	 *
 	 * @param c
-	 *            The class of the objects to be selected
+	 *            The class of the objects to be selected. For example: DataNode, Line, etc. 
+	 *            May be null, in which case everything is selected.
 	 */
 	void selectObjects(Class<?> c)
 	{
@@ -1343,11 +1344,14 @@ public class VPathway implements PathwayListener
 			{
 				selection.addToSelection(vpe);
 			}
+					
 		}
 		selection.stopSelecting();
-		redrawDirtyRect();
 	}
 
+	/**
+	 * select all objects of the pathway.
+	 */
 	void selectAll()
 	{
 		selectObjects(null);
@@ -2629,27 +2633,41 @@ public class VPathway implements PathwayListener
 	}
 
 	/**
-	 * Move multiple elements together (either a group or a selection).
-	 * If a State is contained together with its parent DataNode, then the state is not moved. 
+	 * Move multiple elements together (either a group or a selection). 
+	 * <p>
+	 * This method makes sure that elements are not moved twice if they are part of another element that is being moved. 
+	 * For example: If a State is moved at the same time as its parent DataNode, then the state is not moved.
+	 * If a group member is moved together with the parent group, then the member is not moved.   
 	 */
 	public void moveMultipleElements (Collection<? extends VPathwayElement> toMove, double vdx, double vdy)
 	{
 		// collect all graphIds in selection
 		Set<String> eltIds = new HashSet<String>();
+		// collect all groupIds in selection
+		Set<String> groupIds = new HashSet<String>();
 		for (VPathwayElement o : toMove)
+		{
 			if (o instanceof Graphics) 
-				{
-					String id = ((Graphics)o).getPathwayElement().getGraphId();
-					if (id != null) eltIds.add(id);
-				}
-		
+			{
+				PathwayElement elt = ((Graphics)o).getPathwayElement();
+				String id = elt.getGraphId();
+				if (id != null) eltIds.add(id);
+				String groupId = elt.getGroupId();
+				if (elt.getObjectType() == ObjectType.GROUP && groupId != null) groupIds.add(id);
+			}
+		}
+
 		for (VPathwayElement o : toMove) 
 		{
 			// skip if parent of state is also in selection.
 			if (o instanceof State && eltIds.contains (((State)o).getPathwayElement().getGraphRef()))
 					continue;
-
-			if(o instanceof Graphics) {
+			
+			if(o instanceof Graphics) 
+			{
+				// skip if parent group is also in selection
+				if (groupIds.contains (((Graphics)o).getPathwayElement().getGroupRef())) continue;
+				
 				o.vMoveBy(vdx, vdy);
 			}
 		}

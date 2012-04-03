@@ -88,6 +88,9 @@ public class PopupDialogHandler
 		case INFOBOX:
 			result = new PathwayElementDialog(swingEngine, e.getParent().getMappInfo(), readonly, frame, "Pathway properties", locationComp);
 			break;
+		case MAPPINFO:
+			result = new PathwayPropertiesDialog(swingEngine, e, readonly, frame, "Properties", locationComp);
+			break;
 		default:
 			result = new PathwayElementDialog(swingEngine, e, readonly, frame, "Element properties", locationComp);
 		}	

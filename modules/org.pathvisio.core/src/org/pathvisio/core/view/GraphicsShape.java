@@ -160,6 +160,8 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 
 	protected void vMoveBy(double vdx, double vdy)
 	{
+		// both setM operations fire the exact same objectModifiedEvent, one should be enough
+		gdata.dontFireEvents(1);
 		gdata.setMLeft(gdata.getMLeft()  + mFromV(vdx));
 		gdata.setMTop(gdata.getMTop() + mFromV(vdy));
 	}

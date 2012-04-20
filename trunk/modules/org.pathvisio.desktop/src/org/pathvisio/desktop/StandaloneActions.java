@@ -16,9 +16,14 @@
 //
 package org.pathvisio.desktop;
 
+import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
@@ -27,9 +32,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
+import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Globals;
+import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Resources;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.ViewActions;
 import org.pathvisio.desktop.dialog.PluginManagerDialog;
 import org.pathvisio.desktop.plugin.PluginDialogSwitch;
 import org.pathvisio.gui.SwingEngine;
@@ -41,7 +50,7 @@ import edu.stanford.ejalbert.BrowserLauncher;
  * in the standalone (non-applet)
  * version of PathVisio.
  */
-public class StandaloneActions
+public class StandaloneActions implements ApplicationEventListener
 {
 	private static final URL IMG_OPEN = Resources.getResourceURL("open.gif");
 	private static final URL IMG_NEW = Resources.getResourceURL("new.gif");
@@ -54,6 +63,7 @@ public class StandaloneActions
 	public final Action preferencesAction;
 	public final Action searchAction;
 	public final Action pluginManagerAction;
+	public final Action printAction;
 
 	StandaloneActions (PvDesktop desktop)
 	{
@@ -66,8 +76,19 @@ public class StandaloneActions
 		preferencesAction = new PreferencesAction(desktop);
 		searchAction = new SearchAction(swingEngine);
 		pluginManagerAction = new PluginManagerAction(desktop);
+		//registering this class to receive Application level events (used in PrintAction) 
+		swingEngine.getEngine().addApplicationEventListener(this);
+		printAction = new PrintAction(swingEngine);
 	}
 
+	public void applicationEvent(ApplicationEvent e) {
+		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+			ViewActions va = ((VPathway)e.getSource()).getViewActions();
+			va.registerToGroup(printAction, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
+			va.resetGroupStates();
+		}
+	}
+	
 	/**
 	 * Open the online help in a browser window.
 	 * In menu->help->help or F1
@@ -271,6 +292,70 @@ public class StandaloneActions
 			{
 				pane.setSelectedIndex (index);
 			}
+		}
+	}
+	
+	/**
+	 * Print menu item. Prints the current Pathway
+	 */
+	public static class PrintAction extends AbstractAction
+	{
+		SwingEngine swingEngine;
+
+		public PrintAction(SwingEngine swingEngine)
+		{
+			super();
+			this.swingEngine = swingEngine;
+			putValue(NAME, "Print");
+			putValue(SHORT_DESCRIPTION, "Print Pathway");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_P,
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			setEnabled(false);
+		}
+
+		public void actionPerformed(ActionEvent e)
+		{	
+			PrinterJob pj = PrinterJob.getPrinterJob();
+			pj.setJobName(" Print Component ");
+			PageFormat originalPageFormat = pj.defaultPage();
+			//pops up the Page Setup Dialogue
+			PageFormat returnedPageFormat = pj.pageDialog(originalPageFormat);
+			/*check whether the user canceled or okayed the Page Setup Dialogue by comparing thePageFormat objects 
+			 * if canceled, cancel the Print operation*/ 
+			if(returnedPageFormat == originalPageFormat)
+				return;
+			pj.setPrintable (new Printable() {    
+				@Override
+				public int print(java.awt.Graphics graphics, PageFormat pageFormat, int pageIndex)	
+					throws PrinterException {
+					if (pageIndex > 0){
+						return Printable.NO_SUCH_PAGE;
+					}
+					VPathway vPathway = swingEngine.getEngine().getActiveVPathway();
+					Graphics2D g2 = (Graphics2D) graphics;
+					double xScale = pageFormat.getImageableWidth()/vPathway.getVWidth();
+					double yScale = pageFormat.getImageableHeight()/vPathway.getVHeight();
+					//scaling ratio is being set to the minimum of the two, so that the scaling covers even the larger one. 
+					double minScale = Math.min(xScale, yScale);
+					g2.translate(pageFormat.getImageableX(),pageFormat.getImageableY());
+					//scaling both x and y using the minimum of the 2 scale ratios calculated above.
+					//i.e using the same scaling ratio for both x and y axis to maintain the aspect ratio (width:height)
+					g2.scale(minScale, minScale);
+					vPathway.draw(g2);
+					return Printable.PAGE_EXISTS;
+				}
+			});
+			
+			if (pj.printDialog() == false)
+				return;
+
+			try {
+				pj.print();
+			} catch (PrinterException ex) {
+				//may be popup a dialogue saying that there's a problem with the print system (printer problems) 
+				System.out.println("PrinterException while printing Pathway "+ex.getMessage());
+			}
+
 		}
 	}
 

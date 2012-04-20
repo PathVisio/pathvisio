@@ -50,8 +50,6 @@ public class GexPlugin implements Plugin {
 	 */
 	public static class ImportGexDataAction extends AbstractAction
 	{
-		private static final long serialVersionUID = 1L;
-
 		private final PvDesktop sae;
 
 		public ImportGexDataAction(PvDesktop sae)
@@ -71,15 +69,13 @@ public class GexPlugin implements Plugin {
 
 	/**
 	 * Let the user open an expression dataset
-	 * @author thomas
 	 */
 	public static class SelectGexAction extends AbstractAction
 	{
-		private static final long serialVersionUID = 1L;
-		private final PvDesktop se;
+		private final PvDesktop desktop;
 
-		public SelectGexAction(PvDesktop standaloneEngine) {
-			se = standaloneEngine;
+		public SelectGexAction(PvDesktop _desktop) {
+			desktop = _desktop;
 			putValue(NAME, "Select expression dataset");
 			putValue(SHORT_DESCRIPTION, "Select expression dataset");
 		}
@@ -93,7 +89,7 @@ public class GexPlugin implements Plugin {
 				 * throws an exception if that fails
 				 */
 				DBConnectorSwing dbcon;
-				DBConnector dbc = se.getGexManager().getDBConnector();
+				DBConnector dbc = desktop.getGexManager().getDBConnector();
 				if(dbc instanceof DBConnectorSwing)
 				{
 					dbcon = (DBConnectorSwing)dbc;
@@ -103,17 +99,17 @@ public class GexPlugin implements Plugin {
 					//TODO: better handling of error
 					throw new IllegalArgumentException("Not a Swing database connector");
 				}
-				String dbName = dbcon.openChooseDbDialog(null);
+				String dbName = dbcon.openChooseDbDialog(desktop.getFrame());
 
 				if(dbName == null) return;
 
-				se.getGexManager().setCurrentGex(dbName, false);
-				se.loadGexCache();
+				desktop.getGexManager().setCurrentGex(dbName, false);
+				desktop.loadGexCache();
 			}
 			catch(Exception ex)
 			{
 				String msg = "Failed to open expression dataset; " + ex.getMessage();
-				JOptionPane.showMessageDialog(null,
+				JOptionPane.showMessageDialog(desktop.getFrame(),
 						"Error: " + msg + "\n\n" + "See the error log for details.",
 						"Error",
 						JOptionPane.ERROR_MESSAGE);

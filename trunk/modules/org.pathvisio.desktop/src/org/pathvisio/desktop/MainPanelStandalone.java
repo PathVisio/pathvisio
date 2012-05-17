@@ -170,7 +170,7 @@ public class MainPanelStandalone extends MainPanel
 					{
 						if (swingEngine.canDiscardPathway())
 						{
-							swingEngine.openPathway(file);
+							swingEngine.importPathway(file);
 						}
 					}
 				});

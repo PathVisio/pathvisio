@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -196,5 +197,11 @@ public class EUGeneExporter implements PathwayExporter
 		{
 			systemMappings.put(GENMAPP_SYSTEMS[i], EU_GENE_SYSTEMS[i]);
 		}
+	}
+
+	@Override
+	public List<String> getWarnings()
+	{
+		return Collections.emptyList();
 	}
 }

@@ -19,17 +19,21 @@ package org.pathvisio.core.model;
 import java.io.File;
 
 /** implemented by classes that can import a pathway from various different types */
-public interface PathwayImporter {
-	public String getName();
-
+public interface PathwayImporter extends PathwayIO 
+{
 	/**
-	 * Get the possible extensions this importer can read (e.g. txt).
-	 * The extensions must be unique, the correct importer will be chosen
-	 * based on file extension.
-	 * @return An array with the possible extensions (without '.')
+	 * Inspect the file and determine if the file is suitable for import using this importer.
+	 * For example, files ending in .xml could be examined for the local name and namespace of the root element.
+	 * This function is invoked when multiple importers apply to a given file.
+	 * <p>
+	 * Implementations should check the file only superficially if at all. This function is merely a "tie-breaker" in case there are conflicting importers.  
+	 * A return value of true doesn't automatically mean that the file is guaranteed to be valid, so no complex validation is required. 
+	 * For naive implementations, it's always OK to simply return "true".
+	 * @param f: the file to check
+	 * @returns true if the file appears superficially to be of the correct file type. 
 	 */
-	public String[] getExtensions();
-
+	public boolean isCorrectType (File f);
+	
 	/**
 	 * @param File that contains pathway information
 	 * @returns the result of the import, a fresh Pathway instance

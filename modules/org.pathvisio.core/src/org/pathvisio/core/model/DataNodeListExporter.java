@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.bridgedb.DataSource;
@@ -176,5 +178,11 @@ public class DataNodeListExporter implements PathwayExporter {
 	}
 
 	public DataNodeListExporter() {
+	}
+
+	@Override
+	public List<String> getWarnings()
+	{
+		return Collections.emptyList();
 	}
 }

@@ -16,6 +16,9 @@
 //
 package org.pathvisio.core.model;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Base class for a couple of image exporters.
  * This class adds the ability to remember (a) valid extension(s) for a
@@ -58,4 +61,10 @@ public abstract class ImageExporter implements PathwayExporter {
 	public void noExporterException() throws ConverterException {
 		throw new ConverterException("No exporter for this image format");
 	}
+	
+	@Override
+	public List<String> getWarnings()
+	{
+		return Collections.emptyList();
+	}	
 }

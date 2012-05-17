@@ -17,13 +17,17 @@
 package org.pathvisio.core;
 
 import java.awt.Color;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
@@ -95,44 +99,33 @@ public class Engine
 	}
 
 	//TODO: No reason to keep this in engine, it doesn't act on active pathway
-	public void exportPathway(File file, Pathway pathway) throws ConverterException {
+	public void exportPathway(File file, Pathway pathway) throws ConverterException 
+	{
 		Logger.log.trace("Exporting pathway to " + file);
-		String fileName = file.toString();
-
-		int dot = fileName.lastIndexOf('.');
-		String ext = null;
-		if(dot >= 0) {
-			ext = fileName.substring(dot + 1, fileName.length());
-		}
-		if (ext.toLowerCase().equals("mapp") &&
-				Utils.getOS() != Utils.OS_WINDOWS)
+		
+		Set<PathwayExporter> set = getPathwayExporters(file);
+		if (set != null && set.size() == 1)
 		{
-			throw new ConverterException ("MAPP format is only available on Windows operating systems");
+			PathwayExporter exporter = Utils.oneOf(set);
+			exporter.doExport(file, pathway);
 		}
-		PathwayExporter exporter = getPathwayExporter(ext);
-
-		if(exporter == null) throw new ConverterException( "No exporter for '" + ext +  "' files" );
-
-		exporter.doExport(file, pathway);
+		else
+			throw new ConverterException( "Could not determine exporter for '" + FileUtils.getExtension(file.toString()) +  "' files" );
 	}
 
 	public void importPathway(File file) throws ConverterException
 	{
 		Logger.log.trace("Importing pathway from " + file);
-		String fileName = file.toString();
-
-		int dot = fileName.lastIndexOf('.');
-		String ext = Engine.PATHWAY_FILE_EXTENSION; //
-		if(dot >= 0) {
-			ext = fileName.substring(dot + 1, fileName.length());
+		
+		Set<PathwayImporter> set = getPathwayImporters(file);		
+		if (set != null && set.size() == 1)
+		{
+			PathwayImporter importer = Utils.oneOf (set);
+			Pathway pathway = importer.doImport(file);
+			newPathwayHelper (pathway);
 		}
-		PathwayImporter importer = getPathwayImporter(ext);
-
-		if(importer == null) throw new ConverterException( "No importer for '" + ext +  "' files" );
-
-		Pathway pathway = importer.doImport(file);
-
-		newPathwayHelper (pathway);
+		else
+			throw new ConverterException( "Could not determine importer for '" + FileUtils.getExtension(file.toString()) +  "' files" );
 	}
 
 	/**
@@ -304,15 +297,15 @@ public class Engine
 	 */
 	public boolean hasVPathway() { return vPathway != null; }
 
-	private Map<String, PathwayExporter> exporters = new HashMap<String, PathwayExporter>();
-	private Map<String, PathwayImporter> importers = new HashMap<String, PathwayImporter>();
+	private Map<String, Set <PathwayExporter> > exporters = new HashMap<String, Set <PathwayExporter> >();
+	private Map<String, Set <PathwayImporter> > importers = new HashMap<String, Set <PathwayImporter> >();
 	/**
 	 * Add a {@link PathwayExporter} that handles export of GPML to another file format
 	 * @param export
 	 */
 	public void addPathwayExporter(PathwayExporter export) {
 		for(String ext : export.getExtensions()) {
-			exporters.put(ext, export);
+			Utils.multimapPut(exporters, ext.toLowerCase(), export);
 		}
 	}
 
@@ -322,24 +315,59 @@ public class Engine
 	 */
 	public void addPathwayImporter(PathwayImporter importer) {
 		for(String ext : importer.getExtensions()) {
-			importers.put(ext, importer);
+			Utils.multimapPut(importers, ext.toLowerCase(), importer);
 		}
 	}
 
-	public PathwayExporter getPathwayExporter(String ext) {
-		return exporters.get(ext);
+	/**
+	 * Find a suitable exporter for the given filename
+	 * @returns null if no suitable exporter could be found
+	 */
+	public Set<PathwayExporter> getPathwayExporters(File f) 
+	{
+		return exporters.get(FileUtils.getExtension(f.toString()).toLowerCase());
 	}
 
-	public PathwayImporter getPathwayImporter(String ext) {
-		return importers.get(ext);
+	/**
+	 * Find exporters suitable for a given file.
+	 * In case multiple importers match the file extension, the files may be inspected.
+	 * @returns null if no suitable importer could be found
+	 */
+	public Set<PathwayImporter> getPathwayImporters(File f) 
+	{
+		Set<PathwayImporter> set = new HashSet<PathwayImporter>();
+		
+		// deep copy, so that we can safely modify our set 
+		set.addAll(importers.get(FileUtils.getExtension(f.toString()).toLowerCase()));
+		
+		if (set != null && set.size() > 1)
+		{
+			Iterator<PathwayImporter> i = set.iterator();
+			while (i.hasNext())
+			{
+				PathwayImporter j = i.next();
+				if (!j.isCorrectType(f))
+					i.remove();
+			}
+		}
+
+		return set;
 	}
 
-	public Map<String, PathwayExporter> getPathwayExporters() {
-		return exporters;
+	/**
+	 * @returns all registered pathway exporters
+	 */
+	public Set<PathwayExporter> getPathwayExporters() 
+	{
+		return Utils.multimapValues(exporters);
 	}
 
-	public Map<String, PathwayImporter> getPathwayImporters() {
-		return importers;
+	/**
+	 * @returns all registered pathway importers
+	 */
+	public Set<PathwayImporter> getPathwayImporters() 
+	{
+		return Utils.multimapValues(importers);
 	}
 
 	private List<ApplicationEventListener> applicationEventListeners  = new ArrayList<ApplicationEventListener>();

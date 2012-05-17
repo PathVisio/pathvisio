@@ -32,6 +32,7 @@ import org.jdom.Namespace;
 import org.jdom.input.JDOMParseException;
 import org.jdom.input.SAXBuilder;
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.RootElementFinder;
 import org.xml.sax.InputSource;
 
 
@@ -41,7 +42,7 @@ import org.xml.sax.InputSource;
  * and should be the only class (apart from svgFormat)
  * that needs to import jdom
  */
-public class GpmlFormat implements PathwayImporter, PathwayExporter
+public class GpmlFormat extends AbstractPathwayFormat
 {
 	static private final GpmlFormat2010a CURRENT = GpmlFormat2010a.GPML_2010A;
 
@@ -200,6 +201,22 @@ public class GpmlFormat implements PathwayImporter, PathwayExporter
 		}
 		catch(Exception e) { //Make all types of exceptions a ConverterException
 			throw new ConverterException (e);
+		}
+	}
+	
+	@Override
+	public boolean isCorrectType(File f)
+	{
+		String uri;
+		try
+		{
+			uri = "" + RootElementFinder.getRootUri(f);
+			return uri.startsWith ("http://genmapp.org/");
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
 		}
 	}
 

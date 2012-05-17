@@ -19,27 +19,20 @@ package org.pathvisio.gui;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
 
-import org.pathvisio.core.model.PathwayExporter;
-import org.pathvisio.core.model.PathwayImporter;
+import org.pathvisio.core.model.PathwayIO;
 
 /**
  * A filefilter that filters files for a given {@link PathwayImporter} or {@link PathwayExporter}.
  * Can be used to create a {@link FileDialog} for importers or exporters.
  * @author thomas
- *
  */
-public class ImporterExporterFileFilter extends FileFilter {
+public class PathwayFileFilter extends FileFilter {
 	String[] exts;
 	String name;
 
-	public ImporterExporterFileFilter(PathwayImporter imp) {
+	public PathwayFileFilter(PathwayIO imp) {
 		exts = imp.getExtensions();
 		name = imp.getName();
-	}
-
-	public ImporterExporterFileFilter(PathwayExporter exp) {
-		exts = exp.getExtensions();
-		name = exp.getName();
 	}
 
 	public String getDefaultExtension() {

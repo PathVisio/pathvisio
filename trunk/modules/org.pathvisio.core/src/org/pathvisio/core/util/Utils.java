@@ -22,8 +22,11 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.pathvisio.core.model.PathwayExporter;
 
 /**
  * Various utility functions
@@ -154,6 +157,31 @@ public class Utils {
 		return result;
 	}
 
+	/**
+	 * For safely adding a value to a multimap (i.e. a map of sets)   
+	 */
+	static public <U, V> void multimapPut (Map <U, Set<V> > map, U key, V val)
+	{
+		Set<V> x;
+		if (map.containsKey(key))
+			x = map.get(key);
+		else
+		{
+			x = new HashSet<V>();
+			map.put (key, x);
+		}
+		x.add(val);
+	}
+
+	/**
+	 * returns a set of all unique values of a multimap (i.e. a map of sets).
+	 */
+	public static <U, V> Set<V> multimapValues (Map<U, Set<V>> map)
+	{
+		Set <V> result = new HashSet<V>();
+		for (Set<V> set : map.values()) result.addAll(set);
+		return result;
+	}
 
     /**
      * Compares two Strings, returning <code>true</code> if they are equal.
@@ -194,4 +222,5 @@ public class Utils {
 	public static boolean isEmpty(String str) {
 		return str == null || str.length() == 0;
 	}
+
 }

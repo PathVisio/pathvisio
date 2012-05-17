@@ -37,6 +37,7 @@ import java.util.Map;
 import org.bridgedb.DataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.ShapeRegistry;
 
 /**
@@ -63,7 +64,7 @@ import org.pathvisio.core.view.ShapeRegistry;
  * other objects always have a fixed size and even a fixed rotation in the case
  * of CELLB.
  */
-public class MappFormat implements PathwayImporter, PathwayExporter
+public class MappFormat extends AbstractPathwayFormat
 {
 	private static final String SQL_INFO_INSERT =
 		"INSERT INTO INFO (Title, MAPP, GeneDB, Version, Author, " +
@@ -1047,7 +1048,13 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 		return extensions;
 	}
 
-	public void doExport(File file, Pathway pathway) throws ConverterException {
+	public void doExport(File file, Pathway pathway) throws ConverterException 
+	{
+		if (Utils.getOS() != Utils.OS_WINDOWS)
+		{
+			throw new ConverterException ("MAPP format is only available on Windows operating systems");
+		}
+
 		String[] mappInfo = MappFormat.uncopyMappInfo(pathway);
 		List<String[]> mappObjects = MappFormat.uncopyMappObjects(pathway);
 		MappFormat.exportMapp (file.getAbsolutePath(), mappInfo, mappObjects);
@@ -1086,4 +1093,10 @@ public class MappFormat implements PathwayImporter, PathwayExporter
 	    	return "" + c;
     	}
     }
+
+	@Override
+	public boolean isCorrectType(File f)
+	{
+		return true;
+	}
 }

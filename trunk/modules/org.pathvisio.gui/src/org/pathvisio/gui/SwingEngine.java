@@ -21,6 +21,7 @@ import java.awt.Container;
 import java.io.File;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
@@ -44,11 +45,12 @@ import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.GpmlFormat;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.Pathway.StatusFlagEvent;
-import org.pathvisio.core.model.PathwayExporter;
-import org.pathvisio.core.model.PathwayImporter;
+import org.pathvisio.core.model.PathwayIO;
 import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.Preference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ProgressKeeper;
+import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.VPathwayWrapper;
 import org.pathvisio.gui.dialogs.PopupDialogHandler;
 import org.pathvisio.gui.util.Compat;
@@ -254,40 +256,16 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		engine.newPathway();
 	}
 
-	public boolean exportPathway() {
-		//Open file dialog
-		JFileChooser jfc = new JFileChooser();
-		jfc.setAcceptAllFileFilterUsed(false);
-		jfc.setDialogTitle("Export pathway");
-		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
-		jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_EXPORT));
+	public boolean exportPathway() 
+	{
+		PathwayChooser pc = new PathwayChooser("Export", JFileChooser.SAVE_DIALOG, GlobalPreference.DIR_LAST_USED_EXPORT, engine.getPathwayExporters());
+		int status = pc.show();
+		
+		if(status == JFileChooser.APPROVE_OPTION) 
+		{
+			File f = pc.getSelectedFile();
 
-		SortedSet<PathwayExporter> exporters = new TreeSet<PathwayExporter>(
-				new Comparator<PathwayExporter>() {
-					public int compare(PathwayExporter o1, PathwayExporter o2) {
-						return o1.getName().compareTo(o2.getName());
-					}
-				}
-		);
-		exporters.addAll(engine.getPathwayExporters().values());
-
-		FileFilter selectedFilter = null;
-		for(PathwayExporter exp : exporters) {
-			FileFilter ff = new ImporterExporterFileFilter(exp);
-			jfc.addChoosableFileFilter(ff);
-			if(exp instanceof GpmlFormat) {
-				selectedFilter = ff;
-			}
-		}
-		if(selectedFilter != null) jfc.setFileFilter(selectedFilter);
-
-		int status = jfc.showDialog(getApplicationPanel(), "Export");
-		if(status == JFileChooser.APPROVE_OPTION) {
-			File f = jfc.getSelectedFile();
-			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_EXPORT,
-					jfc.getCurrentDirectory());
-
-			ImporterExporterFileFilter ff = (ImporterExporterFileFilter)jfc.getFileFilter();
+			PathwayFileFilter ff = (PathwayFileFilter)pc.getFileFilter();
 			if(!f.toString().toUpperCase().endsWith("." + ff.getDefaultExtension().toUpperCase())) {
 				f = new File(f.toString() + "." + ff.getDefaultExtension());
 			}
@@ -296,6 +274,73 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		}
 		return false;
 	}
+	
+	/**
+	 * A wrapper around JFileChooser that has the right defaults and File Filters.
+	 */
+	private class PathwayChooser 
+	{
+		private final JFileChooser jfc;
+		private final String taskName;
+		private final Preference dirPreference;
+		
+		public PathwayChooser(String taskName, int dialogType, Preference dirPreference, Set<? extends PathwayIO> set)
+		{
+			jfc = new JFileChooser();
+			this.taskName = taskName;
+			this.dirPreference = dirPreference;
+			createFileFilters(set);
+			jfc.setDialogTitle(taskName + " pathway");
+			jfc.setDialogType(dialogType);
+			jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(dirPreference));
+		}
+		
+		/** create a file chooser populated with file filters for the given pathway importers / exporters */
+		private void createFileFilters(Set<? extends PathwayIO> set)
+		{
+			jfc.setAcceptAllFileFilterUsed(false);
+					
+			SortedSet<PathwayIO> exporters = new TreeSet<PathwayIO>(
+					new Comparator<PathwayIO>() {
+						public int compare(PathwayIO o1, PathwayIO o2) {
+							return o1.getName().compareTo(o2.getName());
+						}
+					}
+			);
+			exporters.addAll(set);
+
+			FileFilter selectedFilter = null;
+			for(PathwayIO exp : exporters) {
+				FileFilter ff = new PathwayFileFilter(exp);
+				jfc.addChoosableFileFilter(ff);
+				if(exp instanceof GpmlFormat) {
+					selectedFilter = ff;
+				}
+			}
+			if(selectedFilter != null) jfc.setFileFilter(selectedFilter);
+		}
+
+		public FileFilter getFileFilter()
+		{
+			return jfc.getFileFilter();
+		}
+
+		public int show ()	
+		{
+			int status = jfc.showDialog(getApplicationPanel(), taskName);
+			if(status == JFileChooser.APPROVE_OPTION) 
+			{
+				PreferenceManager.getCurrent().setFile(dirPreference, jfc.getCurrentDirectory());
+			}
+			return status;
+		}
+			
+		public File getSelectedFile()
+		{
+			return jfc.getSelectedFile();
+		}
+	}
+	
 
 	public boolean exportPathway(final File f) {
 		if(mayOverwrite(f)) {
@@ -326,47 +371,21 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return false;
 	}
 
-	public boolean importPathway() {
-		//Open file dialog
-		JFileChooser jfc = new JFileChooser();
-		jfc.setAcceptAllFileFilterUsed(false);
-		jfc.setDialogTitle("Import pathway");
-		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-		jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_IMPORT));
-
-		SortedSet<PathwayImporter> importers = new TreeSet<PathwayImporter>(
-				new Comparator<PathwayImporter>() {
-					public int compare(PathwayImporter o1, PathwayImporter o2) {
-						return o1.getName().compareTo(o2.getName());
-					}
-				}
-		);
-		importers.addAll(engine.getPathwayImporters().values());
-		FileFilter selectedFilter = null;
-		for(PathwayImporter imp : importers) {
-			FileFilter ff = new ImporterExporterFileFilter(imp);
-			jfc.addChoosableFileFilter(ff);
-			if(imp instanceof GpmlFormat) {
-				selectedFilter = ff;
-			}
-		}
-		if(selectedFilter != null) jfc.setFileFilter(selectedFilter);
-
-		int status = jfc.showDialog(getApplicationPanel(), "Import");
-		if(status == JFileChooser.APPROVE_OPTION) {
-			File f = jfc.getSelectedFile();
-			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_IMPORT,
-					jfc.getCurrentDirectory());
-			ImporterExporterFileFilter ff = (ImporterExporterFileFilter)jfc.getFileFilter();
-			if(!f.toString().toUpperCase().endsWith(ff.getDefaultExtension().toUpperCase())) {
-				f = new File(f.toString() + "." + ff.getDefaultExtension());
-			}
+	public boolean importPathway() 
+	{	
+		PathwayChooser pc = new PathwayChooser("Import", JFileChooser.OPEN_DIALOG, GlobalPreference.DIR_LAST_USED_IMPORT, engine.getPathwayImporters());
+		int status = pc.show();
+		
+		if(status == JFileChooser.APPROVE_OPTION) 
+		{
+			File f = pc.getSelectedFile();
 			return importPathway(f);
-
 		}
 		return false;
 	}
 
+	private final Set<PathwayIO> GPML_FORMAT_ONLY = Utils.setOf((PathwayIO)new GpmlFormat());
+	
 	/**
 	 * Opens a file chooser dialog, and opens the chosen pathway.
 	 * @return true if a pathway was openend, false if the operation was
@@ -374,38 +393,12 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	 */
 	public boolean openPathway()
 	{
-		//Open file dialog
-		JFileChooser jfc = new JFileChooser();
-		jfc.setAcceptAllFileFilterUsed(false);
-		jfc.setDialogTitle("Open pathway");
-		jfc.setDialogType(JFileChooser.OPEN_DIALOG);
-		jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_OPEN));
-
-		jfc.addChoosableFileFilter(new FileFilter() {
-			public boolean accept(File f) {
-				if(f.isDirectory()) return true;
-				String ext = f.toString().substring(f.toString().length() - 4);
-				if(ext.equalsIgnoreCase("xml") || ext.equalsIgnoreCase("gpml")) {
-					return true;
-				}
-				return false;
-			}
-			public String getDescription() {
-				return "GPML files (*.gpml, *.xml)";
-			}
-
-		});
-
-		//TODO: use constants for extensions
-		int status = jfc.showDialog(getApplicationPanel(), "Open pathway");
-		if(status == JFileChooser.APPROVE_OPTION) {
-			File f = jfc.getSelectedFile();
-			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_OPEN,
-				jfc.getCurrentDirectory());
-			if(!(f.toString().toUpperCase().endsWith("GPML") || f.toString().toUpperCase().endsWith("XML")))
-			{
-				f = new File(f.toString() + ".gpml");
-			}
+		PathwayChooser pc = new PathwayChooser("Open", JFileChooser.OPEN_DIALOG, GlobalPreference.DIR_LAST_USED_OPEN, GPML_FORMAT_ONLY);
+		int status = pc.show (); 
+		
+		if(status == JFileChooser.APPROVE_OPTION) 
+		{
+			File f = pc.getSelectedFile();
 			return openPathway(f);
 		}
 		return false;
@@ -421,32 +414,14 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		return allow;
 	}
 
-	public boolean savePathwayAs() {
-		//Open file dialog
-		JFileChooser jfc = new JFileChooser();
-		jfc.setAcceptAllFileFilterUsed(true);
-		jfc.setDialogTitle("Save pathway");
-		jfc.setDialogType(JFileChooser.SAVE_DIALOG);
-		jfc.setCurrentDirectory(PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_SAVE));
-		jfc.addChoosableFileFilter(new FileFilter() {
-			public boolean accept(File f) {
-				if(f.isDirectory()) return true;
-				String ext = f.toString().substring(f.toString().length() - 4);
-				if(ext.equalsIgnoreCase("xml") || ext.equalsIgnoreCase("gpml")) {
-					return true;
-				}
-				return false;
-			}
-			public String getDescription() {
-				return "GPML files (*.gpml, *.xml)";
-			}
-
-		});
-		int status = jfc.showDialog(frame, "Save");
-		if(status == JFileChooser.APPROVE_OPTION) {
-			File toFile = jfc.getSelectedFile();
-			PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_SAVE,
-					jfc.getCurrentDirectory());
+	public boolean savePathwayAs() 
+	{
+		PathwayChooser pc = new PathwayChooser("Save", JFileChooser.SAVE_DIALOG, GlobalPreference.DIR_LAST_USED_SAVE, GPML_FORMAT_ONLY);
+		int status = pc.show (); 
+		
+		if(status == JFileChooser.APPROVE_OPTION) 
+		{
+			File toFile = pc.getSelectedFile();
 			String fn = toFile.toString();
 			if(!fn.toLowerCase().endsWith(Engine.PATHWAY_FILE_EXTENSION)) {
 				toFile = new File(fn + "." + Engine.PATHWAY_FILE_EXTENSION);

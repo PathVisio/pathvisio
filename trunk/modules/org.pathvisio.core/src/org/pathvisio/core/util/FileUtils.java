@@ -129,6 +129,20 @@ public class FileUtils {
 	}
 
 	/**
+	 * @param fileName file as a String
+	 * @returns fragment of the filename after the '.'. Returns null if there was no '.'.
+	 */
+	public static String getExtension(String fileName)
+	{
+		int dot = fileName.lastIndexOf('.');
+		String ext = null;
+		if(dot >= 0) {
+			ext = fileName.substring(dot + 1, fileName.length());
+		}
+		return ext;
+	}
+	
+	/**
 	 * Removes the file extension (everything from the last occurence of '.')
 	 */
 	public static String removeExtension(String fname) {

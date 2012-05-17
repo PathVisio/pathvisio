@@ -20,29 +20,14 @@ import java.io.File;
 
 /**
  * Interface for an exporter that writes a pathway to a file
- * @author thomas
- *
  */
-public interface PathwayExporter {
-	/**
-	 * Get the exporter name (to what file type does it export)
-	 * @return
-	 */
-	public String getName();
-
-	/**
-	 * Get the possible extensions this exporter writes to (e.g. txt).
-	 * The extension must be unique, the correct exporter will be chosen
-	 * based on file extension.
-	 * @return An array with the possible extensions (without '.')
-	 */
-	public String[] getExtensions();
-
+public interface PathwayExporter extends PathwayIO 
+{
 	/**
 	 * Export the given pathway to the file
 	 * @param file The file to export to
 	 * @param pathway The pathway to export
-	 * @throws ConverterException
+	 * @throws ConverterException when there is a fatal conversion problem. Implementations should only throw in case there is a non-recoverable error. Ohterwise, it should emit a warning.
 	 */
 	public void doExport(File file, Pathway pathway) throws ConverterException;
 }

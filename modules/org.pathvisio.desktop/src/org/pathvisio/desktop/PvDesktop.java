@@ -242,7 +242,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	 */
 	public void applicationEvent(ApplicationEvent e)
 	{
-		if(e.getType() == ApplicationEvent.PATHWAY_OPENED)
+		if(e.getType() == ApplicationEvent.Type.PATHWAY_OPENED)
 		{
 			loadGexCache();
 		}

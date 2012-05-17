@@ -504,7 +504,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 
 	public void applicationEvent(ApplicationEvent e) {
 		switch(e.getType()) {
-		case ApplicationEvent.VPATHWAY_CREATED:
+		case VPATHWAY_CREATED:
 			{
 				VPathway vp = (VPathway)e.getSource();
 				vp.addVPathwayListener(this);
@@ -514,7 +514,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 				}
 			}
 			break;
-		case ApplicationEvent.VPATHWAY_DISPOSED:
+		case VPATHWAY_DISPOSED:
 			{
 				VPathway vp = (VPathway)e.getSource();
 				vp.removeVPathwayListener(this);

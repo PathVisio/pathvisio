@@ -497,15 +497,12 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 
 	public void applicationEvent(ApplicationEvent e)
 	{
-		if(e.getType() == ApplicationEvent.PATHWAY_OPENED)
-		{
+		switch (e.getType()) {
+		case PATHWAY_OPENED:
+		case PATHWAY_NEW:
 			updateTitle();
 			engine.getActivePathway().addStatusFlagListener(SwingEngine.this);
-		}
-		else if (e.getType() == ApplicationEvent.PATHWAY_NEW)
-		{
-			updateTitle();
-			engine.getActivePathway().addStatusFlagListener(SwingEngine.this);
+			break;
 		}
 	}
 

@@ -82,7 +82,7 @@ public class StandaloneActions implements ApplicationEventListener
 	}
 
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+		if(e.getType() == ApplicationEvent.Type.VPATHWAY_CREATED) {
 			ViewActions va = ((VPathway)e.getSource()).getViewActions();
 			va.registerToGroup(printAction, ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 			va.resetGroupStates();

@@ -704,14 +704,15 @@ public class WikiPathways implements StatusFlagListener, ApplicationEventListene
 	}
 
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.getType() == ApplicationEvent.PATHWAY_NEW ||
-				e.getType() == ApplicationEvent.PATHWAY_OPENED)
-		{
+		switch (e.getType()) {
+		case PATHWAY_NEW:
+		case PATHWAY_OPENED:
 			Pathway p = swingEngine.getEngine().getActivePathway();
 			p.addStatusFlagListener(this);
 			//Copy initial state of statusFlagListener
 			//(could have been changed by earlier ApplicationEventListener)
 			setRemoteChanged (p.hasChanged());
+			break;
 		}
 	}
 }

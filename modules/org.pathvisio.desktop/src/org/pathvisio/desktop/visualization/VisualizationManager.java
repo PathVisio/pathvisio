@@ -380,10 +380,10 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	public void applicationEvent(ApplicationEvent e) {
 		switch (e.getType())
 		{
-		case ApplicationEvent.VPATHWAY_CREATED:
+		case VPATHWAY_CREATED:
 			((VPathway)e.getSource()).addVPathwayListener(this);
 			break;
-		case ApplicationEvent.VPATHWAY_DISPOSED:
+		case VPATHWAY_DISPOSED:
 			((VPathway)e.getSource()).removeVPathwayListener(this);
 			break;
 		}

@@ -727,12 +727,15 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			setEnabled(!msg.equals(UndoManager.CANT_UNDO));
 		}
 
-		public void applicationEvent(ApplicationEvent e) {
-			if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+		public void applicationEvent(ApplicationEvent e) 
+		{
+			switch (e.getType()) {
+			case VPATHWAY_CREATED:
 				((VPathway)e.getSource()).getUndoManager().addListener(this);
-			}
-			if(e.getType() == ApplicationEvent.VPATHWAY_DISPOSED) {
+				break;
+			case VPATHWAY_DISPOSED:
 				((VPathway)e.getSource()).getUndoManager().removeListener(this);
+				break;
 			}
 		}
 	}

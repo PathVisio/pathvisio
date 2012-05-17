@@ -72,7 +72,7 @@ public class CommonActions implements ApplicationEventListener {
 	private static final URL IMG_EXPORT = Resources.getResourceURL("export.gif");
 
 	public void applicationEvent(ApplicationEvent e) {
-		if(e.getType() == ApplicationEvent.VPATHWAY_CREATED) {
+		if(e.getType() == ApplicationEvent.Type.VPATHWAY_CREATED) {
 			ViewActions va = ((VPathway)e.getSource()).getViewActions();
 			va.registerToGroup(saveAction, 	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
 			va.registerToGroup(saveAsAction,	ViewActions.GROUP_ENABLE_VPATHWAY_LOADED);
@@ -513,12 +513,13 @@ public class CommonActions implements ApplicationEventListener {
 		}
 
 		public void applicationEvent(ApplicationEvent e) {
-			if(e.getType() == ApplicationEvent.PATHWAY_NEW ||
-					e.getType() == ApplicationEvent.PATHWAY_OPENED)
-			{
+			switch(e.getType()) {
+			case PATHWAY_NEW:
+			case PATHWAY_OPENED:
 				Pathway p = swingEngine.getEngine().getActivePathway();
 				p.addStatusFlagListener(this);
 				handleStatus(p.hasChanged());
+				break;
 			}
 		}
 	}

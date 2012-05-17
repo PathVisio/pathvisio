@@ -25,41 +25,37 @@ import java.util.EventObject;
  */
 public class ApplicationEvent extends EventObject
 {
+	public enum Type
+	{
+		/** for events just after a pathway was opened */
+		PATHWAY_OPENED,
+		/** for events just after a new pathway was created */
+		PATHWAY_NEW,
+		/** for events when Application is closed */
+		APPLICATION_CLOSE, 
 
-	/**
-	   Event type, called just after a pathway was opened
-	 */
-	public static final int PATHWAY_OPENED = 1;
+		//TODO: what is difference between VPATHWAY_NEW and VPATHWAY_CREATED???
+		VPATHWAY_CREATED,
+		VPATHWAY_OPENED,
+		VPATHWAY_NEW,
+		PATHWAY_SAVE,
 
-	/**
-	   Event type, called just after a new pathway was created
-	 */
-	public static final int PATHWAY_NEW = 2;
+		/** whenever a VPathway is closed. */
+		VPATHWAY_DISPOSED
+	}
 
-	/**
-	 * Event type, called when Application is closed
-	 */
-	public static final int APPLICATION_CLOSE = 3;
-
-	//TODO: what is difference between VPATHWAY_NEW and VPATHWAY_CREATED???
-	public static final int VPATHWAY_CREATED = 4;
-	public static final int VPATHWAY_OPENED = 5;
-	public static final int VPATHWAY_NEW = 6;
-	public static final int PATHWAY_SAVE = 7;
-
-	/** whenever a VPathway is closed. */
-	public static final int VPATHWAY_DISPOSED = 8;
-
-	private int type;
+	private Type type;
+	
 	/**
 	   Event type, e.g. PATHWAY_OPENED when a pathway was opened
 	 */
-	public int getType()
+	public Type getType()
 	{
 		return type;
 	}
 
-	public ApplicationEvent(Object source, int type) {
+	public ApplicationEvent(Object source, Type type) 
+	{
 		super(source);
 		this.type = type;
 	}

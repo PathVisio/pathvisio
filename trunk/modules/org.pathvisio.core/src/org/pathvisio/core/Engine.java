@@ -17,7 +17,6 @@
 package org.pathvisio.core;
 
 import java.awt.Color;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -141,10 +140,10 @@ public class Engine
 				public void run()
 				{
 					createVPathway(pathway);
-					fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_OPENED));
+					fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.Type.PATHWAY_OPENED));
 					if (vPathway != null)
 					{
-						fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_OPENED));
+						fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.Type.VPATHWAY_OPENED));
 					}
 				}
 			});
@@ -204,7 +203,7 @@ public class Engine
 		// make sure there are no problems with references.
 		p.fixReferences();
 		p.writeToXml(toFile, true);
-		fireApplicationEvent(new ApplicationEvent(p, ApplicationEvent.PATHWAY_SAVE));
+		fireApplicationEvent(new ApplicationEvent(p, ApplicationEvent.Type.PATHWAY_SAVE));
 	}
 
 	/**
@@ -224,7 +223,7 @@ public class Engine
 	{
 		assert (vPathway != null);
 		// signal destruction of vPathway
-		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_DISPOSED));
+		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.Type.VPATHWAY_DISPOSED));
 		vPathway.dispose();
 		vPathway = null;
 	}
@@ -256,7 +255,7 @@ public class Engine
 			vPathway.fromModel(p);
 
 			vPathway.setPctZoom(zoom);
-			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
+			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.Type.VPATHWAY_CREATED));
 		}
 	}
 
@@ -266,7 +265,7 @@ public class Engine
 	public void replacePathway (Pathway p)
 	{
 		vPathway.replacePathway (p);
-		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_CREATED));
+		fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.Type.VPATHWAY_CREATED));
 	}
 
 	/**
@@ -277,10 +276,10 @@ public class Engine
 		pathway.initMappInfo();
 
 		createVPathway(pathway);
-		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.PATHWAY_NEW));
+		fireApplicationEvent(new ApplicationEvent(pathway, ApplicationEvent.Type.PATHWAY_NEW));
 		if (vPathway != null)
 		{
-			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.VPATHWAY_NEW));
+			fireApplicationEvent(new ApplicationEvent(vPathway, ApplicationEvent.Type.VPATHWAY_NEW));
 		}
 	}
 
@@ -424,7 +423,7 @@ public class Engine
 	 */
 	public void close()
 	{
-		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.APPLICATION_CLOSE);
+		ApplicationEvent e = new ApplicationEvent(this, ApplicationEvent.Type.APPLICATION_CLOSE);
 		fireApplicationEvent(e);
 	}
 

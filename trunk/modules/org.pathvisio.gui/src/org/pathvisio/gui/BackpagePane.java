@@ -160,15 +160,12 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 	{
 		switch (e.getType())
 		{
-			case ApplicationEvent.VPATHWAY_CREATED:
-			{
+			case VPATHWAY_CREATED:
 				((VPathway)e.getSource()).addSelectionListener(this);
-			}
 			break;
-			case ApplicationEvent.VPATHWAY_DISPOSED:
-			{
+			case VPATHWAY_DISPOSED:
 				((VPathway)e.getSource()).removeSelectionListener(this);
-			}
+			break;
 		}
 	}
 

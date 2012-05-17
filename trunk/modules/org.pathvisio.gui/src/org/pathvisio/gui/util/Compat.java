@@ -98,7 +98,7 @@ public class Compat implements Engine.ApplicationEventListener
 	{
 		switch (e.getType())
 		{
-		case ApplicationEvent.PATHWAY_OPENED:
+		case PATHWAY_OPENED:
 			{
 				Pathway pwy = swingEngine.getEngine().getActivePathway();
 				if (usesOldEnsembl(pwy))

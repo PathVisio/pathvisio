@@ -138,13 +138,12 @@ public class MainPanelStandalone extends MainPanel
 	@Override
 	public void applicationEvent(ApplicationEvent e) {
 		super.applicationEvent(e);
-		if(e.getType() == ApplicationEvent.PATHWAY_OPENED) {
+		switch (e.getType()) {
+		case PATHWAY_OPENED:
+		case PATHWAY_SAVE:
 			putInRecentPathwayList(swingEngine.getEngine().getActivePathway().getSourceFile());
 			refreshRecentPathwaysMenu();
-		}
-		if(e.getType() == ApplicationEvent.PATHWAY_SAVE) {
-			putInRecentPathwayList(swingEngine.getEngine().getActivePathway().getSourceFile());
-			refreshRecentPathwaysMenu();
+			break;
 		}
 	}
 

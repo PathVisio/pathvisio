@@ -121,6 +121,7 @@ public class Engine
 		{
 			PathwayImporter importer = Utils.oneOf (set);
 			Pathway pathway = importer.doImport(file);
+			pathway.setSourceFile(file);
 			newPathwayHelper (pathway);
 		}
 		else

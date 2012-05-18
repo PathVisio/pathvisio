@@ -7,7 +7,7 @@
 
 	<!-- WikiPathways client -->
 	<property name="axis.wpclient.dir" value="gen-src"/>
-	<property name="lib.axis.dir" value="../../lib/axis-1_4/lib" />
+	<property name="lib.axis.dir" value="../../tools/cytoscape-gpml/lib" />
 
 	<path id="project.class.path">
 		<fileset dir="${lib.axis.dir}" includes="*.jar" />

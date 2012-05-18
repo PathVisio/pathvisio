@@ -1,10 +1,6 @@
 <?xml version="1.0"?>
 <project name="PathVisio" default="all" basedir=".">
 
-	<!-- always be java 1.5 compatible -->
-	<property name="ant.build.javac.target" value="1.5"/>
-	<property name="ant.build.javac.source" value="1.5"/>
-
 	<property name="src.dir" value="modules"/>
 	<property name="debug.mode" value="true"/>
 
@@ -189,9 +185,6 @@
 			<include name="org.pathvisio.xmlrpc.common.jar"/>
 			<include name="org.pathvisio.ws.commons.util.jar"/>
 			<include name="com.springsource.org.jdom-1.1.0.jar"/>
-		</fileset>
-		<fileset dir="lib/axis-1_4/lib">
-			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="lib/apache">
 			<include name="*.jar"/>

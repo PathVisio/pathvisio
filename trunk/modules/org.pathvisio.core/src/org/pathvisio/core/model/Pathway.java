@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EventListener;
 import java.util.HashMap;
@@ -324,8 +325,7 @@ public class Pathway
 		{
 
 			PathwayElement elt = e.getModifiedPathwayElement();
-			List<GraphRefContainer> references = getReferringObjects(elt.getGraphId());
-			for(GraphRefContainer refc : references) 
+			for(GraphRefContainer refc : getReferringObjects(elt.getGraphId())) 
 			{
 				refc.refeeChanged();
 			}
@@ -381,8 +381,8 @@ public class Pathway
 	 */
 	private void forceRemove(PathwayElement o) {
 		dataObjects.remove(o);
-		List<GraphRefContainer> references = getReferringObjects(o.getGraphId());
-		for(GraphRefContainer refc : references) {
+		for(GraphRefContainer refc : getReferringObjects(o.getGraphId())) 
+		{
 			refc.unlink();
 		}
 		String groupRef = o.getGroupRef();
@@ -455,7 +455,7 @@ public class Pathway
 	/**
 	 * Stores references of graph ids to other GraphRefContainers
 	 */
-	private Map<String, List<GraphRefContainer>> graphRefs = new HashMap<String, List<GraphRefContainer>>();
+	private Map<String, Set<GraphRefContainer>> graphRefs = new HashMap<String, Set<GraphRefContainer>>();
 	private Map<String, GraphIdContainer> graphIds = new HashMap<String, GraphIdContainer>();
 
 	public Set<String> getGraphIds() {
@@ -470,16 +470,15 @@ public class Pathway
 	 * Returns all GraphRefContainers that refer to an object with a
 	 * particular graphId.
 	 */
-	public List<GraphRefContainer> getReferringObjects (String id)
+	public Set<GraphRefContainer> getReferringObjects (String id)
 	{
-		List<GraphRefContainer> refs = graphRefs.get(id);
+		Set<GraphRefContainer> refs = graphRefs.get(id);
 		if(refs != null) {
 			// create defensive copy to prevent problems with ConcurrentModification.
-			refs = new ArrayList<GraphRefContainer>(refs);
+			return new HashSet<GraphRefContainer>(refs);
 		} else {
-			refs = new ArrayList<GraphRefContainer>();
+			return Collections.emptySet();
 		}
-		return refs;
 	}
 
 	/**
@@ -489,17 +488,7 @@ public class Pathway
 	 */
 	public void addGraphRef (String id, GraphRefContainer target)
 	{
-		if (graphRefs.containsKey(id))
-		{
-			List<GraphRefContainer> l = graphRefs.get(id);
-			l.add(target);
-		}
-		else
-		{
-			List<GraphRefContainer> l = new ArrayList<GraphRefContainer>();
-			l.add(target);
-			graphRefs.put(id, l);
-		}
+		Utils.multimapPut(graphRefs, id, target);
 	}
 
 	/**

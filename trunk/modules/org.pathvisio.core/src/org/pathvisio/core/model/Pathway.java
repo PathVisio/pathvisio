@@ -40,6 +40,7 @@ import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
+import org.pathvisio.core.util.Utils;
 
 /**
 * This class is the model for pathway data. It is responsible for
@@ -576,17 +577,7 @@ public class Pathway
 
 	void addGroupRef (String ref, PathwayElement child)
 	{
-		if (groupRefs.containsKey(ref))
-		{
-			Set<PathwayElement> s = groupRefs.get(ref);
-			s.add(child);
-		}
-		else
-		{
-			Set<PathwayElement> s = new HashSet<PathwayElement>();
-			s.add(child);
-			groupRefs.put(ref, s);
-		}
+		Utils.multimapPut(groupRefs, ref, child);
 	}
 
 	void removeGroupRef (String id, PathwayElement child)

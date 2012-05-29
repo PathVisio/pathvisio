@@ -27,9 +27,8 @@ import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -57,6 +56,7 @@ import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.Handle;
 import org.pathvisio.core.view.Label;
@@ -384,7 +384,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public static final String TB_GROUP_SHOW_IF_EDITMODE = "edit";
 	public static final String TB_GROUP_SHOW_IF_VPATHWAY = "vpathway";
 
-	Map<String, List<Component>> toolbarGroups = new HashMap<String, List<Component>>();
+	private Map<String, Set<Component>> toolbarGroups = new HashMap<String, Set<Component>>();
 
 	public void addToToolbar(Component c, String group) {
 		JToolBar tb = getToolBar();
@@ -422,13 +422,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	}
 
 	private void addToToolbarGroup(Component c, String group) {
-		if(group != null) {
-			List<Component> gb = toolbarGroups.get(group);
-			if(gb == null) {
-				toolbarGroups.put(group, gb = new ArrayList<Component>());
-			}
-			gb.add(c);
-		}
+		Utils.multimapPut(toolbarGroups, group, c);
 	}
 
 	public void addToMenu(Action a, JMenu parent) {
@@ -437,9 +431,9 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		}
 	}
 
-	public List<Component> getToolbarGroup(String group) {
-		List<Component> tbg = toolbarGroups.get(group);
-		if(tbg == null) tbg = new ArrayList<Component>();
+	public Set<Component> getToolbarGroup(String group) {
+		Set<Component> tbg = toolbarGroups.get(group);
+		if(tbg == null) tbg = new HashSet<Component>();
 		return tbg;
 	}
 

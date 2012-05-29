@@ -22,11 +22,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.pathvisio.core.model.PathwayExporter;
 
 /**
  * Various utility functions

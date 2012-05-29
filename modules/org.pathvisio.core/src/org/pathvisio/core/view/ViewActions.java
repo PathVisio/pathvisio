@@ -47,6 +47,7 @@ import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.model.PathwayElement.MPoint;
 import org.pathvisio.core.model.ShapeType;
 import org.pathvisio.core.util.Resources;
+import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.SelectionBox.SelectionEvent;
 import org.pathvisio.core.view.SelectionBox.SelectionListener;
 
@@ -169,26 +170,18 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		resetGroupStates();
 	}
 
-	Map<String, List<Action>> actionGroups = new HashMap<String, List<Action>>();
-	Map<Action, List<String>> groupActions = new HashMap<Action, List<String>>();
+	private Map<String, Set<Action>> actionGroups = new HashMap<String, Set<Action>>();
+	private Map<Action, Set<String>> groupActions = new HashMap<Action, Set<String>>();
 
 	/**
 	 * Register the given action to a group (one of the GROUP* contants)
 	 * @param a	The action to register
 	 * @param group The group to register the action to
 	 */
-	public void registerToGroup(Action a, String group) {
-		List<Action> actions = actionGroups.get(group);
-		if(actions == null) {
-			actionGroups.put(group, actions = new ArrayList<Action>());
-		}
-		if(!actions.contains(a)) actions.add(a);
-
-		List<String> groups = groupActions.get(a);
-		if(groups == null) {
-			groupActions.put(a, groups = new ArrayList<String>());
-		}
-		if(!groups.contains(group)) groups.add(group);
+	public void registerToGroup(Action a, String group) 
+	{
+		Utils.multimapPut(actionGroups, group, a);
+		Utils.multimapPut(groupActions, a, group);
 	}
 
 	/**
@@ -234,7 +227,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		groupState.put(GROUP_ENABLE_WHEN_SELECTION, vPathway.getSelectedPathwayElements().size() > 0);
 
 		for(Action a : groupActions.keySet()) {
-			List<String> groups = groupActions.get(a);
+			Set<String> groups = groupActions.get(a);
 			boolean enable = true;
 			for(String g : groups) {
 				enable &= groupState.get(g);

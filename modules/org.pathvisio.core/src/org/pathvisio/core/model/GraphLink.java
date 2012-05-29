@@ -17,9 +17,10 @@
 package org.pathvisio.core.model;
 
 import java.awt.geom.Point2D;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
+
+import org.pathvisio.core.util.Utils;
 
 /**
  * This class only contains static methods and should not be instantiated.
@@ -128,24 +129,10 @@ public abstract class GraphLink
 	 */
 	public static Set<GraphRefContainer> getReferences(GraphIdContainer gid, Pathway gd)
 	{
-		Set<GraphRefContainer> result =
-			new HashSet<GraphRefContainer>();
-
-		if (gd == null) return result;
-
-		List<GraphRefContainer> reflist = gd.getReferringObjects(gid.getGraphId());
-
-		if (gid.getGraphId() != null && !gid.getGraphId().equals(""))
-		{
-			// get all referring points as a hashset, so
-			// that a line that refers to the same object twice
-			// is only treated once.
-			for (GraphRefContainer o : reflist)
-			{
-				result.add(o);
-			}
-		}
-		return result;
+		if (gd == null || Utils.isEmpty(gid.getGraphId())) 
+			return Collections.emptySet();
+		else
+			return gd.getReferringObjects(gid.getGraphId());
 	}
 }
 

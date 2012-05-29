@@ -48,22 +48,30 @@ public class RasterImageExporter extends ImageExporter
 	}
 
 	public void doExport(File file, Pathway pathway) throws ConverterException
-	{
-		VPathway vPathway = new VPathway(null);
-		vPathway.fromModel(pathway);
-		BufferedImage image = new BufferedImage(vPathway.getVWidth(), vPathway.getVHeight(),
-				BufferedImage.TYPE_INT_RGB);
-		Graphics2D g2 = image.createGraphics();
-		vPathway.draw(g2);
-		g2.dispose();
-
+	{		
 		try
 		{
+			BufferedImage image = exportAsImage(pathway);
 			ImageIO.write(image, getType(), file);
 		}
 		catch (IOException ex)
 		{
 			throw new ConverterException(ex);
+		}
+	}
+
+	public BufferedImage exportAsImage(Pathway pathway)
+	{
+		VPathway vPathway = new VPathway(null);
+		try
+		{
+			vPathway.fromModel(pathway);
+			BufferedImage image = new BufferedImage(vPathway.getVWidth(), vPathway.getVHeight(),
+					BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2 = image.createGraphics();
+			vPathway.draw(g2);
+			g2.dispose();
+			return image;
 		}
 		finally
 		{

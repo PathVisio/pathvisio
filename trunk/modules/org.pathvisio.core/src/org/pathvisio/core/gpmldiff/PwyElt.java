@@ -18,7 +18,6 @@ package org.pathvisio.core.gpmldiff;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.model.StaticProperty;
@@ -28,41 +27,37 @@ import org.pathvisio.core.model.StaticProperty;
 */
 class PwyElt
 {
+	/** append a property to the summary */
+	private static void summaryHelper(PathwayElement elt, StringBuilder result,
+			StaticProperty p, String shortHand)
+	{
+		if (!elt.getStaticPropertyKeys().contains(p)) return;
+		result.append(',');
+		result.append(shortHand);
+		result.append('=');
+		result.append(elt.getStaticProperty(p));
+	}
+
 	static String summary(PathwayElement elt)
 	{
 		if (elt == null) return "null"; // TODO, why is this necessary?
-		String result = "[" + elt.getObjectType().getTag();
-		Set<StaticProperty> props = elt.getStaticPropertyKeys();
-		if (props.contains(StaticProperty.TEXTLABEL))
-			result += ",lbl=" + elt.getStaticProperty(StaticProperty.TEXTLABEL);
-		if (props.contains(StaticProperty.WIDTH))
-			result += ",w=" + elt.getStaticProperty(StaticProperty.WIDTH);
-		if (props.contains(StaticProperty.HEIGHT))
-			result += ",h=" + elt.getStaticProperty(StaticProperty.HEIGHT);
-		if (props.contains(StaticProperty.CENTERX))
-			result += ",cx=" + elt.getStaticProperty(StaticProperty.CENTERX);
-		if (props.contains(StaticProperty.CENTERY))
-			result += ",cy=" + elt.getStaticProperty(StaticProperty.CENTERY);
-		if (props.contains(StaticProperty.STARTX))
-			result += ",x1=" + elt.getStaticProperty(StaticProperty.STARTX);
-		if (props.contains(StaticProperty.STARTY))
-			result += ",y1=" + elt.getStaticProperty(StaticProperty.STARTY);
-		if (props.contains(StaticProperty.ENDX))
-			result += ",x2=" + elt.getStaticProperty(StaticProperty.ENDX);
-		if (props.contains(StaticProperty.ENDY))
-			result += ",y2=" + elt.getStaticProperty(StaticProperty.ENDY);
-		if (props.contains(StaticProperty.GRAPHID))
-			result += ",id=" + elt.getStaticProperty(StaticProperty.GRAPHID);
-		if (props.contains(StaticProperty.STARTGRAPHREF))
-			result += ",startref=" + elt.getStaticProperty(StaticProperty.STARTGRAPHREF);
-		if (props.contains(StaticProperty.ENDGRAPHREF))
-			result += ",endref=" + elt.getStaticProperty(StaticProperty.ENDGRAPHREF);
-		if (props.contains(StaticProperty.MAPINFONAME))
-			result += ",title=" + elt.getStaticProperty(StaticProperty.MAPINFONAME);
-		if (props.contains(StaticProperty.AUTHOR))
-			result += ",author=" + elt.getStaticProperty(StaticProperty.AUTHOR);
-		result += "]";
-		return result;
+		StringBuilder result = new StringBuilder ("[" + elt.getObjectType().getTag());
+		summaryHelper(elt, result, StaticProperty.TEXTLABEL, "lbl");
+		summaryHelper(elt, result, StaticProperty.WIDTH, "w");
+		summaryHelper(elt, result, StaticProperty.HEIGHT, "h");
+		summaryHelper(elt, result, StaticProperty.CENTERX, "cx");
+		summaryHelper(elt, result, StaticProperty.CENTERY, "cy");
+		summaryHelper(elt, result, StaticProperty.STARTX, "x1");
+		summaryHelper(elt, result, StaticProperty.STARTY, "y1");
+		summaryHelper(elt, result, StaticProperty.ENDX, "x2");
+		summaryHelper(elt, result, StaticProperty.ENDY, "y2");
+		summaryHelper(elt, result, StaticProperty.GRAPHID, "id");
+		summaryHelper(elt, result, StaticProperty.STARTGRAPHREF, "startref");
+		summaryHelper(elt, result, StaticProperty.ENDGRAPHREF, "endref");
+		summaryHelper(elt, result, StaticProperty.MAPINFONAME, "title");
+		summaryHelper(elt, result, StaticProperty.AUTHOR, "author");
+		result.append("]");
+		return result.toString();
 	}
 
 	static Map<String, String> getContents(PathwayElement elt)

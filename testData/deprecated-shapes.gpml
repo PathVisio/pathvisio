@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="New Pathway" Version="20101118">
+  <Graphics BoardWidth="342.1" BoardHeight="104.5" />
+  <Line GraphId="f739c">
+    <Graphics ZOrder="12296" LineThickness="1.0">
+      <Point X="55.0" Y="55.0" />
+      <Point X="271.0" Y="54.0" ArrowHead="LigandRound" />
+    </Graphics>
+  </Line>
+  <Line GraphId="cc993">
+    <Graphics ZOrder="12297" LineThickness="1.0">
+      <Point X="65.0" Y="65.0" />
+      <Point X="281.0" Y="64.0" ArrowHead="LigandSquare" />
+    </Graphics>
+  </Line>
+  <Line GraphId="db182">
+    <Graphics ZOrder="12298" LineThickness="1.0">
+      <Point X="75.0" Y="75.0" />
+      <Point X="291.0" Y="74.0" ArrowHead="ReceptorRound" />
+    </Graphics>
+  </Line>
+  <Line GraphId="d1eb6">
+    <Graphics ZOrder="12299" LineThickness="1.0">
+      <Point X="85.0" Y="85.0" />
+      <Point X="301.0" Y="84.0" ArrowHead="ReceptorSquare" />
+    </Graphics>
+  </Line>
+  <Line GraphId="d159a">
+    <Graphics ZOrder="12300" LineThickness="1.0">
+      <Point X="95.0" Y="95.0" />
+      <Point X="311.0" Y="94.0" ArrowHead="Receptor" />
+    </Graphics>
+  </Line>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="New Pathway" Version="20120206">
+  <Graphics BoardWidth="595.0" BoardHeight="583.0" />
+  <DataNode TextLabel="GeneProduct" GraphId="f3d80" Type="GeneProduct">
+    <Graphics CenterX="81.0" CenterY="50.0" Width="80.0" Height="20.0" ZOrder="32768" FontSize="10" Valign="Middle" />
+    <Xref Database="" ID="" />
+  </DataNode>
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="68.0" Y="194.0" />
+      <Point X="68.0" Y="141.0" ArrowHead="mim-stimulation" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="96.0" Y="196.0" />
+      <Point X="95.0" Y="140.0" ArrowHead="mim-catalysis" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="125.0" Y="205.0" />
+      <Point X="125.0" Y="140.0" ArrowHead="mim-binding" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="158.0" Y="207.0" />
+      <Point X="159.0" Y="140.0" ArrowHead="mim-conversion" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="195.0" Y="206.0" />
+      <Point X="195.0" Y="145.0" ArrowHead="mim-covalent-bond" />
+    </Graphics>
+  </Line>
+  <Line>
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="245.0" Y="212.0" />
+      <Point X="244.0" Y="140.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line GraphId="b4905">
+    <Graphics ZOrder="32769" LineThickness="3.0">
+      <Point X="192.0" Y="320.0" />
+      <Point X="192.0" Y="259.0" ArrowHead="mim-covalent-bond" />
+    </Graphics>
+  </Line>
+  <Line GraphId="c0fd8">
+    <Graphics ZOrder="32770" LineThickness="3.0">
+      <Point X="155.0" Y="321.0" />
+      <Point X="156.0" Y="254.0" ArrowHead="mim-conversion" />
+    </Graphics>
+  </Line>
+  <Line GraphId="ae215">
+    <Graphics ZOrder="32771" LineThickness="3.0">
+      <Point X="122.0" Y="319.0" />
+      <Point X="122.0" Y="254.0" ArrowHead="mim-binding" />
+    </Graphics>
+  </Line>
+  <Line GraphId="ce98e">
+    <Graphics ZOrder="32772" LineThickness="3.0">
+      <Point X="93.0" Y="310.0" />
+      <Point X="92.0" Y="254.0" ArrowHead="mim-catalysis" />
+    </Graphics>
+  </Line>
+  <Line GraphId="eae4d">
+    <Graphics ZOrder="32773" LineThickness="3.0">
+      <Point X="249.0" Y="327.0" />
+      <Point X="251.0" Y="254.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line GraphId="d4eb9">
+    <Graphics ZOrder="32774" LineThickness="3.0">
+      <Point X="65.0" Y="308.0" />
+      <Point X="65.0" Y="255.0" ArrowHead="mim-stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="f1e06">
+    <Graphics ZOrder="32775" LineThickness="10.0">
+      <Point X="396.0" Y="493.0" />
+      <Point X="396.0" Y="432.0" ArrowHead="mim-covalent-bond" />
+    </Graphics>
+  </Line>
+  <Line GraphId="ed7ba">
+    <Graphics ZOrder="32776" LineThickness="10.0">
+      <Point X="271.0" Y="496.0" />
+      <Point X="272.0" Y="429.0" ArrowHead="mim-conversion" />
+    </Graphics>
+  </Line>
+  <Line GraphId="f7b09">
+    <Graphics ZOrder="32777" LineThickness="10.0">
+      <Point X="198.0" Y="551.0" />
+      <Point X="201.0" Y="413.0" ArrowHead="mim-binding" />
+    </Graphics>
+  </Line>
+  <Line GraphId="a136f">
+    <Graphics ZOrder="32778" LineThickness="10.0">
+      <Point X="151.0" Y="479.0" />
+      <Point X="150.0" Y="423.0" ArrowHead="mim-catalysis" />
+    </Graphics>
+  </Line>
+  <Line GraphId="bc117">
+    <Graphics ZOrder="32779" LineThickness="10.0">
+      <Point X="565.0" Y="489.0" />
+      <Point X="564.0" Y="417.0" ArrowHead="TBar" />
+    </Graphics>
+  </Line>
+  <Line GraphId="d4ba2">
+    <Graphics ZOrder="32780" LineThickness="10.0">
+      <Point X="73.0" Y="486.0" />
+      <Point X="73.0" Y="433.0" ArrowHead="mim-stimulation" />
+    </Graphics>
+  </Line>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

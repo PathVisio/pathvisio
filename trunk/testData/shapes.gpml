@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Shapes and deprecated shapes" Version="20101118">
+  <Graphics BoardWidth="745.8" BoardHeight="554.4" />
+  <Shape TextLabel="Cell" GraphId="b9725">
+    <Graphics CenterX="124.75" CenterY="106.25" Width="234.5" Height="147.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Cell" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Nucleus" GraphId="d4a9b">
+    <Graphics CenterX="328.75" CenterY="95.75" Width="138.5" Height="148.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Nucleus" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Mitochondria" GraphId="cb9e6">
+    <Graphics CenterX="101.25" CenterY="250.25" Width="145.5" Height="103.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Mitochondria" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Organelle" GraphId="e8f13">
+    <Graphics CenterX="270.25" CenterY="251.25" Width="143.5" Height="91.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Organelle" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Vesicle" GraphId="f0070">
+    <Graphics CenterX="413.75" CenterY="240.75" Width="102.5" Height="114.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Vesicle" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Pentagon" GraphId="d360c">
+    <Graphics CenterX="60.75" CenterY="358.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Pentagon" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="hexagon" GraphId="e369b">
+    <Graphics CenterX="166.75" CenterY="358.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Hexagon" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="triangle" GraphId="daae1">
+    <Graphics CenterX="280.75" CenterY="361.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Triangle" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="mim-degradation" GraphId="eb080">
+    <Graphics CenterX="401.75" CenterY="360.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="mim-degradation" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="mim-phosphorylation" GraphId="dbc36">
+    <Graphics CenterX="61.75" CenterY="454.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="mim-phosphorylated" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="mim-interaction" GraphId="ec4e6">
+    <Graphics CenterX="178.75" CenterY="454.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="mim-interaction" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Brace" GraphId="b3fc4">
+    <Graphics CenterX="295.75" CenterY="455.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Brace" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="ProteinComplex" GraphId="ec638">
+    <Graphics CenterX="569.75" CenterY="63.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="ProteinComplex" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="OrganC" GraphId="c3a2e">
+    <Graphics CenterX="572.75" CenterY="164.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="OrganC" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="OrganB" GraphId="be677">
+    <Graphics CenterX="551.25" CenterY="263.25" Width="43.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="OrganB" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="OrganA" GraphId="d6246">
+    <Graphics CenterX="541.75" CenterY="363.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="OrganA" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Rectangle" GraphId="e4726">
+    <Graphics CenterX="424.75" CenterY="461.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Rectangle" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="RoundedRectangle" GraphId="f93cb">
+    <Graphics CenterX="551.75" CenterY="460.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="RoundedRectangle" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Oval" GraphId="dea77">
+    <Graphics CenterX="459.75" CenterY="67.25" Width="98.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Oval" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Arc" GraphId="fa508">
+    <Graphics CenterX="471.75" CenterY="140.25" Width="78.5" Height="85.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Arc" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Membrane" GraphId="c4023">
+    <Graphics CenterX="651.5" CenterY="81.75" Width="45.0" Height="108.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Membrane" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="CellA" GraphId="f5ded">
+    <Graphics CenterX="644.75" CenterY="231.5" Width="66.5" Height="129.0" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="CellA" Rotation="0.0" />
+  </Shape>
+  <Shape TextLabel="Ribosome" GraphId="fbe3d">
+    <Graphics CenterX="636.5" CenterY="363.75" Width="69.0" Height="84.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Ribosome" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

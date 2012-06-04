@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="New Pathway" Version="20120206">
+  <Graphics BoardWidth="469.94314143567874" BoardHeight="427.5" />
+  <Line GraphId="idb9aced3f">
+    <Graphics ZOrder="12288" LineThickness="1.0">
+      <Point X="50.0" Y="50.0" />
+      <Point X="50.0" Y="150.0" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="fb7c1">
+    <Graphics ZOrder="12290" LineThickness="2.0">
+      <Point X="90.0" Y="50.0" />
+      <Point X="90.0" Y="150.0" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="daae0">
+    <Graphics ZOrder="12292" LineThickness="3.0">
+      <Point X="130.0" Y="50.0" />
+      <Point X="130.0" Y="150.0" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="a5128">
+    <Graphics ZOrder="12294" LineThickness="4.0">
+      <Point X="170.0" Y="50.0" />
+      <Point X="170.0" Y="150.0" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="c830b">
+    <Graphics ZOrder="12296" LineThickness="5.0">
+      <Point X="210.0" Y="50.0" />
+      <Point X="210.0" Y="150.0" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="db14b">
+    <Graphics ZOrder="12298" LineThickness="6.0">
+      <Point X="250.0" Y="50.0" />
+      <Point X="250.0" Y="150.0" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="fcded">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics ZOrder="16389" LineThickness="1.0">
+      <Point X="53.0" Y="235.5" />
+      <Point X="53.0" Y="335.5" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="d0a78">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics ZOrder="16390" LineThickness="2.0">
+      <Point X="93.0" Y="235.5" />
+      <Point X="93.0" Y="335.5" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="de344">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics ZOrder="16391" LineThickness="3.0">
+      <Point X="133.0" Y="235.5" />
+      <Point X="133.0" Y="335.5" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="bb1c9">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics ZOrder="16392" LineThickness="4.0">
+      <Point X="173.0" Y="235.5" />
+      <Point X="173.0" Y="335.5" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="dd8a5">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics ZOrder="16393" LineThickness="5.0">
+      <Point X="213.0" Y="235.5" />
+      <Point X="213.0" Y="335.5" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Line GraphId="e6503">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics ZOrder="16394" LineThickness="6.0">
+      <Point X="253.0" Y="235.5" />
+      <Point X="253.0" Y="335.5" ArrowHead="SBGN-Stimulation" />
+    </Graphics>
+  </Line>
+  <Shape GraphId="e2fb1">
+    <Graphics CenterX="53.75" CenterY="195.25" Width="32.5" Height="33.5" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="Rectangle" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="ef209">
+    <Attribute Key="org.pathvisio.CellularComponentProperty" Value="Organelle" />
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics CenterX="367.9092039800995" CenterY="258.4564676616916" Width="144.06787491115858" Height="109.95273631840794" ZOrder="16384" FontSize="10" Valign="Middle" ShapeType="RoundedRectangle" LineThickness="3.0" Color="c0c0c0" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="aa73c">
+    <Graphics CenterX="98.75" CenterY="195.25" Width="32.5" Height="33.5" ZOrder="16385" FontSize="10" Valign="Middle" ShapeType="Rectangle" LineThickness="2.0" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="fba2c">
+    <Graphics CenterX="142.75" CenterY="195.25" Width="32.5" Height="33.5" ZOrder="16386" FontSize="10" Valign="Middle" ShapeType="Rectangle" LineThickness="3.0" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="dba47">
+    <Graphics CenterX="187.75" CenterY="195.25" Width="32.5" Height="33.5" ZOrder="16387" FontSize="10" Valign="Middle" ShapeType="Rectangle" LineThickness="4.0" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="b99fe">
+    <Graphics CenterX="228.75" CenterY="195.25" Width="32.5" Height="33.5" ZOrder="16388" FontSize="10" Valign="Middle" ShapeType="Rectangle" LineThickness="5.0" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="aafa0">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics CenterX="56.75" CenterY="380.75" Width="32.5" Height="33.5" ZOrder="16395" FontSize="10" Valign="Middle" ShapeType="Rectangle" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="a41c0">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics CenterX="101.75" CenterY="380.75" Width="32.5" Height="33.5" ZOrder="16396" FontSize="10" Valign="Middle" ShapeType="Rectangle" LineThickness="2.0" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="ec42c">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics CenterX="145.75" CenterY="380.75" Width="32.5" Height="33.5" ZOrder="16397" FontSize="10" Valign="Middle" ShapeType="Rectangle" LineThickness="3.0" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="d7062">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics CenterX="190.75" CenterY="380.75" Width="32.5" Height="33.5" ZOrder="16398" FontSize="10" Valign="Middle" ShapeType="Rectangle" LineThickness="4.0" Rotation="0.0" />
+  </Shape>
+  <Shape GraphId="e2dc1">
+    <Attribute Key="org.pathvisio.DoubleLineProperty" Value="Double" />
+    <Graphics CenterX="231.75" CenterY="380.75" Width="32.5" Height="33.5" ZOrder="16399" FontSize="10" Valign="Middle" ShapeType="Rectangle" LineThickness="5.0" Rotation="0.0" />
+  </Shape>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+</Pathway>
+

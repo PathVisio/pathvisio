@@ -256,12 +256,16 @@ public class CompleterFilterWithWindow extends CompleterFilter
 		@Override
 		public void keyPressed(KeyEvent e)
 		{
-			if (!((e.getKeyCode() == KeyEvent.VK_DOWN) ||
-					(e.getKeyCode() == KeyEvent.VK_UP) ||
-					((e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) && (isFilterWindowVisible())) ||
-					((e.getKeyCode() == KeyEvent.VK_PAGE_UP) && (isFilterWindowVisible())) ))
+			// return immediately if it's not one of the control keys we're interested in.
+			if (!(
+					e.getKeyCode() == KeyEvent.VK_UP || 
+					e.getKeyCode() == KeyEvent.VK_PAGE_DOWN ||
+					e.getKeyCode() == KeyEvent.VK_PAGE_UP ||
+					e.getKeyCode() == KeyEvent.VK_ENTER ||
+					e.getKeyCode() == KeyEvent.VK_DOWN))
 				return;
-
+			
+			// pressing down opens the filter window immediately, even if the data is not fully loaded.
 			if ((e.getKeyCode() == KeyEvent.VK_DOWN) && !isFilterWindowVisible())
 			{
 				_preText = _textField.getText();
@@ -272,32 +276,34 @@ public class CompleterFilterWithWindow extends CompleterFilter
 				else
 					return;
 			}
-
-			if (e.getKeyCode() == KeyEvent.VK_ENTER)
+			
+			if (isFilterWindowVisible()) 
 			{
-				if (isFilterWindowVisible())
+				// pressing enter closes the filter window
+				if (e.getKeyCode() == KeyEvent.VK_ENTER)
+				{
 					setFilterWindowVisible(false);
-
-				_textField.setCaretPosition(_textField.getText().length());
-				return;
+					return;
+				}
+	
+				int index = -1;
+	
+				// navigation keys move the selection in the filter window
+				if (e.getKeyCode() == KeyEvent.VK_DOWN)
+					index = Math.min(_list.getSelectedIndex() + 1, _list.getModel().getSize()-1);
+				else if (e.getKeyCode() == KeyEvent.VK_UP)
+					index = Math.max(_list.getSelectedIndex() - 1, 0);
+				else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP)
+					index = Math.max(_list.getSelectedIndex() - MAX_VISIBLE_ROWS, 0);
+				else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
+					index = Math.min(_list.getSelectedIndex() + MAX_VISIBLE_ROWS, _list.getModel().getSize()-1);
+	
+				if (index == -1)
+					return;
+	
+				_list.setSelectedIndex(index);
+				_list.scrollRectToVisible(_list.getCellBounds(index, index));
 			}
-
-			int index = -1;
-
-			if (e.getKeyCode() == KeyEvent.VK_DOWN)
-				index = Math.min(_list.getSelectedIndex() + 1, _list.getModel().getSize()-1);
-			else if (e.getKeyCode() == KeyEvent.VK_UP)
-				index = Math.max(_list.getSelectedIndex() - 1, 0);
-			else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP)
-				index = Math.max(_list.getSelectedIndex() - MAX_VISIBLE_ROWS, 0);
-			else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN)
-				index = Math.min(_list.getSelectedIndex() + MAX_VISIBLE_ROWS, _list.getModel().getSize()-1);
-
-			if (index == -1)
-				return;
-
-			_list.setSelectedIndex(index);
-			_list.scrollRectToVisible(_list.getCellBounds(index, index));
 		}
 	}
 

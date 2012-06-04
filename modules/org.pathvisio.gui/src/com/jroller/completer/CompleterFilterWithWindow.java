@@ -259,8 +259,7 @@ public class CompleterFilterWithWindow extends CompleterFilter
 			if (!((e.getKeyCode() == KeyEvent.VK_DOWN) ||
 					(e.getKeyCode() == KeyEvent.VK_UP) ||
 					((e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) && (isFilterWindowVisible())) ||
-					((e.getKeyCode() == KeyEvent.VK_PAGE_UP) && (isFilterWindowVisible())) ||
-					(e.getKeyCode() == KeyEvent.VK_ENTER)))
+					((e.getKeyCode() == KeyEvent.VK_PAGE_UP) && (isFilterWindowVisible())) ))
 				return;
 
 			if ((e.getKeyCode() == KeyEvent.VK_DOWN) && !isFilterWindowVisible())

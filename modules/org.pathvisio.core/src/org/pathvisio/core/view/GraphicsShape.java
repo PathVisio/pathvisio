@@ -592,8 +592,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	protected Font getVFont() {
 		String name = gdata.getFontName();
 		int style = getVFontStyle();
-		int size = (int)vFromM(gdata.getMFontSize());
-		return new Font(name, style, size);
+		return new Font(name, style, 12).deriveFont((float)vFromM(gdata.getMFontSize()));
 	}
 
 	protected void drawShape(Graphics2D g)

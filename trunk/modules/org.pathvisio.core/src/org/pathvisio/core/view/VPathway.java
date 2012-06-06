@@ -962,6 +962,8 @@ public class VPathway implements PathwayListener
 					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
+					RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
 			g2d.clip(area);
 			g2d.setColor(java.awt.Color.BLACK);

@@ -59,6 +59,7 @@ public class GpmlFormat extends AbstractPathwayFormat
 	{
 		Pathway pathway = new Pathway();
 		readFromXml(pathway, file, true);
+		pathway.clearChangedFlag();
 		return pathway;
 	}
 

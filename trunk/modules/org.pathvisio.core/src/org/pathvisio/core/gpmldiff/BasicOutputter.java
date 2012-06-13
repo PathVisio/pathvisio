@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.util.Utils;
 
 /**
    Naive implementation of Outputter.
@@ -45,12 +46,12 @@ class BasicOutputter extends DiffOutputter
 
 	public void insert(PathwayElement newElt)
 	{
-		output.println ("insert: " + PwyElt.summary(newElt));
+		output.println ("insert: " + Utils.summary(newElt));
 	}
 
 	public void delete(PathwayElement oldElt)
 	{
-		output.println ("delete: " + PwyElt.summary(oldElt));
+		output.println ("delete: " + Utils.summary(oldElt));
 	}
 
 	PathwayElement curOldElt = null;
@@ -72,7 +73,7 @@ class BasicOutputter extends DiffOutputter
 	{
 		assert (curOldElt != null);
 		assert (curNewElt != null);
-		output.println ("modify: " + PwyElt.summary(curNewElt) + "[" + attr + ": '" + oldVal + "' -> '" + newVal + "']");
+		output.println ("modify: " + Utils.summary(curNewElt) + "[" + attr + ": '" + oldVal + "' -> '" + newVal + "']");
 	}
 
 

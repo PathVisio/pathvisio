@@ -31,6 +31,7 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.util.Utils;
 
 /**
    Wrapper for org.pathvisio.model.Pathway that adds some extra
@@ -167,14 +168,14 @@ public class PwyDoc
 		// column headers
 		for (PathwayElement newElt : newDoc.getElts())
 		{
-			out.print(PwyElt.summary(newElt));
+			out.print(Utils.summary(newElt));
 			out.print("\t");
 		}
 		out.println();
 		for (PathwayElement oldElt : oldDoc.getElts())
 		{
 			// row header.
-			out.print (PwyElt.summary (oldElt));
+			out.print (Utils.summary (oldElt));
 			out.print ("\t");
 			// row data
 			for (PathwayElement newElt : newDoc.getElts())

@@ -27,39 +27,6 @@ import org.pathvisio.core.model.StaticProperty;
 */
 class PwyElt
 {
-	/** append a property to the summary */
-	private static void summaryHelper(PathwayElement elt, StringBuilder result,
-			StaticProperty p, String shortHand)
-	{
-		if (!elt.getStaticPropertyKeys().contains(p)) return;
-		result.append(',');
-		result.append(shortHand);
-		result.append('=');
-		result.append(elt.getStaticProperty(p));
-	}
-
-	static String summary(PathwayElement elt)
-	{
-		if (elt == null) return "null"; // TODO, why is this necessary?
-		StringBuilder result = new StringBuilder ("[" + elt.getObjectType().getTag());
-		summaryHelper(elt, result, StaticProperty.TEXTLABEL, "lbl");
-		summaryHelper(elt, result, StaticProperty.WIDTH, "w");
-		summaryHelper(elt, result, StaticProperty.HEIGHT, "h");
-		summaryHelper(elt, result, StaticProperty.CENTERX, "cx");
-		summaryHelper(elt, result, StaticProperty.CENTERY, "cy");
-		summaryHelper(elt, result, StaticProperty.STARTX, "x1");
-		summaryHelper(elt, result, StaticProperty.STARTY, "y1");
-		summaryHelper(elt, result, StaticProperty.ENDX, "x2");
-		summaryHelper(elt, result, StaticProperty.ENDY, "y2");
-		summaryHelper(elt, result, StaticProperty.GRAPHID, "id");
-		summaryHelper(elt, result, StaticProperty.STARTGRAPHREF, "startref");
-		summaryHelper(elt, result, StaticProperty.ENDGRAPHREF, "endref");
-		summaryHelper(elt, result, StaticProperty.MAPINFONAME, "title");
-		summaryHelper(elt, result, StaticProperty.AUTHOR, "author");
-		result.append("]");
-		return result.toString();
-	}
-
 	static Map<String, String> getContents(PathwayElement elt)
 	{
 		Map<String, String> result = new HashMap<String, String>();

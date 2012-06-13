@@ -98,7 +98,13 @@ public class Engine
 	}
 
 	//TODO: No reason to keep this in engine, it doesn't act on active pathway
-	public void exportPathway(File file, Pathway pathway) throws ConverterException 
+	/**
+	 * Exports given pathway to file. This function doesn't act on the active pathway.
+	 * @param pathway pathway to export
+	 * @param file file to write to.
+	 * @returns a list of warnings that occurred during export, or an empty list if there were none.
+	 */
+	public List<String> exportPathway(File file, Pathway pathway) throws ConverterException 
 	{
 		Logger.log.trace("Exporting pathway to " + file);
 		
@@ -107,6 +113,7 @@ public class Engine
 		{
 			PathwayExporter exporter = Utils.oneOf(set);
 			exporter.doExport(file, pathway);
+			return exporter.getWarnings();
 		}
 		else
 			throw new ConverterException( "Could not determine exporter for '" + FileUtils.getExtension(file.toString()) +  "' files" );

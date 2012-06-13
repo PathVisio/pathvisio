@@ -27,6 +27,7 @@ import java.util.Map;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
@@ -63,7 +64,7 @@ public class PanelOutputter extends DiffOutputter
  		//assert (velt != null || newElt.getObjectType () == ObjectType.INFOBOX);
 		if (velt == null)
 		{
-			Logger.log.warn (PwyElt.summary(newElt) + " doesn't have a corresponding view element");
+			Logger.log.warn (Utils.summary(newElt) + " doesn't have a corresponding view element");
 		}
 		else
 		{
@@ -90,7 +91,7 @@ public class PanelOutputter extends DiffOutputter
  		//assert (velt != null || oldElt.getObjectType () == ObjectType.INFOBOX);
 		if (velt == null)
 		{
-			Logger.log.warn (PwyElt.summary(oldElt) + " doesn't have a corresponding view element");
+			Logger.log.warn (Utils.summary(oldElt) + " doesn't have a corresponding view element");
 		}
 		else
 		{

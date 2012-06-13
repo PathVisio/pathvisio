@@ -21,6 +21,7 @@ import java.awt.Container;
 import java.io.File;
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -29,6 +30,8 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
@@ -52,6 +55,7 @@ import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.VPathwayWrapper;
+import org.pathvisio.gui.dialogs.OkCancelDialog;
 import org.pathvisio.gui.dialogs.PopupDialogHandler;
 import org.pathvisio.gui.util.Compat;
 import org.pathvisio.gui.view.VPathwaySwing;
@@ -351,17 +355,36 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			// create a clone so we can safely act on it in a worker thread.
 			final Pathway clone = engine.getActivePathway().clone();
 
-			SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
+			SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() 
+			{
+				private List<String> warnings;
+				
+				@Override
 				protected Boolean doInBackground() {
 					try {
 						pk.setTaskName("Exporting pathway");
-						engine.exportPathway(f, clone);
+						warnings = engine.exportPathway(f, clone);
 						return true;
 					} catch(ConverterException e) {
 						handleConverterException(e.getMessage(), frame, e);
 						return false;
 					} finally {
 						pk.finished();
+					}
+				}
+				
+				@Override
+				public void done()
+				{
+					if (warnings != null && warnings.size() > 0)
+					{
+						OkCancelDialog dlg = new OkCancelDialog(frame, "Conversion warnings", getFrame(), true);
+						JTextArea area = new JTextArea(60, 30);
+						for (String w : warnings)
+							area.append(w + "\n");
+						dlg.setDialogComponent(area);
+						dlg.pack();
+						dlg.setVisible(true);
 					}
 				}
 			};

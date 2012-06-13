@@ -277,4 +277,21 @@ public class Utils {
 		return result;
 	}
 
+	/**
+	 * Join collection into a single string, with a separator between.
+	 */
+	public static String join (String sep, Collection<?> values)
+	{
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		for (Object o : values)
+		{
+			if (first)
+				first = false;
+			else
+				builder.append (sep);
+			builder.append ("" + o);
+		}
+		return builder.toString();
+	}
 }

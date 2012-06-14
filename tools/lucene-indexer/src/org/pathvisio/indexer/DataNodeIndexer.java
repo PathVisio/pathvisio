@@ -103,6 +103,7 @@ public class DataNodeIndexer extends IndexerBase {
 			return;
 		}
 		addCrossRef(xref, doc, FIELD_ID, FIELD_ID_CODE);
+		addCrossRef(xref, doc, FIELD_XID, FIELD_XID_CODE); //Add original xref as mapped as well
 
 		//Add cross references if connected
 		Organism organism = Organism.fromLatinName(pathway.getMappInfo().getOrganism());

@@ -26,22 +26,21 @@
 		<javac srcdir="src"
 			   includes="**"
 			   destdir="build"
-			   debug="${debug.mode}"
-			   source="1.5">
+			   debug="${debug.mode}">
 		  <classpath refid="project.class.path"/>
 		</javac>
-		<!-- workaround: make an empty directory so that the next step doesn't fail -->
-		<mkdir dir="resources"/>
-		<copy todir="build">
-			<fileset dir="resources">
-				<include name="**/*"/>
-			</fileset>
-		</copy>
 	</target>
 
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
-		<jar jarfile="${bundle.dest}/${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF"/>
+		<jar jarfile="${bundle.dest}/${jar.name}" manifest="META-INF/MANIFEST.MF">
+			<fileset dir="resources" erroronmissingdir="false">
+				<include name="**/*"/>
+			</fileset>
+			<fileset dir="build">
+				<include name="**/*.class"/>
+			</fileset>
+		</jar>
 	</target>
 	
 	<target name="test">

@@ -57,6 +57,7 @@
 			<formatter type="brief" usefile="false"/>
 			<classpath>
 				<pathelement path="build"/>
+				<pathelement path="resources"/>
 				<path refid="project.class.path"/>
 				<path refid="test.class.path"/>
 			</classpath>

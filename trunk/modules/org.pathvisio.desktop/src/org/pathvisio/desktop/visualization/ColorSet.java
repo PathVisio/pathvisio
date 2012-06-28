@@ -218,6 +218,7 @@ public class ColorSet
 	 * If the argument is null, the gradient will be removed.
 	 */
 	public void setGradient(ColorGradient gradient) {
+		if (this.gradient == gradient) return;
 		this.gradient = gradient;
 		if (gradient != null) gradient.setParent(this);
 		fireModifiedEvent();

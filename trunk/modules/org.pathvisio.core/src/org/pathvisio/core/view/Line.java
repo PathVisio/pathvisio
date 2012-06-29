@@ -66,12 +66,7 @@ public class Line extends Graphics implements Adjustable
 	/**
 	 * Dynamic Property key to assign a data source to a reaction/interaction.
 	 */
-	public static final String DATASOURCE_LINE = "org.pathvisio.core.ds";
-	/**
-	  * Dynamic Property key to assign a text label to a reaction/interaction.
-	  */
-	public static final String TEXTLABEL_LINE = "org.pathvisio.core.label";
-		
+	public static final String DATASOURCE_LINE = "org.pathvisio.core.ds";		
 	
 	private List<VPoint> points;
 

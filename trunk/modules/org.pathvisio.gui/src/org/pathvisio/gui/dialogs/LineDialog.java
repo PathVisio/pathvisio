@@ -62,7 +62,6 @@ import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.DataSourceModel;
 import org.pathvisio.gui.ProgressDialog;
 import org.pathvisio.gui.SwingEngine;
-import org.pathvisio.gui.completer.CompleterQueryTextArea;
 import org.pathvisio.gui.completer.CompleterQueryTextField;
 import org.pathvisio.gui.completer.OptionProvider;
 import org.pathvisio.gui.util.PermissiveComboBox;
@@ -81,7 +80,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
 	}
-	CompleterQueryTextArea symText;
 	CompleterQueryTextField idText;
 	private PermissiveComboBox dbCombo;
 	private PermissiveComboBox typeCombo;
@@ -91,7 +89,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 
 	public final void refresh() {
 		super.refresh();
-		symText.setText(getInput().getTextLabel());
 		idText.setText(getInput().getGeneID());
 		dsm.setSelectedItem(input.getDataSource());
 		String lType = getInput().getEndLineType().toString();
@@ -105,7 +102,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		if (sym == null || sym.equals ("")) {
 			sym = ref.getId();
 		}
-		symText.setText(sym);
 		idText.setText(ref.getId());
 		String type = ref.getDataSource().getType();
 		if (!type.equals(null)) {
@@ -247,30 +243,10 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		//Manual entry panel elements
 		fieldPanel.setLayout(new GridBagLayout());
 		
-		JLabel symLabel = new JLabel("Text label");
 		JLabel typeLabel = new JLabel("Biological Type");
 		JLabel idLabel = new JLabel("Identifier");
 		JLabel dbLabel = new JLabel("Database");
 		
-		symText = new CompleterQueryTextArea(new OptionProvider() {
-			public List<String> provideOptions(final String text) {
-				if(text == null) {
-					return Collections.emptyList();
-				}
-
-				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
-				List<String> symbols = new ArrayList<String>();
-				try
-				{
-					symbols.addAll
-						(gdb.freeAttributeSearch(text, "Symbol", 10).values());
-				}
-				catch (IDMapperException ignore) {}
-				return symbols;
-			}
-		}, true);
-		symText.setColumns(20);
-		symText.setRows(2);
 		idText = new CompleterQueryTextField(new OptionProvider() {
 			public List<String> provideOptions(final String text) {
 				if(text == null) {
@@ -292,7 +268,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 			}
 		}, true);
 		
-		symText.setCorrectCase(false);
 		idText.setCorrectCase(false);
 
 		dsm = new DataSourceModel();
@@ -307,7 +282,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		c.weightx = 0;
 		c.gridx = 0;
 		c.gridy = GridBagConstraints.RELATIVE;
-		fieldPanel.add(symLabel, c);
 		fieldPanel.add(typeLabel, c);
 		fieldPanel.add(idLabel, c);
 		fieldPanel.add(dbLabel, c);
@@ -315,19 +289,9 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
 		
-		fieldPanel.add(new JScrollPane(symText), c);
 		fieldPanel.add(typeCombo, c);
 		fieldPanel.add(idText, c);
 		fieldPanel.add(dbCombo, c);
-
-		symText.getDocument().addDocumentListener(new DocumentListener() {
-			public void changedUpdate(final DocumentEvent e) { setText();	}
-			public void insertUpdate(final DocumentEvent e) {	setText(); }
-			public void removeUpdate(final DocumentEvent e) { setText(); }
-			private void setText() {
-				getInput().setTextLabel(symText.getText());
-			}
-		});
 
 		idText.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(final DocumentEvent e) { setText();	}
@@ -360,7 +324,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 			}
 		});
 
-		symText.setEnabled(!readonly);
 		idText.setEnabled(!readonly);
 		dbCombo.setEnabled(!readonly);
 		typeCombo.setEnabled(!readonly);

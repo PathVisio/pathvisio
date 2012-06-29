@@ -39,6 +39,7 @@ import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Utils;
+import org.pathvisio.core.view.Line;
 import org.pathvisio.core.view.State;
 
 /**
@@ -805,7 +806,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.LINESTYLE,
 					StaticProperty.LINETHICKNESS,
 					StaticProperty.STARTGRAPHREF,
-					StaticProperty.ENDGRAPHREF
+					StaticProperty.ENDGRAPHREF,
+					StaticProperty.GENEID,
+					StaticProperty.DATASOURCE,
+					StaticProperty.TEXTLABEL
 				);
 			propsLine.addAll (propsCommon);
 			ALLOWED_PROPS.put (ObjectType.LINE, propsLine);

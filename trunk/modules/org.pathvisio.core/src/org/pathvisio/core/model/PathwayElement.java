@@ -808,8 +808,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 					StaticProperty.STARTGRAPHREF,
 					StaticProperty.ENDGRAPHREF,
 					StaticProperty.GENEID,
-					StaticProperty.DATASOURCE,
-					StaticProperty.TEXTLABEL
+					StaticProperty.DATASOURCE
 				);
 			propsLine.addAll (propsCommon);
 			ALLOWED_PROPS.put (ObjectType.LINE, propsLine);

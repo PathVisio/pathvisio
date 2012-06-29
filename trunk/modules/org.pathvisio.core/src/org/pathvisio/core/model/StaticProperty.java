@@ -75,7 +75,7 @@ public enum StaticProperty implements Property
 	// state
 	MODIFICATIONTYPE ("ModificationType", "ModificationType", StaticPropertyType.STRING, 127),
 
-	// label, shape, state , datanode and line
+	// label, shape, state and datanode
 	TEXTLABEL ("TextLabel", "Text Label", StaticPropertyType.STRING, 128),
 	FONTNAME ("FontName", "Font Name", StaticPropertyType.FONT, 129),
 	FONTWEIGHT ("FontWeight", "Bold", StaticPropertyType.BOOLEAN, 130),

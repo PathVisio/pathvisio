@@ -142,13 +142,10 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 			Iterator<VPathwayElement> it = e.selection.iterator();
 			while(it.hasNext()) {
 				VPathwayElement o = it.next();
-				// works for all GraphicsShape and Graphics object
+				// works for all Graphics object
 				// the backpage checks and gives the correct error if 
 				// it's not a datanode or line
-				if(o instanceof GraphicsShape) {
-					setInput(((GraphicsShape)o).getPathwayElement());
-					break;
-				} else if (o instanceof Graphics) {
+				if(o instanceof Graphics) {
 					setInput(((Graphics)o).getPathwayElement());
 					break;
 				}

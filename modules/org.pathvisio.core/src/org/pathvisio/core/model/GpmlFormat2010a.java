@@ -336,13 +336,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 			o.setDynamicProperty(Line.DATASOURCE_LINE, o.getDataSource().getFullName());
 		} else{
 			o.setDynamicProperty(Line.DATASOURCE_LINE,"");
-		}
-		
-		if(o.getTextLabel() != null){
-			o.setDynamicProperty(Line.TEXTLABEL_LINE, o.getTextLabel());
-		} else {
-			o.setDynamicProperty(Line.TEXTLABEL_LINE, "");
-		}
+		}		
 	}
 
 	/**
@@ -434,9 +428,6 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
     	}
     	if(o.getDynamicProperty(Line.DATASOURCE_LINE)!= null){
     		o.setDataSource(DataSource.getByFullName(o.getDynamicProperty(Line.DATASOURCE_LINE)));
-    	}
-    	if(o.getDynamicProperty(Line.TEXTLABEL_LINE)!= null){
-    		o.setTextLabel(o.getDynamicProperty(Line.TEXTLABEL_LINE));
     	}
 	}
 

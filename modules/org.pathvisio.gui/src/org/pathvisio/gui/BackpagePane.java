@@ -28,16 +28,16 @@ import org.bridgedb.Xref;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.Engine.ApplicationEventListener;
-import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.model.PathwayElementEvent;
 import org.pathvisio.core.model.PathwayElementListener;
 import org.pathvisio.core.model.StaticProperty;
-import org.pathvisio.core.view.GeneProduct;
-import org.pathvisio.core.view.VPathway;
-import org.pathvisio.core.view.VPathwayElement;
+import org.pathvisio.core.view.Graphics;
+import org.pathvisio.core.view.GraphicsShape;
 import org.pathvisio.core.view.SelectionBox.SelectionEvent;
 import org.pathvisio.core.view.SelectionBox.SelectionListener;
+import org.pathvisio.core.view.VPathway;
+import org.pathvisio.core.view.VPathwayElement;
 
 /**
  * The backpage panel for the Swing version of PathVisio. This pane shows annotation
@@ -101,7 +101,7 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 		//Remove pathwaylistener from old input
 		if(input != null) input.removeListener(this);
 
-		if(e == null || e.getObjectType() != ObjectType.DATANODE) {
+		if(e == null) {
 			input = null;
 			setText(bpt.getBackpageHTML(null));
 		} else {
@@ -142,9 +142,15 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 			Iterator<VPathwayElement> it = e.selection.iterator();
 			while(it.hasNext()) {
 				VPathwayElement o = it.next();
-				if(o instanceof GeneProduct) {
-					setInput(((GeneProduct)o).getPathwayElement());
-					break; //Selects the last, TODO: use setGmmlDataObjects
+				// works for all GraphicsShape and Graphics object
+				// the backpage checks and gives the correct error if 
+				// it's not a datanode or line
+				if(o instanceof GraphicsShape) {
+					setInput(((GraphicsShape)o).getPathwayElement());
+					break;
+				} else if (o instanceof Graphics) {
+					setInput(((Graphics)o).getPathwayElement());
+					break;
 				}
 			}
 			break;
@@ -165,6 +171,9 @@ public class BackpagePane extends JEditorPane implements ApplicationEventListene
 			break;
 			case VPATHWAY_DISPOSED:
 				((VPathway)e.getSource()).removeSelectionListener(this);
+				// remove content of backpage when pathway is closed
+				input = null;
+				setText(bpt.getBackpageHTML(null));
 			break;
 		}
 	}

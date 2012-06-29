@@ -77,17 +77,21 @@ public class BackpageTextProvider
 		{
 			attributeMapper = attr;
 		}
-
+		
+		public String getType(PathwayElement e) {
+			ObjectType obj = e.getObjectType();
+			if(obj.equals(ObjectType.LINE)) {
+				return "Interaction";
+			} else {
+				return e.getDataNodeType();
+			}
+		}
+		
 		public String getHtml(PathwayElement e) {
 			String text = "";
-			String type = e.getDataNodeType();
+			String type = getType(e);
 
-			// type will be displayed in the header, make either "Metabolite" or "Gene";
-			text += "<H1>" + type + " information</H1><P>";
-			if (!type.equals("Metabolite"))
-			{
-				type = "Gene";
-			}
+			text += "<H1><font color=\"006699\">" + type + " annotation</font></H1><br>";
 
 			if(e.getXref().getId() == null || "".equals(e.getXref().getId())) {
 				text += "<font color='red'>Invalid annotation: missing identifier.</font>";
@@ -104,34 +108,24 @@ public class BackpageTextProvider
 				} else {
 					attributes = new HashMap<String, Set<String>>();
 				}
-				String[][] table;
 
-				if (!type.equals ("Metabolite"))
-				{
-					table = new String[][] {
-						{"Gene ID", e.getXref().getId()},
-						{"Gene Symbol", Utils.oneOf(attributes.get("Symbol"))},
-						{"Synonyms", Utils.oneOf (attributes.get("Synonyms"))},
+				 String[][] table = new String[][] {
+						{"Name", Utils.oneOf(attributes.get("Symbol"))},	
+						{"Identifier", e.getXref().getId()},
+						{"Database", e.getXref().getDataSource().getFullName()},
 						{"Description", Utils.oneOf (attributes.get("Description"))},
-						{"Chr", Utils.oneOf (attributes.get("Chromosome"))},
-					};
-				}
-				else
-				{
-					table = new String[][] {
-						{"Metabolite", Utils.oneOf (attributes.get("Symbol"))},
-						{"Bruto Formula", Utils.oneOf (attributes.get("BrutoFormula"))},
-						{"Synonyms", Utils.oneOf (attributes.get("Synonym"))},
-						};
-				}
+						{"Synonyms", Utils.oneOf (attributes.get("Synonyms"))},
+						{"Chromosome", Utils.oneOf (attributes.get("Chromosome"))},
+						{"Molecular Formula", Utils.oneOf (attributes.get("BrutoFormula"))}
+				};
 
 				for (String[] row : table)
 				{
 					if (!(row[1] == null))
 					{
-						bpInfo.append ("<TR><TH>");
+						bpInfo.append ("<TR><TH align=\"left\" bgcolor=\"#F0F0F0\">");
 						bpInfo.append (row[0]);
-						bpInfo.append (":<TH>");
+						bpInfo.append (":<TH align=\"left\">");
 						bpInfo.append (row[1]);
 					}
 				}
@@ -147,7 +141,7 @@ public class BackpageTextProvider
 		}
 	}
 
-	/**
+	/**Graphics
 	 * A @{link BackpageHook} that adds a list of crossref links to
 	 * the backpage panel.
 	 */
@@ -174,17 +168,27 @@ public class BackpageTextProvider
 				if(crfs.size() == 0) return "";
 				List<Xref> sortedRefs = new ArrayList<Xref>(crfs);
 				Collections.sort(sortedRefs);
-				StringBuilder crt = new StringBuilder("<H1>Cross references</H1><P>");
+				StringBuilder crt = new StringBuilder("<br><br><hr><br><br><H1><font color=\"006699\">Cross references</font></H1><BR>");
+				
+				String db = "";
+				crt.append("<table border=0>");
 				for(Xref cr : sortedRefs) {
+					String dbNew = (cr.getDataSource().getFullName() != null ? cr.getDataSource().getFullName() : cr.getDataSource().getSystemCode());
+					if(!dbNew.equals(db)) {
+						db = dbNew;
+						crt.append("<TR></TR>");
+						crt.append("<TR><TH border=1 align=\"left\" bgcolor=\"#F0F0F0\"><font size=\"4\"><b>" + db + "</b></font></TH></TR>");
+					}
 					String idtxt = cr.getId();
 					String url = cr.getUrl();
-					url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
-					if(url != null) {
+					if(url != null && !url.equals(idtxt)) {
+						url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
 						idtxt = "<a href=\"" + url + "\">" + idtxt + "</a>";
 					}
-					String dbName = cr.getDataSource().getFullName();
-					crt.append( idtxt + ", " + (dbName != null ? dbName : cr.getDataSource().getSystemCode()) + "<br>");
+
+					crt.append("<TR><TH align=\"left\" style=\"border-left : 1\">" + idtxt + "</TH></TR>");
 				}
+				crt.append("</table>");
 				return crt.toString();
 			}
 			catch (IDMapperException ex)
@@ -217,8 +221,13 @@ public class BackpageTextProvider
 	 */
 	public String getBackpageHTML(PathwayElement e)
 	{
-		if (e == null || e.getObjectType() != ObjectType.DATANODE ||
-				e.getDataSource() == null) return "<p>No data</p>";
+		if (e == null) {
+			return "<p>No pathway element is selected.</p>";
+		} else if (e.getObjectType() != ObjectType.DATANODE && e.getObjectType() != ObjectType.LINE) {
+			return "<p>Backpage is not available for this type of element.<BR>Only DataNodes or Lines can have a backpage.</p>";
+		} else if (e.getDataSource() == null || e.getXref().getId().equals("")) {
+			return "<p>There is no annotation for this pathway element defined.</p>";
+		}
 		StringBuilder builder = new StringBuilder(backpagePanelHeader);
 		for (BackpageHook h : hooks)
 		{

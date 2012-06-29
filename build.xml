@@ -136,7 +136,7 @@
 				<include name="derby.jar"/>
 				<include name="org.bridgedb*.jar"/>
 				<include name="org.pathvisio.*.jar"/>
-				<include name="javax.xml*.jar"/>
+				<include name="javax.*.jar"/>
 				<include name="commons-math*.jar"/>
 				<include name="com.springsource*.jar"/>
 			</fileset>

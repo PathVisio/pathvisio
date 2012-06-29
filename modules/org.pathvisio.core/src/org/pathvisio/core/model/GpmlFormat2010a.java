@@ -36,6 +36,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
+import org.pathvisio.core.view.Line;
 import org.pathvisio.core.view.ShapeRegistry;
 import org.pathvisio.core.view.State;
 
@@ -247,8 +248,9 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 	}
 
 	public Element createJdomElement(PathwayElement o) throws ConverterException
-	{
+	{		
 		Element e = null;
+		
 		switch (o.getObjectType())
 		{
 			case DATANODE:
@@ -280,6 +282,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 				break;
 			case LINE:
 				e = new Element("Line", getGpmlNamespace());
+				updateLineXref(o,e);
 				updateCommon (o, e);
 				e.addContent(new Element("Graphics", getGpmlNamespace()));
 				updateLineData(o, e);
@@ -320,6 +323,26 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 			throw new ConverterException ("Error creating jdom element with objectType " + o.getObjectType());
 		}
 		return e;
+	}
+
+	protected void updateLineXref(PathwayElement o, Element e) {
+		if(o.getGeneID() != null){
+			o.setDynamicProperty(Line.ID_LINE, o.getGeneID());
+		} else {
+			o.setDynamicProperty(Line.ID_LINE, "");
+		}
+		
+		if(o.getDataSource() != null){
+			o.setDynamicProperty(Line.DATASOURCE_LINE, o.getDataSource().getFullName());
+		} else{
+			o.setDynamicProperty(Line.DATASOURCE_LINE,"");
+		}
+		
+		if(o.getTextLabel() != null){
+			o.setDynamicProperty(Line.TEXTLABEL_LINE, o.getTextLabel());
+		} else {
+			o.setDynamicProperty(Line.TEXTLABEL_LINE, "");
+		}
 	}
 
 	/**
@@ -367,6 +390,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 				break;
 			case LINE:
 				mapCommon(o, e);
+				mapLineXref(o, e);
 				mapLineData(o, e); // Points, ConnectorType, ZOrder
 				mapLineStyle(o, e); // LineStyle, LineThickness, Color
 				mapGraphId(o, e);
@@ -401,6 +425,19 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 				throw new ConverterException("Invalid ObjectType'" + tag + "'");
 		}
 		return o;
+	}
+
+	protected void mapLineXref(PathwayElement o, Element e) {
+		//Map Xref and description
+    	if(o.getDynamicProperty(Line.ID_LINE)!= null){
+    		o.setGeneID(o.getDynamicProperty(Line.ID_LINE));
+    	}
+    	if(o.getDynamicProperty(Line.DATASOURCE_LINE)!= null){
+    		o.setDataSource(DataSource.getByFullName(o.getDynamicProperty(Line.DATASOURCE_LINE)));
+    	}
+    	if(o.getDynamicProperty(Line.TEXTLABEL_LINE)!= null){
+    		o.setTextLabel(o.getDynamicProperty(Line.TEXTLABEL_LINE));
+    	}
 	}
 
 	protected void mapRotation(PathwayElement o, Element e) throws ConverterException
@@ -700,7 +737,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
     		if(shape != null) {
     			anchor.setShape(AnchorType.fromName(shape));
     		}
-    	}
+    	}    	
 	}
 
 	protected void updateLineStyle(PathwayElement o, Element e) throws ConverterException
@@ -793,7 +830,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 	 */
 	public void writeToXml(Pathway pwy, OutputStream out, boolean validate) throws ConverterException {
 		Document doc = createJdom(pwy);
-
+		
 		//Validate the JDOM document
 		if (validate) validateDocument(doc);
 		//			Get the XML code

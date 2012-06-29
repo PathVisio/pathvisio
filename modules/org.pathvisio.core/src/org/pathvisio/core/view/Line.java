@@ -58,6 +58,21 @@ import org.pathvisio.core.preferences.PreferenceManager;
  */
 public class Line extends Graphics implements Adjustable
 {
+	
+	/**
+	 * Dynamic Property key to assign an identifier to a reaction/interaction.
+	 */
+	public static final String ID_LINE = "org.pathvisio.core.id";
+	/**
+	 * Dynamic Property key to assign a data source to a reaction/interaction.
+	 */
+	public static final String DATASOURCE_LINE = "org.pathvisio.core.ds";
+	/**
+	  * Dynamic Property key to assign a text label to a reaction/interaction.
+	  */
+	public static final String TEXTLABEL_LINE = "org.pathvisio.core.label";
+		
+	
 	private List<VPoint> points;
 
 	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();
@@ -196,7 +211,7 @@ public class Line extends Graphics implements Adjustable
 	 * This allows the line to be drawn only upto
 	 * the point where the line ending starts
 	 */
-	private Shape getVConnectorAdjusted() {
+	public Shape getVConnectorAdjusted() {
 
 		//call to getLineEndingWidth
 		double startGap = getGap(gdata.getStartLineType());
@@ -313,7 +328,7 @@ public class Line extends Graphics implements Adjustable
 		return new Point2D.Double(getVEndX(), getVEndY());
 	}
 
-	protected Shape calculateVOutline() {
+	public Shape calculateVOutline() {
 		return getVShape(true);
 	}
 
@@ -321,7 +336,7 @@ public class Line extends Graphics implements Adjustable
 	 * Returns the properly sized and rotated arrowheads
 	 * @return An array with two arrowheads, for the start and end respectively
 	 */
-	protected ArrowShape[] getVHeads() {
+	public ArrowShape[] getVHeads() {
 		Segment[] segments = getConnectorShape().getSegments();
 
 		ArrowShape he = getVHead(

@@ -127,7 +127,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 				e.getMessage().contains("Cannot find the declaration of element 'Pathway'"))
 		{
 			JOptionPane.showMessageDialog(c,
-					message + "\n\n" +
+					Utils.formatExceptionMsg(message) + "\n\n" +
 					"The most likely cause for this error is that you are trying to open an old Gpml file. " +
 					"Please note that the Gpml format has changed as of March 2007. " +
 					"The standard pathway set can be re-downloaded from http://pathvisio.org " +
@@ -139,7 +139,7 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		else
 		{
 			JOptionPane.showMessageDialog(c,
-					message + "\nSee error log for details\n" + e.getClass(), "Error", JOptionPane.ERROR_MESSAGE);
+					Utils.formatExceptionMsg(message) + "\nSee error log for details\n" + e.getClass(), "Error", JOptionPane.ERROR_MESSAGE);
 			Logger.log.error("Converter exception", e);
 		}
 	}
@@ -147,14 +147,14 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public void handleMalformedURLException(String message, Component c, Throwable e) {
 		if(e.getMessage() != null && e.getMessage().contains("no protocol:")) {
 			JOptionPane.showMessageDialog(c,
-					message + "\n\n" +
+					Utils.formatExceptionMsg(message) + "\n\n" +
 					"Please correct the specified hyperlink for this Label in the \"properties pane\" on the right.\n" +
 					"(http://www.example.com)\n\n" +
 					"Please contact the authors at " + Globals.DEVELOPER_EMAIL + " if you need help with this.\n"
 					, "Error", JOptionPane.ERROR_MESSAGE);
 			Logger.log.error("MalformedURLException", e);
 		} else {
-			JOptionPane.showMessageDialog(c, message + "\nSee error log for details\n" + e.getClass(), "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(c, Utils.formatExceptionMsg(message) + "\nSee error log for details\n" + e.getClass(), "Error", JOptionPane.ERROR_MESSAGE);
 			Logger.log.error("MalformedURLException", e);
 		}
 	}

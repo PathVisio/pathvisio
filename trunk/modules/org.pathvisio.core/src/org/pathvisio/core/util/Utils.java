@@ -20,10 +20,8 @@ import java.awt.Font;
 import java.awt.geom.Point2D;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -293,5 +291,29 @@ public class Utils {
 			builder.append ("" + o);
 		}
 		return builder.toString();
+	}
+	
+	/**
+	 * formats a message that will be displayed in a dialog,
+	 *  so it's not longer than 80 symbols in each line
+	 */
+	public static String formatExceptionMsg(String msg) {
+		msg = msg.replace("\n", "");
+		if(msg.length() > 80) {
+			String result = "";
+			for(int i = 0; i < msg.length(); i=i+80) {
+				int end = i+80;
+				if (msg.length() < i+80) end = msg.length();
+				String s = msg.substring(i, end);
+				int index = s.lastIndexOf(" ");
+				if(index == -1) {
+					result = result + s + "\n";
+				} else {
+					result = result + msg.substring(i, i+index) + "\n";
+					i = i - (s.length()-index);
+				}
+			}
+			return result;
+		} else return msg;
 	}
 }

@@ -23,7 +23,7 @@ import org.pathvisio.data.ISample;
 /**
  * This class represents a record in the Sample table of the Expression database.
  */
-public class Sample implements Comparable<Sample>, ISample
+public class Sample implements ISample
 {
 	int idSample;
 	String name;
@@ -73,6 +73,7 @@ public class Sample implements Comparable<Sample>, ISample
 	protected void setDataType(int type) { dataType = type; }
 	public Integer getId() { return idSample; }
 	protected void setId(int id) { idSample = id; }
+
 	/**
 	 * Compares this object to another {@link Sample} object based on the idSample property
 	 * @param o	The {@link Sample} object to compare with
@@ -80,9 +81,11 @@ public class Sample implements Comparable<Sample>, ISample
 	 * lower idSample, positive if this object has a higher idSample
 	 * @throws ClassCastException
 	 */
-	public int compareTo(Sample o)
+	@Override
+	public int compareTo(ISample o)
 	{
-		return idSample - o.idSample;
+		if (o == null) return 1;
+		return idSample - o.getId();
 	}
 
 	public int hashCode() {

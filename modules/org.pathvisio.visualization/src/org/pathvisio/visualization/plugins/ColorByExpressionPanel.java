@@ -64,7 +64,6 @@ import org.bridgedb.gui.SimpleFileFilter;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.data.ISample;
-import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.visualization.gui.ColorSetChooser;

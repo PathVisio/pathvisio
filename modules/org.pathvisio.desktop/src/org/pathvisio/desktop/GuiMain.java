@@ -52,8 +52,8 @@ import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.MIMShapes;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.DataInterface;
 import org.pathvisio.desktop.gex.GexManager;
-import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.desktop.gex.GexManager.GexManagerEvent;
 import org.pathvisio.desktop.gex.GexManager.GexManagerListener;
 import org.pathvisio.desktop.model.BatikImageWithDataExporter;
@@ -175,7 +175,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		if(e.getType() == GexManagerEvent.CONNECTION_OPENED ||
 				e.getType() == GexManagerEvent.CONNECTION_CLOSED)
 		{
-			SimpleGex gex = pvDesktop.getGexManager().getCurrentGex();
+			DataInterface gex = pvDesktop.getGexManager().getCurrentGex();
 			if(gex != null && gex.isConnected()) {
 				gexLabel.setText(" | Dataset: " + shortenString(gex.getDbName()));
 				gexLabel.setToolTipText(gex.getDbName());

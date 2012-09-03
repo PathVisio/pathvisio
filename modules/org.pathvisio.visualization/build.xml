@@ -20,6 +20,7 @@
 	  </fileset>
 	  <fileset dir="${bundle.dest}">
 		<include name="org.pathvisio.core.jar"/>
+		<include name="org.pathvisio.data.jar"/>
 		<include name="org.pathvisio.gui.jar"/>
 		<include name="org.pathvisio.desktop.jar"/>
 	  </fileset>

@@ -36,9 +36,9 @@ import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.PathwayParser.ParseException;
 import org.pathvisio.core.util.Utils;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.DataInterface;
+import org.pathvisio.data.IRow;
 import org.pathvisio.desktop.gex.GexManager;
-import org.pathvisio.desktop.gex.ReporterData;
-import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.statistics.PathwayMap.PathwayInfo;
 
 /**
@@ -67,7 +67,7 @@ public class IsDataInPathways
 		gexManager.setCurrentGex("" + fGex, false);
 
 		// read all rows of gex;
-		SimpleGex gex = gexManager.getCurrentGex();
+		DataInterface gex = gexManager.getCurrentGex();
 
 		Map<Xref, Xref> dataRefs = new HashMap<Xref, Xref>();
 		Map<Xref, List<String>> counts = new HashMap<Xref, List<String>>();
@@ -76,7 +76,7 @@ public class IsDataInPathways
 
 		for (int i = 0; i < gex.getNrRow(); ++i)
 		{
-			ReporterData data = gex.getRow(i);
+			IRow data = gex.getRow(i);
 			Xref src = data.getXref();
 			counts.put (src, new ArrayList<String>());
 			for (Xref dest : gdb.mapID(data.getXref()))
@@ -103,7 +103,7 @@ public class IsDataInPathways
 		PrintStream out = new PrintStream(new FileOutputStream(outFile));
 		for (int i = 0; i < gex.getNrRow(); ++i)
 		{
-			ReporterData data = gex.getRow(i);
+			IRow data = gex.getRow(i);
 			Xref ref = data.getXref();
 			String bpText = Utils.oneOf (((AttributeMapper)gdb).getAttributes(ref, "Backpage"));
 			String desc = "";

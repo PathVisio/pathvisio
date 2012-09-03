@@ -34,7 +34,6 @@ import javax.swing.SwingConstants;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.GexManager;
-import org.pathvisio.desktop.gex.Sample;
 
 /**
  * A SampleCheckList with buttons on the right side to

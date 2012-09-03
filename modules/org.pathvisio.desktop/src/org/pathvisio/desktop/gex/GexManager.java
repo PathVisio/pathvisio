@@ -20,12 +20,12 @@ import java.util.EventObject;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bridgedb.IDMapperException;
 import org.bridgedb.rdb.construct.DBConnector;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.DataInterface;
 
 /**
  * Manage the centralized SimpleGex
@@ -39,8 +39,8 @@ import org.pathvisio.data.DataException;
  */
 public class GexManager
 {
-	private SimpleGex currentGex = null;
-	public SimpleGex getCurrentGex() { return currentGex; }
+	private DataInterface currentGex = null;
+	public DataInterface getCurrentGex() { return currentGex; }
 
 	private CachedData cachedData = null;
 	public CachedData getCachedData() { return cachedData; }
@@ -65,7 +65,7 @@ public class GexManager
 	 *
 	 * @param gex a premade Gex instance
 	 */
-	public void setCurrentGex (SimpleGex gex)
+	public void setCurrentGex (DataInterface gex)
 	{
 		close(); // close old gex.
 		currentGex = gex;
@@ -141,7 +141,7 @@ public class GexManager
 		{
 			currentGex.close();
 		}
-		catch (IDMapperException e)
+		catch (DataException e)
 		{
 			Logger.log.error ("Problem while closing previous gex", e);
 		}

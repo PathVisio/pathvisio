@@ -41,6 +41,7 @@ import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.view.VPathway;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.data.DBConnDerby;
 import org.pathvisio.desktop.data.DBConnectorSwing;
 import org.pathvisio.desktop.gex.CachedData;
@@ -229,7 +230,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				gex.preSeed(p.getDataNodeXrefs());
 				swingEngine.getEngine().getActiveVPathway().redraw();
 			}
-			catch (IDMapperException e)
+			catch (DataException e)
 			{
 				Logger.log.error ("Exception while caching expression data ", e);
 			}

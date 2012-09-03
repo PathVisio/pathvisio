@@ -68,6 +68,7 @@ import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.core.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.core.util.ProgressKeeper.ProgressListener;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.PvDesktop;
 import org.pathvisio.desktop.data.DBConnectorSwing;
 import org.pathvisio.desktop.gex.SimpleGex;
@@ -1001,7 +1002,7 @@ public class GexImportWizard extends Wizard
 		return Math.round (input / order) * order;
 	}
 	
-	private void createDefaultVisualization(ImportInformation info) throws IDMapperException
+	private void createDefaultVisualization(ImportInformation info) throws IDMapperException, DataException
 	{
 		VisualizationManager visMgr = standaloneEngine.getVisualizationManager(); 
 		ColorSetManager csmgr = visMgr.getColorSetManager();

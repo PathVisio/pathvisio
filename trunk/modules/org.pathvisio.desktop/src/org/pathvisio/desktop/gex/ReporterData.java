@@ -17,11 +17,14 @@
 package org.pathvisio.desktop.gex;
 
 import java.sql.Types;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bridgedb.Xref;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 
 /**
  * This class represents a row of cached expression data for a reporter in the dataset.
@@ -30,11 +33,11 @@ import org.bridgedb.Xref;
  *
  * Setters are package private, external classes are not supposed to modify this data.
  */
-public class ReporterData implements Comparable<ReporterData>
+public class ReporterData implements Comparable<ReporterData>, IRow
 {
 	Xref idc;
 	int group;
-	Map<Sample, Object> sampleData;
+	Map<ISample, Object> sampleData;
 
 	/**
 	 * Constructor for this class. Creates a new {@link ReporterData} object for the given reporter
@@ -42,10 +45,10 @@ public class ReporterData implements Comparable<ReporterData>
 	 * @param groupId An id that groups the expression data from duplicate reporters. groupId is also used
 	 * 	as a sorting key, to keep the order of Reporters consistent.
 	 */
-	ReporterData(Xref ref, int groupId) {
+	public ReporterData(Xref ref, int groupId) {
 		idc = ref;
 		group = groupId;
-		sampleData = new HashMap<Sample, Object>();
+		sampleData = new HashMap<ISample, Object>();
 	}
 
 	/** set the xref (reporter) for this row. */
@@ -73,7 +76,7 @@ public class ReporterData implements Comparable<ReporterData>
 	 * @see Sample#getDataType()
 	 * @see Sample#getId()
 	 */
-	public Map<Sample, Object> getSampleData() {
+	public Map<ISample, Object> getSampleData() {
 		return sampleData;
 	}
 
@@ -84,7 +87,7 @@ public class ReporterData implements Comparable<ReporterData>
 	public Map<String, Object> getByName()
 	{
 		Map<String, Object> result = new HashMap<String, Object>();
-		for (Sample s : sampleData.keySet())
+		for (ISample s : sampleData.keySet())
 		{
 			result.put (s.getName(), sampleData.get(s));
 		}
@@ -98,7 +101,7 @@ public class ReporterData implements Comparable<ReporterData>
 	 * @see Sample#getDataType()
 	 * @see Sample#getId()
 	 */
-	public Object getSampleData(Sample key)
+	public Object getSampleData(ISample key)
 	{
 		return sampleData.get(key);
 	}
@@ -109,7 +112,7 @@ public class ReporterData implements Comparable<ReporterData>
 	 * @param data The {@link String} representation of the data to add
 	 * @see SimpleGex#cacheData
 	 */
-	void setSampleData(Sample sample, String data) {
+	public void setSampleData(Sample sample, String data) {
 		Object parsedData = null;
 		try { parsedData = Double.parseDouble(data); }
 		catch(Exception e) { parsedData = data; }
@@ -117,7 +120,7 @@ public class ReporterData implements Comparable<ReporterData>
 	}
 
 	/** set sample directly as Object, it won't be parsed */
-	void setSampleAsObject (Sample sample, Object data)
+	void setSampleAsObject (ISample sample, Object data)
 	{
 		sampleData.put(sample, data);
 	}
@@ -128,11 +131,11 @@ public class ReporterData implements Comparable<ReporterData>
 	 * @param dlist list to summarize.
 	 * @return summary ReporterData
 	 */
-	public static ReporterData createListSummary(List<ReporterData> dlist)
+	public static ReporterData createListSummary(List<? extends IRow> dlist)
 	{
 		ReporterData result = new ReporterData(null, -1);
 		if(dlist != null && dlist.size() > 0) {
-			for(Sample key : dlist.get(0).getSampleData().keySet())
+			for(ISample key : dlist.get(0).getSamples())
 			{
 				int dataType = key.getDataType();
 				if(dataType == Types.REAL) {
@@ -145,12 +148,18 @@ public class ReporterData implements Comparable<ReporterData>
 		return result;
 	}
 
+	@Override
+	/** return a set of all samples used */
+	public Collection<? extends ISample> getSamples() 
+	{
+		return sampleData.keySet();
+	}
 
-	private static Object averageDouble(List<ReporterData> dlist, Sample s)
+	private static Object averageDouble(List<? extends IRow> dlist, ISample s)
 	{
 		double avg = 0;
 		int n = 0;
-		for(ReporterData d : dlist) {
+		for(IRow d : dlist) {
 			try {
 				Double value = (Double)d.getSampleData(s);
 				if( !value.isNaN() ) {
@@ -166,10 +175,10 @@ public class ReporterData implements Comparable<ReporterData>
 		}
 	}
 
-	private static Object averageString(List<ReporterData> dlist, Sample s)
+	private static Object averageString(List<? extends IRow> dlist, ISample s)
 	{
 		StringBuilder sb = new StringBuilder();
-		for(ReporterData d : dlist) {
+		for(IRow d : dlist) {
 			sb.append(d.getSampleData(s) + ", ");
 		}
 		int end = sb.lastIndexOf(", ");

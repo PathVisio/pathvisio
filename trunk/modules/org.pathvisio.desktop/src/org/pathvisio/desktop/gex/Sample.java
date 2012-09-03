@@ -18,10 +18,12 @@ package org.pathvisio.desktop.gex;
 
 import java.sql.Types;
 
+import org.pathvisio.data.ISample;
+
 /**
  * This class represents a record in the Sample table of the Expression database.
  */
-public class Sample implements Comparable<Sample>
+public class Sample implements Comparable<Sample>, ISample
 {
 	int idSample;
 	String name;
@@ -69,7 +71,7 @@ public class Sample implements Comparable<Sample>
 	 * the type is determined upon loading the data entry.
 	 */
 	protected void setDataType(int type) { dataType = type; }
-	public int getId() { return idSample; }
+	public Integer getId() { return idSample; }
 	protected void setId(int id) { idSample = id; }
 	/**
 	 * Compares this object to another {@link Sample} object based on the idSample property

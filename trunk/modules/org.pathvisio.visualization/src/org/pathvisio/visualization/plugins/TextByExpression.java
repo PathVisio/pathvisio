@@ -53,10 +53,11 @@ import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.VPathway;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
-import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.visualization.VisualizationMethod;
 import org.pathvisio.gui.dialogs.OkCancelDialog;
 import org.pathvisio.gui.util.FontChooser;
@@ -77,7 +78,7 @@ public class TextByExpression extends VisualizationMethod
 	boolean mean = false;
 
 	Font font;
-	List<Sample> useSamples = new ArrayList<Sample>();
+	List<ISample> useSamples = new ArrayList<ISample>();
 
 	private final GexManager gexManager;
 
@@ -119,7 +120,7 @@ public class TextByExpression extends VisualizationMethod
 			g2d.setFont(f);
 			int th = g2d.getFontMetrics().getHeight();
 			int w = 0, i = 0;
-			for(Sample s : useSamples) {
+			for(ISample s : useSamples) {
 				String str = getDataString(s, cache.getData(idc), SEP + "\n") +
 					(++i == useSamples.size() ? "" : SEP);
 				if (str.length() == 0) continue;
@@ -149,7 +150,7 @@ public class TextByExpression extends VisualizationMethod
 			panel.setLayout(new GridBagLayout());
 			GridBagConstraints gbc = new GridBagConstraints();
 			gbc.gridy = -1;
-			for(Sample s : useSamples) {
+			for(ISample s : useSamples) {
 				gbc.gridy++;
 				gbc.gridx = 0;
 				panel.add(new JLabel(getLabelLeftText(s)), gbc);
@@ -160,15 +161,15 @@ public class TextByExpression extends VisualizationMethod
 		} else return null;
 	}
 
-	String getLabelLeftText(Sample s) {
+	String getLabelLeftText(ISample s) {
 		return s.getName() + ":";
 	}
 
-	String getLabelRightText(Sample s, List<ReporterData> data) {
+	String getLabelRightText(ISample s, List<? extends IRow> data) {
 		return getDataString(s, data, SEP);
 	}
 
-	String getDataString(Sample s, List<ReporterData> data, String multSep) {
+	String getDataString(ISample s, List<? extends IRow> data, String multSep) {
 		Object str = null;
 		if(data.size() > 1)
 			str = formatData(getSampleStringMult(s, data, multSep));
@@ -177,15 +178,15 @@ public class TextByExpression extends VisualizationMethod
 		return str == null ? "" : str.toString();
 	}
 
-	Object getSampleData(Sample s, ReporterData data) {
+	Object getSampleData(ISample s, IRow data) {
 		return data.getSampleData(s);
 	}
 
-	Object getSampleStringMult(Sample s, List<ReporterData> refdata, String sep) {
+	Object getSampleStringMult(ISample s, List<? extends IRow> refdata, String sep) {
 		if(mean) return ReporterData.createListSummary(refdata).getSampleData(s);
 
 		StringBuilder strb = new StringBuilder();
-		for(ReporterData d : refdata) {
+		for(IRow d : refdata) {
 			String str = "" + formatData(d.getSampleData(s));
 			if(!str.equals("NaN")) {
 				strb.append(str + sep);
@@ -354,7 +355,7 @@ public class TextByExpression extends VisualizationMethod
 		elm.setAttribute(XML_ATTR_FONTDATA, Utils.encodeFont(getFont()));
 		elm.setAttribute(XML_ATTR_ROUND, Integer.toString(getRoundTo()));
 		elm.setAttribute(XML_ATTR_AVG, Boolean.toString(mean));
-		for(Sample s : useSamples) {
+		for(ISample s : useSamples) {
 			Element selm = new Element(XML_ELM_ID);
 			selm.setText(Integer.toString(s.getId()));
 			elm.addContent(selm);
@@ -367,7 +368,7 @@ public class TextByExpression extends VisualizationMethod
 		for(Object o : xml.getChildren(XML_ELM_ID)) {
 			try {
 				int id = Integer.parseInt(((Element)o).getText());
-				Sample s = gexManager.getCurrentGex().getSample(id);
+				ISample s = gexManager.getCurrentGex().getSample(id);
 				if (s != null) useSamples.add(s);
 			} catch(Exception e) { Logger.log.error("Unable to add sample", e); }
 		}

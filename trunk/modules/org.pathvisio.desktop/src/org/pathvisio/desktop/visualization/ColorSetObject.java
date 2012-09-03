@@ -20,8 +20,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import org.jdom.Element;
-import org.pathvisio.desktop.gex.ReporterData;
-import org.pathvisio.desktop.gex.Sample;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;
 
 /**
@@ -70,7 +70,7 @@ public abstract class ColorSetObject {
 	 * null if the input data doesn't result in a valid color
 	 * @throws Exception
 	 */
-	abstract Color getColor(ReporterData data, Sample key) throws CriterionException;
+	abstract Color getColor(IRow data, ISample key) throws CriterionException;
 
 	public abstract void paintPreview(Graphics2D g, Rectangle bounds);
 

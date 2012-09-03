@@ -53,11 +53,13 @@ import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.Legend;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.CachedData.Callback;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
-import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.VisualizationManager.VisualizationException;
@@ -160,7 +162,7 @@ public class ColorByExpression extends VisualizationMethod {
 	 * Get the configured sample for the given sample. Returns
 	 * null when no configured sample is found.
 	 */
-	public ConfiguredSample getConfiguredSample(Sample s) {
+	public ConfiguredSample getConfiguredSample(ISample s) {
 		for(ConfiguredSample cs : useSamples) {
 			if(cs.getSample() != null && cs.getSample() == s) {
 				return cs;
@@ -185,8 +187,8 @@ public class ColorByExpression extends VisualizationMethod {
 		return useSamples;
 	}
 
-	public List<Sample> getSelectedSamples() {
-		List<Sample> samples = new ArrayList<Sample>();
+	public List<ISample> getSelectedSamples() {
+		List<ISample> samples = new ArrayList<ISample>();
 
 		for(ConfiguredSample cs : useSamples)
 		{
@@ -273,7 +275,7 @@ public class ColorByExpression extends VisualizationMethod {
 			}
 			if(cache.hasData(idc))
 			{
-				List<ReporterData> data = cache.getData(idc);
+				List<? extends IRow> data = cache.getData(idc);
 				if (data.size() > 0)
 				{
 					drawSample(s, data, r, g2d);
@@ -329,13 +331,13 @@ public class ColorByExpression extends VisualizationMethod {
 	Color lineColor;
 	boolean drawLine = false;
 
-	void drawSampleAvg(ConfiguredSample s, List<ReporterData> data, Rectangle area, Graphics2D g2d) {
+	void drawSampleAvg(ConfiguredSample s, List<? extends IRow> data, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		Color rgb = cs.getColor(ReporterData.createListSummary(data), s.getSample());
 		drawColoredRectangle(area, rgb, g2d);
 	}
 
-	void drawSampleBar(ConfiguredSample s, List<ReporterData> refdata, Rectangle area, Graphics2D g2d) {
+	void drawSampleBar(ConfiguredSample s, List<? extends IRow> refdata, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 		int n = refdata.size();
 		double hf = (double)area.height / n;
@@ -364,7 +366,7 @@ public class ColorByExpression extends VisualizationMethod {
 		modified();
 	}
 
-	void drawSample(ConfiguredSample s, List<ReporterData> data, Rectangle area, Graphics2D g2d) {
+	void drawSample(ConfiguredSample s, List<? extends IRow> data, Rectangle area, Graphics2D g2d) {
 		ColorSet cs = s.getColorSet();
 
 		if(s.hasImage()) {
@@ -396,7 +398,7 @@ public class ColorByExpression extends VisualizationMethod {
 	 * Add a sample to use for visualization
 	 * @param s The sample to add
 	 */
-	public void addUseSample(Sample s) {
+	public void addUseSample(ISample s) {
 		if(s != null) {
 			if(!useSamples.contains(s)) useSamples.add(new ConfiguredSample(s));
 			modified();
@@ -495,7 +497,7 @@ public class ColorByExpression extends VisualizationMethod {
 		Color replaceColor = DEFAULT_TRANSPARENT;
 		int tolerance; //range 0 - 255;
 
-		private Sample sample;
+		private ISample sample;
 
 		int getAmbigiousType() { return ambigious; }
 
@@ -504,7 +506,7 @@ public class ColorByExpression extends VisualizationMethod {
 			modified();
 		}
 
-		public Sample getSample()
+		public ISample getSample()
 		{
 			return sample;
 		}
@@ -565,7 +567,7 @@ public class ColorByExpression extends VisualizationMethod {
 			{
 				sample = gexManager.getCurrentGex().getSamples().get(id);
 			}
-			catch (IDMapperException ex)
+			catch (DataException ex)
 			{
 				throw new VisualizationException(ex);
 			}
@@ -583,7 +585,7 @@ public class ColorByExpression extends VisualizationMethod {
 		 * Create a configured sample based on an existing sample
 		 * @param s The sample to base the configured sample on
 		 */
-		public ConfiguredSample(Sample s) {
+		public ConfiguredSample(ISample s) {
 			if (s == null) throw new NullPointerException();
 			sample = s;
 		}

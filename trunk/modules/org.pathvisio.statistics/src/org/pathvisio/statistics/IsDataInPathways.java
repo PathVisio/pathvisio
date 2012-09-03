@@ -35,6 +35,7 @@ import org.bridgedb.Xref;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.PathwayParser.ParseException;
 import org.pathvisio.core.util.Utils;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.gex.SimpleGex;
@@ -59,7 +60,7 @@ public class IsDataInPathways
 
 	static File outFile = new File ("/home/martijn/Desktop/isdatainpahtways.txt");
 
-	public static void main(String[] args) throws IDMapperException, ParseException, FileNotFoundException
+	public static void main(String[] args) throws IDMapperException, ParseException, FileNotFoundException, DataException
 	{
 		PreferenceManager.init();
 		GexManager gexManager = new GexManager();

@@ -33,6 +33,9 @@ import org.bridgedb.rdb.construct.DBConnector;
 import org.bridgedb.rdb.construct.DataDerby;
 import org.bridgedb.rdb.construct.DataDerbyDirectory;
 import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
@@ -75,7 +78,7 @@ public class Test extends TestCase
 		assertEquals ("AAAA", ImportInformation.colIndexToExcel (base3));
 	}
 
-	public void testImportSimple() throws IOException, IDMapperException
+	public void testImportSimple() throws IOException, IDMapperException, DataException
 	{
 		PreferenceManager.init();
 		ImportInformation info = new ImportInformation();
@@ -99,13 +102,13 @@ public class Test extends TestCase
 		cache.setMapper(gdb);
 		cache.preSeed(refs);
 
-		Sample s = gex.getSample(1);
-		assertEquals (1, s.getId());
+		ISample s = gex.getSample(1);
+		assertEquals (1, (int)s.getId());
 
 		assertEquals ("Control 2", s.getName());
 
 		//check that there is only one row of data
-		List<ReporterData> data1 = cache.getData(ref1);
+		List<? extends IRow> data1 = cache.getData(ref1);
 		assertEquals (1, data1.size());
 
 		// looking up a particular data point in two different ways: L:7124, sample "Control 2"
@@ -242,7 +245,7 @@ public class Test extends TestCase
 		assertEquals (info.getErrorList().size(), 0);
 	}
 
-	public void gexHelper(DBConnector con, String filename) throws IDMapperException, SQLException
+	public void gexHelper(DBConnector con, String filename) throws IDMapperException, SQLException, DataException
 	{
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + filename;
 
@@ -259,7 +262,7 @@ public class Test extends TestCase
 		// read data back
 		sgex = new SimpleGex (dbFileName, false, con);
 
-		Sample s = sgex.getSample(55);
+		ISample s = sgex.getSample(55);
 		assertEquals (s.getName(), "mysample");
 		assertEquals (s.getDataType(), 99);
 
@@ -270,13 +273,13 @@ public class Test extends TestCase
 
 	}
 
-	public void testGexDerby() throws IDMapperException, SQLException
+	public void testGexDerby() throws IDMapperException, SQLException, DataException
 	{
 		gexHelper (new DataDerby(), "tempgex1a");
 	}
 
 	//TODO: re-enable
-	public void disabled_testGexDirectory() throws IDMapperException, SQLException
+	public void disabled_testGexDirectory() throws IDMapperException, SQLException, DataException
 	{
 		gexHelper (new DataDerbyDirectory(), "tempgex1b");
 	}

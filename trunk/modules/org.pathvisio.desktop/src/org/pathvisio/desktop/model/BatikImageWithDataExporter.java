@@ -38,6 +38,7 @@ import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.ImageExporter;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.view.VPathway;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.visualization.VisualizationManager;
 import org.w3c.dom.DOMImplementation;
@@ -84,6 +85,10 @@ public class BatikImageWithDataExporter extends ImageExporter
 					gexManager.getCachedData().syncSeed(pathway.getDataNodeXrefs());
 			}
 			catch (IDMapperException ex)
+			{
+				Logger.log.error ("Could not get data", ex);
+			}
+			catch (DataException ex)
 			{
 				Logger.log.error ("Could not get data", ex);
 			}

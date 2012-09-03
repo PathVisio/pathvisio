@@ -21,6 +21,8 @@ import java.util.List;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.ISample;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
 
 /**
@@ -43,7 +45,7 @@ public class BackpageExpression implements BackpageHook
 	 * @return		String containing the expression data in HTML format or a string displaying a
 	 * 'no expression data found' message in HTML format
 	 */
-	private static String getDataString(Xref idc, CachedData gex) throws IDMapperException
+	private static String getDataString(Xref idc, CachedData gex) throws IDMapperException, DataException
 	{
 		String noDataFound = "<P><I>No expression data found";
 		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
@@ -60,7 +62,7 @@ public class BackpageExpression implements BackpageHook
 		}
 
 		String dataString = "";
-		for(Sample s : gex.getOrderedSamples())
+		for(ISample s : gex.getOrderedSamples())
 		{
 			dataString += "<TR><TH>" + s.getName();
 			for(ReporterData d : pwData)
@@ -88,6 +90,11 @@ public class BackpageExpression implements BackpageHook
 			}
 		}
 		catch (IDMapperException ex)
+		{
+			text += "Exception occured while getting cross-references</br>"
+				+ ex.getMessage();
+		}
+		catch (DataException ex)
 		{
 			text += "Exception occured while getting cross-references</br>"
 				+ ex.getMessage();

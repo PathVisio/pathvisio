@@ -25,6 +25,7 @@ import org.bridgedb.rdb.construct.DBConnector;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.data.DataException;
 
 /**
  * Manage the centralized SimpleGex
@@ -79,7 +80,7 @@ public class GexManager
 	 * @param dbName name of the database (usually file or directory name)
 	 * @param create true if you want to create / overwrite a database
 	 */
-	public void setCurrentGex (String dbName, boolean create) throws IDMapperException
+	public void setCurrentGex (String dbName, boolean create) throws DataException
 	{
 		DBConnector connector;
 		try
@@ -88,15 +89,15 @@ public class GexManager
 		}
 		catch (IllegalAccessException e)
 		{
-			throw new IDMapperException (e);
+			throw new DataException (e);
 		}
 		catch (InstantiationException e)
 		{
-			throw new IDMapperException (e);
+			throw new DataException (e);
 		}
 		catch (ClassNotFoundException e)
 		{
-			throw new IDMapperException (e);
+			throw new DataException (e);
 		}
 		SimpleGex gex = new SimpleGex (dbName, create, connector);
 		setCurrentGex (gex);

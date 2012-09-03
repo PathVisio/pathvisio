@@ -37,6 +37,7 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.debug.ThreadSafe;
 import org.pathvisio.core.debug.WorkerThreadOnly;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.DataInterface;
 import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
 
@@ -51,17 +52,17 @@ import org.pathvisio.data.ISample;
 public class CachedData
 {
 	//Data objects for gene-products on the pathway
-	private final ConcurrentHashMap<Xref, List<ReporterData>> data = new ConcurrentHashMap<Xref, List<ReporterData>>();
+	private final ConcurrentHashMap<Xref, List<IRow>> data = new ConcurrentHashMap<Xref, List<IRow>>();
 	private final Executor executor;
 
-	private final SimpleGex parent;
+	private final DataInterface parent;
 
 	/**
 	 * Do not instantiate in the PathVisio environment!
 	 * Use GexManager.getCachedData() instead.
 	 * Or you'll end up with multiple caches.
 	 */
-	public CachedData (SimpleGex parent)
+	public CachedData (DataInterface parent)
 	{
 		this.parent = parent;
 		executor = Executors.newSingleThreadExecutor();
@@ -109,18 +110,18 @@ public class CachedData
 	private Set<DataSource> destFilterCache = null;
 
 	@WorkerThreadOnly
-	public List<ReporterData> syncGet(Xref ref) throws IDMapperException, DataException
+	public List<? extends IRow> syncGet(Xref ref) throws IDMapperException, DataException
 	{
 		if (destFilterCache == null)
 		{
 			destFilterCache = parent.getUsedDatasources();
 		}
 
-		List<ReporterData> result;
+		List<IRow> result;
 		if (!data.containsKey (ref))
 		{
 			result =
-				new ArrayList<ReporterData>(getDataForXref(ref, mapper, destFilterCache));
+				new ArrayList<IRow>(getDataForXref(ref, mapper, destFilterCache));
 			Collections.sort(result);
 			data.put (ref, result);
 		}
@@ -157,7 +158,7 @@ public class CachedData
 		});
 	}
 
-	private Collection<ReporterData> getDataForXref(Xref srcRef, IDMapper gdb, Set<DataSource> destFilter) throws IDMapperException
+	private Collection<? extends IRow> getDataForXref(Xref srcRef, IDMapper gdb, Set<DataSource> destFilter) throws IDMapperException, DataException
 	{
 		// get all cross-refs for this id
 		Set<Xref> destRefs = new HashSet<Xref>();
@@ -248,7 +249,7 @@ public class CachedData
 		return parent.getNrRow();
 	}
 
-	public ReporterData getRow(int i) throws DataException
+	public IRow getRow(int i) throws DataException
 	{
 		return parent.getRow(i);
 	}

@@ -14,3 +14,4 @@ tools/cytoscape-gpml/gpml.jar
 .project
 ant.properties
 *~
+felix-cache/

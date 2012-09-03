@@ -34,7 +34,6 @@ import org.pathvisio.core.util.Stats;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.IRow;
 import org.pathvisio.desktop.gex.CachedData;
-import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.visualization.Criterion;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;
 import org.pathvisio.statistics.PathwayMap.PathwayInfo;
@@ -229,7 +228,7 @@ public class ZScoreCalculator
 				if (pk != null && pk.isCancelled()) return;
 				try
 				{
-					ReporterData d = result.gex.getRow(i);
+					IRow d = result.gex.getRow(i);
 					result.bigN++;
 					boolean eval = result.crit.evaluate(d.getByName());
 					if (eval)

@@ -29,9 +29,9 @@ import javax.swing.JCheckBox;
 import org.bridgedb.IDMapperException;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.DataInterface;
 import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.GexManager;
-import org.pathvisio.desktop.gex.SimpleGex;
 
 /**
  * List of samples, with a checkbox in front of each so the user can select
@@ -44,7 +44,7 @@ public class SampleCheckList extends JCheckBoxList {
 
 	public SampleCheckList(List<? extends ISample> selection, GexManager gexManager) {
 		super(false);
-		SimpleGex gex = gexManager.getCurrentGex();
+		DataInterface gex = gexManager.getCurrentGex();
 		if(gex != null) {
 			try
 			{

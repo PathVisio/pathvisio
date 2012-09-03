@@ -37,6 +37,7 @@ import org.bridgedb.rdb.construct.DBConnector;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.DataInterface;
+import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
 
 /**
@@ -174,9 +175,10 @@ public class SimpleGex implements DataInterface
 	 * In other words, result.get(n).getId() < result.get(n+1).getId(), but
 	 * NOT: result.get(n).getId() == n
 	 */
+	@Override
 	public List<? extends ISample> getOrderedSamples() throws DataException
 	{
-		List<Sample> result = new ArrayList<Sample>(getSamples().values());
+		List<ISample> result = new ArrayList<ISample>(getSamples().values());
 		Collections.sort (result);
 		return result;
 	}
@@ -187,7 +189,8 @@ public class SimpleGex implements DataInterface
 	 *
 	 * This data is cached, so you can safely call this repeatedly.
 	 */
-	public Map<Integer, Sample> getSamples() throws DataException
+	@Override
+	public Map<Integer, ? extends ISample> getSamples() throws DataException
 	{
 		if(samples == null)
 		{
@@ -208,10 +211,12 @@ public class SimpleGex implements DataInterface
 		return samples;
 	}
 
+	@Override
 	public List<String> getSampleNames() {
 		return getSampleNames(-1);
 	}
 
+	@Override
 	public List<String> getSampleNames(int dataType) {
 		List<String> names = new ArrayList<String>();
 		List<Sample> sorted = new ArrayList<Sample>(samples.values());
@@ -221,17 +226,6 @@ public class SimpleGex implements DataInterface
 				names.add(s.getName());
 		}
 		return names;
-	}
-
-	public List<Sample> getSamples(int dataType) {
-		List<Sample> smps = new ArrayList<Sample>();
-		List<Sample> sorted = new ArrayList<Sample>(samples.values());
-		Collections.sort(sorted);
-		for(Sample s : sorted) {
-			if(dataType == s.dataType || dataType == -1)
-				smps.add(s);
-		}
-		return smps;
 	}
 
 	PreparedStatement pst1 = null;
@@ -259,6 +253,7 @@ public class SimpleGex implements DataInterface
 	/**
 	 * get all datasouces used in this gex.
 	 */
+	@Override
 	public Set<DataSource> getUsedDatasources() throws DataException
 	{
 		try
@@ -278,7 +273,8 @@ public class SimpleGex implements DataInterface
 		}
 	}
 
-	public Collection<ReporterData> getData(Set<Xref> destRefs) throws IDMapperException
+	@Override
+	public Collection<? extends IRow> getData(Set<Xref> destRefs) throws DataException
 	{
 		try
 		{
@@ -309,7 +305,7 @@ public class SimpleGex implements DataInterface
 		}
 		catch (SQLException ex)
 		{
-			throw new IDMapperException(ex);
+			throw new DataException(ex);
 		}
 	}
 
@@ -379,18 +375,22 @@ public class SimpleGex implements DataInterface
 	 * Close the connection to the Expression database, with option to execute the 'SHUTDOWN COMPACT'
 	 * statement before calling {@link Connection#close()}
 	 */
-	public void close() throws IDMapperException
+	public void close() throws DataException
 	{
 		if(con != null)
 		{
-			dbConnector.closeConnection(con);
 			try
 			{
+				dbConnector.closeConnection(con);
 				con.close();
+			}
+			catch (IDMapperException e)
+			{
+				throw new DataException (e);
 			}
 			catch (SQLException ex)
 			{
-				throw new IDMapperException (ex);
+				throw new DataException (ex);
 			}
 			con = null;
 		}
@@ -557,9 +557,10 @@ public class SimpleGex implements DataInterface
 		return pstRow;
 	}
 
+	@Override
 	public ReporterData getRow(int rowId) throws DataException
 	{
-		Map<Integer, Sample> samples = getSamples();
+		Map<Integer, ? extends ISample> samples = getSamples();
 		try
 		{
 			ReporterData result;
@@ -592,6 +593,7 @@ public class SimpleGex implements DataInterface
 		}
 	}
 
+	@Override
 	public int getNrRow() throws DataException
 	{
 		try

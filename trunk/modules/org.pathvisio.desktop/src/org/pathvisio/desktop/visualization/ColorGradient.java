@@ -30,8 +30,6 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
-import org.pathvisio.desktop.gex.ReporterData;
-import org.pathvisio.desktop.gex.Sample;
 
 /**
  * This class represent a color gradient used for data visualization

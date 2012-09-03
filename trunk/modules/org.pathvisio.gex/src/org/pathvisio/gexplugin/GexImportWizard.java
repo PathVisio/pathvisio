@@ -69,9 +69,9 @@ import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.core.util.ProgressKeeper.ProgressEvent;
 import org.pathvisio.core.util.ProgressKeeper.ProgressListener;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.DataInterface;
 import org.pathvisio.desktop.PvDesktop;
 import org.pathvisio.desktop.data.DBConnectorSwing;
-import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.desktop.util.RowNumberHeader;
 import org.pathvisio.desktop.visualization.ColorGradient;
 import org.pathvisio.desktop.visualization.ColorGradient.ColorValuePair;
@@ -1021,7 +1021,7 @@ public class GexImportWizard extends Wizard
 		
 		ColorByExpression cby = new ColorByExpression(standaloneEngine.getGexManager(), 
 				standaloneEngine.getVisualizationManager().getColorSetManager());
-		SimpleGex gex = standaloneEngine.getGexManager().getCurrentGex();
+		DataInterface gex = standaloneEngine.getGexManager().getCurrentGex();
 		int count = Math.min (5, gex.getSamples().keySet().size());
 		for (int i = 0; i < count; ++i)
 		{

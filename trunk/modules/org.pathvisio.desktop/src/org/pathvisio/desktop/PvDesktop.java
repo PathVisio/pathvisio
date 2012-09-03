@@ -382,7 +382,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			{
 				gexManager.getCurrentGex().close();
 			}
-			catch (IDMapperException ex)
+			catch (DataException ex)
 			{
 				Logger.log.error ("Couldn't cleanly close pgex database", ex);
 			}

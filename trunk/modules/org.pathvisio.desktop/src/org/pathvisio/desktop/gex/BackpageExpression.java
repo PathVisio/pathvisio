@@ -22,6 +22,7 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
 
@@ -53,11 +54,11 @@ public class BackpageExpression implements BackpageHook
 		String colNames = "<TR><TH>Sample name";
 		if(!gex.isConnected()) return noDataFound;
 
-		List<ReporterData> pwData = gex.syncGet(idc);
+		List<? extends IRow> pwData = gex.syncGet(idc);
 
 		if(pwData == null) return noDataFound;
 
-		for(ReporterData d : pwData){
+		for(IRow d : pwData){
 			colNames += "<TH>" + d.getXref().getId();
 		}
 
@@ -65,7 +66,7 @@ public class BackpageExpression implements BackpageHook
 		for(ISample s : gex.getOrderedSamples())
 		{
 			dataString += "<TR><TH>" + s.getName();
-			for(ReporterData d : pwData)
+			for(IRow d : pwData)
 			{
 				dataString += "<TH>" + d.getSampleData(s);
 			}

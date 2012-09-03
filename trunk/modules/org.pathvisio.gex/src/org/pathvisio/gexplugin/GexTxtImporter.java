@@ -36,6 +36,7 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.debug.StopWatch;
 import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.core.util.ProgressKeeper;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.gexplugin.ImportInformation.ColumnType;
@@ -306,7 +307,7 @@ public class GexTxtImporter
 			{
 				result.close();
 			}
-			catch (IDMapperException f)
+			catch (DataException f)
 			{ Logger.log.error ("Exception while aborting database", f); }
 			error.close();
 		}

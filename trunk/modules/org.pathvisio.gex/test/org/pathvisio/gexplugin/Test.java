@@ -34,12 +34,12 @@ import org.bridgedb.rdb.construct.DataDerby;
 import org.bridgedb.rdb.construct.DataDerbyDirectory;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.data.DataException;
+import org.pathvisio.data.DataInterface;
 import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
-import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.gex.SimpleGex;
 
 public class Test extends TestCase
@@ -94,7 +94,7 @@ public class Test extends TestCase
 		assertEquals (0, info.getErrorList().size());
 
 		// Now test caching data
-		SimpleGex gex = gexManager.getCurrentGex();
+		DataInterface gex = gexManager.getCurrentGex();
 		Xref ref1 = new Xref("7124", BioDataSource.ENTREZ_GENE);
 		Xref ref2 = new Xref("1909_at", BioDataSource.AFFY);
 		List<Xref> refs = Arrays.asList(new Xref[] { ref1, ref2 });

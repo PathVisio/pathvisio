@@ -29,8 +29,6 @@ import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
-import org.pathvisio.desktop.gex.ReporterData;
-import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;
 
 /**

@@ -38,8 +38,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.pathvisio.data.DataInterface;
 import org.pathvisio.desktop.gex.GexManager;
-import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.desktop.util.TextFieldUtils;
 import org.pathvisio.desktop.visualization.ColorRule;
 import org.pathvisio.desktop.visualization.Criterion;
@@ -174,7 +174,7 @@ public class ColorRulePanel extends JPanel
 			}
 		} );
 
-		SimpleGex gex = gexManager.getCurrentGex();
+		DataInterface gex = gexManager.getCurrentGex();
 		final List<String> sampleNames = gex.getSampleNames();
 		lstSamples = new JList(sampleNames.toArray());
 

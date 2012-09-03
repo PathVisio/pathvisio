@@ -33,7 +33,7 @@ import org.pathvisio.data.ISample;
  *
  * Setters are package private, external classes are not supposed to modify this data.
  */
-public class ReporterData implements Comparable<ReporterData>, IRow
+public class ReporterData implements IRow
 {
 	Xref idc;
 	int group;
@@ -112,7 +112,7 @@ public class ReporterData implements Comparable<ReporterData>, IRow
 	 * @param data The {@link String} representation of the data to add
 	 * @see SimpleGex#cacheData
 	 */
-	public void setSampleData(Sample sample, String data) {
+	public void setSampleData(ISample sample, String data) {
 		Object parsedData = null;
 		try { parsedData = Double.parseDouble(data); }
 		catch(Exception e) { parsedData = data; }
@@ -185,9 +185,10 @@ public class ReporterData implements Comparable<ReporterData>, IRow
 		return end < 0 ? "" : sb.substring(0, end).toString();
 	}
 
-	public int compareTo(ReporterData o)
+	public int compareTo(IRow o)
 	{
-		return group - o.group;
+		if (o == null) return 1;
+		return group - o.getGroup();
 	}
 
 }

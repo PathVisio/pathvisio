@@ -51,6 +51,7 @@ import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.MIMShapes;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.SimpleGex;
 import org.pathvisio.desktop.gex.GexManager.GexManagerEvent;
@@ -136,7 +137,8 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 				pvDesktop.getGexManager().setCurrentGex(str, false);
 				pvDesktop.loadGexCache();
 				Logger.log.info ("Loaded pgex " + str);
-			} catch (IDMapperException e) {
+			} 
+			catch (DataException e) {
 				Logger.log.error ("Couldn't open pgex " + str, e);
 			}
 		}

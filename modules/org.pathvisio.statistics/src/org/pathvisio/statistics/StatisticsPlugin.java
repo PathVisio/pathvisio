@@ -51,6 +51,7 @@ import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.Preference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ProgressKeeper;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.PreferencesDlg;
 import org.pathvisio.desktop.PvDesktop;
 import org.pathvisio.desktop.gex.CachedData;
@@ -450,7 +451,7 @@ public class StatisticsPlugin implements Plugin
 			}
 
 			@Override
-			protected StatisticsResult doInBackground() throws IDMapperException
+			protected StatisticsResult doInBackground() throws IDMapperException, DataException
 			{
 				StatisticsResult result;
 

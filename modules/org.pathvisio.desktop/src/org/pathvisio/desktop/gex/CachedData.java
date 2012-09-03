@@ -36,6 +36,9 @@ import org.bridgedb.Xref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.debug.ThreadSafe;
 import org.pathvisio.core.debug.WorkerThreadOnly;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 
 /**
  * This class represents cached expression data for a pathway.
@@ -79,7 +82,7 @@ public class CachedData
 	 * @param idc The Xref for which the data has to be returned
 	 * @return a list of {@link ReporterData} object containing the cached data, or null when no data is available
 	 */
-	public List<ReporterData> getData(Xref idc) {
+	public List<? extends IRow> getData(Xref idc) {
 		return data.get(idc);
 	}
 
@@ -106,7 +109,7 @@ public class CachedData
 	private Set<DataSource> destFilterCache = null;
 
 	@WorkerThreadOnly
-	public List<ReporterData> syncGet(Xref ref) throws IDMapperException
+	public List<ReporterData> syncGet(Xref ref) throws IDMapperException, DataException
 	{
 		if (destFilterCache == null)
 		{
@@ -138,6 +141,10 @@ public class CachedData
 				try {
 					syncGet(ref);
 				} catch (IDMapperException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (DataException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -201,7 +208,7 @@ public class CachedData
 	 * @param srcRefs Xrefs to cache the expression data for
 	 * 	(typically all genes and metabolites in a pathway)
 	 */
-	public void preSeed(Collection<Xref> srcRefs) throws IDMapperException
+	public void preSeed(Collection<Xref> srcRefs) throws DataException
 	{
 		// seed samples cache
 		parent.getSamples();
@@ -215,7 +222,7 @@ public class CachedData
 	 * Load expression data for given Xrefs into cache.
 	 * Waits until the process is done.
 	 */
-	public void syncSeed(Collection<Xref> srcRefs) throws IDMapperException
+	public void syncSeed(Collection<Xref> srcRefs) throws DataException, IDMapperException
 	{
 		// seed samples cache
 		parent.getSamples();
@@ -236,12 +243,12 @@ public class CachedData
 		return parent.getDbName();
 	}
 
-	public int getNrRow() throws IDMapperException
+	public int getNrRow() throws DataException
 	{
 		return parent.getNrRow();
 	}
 
-	public ReporterData getRow(int i) throws IDMapperException
+	public ReporterData getRow(int i) throws DataException
 	{
 		return parent.getRow(i);
 	}
@@ -251,7 +258,7 @@ public class CachedData
 		return parent.isConnected();
 	}
 
-	List<Sample> getOrderedSamples() throws IDMapperException
+	List<? extends ISample> getOrderedSamples() throws DataException
 	{
 		return parent.getOrderedSamples();
 	}

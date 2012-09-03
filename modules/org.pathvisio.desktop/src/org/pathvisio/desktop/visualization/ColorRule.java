@@ -24,8 +24,8 @@ import java.util.List;
 import org.jdom.Element;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ColorConverter;
-import org.pathvisio.desktop.gex.ReporterData;
-import org.pathvisio.desktop.gex.Sample;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;
 
 /**
@@ -70,7 +70,7 @@ public class ColorRule extends ColorSetObject
 		loadXML(xml);
 	}
 
-	@Override Color getColor(ReporterData data, Sample key) throws CriterionException
+	@Override Color getColor(IRow data, ISample key) throws CriterionException
 	{
 		if (criterion.evaluate(data.getByName())) return color;
 		return null;

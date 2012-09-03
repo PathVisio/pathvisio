@@ -31,6 +31,8 @@ import org.bridgedb.Xref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.core.util.Stats;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.IRow;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.visualization.Criterion;
@@ -81,7 +83,7 @@ public class ZScoreCalculator
 		 * calculate result.bigN and result.bigR
 		 */
 		public abstract void calculateTotals ()
-			throws IDMapperException;
+			throws IDMapperException, DataException;
 
 		/**
 		 * Do a permutation test to calculate permP and adjP
@@ -182,11 +184,11 @@ public class ZScoreCalculator
 		Set<String> cGeneTotal = new HashSet<String>();
 		Set<String> cGenePositive = new HashSet<String>();
 
-		List<ReporterData> rows = result.gex.getData(srcRef);
+		List<? extends IRow> rows = result.gex.getData(srcRef);
 
 		if (rows != null)
 		{
-			for (ReporterData row : rows)
+			for (IRow row : rows)
 			{
 				if (pk != null && pk.isCancelled()) return null;
 				// Use group (line number) to identify a measurement
@@ -219,7 +221,7 @@ public class ZScoreCalculator
 		 * This goes through every row of the dataset and counts the number
 		 * of total rows (bigN) and the number of rows meeting our criterion (bigR)
 		 */
-		public void calculateTotals() throws IDMapperException
+		public void calculateTotals() throws IDMapperException, DataException
 		{
 			int maxRow = result.gex.getNrRow();
 			for (int i = 0; i < maxRow; ++i)
@@ -426,7 +428,7 @@ public class ZScoreCalculator
 		}
 	}
 
-	private StatisticsResult calculate(Method m) throws IDMapperException
+	private StatisticsResult calculate(Method m) throws IDMapperException, DataException
 	{
 		result.methodDesc = m.getDescription();
 
@@ -505,13 +507,14 @@ public class ZScoreCalculator
 	 * This alternative method includes the whole dataset into the calculation
 	 * of the N and R parameters for the zscore, not just the part
 	 * of the dataset that maps to Pathways.
+	 * @throws DataException 
 	 */
-	public StatisticsResult calculateAlternative() throws IDMapperException
+	public StatisticsResult calculateAlternative() throws IDMapperException, DataException
 	{
 		return calculate (new AlternativeMethod());
 	}
 
-	public StatisticsResult calculateMappFinder() throws IDMapperException
+	public StatisticsResult calculateMappFinder() throws IDMapperException, DataException
 	{
 		return calculate (new MappFinderMethod());
 	}

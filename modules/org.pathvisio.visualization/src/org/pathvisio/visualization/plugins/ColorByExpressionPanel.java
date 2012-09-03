@@ -63,6 +63,7 @@ import javax.swing.event.ListSelectionListener;
 import org.bridgedb.gui.SimpleFileFilter;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.Resources;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetManager;
@@ -167,8 +168,8 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 					"4dlu, pref:grow, 4dlu, pref, 4dlu"
 			));
 
-			List<Sample> selected = method.getSelectedSamples();
-			for (Sample s : selected) if (s == null) throw new NullPointerException();
+			List<ISample> selected = method.getSelectedSamples();
+			for (ISample s : selected) if (s == null) throw new NullPointerException();
 			sampleList = new SortSampleCheckList(
 					selected, method.getGexManager()
 			);
@@ -203,7 +204,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 
 		private void refreshSamples() {
 			List<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
-			for(Sample s : sampleList.getList().getSelectedSamplesInOrder()) {
+			for(ISample s : sampleList.getList().getSelectedSamplesInOrder()) {
 				ConfiguredSample cs = method.new ConfiguredSample(s);
 
 				cs.setColorSet(colorSetCombo.getSelectedColorSet());
@@ -278,7 +279,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 			if(ACTION_SAMPLE.equals(action)) {
 				refreshSamples();
 			} else if(ACTION_COMBO.equals(action)) {
-				Sample s = sampleList.getList().getSelectedSample();
+				ISample s = sampleList.getList().getSelectedSample();
 				ColorSet colorSet = colorSetCombo.getSelectedColorSet();
 				if(s != null && colorSet != null) {
 					ConfiguredSample cs = method.getConfiguredSample(s);
@@ -291,7 +292,7 @@ public class ColorByExpressionPanel extends JPanel implements ActionListener {
 
 		private void refreshSamples() {
 			List<ConfiguredSample> csamples = new ArrayList<ConfiguredSample>();
-			for(Sample s : sampleList.getList().getSelectedSamplesInOrder()) {
+			for(ISample s : sampleList.getList().getSelectedSamplesInOrder()) {
 				ConfiguredSample cs = method.getConfiguredSample(s);
 				if(cs == null) {
 					cs = method.new ConfiguredSample(s);

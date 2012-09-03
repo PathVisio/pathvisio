@@ -27,6 +27,8 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ColorConverter;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;
@@ -158,7 +160,7 @@ public class ColorSet
 	 * @param sampleId	the id of the sample that will be visualized
 	 * @return	an {@link RGB} object representing the color for the given data
 	 */
-	public Color getColor(ReporterData data, Sample key)
+	public Color getColor(IRow data, ISample key)
 	{
 		if(data == null) return colorNoDataFound;
 		Object value = data.getSampleData(key);

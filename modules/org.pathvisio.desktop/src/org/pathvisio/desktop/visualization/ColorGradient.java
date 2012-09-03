@@ -28,6 +28,8 @@ import java.util.List;
 import org.jdom.Element;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ColorConverter;
+import org.pathvisio.data.IRow;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.gex.Sample;
 
@@ -195,7 +197,7 @@ public class ColorGradient extends ColorSetObject {
 		return rgb;
 	}
 
-	@Override public Color getColor(ReporterData data, Sample key)
+	@Override public Color getColor(IRow data, ISample key)
 	{
 		Object o = data.getSampleData(key);
 		double value;

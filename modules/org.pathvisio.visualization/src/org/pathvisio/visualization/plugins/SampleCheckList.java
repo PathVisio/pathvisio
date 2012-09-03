@@ -28,8 +28,9 @@ import javax.swing.JCheckBox;
 
 import org.bridgedb.IDMapperException;
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.data.DataException;
+import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.GexManager;
-import org.pathvisio.desktop.gex.Sample;
 import org.pathvisio.desktop.gex.SimpleGex;
 
 /**
@@ -38,10 +39,10 @@ import org.pathvisio.desktop.gex.SimpleGex;
  */
 public class SampleCheckList extends JCheckBoxList {
 	DefaultListModel model = new DefaultListModel();
-	Map<JCheckBox, Sample> checkbox2sample = new HashMap<JCheckBox, Sample>();
-	Map<Sample, JCheckBox> sample2checkbox = new HashMap<Sample, JCheckBox>();
+	Map<JCheckBox, ISample> checkbox2sample = new HashMap<JCheckBox, ISample>();
+	Map<ISample, JCheckBox> sample2checkbox = new HashMap<ISample, JCheckBox>();
 
-	public SampleCheckList(List<? extends Sample> selection, GexManager gexManager) {
+	public SampleCheckList(List<? extends ISample> selection, GexManager gexManager) {
 		super(false);
 		SimpleGex gex = gexManager.getCurrentGex();
 		if(gex != null) {
@@ -49,7 +50,7 @@ public class SampleCheckList extends JCheckBoxList {
 			{
 				setSamples(gex.getOrderedSamples(), selection);
 			}
-			catch (IDMapperException ex)
+			catch (DataException ex)
 			{
 				//TODO: notify user with popup
 				Logger.log.error ("Could not fetch samples from database", ex);
@@ -57,27 +58,27 @@ public class SampleCheckList extends JCheckBoxList {
 
 		} else {
 			setSamples(
-					new ArrayList<Sample>(), new ArrayList<Sample>()
+					new ArrayList<ISample>(), new ArrayList<ISample>()
 			);
 		}
 	}
 
-	public SampleCheckList(List<? extends Sample> samples,
-			List<? extends Sample> selected) {
+	public SampleCheckList(List<? extends ISample> samples,
+			List<? extends ISample> selected) {
 		super(false);
 		setSamples(samples, selected);
 	}
 
-	private void setSamples(List<? extends Sample> samples,
-			List<? extends Sample> selected) {
+	private void setSamples(List<? extends ISample> samples,
+			List<? extends ISample> selected) {
 		model = new DefaultListModel();
 
 		//First add the selected samples in order
-		for(Sample s : selected) {
+		for(ISample s : selected) {
 			addSample(s).setSelected(true);
 		}
 		//Add the remaining samples
-		for(Sample s : samples) {
+		for(ISample s : samples) {
 			if(!selected.contains(s)) {
 				addSample(s);
 			}
@@ -85,7 +86,7 @@ public class SampleCheckList extends JCheckBoxList {
 		setModel(model);
 	}
 
-	private JCheckBox addSample(Sample s)
+	private JCheckBox addSample(ISample s)
 	{
 		if (s == null) throw new NullPointerException();
 		JCheckBox ch = new JCheckBox();
@@ -114,19 +115,19 @@ public class SampleCheckList extends JCheckBoxList {
 		}
 	}
 
-	public Sample getSample(JCheckBox check) {
+	public ISample getSample(JCheckBox check) {
 		return checkbox2sample.get(check);
 	}
 
-	public Sample getSelectedSample() {
+	public ISample getSelectedSample() {
 		return checkbox2sample.get(getSelectedValue());
 	}
 
-	public void setSelectedSamples(Collection<Sample> select) {
+	public void setSelectedSamples(Collection<ISample> select) {
 		for(JCheckBox ch : sample2checkbox.values()) {
 			ch.setSelected(false);
 		}
-		for(Sample s : select) {
+		for(ISample s : select) {
 			JCheckBox ch = sample2checkbox.get(s);
 			if(ch != null) {
 				ch.setSelected(true);
@@ -134,7 +135,7 @@ public class SampleCheckList extends JCheckBoxList {
 		}
 	}
 
-	public boolean isSelected(Sample s) {
+	public boolean isSelected(ISample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) return ch.isSelected();
 		else return false;
@@ -143,9 +144,9 @@ public class SampleCheckList extends JCheckBoxList {
 	/**
 	 * Get all samples in the list in the order they are displayed
 	 */
-	public List<Sample> getSamplesInOrder() {
+	public List<ISample> getSamplesInOrder() {
 		Object[] sa = model.toArray();
-		List<Sample> order = new ArrayList<Sample>();
+		List<ISample> order = new ArrayList<ISample>();
 		for(Object o : sa) {
 			order.add(checkbox2sample.get((JCheckBox)o));
 		}
@@ -156,9 +157,9 @@ public class SampleCheckList extends JCheckBoxList {
 	 * Get the selected samples in the list in the order they are
 	 * displayed
 	 */
-	public List<Sample> getSelectedSamplesInOrder() {
+	public List<ISample> getSelectedSamplesInOrder() {
 		Object[] sa = model.toArray();
-		List<Sample> order = new ArrayList<Sample>();
+		List<ISample> order = new ArrayList<ISample>();
 		for(Object o : sa) {
 			JCheckBox ch = (JCheckBox)o;
 			if(ch.isSelected()) {
@@ -169,7 +170,7 @@ public class SampleCheckList extends JCheckBoxList {
 	}
 
 
-	public void moveUp(Sample s) {
+	public void moveUp(ISample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) {
 			int i = model.indexOf(ch);
@@ -181,7 +182,7 @@ public class SampleCheckList extends JCheckBoxList {
 		}
 	}
 
-	public void moveDown(Sample s) {
+	public void moveDown(ISample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) {
 			int i = model.indexOf(ch);
@@ -193,7 +194,7 @@ public class SampleCheckList extends JCheckBoxList {
 		}
 	}
 
-	public void moveToBottom(Sample s) {
+	public void moveToBottom(ISample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) {
 			model.removeElement(ch);
@@ -202,7 +203,7 @@ public class SampleCheckList extends JCheckBoxList {
 		}
 	}
 
-	public void moveToTop(Sample s) {
+	public void moveToTop(ISample s) {
 		JCheckBox ch = sample2checkbox.get(s);
 		if(ch != null) {
 			model.removeElement(ch);

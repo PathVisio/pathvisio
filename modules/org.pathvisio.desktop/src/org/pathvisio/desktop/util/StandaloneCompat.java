@@ -22,6 +22,7 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.data.GdbEvent;
 import org.pathvisio.core.data.GdbManager.GdbEventListener;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.PvDesktop;
 import org.pathvisio.desktop.gex.GexManager.GexManagerEvent;
 import org.pathvisio.desktop.gex.GexManager.GexManagerListener;
@@ -72,7 +73,7 @@ public class StandaloneCompat implements GdbEventListener, GexManagerListener
 							"It is recommended that you redo the dataset import process");
 				}
 			}
-			catch (IDMapperException ex)
+			catch (DataException ex)
 			{
 				//ignore - no compatibility check today
 			}

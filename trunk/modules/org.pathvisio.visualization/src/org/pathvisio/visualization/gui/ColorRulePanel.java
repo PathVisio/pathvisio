@@ -38,6 +38,8 @@ import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.pathvisio.core.debug.Logger;
+import org.pathvisio.data.DataException;
 import org.pathvisio.data.DataInterface;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.util.TextFieldUtils;
@@ -67,19 +69,25 @@ public class ColorRulePanel extends JPanel
 	 */
 	private void setExpresion()
 	{
-		List<String> sampleNames = gexManager.getCurrentGex().getSampleNames();
-		String expr = txtExpr.getText();
-
-		String error = cr.setExpression(expr, sampleNames);
-		if (error == null)
-		{
-			errorMsg.setText("Rule logic OK");
-			errorMsg.setForeground(Color.GREEN);
-		}
-		else
-		{
-			errorMsg.setText(error);
-			errorMsg.setForeground(Color.RED);
+		List<String> sampleNames;
+		try {
+			sampleNames = gexManager.getCurrentGex().getSampleNames();
+			String expr = txtExpr.getText();
+	
+			String error = cr.setExpression(expr, sampleNames);
+			if (error == null)
+			{
+				errorMsg.setText("Rule logic OK");
+				errorMsg.setForeground(Color.GREEN);
+			}
+			else
+			{
+				errorMsg.setText(error);
+				errorMsg.setForeground(Color.RED);
+			}
+		} 
+		catch (DataException e) {
+			Logger.log.error ("Error while setting expression", e);
 		}
 	}
 
@@ -126,7 +134,7 @@ public class ColorRulePanel extends JPanel
 
 	private final GexManager gexManager;
 
-	ColorRulePanel (GexManager gexManager)
+	ColorRulePanel (GexManager gexManager) throws DataException
 	{
 		this.gexManager = gexManager;
 		FormLayout layout = new FormLayout("4dlu, pref, 4dlu, pref, 4dlu",

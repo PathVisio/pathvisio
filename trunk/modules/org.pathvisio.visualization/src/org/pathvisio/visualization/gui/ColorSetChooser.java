@@ -26,9 +26,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.pathvisio.core.util.Resources;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetManager;
@@ -84,29 +86,36 @@ public class ColorSetChooser extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		String action = e.getActionCommand();
-		if(ACTION_NEW.equals(action)) {
-
-			ColorSet cs = new ColorSet(csMgr);
-			ColorSetDlg dlg = new ColorSetDlg(cs, null, this, gexManager);
-			dlg.setVisible(true);
-			csMgr.addColorSet(cs);
-			colorSetCombo.refresh();
-			colorSetCombo.setSelectedItem(cs);
-		} else if(ACTION_REMOVE.equals(action)) {
-			ColorSet cs = colorSetCombo.getSelectedColorSet();
-			if(cs != null) {
-				csMgr.removeColorSet(cs);
-				colorSetCombo.setSelectedIndex(0);
-			}
-			colorSetCombo.refresh();
-		} else if(ACTION_MODIFY.equals(action)) {
-			ColorSet cs = colorSetCombo.getSelectedColorSet();
-			if(cs != null) {
+		try
+		{
+			if(ACTION_NEW.equals(action)) {
+	
+				ColorSet cs = new ColorSet(csMgr);
 				ColorSetDlg dlg = new ColorSetDlg(cs, null, this, gexManager);
 				dlg.setVisible(true);
+				csMgr.addColorSet(cs);
+				colorSetCombo.refresh();
+				colorSetCombo.setSelectedItem(cs);
+			} else if(ACTION_REMOVE.equals(action)) {
+				ColorSet cs = colorSetCombo.getSelectedColorSet();
+				if(cs != null) {
+					csMgr.removeColorSet(cs);
+					colorSetCombo.setSelectedIndex(0);
+				}
+				colorSetCombo.refresh();
+			} else if(ACTION_MODIFY.equals(action)) {
+				ColorSet cs = colorSetCombo.getSelectedColorSet();
+				if(cs != null) {
+					ColorSetDlg dlg = new ColorSetDlg(cs, null, this, gexManager);
+					dlg.setVisible(true);
+				}
+				colorSetCombo.refresh();
+				colorSetCombo.setSelectedItem(cs);
 			}
-			colorSetCombo.refresh();
-			colorSetCombo.setSelectedItem(cs);
+		}
+		catch (DataException ex)
+		{
+			JOptionPane.showMessageDialog(this, "Could not initialize colorset dialog because of a database error");
 		}
 	}
 }

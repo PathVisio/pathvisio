@@ -40,6 +40,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.visualization.ColorGradient;
 import org.pathvisio.desktop.visualization.ColorRule;
@@ -70,7 +71,7 @@ public class ColorSetPanel extends JPanel implements ActionListener
 
 	private JTable rulesTable;
 
-	ColorSetPanel (ColorSet cs, GexManager gexManager)
+	ColorSetPanel (ColorSet cs, GexManager gexManager) throws DataException
 	{
 		colorSet = cs;
 

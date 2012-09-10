@@ -36,6 +36,7 @@ import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
@@ -278,9 +279,29 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 
 	public static final String ROOT_XML_ELEMENT = "expression-data-visualizations";
 
+	/**
+	 * Get a suitable file to store the Visualization XML.
+	 * If the database is a regular pgex, we store the xml in the same directory.
+	 * If it isn't, we store the xml in the PathVisio application data directory
+	 */
+	private File getFileForDb()
+	{
+		String dbname = gexManager.getCurrentGex().getDbName();
+		File xmlFile = null;
+		
+		// We try to determine if it's a valid pgex file or something else
+		if (new File(dbname).exists())
+			xmlFile = new File(dbname + ".xml");
+		else
+			xmlFile = new File (GlobalPreference.getApplicationDir(), dbname.replaceAll("[?*<>|:\\/\n]", "_") + ".xml");
+		
+		return xmlFile;
+	}
+	
 	private InputStream getXmlInput()
 	{
-		File xmlFile = new File(gexManager.getCurrentGex().getDbName() + ".xml");
+		File xmlFile = getFileForDb();
+		
 		Logger.log.trace("Getting visualizations xml: " + xmlFile);
 		try {
 			if(!xmlFile.exists()) xmlFile.createNewFile();
@@ -297,11 +318,10 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		if(!gexManager.isConnected()) return;
 
 		// write to a temporary file, rename to final file after write was successful.
-		File finalFile = new File(gexManager.getCurrentGex().getDbName() + ".xml");
+		File finalFile = getFileForDb();
 		File tempFile = File.createTempFile(finalFile.getName(), ".tmp", finalFile.getParentFile());
 		OutputStream out = new FileOutputStream(tempFile);
 
-		Logger.log.trace("Saving visualizations and color sets to xml: " + out);
 		Document xmlDoc = new Document();
 		Element root = new Element(ROOT_XML_ELEMENT);
 		xmlDoc.setRootElement(root);
@@ -320,6 +340,7 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 
 		if (finalFile.exists()) finalFile.delete();
 		if (!tempFile.renameTo(finalFile)) throw new IOException ("Couldn't rename temporary file " + tempFile);
+		Logger.log.info("Saved visualizations and color sets to xml: " + finalFile);
 	}
 
 

@@ -120,8 +120,10 @@ public class CachedData
 		List<IRow> result;
 		if (!data.containsKey (ref))
 		{
-			result =
-				new ArrayList<IRow>(getDataForXref(ref, mapper, destFilterCache));
+			// get results and sort them
+			result = new ArrayList<IRow>();
+			Collection <? extends IRow> collection = getDataForXref(ref, mapper, destFilterCache);
+			if (collection != null) result.addAll(collection);
 			Collections.sort(result);
 			data.put (ref, result);
 		}

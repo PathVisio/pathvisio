@@ -15,9 +15,9 @@ public interface DataInterface
 	
     public ISample findSample(String name) throws DataException;
 
-    public List<String> getSampleNames();
+    public List<String> getSampleNames() throws DataException;
 
-    public List<String> getSampleNames(int dataType);
+    public List<String> getSampleNames(int dataType) throws DataException;
     
     public List<? extends ISample> getOrderedSamples() throws DataException;
 

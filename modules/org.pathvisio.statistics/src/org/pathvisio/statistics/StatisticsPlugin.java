@@ -328,7 +328,14 @@ public class StatisticsPlugin implements Plugin
 
 			CellConstraints cc = new CellConstraints();
 
-			critPanel = new CriterionPanel(gm.getCurrentGex().getSampleNames());
+			try
+			{
+				critPanel = new CriterionPanel(gm.getCurrentGex().getSampleNames());
+			}
+			catch (DataException ex)
+			{
+				JOptionPane.showMessageDialog(dlg, "Could not open criterion panel because of a database access error");
+			}
 			dlg.add (critPanel, cc.xyw (2,2,3));
 
 			dlg.add (new JLabel ("Pathway Directory: "), cc.xy (2,4));

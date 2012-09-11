@@ -27,6 +27,8 @@ import java.util.Set;
 public class VisualizationMethodRegistry {
 	private Map<String, VisualizationMethodProvider> methodProviders =
 		new HashMap<String, VisualizationMethodProvider>();
+	private Map<String, VisualizationMethodProvider> edgemethodProviders =
+			new HashMap<String, VisualizationMethodProvider>();
 
 	/**
 	 * Register a visualization method for the given name. The
@@ -51,6 +53,35 @@ public class VisualizationMethodRegistry {
 	 */
 	public VisualizationMethod createVisualizationMethod(String name) {
 		VisualizationMethodProvider p = methodProviders.get(name);
+		if(p != null) {
+			return p.create();
+		}
+		return null;
+	}
+	
+	/**
+	 * Register a visualization method for Lines with the given name.
+	 * The VisualizationMethodProvider will be used to create instances
+	 * of VisualizationMethod.
+	 */
+	public void registerEdgeMethod(String name, VisualizationMethodProvider p) {
+		edgemethodProviders.put(name, p);
+	}
+
+	public void unregisterEdgeMethod(String name) {
+		edgemethodProviders.remove(name);
+	}
+
+	public Set<String> getRegisteredEdgeMethods() {
+		return edgemethodProviders.keySet();
+	}
+	/**
+	 * Creates an instance of a VisualizationMethod subclass that is registered
+	 * by the given name. Returns null if there is no subclass registered for the
+	 * name.
+	 */
+	public VisualizationMethod createEdgeVisualizationMethod(String name) {
+		VisualizationMethodProvider p = edgemethodProviders.get(name);
 		if(p != null) {
 			return p.create();
 		}

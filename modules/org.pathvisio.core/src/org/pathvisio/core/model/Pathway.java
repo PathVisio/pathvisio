@@ -140,6 +140,27 @@ public class Pathway
 		}
 		return result;
 	}
+	
+	/**
+	 * Takes the Xref of all Lines in this pathway
+	 * and returns them as a List.
+	 *
+	 * returns an empty arraylist if there are no lines in
+	 * this pathway.
+	 */
+	public List<Xref> getLineXrefs()
+	{
+		List<Xref> result = new ArrayList<Xref>();
+		for (PathwayElement e : dataObjects)
+		{
+			if (e.getObjectType() == ObjectType.LINE)
+			{
+				result.add(e.getXref());
+			}
+		}
+		return result;
+	}
+
 
 	private PathwayElement mappInfo = null;
 	private PathwayElement infoBox = null;

@@ -353,7 +353,7 @@ public class Line extends Graphics implements Adjustable
 	 * for Line ending thickness
 	 * @return An array with two arrowheads, for the start and end respectively
 	 */
-	protected ArrowShape[] getVHeadsAdjusted() {
+	public ArrowShape[] getVHeadsAdjusted() {
 		Segment[] segments = getConnectorShape().getSegments();
 
 		//last segment in the Connector Shape

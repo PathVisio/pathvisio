@@ -246,16 +246,23 @@ public class CachedData
 		return parent.getDbName();
 	}
 
+	/** @deprecated use getIterator() instead */
 	public int getNrRow() throws DataException
 	{
 		return parent.getNrRow();
 	}
 
+	/** @deprecated use getIterator() instead */
 	public IRow getRow(int i) throws DataException
 	{
 		return parent.getRow(i);
 	}
 
+	public Iterable<IRow> getIterator() throws DataException
+	{
+		return parent.getIterator();
+	}
+	
 	public boolean isConnected()
 	{
 		return parent.isConnected();

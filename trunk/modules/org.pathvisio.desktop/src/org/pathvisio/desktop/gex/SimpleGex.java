@@ -26,8 +26,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.bridgedb.DataSource;
@@ -157,9 +159,10 @@ public class SimpleGex implements DataInterface
 	{
 		return getSamples().get(id);
 	}
-	
+
 	public Sample findSample(String name) throws DataException
 	{
+		//TODO: create a map for faster lookups.
 		for (Sample s : samples.values())
 		{
 			if (s.getName().equals(name)) return s;
@@ -607,5 +610,116 @@ public class SimpleGex implements DataInterface
 		{
 			throw new DataException (e);
 		}
+	}
+
+	PreparedStatement pstRowIt = null;
+
+	// lazy instantiation of pstRow
+	private PreparedStatement getPstRowIterator() throws SQLException
+	{
+		if (pstRowIt == null)
+		{
+			pstRowIt = con.prepareStatement (
+					"SELECT id, code, idSample, data, groupId " +
+					"FROM expression " +
+					"ORDER BY groupId");
+		}
+		return pstRowIt;
+	}
+	
+	/**
+	 * Go over groups in database one by one.
+	 */
+	private class RowIterator implements Iterator<IRow>
+	{
+		private ResultSet rs;
+		private boolean hasNext;
+		
+		RowIterator() throws SQLException
+		{
+			PreparedStatement ps = getPstRowIterator();
+			ResultSet rs = ps.executeQuery();
+			hasNext = rs.next();
+		}
+		
+		@Override
+		public boolean hasNext() 
+		{
+			return hasNext;
+		}
+
+		@Override
+		public IRow next() 
+		{
+			if (!hasNext) throw new NoSuchElementException();				
+			
+			// at this point, resultset should already be at beginning of new group.
+			try
+			{
+				Map<Integer, ? extends ISample> samples = getSamples();
+				ReporterData result;
+
+				int currentGroup = rs.getInt(5);
+				result = new ReporterData (null, rs.getInt(5));
+				
+				Xref ref = new Xref (rs.getString(1), DataSource.getBySystemCode(rs.getString(2)));
+				result.setXref(ref);
+				
+				do
+				{
+					int groupId = rs.getInt(5);
+					
+					if (groupId != currentGroup)
+					{
+						// we're done tallying this group, and recordset is ready for next group
+						return result;
+					}
+					
+					int sample = rs.getInt(3);
+					String value = rs.getString (4);
+					result.setSampleData(samples.get(sample), value);
+				}
+				while  ((hasNext = rs.next()) == true);
+
+				return result;
+			}
+			catch (SQLException e)
+			{
+				Logger.log.error ("Error while iterating over elements", e);
+				throw new NoSuchElementException("Error fetching next element: " + e.getMessage());
+			} catch (DataException e) {
+				Logger.log.error ("Error while iterating over elements", e);
+				throw new NoSuchElementException("Error fetching next element: " + e.getMessage());
+			}		
+		}
+
+		@Override
+		public void remove() 
+		{
+			throw new UnsupportedOperationException();
+		}
+		
+	}
+	
+	@Override
+	public Iterable<IRow> getIterator() throws DataException 
+	{
+		try
+		{
+			final RowIterator it = new RowIterator();
+			return new Iterable<IRow>()
+			{
+				@Override
+				public Iterator<IRow> iterator() 
+				{
+					return it;
+				}
+			};
+		}
+		catch (SQLException ex)
+		{
+			throw new DataException(ex);
+		}
+
 	}
 }

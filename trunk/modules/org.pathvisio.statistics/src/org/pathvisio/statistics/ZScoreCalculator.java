@@ -222,13 +222,11 @@ public class ZScoreCalculator
 		 */
 		public void calculateTotals() throws IDMapperException, DataException
 		{
-			int maxRow = result.gex.getNrRow();
-			for (int i = 0; i < maxRow; ++i)
+			for (IRow d : result.gex.getIterator())
 			{
 				if (pk != null && pk.isCancelled()) return;
 				try
 				{
-					IRow d = result.gex.getRow(i);
 					result.bigN++;
 					boolean eval = result.crit.evaluate(d.getByName());
 					if (eval)
@@ -241,7 +239,7 @@ public class ZScoreCalculator
 					Logger.log.error ("Problem during row handling ", e);
 				}
 
-				if (pk != null) pk.setProgress ((int)(0.2 * (double)i / (double)maxRow * 100.0));
+				if (pk != null) pk.setProgress ((int)(0.1 * 100.0));
 			}
 		}
 

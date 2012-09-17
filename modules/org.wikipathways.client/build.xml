@@ -3,8 +3,6 @@
 
 	<import file="../../build-common.xml" />
 
-	<property name="jar.name" value="wikipathways-client.jar"/>
-
 	<!-- WikiPathways client -->
 	<property name="axis.wpclient.dir" value="gen-src"/>
 	<property name="lib.axis.dir" value="../../tools/cytoscape-gpml/lib" />

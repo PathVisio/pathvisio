@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
-<project name="pathvisio-core" default="jar" basedir=".">
+<project name="org.pathvisio.core" default="jar" basedir=".">
 
 	<import file="../../build-common.xml" />
 
-	<property name="jar.name" value="org.pathvisio.core.jar"/>
-	
 	<target name="prepare" depends="svnversion">
 		<echo file="src/org/pathvisio/core/Revision.java">
 package org.pathvisio.core;

@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
-<project name="wikipathways-applet" default="jar" basedir=".">
+<project name="org.wikipathways.applet" default="jar" basedir=".">
 
 	<import file="../../build-common.xml" />
-
-	<property name="jar.name" value="org.wikipathways.applet.jar"/>
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">

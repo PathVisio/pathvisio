@@ -3,8 +3,6 @@
 
 	<import file="../../build-common.xml" />
 
-	<property name="jar.name" value="org.pathvisio.statistics.jar"/>
-
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
 		<include name="org.bridgedb.jar"/>

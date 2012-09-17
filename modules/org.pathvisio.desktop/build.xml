@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
-<project name="pathvisio-desktop" default="jar" basedir=".">
+<project name="org.pathvisio.desktop" default="jar" basedir=".">
 
 	<import file="../../build-common.xml" />
-
-	<property name="jar.name" value="org.pathvisio.desktop.jar"/>
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">

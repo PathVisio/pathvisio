@@ -205,7 +205,7 @@ public class SimpleGex implements DataInterface
 				while(r.next())
 				{
 					int id = r.getInt(1);
-					samples.put(id, new Sample(id, r.getString(2), r.getInt(3)));
+					samples.put(id, new Sample(id, r.getString(2), "undefined", r.getInt(3)));
 				}
 			} catch (SQLException e) {
 				throw new DataException ("SQL exception while setting samples", e);
@@ -225,7 +225,7 @@ public class SimpleGex implements DataInterface
 		List<Sample> sorted = new ArrayList<Sample>(samples.values());
 		Collections.sort(sorted);
 		for(Sample s : sorted) {
-			if(dataType == s.dataType || dataType == -1)
+			if(dataType == s.getDataType() || dataType == -1)
 				names.add(s.getName());
 		}
 		return names;

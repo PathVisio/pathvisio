@@ -61,13 +61,16 @@ public class PluginManager {
 			ServiceReference[] refs = pvDesktop.getContext().getServiceReferences(Plugin.class.getName(), null);
 			if(refs != null) {
 				for(int i = 0; i < refs.length; i++) {
+					System.out.println ("Found Plugin class " + refs[i].getBundle().getSymbolicName());
 					Plugin plugin = (Plugin) pvDesktop.getContext().getService(refs[i]);
-					if(!startedPlugins.contains(plugin)) {
+					if(!startedPlugins.contains(plugin)) 
+					{
 						PluginInfo pi = new PluginInfo();
 						pi.plugin = plugin.getClass();
 						pi.param = "";
 						pi.jar = refs[i].getBundle().getLocation();
 						try {
+							System.out.println ("Calling " + plugin.getClass().getName() + ".init()");
 							plugin.init(pvDesktop);
 							startedPlugins.add(plugin);
 						} catch (Error ex) {

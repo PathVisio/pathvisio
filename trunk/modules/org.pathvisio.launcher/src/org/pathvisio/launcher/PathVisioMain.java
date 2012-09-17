@@ -20,23 +20,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 
 import javax.swing.JOptionPane;
 
@@ -65,15 +55,15 @@ public class PathVisioMain {
 	 * reported directly to the user, and PathVisio shuts down.
 	 * Exceptions in other bundles are merely logged. 
 	 */
-	private static final List<String> mustActivate = Arrays.asList (new String[] {
-		"derby.jar",
-		"org.bridgedb.rdb.jar",
-		"org.pathvisio.core.jar",
-		"org.pathvisio.gui.jar",
-		"org.pathvisio.desktop.jar",
-		"org.pathvisio.visualization.jar",
-		"org.pathvisio.gexplugin.jar",
-		"org.pathvisio.statistics.jar"	
+	public static final List<String> mustActivate = Arrays.asList (new String[] {
+		"derby",
+		"org.bridgedb.rdb",
+		"org.pathvisio.core",
+		"org.pathvisio.gui",
+		"org.pathvisio.desktop",
+		"org.pathvisio.visualization",
+		"org.pathvisio.gex",
+		"org.pathvisio.statistics"	
 	});	
 	
 	private static final String[][] frameworkProperties = { 
@@ -112,21 +102,7 @@ public class PathVisioMain {
 	}
 	
 	private BundleContext context;
-	
-	/**
-	 * An error dialog that is slightly more user-friendly than a stack dump.
-	 */
-	private void reportException(String message, Exception ex)
-	{
-		Throwable cause = ex;
-		// get ultimate cause
-		while (cause.getCause() != null) cause = cause.getCause();
-		JOptionPane.showMessageDialog(null, message + "\n" +
-				"Cause: " + cause.getClass().getName() + ":  " + cause.getMessage() + "\n" +
-				"Please contact PathVisio developers");
-		ex.printStackTrace();
-	}
-	
+		
 	private Properties getLaunchProperties()
 	{	
 		Properties launchProperties = new Properties();
@@ -147,44 +123,17 @@ public class PathVisioMain {
 			framework.start();
 			
 			context = framework.getBundleContext();
-			Map <Bundle, String> bundles = new HashMap <Bundle, String>();
+			BundleLoader loader = new BundleLoader(context);
 	    	
 	       	/* load embedded bundles, i.e. all bundles that are inside pathvisio.jar */ 
-	    	System.out.println("Installing core bundles.");
-	    	Set<String> jarNames = getResourceListing(PathVisioMain.class);
-			for (String s : jarNames) 
-			{
-				if (!s.endsWith(".jar")) continue; // skip non-jar resources.
-				System.out.println ("Detected embedded bundle: " + s);
-				
-				URL locationURL = PathVisioMain.class.getResource('/' + s);
-				if (locationURL != null)
-				{
-					System.out.println ("Loading " + locationURL);
-					try {
-	    				Bundle b = context.installBundle(locationURL.toString());
-	    				bundles.put (b, s);
-					}
-					catch (Exception ex)
-					{
-		    			if (mustActivate.contains (s))
-		    			{
-		    				reportException("Could not install bundle " + s, ex);
-		    				System.exit(1);
-		    			}
-		    			else
-		    			{
-							System.err.println ("Could not install bundle " + s);
-							ex.printStackTrace();
-		    			}
-					}
-	    		}
-			}
-	    	    	
-	    	startBundles(context, bundles);
+	    	System.out.println("Installing bundles that are embedded in the jar.");
+	    	loader.installEmbeddedBundles();
+
+	    	System.out.println("Installing bundles from directories specified on the command-line.");
+	    	loader.installPlugins(pluginLocations);
+
+			startBundles(context, loader.getBundles());
 	    	
-	    	System.out.println("Installing plug-in bundles.");
-	    	new PluginLoader().installPlugins(pluginLocations, context);
     	}
     	catch (Exception ex)
     	{
@@ -193,112 +142,27 @@ public class PathVisioMain {
     	}
 	}
 
-	/**
-	 * List directory contents for the root jar. Not recursive. 
-	 *
-	 * @author Greg Briggs
-	 *    modified LF 02/02/2011 to support java web start
-	 * @param clazz
-	 *            Any java class that lives in the same place as the resources
-	 *            you want.
-	 * @return Just the name of each member item, not the full paths.
-	 * @throws URISyntaxException
-	 * @throws IOException
-	 */
-	private Set<String> getResourceListing(Class<?> clazz)
-			throws URISyntaxException, IOException 
-	{
-		String me = clazz.getName().replace(".", "/") + ".class";
-		URL dirURL = clazz.getClassLoader().getResource(me);
-		
-		if (!dirURL.getProtocol().equals("jar")) throw new AssertionError("Expected URL with jar protocol. " +
-				"Can not list files for " + dirURL);
-
-		/* A JAR path */
-		String protocol = dirURL.getPath().substring(0,	dirURL.getPath().indexOf(":"));
-		
-		Set<String> result = new HashSet<String>(); // avoid duplicates in
-		// case it is a
-		// subdirectory
-
-		/* If we run locally, we'll get the file protocol */
-		if ("file".equals(protocol)) {
-			String jarPath = dirURL.getPath().substring(5,
-					dirURL.getPath().indexOf("!")); // strip out only the
-													// JAR
-													// file
-			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
-			Enumeration<JarEntry> entries = jar.entries(); // gives ALL
-															// entries
-															// in jar
-			while (entries.hasMoreElements()) {
-				String entry = entries.nextElement().getName();
-				int checkSubdir = entry.indexOf("/");
-				if (checkSubdir >= 0) {
-					// if it is a subdirectory, we just return the
-					// directory
-					// name
-					entry = entry.substring(0, checkSubdir);
-				}
-				result.add(entry);
-			}
-		}
-		/* If we're running webstart, we'll get http/https */ 
-		if ("http".equals(protocol) || "https".equals(protocol)) {
-			final ProtectionDomain domain = PathVisioMain.class.getProtectionDomain();
-			final CodeSource source = domain.getCodeSource();
-			URL url = source.getLocation();
-			if (url.toExternalForm().endsWith(".jar")) {
-				try {
-					JarInputStream jarStream = new JarInputStream(url.openStream(), false);
-					for (String entry : jarStream.getManifest().getEntries().keySet()) {
-						result.add(entry);
-					}
-				}
-				catch (IOException e) {
-					System.err.println ("error reading manifest" + e.getMessage());
-				}
-			}
-		}
-		if (result.size() == 0)
-		{
-			throw new AssertionError("No files found for URL " + dirURL);
-		}
-		return result;
-	}
-
 	private void startBundles(BundleContext context, Map<Bundle, String> bundles) throws BundleException 
 	{
     	Set<String> mustActivateLeft = new HashSet<String>();
     	mustActivateLeft.addAll(mustActivate);
     	
+    	Bundle activateLast = null;    	
 		for (Map.Entry<Bundle, String> e : bundles.entrySet()) 
     	{
 			Bundle b = e.getKey();
-    		try {
-    			b.start();
-    			
-    			if (mustActivateLeft.contains (e.getValue()))
-    			{
-    				mustActivateLeft.remove(e.getValue());
-    			}    				
-    			System.out.println("Bundle " + b.getSymbolicName() + " started");
-    		}
-    		catch (Exception ex)
-    		{ 
-    			System.out.println("Core Bundle " + b.getBundleId() + " failed to start.");
-    			if (mustActivateLeft.contains (e.getValue()))
-    			{
-    				reportException ("Fatal: could not start bundle " + e.getValue(), ex);
-    				System.exit (1);
-    			}
-    			else
-    			{
-    				/* Non-fatal error */
-    				ex.printStackTrace();
-    			}
-    		}
+			if ("org.pathvisio.desktop".equals (b.getSymbolicName()))
+			{
+				// must be activated last
+				activateLast = b;
+				continue;
+			}
+    		startBundle(b, mustActivateLeft);
     	}
+		
+		System.out.println ("Saved org.pathvisio.desktop for last");
+		startBundle(activateLast, mustActivateLeft);
+		
 		if (mustActivateLeft.size() > 0)
 		{
 			StringBuilder missing = new StringBuilder();
@@ -307,6 +171,35 @@ public class PathVisioMain {
 			System.exit (1);
 		}
     }
+
+	/** Start a single bundle, record any exceptions and update the mustActivateLeft set */
+	public void startBundle(Bundle b, Set<String> mustActivateLeft)
+	{
+		String symbolicName = b.getSymbolicName();
+		try {
+			b.start();
+			
+			if (mustActivateLeft.contains (symbolicName))
+			{
+				mustActivateLeft.remove(symbolicName);
+			}    				
+			System.out.println("Bundle " + symbolicName + " started");
+		}
+		catch (Exception ex)
+		{ 
+			System.out.println("Core Bundle " + b.getBundleId() + " failed to start.");
+			if (mustActivateLeft.contains (symbolicName))
+			{
+				reportException ("Fatal: could not start bundle " + symbolicName, ex);
+				System.exit (1);
+			}
+			else
+			{
+				/* Non-fatal error */
+				ex.printStackTrace();
+			}
+		}
+	}
 	
 	public static final String ARG_PROPERTY_PGEX = "pathvisio.pgex";
 	public static final String ARG_PROPERTY_PATHWAYFILE = "pathvisio.pathwayfile";
@@ -388,5 +281,19 @@ public class PathVisioMain {
 				"-h: displays this help message"
 		);
 	}
-	
+
+	/**
+	 * An error dialog that is slightly more user-friendly than a stack dump.
+	 */
+	static void reportException(String message, Exception ex)
+	{
+		Throwable cause = ex;
+		// get ultimate cause
+		while (cause.getCause() != null) cause = cause.getCause();
+		JOptionPane.showMessageDialog(null, message + "\n" +
+				"Cause: " + cause.getClass().getName() + ":  " + cause.getMessage() + "\n" +
+				"Please contact PathVisio developers");
+		ex.printStackTrace();
+	}
+
 }

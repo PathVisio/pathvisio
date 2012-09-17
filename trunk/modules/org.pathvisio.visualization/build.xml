@@ -3,8 +3,6 @@
 
 	<import file="../../build-common.xml" />
 
-	<property name="jar.name" value="org.pathvisio.visualization.jar"/>
-
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
 		<include name="com.springsource.org.jdom-1.1.0.jar"/>

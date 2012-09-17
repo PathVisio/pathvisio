@@ -6,6 +6,11 @@
 	<property name="pathvisio.version" value="3.0.Beta2"/>
 	<property name="bundle.dest" value=".."/>
 
+	<target name="prepare-jar-name">
+		<!-- the name of the plug-in jar uses the project name of the calling build file -->
+		<property name="jar.name" value="${bundle.dest}/${ant.project.name}.jar"/>
+	</target>
+	
 	<target name="prepare-common">
 		<mkdir dir="build"/>
 	</target>
@@ -13,15 +18,15 @@
 	<target name="prepare">
 	</target>
 	
-	<target name="clean">
+	<target name="clean" depends="prepare-jar-name">
 		<delete dir="build"/>
 	</target>
 
 	<target name="dist-clean" depends="clean">
-		<delete file="${bundle.dest}/${jar.name}"/>
+		<delete file="${jar.name}"/>
 	</target>
 
-	<target name="compile" depends="prepare,prepare-common">
+	<target name="compile" depends="prepare,prepare-common,prepare-jar-name">
 		<echo>Compiling: ${jar.name}</echo>
 		<javac srcdir="src"
 			   includes="**"
@@ -33,7 +38,7 @@
 
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
-		<jar jarfile="${bundle.dest}/${jar.name}" manifest="META-INF/MANIFEST.MF">
+		<jar jarfile="${jar.name}" manifest="META-INF/MANIFEST.MF">
 			<fileset dir="resources" erroronmissingdir="false">
 				<include name="**/*"/>
 			</fileset>

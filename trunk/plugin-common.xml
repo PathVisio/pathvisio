@@ -6,9 +6,6 @@
 	<!-- location where bundle and its dependencies will be installed -->
 	<property name="bundle.dest" value="dist"/>
 
-	<!-- the name of the plug-in jar uses the project name of the calling build file -->
-	<property name="jar.name" value="${bundle.dest}/${ant.project.name}.jar"/>
-	
 	<!-- the name of the executable wrapper jar uses the project name of the calling build file -->
 	<property name="exe.jar" value="pathvisio-with-${ant.project.name}.jar"/>
 
@@ -24,16 +21,21 @@
 		</fail>
 	</target>
 
+	<target name="prepare-jar-name">
+		<!-- the name of the plug-in jar uses the project name of the calling build file -->
+		<property name="jar.name" value="${bundle.dest}/${ant.project.name}.jar"/>
+	</target>
+
 	<!-- designed to be overridden -->
 	<target name="prepare">
 	</target>
 	
 	<target name="clean">
 		<delete dir="build"/>
-		<delete dir="${bundle.dest}"/>
+		<delete file="${jar.name}"/>
 	</target>
 
-	<target name="compile" depends="prepare,prepare-common">
+	<target name="compile" depends="prepare,prepare-common,prepare-jar-name">
 		<echo>Compiling: ${jar.name}</echo>
 		<javac srcdir="src"
 			   includes="**"
@@ -46,9 +48,6 @@
 
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
-		<copy toDir="${bundle.dest}" flatten="true">
-			<path refid="project.class.path"/>
-		</copy>
 		<manifestclasspath property="manifest.cp" jarfile="${jar.name}">
 			<classpath>
 				<fileset dir="${bundle.dest}">
@@ -70,6 +69,12 @@
         </jar>
 	</target>
 
+	<target name="install" depends="jar"> 
+		<copy toDir="${bundle.dest}" flatten="true">
+			<path refid="project.class.path"/>
+		</copy>
+	</target>
+	
 	  <target name="dist-clean" depends="clean">
 		<delete file="${jar.name}"/>
 		<delete file="${exe.jar}"/>

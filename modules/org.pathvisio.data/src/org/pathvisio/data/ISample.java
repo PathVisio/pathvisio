@@ -4,17 +4,20 @@ package org.pathvisio.data;
  * A base interface for a Sample, 
  * which represents a column in a gene expression matrix or other high-throughput dataset.\
  * <p>
- * Note that the word Sample is used in a very broad sense. 
+ * Note that the word Sample is used in a very broad sense, it really corresponds to a column in your expression matrix.
  */
 public interface ISample extends Comparable<ISample>
 {
+	/** a human readable name for this sample, corresponding to a column header in your expression matrix */
 	public String getName();
+	
+	/** a numeric id for this sample. Note that a set of samples does not have to be numbered consecutively */
 	public Integer getId();
 	
-	/* Return one of the ISample values */
+	/** Return one of the ISample values */
 	public int getDataType();
 	
-	/* A string that divides samples into groups, e.g. "treated" or "untreated". 
+	/** A string that divides samples into groups, e.g. "treated" or "untreated". 
 	 * If multiple factors play a role, they should be separated by ':', for example
 	 * "wildtype:treated" or "mutant:untreated"  */
 	public String getFactor();

@@ -107,7 +107,7 @@ public class Sample implements ISample
 	 */
 	public String toString()
 	{
-		return Integer.toString(idSample);
+		return name + "(" + idSample + ")";
 	}
 
 	@Override

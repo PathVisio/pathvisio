@@ -28,4 +28,5 @@ public interface ISample extends Comparable<ISample>
 	public static final int NUMBER_LOG   = 1704; /* a java.lang.Number representing a log-transformed value, such as a log fold-change */
 	public static final int NUMBER_PVAL  = 1704; /* a java.lang.Number representing a pvalue, such as the result of a ttest or anova. Use this both for raw pvalues and multiple-testing-corrected pvalues */
 	public static final int NON_NUMBER   = 1705; /* any non-number type, such as a String type */ 
+	public static final int FACTOR	     = 1706; /* either a String or number representing a category or a cluster */
 }

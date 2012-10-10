@@ -2,6 +2,8 @@
 <project name="PathVisio-common" basedir=".">
 
 	<property name="debug.mode" value="true"/>
+	<property name="ant.build.javac.target" value="1.6"/>
+	<property name="ant.build.javac.source" value="1.6"/>
 	
 	<property name="pathvisio.version" value="3.0.Beta2"/>
 	<property name="bundle.dest" value=".."/>
@@ -38,8 +40,9 @@
 
 	<target name="jar" depends="compile"> 
 		<echo>Creating JAR: ${jar.name}</echo>
+		<mkdir dir="resources"/> <!-- workaround in case resources dir doesn't exist -->
 		<jar jarfile="${jar.name}" manifest="META-INF/MANIFEST.MF">
-			<fileset dir="resources" erroronmissingdir="false">
+			<fileset dir="resources">
 				<include name="**/*"/>
 			</fileset>
 			<fileset dir="build">
@@ -52,7 +55,7 @@
 		<javac srcdir="test" debug="${debug.mode}"
 					includes="**"
 					destdir="build"
-					source="1.5">
+					source="1.6">
 			<classpath>
 				<path refid="test.class.path"/>
 				<path refid="project.class.path"/>

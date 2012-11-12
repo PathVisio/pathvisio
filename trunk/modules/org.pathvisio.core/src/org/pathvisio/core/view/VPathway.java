@@ -1481,6 +1481,10 @@ public class VPathway implements PathwayListener
 	public static final KeyStroke KEY_SELECT_DATA_NODES = KeyStroke
 			.getKeyStroke(java.awt.event.KeyEvent.VK_D,
 					java.awt.Event.CTRL_MASK);
+	
+	public static final KeyStroke KEY_SELECT_LINES = KeyStroke
+			.getKeyStroke(java.awt.event.KeyEvent.VK_E,
+					java.awt.Event.CTRL_MASK);
 
 	public static final KeyStroke KEY_BOLD = KeyStroke
 	.getKeyStroke(java.awt.event.KeyEvent.VK_B,
@@ -1552,6 +1556,8 @@ public class VPathway implements PathwayListener
 			registerKeyboardAction(viewActions.paste);
 			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES,
 					viewActions.selectDataNodes);
+			parent.registerKeyboardAction(KEY_SELECT_LINES,
+					viewActions.selectLines);
 			registerKeyboardAction(viewActions.toggleGroup);
 			registerKeyboardAction(viewActions.toggleComplex);
 			registerKeyboardAction(viewActions.selectAll);

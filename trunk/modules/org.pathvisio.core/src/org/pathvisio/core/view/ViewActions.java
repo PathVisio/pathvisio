@@ -94,6 +94,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	VPathway vPathway;
 
 	public final SelectClassAction selectDataNodes;
+	public final SelectClassAction selectLines;
 	public final SelectAllAction selectAll;
 	public final GroupAction toggleGroup;
 	public final ComplexAction toggleComplex;
@@ -126,6 +127,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		vp.addVPathwayListener(this);
 
 		selectDataNodes = new SelectClassAction("DataNode", GeneProduct.class);
+		selectLines = new SelectClassAction("Line", Line.class);
 		selectAll = new SelectAllAction();
 		toggleGroup = new GroupAction();
 		toggleComplex = new ComplexAction();

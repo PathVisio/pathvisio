@@ -55,13 +55,6 @@ public class BundleLoader
 	{
 		this.context = context;
 	}
-
-	public void installPlugins(List<String> pluginLocations) 
-	{
-		for(String location : pluginLocations) {
-			loadFromParameter(location);
-		}
-	}
 	
 	/**
 	 * If argument is a dir, load all jar files in that dir recursively
@@ -121,15 +114,11 @@ public class BundleLoader
 	 * Install bundles that are embedded in the jar that we are currently running.
 	 * If we're not running from jar, this step is simply skipped.
 	 */
-	void installEmbeddedBundles() throws URISyntaxException, IOException
+	void installEmbeddedBundle(String s) throws URISyntaxException, IOException
 	{
-		System.out.println("Installing bundles embedded in jar.");
-		Set<String> jarNames = getResourceListing(PathVisioMain.class);
-		for (String s : jarNames) 
-		{
-			if (!s.endsWith(".jar")) continue; // skip non-jar resources.
+		if (s.endsWith(".jar")) { // skip non-jar resources.
 			System.out.println ("Detected embedded bundle: " + s);
-			
+				
 			URL locationURL = PathVisioMain.class.getResource('/' + s);
 			if (locationURL != null)
 			{
@@ -167,7 +156,7 @@ public class BundleLoader
 	 * @throws URISyntaxException
 	 * @throws IOException
 	 */
-	private Set<String> getResourceListing(Class<?> clazz)
+	public Set<String> getResourceListing(Class<?> clazz)
 			throws URISyntaxException, IOException 
 	{
 		String me = clazz.getName().replace(".", "/") + ".class";

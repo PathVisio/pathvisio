@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -79,6 +80,7 @@ public class PathVisioMain {
         {"org.osgi.framework.system.packages.extra", "javax.xml.parsers,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers"},
         
         {"org.osgi.framework.storage.clean", "onFirstInit"},
+//        {"org.osgi.framework.storage.clean", "none"},
         
         /* following property is necessary for Felix: to prevent complaints 
          * about missing requirements ee=JSE2-1.2 on the javax.xml bundle. */
@@ -113,33 +115,65 @@ public class PathVisioMain {
 	}
 	
 	public void start() 
-	{	
-    	try
-    	{
-			String factoryClass = getFactoryClass();
-			FrameworkFactory factory = (FrameworkFactory) Class.forName(factoryClass).newInstance();
-			
-			Framework framework = factory.newFramework(getLaunchProperties());
-			framework.start();
-			
-			context = framework.getBundleContext();
-			BundleLoader loader = new BundleLoader(context);
-	    	
-	       	/* load embedded bundles, i.e. all bundles that are inside pathvisio.jar */ 
-	    	System.out.println("Installing bundles that are embedded in the jar.");
-	    	loader.installEmbeddedBundles();
+	{		
+		final SplashFrame frame = new SplashFrame();
+		
+		final SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
+			protected Void doInBackground() throws Exception {
+				try {
+					String factoryClass = getFactoryClass();
+					FrameworkFactory factory = (FrameworkFactory) Class.forName(factoryClass).newInstance();
+					
+					Framework framework = factory.newFramework(getLaunchProperties());
+					framework.start();
+					
+					context = framework.getBundleContext();
+					BundleLoader loader = new BundleLoader(context);
+					
+				 	/* load embedded bundles, i.e. all bundles that are inside pathvisio.jar */ 
+			    	System.out.println("Installing bundles that are embedded in the jar.");
+			    	
+					Set<String> jarNames = loader.getResourceListing(PathVisioMain.class);
+					int cnt = 0;
+					int total = jarNames.size() + pluginLocations.size();
+					for (String s : jarNames) 
+					{
+						publish(100 * (++cnt) / total);
+						System.out.println(cnt + "\t" + total);
+						loader.installEmbeddedBundle(s);
+					}
 
-	    	System.out.println("Installing bundles from directories specified on the command-line.");
-	    	loader.installPlugins(pluginLocations);
-
-			startBundles(context, loader.getBundles());
-	    	
-    	}
-    	catch (Exception ex)
-    	{
-    		reportException("Startup Error", ex);
-    		ex.printStackTrace();
-    	}
+			    	System.out.println("Installing bundles from directories specified on the command-line.");
+			    	for(String location : pluginLocations) {
+			    		publish(100 * (++cnt) / total);
+			    		System.out.println(cnt + "\t" + total);
+			    		loader.loadFromParameter(location);
+					}
+			    	
+					startBundles(context, loader.getBundles());
+					
+				} catch(Exception ex) {
+					reportException("Startup Error", ex);
+					ex.printStackTrace();
+				}
+				return null;
+			}
+			
+			protected void process(List<Integer> chunks) {
+				for (Integer chunk : chunks) {
+					frame.getProgressBar().setString("Installing modules..." + chunk + "%");
+					frame.getProgressBar().setValue(chunk);
+					frame.repaint();
+				}
+			}
+				
+			protected void done() {
+				frame.setVisible(false);
+			}
+			
+		};
+	
+		worker.execute();
 	}
 
 	private void startBundles(BundleContext context, Map<Bundle, String> bundles) throws BundleException 
@@ -295,5 +329,4 @@ public class PathVisioMain {
 				"Please contact PathVisio developers");
 		ex.printStackTrace();
 	}
-
 }

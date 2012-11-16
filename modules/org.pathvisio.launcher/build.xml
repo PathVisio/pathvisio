@@ -20,17 +20,4 @@ pathvisio.version = ${pathvisio.version}
 	  </fileset>
 	</path>
 
-	<!-- override jar target, because we want to add Main-Class and Class-Path attributes -->
-	<target name="jar" depends="compile"> 
-		<echo>Creating JAR: ${jar.name}</echo>
-		<manifestclasspath property="jar.class.path" jarfile="${jar.name}">
-			<classpath refid="project.class.path"/>
-		</manifestclasspath>
-		<jar jarfile="${jar.name}" basedir="build" manifest="META-INF/MANIFEST.MF">
-			<manifest>
-				<attribute name="Class-Path" value="${jar.class.path}"/>
-			</manifest>
-		</jar>
-	</target>
-
 </project>

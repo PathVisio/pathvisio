@@ -44,6 +44,7 @@ import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
+import org.pathvisio.desktop.visualization.AbstractVisualizationMethod;
 import org.pathvisio.desktop.visualization.VisualizationMethod;
 import org.pathvisio.gui.dialogs.OkCancelDialog;
 import org.pathvisio.gui.util.FontChooser;
@@ -57,7 +58,7 @@ import org.pathvisio.gui.util.FontChooser;
  * This visualization method also lets you use the id instead of the symbol
  * as label.
  */
-public class DataNodeLabel extends VisualizationMethod implements ActionListener {
+public class DataNodeLabel extends AbstractVisualizationMethod implements ActionListener {
 	static final String DISPLAY_ID = "Identifier";
 	static final String DISPLAY_LABEL = "Text label";
 	static final String ACTION_APPEARANCE = "Appearance...";

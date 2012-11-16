@@ -60,6 +60,7 @@ import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.CachedData.Callback;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
+import org.pathvisio.desktop.visualization.AbstractVisualizationMethod;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.VisualizationManager.VisualizationException;
@@ -70,7 +71,7 @@ import org.pathvisio.desktop.visualization.VisualizationMethod;
  * expression values. In basic mode several samples use the same colorSet,
  * in advanced mode each sample can have a different colorSet
  */
-public class ColorByExpression extends VisualizationMethod {
+public class ColorByExpression extends AbstractVisualizationMethod {
 	static final Color DEFAULT_TRANSPARENT = Engine.TRANSPARENT_COLOR;
 	static final Color LINE_COLOR_DEFAULT = Color.BLACK;
 

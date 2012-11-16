@@ -58,6 +58,7 @@ import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
+import org.pathvisio.desktop.visualization.AbstractVisualizationMethod;
 import org.pathvisio.desktop.visualization.VisualizationMethod;
 import org.pathvisio.gui.dialogs.OkCancelDialog;
 import org.pathvisio.gui.util.FontChooser;
@@ -66,7 +67,7 @@ import org.pathvisio.gui.util.FontChooser;
  * Visialization method where expression values are represented by text,
  * i.e. the actual value written out small at or near the datanode.
  */
-public class TextByExpression extends VisualizationMethod
+public class TextByExpression extends AbstractVisualizationMethod
 								implements ActionListener, ListDataListener {
 	static final Font DEFAULT_FONT = new Font("Arial narrow", Font.PLAIN, 10);
 	static final int SPACING = 3;

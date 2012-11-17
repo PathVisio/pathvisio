@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Lycopene biosynthesis" Author="Pankaj Jaiswal" Organism="Solanum lycopersicum">
+  <Comment Source="WikiPathways-category">Metabolic Process</Comment>
+  <Comment>A series of desaturation processes leads to the formation of lycopene.  All trans-lycopene feeds into the carotenoid biosynthesis. </Comment>
+  <BiopaxRef>e4d</BiopaxRef>
+  <Graphics BoardWidth="1311.244499611305" BoardHeight="1960.5199826070125" />
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+  <Legend CenterX="71.2757105043763" CenterY="565.8579561434458" />
+  <Biopax>
+	<bp:PublicationXref xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" rdf:id="e4d">
+      <bp:ID rdf:datatype="http://www.w3.org/2001/XMLSchema#string">22645578</bp:ID>
+      <bp:DB rdf:datatype="http://www.w3.org/2001/XMLSchema#string">PubMed</bp:DB>
+      <bp:TITLE rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Maize provitamin a carotenoids, current resources, and future metabolic engineering challenges.</bp:TITLE>
+      <bp:SOURCE rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Front Plant Sci</bp:SOURCE>
+      <bp:YEAR rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2012</bp:YEAR>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Wurtzel ET</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cuttriss A</bp:AUTHORS>
+      <bp:AUTHORS rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Vallabhaneni R</bp:AUTHORS>
+    </bp:PublicationXref>
+  </Biopax>
+</Pathway>
+

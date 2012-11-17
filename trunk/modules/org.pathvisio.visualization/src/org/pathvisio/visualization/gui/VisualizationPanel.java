@@ -49,13 +49,11 @@ public class VisualizationPanel extends JPanel implements ActionListener
 	static final String ACTION_REMOVE = "Remove";
 	static final String ACTION_RENAME = "Rename";
 	static final String ACTION_COMBO = "Combo";
-	static final String ACTION_SHOWLEGEND = "Show legend";
 
 	private final VisualizationManager visMgr;
 
 	private JComboBox visCombo;
 	private JPanel methods;
-	private JCheckBox ckLegend;
 	
 	public VisualizationPanel(VisualizationManager visMgr) 
 	{
@@ -84,12 +82,6 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		visButton.addComponent(mNew);
 		visButton.addComponent(mRemove);
 		visButton.addComponent(mRename);
-
-		ckLegend = new JCheckBox("Show legend");
-		ckLegend.setActionCommand(ACTION_SHOWLEGEND);
-		Visualization v = visMgr.getActiveVisualization();
-		if (v != null) ckLegend.setSelected(v.isShowLegend());
-		ckLegend.addActionListener(this);
 		
 		methods = new JPanel();
 		CellConstraints cc = new CellConstraints();
@@ -97,7 +89,6 @@ public class VisualizationPanel extends JPanel implements ActionListener
 		add(new JLabel("Visualization"), cc.xy(1, 1));
 		add(visCombo, cc.xy(3, 1));
 		add(visButton, cc.xy(5, 1));
-		add(ckLegend, cc.xyw(1, 3, 5));
 		add(methods, cc.xyw(1, 5, 5));
 		
 		refresh();
@@ -140,13 +131,6 @@ public class VisualizationPanel extends JPanel implements ActionListener
 			visMgr.setActiveVisualization((Visualization)visCombo.getSelectedItem());
 			refresh();
 		} 
-		else if (ACTION_SHOWLEGEND.equals(action))
-		{
-			Visualization v = visMgr.getActiveVisualization();
-			if(v != null) {
-				v.setShowLegend(ckLegend.isSelected());
-			}
-		}
 	}
 
 	private void refresh() {
@@ -170,7 +154,6 @@ public class VisualizationPanel extends JPanel implements ActionListener
 					builder.append(mp);
 					builder.nextLine();
 				}
-				ckLegend.setSelected(v.isShowLegend());
 			}
 		} else {
 			visCombo.setModel(new DefaultComboBoxModel());

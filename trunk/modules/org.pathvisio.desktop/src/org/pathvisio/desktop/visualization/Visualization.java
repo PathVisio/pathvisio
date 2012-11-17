@@ -240,13 +240,6 @@ public class Visualization
 		return name;
 	}
 
-	private boolean showLegend;
-	public boolean isShowLegend() { return showLegend; }
-	public void setShowLegend (boolean value) 
-	{ 
-		showLegend = value;
-		modified();
-	}
 
 	public void setActive(boolean value)
 	{

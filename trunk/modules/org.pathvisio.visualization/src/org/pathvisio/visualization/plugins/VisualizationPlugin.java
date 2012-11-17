@@ -55,6 +55,16 @@ public class VisualizationPlugin implements Plugin
 			aDesktop.getVisualizationManager().getVisualizationMethodRegistry();
 
 		reg.registerMethod(
+				LegendVisualization.class.toString(),
+				new VisualizationMethodProvider() {
+					public VisualizationMethod create() {
+						return new LegendVisualization(
+								desktop.getVisualizationManager().getColorSetManager(),
+								desktop.getSwingEngine().getEngine());
+					}
+			}
+		);
+		reg.registerMethod(
 				ColorByExpression.class.toString(),
 				new VisualizationMethodProvider() {
 					public VisualizationMethod create() {

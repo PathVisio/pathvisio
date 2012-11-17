@@ -27,8 +27,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import org.pathvisio.core.biopax.BiopaxEvent;
-import org.pathvisio.core.biopax.BiopaxListener;
 import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.debug.DebugList;
 import org.pathvisio.core.model.LineStyle;
@@ -40,7 +38,7 @@ import org.pathvisio.core.model.PathwayElementListener;
  * This class is a parent class for all graphics
  * that can be added to a VPathway.
  */
-public abstract class Graphics extends VPathwayElement implements PathwayElementListener, BiopaxListener
+public abstract class Graphics extends VPathwayElement implements PathwayElementListener
 {
 	protected PathwayElement gdata = null;
 	
@@ -54,7 +52,6 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		super(canvas);
 		o.addListener(this);
 		gdata = o;
-		gdata.getBiopaxReferenceManager().addBiopaxListener(this);
 		checkCitation();
 	}
 
@@ -232,7 +229,6 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 		}
 		children.clear();
 		citation = null;
-		gdata.getBiopaxReferenceManager().removeBiopaxListener(this);
 
 		//View should not remove its model
 //		Pathway parent = gdata.getParent();
@@ -244,11 +240,6 @@ public abstract class Graphics extends VPathwayElement implements PathwayElement
 	 */
 	protected int getZOrder() {
 		return gdata.getZOrder();
-	}
-
-	public void biopaxEvent(BiopaxEvent e)
-	{
-		checkCitation();
 	}
 
 	protected Color getLineColor()

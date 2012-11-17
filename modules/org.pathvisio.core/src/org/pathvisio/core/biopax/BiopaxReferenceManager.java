@@ -98,8 +98,6 @@ public class BiopaxReferenceManager {
 
 		//Add a reference to the biopax element
 		pwElement.addBiopaxRef(e.getId());
-
-		fireBiopaxEvent(new BiopaxEvent(this));
 	}
 
 	/**
@@ -116,29 +114,6 @@ public class BiopaxReferenceManager {
 		if(!getBiopaxElementManager().hasReferences(e)) {
 			getBiopaxElementManager().removeElement(e);
 		}
-
-		fireBiopaxEvent(new BiopaxEvent(this));
 	}
 
-	private void fireBiopaxEvent(BiopaxEvent e) {
-		for(BiopaxListener l : listeners) {
-			l.biopaxEvent(e);
-		}
-	}
-
-	List<BiopaxListener> listeners = new ArrayList<BiopaxListener>();
-
-	public void addBiopaxListener(BiopaxListener l) {
-		if(!listeners.contains(l)) listeners.add(l);
-	}
-
-	public void removeBiopaxListener(BiopaxListener l) {
-		listeners.remove(l);
-	}
-
-	public void copyBiopaxListeners(BiopaxReferenceManager refMgr) {
-		for(BiopaxListener l : refMgr.listeners) {
-			addBiopaxListener(l);
-		}
-	}
 }

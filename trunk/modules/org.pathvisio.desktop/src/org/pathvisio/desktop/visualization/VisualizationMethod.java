@@ -27,7 +27,6 @@ import org.pathvisio.core.view.Graphics;
 /**
  * The VisualizationMethod class can be extended to create a visualization method for
  * the visualization of experimental data on GPML pathways
- * @author Thomas
  */
 public interface VisualizationMethod extends Comparable <VisualizationMethod>
 {
@@ -127,4 +126,9 @@ public interface VisualizationMethod extends Comparable <VisualizationMethod>
 	 */
 	public boolean isUseProvidedArea();
 
+	/**
+	 * Signals that the visualization has become active or inactive.
+	 * Individual VisualizationMethods can respond by doing global preparation work.
+	 */
+	public void setActive(boolean value);
 }

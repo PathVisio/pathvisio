@@ -23,7 +23,6 @@ import org.jdom.Element;
 /**
  * The VisualizationMethod class can be extended to create a visualization method for
  * the visualization of experimental data on GPML pathways
- * @author Thomas
  */
 public abstract class AbstractVisualizationMethod implements VisualizationMethod
 {
@@ -126,4 +125,7 @@ public abstract class AbstractVisualizationMethod implements VisualizationMethod
 	{
 		return getName().compareTo(o.getName());
 	}
+
+	@Override 
+	public void setActive(boolean value) {}
 }

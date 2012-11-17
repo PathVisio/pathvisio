@@ -124,8 +124,14 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	/**
 	   Set which visualization will be active, by index
 	 */
-	public void setActiveVisualization(int index) {
+	public void setActiveVisualization(int index) 
+	{
+//		if (active == index) return; // No-op.
+//		if (getActiveVisualization() != null)
+//			getActiveVisualization().setActive(false);
 		active = index;
+//		if (getActiveVisualization() != null)
+//			getActiveVisualization().setActive(true);
 		fireVisualizationEvent(
 				new VisualizationEvent(
 					VisualizationManager.class,

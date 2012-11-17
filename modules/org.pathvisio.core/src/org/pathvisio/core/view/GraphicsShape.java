@@ -471,6 +471,7 @@ public abstract class GraphicsShape extends Graphics implements LinkProvider, Ad
 	public void gmmlObjectModified(PathwayElementEvent e)
 	{
 		markDirty(); // mark everything dirty
+		checkCitation();
 		if (handles.length > 0) setHandleLocation();
 	}
 

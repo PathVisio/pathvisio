@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Pathway xmlns="http://genmapp.org/GPML/2010a" Name="Lycopene biosynthesis" Author="Pankaj Jaiswal" Organism="Solanum lycopersicum">
+  <Comment Source="WikiPathways-category">Metabolic Process</Comment>
+  <Comment>A series of desaturation processes leads to the formation of lycopene.  All trans-lycopene feeds into the carotenoid biosynthesis. </Comment>
+  <InfoBox CenterX="0.0" CenterY="0.0" />
+  <Legend CenterX="71.2757105043763" CenterY="565.8579561434458" />
+  <Biopax>
+    <bp:openControlledVocabulary xmlns:bp="http://www.biopax.org/release/biopax-level3.owl#">
+      <bp:TERM>carotenoid biosynthetic pathway</bp:TERM>
+      <bp:ID>PW:0000697</bp:ID>
+      <bp:Ontology>Pathway Ontology</bp:Ontology>
+    </bp:openControlledVocabulary>
+  </Biopax>
+</Pathway>
+

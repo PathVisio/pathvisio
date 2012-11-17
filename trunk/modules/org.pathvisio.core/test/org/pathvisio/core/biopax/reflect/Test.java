@@ -144,6 +144,30 @@ public class Test extends TestCase {
 		assertTrue("One author", xref.getAuthors().size() == 1);
 
 	}
+	
+	public void testOpenControlledVocabulary() throws ConverterException
+	{
+		File f = new File ("../../testData/2010a/biopax-opencontrolledvocabulary-testcase.gpml");
+		
+		System.out.println (f.getAbsolutePath());
+		assertTrue (f.exists());
+		Pathway pwy = new Pathway();
+		pwy.readFromXml(f, true);
+	}
+
+	public void testLiteratureXref() throws ConverterException
+	{
+		File f = new File ("../../testData/2010a/biopax-literaturexref-testcase.gpml");
+		
+		System.out.println (f.getAbsolutePath());
+		assertTrue (f.exists());
+		Pathway pwy = new Pathway();
+		pwy.readFromXml(f, true);
+		
+		BiopaxElement elt = pwy.getBiopaxElementManager().getElement("e4d");
+		assertNotNull (elt);
+		assertTrue (elt instanceof PublicationXref);
+	}
 
 	public void writeRead(Pathway data) throws IOException
 	{

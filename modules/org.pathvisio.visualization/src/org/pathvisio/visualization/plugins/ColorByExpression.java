@@ -52,7 +52,6 @@ import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.GeneProduct;
 import org.pathvisio.core.view.Graphics;
-import org.pathvisio.core.view.Legend;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
@@ -241,15 +240,6 @@ public class ColorByExpression extends AbstractVisualizationMethod {
 			Rectangle area = da.getBounds();
 	
 			drawArea(gp, area, g2d);
-		}
-		else if (g instanceof Legend && getVisualization().isShowLegend())
-		{
-			Legend l = (Legend)g;
-			Rectangle2D area = l.getVBounds();
-			double zoomFactor = l.getDrawing().getZoomFactor();
-			Font f = l.getVFont();
-			g2d.setFont(f);
-			LegendPanel.drawVisualization(getVisualization(), csm, g2d, area, zoomFactor);
 		}
 	}
 

@@ -403,27 +403,6 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	{
 		loadGexCache();
 		
-		Visualization v = visualizationManager.getActiveVisualization(); 
-		if (v != null && v.isShowLegend())
-		{
-			// check if pwy contains a legend, add it if not
-			Pathway pwy = swingEngine.getEngine().getActivePathway();
-			boolean found = false;
-			for (PathwayElement elt : pwy.getDataObjects())
-			{
-				if (elt.getObjectType() == ObjectType.LEGEND) { found = true; break; } 
-			}
-			if (!found)
-			{ 
-				PathwayElement elt = PathwayElement.createPathwayElement(ObjectType.LEGEND);
-				elt.setMWidth (200);
-				elt.setMHeight (400);
-				elt.setMLeft(0);
-				elt.setMTop(0);
-				pwy.add(elt);
-			}
-		}
-		
 		// redraw Pathway
 		VPathway vPwy = swingEngine.getEngine().getActiveVPathway();
 		if (vPwy != null) vPwy.redraw();

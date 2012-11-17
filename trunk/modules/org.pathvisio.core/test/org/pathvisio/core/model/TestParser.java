@@ -374,12 +374,12 @@ public class TestParser extends TestCase
 		assertEquals ("f7c", elt.getBiopaxRefs().get(0));
 		
 		BiopaxElement be = data.getBiopaxElementManager().getElement("c73");
-		assertEquals ("20047655", be.getChild("ID", GpmlFormat.BIOPAX).getText());
-		assertEquals ("PubMed", be.getChild("DB", GpmlFormat.BIOPAX).getText());
+		assertEquals ("20047655", be.getProperty("ID").getText());
+		assertEquals ("PubMed", be.getProperty("DB").getText());
 		assertEquals ("The BridgeDb framework: standardized access to gene, protein and metabolite identifier mapping services.", 
-					be.getChild("TITLE", GpmlFormat.BIOPAX).getText());
-		assertEquals ("BMC Bioinformatics", be.getChild("SOURCE", GpmlFormat.BIOPAX).getText());
-		assertEquals ("2010", be.getChild("YEAR", GpmlFormat.BIOPAX).getText());
+					be.getProperty("TITLE").getText());
+		assertEquals ("BMC Bioinformatics", be.getProperty("SOURCE").getText());
+		assertEquals ("2010", be.getProperty("YEAR").getText());
 	}
 
 	public void testParser8() throws ConverterException, FileNotFoundException

@@ -33,7 +33,6 @@ import org.pathvisio.core.view.Graphics;
 
 /**
  * Represents a set of configured visualization plugins
- * @author thomas
  */
 public class Visualization
 {
@@ -249,4 +248,9 @@ public class Visualization
 		modified();
 	}
 
+	public void setActive(boolean value)
+	{
+		for (VisualizationMethod m : methods.values())
+			m.setActive(value);
+	}
 }

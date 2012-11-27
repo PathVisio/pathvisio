@@ -114,9 +114,11 @@ public class PathVisioMain {
 		return launchProperties;
 	}
 	
+	
+	private SplashFrame frame;
 	public void start() 
 	{		
-		final SplashFrame frame = new SplashFrame();
+		frame = new SplashFrame();
 		
 		final SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
 			protected Void doInBackground() throws Exception {
@@ -136,22 +138,30 @@ public class PathVisioMain {
 					Set<String> jarNames = loader.getResourceListing(PathVisioMain.class);
 					int cnt = 0;
 					int total = jarNames.size() + pluginLocations.size();
+					
 					for (String s : jarNames) 
 					{
+						String text = (s.length() > 50) ? s.substring(0, 50) : s;
+						frame.getTextLabel().setText("<html>Install " + text + ".</html>");
+						frame.repaint();
 						publish(100 * (++cnt) / total);
 						System.out.println(cnt + "\t" + total);
 						loader.installEmbeddedBundle(s);
 					}
 
+					frame.getTextLabel().setText("<html>Install active plugins.</html>");
+					frame.repaint();
 			    	System.out.println("Installing bundles from directories specified on the command-line.");
 			    	for(String location : pluginLocations) {
 			    		publish(100 * (++cnt) / total);
 			    		System.out.println(cnt + "\t" + total);
 			    		loader.loadFromParameter(location);
 					}
-			    	
+			    
 					startBundles(context, loader.getBundles());
 					
+					frame.getTextLabel().setText("Start application.");
+					frame.repaint();
 				} catch(Exception ex) {
 					reportException("Startup Error", ex);
 					ex.printStackTrace();
@@ -195,6 +205,7 @@ public class PathVisioMain {
     	}
 		
 		System.out.println ("Saved org.pathvisio.desktop for last");
+		
 		startBundle(activateLast, mustActivateLeft);
 		
 		if (mustActivateLeft.size() > 0)
@@ -217,6 +228,9 @@ public class PathVisioMain {
 			{
 				mustActivateLeft.remove(symbolicName);
 			}    				
+			String name = (symbolicName.length() > 50) ? symbolicName.substring(0, 50) : symbolicName;
+			frame.getTextLabel().setText("<html>Start " + name + "</html>");
+			frame.repaint();
 			System.out.println("Bundle " + symbolicName + " started");
 		}
 		catch (Exception ex)

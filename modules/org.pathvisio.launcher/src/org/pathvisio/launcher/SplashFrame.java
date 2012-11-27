@@ -20,6 +20,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 
 import javax.swing.BorderFactory;
@@ -33,6 +34,7 @@ public class SplashFrame extends JFrame {
 
 	private JFrame splashFrame;
 	private JProgressBar progressBar;
+	private JLabel textLabel;
 	
 	public SplashFrame() {
 		splashFrame = this;
@@ -42,7 +44,7 @@ public class SplashFrame extends JFrame {
 		progressBar = new JProgressBar();
 		progressBar.setIndeterminate(true);
 		progressBar.setString("");
-		final JLabel label = new JLabel("Loading PathVisio...");
+		JLabel label = new JLabel("Loading PathVisio...");
 		progressBar.setStringPainted(true);
 		
 		splashPanel.setBorder(BorderFactory.createLineBorder(new Color(133,133,133), 3));
@@ -52,8 +54,11 @@ public class SplashFrame extends JFrame {
 		lblPanel.add(label);
 		splashPanel.add(lblPanel, BorderLayout.CENTER);
 		JPanel pPanel = new JPanel();
+		pPanel.setLayout(new GridLayout(2,1));
 		pPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		pPanel.add(progressBar);
+		textLabel = new JLabel();
+		pPanel.add(textLabel);
 		splashPanel.add(pPanel, BorderLayout.SOUTH);
 		splashPanel.setBackground(Color.WHITE);
 		for(Component c : splashPanel.getComponents()) c.setBackground(Color.WHITE);
@@ -72,5 +77,9 @@ public class SplashFrame extends JFrame {
 	
 	public JProgressBar getProgressBar() {
 		return progressBar;
+	}
+
+	public JLabel getTextLabel() {
+		return textLabel;
 	}
 }

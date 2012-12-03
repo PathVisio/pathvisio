@@ -39,6 +39,10 @@ import org.osgi.framework.launch.FrameworkFactory;
 
 public class PathVisioMain {
 
+	/** The smoke-test option is for automated testing purposes.
+	 * When set, PathVisio just tries loading plugins, and quits with exit code 0 on success or non-zero on error. */
+	private static boolean isSmokeTest = false;
+	
 	/**
 	 * @param args
 	 */
@@ -215,6 +219,10 @@ public class PathVisioMain {
 			JOptionPane.showMessageDialog(null, "Fatal: some essential bundles were missing: " + missing);
 			System.exit (1);
 		}
+		
+		// if we're doing a smoke test, and we got to this point, we've completed succesfully.
+		// exit with error code 0 to indicate success.
+		if (isSmokeTest) System.exit(0);
     }
 
 	/** Start a single bundle, record any exceptions and update the mustActivateLeft set */
@@ -245,6 +253,9 @@ public class PathVisioMain {
 			{
 				/* Non-fatal error */
 				ex.printStackTrace();
+				
+				// if we're doing a smoke test, exit with error code.
+				if (isSmokeTest) System.exit (-1);
 			}
 		}
 	}
@@ -267,7 +278,8 @@ public class PathVisioMain {
 		}
 	}
 
-	public static void parseArguments(String [] args) {
+	public static void parseArguments(String [] args) 
+	{
 		pluginLocations = new ArrayList<String>();
 		for(int i = 0; i < args.length; i++) {
 			if ("-v".equals(args[i])) 
@@ -306,14 +318,18 @@ public class PathVisioMain {
 					printHelp();
 					System.exit(-1);
 				}
-			} else {
+			} else if ("--smoketest".equals(args[i]))
+			{
+				isSmokeTest = true;
+			}
+			else {
 				pathwayFile = args[i];
 			}
 		}
     }
 		
 	private static boolean isArgument(String string) {
-		if(string.equals("-p") || string.equals("-v") || string.equals("-h") || string.equals("-d")) {
+		if(string.equals("-p") || string.equals("-v") || string.equals("-h") || string.equals("-d") || string.equals("--smoketest")) {
 			return true;
 		}
 		return false;
@@ -327,6 +343,9 @@ public class PathVisioMain {
 				"-d: A pgex data file to load\n" +
 				"-v: displays PathVisio version\n" +
 				"-h: displays this help message"
+				
+				/* NOTE: the --smoketest option is not documented on purpose
+				 * It's not for use by end-users. */
 		);
 	}
 

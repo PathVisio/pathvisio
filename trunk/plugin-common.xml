@@ -19,6 +19,7 @@
 				<not><available file="${pathvisio.dir}/modules/org.pathvisio.core.jar"/></not>
 			</condition>
 		</fail>
+		<condition property="test.dir.exists"><available file="test"/></condition>
 	</target>
 
 	<target name="prepare-jar-name">
@@ -78,9 +79,10 @@
 	  <target name="dist-clean" depends="clean">
 		<delete file="${jar.name}"/>
 		<delete file="${exe.jar}"/>
+		<delete dir="${bundle.dest}"/>
 	  </target>
 
-	<target name="test">
+	<target name="test" if="test.dir.exists">
 		<javac srcdir="test" debug="${debug.mode}"
 					includes="**"
 					destdir="build"

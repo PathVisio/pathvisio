@@ -34,7 +34,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.core.biopax.BiopaxElementManager;
+import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
 import org.pathvisio.core.view.Line;
@@ -899,7 +899,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		root.addContent(e.cloneContent());
 		Document bp = new Document(root);
 
-		((BiopaxElementManager)o).setBiopax(bp);
+		((BiopaxElement)o).setBiopax(bp);
 	}
 
 }

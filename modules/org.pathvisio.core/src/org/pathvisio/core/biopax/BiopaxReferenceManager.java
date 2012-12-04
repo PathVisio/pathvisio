@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.pathvisio.core.biopax.reflect.BiopaxElement;
 import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.PathwayElement;
@@ -44,7 +43,7 @@ public class BiopaxReferenceManager {
 		pwElement = e;
 	}
 
-	public BiopaxElementManager getBiopaxElementManager() {
+	public BiopaxElement getBiopaxElementManager() {
 		return pwElement.getParent().getBiopaxElementManager();
 	}
 
@@ -54,11 +53,11 @@ public class BiopaxReferenceManager {
 	 * @return A List with all referred biopax element, or an empty list
 	 * if no elements have been found
 	 */
-	public List<BiopaxElement> getReferences() {
+	public List<BiopaxNode> getReferences() {
 		List<String> refs = pwElement.getBiopaxRefs();
-		List<BiopaxElement> bpElements = new ArrayList<BiopaxElement>();
+		List<BiopaxNode> bpElements = new ArrayList<BiopaxNode>();
 		for(String ref : refs) {
-			BiopaxElement bpe = getBiopaxElementManager().getElement(ref);
+			BiopaxNode bpe = getBiopaxElementManager().getElement(ref);
 			if(bpe != null) {
 				bpElements.add(bpe);
 			} else {
@@ -75,12 +74,12 @@ public class BiopaxReferenceManager {
 	 */
 	public List<PublicationXref> getPublicationXRefs() {
 		List<PublicationXref> xrefs = new ArrayList<PublicationXref>();
-		for(BiopaxElement e : getReferences()) {
+		for(BiopaxNode e : getReferences()) {
 			if(e instanceof PublicationXref) xrefs.add((PublicationXref)e);
 		}
 		Collections.sort(xrefs, new Comparator<PublicationXref>() {
 			public int compare(PublicationXref o1, PublicationXref o2) {
-				BiopaxElementManager elmMgr = getBiopaxElementManager();
+				BiopaxElement elmMgr = getBiopaxElementManager();
 				return elmMgr.getOrdinal(o1) - elmMgr.getOrdinal(o2);
 			}
 		});
@@ -92,7 +91,7 @@ public class BiopaxReferenceManager {
 	 * element this class manages.
 	 * @param e The biopax element to add a reference to.
 	 */
-	public void addElementReference(BiopaxElement e) {
+	public void addElementReference(BiopaxNode e) {
 		//Will be added to the BioPAX document if not already in there
 		getBiopaxElementManager().addElement(e);
 
@@ -105,7 +104,7 @@ public class BiopaxReferenceManager {
 	 * pathway element this class manages.
 	 * @param e The biopax reference to remove the reference for
 	 */
-	public void removeElementReference(BiopaxElement e) {
+	public void removeElementReference(BiopaxNode e) {
 		//Remove the reference to the element
 		pwElement.removeBiopaxRef(e.getId());
 

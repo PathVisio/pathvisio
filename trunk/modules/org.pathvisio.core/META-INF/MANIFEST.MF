@@ -3,7 +3,16 @@ Bundle-ManifestVersion: 2
 Bundle-Name: org.pathvisio.core
 Bundle-SymbolicName: org.pathvisio.core
 Bundle-Version: 2.0.11
-Export-Package: org.pathvisio.core,org.pathvisio.core.biopax,org.pathvisio.core.biopax.reflect,org.pathvisio.core.data,org.pathvisio.core.debug,org.pathvisio.core.gpmldiff,org.pathvisio.core.gui,org.pathvisio.core.model,org.pathvisio.core.preferences,org.pathvisio.core.util,org.pathvisio.core.view
+Export-Package: org.pathvisio.core,
+ org.pathvisio.core.biopax,
+ org.pathvisio.core.data,
+ org.pathvisio.core.debug,
+ org.pathvisio.core.gpmldiff,
+ org.pathvisio.core.gui,
+ org.pathvisio.core.model,
+ org.pathvisio.core.preferences,
+ org.pathvisio.core.util,
+ org.pathvisio.core.view
 Require-Bundle: derby;bundle-version="10.4.2000000",
  com.springsource.org.jdom;bundle-version="1.1.0",
  org.pathvisio.pdftranscoder;bundle-version="1.7.0",

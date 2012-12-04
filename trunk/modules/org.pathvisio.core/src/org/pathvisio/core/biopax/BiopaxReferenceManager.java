@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.PathwayElement;
 

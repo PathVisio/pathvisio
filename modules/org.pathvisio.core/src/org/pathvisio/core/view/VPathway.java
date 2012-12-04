@@ -42,6 +42,7 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 import org.pathvisio.core.Engine;
+import org.pathvisio.core.biopax.BiopaxElementManager;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.GroupStyle;
@@ -2356,7 +2357,7 @@ public class VPathway implements PathwayListener
 
 			if (o.getObjectType() == ObjectType.BIOPAX) {
 				// Merge the copied biopax elements with existing
-				data.mergeBiopax(o);
+				data.getBiopax().mergeBiopax((BiopaxElementManager)o);
 				continue;
 			}
 

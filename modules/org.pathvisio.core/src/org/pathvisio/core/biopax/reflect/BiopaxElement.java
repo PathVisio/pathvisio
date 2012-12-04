@@ -27,8 +27,11 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.pathvisio.core.model.GpmlFormat;
 
-public class BiopaxElement extends Element {
-
+/**
+ * Represents a fragment of the embedded biopax of a pathway.
+ */
+public class BiopaxElement extends Element 
+{
 	private Set<PropertyType> validProperties;
 	private List<BiopaxProperty> properties;
 
@@ -44,10 +47,13 @@ public class BiopaxElement extends Element {
 	}
 
 	public void addProperty(BiopaxProperty p) {
-		//Check if property is valid
-		PropertyType pt = PropertyType.valueOf(p.getName());
-		if(!validProperties.contains(pt)) {
-			throw new IllegalArgumentException("Property " + p.getName() + " is not valid for " + this);
+		//Check if property is valid for any subclass of BiopaxElement
+		if (this.getClass() != BiopaxElement.class)
+		{
+			PropertyType pt = PropertyType.byName(p.getName());
+			if(!validProperties.contains(pt)) {
+				throw new IllegalArgumentException("Property " + p.getName() + " is not valid for " + this);
+			}
 		}
 		List<BiopaxProperty> existingProps = getProperties(p.getName());
 		if(p.getMaxCardinality() != BiopaxProperty.UNBOUND &&
@@ -116,24 +122,30 @@ public class BiopaxElement extends Element {
 		setAttribute("id", id, Namespaces.RDF);
 	}
 
-	public static BiopaxElement fromXML(Element xml) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static BiopaxElement fromXML(Element xml) 
+	{
 		String className = xml.getName();
-		// compatibility hack, see bug #1022
-		if ("PublicationXref".equalsIgnoreCase(className)) 
+		BiopaxElement result = null;
+		if ("PublicationXref".equalsIgnoreCase(className))
 		{
-			className = "PublicationXref";
+			// compatibility hack, see bug #1022
 			xml.setName("PublicationXref");
+			
+			result = new PublicationXref();
 		}
-		Class<?> c = Class.forName("org.pathvisio.core.biopax.reflect." + className);
-		BiopaxElement elm = (BiopaxElement)c.newInstance();
-		elm.loadXML(xml);
-		return elm;
+		else
+		{
+			result = new BiopaxElement();
+		}
+		result.loadXML(xml);
+		return result;
 	}
 
 	void loadXML(Element xml) {
 		setName(xml.getName());
 		setNamespace(xml.getNamespace());
-		setId(xml.getAttributeValue("id", Namespaces.RDF));
+		String id = xml.getAttributeValue("id", Namespaces.RDF);
+		if (id != null) setId(id);
 		for(Object child : xml.getChildren()) {
 			if(child instanceof Element) {
 				addProperty(new BiopaxProperty((Element)child));

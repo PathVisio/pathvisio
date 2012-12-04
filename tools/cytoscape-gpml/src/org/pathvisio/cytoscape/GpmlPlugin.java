@@ -76,7 +76,7 @@ import java.util.regex.Pattern;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
-import org.pathvisio.core.biopax.reflect.PublicationXref;
+import org.pathvisio.core.biopax.PublicationXref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.gui.PathwayTransferable;
 import org.pathvisio.core.model.ConverterException;

@@ -24,10 +24,6 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import org.jdom.Element;
-import org.pathvisio.core.biopax.reflect.BiopaxProperty;
-import org.pathvisio.core.biopax.reflect.Namespaces;
-import org.pathvisio.core.biopax.reflect.PropertyType;
-import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.model.GpmlFormat;
 
 /**

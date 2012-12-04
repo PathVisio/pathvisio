@@ -16,8 +16,10 @@
 //
 package org.pathvisio.core.biopax;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -29,20 +31,31 @@ import org.pathvisio.core.biopax.reflect.Namespaces;
 import org.pathvisio.core.biopax.reflect.PropertyType;
 import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.GpmlFormat;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 
 /**
  * This class keeps track of all BioPAX elements in the pathway
- * @author thomas
- *
  */
-public class BiopaxElementManager {
-	Random random = new Random(); //Used to generate unique id's
-
-	private Pathway pathway;
-	private PathwayElement bpElm;
+public class BiopaxElementManager extends PathwayElement 
+{
+	/**
+	 * Constructor for this class. Builds a map of all biopax
+	 * elements and their references
+	 */
+	public BiopaxElementManager()
+	{
+		super(ObjectType.BIOPAX);
+		biopax = new HashMap<String, BiopaxElement>();
+		ordinal = new HashMap<Class<? extends BiopaxElement>, Map<String, Integer>>();
+		refresh();
+	}
+	
+	private Document document;
+	
+	private Random random = new Random(); //Used to generate unique id's
 	private Map<String, BiopaxElement> biopax;
 	/**
 	 * Keeps track of the order of the loaded biopax elements per subclass.
@@ -50,69 +63,43 @@ public class BiopaxElementManager {
 	private Map<Class<? extends BiopaxElement>, Map<String, Integer>> ordinal;
 
 	/**
-	 * Constructor for this class. Builds a map of all biopax
-	 * elements and their references
-	 * @param p The pathway that contains the biopax elements
-	 */
-	public BiopaxElementManager(Pathway p) {
-		pathway = p;
-		biopax = new HashMap<String, BiopaxElement>();
-		ordinal = new HashMap<Class<? extends BiopaxElement>, Map<String, Integer>>();
-		refresh();
-	}
-
-	/**
 	 * Check if the pathway element that contains the biopax document has changed
 	 * and update the biopax hashmap if needed.
 	 */
-	public void refresh() {
-		refresh(false);
-	}
+	public void refresh() 
+	{
+		if(parent == null) return;
+		
+		Logger.log.trace("Refreshing biopax");
+		biopax.clear();
+		ordinal.clear();
 
-	private void refresh(boolean force) {
-		PathwayElement bp = pathway.getBiopax();
-		if(bpElm != bp || force) { //Only refresh if element differs or forced
-			Logger.log.trace("Refreshing biopax");
-			bpElm = bp;
-			biopax.clear();
-			ordinal.clear();
-
-			if(bp != null) {
-				Logger.log.trace("Biopax element found");
-				Document d = bp.getBiopax();
-				if(d != null) {
-					Map<BiopaxElement, Element> oldElements = new HashMap<BiopaxElement, Element>();
-					Element root = d.getRootElement();
-					for(Object child : root.getChildren()) {
-						if(child instanceof Element) {
-							try {
-								BiopaxElement bpe = BiopaxElement.fromXML((Element)child);
-								biopax.put(bpe.getId(), bpe);
-								addToOrdinal(bpe);
-								//Remember link between new and old element
-								oldElements.put(bpe, (Element)child);
-							} catch(Exception ex) {
-								Logger.log.error("Biopax element " + child + " ignored", ex);
-							}
-						}
-					}
-					//Remove old instances of the elements, replace with
-					//BiopaxElement instances
-					for(BiopaxElement bpe : oldElements.keySet()) {
-						root.addContent(bpe);
-						root.removeContent(oldElements.get(bpe));
+		Logger.log.trace("Biopax element found");
+		
+		if(document != null) 
+		{
+			Map<BiopaxElement, Element> oldElements = new HashMap<BiopaxElement, Element>();
+			Element root = document.getRootElement();
+			for(Object child : root.getChildren()) {
+				if(child instanceof Element) {
+					try {
+						BiopaxElement bpe = BiopaxElement.fromXML((Element)child);
+						biopax.put(bpe.getId(), bpe);
+						addToOrdinal(bpe);
+						//Remember link between new and old element
+						oldElements.put(bpe, (Element)child);
+					} catch(Exception ex) {
+						Logger.log.error("Biopax element " + child + " ignored", ex);
 					}
 				}
 			}
+			//Remove old instances of the elements, replace with
+			//BiopaxElement instances
+			for(BiopaxElement bpe : oldElements.keySet()) {
+				root.addContent(bpe);
+				root.removeContent(oldElements.get(bpe));
+			}
 		}
-	}
-
-	/**
-	 * Get the pathway that this instance manages the biopax elements for
-	 * @return
-	 */
-	public Pathway getPathway() {
-		return pathway;
 	}
 
 	/**
@@ -139,7 +126,7 @@ public class BiopaxElementManager {
 	 */
 	public boolean hasReferences(BiopaxElement e) {
 		//Check for references in child objects
-		for(PathwayElement pwe : pathway.getDataObjects()) {
+		for(PathwayElement pwe : parent.getDataObjects()) {
 			if(pwe.getBiopaxRefs().contains(e.getId())) {
 				return true;
 			}
@@ -230,7 +217,7 @@ public class BiopaxElementManager {
 	}
 
 	private void rebuildOrdinal() {
-		refresh(true);
+		refresh();
 	}
 
 	/**
@@ -282,23 +269,67 @@ public class BiopaxElementManager {
 	 * The document will be created and added to the pathway if it doesn't exist yet
 	 * @return
 	 */
-	private Document getDocument() {
-		PathwayElement biopax = pathway.getBiopax();
-		if(biopax == null) {
-			biopax = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
-			pathway.add(biopax);
-		}
-		Document biopaxDoc = biopax.getBiopax();
-		if(biopaxDoc == null) {
+	private Document getDocument() 
+	{
+		if (document == null)
+		{
 			//Create a biopax document
 			Element root = new Element("RDF", Namespaces.RDF);
 			root.addNamespaceDeclaration(Namespaces.RDFS);
 			root.addNamespaceDeclaration(Namespaces.RDF);
 			root.addNamespaceDeclaration(Namespaces.OWL);
 			root.addNamespaceDeclaration(Namespaces.BIOPAX);
-			biopaxDoc = new Document(root);
-			pathway.getBiopax().setBiopax(biopaxDoc);
+			document = new Document(root);
 		}
-		return biopaxDoc;
+		return document;
 	}
+	
+	/** @deprecated backwards compatibility hack for pwy.getBiopax().getBiopax() */
+	public Document getBiopax()
+	{
+		return getDocument();
+	}
+	
+	/** @deprecated backwards compatibility hack for pwy.getBiopax().setBiopax() */
+	public void setBiopax(Document d)
+	{
+		document = d;
+		refresh();
+	}
+
+	public void mergeBiopax(BiopaxElementManager bpnew) 
+	{
+		if(bpnew == null) return;
+
+		Document dNew = bpnew.getBiopax();
+		Document dOld = getDocument();
+
+		if(dNew == null) {
+			return; //Nothing to merge
+		}
+
+		//Create a map of existing biopax elements with an id
+		Map<String, Element> bpelements = new HashMap<String, Element>();
+		for(Object o : dOld.getRootElement().getContent()) {
+			if(o instanceof Element) {
+				Element e = (Element)o;
+				String id = e.getAttributeValue("id", GpmlFormat.RDF);
+				if(id != null) bpelements.put(id, e);
+			}
+		}
+
+		//Replace existing elements with the new one, or add if none exist yet
+		for(Object o : dNew.getRootElement().getContent()) {
+			if(o instanceof Element) {
+				Element eNew = (Element)o;
+				String id = eNew.getAttributeValue("id", GpmlFormat.RDF);
+				Element eOld = bpelements.get(id);
+				if(eOld != null) { //If an elements with the same id exist, remove it
+					dOld.getRootElement().removeContent(eOld);
+				}
+				dOld.getRootElement().addContent((Element)eNew.clone());
+			}
+		}
+	}
+
 }

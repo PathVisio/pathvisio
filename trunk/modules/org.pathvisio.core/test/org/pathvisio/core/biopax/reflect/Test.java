@@ -42,7 +42,8 @@ public class Test extends TestCase {
 		PathwayElement o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add (o);
 
-		elementManager = new BiopaxElementManager(data);
+		data.createBiopax();
+		elementManager = data.getBiopax();
 	}
 
 	public void testProperties() {
@@ -183,7 +184,7 @@ public class Test extends TestCase {
 		} catch(ConverterException e) {
 			fail("Unable to read a pathway: " + e.toString());
 		}
-		elementManager = new BiopaxElementManager(data);
+		elementManager = data.getBiopax();
 		pwRefManager = new BiopaxReferenceManager(data.getMappInfo());
 	}
 

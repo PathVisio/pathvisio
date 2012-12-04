@@ -18,6 +18,7 @@ package org.pathvisio.core.biopax;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -28,6 +29,11 @@ import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.model.PathwayEvent;
 
+/**
+ * GPML pathways can contain embedded BioPAX snippets.
+ * This checks whether BioPAX nodes can be added to a pathway,
+ * and wether they are written out and read back properly.
+ */
 public class Test extends TestCase {
 	Pathway data;
 	List<PathwayEvent> received;
@@ -144,14 +150,33 @@ public class Test extends TestCase {
 
 	}
 	
-	public void testOpenControlledVocabulary() throws ConverterException
+	public void testOpenControlledVocabulary() throws ConverterException, IOException
 	{
 		File f = new File ("../../testData/2010a/biopax-opencontrolledvocabulary-testcase.gpml");
 		
 		System.out.println (f.getAbsolutePath());
+		
 		assertTrue (f.exists());
-		Pathway pwy = new Pathway();
-		pwy.readFromXml(f, true);
+		read (f);
+		
+		{
+			Collection<BiopaxNode> nodes = elementManager.getElements();
+			assertEquals (1, nodes.size());
+			BiopaxNode first = nodes.iterator().next();
+			assertEquals ("openControlledVocabulary", first.getName());
+			assertEquals ("carotenoid biosynthetic pathway", first.getProperty("TERM").getText());
+		}
+		
+		writeRead(data);
+
+		{
+			Collection<BiopaxNode> nodes = elementManager.getElements();
+			assertEquals (1, nodes.size());
+			BiopaxNode first = nodes.iterator().next();
+			assertEquals ("openControlledVocabulary", first.getName());
+			assertEquals ("carotenoid biosynthetic pathway", first.getProperty("TERM").getText());
+		}
+
 	}
 
 	public void testLiteratureXref() throws ConverterException
@@ -163,7 +188,7 @@ public class Test extends TestCase {
 		Pathway pwy = new Pathway();
 		pwy.readFromXml(f, true);
 		
-		BiopaxNode elt = pwy.getBiopaxElementManager().getElement("e4d");
+		BiopaxNode elt = pwy.getBiopax().getElement("e4d");
 		assertNotNull (elt);
 		assertTrue (elt instanceof PublicationXref);
 	}

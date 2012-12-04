@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.bio.BioDataSource;
-import org.pathvisio.core.biopax.reflect.BiopaxElement;
+import org.pathvisio.core.biopax.BiopaxNode;
 import org.pathvisio.core.debug.StopWatch;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.view.MIMShapes;
@@ -373,7 +373,7 @@ public class TestParser extends TestCase
 		assertEquals (1, elt.getBiopaxRefs().size());
 		assertEquals ("f7c", elt.getBiopaxRefs().get(0));
 		
-		BiopaxElement be = data.getBiopaxElementManager().getElement("c73");
+		BiopaxNode be = data.getBiopaxElementManager().getElement("c73");
 		assertEquals ("20047655", be.getProperty("ID").getText());
 		assertEquals ("PubMed", be.getProperty("DB").getText());
 		assertEquals ("The BridgeDb framework: standardized access to gene, protein and metabolite identifier mapping services.", 

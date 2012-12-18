@@ -66,8 +66,6 @@ public class WikiPathwaysInit
 	}
 
 	public static void registerXmlRpcExporters(URL rpcUrl, Engine engine) {
-		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_PDF));
-		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_SVG));
 		engine.addPathwayExporter(new RasterImageExporter(ImageExporter.TYPE_PNG));
 		if(Utils.getOS() == Utils.OS_WINDOWS) {
 			engine.addPathwayExporter(new MappFormat());

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.core.biopax;
+package org.pathvisio.core.biopax.reflect;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,22 +23,17 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.pathvisio.core.model.GpmlFormat;
 
-/**
- * Represents a fragment of the embedded biopax of a pathway.
- */
-public class BiopaxNode
-{
-	private Element wrapped;
-	
+public class BiopaxElement extends Element {
+
 	private Set<PropertyType> validProperties;
 	private List<BiopaxProperty> properties;
 
-	public BiopaxNode() {
-		wrapped = new Element("unnamed");
-		wrapped.setNamespace(GpmlFormat.BIOPAX);
+	public BiopaxElement() {
+		setNamespace(GpmlFormat.BIOPAX);
 		validProperties = new HashSet<PropertyType>();
 		properties = new ArrayList<BiopaxProperty>();
 	}
@@ -49,13 +44,10 @@ public class BiopaxNode
 	}
 
 	public void addProperty(BiopaxProperty p) {
-		//Check if property is valid for any subclass of BiopaxElement
-		if (this.getClass() != BiopaxNode.class)
-		{
-			PropertyType pt = PropertyType.byName(p.getName());
-			if(!validProperties.contains(pt)) {
-				throw new IllegalArgumentException("Property " + p.getName() + " is not valid for " + this);
-			}
+		//Check if property is valid
+		PropertyType pt = PropertyType.valueOf(p.getName());
+		if(!validProperties.contains(pt)) {
+			throw new IllegalArgumentException("Property " + p.getName() + " is not valid for " + this);
 		}
 		List<BiopaxProperty> existingProps = getProperties(p.getName());
 		if(p.getMaxCardinality() != BiopaxProperty.UNBOUND &&
@@ -67,14 +59,14 @@ public class BiopaxNode
 		} else {
 			properties.add(p);
 		}
-		wrapped.addContent(p);
+		addContent(p);
 	}
 
 	public void removeProperty(BiopaxProperty p) {
 		BiopaxProperty existing = properties.get(properties.indexOf(p));
 		if(existing != null) {
 			properties.remove(p);
-			wrapped.removeContent(p);
+			removeContent(p);
 		}
 	}
 
@@ -117,37 +109,31 @@ public class BiopaxNode
 	}
 
 	public String getId() {
-		return wrapped.getAttributeValue("id", Namespaces.RDF);
+		return getAttributeValue("id", Namespaces.RDF);
 	}
 
 	public void setId(String id) {
-		wrapped.setAttribute("id", id, Namespaces.RDF);
+		setAttribute("id", id, Namespaces.RDF);
 	}
 
-	public static BiopaxNode fromXML(Element xml) 
-	{
+	public static BiopaxElement fromXML(Element xml) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		String className = xml.getName();
-		BiopaxNode result = null;
-		if ("PublicationXref".equalsIgnoreCase(className))
+		// compatibility hack, see bug #1022
+		if ("PublicationXref".equalsIgnoreCase(className)) 
 		{
-			// compatibility hack, see bug #1022
+			className = "PublicationXref";
 			xml.setName("PublicationXref");
-			
-			result = new PublicationXref();
 		}
-		else
-		{
-			result = new BiopaxNode();
-		}
-		result.loadXML(xml);
-		return result;
+		Class<?> c = Class.forName("org.pathvisio.core.biopax.reflect." + className);
+		BiopaxElement elm = (BiopaxElement)c.newInstance();
+		elm.loadXML(xml);
+		return elm;
 	}
 
 	void loadXML(Element xml) {
-		wrapped.setName(xml.getName());
-		wrapped.setNamespace(xml.getNamespace());
-		String id = xml.getAttributeValue("id", Namespaces.RDF);
-		if (id != null) setId(id);
+		setName(xml.getName());
+		setNamespace(xml.getNamespace());
+		setId(xml.getAttributeValue("id", Namespaces.RDF));
 		for(Object child : xml.getChildren()) {
 			if(child instanceof Element) {
 				addProperty(new BiopaxProperty((Element)child));
@@ -155,12 +141,17 @@ public class BiopaxNode
 		}
 	}
 
+	public void removeFromDocument(Document d) {
+		if(d == null) return;
+		d.getRootElement().removeContent(this);
+	}
+
 	/**
 	 * Check if this element equals the given element by comparing the properties.
 	 * @param e
 	 * @return
 	 */
-	public boolean propertyEquals(BiopaxNode e) {
+	public boolean propertyEquals(BiopaxElement e) {
 		return propertyEquals(e, null);
 	}
 
@@ -171,7 +162,7 @@ public class BiopaxNode
 	 * @param ignore
 	 * @return
 	 */
-	public boolean propertyEquals(BiopaxNode e, Collection<PropertyType> ignore) {
+	public boolean propertyEquals(BiopaxElement e, Collection<PropertyType> ignore) {
 		for(PropertyType p : PropertyType.values()) {
 			//Continue if property is in ignore list
 			if(ignore != null && ignore.contains(p)) continue;
@@ -199,22 +190,5 @@ public class BiopaxNode
 			}
 		}
 		return true;
-	}
-
-	/** @deprecated warning: internal, don't use. */
-	public Element getWrapped()
-	{
-		return wrapped;
-	}
-
-	protected void setName(String string)
-	{
-		wrapped.setName(string);
-	}
-
-
-	public String getName()
-	{
-		return wrapped.getName();
 	}
 }

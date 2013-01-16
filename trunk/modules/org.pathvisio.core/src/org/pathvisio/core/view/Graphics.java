@@ -27,7 +27,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import org.pathvisio.core.biopax.PublicationXref;
+import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.debug.DebugList;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.PathwayElement;

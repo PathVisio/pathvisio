@@ -14,14 +14,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.core.biopax;
+package org.pathvisio.core.biopax.reflect;
 
 import org.jdom.Element;
-import org.pathvisio.core.debug.Logger;
 
-/**
- * Represents a property of a BiopaxElement, such as "Title" for a PublicationXref
- */
 public class BiopaxProperty extends Element {
 
 	public static final int UNBOUND = -1;
@@ -48,22 +44,16 @@ public class BiopaxProperty extends Element {
 		this(type.name(), value, type.datatype, type.maxCardinality);
 	}
 
-	public BiopaxProperty(Element e) {
+	BiopaxProperty(Element e) {
 		this();
 		setName(e.getName());
-		PropertyType pt = PropertyType.byName(name);
+		PropertyType pt = PropertyType.valueOf(name);
 		if(pt == null) {
-			Logger.log.warn ("Unknown property: " + name);
-			maxCardinality = UNBOUND;
-			setDatatype("http://www.w3.org/2001/XMLSchema#string");
-		}
-		else
-		{
-			setDatatype(pt.datatype);
-			maxCardinality = pt.maxCardinality;
+			throw new IllegalArgumentException("Unknown property: " + name);
 		}
 		setText(e.getText());
-		
+		setDatatype(pt.datatype);
+		maxCardinality = pt.maxCardinality;
 	}
 
 	public void setDatatype(String datatype) {

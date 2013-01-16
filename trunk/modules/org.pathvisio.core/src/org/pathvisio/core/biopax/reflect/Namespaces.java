@@ -14,14 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.core.biopax;
+package org.pathvisio.core.biopax.reflect;
 
 import org.jdom.Namespace;
 import org.pathvisio.core.model.GpmlFormat;
 
-/**
- * Some namespace constants.
- */
 public class Namespaces {
 	public static final Namespace RDF = GpmlFormat.RDF;
 	public static final Namespace RDFS = GpmlFormat.RDFS;

@@ -39,7 +39,6 @@ import org.jdom.Namespace;
 import org.jdom.output.Format;
 import org.jdom.output.SAXOutputter;
 import org.jdom.output.XMLOutputter;
-import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.xml.sax.SAXException;
@@ -449,7 +448,7 @@ public abstract class GpmlFormatAbstract
 	
 	protected void updateBiopax(PathwayElement o, Element e) throws ConverterException
 	{
-		Document bp = ((BiopaxElement)o).getBiopax();
+		Document bp = o.getBiopax();
 		if(e != null && bp != null) {
 			List<Content> content = bp.getRootElement().cloneContent();
 			for(Content c : content) {

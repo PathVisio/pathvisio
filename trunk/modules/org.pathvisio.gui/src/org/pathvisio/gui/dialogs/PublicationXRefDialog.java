@@ -43,7 +43,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.pathvisio.core.biopax.PublicationXref;
+import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.data.PubMedQuery;
 import org.pathvisio.core.data.PubMedResult;
 import org.pathvisio.core.util.ProgressKeeper;

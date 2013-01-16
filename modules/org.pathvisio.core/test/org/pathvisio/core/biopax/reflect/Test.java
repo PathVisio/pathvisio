@@ -14,30 +14,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.core.biopax;
+package org.pathvisio.core.biopax.reflect;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.pathvisio.core.biopax.BiopaxElementManager;
+import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.model.PathwayEvent;
 
-/**
- * GPML pathways can contain embedded BioPAX snippets.
- * This checks whether BioPAX nodes can be added to a pathway,
- * and wether they are written out and read back properly.
- */
 public class Test extends TestCase {
 	Pathway data;
 	List<PathwayEvent> received;
-	BiopaxElement elementManager;
+	BiopaxElementManager elementManager;
 	BiopaxReferenceManager pwRefManager;
 
 	public void setUp()
@@ -46,8 +42,7 @@ public class Test extends TestCase {
 		PathwayElement o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add (o);
 
-		data.createBiopax();
-		elementManager = data.getBiopax();
+		elementManager = new BiopaxElementManager(data);
 	}
 
 	public void testProperties() {
@@ -150,33 +145,14 @@ public class Test extends TestCase {
 
 	}
 	
-	public void testOpenControlledVocabulary() throws ConverterException, IOException
+	public void testOpenControlledVocabulary() throws ConverterException
 	{
 		File f = new File ("../../testData/2010a/biopax-opencontrolledvocabulary-testcase.gpml");
 		
 		System.out.println (f.getAbsolutePath());
-		
 		assertTrue (f.exists());
-		read (f);
-		
-		{
-			Collection<BiopaxNode> nodes = elementManager.getElements();
-			assertEquals (1, nodes.size());
-			BiopaxNode first = nodes.iterator().next();
-			assertEquals ("openControlledVocabulary", first.getName());
-			assertEquals ("carotenoid biosynthetic pathway", first.getProperty("TERM").getText());
-		}
-		
-		writeRead(data);
-
-		{
-			Collection<BiopaxNode> nodes = elementManager.getElements();
-			assertEquals (1, nodes.size());
-			BiopaxNode first = nodes.iterator().next();
-			assertEquals ("openControlledVocabulary", first.getName());
-			assertEquals ("carotenoid biosynthetic pathway", first.getProperty("TERM").getText());
-		}
-
+		Pathway pwy = new Pathway();
+		pwy.readFromXml(f, true);
 	}
 
 	public void testLiteratureXref() throws ConverterException
@@ -188,7 +164,7 @@ public class Test extends TestCase {
 		Pathway pwy = new Pathway();
 		pwy.readFromXml(f, true);
 		
-		BiopaxNode elt = pwy.getBiopax().getElement("e4d");
+		BiopaxElement elt = pwy.getBiopaxElementManager().getElement("e4d");
 		assertNotNull (elt);
 		assertTrue (elt instanceof PublicationXref);
 	}
@@ -207,7 +183,7 @@ public class Test extends TestCase {
 		} catch(ConverterException e) {
 			fail("Unable to read a pathway: " + e.toString());
 		}
-		elementManager = data.getBiopax();
+		elementManager = new BiopaxElementManager(data);
 		pwRefManager = new BiopaxReferenceManager(data.getMappInfo());
 	}
 

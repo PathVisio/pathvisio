@@ -14,18 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.core.biopax;
+package org.pathvisio.core.biopax.reflect;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Object to store a publication Xref (citation), based on BioPAX
  * In PathVisio, all citations  are stored as a BioPAX element.
  * Can hold information about a.o. authors, title and year.
  */
-public class PublicationXref extends BiopaxNode {
+public class PublicationXref extends BiopaxElement {
 	static final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
 
 	public PublicationXref() {

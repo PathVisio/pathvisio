@@ -23,77 +23,96 @@ import java.util.Random;
 
 import org.jdom.Document;
 import org.jdom.Element;
+import org.pathvisio.core.biopax.reflect.BiopaxElement;
+import org.pathvisio.core.biopax.reflect.BiopaxProperty;
+import org.pathvisio.core.biopax.reflect.Namespaces;
+import org.pathvisio.core.biopax.reflect.PropertyType;
+import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.core.model.GpmlFormat;
 import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 
 /**
  * This class keeps track of all BioPAX elements in the pathway
+ * @author thomas
+ *
  */
-public class BiopaxElement extends PathwayElement 
-{
+public class BiopaxElementManager {
+	Random random = new Random(); //Used to generate unique id's
+
+	private Pathway pathway;
+	private PathwayElement bpElm;
+	private Map<String, BiopaxElement> biopax;
+	/**
+	 * Keeps track of the order of the loaded biopax elements per subclass.
+	 */
+	private Map<Class<? extends BiopaxElement>, Map<String, Integer>> ordinal;
+
 	/**
 	 * Constructor for this class. Builds a map of all biopax
 	 * elements and their references
+	 * @param p The pathway that contains the biopax elements
 	 */
-	public BiopaxElement()
-	{
-		super(ObjectType.BIOPAX);
-		biopax = new HashMap<String, BiopaxNode>();
-		ordinal = new HashMap<Class<? extends BiopaxNode>, Map<String, Integer>>();
+	public BiopaxElementManager(Pathway p) {
+		pathway = p;
+		biopax = new HashMap<String, BiopaxElement>();
+		ordinal = new HashMap<Class<? extends BiopaxElement>, Map<String, Integer>>();
 		refresh();
 	}
-	
-	private Document document;
-	
-	private Random random = new Random(); //Used to generate unique id's
-	private Map<String, BiopaxNode> biopax;
-	
-	/**
-	 * Keeps track of the order of the loaded biopax elements per subclass.
-	 * (The main use of this is to keep the citation numbers constant between sessions).
-	 */
-	private Map<Class<? extends BiopaxNode>, Map<String, Integer>> ordinal;
 
 	/**
 	 * Check if the pathway element that contains the biopax document has changed
 	 * and update the biopax hashmap if needed.
 	 */
-	private void refresh() 
-	{
-		if(parent == null) return;
-		
-		Logger.log.trace("Refreshing biopax");
-		biopax.clear();
-		ordinal.clear();
+	public void refresh() {
+		refresh(false);
+	}
 
-		Logger.log.trace("Biopax element found");
-		
-		if(document != null) 
-		{
-			Map<BiopaxNode, Element> oldElements = new HashMap<BiopaxNode, Element>();
-			Element root = document.getRootElement();
-			for(Object child : root.getChildren()) {
-				if(child instanceof Element) {
-					try {
-						BiopaxNode bpe = BiopaxNode.fromXML((Element)child);
-						biopax.put(bpe.getId(), bpe);
-						addToOrdinal(bpe);
-						//Remember link between new and old element
-						oldElements.put(bpe, (Element)child);
-					} catch(Exception ex) {
-						Logger.log.error("Biopax element " + child + " ignored", ex);
+	private void refresh(boolean force) {
+		PathwayElement bp = pathway.getBiopax();
+		if(bpElm != bp || force) { //Only refresh if element differs or forced
+			Logger.log.trace("Refreshing biopax");
+			bpElm = bp;
+			biopax.clear();
+			ordinal.clear();
+
+			if(bp != null) {
+				Logger.log.trace("Biopax element found");
+				Document d = bp.getBiopax();
+				if(d != null) {
+					Map<BiopaxElement, Element> oldElements = new HashMap<BiopaxElement, Element>();
+					Element root = d.getRootElement();
+					for(Object child : root.getChildren()) {
+						if(child instanceof Element) {
+							try {
+								BiopaxElement bpe = BiopaxElement.fromXML((Element)child);
+								biopax.put(bpe.getId(), bpe);
+								addToOrdinal(bpe);
+								//Remember link between new and old element
+								oldElements.put(bpe, (Element)child);
+							} catch(Exception ex) {
+								Logger.log.error("Biopax element " + child + " ignored", ex);
+							}
+						}
+					}
+					//Remove old instances of the elements, replace with
+					//BiopaxElement instances
+					for(BiopaxElement bpe : oldElements.keySet()) {
+						root.addContent(bpe);
+						root.removeContent(oldElements.get(bpe));
 					}
 				}
 			}
-			//Remove old instances of the elements, replace with
-			//BiopaxElement instances
-			for(BiopaxNode bpe : oldElements.keySet()) {
-				root.addContent(bpe.getWrapped());
-				root.removeContent(oldElements.get(bpe));
-			}
 		}
+	}
+
+	/**
+	 * Get the pathway that this instance manages the biopax elements for
+	 * @return
+	 */
+	public Pathway getPathway() {
+		return pathway;
 	}
 
 	/**
@@ -101,9 +120,9 @@ public class BiopaxElement extends PathwayElement
 	 * Note: references to this element will <B>NOT</B> be removed!
 	 * @param e
 	 */
-	public void removeElement(BiopaxNode e) {
+	public void removeElement(BiopaxElement e) {
 		Document doc = getDocument();
-		System.err.println("removed: " + doc.getRootElement().removeContent(e.getWrapped()));
+		System.err.println("removed: " + doc.getRootElement().removeContent(e));
 //		doc.getRootElement().removeContent(e);
 		biopax.remove(e.getId());
 		rebuildOrdinal();
@@ -118,9 +137,9 @@ public class BiopaxElement extends PathwayElement
 	 * @param e
 	 * @return
 	 */
-	public boolean hasReferences(BiopaxNode e) {
+	public boolean hasReferences(BiopaxElement e) {
 		//Check for references in child objects
-		for(PathwayElement pwe : parent.getDataObjects()) {
+		for(PathwayElement pwe : pathway.getDataObjects()) {
 			if(pwe.getBiopaxRefs().contains(e.getId())) {
 				return true;
 			}
@@ -134,13 +153,13 @@ public class BiopaxElement extends PathwayElement
 	 * @return the biopax element, or null if no element exists for the
 	 * given identifier
 	 */
-	public BiopaxNode getElement(String id) {
+	public BiopaxElement getElement(String id) {
 		return biopax.get(id);
 	}
 
 	/**
 	 * Add a biopax element to the biopax document, but ignore it
-	 * in the BiopaxElement. This method can be used for elemens that
+	 * in the BiopaxElementManager. This method can be used for elemens that
 	 * are not used by PathVisio but still have to be included in the GPML
 	 * file.
 	 * @param e
@@ -159,7 +178,7 @@ public class BiopaxElement extends PathwayElement
 	 * Other elements can be added using {@link #addPassiveElement(Element)}.
 	 * @param elm
 	 */
-	public void addElement(BiopaxNode elm) {
+	public void addElement(BiopaxElement elm) {
 		Document d = getDocument();
 
 		//Check if this is a valid biopax document
@@ -172,7 +191,7 @@ public class BiopaxElement extends PathwayElement
 			elm.setId(getUniqueID());
 		}
 		//Add this element to the document if it's not already in there
-		for(BiopaxNode e : getElements()) {
+		for(BiopaxElement e : getElements()) {
 			if(e.getName().equalsIgnoreCase(elm.getName())) { //Check for equal element name
 				//Check for properties
 				if(e instanceof PublicationXref) {
@@ -196,12 +215,12 @@ public class BiopaxElement extends PathwayElement
 			}
 
 		}
-		d.getRootElement().addContent(elm.getWrapped());
+		d.getRootElement().addContent(elm);
 		biopax.put(elm.getId(), elm);
 		addToOrdinal(elm);
 	}
 
-	private void addToOrdinal(BiopaxNode e) {
+	private void addToOrdinal(BiopaxElement e) {
 		Map<String, Integer> classOrdinal = ordinal.get(e.getClass());
 		if(classOrdinal == null) {
 			classOrdinal = new HashMap<String, Integer>();
@@ -211,15 +230,14 @@ public class BiopaxElement extends PathwayElement
 	}
 
 	private void rebuildOrdinal() {
-		refresh();
+		refresh(true);
 	}
 
 	/**
 	 * Get the position of the biopax element in the document, relative
 	 * to other elements of the same class.
-	 * (The main use of this is to keep citation numbers constant)
 	 */
-	public int getOrdinal(BiopaxNode bpe) {
+	public int getOrdinal(BiopaxElement bpe) {
 		Map<String, Integer> classOrdinal = ordinal.get(bpe.getClass());
 		if(classOrdinal != null) {
 			return classOrdinal.get(bpe.getId());
@@ -232,7 +250,7 @@ public class BiopaxElement extends PathwayElement
 	 * Get all biopax elements for the pathway
 	 * @return
 	 */
-	public Collection<BiopaxNode> getElements() {
+	public Collection<BiopaxElement> getElements() {
 		return biopax.values();
 	}
 
@@ -264,67 +282,23 @@ public class BiopaxElement extends PathwayElement
 	 * The document will be created and added to the pathway if it doesn't exist yet
 	 * @return
 	 */
-	private Document getDocument() 
-	{
-		if (document == null)
-		{
+	private Document getDocument() {
+		PathwayElement biopax = pathway.getBiopax();
+		if(biopax == null) {
+			biopax = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
+			pathway.add(biopax);
+		}
+		Document biopaxDoc = biopax.getBiopax();
+		if(biopaxDoc == null) {
 			//Create a biopax document
 			Element root = new Element("RDF", Namespaces.RDF);
 			root.addNamespaceDeclaration(Namespaces.RDFS);
 			root.addNamespaceDeclaration(Namespaces.RDF);
 			root.addNamespaceDeclaration(Namespaces.OWL);
 			root.addNamespaceDeclaration(Namespaces.BIOPAX);
-			document = new Document(root);
+			biopaxDoc = new Document(root);
+			pathway.getBiopax().setBiopax(biopaxDoc);
 		}
-		return document;
+		return biopaxDoc;
 	}
-	
-	/** @deprecated backwards compatibility hack for pwy.getBiopax().getBiopax() */
-	public Document getBiopax()
-	{
-		return getDocument();
-	}
-	
-	/** @deprecated backwards compatibility hack for pwy.getBiopax().setBiopax() */
-	public void setBiopax(Document d)
-	{
-		document = d;
-		refresh();
-	}
-
-	public void mergeBiopax(BiopaxElement bpnew) 
-	{
-		if(bpnew == null) return;
-
-		Document dNew = bpnew.getBiopax();
-		Document dOld = getDocument();
-
-		if(dNew == null) {
-			return; //Nothing to merge
-		}
-
-		//Create a map of existing biopax elements with an id
-		Map<String, Element> bpelements = new HashMap<String, Element>();
-		for(Object o : dOld.getRootElement().getContent()) {
-			if(o instanceof Element) {
-				Element e = (Element)o;
-				String id = e.getAttributeValue("id", GpmlFormat.RDF);
-				if(id != null) bpelements.put(id, e);
-			}
-		}
-
-		//Replace existing elements with the new one, or add if none exist yet
-		for(Object o : dNew.getRootElement().getContent()) {
-			if(o instanceof Element) {
-				Element eNew = (Element)o;
-				String id = eNew.getAttributeValue("id", GpmlFormat.RDF);
-				Element eOld = bpelements.get(id);
-				if(eOld != null) { //If an elements with the same id exist, remove it
-					dOld.getRootElement().removeContent(eOld);
-				}
-				dOld.getRootElement().addContent((Element)eNew.clone());
-			}
-		}
-	}
-
 }

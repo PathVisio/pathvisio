@@ -71,7 +71,7 @@ public class AboutDlg
 				"E.J. Creusen, P. Moeskops, Adem Bilican,\n" +
 				"Margot Sunshine, Mark Woon, Bing Liu,\n" +
 				"Ferry Jagers, Justin Elser, Harm Nijveen, \n" +
-				"Sravanthi Sinha, Praveen Kumar\n" +
+				"Sravanthi Sinha, Praveen Kumar, Anwesha Dutta\n" +
 				"<h3>Visit our website</h3>" +
 				"<p><a href=\"http://www.pathvisio.org\">http://www.pathvisio.org</a>" +
 				"</html>");

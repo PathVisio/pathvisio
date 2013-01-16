@@ -26,7 +26,6 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
-import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
 import org.pathvisio.core.view.ShapeRegistry;
@@ -504,7 +503,7 @@ class GpmlFormat200X extends GpmlFormatAbstract implements GpmlFormatReader
 		Document bp = new Document(root);
 
 		updateBiopaxNamespace(root);
-		((BiopaxElement)o).setBiopax(bp);
+		o.setBiopax(bp);
 	}
 
 	private static final Namespace BP_LEV2 = Namespace.getNamespace("bp", "http://www.biopax.org/release/biopax-level2.owl#");

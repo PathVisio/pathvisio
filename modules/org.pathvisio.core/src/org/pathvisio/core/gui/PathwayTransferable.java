@@ -34,8 +34,8 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.pathvisio.core.Engine;
-import org.pathvisio.core.biopax.BiopaxNode;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
+import org.pathvisio.core.biopax.reflect.BiopaxElement;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.GpmlFormat;
@@ -134,8 +134,16 @@ public class PathwayTransferable implements Transferable {
 				
 				BiopaxReferenceManager bpr = e.getBiopaxReferenceManager();
 				BiopaxReferenceManager bprnew = enew.getBiopaxReferenceManager();
-				for(BiopaxNode bpe : bpr.getReferences()) {
-					bprnew.addElementReference(BiopaxNode.fromXML((Element)bpe.getWrapped().clone()));
+				for(BiopaxElement bpe : bpr.getReferences()) {
+					try {
+						bprnew.addElementReference(BiopaxElement.fromXML((Element)bpe.clone()));
+					} catch (ClassNotFoundException e1) {
+						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
+					} catch (InstantiationException e1) {
+						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
+					} catch (IllegalAccessException e1) {
+						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
+					}
 				}
 			}
 		}

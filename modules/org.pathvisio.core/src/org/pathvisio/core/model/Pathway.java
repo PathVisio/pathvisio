@@ -33,7 +33,9 @@ import java.util.Random;
 import java.util.Set;
 
 import org.bridgedb.Xref;
-import org.pathvisio.core.biopax.BiopaxElement;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.pathvisio.core.biopax.BiopaxElementManager;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.GraphLink.GraphRefContainer;
@@ -162,7 +164,7 @@ public class Pathway
 
 	private PathwayElement mappInfo = null;
 	private PathwayElement infoBox = null;
-	private BiopaxElement biopax = null;
+	private PathwayElement biopax = null;
 	private PathwayElement legend = null;
 
 	/**
@@ -188,7 +190,7 @@ public class Pathway
 	/**
 	   note: may return null.
 	 */
-	public BiopaxElement getBiopax()
+	public PathwayElement getBiopax()
 	{
 		return biopax;
 	}
@@ -199,10 +201,14 @@ public class Pathway
 		this.add(biopax);
 	}
 
-	/** @deprecated use getBiopax() instead */
-	public BiopaxElement getBiopaxElementManager() 
-	{
-		return getBiopax();
+	private BiopaxElementManager bpElmMgr;
+
+	public BiopaxElementManager getBiopaxElementManager() {
+		if(bpElmMgr == null) {
+			bpElmMgr = new BiopaxElementManager(this);
+		}
+		bpElmMgr.refresh();
+		return bpElmMgr;
 	}
 
 	/**
@@ -238,14 +244,14 @@ public class Pathway
 			infoBox = o;
 		}
 		// There can be zero or one Biopax object, so if we're trying to add it, remove the old one.
-		if(o instanceof BiopaxElement && o != biopax)
+		if(o.getObjectType() == ObjectType.BIOPAX && o != biopax)
 		{
 			if(biopax != null) {
 				replaceUnique (biopax, o);
-				biopax = (BiopaxElement)o;
+				biopax = o;
 				return;
 			}
-			biopax = (BiopaxElement)o;
+			biopax = o;
 		}
 		// There can be only one Legend object, so if we're trying to add it, remove the old one.
 		if (o.getObjectType() == ObjectType.LEGEND && o != legend)
@@ -425,6 +431,46 @@ public class Pathway
 		}
 		fireObjectModifiedEvent(new PathwayEvent(o, PathwayEvent.DELETED));
 		o.setParent(null);
+	}
+
+	public void mergeBiopax(PathwayElement bpnew) {
+		if(bpnew == null) return;
+
+		Document dNew = bpnew.getBiopax();
+		Document dOld = biopax == null ? null : biopax.getBiopax();
+
+		if(dNew == null) {
+			return; //Nothing to merge
+		}
+
+		if(dOld == null) {
+			createBiopax();
+			biopax.setBiopax(dNew);
+			return;
+		}
+
+		//Create a map of existing biopax elements with an id
+		Map<String, Element> bpelements = new HashMap<String, Element>();
+		for(Object o : dOld.getRootElement().getContent()) {
+			if(o instanceof Element) {
+				Element e = (Element)o;
+				String id = e.getAttributeValue("id", GpmlFormat.RDF);
+				if(id != null) bpelements.put(id, e);
+			}
+		}
+
+		//Replace existing elements with the new one, or add if none exist yet
+		for(Object o : dNew.getRootElement().getContent()) {
+			if(o instanceof Element) {
+				Element eNew = (Element)o;
+				String id = eNew.getAttributeValue("id", GpmlFormat.RDF);
+				Element eOld = bpelements.get(id);
+				if(eOld != null) { //If an elements with the same id exist, remove it
+					dOld.getRootElement().removeContent(eOld);
+				}
+				dOld.getRootElement().addContent((Element)eNew.clone());
+			}
+		}
 	}
 
 	/**

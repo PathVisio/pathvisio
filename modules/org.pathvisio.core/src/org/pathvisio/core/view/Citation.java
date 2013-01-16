@@ -25,7 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
-import org.pathvisio.core.biopax.PublicationXref;
+import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.preferences.GlobalPreference;

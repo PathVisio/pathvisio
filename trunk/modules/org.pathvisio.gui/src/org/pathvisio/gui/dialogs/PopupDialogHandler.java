@@ -88,9 +88,6 @@ public class PopupDialogHandler
 		case MAPPINFO:
 			result = new PathwayPropertiesDialog(swingEngine, e, readonly, frame, "Properties", locationComp);
 			break;
-		case LINE:
-			result = new LineDialog(swingEngine, e, readonly, frame, locationComp);
-			break;
 		default:
 			result = new PathwayElementDialog(swingEngine, e, readonly, frame, "Element properties", locationComp);
 		}	

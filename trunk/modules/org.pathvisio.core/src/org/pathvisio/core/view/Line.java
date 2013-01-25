@@ -59,15 +59,6 @@ import org.pathvisio.core.preferences.PreferenceManager;
 public class Line extends Graphics implements Adjustable
 {
 	
-	/**
-	 * Dynamic Property key to assign an identifier to a reaction/interaction.
-	 */
-	public static final String ID_LINE = "org.pathvisio.core.id";
-	/**
-	 * Dynamic Property key to assign a data source to a reaction/interaction.
-	 */
-	public static final String DATASOURCE_LINE = "org.pathvisio.core.ds";		
-	
 	private List<VPoint> points;
 
 	private Map<MAnchor, VAnchor> anchors = new HashMap<MAnchor, VAnchor>();

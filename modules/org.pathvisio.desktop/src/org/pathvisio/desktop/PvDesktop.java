@@ -28,16 +28,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
-import org.bridgedb.IDMapperException;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.data.GdbEvent;
 import org.pathvisio.core.data.GdbManager.GdbEventListener;
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
-import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.view.VPathway;
@@ -49,11 +47,11 @@ import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.plugin.PluginDialogSwitch;
 import org.pathvisio.desktop.plugin.PluginManager;
 import org.pathvisio.desktop.util.StandaloneCompat;
-import org.pathvisio.desktop.visualization.Visualization;
 import org.pathvisio.desktop.visualization.VisualizationEvent;
 import org.pathvisio.desktop.visualization.VisualizationManager;
-import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.PathwayElementMenuListener.PathwayElementMenuHook;
+import org.pathvisio.gui.SwingEngine;
+import org.pathvisio.pluginmanager.IPluginManager;
 
 /**
  * PvDesktop ties together several
@@ -74,6 +72,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	private final SwingEngine swingEngine;
 	private final StandaloneCompat compat;
 	private final PreferencesDlg preferencesDlg;
+	private IPluginManager pluginManagerExternal;
 
 	private BundleContext context;
 	
@@ -101,6 +100,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		visualizationManager.addListener(this);
 		compat = new StandaloneCompat(this);
 		preferencesDlg = new PreferencesDlg(PreferenceManager.getCurrent());
+		loadPluginManager();
 		initPanels();
 	}
 
@@ -458,5 +458,24 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			Logger.log.error(msg, ex);
 		}
 	}
+	
+	/**
+	 * plugin manager registers a service in the activator
+	 * this methods gets the plugin manager class from the OSGi registry
+	 * @return
+	 */
+	private void loadPluginManager() {
+		System.out.println(" load plugin manager");
+		ServiceReference ref = getContext().getServiceReference(IPluginManager.class.getName());
+		if(ref != null) {
+			pluginManagerExternal = (IPluginManager) getContext().getService(ref);
+			System.out.println(pluginManagerExternal);
+			// TODO: warning if plugin manager service can not be resolved
+		}
+	}
 
+
+	public IPluginManager getPluginManagerExternal() {
+		return pluginManagerExternal;
+	}
 }

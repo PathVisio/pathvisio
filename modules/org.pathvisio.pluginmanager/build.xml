@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<project name="org.pathvisio.pluginmanager" default="jar" basedir=".">
+
+  <import file="../../build-common.xml" />
+
+  	<path id="project.class.path">
+		<fileset dir="../../lib">
+			<include name="org.eclipse.osgi.jar"/>
+		</fileset>
+	</path>
+
+</project>

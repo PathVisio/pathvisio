@@ -99,6 +99,7 @@ public class MainPanelStandalone extends MainPanel
 
 		JMenu pluginsMenu = new JMenu("Plugins");//new
 		pluginsMenu.add(standaloneActions.pluginManagerAction);
+		pluginsMenu.add(standaloneActions.loadLocalBundlesAction);
 		pluginsMenu.addSeparator();
 		
 		JMenu helpMenu = new JMenu("Help");

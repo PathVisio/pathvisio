@@ -25,6 +25,7 @@
 					<file name="modules/org.pathvisio.core/build.xml"/>
 					<file name="modules/org.pathvisio.gui/build.xml"/>
 					<file name="modules/org.pathvisio.data/build.xml"/>
+					<file name="modules/org.pathvisio.pluginmanager/build.xml"/>
 					<file name="modules/org.pathvisio.desktop/build.xml"/>
 					<file name="modules/org.pathvisio.launcher/build.xml"/>
 					<file name="modules/org.pathvisio.gex/build.xml"/>
@@ -82,11 +83,15 @@
 		<subant target="jar" buildpath="modules/org.pathvisio.data/build.xml"/>
 	</target>
 
+	<target name="pluginmanager.jar" depends="prepare">
+		<subant target="jar" buildpath="modules/org.pathvisio.pluginmanager/build.xml"/>
+	</target>
+
 	<target name="gui.jar" depends="core.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.gui/build.xml"/>
 	</target>
 
-	<target name="desktop.jar" depends="gui.jar, data.jar">
+	<target name="desktop.jar" depends="gui.jar, data.jar, pluginmanager.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.desktop/build.xml"/>
 	</target>
 
@@ -129,6 +134,7 @@
 			<fileset dir="modules">
 				<include name="org.pathvisio.core.jar"/>
 				<include name="org.pathvisio.data.jar"/>
+				<include name="org.pathvisio.pluginmanager.jar"/>
 				<include name="org.pathvisio.gui.jar"/>
 				<include name="org.pathvisio.desktop.jar"/>
 				<include name="org.pathvisio.statistics.jar"/>
@@ -319,6 +325,7 @@
 			</classpath>
 			<packageset dir="${src.dir}/org.pathvisio.core/src"/>
 			<packageset dir="${src.dir}/org.pathvisio.data/src"/>
+			<packageset dir="${src.dir}/org.pathvisio.pluginmanager/src"/>
 			<packageset dir="${src.dir}/org.pathvisio.gui/src"/>
 			<packageset dir="${src.dir}/org.pathvisio.desktop/src"/>
 			<packageset dir="${src.dir}/org.wikipathways.applet/src"/>
@@ -330,6 +337,7 @@
 			<sourcepath>
 				<pathelement location="${src.dir}/org.pathvisio.core/src"/>
 				<pathelement location="${src.dir}/org.pathvisio.data/src"/>
+				<pathelement location="${src.dir}/org.pathvisio.pluginmanager/src"/>
 				<pathelement location="${src.dir}/org.pathvisio.gex/src"/>
 				<pathelement location="${src.dir}/org.pathvisio.visualization/src"/>
 				<pathelement location="${src.dir}/org.pathvisio.statistics/src"/>

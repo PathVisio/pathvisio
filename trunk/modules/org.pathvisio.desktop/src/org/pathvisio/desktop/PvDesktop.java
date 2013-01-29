@@ -100,7 +100,6 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		visualizationManager.addListener(this);
 		compat = new StandaloneCompat(this);
 		preferencesDlg = new PreferencesDlg(PreferenceManager.getCurrent());
-		loadPluginManager();
 		initPanels();
 	}
 
@@ -464,7 +463,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	 * this methods gets the plugin manager class from the OSGi registry
 	 * @return
 	 */
-	private void loadPluginManager() {
+	public void loadPluginManager() {
 		System.out.println(" load plugin manager");
 		ServiceReference ref = getContext().getServiceReference(IPluginManager.class.getName());
 		if(ref != null) {

@@ -6,6 +6,12 @@ org.pathvisio.core
 org.pathvisio.gui
 	gui functions that are shared by wikipathways applet and PathVisio
 
+org.pathvisio.data
+	data interface to load biological data into PathVisio
+
+org.pathvisio.pluginmanager
+	module that contains all functionality of the 3.0.0 PathVisio plugin manager
+
 org.pathvisio.desktop
 	standalone desktop version of PathVisio
 

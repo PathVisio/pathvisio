@@ -40,6 +40,7 @@ import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.ViewActions;
 import org.pathvisio.desktop.dialog.PluginManagerDialog;
+import org.pathvisio.desktop.dialog.RunLocalPluginDialog;
 import org.pathvisio.desktop.plugin.PluginDialogSwitch;
 import org.pathvisio.gui.SwingEngine;
 
@@ -63,6 +64,7 @@ public class StandaloneActions implements ApplicationEventListener
 	public final Action preferencesAction;
 	public final Action searchAction;
 	public final Action pluginManagerAction;
+	public final Action loadLocalBundlesAction;
 	public final Action printAction;
 
 	StandaloneActions (PvDesktop desktop)
@@ -76,6 +78,7 @@ public class StandaloneActions implements ApplicationEventListener
 		preferencesAction = new PreferencesAction(desktop);
 		searchAction = new SearchAction(swingEngine);
 		pluginManagerAction = new PluginManagerAction(desktop);
+		loadLocalBundlesAction = new LoadLocalBundlesAction(desktop);
 		//registering this class to receive Application level events (used in PrintAction) 
 		swingEngine.getEngine().addApplicationEventListener(this);
 		printAction = new PrintAction(swingEngine);
@@ -151,7 +154,30 @@ public class StandaloneActions implements ApplicationEventListener
 			}
 		}
 	}
+	
+	/**
+	 * Plugins -> Install local plugins
+	 * allows users to start all bundles in a directory
+	 */
+	public static class LoadLocalBundlesAction extends AbstractAction
+	{
+		PvDesktop pvDesktop;
 
+		public LoadLocalBundlesAction(PvDesktop desktop)
+		{
+			super();
+			this.pvDesktop = desktop;
+			putValue(NAME, "Install local plugins");
+			putValue(SHORT_DESCRIPTION, "Information about active plugins");
+		}
+
+		public void actionPerformed(ActionEvent e)
+		{
+			RunLocalPluginDialog dlg = new RunLocalPluginDialog(pvDesktop);
+			dlg.createAndShowGUI();
+		}
+	}
+	
 	/**
 	 * Open a pathway from disk.
 	 * In menu->file->open

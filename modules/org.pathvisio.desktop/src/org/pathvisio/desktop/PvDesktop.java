@@ -284,6 +284,9 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			JMenu menuAt = menuBar.getMenu(i);
 			if (menuAt.getText().equals (submenu))
 			{
+				if(menuAt.getText().equalsIgnoreCase("plugins") && menuAt.getItemCount() == 2) {
+					menuAt.addSeparator(); 
+				}
 				JMenuItem item = menuAt.add(a);
 				registeredActions.put(a, item);
 				break;

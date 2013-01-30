@@ -467,11 +467,9 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	 * @return
 	 */
 	public void loadPluginManager() {
-		System.out.println(" load plugin manager");
 		ServiceReference ref = getContext().getServiceReference(IPluginManager.class.getName());
 		if(ref != null) {
 			pluginManagerExternal = (IPluginManager) getContext().getService(ref);
-			System.out.println(pluginManagerExternal);
 			// TODO: warning if plugin manager service can not be resolved
 		}
 	}

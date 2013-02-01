@@ -7,7 +7,6 @@ Bundle-Activator: org.pathvisio.desktop.Activator
 Export-Package: com.nexes.wizard,
  org.pathvisio.desktop,
  org.pathvisio.desktop.data,
- org.pathvisio.desktop.debug,
  org.pathvisio.desktop.dialog,
  org.pathvisio.desktop.gex,
  org.pathvisio.desktop.model,

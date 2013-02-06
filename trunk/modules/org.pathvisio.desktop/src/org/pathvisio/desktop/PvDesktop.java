@@ -17,8 +17,13 @@
 
 package org.pathvisio.desktop;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -468,9 +473,26 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	 */
 	public void loadPluginManager() {
 		ServiceReference ref = getContext().getServiceReference(IPluginManager.class.getName());
+		// TODO: warning if plugin manager service can not be resolved
 		if(ref != null) {
 			pluginManagerExternal = (IPluginManager) getContext().getService(ref);
-			// TODO: warning if plugin manager service can not be resolved
+			Set<URL> onlineRepos = new HashSet<URL>();
+			try {
+				// TODO: this information should be stored in global settings
+				onlineRepos.add(new URL("http://repository.pathvisio.org/repository.xml"));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			URL localRepo;
+			try {
+				localRepo = new File(GlobalPreference.getPluginDir(), "repository.xml").toURI().toURL();
+				pluginManagerExternal.init(localRepo, onlineRepos);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

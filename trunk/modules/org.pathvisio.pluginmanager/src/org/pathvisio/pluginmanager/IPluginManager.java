@@ -17,7 +17,9 @@
 package org.pathvisio.pluginmanager;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * interface which will be registered as an OSGi service
@@ -37,5 +39,5 @@ public interface IPluginManager {
 	 * @return status report map - status info for each bundle
 	 */
 	public Map<String, String> runLocalPlugin(File bundleDir);
-	
+	public void init(URL localRepo, Set<URL> onlineRepo);
 }

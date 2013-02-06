@@ -17,14 +17,21 @@
 package org.pathvisio.pluginmanager.impl;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.felix.bundlerepository.Repository;
+import org.apache.felix.bundlerepository.RepositoryAdmin;
+import org.apache.felix.bundlerepository.Resource;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.ServiceReference;
 import org.pathvisio.pluginmanager.IPluginManager;
 
 /**
@@ -37,9 +44,37 @@ import org.pathvisio.pluginmanager.IPluginManager;
 public class PluginManager implements IPluginManager {
 
 	private BundleContext context;
+	private Repository localRepository;
+	private Set<Repository> onlineRepositories;
 	
 	public PluginManager (BundleContext context) {
 		this.context = context;
+		onlineRepositories = new HashSet<Repository>();
+	}
+	
+	public void init(URL localRepo, Set<URL> onlineRepo) {
+		ServiceReference ref = context.getServiceReference(RepositoryAdmin.class.getName());
+		RepositoryAdmin admin = (RepositoryAdmin) context.getService(ref);
+		try {
+			// TODO: create repository.xml file if it is not there yet
+			localRepository = admin.addRepository(localRepo);
+			
+			for(URL url : onlineRepo) {
+				Repository repo = admin.addRepository(url);
+				onlineRepositories.add(repo);
+			}
+			
+			for(Repository rep : admin.listRepositories()) {
+				System.out.println(rep.getName() + "\t" + rep.getResources().length);
+				for(Resource r : rep.getResources()) {
+					System.out.println(r.getSymbolicName());
+				}
+				System.out.println("\n");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

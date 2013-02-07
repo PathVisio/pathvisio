@@ -6,6 +6,8 @@
   	<path id="project.class.path">
 		<fileset dir="../../lib">
 			<include name="org.eclipse.osgi.jar"/>
+			<include name="org.apache.felix.bundlerepository-1.6.6.jar"/>
+			<include name="org.osgi.impl.bundle.repoindex.lib-0.0.2.jar"/>
 		</fileset>
 	</path>
 

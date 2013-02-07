@@ -39,5 +39,5 @@ public interface IPluginManager {
 	 * @return status report map - status info for each bundle
 	 */
 	public Map<String, String> runLocalPlugin(File bundleDir);
-	public void init(URL localRepo, Set<URL> onlineRepo);
+	public void init(File localRepo, Set<URL> onlineRepo);
 }

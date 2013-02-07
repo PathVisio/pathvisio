@@ -485,14 +485,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				e.printStackTrace();
 			}
 			
-			URL localRepo;
-			try {
-				localRepo = new File(GlobalPreference.getPluginDir(), "repository.xml").toURI().toURL();
-				pluginManagerExternal.init(localRepo, onlineRepos);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			pluginManagerExternal.init(new File(GlobalPreference.getPluginDir(), "repository.xml"), onlineRepos);
 		}
 	}
 

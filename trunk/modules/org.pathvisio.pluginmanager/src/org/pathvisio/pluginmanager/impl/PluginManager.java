@@ -17,6 +17,8 @@
 package org.pathvisio.pluginmanager.impl;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
@@ -32,6 +35,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.service.indexer.ResourceIndexer;
 import org.pathvisio.pluginmanager.IPluginManager;
 
 /**
@@ -46,18 +50,38 @@ public class PluginManager implements IPluginManager {
 	private BundleContext context;
 	private Repository localRepository;
 	private Set<Repository> onlineRepositories;
+	private ResourceIndexer indexer;
 	
 	public PluginManager (BundleContext context) {
 		this.context = context;
 		onlineRepositories = new HashSet<Repository>();
 	}
 	
-	public void init(URL localRepo, Set<URL> onlineRepo) {
+	public void init(File localRepo, Set<URL> onlineRepo) {
 		ServiceReference ref = context.getServiceReference(RepositoryAdmin.class.getName());
 		RepositoryAdmin admin = (RepositoryAdmin) context.getService(ref);
+		ServiceReference resIndexRef = context.getServiceReference(ResourceIndexer.class.getName());
+		indexer = (ResourceIndexer) context.getService(resIndexRef);
 		try {
-			// TODO: create repository.xml file if it is not there yet
-			localRepository = admin.addRepository(localRepo);
+			if(localRepo.exists()) {
+				// repository.xml file exists
+				System.out.println("INFO:\tPathVisio local repository already exists.");
+				localRepository = admin.addRepository(localRepo.toURI().toURL());
+			} else {
+				System.out.println("INFO:\tPathVisio local repository does not exist. Create new repository file: " + localRepo.getAbsolutePath());
+				// repository.xml file does not exist
+				
+				Map<String, String> config = new HashMap<String, String>();
+				config.put(ResourceIndexer.REPOSITORY_NAME, "PathVisio local repository");
+
+				Set<File> inputs = new HashSet<File>();
+				File indexFile = new File(localRepo.getAbsolutePath() + ".gz");
+				OutputStream output = new FileOutputStream(indexFile);
+				indexer.index(inputs, output, config);
+				
+				localRepo = Utils.unGzip(indexFile, true);
+				localRepository = admin.addRepository(localRepo.toURI().toURL());
+			}
 			
 			for(URL url : onlineRepo) {
 				Repository repo = admin.addRepository(url);
@@ -76,7 +100,7 @@ public class PluginManager implements IPluginManager {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * method installs all OSGi bundles present in the
 	 * provided directory

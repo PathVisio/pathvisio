@@ -17,7 +17,6 @@
 
 package org.pathvisio.desktop;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -485,7 +484,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				e.printStackTrace();
 			}
 			
-			pluginManagerExternal.init(new File(GlobalPreference.getPluginDir(), "repository.xml"), onlineRepos);
+			pluginManagerExternal.init(GlobalPreference.getBundleDir(), onlineRepos);
 		}
 	}
 

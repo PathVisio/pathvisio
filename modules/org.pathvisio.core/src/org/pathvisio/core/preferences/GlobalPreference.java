@@ -139,6 +139,7 @@ public enum GlobalPreference implements Preference
 	private static File dirApplication = null;
 	private static File dirData = null;
 	private static File dirPlugin = null;
+	private static File dirBundle = null;
 
 	/**
 	 * Get the working directory of this application
@@ -166,6 +167,17 @@ public enum GlobalPreference implements Preference
 			if(!dirPlugin.exists()) dirPlugin.mkdir();
 		}
 		return dirPlugin;
+	}
+	
+	public static File getBundleDir() {
+		if(dirApplication == null) {
+			getApplicationDir();
+		}
+		if(dirBundle == null) {
+			dirBundle = new File(getApplicationDir(),".bundles");
+			if(!dirBundle.exists()) dirBundle.mkdir();
+		}
+		return dirBundle;
 	}
 
 	public static File getDataDir() {

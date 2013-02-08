@@ -75,7 +75,7 @@ public class RunLocalPluginDialog extends JDialog
 		FormLayout layout = new FormLayout("4dlu, pref, 4dlu, min, 4dlu, min, 4dlu", "4dlu, pref, 4dlu, pref");
 		panel.setLayout(layout);
 		
-		panel.add(new JLabel("Run local plugins temporarily. Please select directory."), cc.xy(2, 2));
+		panel.add(new JLabel("Install local plugins. Please select directory."), cc.xy(2, 2));
 		tfDir = new JTextField();
 		JButton browseBtn = new JButton("Browse");
 		browseBtn.addActionListener(new BrowseButtonActionListener(tfDir, dlg, JFileChooser.DIRECTORIES_ONLY));
@@ -114,7 +114,7 @@ public class RunLocalPluginDialog extends JDialog
 					File file = new File(tfDir.getText());
 					if(file.exists()) 
 					{
-						Map<String, String> map = desktop.getPluginManagerExternal().runLocalPlugin(file);
+						Map<String, String> map = desktop.getPluginManagerExternal().installLocalPlugins(file);
 						desktop.getPluginManager().startPlugins();
 						dlg.dispose();
 						StatusDialog status = new StatusDialog(desktop);
@@ -166,7 +166,7 @@ public class RunLocalPluginDialog extends JDialog
 			
 			for(String str : status.keySet()) 
 			{
-				if(status.get(str).equals("running")) running.put(str, status.get(str));
+				if(status.get(str).equals("started") || status.get(str).equals("already installed")) running.put(str, status.get(str));
 				else problems.put(str, status.get(str));
 			}
 

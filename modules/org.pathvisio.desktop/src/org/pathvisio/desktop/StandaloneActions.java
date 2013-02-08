@@ -33,8 +33,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.core.ApplicationEvent;
-import org.pathvisio.core.Globals;
 import org.pathvisio.core.Engine.ApplicationEventListener;
+import org.pathvisio.core.Globals;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.VPathway;

@@ -40,4 +40,5 @@ public interface IPluginManager {
 	 */
 	public Map<String, String> installLocalPlugins(File bundleDir);
 	public void init(File localRepo, Set<URL> onlineRepo);
+	public Map<String, String> downloadPLugin(String symbolicName);
 }

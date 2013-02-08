@@ -61,7 +61,6 @@ public class PluginManager {
 			ServiceReference[] refs = pvDesktop.getContext().getServiceReferences(Plugin.class.getName(), null);
 			if(refs != null) {
 				for(int i = 0; i < refs.length; i++) {
-					System.out.println ("Found Plugin class " + refs[i].getBundle().getSymbolicName());
 					Plugin plugin = (Plugin) pvDesktop.getContext().getService(refs[i]);
 					if(!startedPlugins.contains(plugin)) 
 					{
@@ -70,8 +69,8 @@ public class PluginManager {
 						pi.param = "";
 						pi.jar = refs[i].getBundle().getLocation();
 						try {
-							System.out.println ("Calling " + plugin.getClass().getName() + ".init()");
 							plugin.init(pvDesktop);
+							Logger.log.info("Initializing plugin: " + refs[i].getBundle().getSymbolicName());
 							startedPlugins.add(plugin);
 						} catch (Error ex) {
 							Logger.log.error("Could not initialize plugin", ex);

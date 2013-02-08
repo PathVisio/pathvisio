@@ -20,7 +20,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+
+import org.apache.felix.bundlerepository.Resource;
 
 public class Utils {
 	
@@ -45,5 +50,32 @@ public class Utils {
 	            destination.close();
 	        }
 	    }
+	}
+	
+	public static File downloadFile(String uri, Resource resource, File bundleDir) {
+		File localFile = new File(bundleDir,resource.getSymbolicName()+"-"+resource.getVersion()+".jar");
+		System.out.println(localFile.getAbsolutePath());
+
+		FileOutputStream fos = null;
+		ReadableByteChannel rbc = null;
+		try {
+			URL website = new URL(uri);
+		    rbc = Channels.newChannel(website.openStream());
+		    fos = new FileOutputStream(localFile);
+		    fos.getChannel().transferFrom(rbc, 0, 1 << 24);
+		 
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				fos.close();
+				rbc.close();
+				return localFile;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 }

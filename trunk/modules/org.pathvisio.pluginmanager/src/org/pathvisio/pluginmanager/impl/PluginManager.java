@@ -26,12 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
+import org.apache.felix.bundlerepository.Resolver;
 import org.apache.felix.bundlerepository.Resource;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.pathvisio.pluginmanager.IPluginManager;
 
@@ -47,6 +50,7 @@ public class PluginManager implements IPluginManager {
 	private BundleContext context;
 	private Set<Repository> onlineRepositories;
 	private File bundleDir;
+	private RepositoryAdmin repoAdmin;
 	
 	public PluginManager (BundleContext context) {
 		this.context = context;
@@ -58,18 +62,24 @@ public class PluginManager implements IPluginManager {
 		startLocalBundles();
 		
 		ServiceReference ref = context.getServiceReference(RepositoryAdmin.class.getName());
-		RepositoryAdmin admin = (RepositoryAdmin) context.getService(ref);
+		repoAdmin = (RepositoryAdmin) context.getService(ref);
 
 		try {
 			for(URL url : onlineRepo) {
-				Repository repo = admin.addRepository(url);
+				Repository repo = repoAdmin.addRepository(url);
 				onlineRepositories.add(repo);
 			}
 			
-			for(Repository rep : admin.listRepositories()) {
+			for(Repository rep : repoAdmin.listRepositories()) {
 				System.out.println(rep.getName() + "\t" + rep.getResources().length);
 				for(Resource r : rep.getResources()) {
-					System.out.println(r.getSymbolicName());
+					System.out.print(r.getSymbolicName());
+					for(Bundle b : context.getBundles()) {
+						if(b.getSymbolicName().equals(r.getSymbolicName()) && b.getVersion().equals(r.getVersion())) {
+							System.out.print(" is installed.");
+						}
+					}
+					System.out.println();
 				}
 				System.out.println("\n");
 			}
@@ -137,36 +147,94 @@ public class PluginManager implements IPluginManager {
 	 *      value = running / error message 
 	 */
 	public Map<String, String> installLocalPlugins(File dir) {
-
-		Map<String, String> statusReport = new HashMap<String, String>();
-		List<Bundle> bundles = new ArrayList<Bundle>();
 		if(dir != null && dir.isDirectory() && dir.listFiles().length > 0) {
-			// copy files in localrepo
-			List<File> copiedFiles = new ArrayList<File>();
-			for(File file : dir.listFiles()) {
-				File dest = new File(bundleDir, file.getName());
-				try {
-					Utils.copyFile(file, dest);
-					copiedFiles.add(dest);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			List<File> files = new ArrayList<File>();
+			for(File f : dir.listFiles()) {
+				if(f.getName().endsWith("jar")) {
+					// copy files in localrepo
+					File dest = new File(bundleDir, f.getName());
+					try {
+						Utils.copyFile(f, dest);
+						files.add(dest);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
-			for(File file : copiedFiles) {
-				String msg = installBundle(file, bundles);
-				if(msg != null) {
-					statusReport.put(file.getName(), msg);
-					file.delete();
-				} 
-			}
-			for(Bundle b : bundles) {
-				String msg = startBundle(b);
-				statusReport.put(b.getSymbolicName(), msg);
-			}
+			return installLocalPlugins(files);
 		} else {
 			// TODO: throw exception --> directory is not valid or empty
 		}
+		return null;
+	}
+	
+	public Map<String, String> installLocalPlugins(List<File> files) {
+		Map<String, String> statusReport = new HashMap<String, String>();
+		List<Bundle> bundles = new ArrayList<Bundle>();
+
+		for (File file : files) {
+			String msg = installBundle(file, bundles);
+			if (msg != null) {
+				statusReport.put(file.getName(), msg);
+				file.delete();
+			}
+		}
+		for (Bundle b : bundles) {
+			String msg = startBundle(b);
+			statusReport.put(b.getSymbolicName(), msg);
+		}
 		return statusReport;
+	}
+
+	
+//	Map<String, String> status = pvDesktop.getPluginManagerExternal().downloadPLugin("org.pathvisio.htmlexport");
+//	for(String key : status.keySet()) {
+//		System.out.println(key + "\t" + status.get(key));
+//	}
+//	pvDesktop.getPluginManager().startPlugins();
+	@Override
+	public Map<String, String> downloadPLugin(String symbolicName) {
+		try {
+			Resolver resolver = repoAdmin.resolver();
+			Resource[] resources = repoAdmin.discoverResources("(symbolicname=" + symbolicName + ")");
+			for(Resource r : resources) {
+				System.out.println(r.getSymbolicName() + "\t" + r.getVersion());
+			}
+			if(resources != null && resources.length > 0) {
+				resolver.add(resources[0]);
+				loadDependencies(resolver, resources[0]);
+			}
+			List<File> files = new ArrayList<File>();
+			for(Resource res : resolver.getAddedResources()) {
+				System.out.println("Download " + res.getSymbolicName() + "\t" + res.getURI());
+				File file = Utils.downloadFile(res.getURI(), res, bundleDir);
+				if(file != null) files.add(file);
+			}
+			for(Resource res : resolver.getRequiredResources()) {
+				System.out.println("Download " + res.getSymbolicName() + "\t" + res.getURI());
+				File file = Utils.downloadFile(res.getURI(), res, bundleDir);
+				if(file != null) files.add(file);
+			}
+			
+			return installLocalPlugins(files);
+		} catch (InvalidSyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private void loadDependencies(Resolver resolver, Resource resource) {
+		if(resolver.resolve()) {
+			for(Resource res : resolver.getRequiredResources()) {
+				System.out.println("Deploying dependency: " + res.getPresentationName() + " (" + res.getSymbolicName() + ") " + res.getVersion());
+			}
+		} else {
+			Reason[] reqs = resolver.getUnsatisfiedRequirements();
+		    for (int i = 0; i < reqs.length; i++) {
+		        System.out.println("Unable to resolve: " + reqs[i].getRequirement().getFilter());
+		    }
+		}
 	}
 }

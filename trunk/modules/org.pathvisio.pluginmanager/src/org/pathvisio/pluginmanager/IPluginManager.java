@@ -38,6 +38,6 @@ public interface IPluginManager {
 	 * @param bundleDir
 	 * @return status report map - status info for each bundle
 	 */
-	public Map<String, String> runLocalPlugin(File bundleDir);
+	public Map<String, String> installLocalPlugins(File bundleDir);
 	public void init(File localRepo, Set<URL> onlineRepo);
 }

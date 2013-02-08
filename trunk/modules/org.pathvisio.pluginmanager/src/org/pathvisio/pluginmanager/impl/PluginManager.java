@@ -17,8 +17,7 @@
 package org.pathvisio.pluginmanager.impl;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
@@ -35,7 +33,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.indexer.ResourceIndexer;
 import org.pathvisio.pluginmanager.IPluginManager;
 
 /**
@@ -48,41 +45,22 @@ import org.pathvisio.pluginmanager.IPluginManager;
 public class PluginManager implements IPluginManager {
 
 	private BundleContext context;
-	private Repository localRepository;
 	private Set<Repository> onlineRepositories;
-	private ResourceIndexer indexer;
+	private File bundleDir;
 	
 	public PluginManager (BundleContext context) {
 		this.context = context;
 		onlineRepositories = new HashSet<Repository>();
 	}
 	
-	public void init(File localRepo, Set<URL> onlineRepo) {
+	public void init(File bundleDir, Set<URL> onlineRepo) {
+		this.bundleDir = bundleDir;
+		startLocalBundles();
+		
 		ServiceReference ref = context.getServiceReference(RepositoryAdmin.class.getName());
 		RepositoryAdmin admin = (RepositoryAdmin) context.getService(ref);
-		ServiceReference resIndexRef = context.getServiceReference(ResourceIndexer.class.getName());
-		indexer = (ResourceIndexer) context.getService(resIndexRef);
-		try {
-			if(localRepo.exists()) {
-				// repository.xml file exists
-				System.out.println("INFO:\tPathVisio local repository already exists.");
-				localRepository = admin.addRepository(localRepo.toURI().toURL());
-			} else {
-				System.out.println("INFO:\tPathVisio local repository does not exist. Create new repository file: " + localRepo.getAbsolutePath());
-				// repository.xml file does not exist
-				
-				Map<String, String> config = new HashMap<String, String>();
-				config.put(ResourceIndexer.REPOSITORY_NAME, "PathVisio local repository");
 
-				Set<File> inputs = new HashSet<File>();
-				File indexFile = new File(localRepo.getAbsolutePath() + ".gz");
-				OutputStream output = new FileOutputStream(indexFile);
-				indexer.index(inputs, output, config);
-				
-				localRepo = Utils.unGzip(indexFile, true);
-				localRepository = admin.addRepository(localRepo.toURI().toURL());
-			}
-			
+		try {
 			for(URL url : onlineRepo) {
 				Repository repo = admin.addRepository(url);
 				onlineRepositories.add(repo);
@@ -100,6 +78,56 @@ public class PluginManager implements IPluginManager {
 			e.printStackTrace();
 		}
 	}
+	
+	private Map<String, String> startLocalBundles() {
+		Map<String, String> statusReport = new HashMap<String, String>();
+		List<Bundle> bundles = new ArrayList<Bundle>();
+		for(File f : bundleDir.listFiles()) {
+			if(f.getName().endsWith("jar")) {
+				String msg = installBundle(f, bundles);
+				if(msg != null) {
+					statusReport.put(f.getName(), msg);
+				}
+			}
+		}
+		
+		for(Bundle b : bundles) {
+			String msg = startBundle(b);
+			statusReport.put(b.getSymbolicName(), msg);
+		}
+		
+		return statusReport;
+	}
+	
+	private String startBundle(Bundle b) {
+		try {
+			b.start();
+			System.out.println("Bundle " + b.getSymbolicName() + " started");
+			return "started";
+		} catch (BundleException e) {
+			System.err.println ("Could not start bundle " + b.getSymbolicName() + "\t" + e.getMessage());
+			try {
+				// necessary so it can be installed at a later point
+				b.uninstall();
+			} catch (BundleException e1) {}
+			return e.getMessage();
+		}
+	}
+
+	private String installBundle(File f, List<Bundle> bundles) {
+		try {
+			Bundle b = context.installBundle(f.toURI().toString());
+			System.out.println ("Loading " + f.toURI());
+			bundles.add(b);
+		} catch (BundleException ex) {
+			if(ex.getMessage().contains("has already been installed from")) {
+				return "already installed";
+			}
+			System.err.println ("Could not install bundle " + ex.getMessage());
+			return ex.getMessage();
+		}
+		return null;
+	}
 
 	/**
 	 * method installs all OSGi bundles present in the
@@ -108,39 +136,36 @@ public class PluginManager implements IPluginManager {
 	 * 		key = bundle symbolic name (or file name if bundle couldn't be installed)
 	 *      value = running / error message 
 	 */
-	public Map<String, String> runLocalPlugin(File bundleDir) {
+	public Map<String, String> installLocalPlugins(File dir) {
+
 		Map<String, String> statusReport = new HashMap<String, String>();
 		List<Bundle> bundles = new ArrayList<Bundle>();
-		if(bundleDir != null && bundleDir.isDirectory() && bundleDir.listFiles().length > 0) {
-			for(File file : bundleDir.listFiles()) {
-				if (file.getName().endsWith(".jar")) {
-					try {
-						Bundle b = context.installBundle(file.toURI().toString());
-						System.out.println ("Loading " + file.toURI());
-		    			bundles.add(b);
-					} catch (Exception ex) {
-						statusReport.put(file.getName(), ex.getMessage());
-						System.err.println ("Could not install bundle " + ex.getMessage());
-					}
+		if(dir != null && dir.isDirectory() && dir.listFiles().length > 0) {
+			// copy files in localrepo
+			List<File> copiedFiles = new ArrayList<File>();
+			for(File file : dir.listFiles()) {
+				File dest = new File(bundleDir, file.getName());
+				try {
+					Utils.copyFile(file, dest);
+					copiedFiles.add(dest);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+			}
+			for(File file : copiedFiles) {
+				String msg = installBundle(file, bundles);
+				if(msg != null) {
+					statusReport.put(file.getName(), msg);
+					file.delete();
+				} 
+			}
+			for(Bundle b : bundles) {
+				String msg = startBundle(b);
+				statusReport.put(b.getSymbolicName(), msg);
 			}
 		} else {
 			// TODO: throw exception --> directory is not valid or empty
-		}
-		
-		for(Bundle b : bundles) {
-			try {
-				b.start();
-				System.out.println("Bundle " + b.getSymbolicName() + " started");
-				statusReport.put(b.getSymbolicName(), "running");
-			} catch (BundleException e) {
-				statusReport.put(b.getSymbolicName(), e.getMessage());
-				System.err.println ("Could not start bundle " + b.getSymbolicName() + "\t" + e.getMessage());
-				try {
-					// necessary so it can be installed at a later point
-					b.uninstall();
-				} catch (BundleException e1) {}
-			}
 		}
 		return statusReport;
 	}

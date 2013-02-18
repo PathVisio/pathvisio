@@ -43,7 +43,7 @@ import org.pathvisio.core.view.State;
 class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, GpmlFormatWriter 
 {
 	public static final GpmlFormat2010a GPML_2010A = new GpmlFormat2010a (
-			"GPML.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2010a")
+			"GPML2010a.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2010a")
 		);
 
 	public GpmlFormat2010a(String xsdFile, Namespace ns) {

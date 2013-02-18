@@ -1666,12 +1666,28 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 
 	protected String setGeneID = "";
 
+	/**
+	 * @deprecated Use {@link #getElementID()} instead
+	 */
 	public String getGeneID()
+	{
+		return getElementID();
+	}
+
+	public String getElementID()
 	{
 		return setGeneID;
 	}
 
+	/**
+	 * @deprecated Use {@link #setElementID(String)} instead
+	 */
 	public void setGeneID(String v)
+	{
+		setElementID(v);
+	}
+
+	public void setElementID(String v)
 	{
 		if (v == null)
 			throw new IllegalArgumentException();

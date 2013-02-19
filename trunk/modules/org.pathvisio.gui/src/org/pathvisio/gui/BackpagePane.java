@@ -41,7 +41,7 @@ import org.pathvisio.core.view.VPathwayElement;
 
 /**
  * The backpage panel for the Swing version of PathVisio. This pane shows annotation
- * information from the Gene Database when a datanode is clicked.
+ * information from the individual Databases when a datanode or interaction is clicked.
  * <p>
  * BackpagePane listens to selection events and other event types to update
  * its contents when necessary.

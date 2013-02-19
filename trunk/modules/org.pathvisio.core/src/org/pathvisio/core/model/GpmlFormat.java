@@ -44,7 +44,7 @@ import org.xml.sax.InputSource;
  */
 public class GpmlFormat extends AbstractPathwayFormat
 {
-	static private final GpmlFormat2010a CURRENT = GpmlFormat2010a.GPML_2010A;
+	static private final GpmlFormat2013a CURRENT = GpmlFormat2013a.GPML_2013A;
 
 	public static final Namespace RDF = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	public static final Namespace RDFS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
@@ -135,7 +135,7 @@ public class GpmlFormat extends AbstractPathwayFormat
 	{
 		GpmlFormatReader[] formats = new GpmlFormatReader[]
 		{ 
-				GpmlFormat200X.GPML_2007, GpmlFormat200X.GPML_2008A, GpmlFormat2010a.GPML_2010A 
+				GpmlFormat200X.GPML_2007, GpmlFormat200X.GPML_2008A, GpmlFormat2010a.GPML_2010A , GpmlFormat2013a.GPML_2013A 
 		};
 		for (GpmlFormatReader format : formats)
 		{

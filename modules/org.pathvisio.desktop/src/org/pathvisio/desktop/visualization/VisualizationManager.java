@@ -322,11 +322,12 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 	public void saveXML() throws IOException
 	{
 		if(!gexManager.isConnected()) return;
-
-		// write to a temporary file, rename to final file after write was successful.
+		
 		File finalFile = getFileForDb();
-		File tempFile = File.createTempFile(finalFile.getName(), ".tmp", finalFile.getParentFile());
-		OutputStream out = new FileOutputStream(tempFile);
+		if (finalFile.exists()) finalFile.delete();
+		finalFile.createNewFile();
+		
+		OutputStream out = new FileOutputStream(finalFile);
 
 		Document xmlDoc = new Document();
 		Element root = new Element(ROOT_XML_ELEMENT);
@@ -344,8 +345,6 @@ public class VisualizationManager implements GexManagerListener, VPathwayListene
 		xmlOut.output(xmlDoc, out);
 		out.close();
 
-		if (finalFile.exists()) finalFile.delete();
-		if (!tempFile.renameTo(finalFile)) throw new IOException ("Couldn't rename temporary file " + tempFile);
 		Logger.log.info("Saved visualizations and color sets to xml: " + finalFile);
 	}
 

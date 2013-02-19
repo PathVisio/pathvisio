@@ -80,8 +80,12 @@ public class BackpageTextProvider
 		
 		public String getType(PathwayElement e) {
 			ObjectType obj = e.getObjectType();
+			if(obj.equals(ObjectType.LINE)) {
+				return "Interaction";
+			} else {
 				return e.getDataNodeType();
 			}
+		}
 		
 		public String getHtml(PathwayElement e) {
 			String text = "";
@@ -219,8 +223,8 @@ public class BackpageTextProvider
 	{
 		if (e == null) {
 			return "<p>No pathway element is selected.</p>";
-		} else if (e.getObjectType() != ObjectType.DATANODE) {
-			return "<p>Backpage is not available for this type of element.<BR>Only DataNodes can have a backpage.</p>";
+		} else if (e.getObjectType() != ObjectType.DATANODE && e.getObjectType() != ObjectType.LINE) {
+			return "<p>Backpage is not available for this type of element.<BR>Only DataNodes or Lines can have a backpage.</p>";
 		} else if (e.getDataSource() == null || e.getXref().getId().equals("")) {
 			return "<p>There is no annotation for this pathway element defined.</p>";
 		}

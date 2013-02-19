@@ -1,0 +1,512 @@
+<xsd:schema targetNamespace="http://genmapp.org/GPML/2013a"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:gpml="http://pathvisio.org/GPML/2013a"
+	elementFormDefault="qualified"
+	>
+
+	<!-- GenMAPP Pathway Markup Language version 2010a -->
+
+	<!-- Type Definitions -->	
+	<xsd:attributeGroup name="FontAttributes">
+		<xsd:attribute name="FontName" default="Arial"
+			type="xsd:string"/>
+		<xsd:attribute name="FontStyle" default="Normal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Normal"/>
+					<xsd:enumeration value="Italic"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="FontDecoration" default="Normal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Normal"/>
+					<xsd:enumeration value="Underline"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="FontStrikethru" default="Normal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Normal"/>
+					<xsd:enumeration value="Strikethru"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="FontWeight" default="Normal">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Normal"/>
+					<xsd:enumeration value="Bold"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="FontSize" type="xsd:nonNegativeInteger"
+			default="12"/>
+		<xsd:attribute name="Align" default="Center">
+			<!-- Horizontal alignment -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Left"/>
+					<xsd:enumeration value="Center"/>
+					<xsd:enumeration value="Right"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+		<xsd:attribute name="Valign" default="Top">
+			<!-- Vertical alignment -->
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Top"/>
+					<xsd:enumeration value="Middle"/>
+					<xsd:enumeration value="Bottom"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:attributeGroup>
+
+	<xsd:attributeGroup name="RectAttributes">
+		<xsd:attribute name="CenterX" type="xsd:float" use="required"/>
+		<xsd:attribute name="CenterY" type="xsd:float" use="required"/>
+		<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
+		<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
+	</xsd:attributeGroup>
+
+	<xsd:attributeGroup name="ShapeStyleAttributes">
+		<xsd:attribute name="Color" type="gpml:ColorType" default="Black"/>
+		<xsd:attribute name="LineStyle" type="gpml:StyleType" default="Solid" />
+		<xsd:attribute name="LineThickness" type="xsd:float" default="1.0" />
+	</xsd:attributeGroup>
+
+	<!-- a rotation is either a float value or a string for each of the four right angles !-->
+	<xsd:simpleType name="RotationType">
+		<xsd:union>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Top"/> <!-- rotation of 0.0 !-->
+					<xsd:enumeration value="Right"/> <!-- rotation of 1/2 pi !-->
+					<xsd:enumeration value="Bottom"/> <!-- rotation of 1 pi !-->
+					<xsd:enumeration value="Left"/> <!-- rotation of 3/2 pi !-->
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:float"/> <!-- rotation is always measured in radians !-->
+			</xsd:simpleType>
+		</xsd:union>
+		
+	</xsd:simpleType>
+
+	<xsd:simpleType name="ColorType">
+		<xsd:union>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:hexBinary"/>
+			</xsd:simpleType>
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="Aqua"/>
+					<xsd:enumeration value="Black"/>
+					<xsd:enumeration value="Blue"/>
+					<xsd:enumeration value="Fuchsia"/>
+					<xsd:enumeration value="Gray"/>
+					<xsd:enumeration value="Green"/>
+					<xsd:enumeration value="Lime"/>
+					<xsd:enumeration value="Maroon"/>
+					<xsd:enumeration value="Navy"/>
+					<xsd:enumeration value="Olive"/>
+					<xsd:enumeration value="Purple"/>
+					<xsd:enumeration value="Red"/>
+					<xsd:enumeration value="Silver"/>
+					<xsd:enumeration value="Teal"/>
+					<xsd:enumeration value="White"/>
+					<xsd:enumeration value="Yellow"/>
+					<xsd:enumeration value="Transparent"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:union>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="StyleType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="Solid"/>
+			<xsd:enumeration value="Broken"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- use Dimension for width and height, they can't be nagative !-->
+	<xsd:simpleType name="Dimension">
+		<xsd:restriction base="xsd:float">
+			<xsd:minInclusive value="0" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- One or more comments - bundles GenMAPP notes and GenMAPP remarks together !-->
+	<xsd:group name="CommentGroup">
+		<xsd:sequence>
+			<xsd:element name="Comment" minOccurs="0"
+			maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:simpleContent>
+						<xsd:extension base="xsd:string">
+							<xsd:attribute name="Source" type="xsd:string"/>
+						</xsd:extension>
+					</xsd:simpleContent>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="PublicationXref" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="ID" type="xsd:string" use="required"/>
+					<xsd:attribute name="Database" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="BiopaxRef" minOccurs="0" maxOccurs="unbounded"/>		
+			<xsd:element name="Attribute" minOccurs="0"
+			maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:attribute name="Key" type="xsd:string" use="required"/>
+					<xsd:attribute name="Value" type="xsd:string" use="required"/>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:group>
+	
+<!-- End: Type Definitions -->
+
+<!-- Pathway -->
+	<xsd:element name="Pathway">
+		<xsd:complexType>
+			<xsd:sequence>
+
+				<xsd:group ref="gpml:CommentGroup"/>
+				
+				<xsd:element name="Graphics" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="BoardWidth" type="gpml:Dimension"
+							use="required"/>
+						<xsd:attribute name="BoardHeight" type="gpml:Dimension"
+							use="required"/>
+					</xsd:complexType>
+				</xsd:element>
+
+				<xsd:element ref="gpml:DataNode" minOccurs="0" maxOccurs="unbounded"/>
+
+				<xsd:element ref="gpml:State" minOccurs="0" maxOccurs="unbounded"/>
+
+				<xsd:element ref="gpml:Line" minOccurs="0" maxOccurs="unbounded"/>
+
+				<xsd:element ref="gpml:Label" minOccurs="0" maxOccurs="unbounded"/>
+
+				<xsd:element ref="gpml:Shape" minOccurs="0" maxOccurs="unbounded"/>
+
+				<xsd:element ref="gpml:Group" minOccurs="0" maxOccurs="unbounded"/>
+
+				<xsd:element ref="gpml:InfoBox" minOccurs="1" maxOccurs="1" />
+				
+				<xsd:element ref="gpml:Legend" minOccurs="0" maxOccurs="1"/>
+
+				<xsd:element ref="gpml:Biopax" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+
+			<xsd:attribute name="Name" type="xsd:string" use="required">
+				<!--  GenMAPP Pathway Title -->
+			</xsd:attribute>
+
+			<xsd:attribute name="Organism" type="xsd:string" use="optional">
+				<!-- Organism is not a field in the
+						GenMAPP database at this time, but we want to preserve this
+						information when importing maps, and also when exporting maps.
+						GenMAPP maps have the organism implied from the
+						filename. -->
+			</xsd:attribute>
+
+			<xsd:attribute name="Data-Source" type="xsd:string" use="optional">
+				<!-- On import to GenMAPP,
+						Data-Source value could be 'KEGG', 'Cytoscape', etc.  On export
+						from GenMAPP, value should be 'GenMAPP' with version
+						number. -->
+			</xsd:attribute>
+
+			<xsd:attribute name="Version" type="xsd:string" use="optional">
+				<!-- GenMAPP version, use for export
+					of maps from GenMAPP only. -->
+			</xsd:attribute>
+
+			<xsd:attribute name="Author" type="xsd:string" use="optional"/>
+
+			<xsd:attribute name="Maintainer" type="xsd:string" use="optional"/>
+
+			<xsd:attribute name="Email" type="xsd:string" use="optional"/>
+
+			<xsd:attribute name="License" type="xsd:string" use="optional"/>
+
+			<xsd:attribute name="Last-Modified" type="xsd:string" use="optional">
+				<!-- Last modification date, in the form of YYYYMMDD -->
+			</xsd:attribute>
+
+			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+
+		</xsd:complexType>
+	</xsd:element>
+<!-- End: Pathway -->
+
+
+<!-- Data Node -->
+	<xsd:element name="DataNode">
+		<!-- DataNode is the old GeneProduct, a gene in GenMAPP
+				terminology. -->
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attributeGroup ref="gpml:RectAttributes"/>
+						<xsd:attributeGroup ref="gpml:FontAttributes"/>
+						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes"/>
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="White"/>
+						<xsd:attribute name="ShapeType" type="xsd:string" default="Rectangle"/>
+						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="Xref" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="Database" type="xsd:string" use="required"/>
+						<xsd:attribute name="ID" type="xsd:string" use="required"/>						
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			
+			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+            		<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+            		<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
+
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
+		
+			<xsd:attribute name="Type" type="xsd:string" default="Unknown">
+			<!-- Old versions of GPML only allowed these values for Type:
+				"Protein", "Rna", "Complex", "GeneProduct", "Metabolite" and "Unknown". 
+				It's recommended that you use these values as often as possible. -->
+			</xsd:attribute>
+
+		</xsd:complexType>
+
+	</xsd:element>
+<!-- End: DataNode -->
+
+<!-- State -->
+	<xsd:element name="State">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:group ref="gpml:CommentGroup"/>
+				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="RelX" type="xsd:float" use="required"/>
+						<xsd:attribute name="RelY" type="xsd:float" use="required"/>
+						<xsd:attribute name="Width" type="gpml:Dimension" use="required" />
+						<xsd:attribute name="Height" type="gpml:Dimension" use="required" />
+						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes"/>
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="White"/>
+						<xsd:attribute name="ShapeType" type="xsd:string" default="Rectangle"/>
+						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:element name="Xref" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attribute name="Database" type="xsd:string" use="required"/>
+						<xsd:attribute name="ID" type="xsd:string" use="required"/>						
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			
+			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+            <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+			<xsd:attribute name="GraphRef" type="xsd:IDREF" use="optional" />
+			
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>
+		
+			<xsd:attribute name="StateType" type="xsd:string" default="Unknown"/>
+			<!-- Biological modification type. suggested values: Phosphorylated, Glycosylated, Activated, ... !-->
+
+		</xsd:complexType>
+
+	</xsd:element>
+<!-- End: State -->
+
+<!-- Line -->
+<xsd:element name="Line">
+	<xsd:complexType>
+		<xsd:sequence>
+			<xsd:group ref="gpml:CommentGroup" />
+			<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+				<xsd:complexType>
+	                        	<xsd:sequence>
+	                        		<xsd:element name="Point" minOccurs="2" maxOccurs="unbounded">
+	                                		<xsd:complexType>
+	                                                <xsd:attribute name="X" type="xsd:float" use="required" />
+	                                                <xsd:attribute name="Y" type="xsd:float" use="required" />
+	                                                <!-- relX and relY are the coordinates used when
+	                                                a point is linked to another object (when GraphRef
+	                                                is defined). They represent he coordinates of the
+	                                                point relative to the object that it's linked to, where
+	                                                0,0 lies at the center of the object and 1,1 at the bottom-right
+	                                                corner -->
+	                                                <xsd:attribute name="RelX" type="xsd:float" use="optional" />
+	                                                <xsd:attribute name="RelY" type="xsd:float" use="optional" />
+	                                                <xsd:attribute name="GraphRef" type="xsd:IDREF" use="optional" />
+	                                                <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+	                                                <!-- Note: only the ArrowHead attribute on first and last points are used, the rest is ignored. !-->
+	                                                <xsd:attribute name="ArrowHead" default="Line" type="xsd:string" />
+	                                                </xsd:complexType>
+	                                          </xsd:element>
+	                                          <xsd:element name="Anchor" minOccurs="0" maxOccurs="unbounded">
+	                                                	<xsd:complexType>
+	                                                         	<xsd:attribute name="Position" type="xsd:float" use="required" />
+	                                                                <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+	                                                                <xsd:attribute name="Shape" default="ReceptorRound" type="xsd:string" />
+	                                                        </xsd:complexType>
+	                                           </xsd:element>
+	                                </xsd:sequence>
+	                                <xsd:attribute name="Color" type="gpml:ColorType" default="Black" />
+	                                <xsd:attribute name="LineThickness" type="xsd:float"/> 
+					<xsd:attribute name="LineStyle" type="gpml:StyleType" default="Solid" />
+	                                <xsd:attribute name="ConnectorType" type="xsd:string" use="optional" default="Straight"/>
+	                                <xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
+	                        </xsd:complexType>
+	                </xsd:element>
+			<xsd:element name="Xref" minOccurs="1" maxOccurs="1">
+				<xsd:complexType>
+					<xsd:attribute name="Database" type="xsd:string" use="required"/>
+					<xsd:attribute name="ID" type="xsd:string" use="required"/>						
+				</xsd:complexType>
+			</xsd:element>
+	        </xsd:sequence>
+		<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
+	        <xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+		<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+		<xsd:attribute name="Type" type="xsd:string" use="optional" />
+		</xsd:complexType>
+</xsd:element>
+<!-- End: Line -->
+<!-- Label -->
+	<xsd:element name="Label">
+
+		<xsd:complexType>
+			<!--  This is text on a GenMAPP map that
+				can have associated comments. -->
+
+			<xsd:sequence>
+
+				<xsd:group ref="gpml:CommentGroup"/>
+
+				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attributeGroup ref="gpml:RectAttributes"/>
+						<xsd:attributeGroup ref="gpml:FontAttributes" />
+						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes" />
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
+						<xsd:attribute name="ShapeType" type="xsd:string" default="None"/>
+						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
+					</xsd:complexType>
+				</xsd:element>
+
+			</xsd:sequence>
+			
+			<!-- for a reference to a url !-->
+			<xsd:attribute name="Href" use="optional" type="xsd:string" />
+			
+			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
+
+			<xsd:attribute name="TextLabel" use="required" type="xsd:string"/>			
+		</xsd:complexType>
+
+	</xsd:element>
+<!-- End: Label -->
+
+<!-- Shape -->
+	<xsd:element name="Shape">
+
+		<xsd:complexType>
+
+			<xsd:sequence>
+
+				<xsd:group ref="gpml:CommentGroup" />
+
+				<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:attributeGroup ref="gpml:RectAttributes"/>
+						<xsd:attributeGroup ref="gpml:FontAttributes" />
+						<xsd:attributeGroup ref="gpml:ShapeStyleAttributes" />
+						<xsd:attribute name="FillColor" type="gpml:ColorType" default="Transparent"/>
+						<xsd:attribute name="ShapeType" type="xsd:string" use="required"/>
+						<xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
+						<xsd:attribute name="Rotation" type="gpml:RotationType" default="Top" />
+					</xsd:complexType>
+				</xsd:element>
+
+			</xsd:sequence>
+
+			<xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+			<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
+
+			<xsd:attribute name="TextLabel" use="optional" type="xsd:string"/>
+
+		</xsd:complexType>
+
+	</xsd:element>
+<!-- End: Shape -->
+
+<!-- Group -->
+
+	<xsd:element name="Group">	
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:group ref="gpml:CommentGroup" />
+			</xsd:sequence>
+			<xsd:attribute name="BiopaxRef" type="xsd:string"
+				use="optional" />
+			<xsd:attribute name="GroupId" type="xsd:string" use="required" />
+			<xsd:attribute name="GroupRef" type="xsd:string"
+				use="optional" />
+			<xsd:attribute name="Style" type="xsd:string" default="None" />
+			<xsd:attribute name="TextLabel" type="xsd:string"
+				use="optional" />
+			<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+		</xsd:complexType>
+	</xsd:element>
+
+<!-- InfoBox -->
+	<xsd:element name="InfoBox">
+		<!-- InfoBox element holds the
+			coordinates on the GenMAPP layout where the Information kept in the
+			Info table will be displayed in the mapp. -->
+	
+		<xsd:complexType>
+			<xsd:attribute name="CenterX" type="xsd:float" use="required"/>
+			<xsd:attribute name="CenterY" type="xsd:float" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+<!-- End: InfoBox -->
+
+<!-- Legend -->
+	<xsd:element name="Legend">	
+		<xsd:complexType>
+			<xsd:attribute name="CenterX" type="xsd:float" use="required"/>
+			<xsd:attribute name="CenterY" type="xsd:float" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+<!-- End: Legend -->
+
+<!-- Biopax -->
+	<xsd:element name="Biopax">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:any namespace="http://www.biopax.org/release/biopax-level3.owl#"
+					processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+<!-- End: Biopax -->
+
+</xsd:schema>

@@ -39,7 +39,8 @@ Require-Bundle: derby;bundle-version="10.4.2000000",
  org.w3c.css.sac;bundle-version="1.3.1",
  org.w3c.dom.events;bundle-version="3.0.0",
  org.w3c.dom.smil;bundle-version="1.0.1",
- org.w3c.dom.svg;bundle-version="1.1.0"
+ org.w3c.dom.svg;bundle-version="1.1.0",
+ org.junit;bundle-version="4.10.0";resolution:=optional
 Import-Package: org.osgi.framework;version="1.5.0"
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Vendor: PathVisio developers

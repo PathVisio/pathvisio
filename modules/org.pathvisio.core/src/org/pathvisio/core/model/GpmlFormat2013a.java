@@ -41,7 +41,7 @@ import org.pathvisio.core.view.ShapeRegistry;
 class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, GpmlFormatWriter 
 {
 	public static final GpmlFormat2013a GPML_2013A = new GpmlFormat2013a (
-			"GPML2013a.xsd", Namespace.getNamespace("http://genmapp.org/GPML/2013a")
+			"GPML2013a.xsd", Namespace.getNamespace("http://pathvisio.org/GPML/2013a")
 		);
 
 	public GpmlFormat2013a(String xsdFile, Namespace ns) {

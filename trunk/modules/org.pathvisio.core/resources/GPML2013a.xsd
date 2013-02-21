@@ -1,10 +1,10 @@
 <xsd:schema targetNamespace="http://genmapp.org/GPML/2013a"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
-	xmlns:gpml="http://pathvisio.org/GPML/2013a"
+	xmlns:gpml="http://genmapp.org/GPML/2013a"
 	elementFormDefault="qualified"
 	>
 
-	<!-- GenMAPP Pathway Markup Language version 2010a -->
+	<!-- GenMAPP Pathway Markup Language version 2013a -->
 
 	<!-- Type Definitions -->	
 	<xsd:attributeGroup name="FontAttributes">

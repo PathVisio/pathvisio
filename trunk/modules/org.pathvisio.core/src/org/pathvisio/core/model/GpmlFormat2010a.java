@@ -759,7 +759,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		doc.setRootElement(root);
 
 		List<Element> elementList = new ArrayList<Element>();
-
+		
 		List<PathwayElement> pathwayElements = data.getDataObjects();
 		Collections.sort(pathwayElements);
 		for (PathwayElement o : pathwayElements)

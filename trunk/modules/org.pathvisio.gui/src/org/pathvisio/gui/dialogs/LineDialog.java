@@ -76,7 +76,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	private static final long serialVersionUID = 1L;
 
 	protected LineDialog(final SwingEngine swingEngine, final PathwayElement e, final boolean readonly, final Frame frame, final Component locationComp) {
-		super(swingEngine, e, readonly, frame, "Line properties", locationComp);
+		super(swingEngine, e, readonly, frame, "Interaction properties", locationComp);
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
 	}

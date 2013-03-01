@@ -24,6 +24,7 @@ import org.pathvisio.core.model.DataNodeType;
 import org.pathvisio.core.model.IShape;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.model.MLine;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
@@ -82,7 +83,7 @@ public abstract class DefaultTemplates {
 	}
 
 	/**
-	 * Template for adding a single line to a Pathway.
+	 * Template for adding a single line denoting an interaction to a Pathway.
 	 */
 	public static class LineTemplate extends SingleElementTemplate {
 		int style;
@@ -124,7 +125,7 @@ public abstract class DefaultTemplates {
 			return name;
 		}
 	}
-
+	
 	/**
 	 * Template for adding a Label to a Pathway
 	 */
@@ -235,6 +236,50 @@ public abstract class DefaultTemplates {
 	}
 
 	/**
+	 * Template for adding a Graphical line to a Pathway.
+	 */
+	public static class GraphicalLineTemplate extends SingleElementTemplate {
+		int style;
+		LineType startType;
+		LineType endType;
+		ConnectorType connectorType;
+		String name;
+
+		public GraphicalLineTemplate(String name, int style, LineType startType, LineType endType, ConnectorType connectorType) {
+			this.style = style;
+			this.startType = startType;
+			this.endType = endType;
+			this.connectorType = connectorType;
+			this.name = name;
+		}
+
+		public PathwayElement[] addElements(Pathway p, double mx, double my) {
+			PathwayElement e = PathwayElement.createPathwayElement(ObjectType.GRAPHLINE);
+			e.setMStartX(mx);
+			e.setMStartY(my);
+			e.setMEndX(mx);
+			e.setMEndY(my);
+			e.setLineStyle(style);
+			e.setStartLineType(startType);
+			e.setEndLineType(endType);
+			e.setConnectorType(connectorType);
+			addElement(e, p);
+
+			return new PathwayElement[] { e };
+		}
+
+		public VPathwayElement getDragElement(VPathway vp) {
+			Line l = (Line)super.getDragElement(vp);
+			return l.getEnd().getHandle();
+		}
+
+		public String getName()
+		{
+			return name;
+		}
+	}
+	
+	/**
 	 * Template for adding a Cellular Compartment Shape to a Pathway. Pass a ShapeType upon creation.
 	 */
 	public static class CellularComponentTemplate extends SingleElementTemplate {
@@ -275,7 +320,7 @@ public abstract class DefaultTemplates {
 		}
 
 		public VPathwayElement getDragElement(VPathway vp) {
-			Shape s = (Shape)super.getDragElement(vp);
+			GraphicsShape s = (GraphicsShape)super.getDragElement(vp);
 			return s.handleSE;
 		}
 

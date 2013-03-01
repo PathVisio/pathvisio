@@ -419,6 +419,11 @@ public class MappFormat extends AbstractPathwayFormat
 					unmapLineType(o, row);
 					result.add(row);
 					break;
+				case GRAPHLINE:
+					unmapNotesAndComments (o, row);
+					unmapLineType(o, row);
+					result.add(row);
+					break;	
 				case DATANODE:
 					unmapNotesAndComments (o, row);
 					unmapGeneProductType(o, row);

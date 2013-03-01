@@ -681,6 +681,10 @@ public class Pathway
 			mw = Math.max(mw, BORDER_SIZE + Math.max(e.getMStartX(), e.getMEndX()));
 			mh = Math.max(mh, BORDER_SIZE + Math.max(e.getMStartY(), e.getMEndY()));
 			break;
+		case GRAPHLINE:
+			mw = Math.max(mw, BORDER_SIZE + Math.max(e.getMStartX(), e.getMEndX()));
+			mh = Math.max(mh, BORDER_SIZE + Math.max(e.getMStartY(), e.getMEndY()));
+			break;	
 		default:
 			mw = Math.max(mw, BORDER_SIZE + e.getMLeft() + e.getMWidth());
 			mh = Math.max(mh, BORDER_SIZE + e.getMTop() + e.getMHeight());

@@ -61,6 +61,7 @@ public class StandaloneActions implements ApplicationEventListener
 	public final Action newAction;
 	public final Action selectGeneDbAction;
 	public final Action selectMetaboliteDbAction;
+	public final Action selectInteractionDbAction;
 	public final Action preferencesAction;
 	public final Action searchAction;
 	public final Action pluginManagerAction;
@@ -75,6 +76,7 @@ public class StandaloneActions implements ApplicationEventListener
 		newAction = new NewAction(swingEngine);
 		selectGeneDbAction = new SelectGeneDbAction(desktop, "Gene");
 		selectMetaboliteDbAction = new SelectGeneDbAction(desktop, "Metabolite");
+		selectInteractionDbAction = new SelectGeneDbAction(desktop, "Interaction");
 		preferencesAction = new PreferencesAction(desktop);
 		searchAction = new SearchAction(swingEngine);
 		pluginManagerAction = new PluginManagerAction(desktop);
@@ -246,14 +248,15 @@ public class StandaloneActions implements ApplicationEventListener
 
 		String dbType;
 		/**
-		 * type should be "Gene" or "Metabolite"
+		 * type should be "Gene" , "Metabolite" or "Interaction"
 		 */
 		public SelectGeneDbAction(PvDesktop desktop, String type)
 		{
 			super();
 			this.desktop = desktop;
 			dbType = type;
-			assert (dbType.equals ("Gene") || dbType.equals ("Metabolite"));
+			assert (dbType.equals ("Gene") || dbType.equals ("Metabolite") || 
+					dbType.equals ("Interaction"));
 			putValue(NAME, "Select " + dbType + " Database");
 			putValue(SHORT_DESCRIPTION, "Select " + dbType + " Database");
 		}

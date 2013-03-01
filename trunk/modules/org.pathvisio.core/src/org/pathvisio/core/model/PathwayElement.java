@@ -587,6 +587,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			return Z_ORDER_LABEL;
 		case LINE:
 			return Z_ORDER_LINE;
+		case GRAPHLINE:
+			return Z_ORDER_LINE;
 		case LEGEND:
 		case INFOBOX:
 		case MAPPINFO:
@@ -614,8 +616,11 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			e = new MGroup();
 			break;
 		case LINE:
-			e = new MLine();
+			e = new MLine(ObjectType.LINE);
 			break;
+		case GRAPHLINE:
+			e = new MLine(ObjectType.GRAPHLINE);
+			break;	
 		case STATE:
 			e = new MState();
 			break;
@@ -629,7 +634,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	protected PathwayElement(ObjectType ot)
 	{
 		/* set default value for transparency */
-		if (ot == ObjectType.LINE || ot == ObjectType.LABEL || ot == ObjectType.DATANODE || ot == ObjectType.STATE)
+		if (ot == ObjectType.LINE || ot == ObjectType.LABEL || ot == ObjectType.DATANODE || ot == ObjectType.STATE
+				|| ot == ObjectType.GRAPHLINE)
 		{
 			fillColor = Color.WHITE;
 		}
@@ -687,7 +693,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	/**
 	 * Set parent. Do not use this method directly! parent is set automatically
 	 * when using Pathway.add/remove
-	 * @param v the parent
+	 * @param v the parentGENEID
 	 */
 	void setParent(Pathway v)
 	{
@@ -736,6 +742,19 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 				StaticProperty.SHAPETYPE,
 				StaticProperty.LINETHICKNESS,
 				StaticProperty.LINESTYLE
+			);
+		Set<StaticProperty> propsCommonLine = EnumSet.of(
+				StaticProperty.COLOR,
+				StaticProperty.STARTX,
+				StaticProperty.STARTY,
+				StaticProperty.ENDX,
+				StaticProperty.ENDY,
+				StaticProperty.STARTLINETYPE,
+				StaticProperty.ENDLINETYPE,
+				StaticProperty.LINESTYLE,
+				StaticProperty.LINETHICKNESS,
+				StaticProperty.STARTGRAPHREF,
+				StaticProperty.ENDGRAPHREF
 			);
 		ALLOWED_PROPS = new EnumMap<ObjectType, Set<StaticProperty>>(ObjectType.class);
 		{
@@ -795,22 +814,18 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			ALLOWED_PROPS.put (ObjectType.DATANODE, propsDatanode);
 		}
 		{
+			Set<StaticProperty> propsGraphLine = new HashSet<StaticProperty>();
+					propsGraphLine.addAll (propsCommon);
+					propsGraphLine.addAll(propsCommonLine);
+			ALLOWED_PROPS.put (ObjectType.GRAPHLINE, propsGraphLine);
+		}
+		{
 			Set<StaticProperty> propsLine = EnumSet.of(
-					StaticProperty.COLOR,
-					StaticProperty.STARTX,
-					StaticProperty.STARTY,
-					StaticProperty.ENDX,
-					StaticProperty.ENDY,
-					StaticProperty.STARTLINETYPE,
-					StaticProperty.ENDLINETYPE,
-					StaticProperty.LINESTYLE,
-					StaticProperty.LINETHICKNESS,
-					StaticProperty.STARTGRAPHREF,
-					StaticProperty.ENDGRAPHREF,
 					StaticProperty.GENEID,
 					StaticProperty.DATASOURCE
 				);
 			propsLine.addAll (propsCommon);
+			propsLine.addAll(propsCommonLine);
 			ALLOWED_PROPS.put (ObjectType.LINE, propsLine);
 		}
 		{
@@ -2653,6 +2668,10 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			setMEndX(getMStartX() + M_INITIAL_LINE_LENGTH);
 			setMEndY(getMStartY() + M_INITIAL_LINE_LENGTH);
 			break;
+		case GRAPHLINE:
+			setMEndX(getMStartX() + M_INITIAL_LINE_LENGTH);
+			setMEndY(getMStartY() + M_INITIAL_LINE_LENGTH);
+			break;	
 		case STATE:
 			setMWidth(M_INITIAL_STATE_SIZE);
 			setMHeight(M_INITIAL_STATE_SIZE);

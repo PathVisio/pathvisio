@@ -31,7 +31,7 @@ public class TestSegmentedConnector extends TestCase
 	/** test converstion to / from line coordinates */
 	public void testLineCoordinates()
 	{
-		MLine line = new MLine();
+		MLine line = new MLine(ObjectType.LINE);
 		MPoint [] points = new MPoint[] {
 				line.new MPoint(75.0, 125.0),
 				line.new MPoint(75.0, 50.0),

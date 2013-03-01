@@ -232,6 +232,9 @@ public class VPathway implements PathwayListener
 		case LINE:
 			result = new Line(this, o);
 			break;
+		case GRAPHLINE:
+			result = new Line(this, o);
+			break;	
 		case MAPPINFO:
 			InfoBox mi = new InfoBox(this, o);
 			result = mi;
@@ -1350,7 +1353,7 @@ public class VPathway implements PathwayListener
 		}
 		selection.stopSelecting();
 	}
-
+	
 	/**
 	 * select all objects of the pathway.
 	 */
@@ -1431,7 +1434,7 @@ public class VPathway implements PathwayListener
 		// No more nested or overlapping groups!
 		else
 		{
-			// Form new group with all selected elements
+			// Form new group with all selected elementsselectPathwayObjects
 			PathwayElement group = PathwayElement.createPathwayElement(ObjectType.GROUP);
 			data.add(group);
 			group.setGroupStyle(GroupStyle.NONE);
@@ -1482,7 +1485,7 @@ public class VPathway implements PathwayListener
 			.getKeyStroke(java.awt.event.KeyEvent.VK_D,
 					java.awt.Event.CTRL_MASK);
 	
-	public static final KeyStroke KEY_SELECT_LINES = KeyStroke
+	public static final KeyStroke KEY_SELECT_INTERACTIONS = KeyStroke
 			.getKeyStroke(java.awt.event.KeyEvent.VK_E,
 					java.awt.Event.CTRL_MASK);
 
@@ -1556,8 +1559,8 @@ public class VPathway implements PathwayListener
 			registerKeyboardAction(viewActions.paste);
 			parent.registerKeyboardAction(KEY_SELECT_DATA_NODES,
 					viewActions.selectDataNodes);
-			parent.registerKeyboardAction(KEY_SELECT_LINES,
-					viewActions.selectLines);
+			parent.registerKeyboardAction(KEY_SELECT_INTERACTIONS,
+					viewActions.selectInteractions);
 			registerKeyboardAction(viewActions.toggleGroup);
 			registerKeyboardAction(viewActions.toggleComplex);
 			registerKeyboardAction(viewActions.selectAll);
@@ -2248,7 +2251,7 @@ public class VPathway implements PathwayListener
 			generatePasteId(groupId, data.getGroupIds(), idmap, newids);
 
 			//For a line, also process the point ids
-			if(o.getObjectType() == ObjectType.LINE) {
+			if(o.getObjectType() == ObjectType.LINE || o.getObjectType() == ObjectType.GRAPHLINE) {
 				for(MPoint mp : o.getMPoints())
 					generatePasteId(mp.getGraphId(), data.getGraphIds(), idmap, newids);
 				for(MAnchor ma : o.getMAnchors())
@@ -2362,7 +2365,7 @@ public class VPathway implements PathwayListener
 
 			lastAdded = null;
 
-			if(o.getObjectType() == ObjectType.LINE) {
+			if(o.getObjectType() == ObjectType.LINE || o.getObjectType() == ObjectType.GRAPHLINE) {
 				for (MPoint mp : o.getMPoints())
 				{
 					mp.setX(mp.getX() + xShift);

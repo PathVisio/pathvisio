@@ -57,6 +57,8 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 
 
 	private Set<VPathwayElement> selection;
+	
+	private Set<PathwayElement> peselection;
 
 	boolean isSelecting;
 
@@ -84,7 +86,7 @@ public class SelectionBox extends VPathwayElement implements Adjustable
 	{
 		return selection;
 	}
-
+	
 	public Rectangle2D calculateVOutline()
 	{
 		return new Rectangle2D.Double(vFromM(mLeft), vFromM(mTop),

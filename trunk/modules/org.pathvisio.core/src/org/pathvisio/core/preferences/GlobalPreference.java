@@ -55,6 +55,7 @@ public enum GlobalPreference implements Preference
 
 	DB_CONNECTSTRING_GDB("idmapper-pgdb:none"),
 	DB_CONNECTSTRING_METADB("idmapper-pgdb:none"),
+	DB_CONNECTSTRING_IDB("idmapper-pgdb:none"),
 
 	ENABLE_DOUBLE_BUFFERING(Boolean.toString(true)),
 	SHOW_ADVANCED_PROPERTIES(Boolean.toString(false)),

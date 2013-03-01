@@ -99,7 +99,7 @@ public class CommonActions implements ApplicationEventListener {
 
 	public final Action importAction;
 	public final Action exportAction;
-
+	
 	public final Action copyAction;
 	public final Action pasteAction;
 
@@ -266,7 +266,11 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.TRIANGLE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.PENTAGON)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.HEXAGON)),
-				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC)),
+//				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.EDGE)),
+				 new NewElementAction(e, new DefaultTemplates.GraphicalLineTemplate(
+							"line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
+					),
+			 	 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
 		 };

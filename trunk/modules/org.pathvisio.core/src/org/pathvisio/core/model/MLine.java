@@ -36,8 +36,8 @@ import org.pathvisio.core.util.Utils;
 public class MLine extends PathwayElement implements ConnectorRestrictions {
 	ConnectorShape shape;
 
-	public MLine() {
-		super(ObjectType.LINE);
+	public MLine(ObjectType ot) {
+		super(ot);
 	}
 
 	/**

@@ -21,6 +21,7 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public enum ShapeType implements IShape
 			return new RoundRectangle2D.Double (0, 0, mw, mh, 20, 20);
 		}	
 	},
-	
+	EDGE(new Line2D.Double (0, 0, 10, 10), "Line"),
 	OVAL(new Ellipse2D.Double (0, 0, 10, 10), "Oval"),
 	ARC(new Arc2D.Double (0, 0, 10, 10, 0, -180, Arc2D.OPEN), "Arc"),
 	TRIANGLE(GenMAPPShapes.getRegularPolygon (3, 10, 10), "Triangle", "Poly"), // poly ;in MAPP

@@ -200,8 +200,8 @@ public abstract class GpmlFormatAbstract
 		// correctly ordered list of tag names, which are loaded into the hashmap in
 		// the constructor.
 		private final String[] elements = new String[] {
-				"Comment", "BiopaxRef", "Graphics", "DataNode", "State", "Line", "Label",
-				"Shape", "Group", "InfoBox", "Legend", "Biopax"
+				"Comment", "BiopaxRef", "Graphics", "DataNode", "State", "Interaction", 
+				"GraphicalLine", "Label", "Shape", "Group", "InfoBox", "Legend", "Biopax"
 			};
 
 		/*
@@ -601,7 +601,7 @@ public abstract class GpmlFormatAbstract
 			String id = pe.getGraphId();
 			if(id == null || "".equals(id))
 			{
-				if (pe.getObjectType() == ObjectType.LINE)
+				if (pe.getObjectType() == ObjectType.LINE || pe.getObjectType() == ObjectType.GRAPHLINE)
 				{
 					// because we forgot to write out graphId's on Lines on older pathways
 					// generate a graphId based on hash of coordinates
@@ -633,7 +633,7 @@ public abstract class GpmlFormatAbstract
 	private static void convertPointCoordinates(Pathway pathway) throws ConverterException
 	{
 		for(PathwayElement pe : pathway.getDataObjects()) {
-			if(pe.getObjectType() == ObjectType.LINE) {
+			if(pe.getObjectType() == ObjectType.LINE || pe.getObjectType() == ObjectType.GRAPHLINE) {
 				String sr = pe.getStartGraphRef();
 				String er = pe.getEndGraphRef();
 				if(sr != null && !"".equals(sr) && !pe.getMStart().relativeSet()) {

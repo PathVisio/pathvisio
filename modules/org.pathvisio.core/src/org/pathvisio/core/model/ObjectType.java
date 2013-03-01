@@ -27,13 +27,17 @@ public enum ObjectType
 	/** any shape with width and height */
 	SHAPE ("Shape"),
 	
+	/** a connector. Can be straight, or can consist of multiple line segments */
+	GRAPHLINE ("GraphicalLine"),
+	
 	/** a rectangle that contains a link to an online biological database */
 	DATANODE ("DataNode"),
 	
 	/** a piece of text */
 	LABEL ("Label"),
 
-	/** a connector. Can be straight, or can consist of multiple line segments */
+	/** a connector. Can be straight, or can consist of multiple line 
+	 * segments and can contain a that contains a link to an online biological database */
 	LINE ("Line"),
 	
 	/** Zero or one per pathway. Placeholder object to let visualization plugins draw a legend */

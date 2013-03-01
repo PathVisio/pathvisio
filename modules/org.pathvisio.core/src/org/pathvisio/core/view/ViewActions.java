@@ -94,7 +94,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	VPathway vPathway;
 
 	public final SelectClassAction selectDataNodes;
-	public final SelectClassAction selectLines;
+	public final SelectObjectAction selectInteractions;
+	public final SelectObjectAction selectLines;
+	public final SelectObjectAction selectShapes;
 	public final SelectAllAction selectAll;
 	public final GroupAction toggleGroup;
 	public final ComplexAction toggleComplex;
@@ -127,7 +129,9 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		vp.addVPathwayListener(this);
 
 		selectDataNodes = new SelectClassAction("DataNode", GeneProduct.class);
-		selectLines = new SelectClassAction("Line", Line.class);
+		selectInteractions = new SelectObjectAction("Interaction", ObjectType.LINE);
+		selectLines = new SelectObjectAction("Line", ObjectType.GRAPHLINE);
+		selectShapes = new SelectObjectAction("Shape", ObjectType.SHAPE);
 		selectAll = new SelectAllAction();
 		toggleGroup = new GroupAction();
 		toggleComplex = new ComplexAction();
@@ -384,14 +388,35 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 
 		Class<?> c;
 		public SelectClassAction(String name, Class<?> c) {
-			super("Select all " + name + " objects");
+			super("Select all " + name + "s");
 			this.c = c;
 		}
 		public void actionPerformed(ActionEvent e) {
 			vPathway.selectObjects(c);
 		}
 	}
-
+	
+	/**
+	 * Selects all objects of a given objectType
+	 * @author anwesha
+	 *
+	 */
+	private class SelectObjectAction extends AbstractAction {
+		private ObjectType objtype;
+		public SelectObjectAction(String name, ObjectType objtype) {
+			super("Select all " + name + "s");
+			this.objtype = objtype;
+			}
+		public void actionPerformed(ActionEvent e) {
+			for(PathwayElement pe : vPathway.getPathwayModel().getDataObjects()) {
+				if(pe.getObjectType() == objtype) {
+					vPathway.getPathwayElementView(pe).select();
+					}
+			}
+		}
+	}
+		
+	
 	private class SelectAllAction extends AbstractAction {
 
 		public SelectAllAction() {
@@ -843,8 +868,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	 */
 	public class ShowUnlinkedConnectors extends AbstractAction {
 		public ShowUnlinkedConnectors() {
-			putValue(NAME, "Highlight unlinked lines");
-			putValue(SHORT_DESCRIPTION, "Highlight all lines that are not linked");
+			putValue(NAME, "Highlight unlinked interactions");
+			putValue(SHORT_DESCRIPTION, "Highlight all interactions that are not linked");
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L,
 					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
@@ -866,6 +891,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				}
 		}
 	}
+	
 	
 	/**
 	 * Action for toggling bold or italic flags on selected elements.

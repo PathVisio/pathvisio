@@ -429,7 +429,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	/**
 	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
 	 * current database type.
-	 * dbType is "Metabolite" or "Gene" and is only used in messages to the user.
+	 * dbType is "Metabolite" , "Gene" or "Interaction" and is only used in messages to the user.
 	 */
 	public void selectGdb (String dbType)
 	{
@@ -446,12 +446,24 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			if (dbType.equals("Gene"))
 			{
 				swingEngine.getGdbManager().setGeneDb(dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, 
+						dbName);
 			}
 			else
 			{
-				swingEngine.getGdbManager().setMetaboliteDb(dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);
+				if(dbType.equals("Metabolite")){
+					swingEngine.getGdbManager().setMetaboliteDb(dbName);
+					PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, 
+							dbName);
+				}
+				else
+				{ 
+					if(dbType.equals("Interaction")){
+						swingEngine.getGdbManager().setInteractionDb(dbName);
+						PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_IDB, 
+								dbName);
+					}
+				}
 			}
 		}
 		catch(Exception ex)

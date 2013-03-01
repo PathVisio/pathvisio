@@ -95,7 +95,7 @@ public class PathwayTransferable implements Transferable {
 			if(e.getObjectType() == ObjectType.MAPPINFO) {
 				infoFound = true;
 			}
-			if(e.getObjectType() == ObjectType.LINE) {
+			if(e.getObjectType() == ObjectType.LINE || e.getObjectType() == ObjectType.GRAPHLINE) {
 				for(MAnchor ma : e.getMAnchors()) {
 					ids.add(ma.getGraphId());
 				}

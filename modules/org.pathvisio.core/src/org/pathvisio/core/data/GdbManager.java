@@ -46,6 +46,7 @@ public class GdbManager extends AbstractListModel
 	private final IDMapperStack currentGdb = new IDMapperStack();
 	private IDMapper metabolites;
 	private IDMapper genes;
+	private IDMapper interactions;
 	private Map<IDMapper, String> connectionStrings = new HashMap<IDMapper, String>();
 
 	public GdbManager()
@@ -79,6 +80,30 @@ public class GdbManager extends AbstractListModel
 	}
 
 	/**
+	 * Set the global gene database
+	 * with the given file- or
+	 * directory name.
+	 * The database type used for the connection
+	 * depends on the value of the DB_ENGINE_GDB value
+	 *
+	 * use null to disconnect the current db.
+	 */
+	public void setGeneDb(String connectString) throws IDMapperException
+	{
+		removeMapper(genes);
+		genes = null;
+		if (connectString != null)
+		{
+			genes = BridgeDb.connect(connectString); 
+			if (genes != null)
+			{
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_GDB, (connectString));
+				addMapper(genes, connectString);
+			}
+		}
+	}
+
+	/**
 	 * Set the global metabolite database
 	 * with the given file- or
 	 * directory name.
@@ -98,6 +123,30 @@ public class GdbManager extends AbstractListModel
 			{
 				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_METADB, (connectString));
 				addMapper(metabolites, connectString);
+			}
+		}
+	}
+	
+	/**
+	 * Set the global interaction database
+	 * with the given file- or
+	 * directory name.
+	 * The database type used for the connection
+	 * depends on the value of the DB_ENGINE_GDB value
+	 *
+	 * use null to disconnect the current db
+	 */
+	public void setInteractionDb(String connectString) throws IDMapperException
+	{
+		removeMapper(interactions);
+		interactions = null;
+		if (connectString != null)
+		{
+			interactions = BridgeDb.connect(connectString);
+			if (interactions != null)
+			{
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_METADB, (connectString));
+				addMapper(interactions, connectString);
 			}
 		}
 	}
@@ -124,6 +173,7 @@ public class GdbManager extends AbstractListModel
 		currentGdb.removeIDMapper(mapper);
 		connectionStrings.remove(mapper);
 		if (mapper == metabolites) metabolites = null;
+		if (mapper == interactions) interactions = null;
 		if (mapper == genes) genes = null;
 		GdbEvent e = new GdbEvent (this, GdbEvent.Type.REMOVED, mapper.toString());
 		fireGdbEvent (e);
@@ -159,30 +209,6 @@ public class GdbManager extends AbstractListModel
 	}
 
 	private List<GdbEventListener> gdbEventListeners  = new ArrayList<GdbEventListener>();
-
-	/**
-	 * Set the global gene database
-	 * with the given file- or
-	 * directory name.
-	 * The database type used for the connection
-	 * depends on the value of the DB_ENGINE_GDB value
-	 *
-	 * use null to disconnect the current db.
-	 */
-	public void setGeneDb(String connectString) throws IDMapperException
-	{
-		removeMapper(genes);
-		genes = null;
-		if (connectString != null)
-		{
-			genes = BridgeDb.connect(connectString); 
-			if (genes != null)
-			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_GDB, (connectString));
-				addMapper(genes, connectString);
-			}
-		}
-	}
 
 	/**
 	 * Initiates this class. Checks the preferences for a previously
@@ -222,6 +248,19 @@ public class GdbManager extends AbstractListModel
 				Logger.log.error("Setting previous Metabolite db failed.", e);
 			}
 		}
+		// then do the Interaction database
+		gdbName = prefs.get(GlobalPreference.DB_CONNECTSTRING_IDB);
+		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_CONNECTSTRING_IDB))
+		{
+			try
+			{
+				setInteractionDb(gdbName);
+			}
+			catch(Exception e)
+			{
+				Logger.log.error("Setting previous Interaction db failed.", e);
+			}
+		}
 	}
 
 	public Object getElementAt(int arg0)
@@ -241,4 +280,5 @@ public class GdbManager extends AbstractListModel
 
 	public IDMapper getGeneDb() { return genes; }
 	public IDMapper getMetaboliteDb() { return metabolites; }
+	public IDMapper getInteractionDb() { return interactions; }
 }

@@ -192,12 +192,14 @@
 
 				<xsd:element ref="gpml:State" minOccurs="0" maxOccurs="unbounded"/>
 
-				<xsd:element ref="gpml:Line" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gpml:Interaction" minOccurs="0" maxOccurs="unbounded"/>
+				
+				<xsd:element ref="gpml:GraphicalLine" minOccurs="0" maxOccurs="unbounded"/>
 
 				<xsd:element ref="gpml:Label" minOccurs="0" maxOccurs="unbounded"/>
 
 				<xsd:element ref="gpml:Shape" minOccurs="0" maxOccurs="unbounded"/>
-
+				
 				<xsd:element ref="gpml:Group" minOccurs="0" maxOccurs="unbounded"/>
 
 				<xsd:element ref="gpml:InfoBox" minOccurs="1" maxOccurs="1" />
@@ -205,6 +207,7 @@
 				<xsd:element ref="gpml:Legend" minOccurs="0" maxOccurs="1"/>
 
 				<xsd:element ref="gpml:Biopax" minOccurs="0" maxOccurs="1"/>
+				
 			</xsd:sequence>
 
 			<xsd:attribute name="Name" type="xsd:string" use="required">
@@ -331,8 +334,57 @@
 	</xsd:element>
 <!-- End: State -->
 
-<!-- Line -->
-<xsd:element name="Line">
+<!-- Grapical Line -->
+<xsd:element name="GraphicalLine">
+	<xsd:complexType>
+		<xsd:sequence>
+			<xsd:group ref="gpml:CommentGroup" />
+			<xsd:element name="Graphics" minOccurs="1" maxOccurs="1">
+				<xsd:complexType>
+	                        	<xsd:sequence>
+	                        		<xsd:element name="Point" minOccurs="2" maxOccurs="unbounded">
+	                                		<xsd:complexType>
+	                                                <xsd:attribute name="X" type="xsd:float" use="required" />
+	                                                <xsd:attribute name="Y" type="xsd:float" use="required" />
+	                                                <!-- relX and relY are the coordinates used when
+	                                                a point is linked to another object (when GraphRef
+	                                                is defined). They represent he coordinates of the
+	                                                point relative to the object that it's linked to, where
+	                                                0,0 lies at the center of the object and 1,1 at the bottom-right
+	                                                corner -->
+	                                                <xsd:attribute name="RelX" type="xsd:float" use="optional" />
+	                                                <xsd:attribute name="RelY" type="xsd:float" use="optional" />
+	                                                <xsd:attribute name="GraphRef" type="xsd:IDREF" use="optional" />
+	                                                <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+	                                                <!-- Note: only the ArrowHead attribute on first and last points are used, the rest is ignored. !-->
+	                                                <xsd:attribute name="ArrowHead" default="Line" type="xsd:string" />
+	                                                </xsd:complexType>
+	                                          </xsd:element>
+	                                          <xsd:element name="Anchor" minOccurs="0" maxOccurs="unbounded">
+	                                                	<xsd:complexType>
+	                                                         	<xsd:attribute name="Position" type="xsd:float" use="required" />
+	                                                                <xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+	                                                                <xsd:attribute name="Shape" default="ReceptorRound" type="xsd:string" />
+	                                                        </xsd:complexType>
+	                                           </xsd:element>
+	                                </xsd:sequence>
+	                                <xsd:attribute name="Color" type="gpml:ColorType" default="Black" />
+	                                <xsd:attribute name="LineThickness" type="xsd:float"/> 
+					<xsd:attribute name="LineStyle" type="gpml:StyleType" default="Solid" />
+	                                <xsd:attribute name="ConnectorType" type="xsd:string" use="optional" default="Straight"/>
+	                                <xsd:attribute name="ZOrder" type="xsd:integer" use="optional"/>
+	                        </xsd:complexType>
+	                </xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="GroupRef" type="xsd:string" use="optional" />
+	        <xsd:attribute name="BiopaxRef" type="xsd:string" use="optional" />
+		<xsd:attribute name="GraphId" type="xsd:ID" use="optional" />
+		<xsd:attribute name="Type" type="xsd:string" use="optional" />
+		</xsd:complexType>
+</xsd:element>
+<!-- End: Graphical Line -->
+<!-- Interaction -->
+<xsd:element name="Interaction">
 	<xsd:complexType>
 		<xsd:sequence>
 			<xsd:group ref="gpml:CommentGroup" />
@@ -385,7 +437,7 @@
 		<xsd:attribute name="Type" type="xsd:string" use="optional" />
 		</xsd:complexType>
 </xsd:element>
-<!-- End: Line -->
+<!-- End: Interaction -->
 <!-- Label -->
 	<xsd:element name="Label">
 

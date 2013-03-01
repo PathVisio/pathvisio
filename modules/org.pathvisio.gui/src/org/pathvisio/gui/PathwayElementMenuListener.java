@@ -111,7 +111,9 @@ public class PathwayElementMenuListener implements VPathwayListener {
 		JMenu selectMenu = new JMenu("Select");
 		selectMenu.add(vActions.selectAll);
 		selectMenu.add(vActions.selectDataNodes);
+		selectMenu.add(vActions.selectInteractions);
 		selectMenu.add(vActions.selectLines);
+		selectMenu.add(vActions.selectShapes);
 		menu.add(selectMenu);
 		menu.addSeparator();
 		

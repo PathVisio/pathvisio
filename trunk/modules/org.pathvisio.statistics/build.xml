@@ -18,5 +18,9 @@
 		<include name="org.pathvisio.desktop.jar"/>
 	  </fileset>
 	</path>
+	
+	<path id="test.class.path">
+		<pathelement path="../../lib/org.junit_4.10.0.jar"/>
+	</path>
 
 </project>

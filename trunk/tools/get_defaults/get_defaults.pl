@@ -31,7 +31,7 @@ my $twig = XML::Twig->new( twig_handlers =>
 );
 
 # run all the handlers on the XSD
-$twig->parsefile ("/home/anwesha/workspace/pathvisio/modules/org.pathvisio.core/resources/GPML2013a.xsd");
+$twig->parsefile ("../../GPML2013a.xsd");
 $twig->purge;
 
 # handler for references to attribute Groups

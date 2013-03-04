@@ -97,6 +97,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final SelectObjectAction selectInteractions;
 	public final SelectObjectAction selectLines;
 	public final SelectObjectAction selectShapes;
+	public final SelectObjectAction selectLabels;
 	public final SelectAllAction selectAll;
 	public final GroupAction toggleGroup;
 	public final ComplexAction toggleComplex;
@@ -129,9 +130,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		vp.addVPathwayListener(this);
 
 		selectDataNodes = new SelectClassAction("DataNode", GeneProduct.class);
-		selectInteractions = new SelectObjectAction("Interaction", ObjectType.LINE);
-		selectLines = new SelectObjectAction("Line", ObjectType.GRAPHLINE);
-		selectShapes = new SelectObjectAction("Shape", ObjectType.SHAPE);
+		selectInteractions = new SelectObjectAction("Interactions", ObjectType.LINE);
+		selectLines = new SelectObjectAction("Graphical Lines", ObjectType.GRAPHLINE);
+		selectShapes = new SelectObjectAction("Shapes", ObjectType.SHAPE);
+		selectLabels = new SelectObjectAction("Labels", ObjectType.LABEL);
 		selectAll = new SelectAllAction();
 		toggleGroup = new GroupAction();
 		toggleComplex = new ComplexAction();
@@ -404,7 +406,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	private class SelectObjectAction extends AbstractAction {
 		private ObjectType objtype;
 		public SelectObjectAction(String name, ObjectType objtype) {
-			super("Select all " + name + "s");
+			super("Select all " + name);
 			this.objtype = objtype;
 			}
 		public void actionPerformed(ActionEvent e) {

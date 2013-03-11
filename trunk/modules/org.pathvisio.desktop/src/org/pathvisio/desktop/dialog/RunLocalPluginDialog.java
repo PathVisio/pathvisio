@@ -22,22 +22,17 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.pathvisio.desktop.PvDesktop;
 import org.pathvisio.desktop.util.BrowseButtonActionListener;
 
-import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -114,11 +109,8 @@ public class RunLocalPluginDialog extends JDialog
 					File file = new File(tfDir.getText());
 					if(file.exists()) 
 					{
-						Map<String, String> map = desktop.getPluginManagerExternal().installLocalPlugins(file);
-						desktop.getPluginManager().startPlugins();
+						desktop.getPluginManagerExternal().installLocalPlugins(file);
 						dlg.dispose();
-						StatusDialog status = new StatusDialog(desktop);
-						status.createAndShowGUI(map);
 					}
 				}
 			}
@@ -142,121 +134,121 @@ public class RunLocalPluginDialog extends JDialog
 		dlg.setLocationRelativeTo(desktop.getFrame());
 	}
 	
-	private class StatusDialog extends JDialog 
-	{
-		
-		private JDialog dlg;
-		private PvDesktop desktop;
-		
-		public StatusDialog(PvDesktop desktop) 
-		{
-			super();
-			dlg = this;
-			this.desktop = desktop;
-		}
-		
-		public void createAndShowGUI(Map<String, String> status) 
-		{
-			init();
-			
-			// splits up bundles that started with out problems
-			// and bundles that couldn't be started
-			Map<String, String> running = new HashMap<String, String>();
-			Map<String, String> problems = new HashMap<String, String>();
-			
-			for(String str : status.keySet()) 
-			{
-				if(status.get(str).equals("started") || status.get(str).equals("already installed")) running.put(str, status.get(str));
-				else problems.put(str, status.get(str));
-			}
-
-			String rowLayout = "4dlu,pref,";
-			for(int i = 0; i < running.size(); i++) {
-				rowLayout = rowLayout + "4dlu,pref,";
-			}
-			rowLayout = rowLayout + "4dlu, 30dlu,pref,";
-			for(int i = 0; i < problems.size(); i++) {
-				rowLayout = rowLayout + "4dlu,pref,";
-			}
-			rowLayout = rowLayout + "15dlu";
-			FormLayout layout = new FormLayout("4dlu, pref, 4dlu, 150dlu, 4dlu", rowLayout);
-			PanelBuilder builder = new PanelBuilder(layout);
-			builder.setBackground(Color.white);
-			if(running.size() > 0) {
-				builder.addLabel("Bundles started:", cc.xy(2, 2));
-				builder.addSeparator("", cc.xyw(2, 3, 3));
-			}
-			int count = 4;
-			for(String b : running.keySet()) {
-				builder.add(new JLabel("    " + b), cc.xy(2, count));
-				JTextArea ta = new JTextArea(status.get(b));
-				ta.setForeground(Color.GREEN);
-				ta.setBackground(Color.white);
-				ta.setLineWrap(true);
-				ta.setEditable(false);
-				builder.add(ta, cc.xy(4, count));
-				builder.addSeparator("", cc.xyw(2, count+1, 3));
-				count = count + 2;
-			}
-			count = count+1;
-			if(problems.size() > 0) {
-				builder.addLabel("Problems occured in:", cc.xy(2, count));
-				builder.addSeparator("", cc.xyw(2, count+1, 3));
-			}
-			count = count+2;
-			
-			for(String b : problems.keySet()) {
-				builder.add(new JLabel("    " + b), cc.xy(2, count));
-				JTextArea ta = new JTextArea(status.get(b));
-				ta.setBackground(Color.white);
-				ta.setForeground(Color.red);
-				ta.setLineWrap(true);
-				ta.setEditable(false);
-				builder.add(ta, cc.xy(4, count));
-				builder.addSeparator("", cc.xyw(2, count+1, 3));
-				count = count + 2;
-			}
-			
-			JScrollPane pane = new JScrollPane(builder.getPanel());
-			pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-			pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-			dlg.add(pane, BorderLayout.CENTER);
-			dlg.add(createBtnPanel(), BorderLayout.SOUTH);
-
-			dlg.setVisible(true);
-		}
-		
-		private JPanel createBtnPanel() 
-		{
-			JPanel btnPanel = new JPanel();
-			btnPanel.setBackground(Color.white);
-			
-			JButton cancelBtn = new JButton("OK");
-			cancelBtn.addActionListener(new ActionListener() 
-			{				
-				@Override
-				public void actionPerformed(ActionEvent e)
-				{
-					dlg.dispose();
-				}
-			});
-			
-			btnPanel.add(cancelBtn);
-			return btnPanel;
-		}
-		
-		private void init() 
-		{
-			dlg.setLayout(new BorderLayout());
-			dlg.setPreferredSize(new Dimension(600, 450));
-			dlg.setTitle("Status");
-			dlg.setBackground(Color.white);
-			dlg.setLayout(new BorderLayout());
-			dlg.setResizable(false);
-			dlg.setAlwaysOnTop(true);
-			dlg.setModal(true);
-			dlg.pack();
-			dlg.setLocationRelativeTo(desktop.getFrame());
-		}
-	}
+//	private class StatusDialog extends JDialog 
+//	{
+//		
+//		private JDialog dlg;
+//		private PvDesktop desktop;
+//		
+//		public StatusDialog(PvDesktop desktop) 
+//		{
+//			super();
+//			dlg = this;
+//			this.desktop = desktop;
+//		}
+//		
+//		public void createAndShowGUI(Map<String, String> status) 
+//		{
+//			init();
+//			
+//			// splits up bundles that started with out problems
+//			// and bundles that couldn't be started
+//			Map<String, String> running = new HashMap<String, String>();
+//			Map<String, String> problems = new HashMap<String, String>();
+//			
+//			for(String str : status.keySet()) 
+//			{
+//				if(status.get(str).equals("started") || status.get(str).equals("already installed")) running.put(str, status.get(str));
+//				else problems.put(str, status.get(str));
+//			}
+//
+//			String rowLayout = "4dlu,pref,";
+//			for(int i = 0; i < running.size(); i++) {
+//				rowLayout = rowLayout + "4dlu,pref,";
+//			}
+//			rowLayout = rowLayout + "4dlu, 30dlu,pref,";
+//			for(int i = 0; i < problems.size(); i++) {
+//				rowLayout = rowLayout + "4dlu,pref,";
+//			}
+//			rowLayout = rowLayout + "15dlu";
+//			FormLayout layout = new FormLayout("4dlu, pref, 4dlu, 150dlu, 4dlu", rowLayout);
+//			PanelBuilder builder = new PanelBuilder(layout);
+//			builder.setBackground(Color.white);
+//			if(running.size() > 0) {
+//				builder.addLabel("Bundles started:", cc.xy(2, 2));
+//				builder.addSeparator("", cc.xyw(2, 3, 3));
+//			}
+//			int count = 4;
+//			for(String b : running.keySet()) {
+//				builder.add(new JLabel("    " + b), cc.xy(2, count));
+//				JTextArea ta = new JTextArea(status.get(b));
+//				ta.setForeground(Color.GREEN);
+//				ta.setBackground(Color.white);
+//				ta.setLineWrap(true);
+//				ta.setEditable(false);
+//				builder.add(ta, cc.xy(4, count));
+//				builder.addSeparator("", cc.xyw(2, count+1, 3));
+//				count = count + 2;
+//			}
+//			count = count+1;
+//			if(problems.size() > 0) {
+//				builder.addLabel("Problems occured in:", cc.xy(2, count));
+//				builder.addSeparator("", cc.xyw(2, count+1, 3));
+//			}
+//			count = count+2;
+//			
+//			for(String b : problems.keySet()) {
+//				builder.add(new JLabel("    " + b), cc.xy(2, count));
+//				JTextArea ta = new JTextArea(status.get(b));
+//				ta.setBackground(Color.white);
+//				ta.setForeground(Color.red);
+//				ta.setLineWrap(true);
+//				ta.setEditable(false);
+//				builder.add(ta, cc.xy(4, count));
+//				builder.addSeparator("", cc.xyw(2, count+1, 3));
+//				count = count + 2;
+//			}
+//			
+//			JScrollPane pane = new JScrollPane(builder.getPanel());
+//			pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+//			pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+//			dlg.add(pane, BorderLayout.CENTER);
+//			dlg.add(createBtnPanel(), BorderLayout.SOUTH);
+//
+//			dlg.setVisible(true);
+//		}
+//		
+//		private JPanel createBtnPanel() 
+//		{
+//			JPanel btnPanel = new JPanel();
+//			btnPanel.setBackground(Color.white);
+//			
+//			JButton cancelBtn = new JButton("OK");
+//			cancelBtn.addActionListener(new ActionListener() 
+//			{				
+//				@Override
+//				public void actionPerformed(ActionEvent e)
+//				{
+//					dlg.dispose();
+//				}
+//			});
+//			
+//			btnPanel.add(cancelBtn);
+//			return btnPanel;
+//		}
+//		
+//		private void init() 
+//		{
+//			dlg.setLayout(new BorderLayout());
+//			dlg.setPreferredSize(new Dimension(600, 450));
+//			dlg.setTitle("Status");
+//			dlg.setBackground(Color.white);
+//			dlg.setLayout(new BorderLayout());
+//			dlg.setResizable(false);
+//			dlg.setAlwaysOnTop(true);
+//			dlg.setModal(true);
+//			dlg.pack();
+//			dlg.setLocationRelativeTo(desktop.getFrame());
+//		}
+//	}
 }

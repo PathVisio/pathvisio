@@ -17,6 +17,7 @@
 
 package org.pathvisio.desktop;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -48,14 +49,13 @@ import org.pathvisio.desktop.data.DBConnDerby;
 import org.pathvisio.desktop.data.DBConnectorSwing;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
+import org.pathvisio.desktop.plugin.IPluginManager;
 import org.pathvisio.desktop.plugin.PluginDialogSwitch;
-import org.pathvisio.desktop.plugin.PluginManager;
 import org.pathvisio.desktop.util.StandaloneCompat;
 import org.pathvisio.desktop.visualization.VisualizationEvent;
 import org.pathvisio.desktop.visualization.VisualizationManager;
 import org.pathvisio.gui.PathwayElementMenuListener.PathwayElementMenuHook;
 import org.pathvisio.gui.SwingEngine;
-import org.pathvisio.pluginmanager.IPluginManager;
 
 /**
  * PvDesktop ties together several
@@ -76,7 +76,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 	private final SwingEngine swingEngine;
 	private final StandaloneCompat compat;
 	private final PreferencesDlg preferencesDlg;
-	private IPluginManager pluginManagerExternal;
+	private IPluginManager pluginManager;
 
 	private BundleContext context;
 	
@@ -414,22 +414,22 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		if (vPwy != null) vPwy.redraw();
 	}
 
-	private PluginManager manager = null;
+//	private PluginManager manager = null;
 
-	public void initPlugins()
-	{
-		if (manager != null) throw new IllegalStateException ("Can't initialize plugin manager twice!");
-		manager = new PluginManager(this);
-	}
+//	public void initPlugins()
+//	{
+//		if (manager != null) throw new IllegalStateException ("Can't initialize plugin manager twice!");
+//		manager = new PluginManager(this);
+//	}
 
-	public PluginManager getPluginManager() {
-		return manager;
-	}
+//	public PluginManager getPluginManager() {
+//		return manager;
+//	}
 	
 	/**
 	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
 	 * current database type.
-	 * dbType is "Metabolite" , "Gene" or "Interaction" and is only used in messages to the user.
+	 * dbType is "Metabolite" or "Gene" and is only used in messages to the user.
 	 */
 	public void selectGdb (String dbType)
 	{
@@ -446,24 +446,12 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			if (dbType.equals("Gene"))
 			{
 				swingEngine.getGdbManager().setGeneDb(dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, 
-						dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, dbName);
 			}
 			else
 			{
-				if(dbType.equals("Metabolite")){
-					swingEngine.getGdbManager().setMetaboliteDb(dbName);
-					PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, 
-							dbName);
-				}
-				else
-				{ 
-					if(dbType.equals("Interaction")){
-						swingEngine.getGdbManager().setInteractionDb(dbName);
-						PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_IDB, 
-								dbName);
-					}
-				}
+				swingEngine.getGdbManager().setMetaboliteDb(dbName);
+				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);
 			}
 		}
 		catch(Exception ex)
@@ -486,7 +474,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		ServiceReference ref = getContext().getServiceReference(IPluginManager.class.getName());
 		// TODO: warning if plugin manager service can not be resolved
 		if(ref != null) {
-			pluginManagerExternal = (IPluginManager) getContext().getService(ref);
+			pluginManager = (IPluginManager) getContext().getService(ref);
 			Set<URL> onlineRepos = new HashSet<URL>();
 			try {
 				// TODO: this information should be stored in global settings
@@ -495,13 +483,14 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			pluginManagerExternal.init(GlobalPreference.getBundleDir(), onlineRepos);
+
+			File localRepo = new File(GlobalPreference.getApplicationDir(), ".bundles");
+			pluginManager.init(localRepo, onlineRepos);
 		}
 	}
 
 
 	public IPluginManager getPluginManagerExternal() {
-		return pluginManagerExternal;
+		return pluginManager;
 	}
 }

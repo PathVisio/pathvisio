@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.desktop.dialog;
+package org.pathvisio.pluginmanager.impl.dialogs;
 
 /*
  * Developed by Panagiotis Peikidis
@@ -26,19 +26,19 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import org.apache.felix.bundlerepository.Resource;
+import org.pathvisio.pluginmanager.impl.data.BundleVersion;
 
-public class ResourceTableModel extends AbstractTableModel implements TableModel{
-	List<Resource> resources;
+public class PluginTableModel extends AbstractTableModel implements TableModel{
+	List<BundleVersion> bundleVersions;
 	
-	public ResourceTableModel(List<Resource> resources) {
-		this.resources = resources;
+	public PluginTableModel(List<BundleVersion> bundleVersions) {
+		this.bundleVersions = bundleVersions;
 	}
 	
-	public Class<?> getColumnClass(int columnIndex) { return Resource.class; }
+	public Class<?> getColumnClass(int columnIndex) { return BundleVersion.class; }
 	public int getColumnCount() { return 1; }
 	public String getColumnName(int columnIndex) { return "Plug-ins"; }
-	public int getRowCount() { return (resources == null) ? 0 : resources.size(); }
-	public Object getValueAt(int rowIndex, int columnIndex) { return (resources == null) ? null : resources.get(rowIndex); }
+	public int getRowCount() { return (bundleVersions == null) ? 0 : bundleVersions.size(); }
+	public Object getValueAt(int rowIndex, int columnIndex) { return (bundleVersions == null) ? null : bundleVersions.get(rowIndex); }
 	public boolean isCellEditable(int arg0, int arg1) { return true; }
 }

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.desktop.dialog;
+package org.pathvisio.pluginmanager.impl.dialogs;
 
 /*
  * Developed by Panagiotis Peikidis
@@ -40,15 +40,13 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import org.apache.felix.bundlerepository.Resource;
-import org.pathvisio.core.util.Resources;
-import org.pathvisio.desktop.PvDesktop;
-import org.pathvisio.desktop.plugin.LocalRepository;
-import org.pathvisio.desktop.plugin.OnlineRepository;
+import org.pathvisio.pluginmanager.impl.PluginManager;
+import org.pathvisio.pluginmanager.impl.data.BundleVersion;
+import org.pathvisio.pluginmanager.impl.util.Resources;
 
-public class ResourceCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer{
-	
-	private Resource resource;
+public class PluginCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
+
+	private BundleVersion bundleVersion;
 	
 	private JPanel panel;
 	private JPanel showButton;
@@ -56,13 +54,13 @@ public class ResourceCell extends AbstractCellEditor implements TableCellEditor,
 	private JLabel text;
 	
 	private JButton button;
-	private JButton buttonInfo;
 	
-	private PvDesktop pvDesktop;
+	private PluginManager manager;
 	
-	public ResourceCell(boolean installed, PvDesktop pvDesktop) {
-		this.pvDesktop = pvDesktop;
+	public PluginCell(boolean installed, PluginManager manager) {
+		this.manager = manager;
 		text = new JLabel();
+
 		showButton = getButtonPanel(installed);
 		panel = new JPanel(new BorderLayout());
 		URL imgURL = Resources.getResourceURL("plugin.png");
@@ -75,10 +73,10 @@ public class ResourceCell extends AbstractCellEditor implements TableCellEditor,
 		panel.add(showButton, BorderLayout.EAST);
 	}
 	
-	private void updateData(Resource res, boolean isSelected, JTable table) {
-		this.resource = res;
+	private void updateData(BundleVersion res, boolean isSelected, JTable table) {
+		this.bundleVersion = res;
 		
-		text.setText("<html><b>" + res.getSymbolicName() + ", " + res.getVersion() + "</b><br>" + "<i>Short Description</i>" + "</html>");
+		text.setText("<html><b>" + res.getName() + "<br><i>" + res.getVersion() + "</i></b>" + "</html>");
 		if (isSelected) {
 			showButton.setBackground(table.getSelectionBackground());
 			showButton.setBorder(new LineBorder(table.getSelectionBackground(), 5));
@@ -97,50 +95,34 @@ public class ResourceCell extends AbstractCellEditor implements TableCellEditor,
 			button.setText("  Install ");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					JOptionPane.showMessageDialog(null, "Install:  " + resource.getSymbolicName());
-					System.out.println("ACTION");
-					OnlineRepository repo = pvDesktop.getPluginManager().getRepositoryManager().getRepository(resource);
-					if(repo != null) {
-						repo.installResource(resource);
-					}
+//					JOptionPane.showMessageDialog(null, "Install:  " + bundleVersion.getBundle().getSymbolicName());
+//					System.out.println("ACTION");
+					manager.installPluginFromRepo(bundleVersion);
 				}
 			});
 		} else {
-			button.setText("Remove");
+			button.setText(" Uninstall ");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					LocalRepository repo = pvDesktop.getPluginManager().getRepositoryManager().getLocalRepository();
-					repo.uninstallResource(resource);
-					JOptionPane.showMessageDialog(null, "Remove:  " + resource.getSymbolicName());
+//					LocalRepository repo = pvDesktop.getPluginManager().getRepositoryManager().getLocalRepository();
+//					repo.uninstallResource(resource);
+//					JOptionPane.showMessageDialog(null, "Remove:  " + resource.getSymbolicName());
 				}
 			});
 		}
-		
-		buttonInfo = new JButton("Get Info");
-		buttonInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
-		buttonInfo.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JOptionPane.showMessageDialog(null, "Get Info:  " + resource.getSymbolicName());
-			}
-		});
 		
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(Box.createVerticalGlue());
 		panel.add(button, JPanel.CENTER_ALIGNMENT);
 		panel.add(Box.createVerticalGlue());
-		panel.add(buttonInfo, JPanel.CENTER_ALIGNMENT);
-		panel.add(Box.createVerticalGlue());
 		return panel;
 	}
 	
 	
 
-	public Component getTableCellEditorComponent(JTable table, Object value,
-			boolean isSelected, int row, int column) {
-		Resource feed = (Resource)value;
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+		BundleVersion feed = (BundleVersion)value;
 		updateData(feed, true, table);
 		return panel;
 	}
@@ -151,7 +133,7 @@ public class ResourceCell extends AbstractCellEditor implements TableCellEditor,
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
-		Resource feed = (Resource)value;
+		BundleVersion feed = (BundleVersion)value;
 
 		updateData(feed, isSelected, table);
 		return panel;

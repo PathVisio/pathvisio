@@ -25,8 +25,8 @@
 					<file name="modules/org.pathvisio.core/build.xml"/>
 					<file name="modules/org.pathvisio.gui/build.xml"/>
 					<file name="modules/org.pathvisio.data/build.xml"/>
-					<file name="modules/org.pathvisio.pluginmanager/build.xml"/>
 					<file name="modules/org.pathvisio.desktop/build.xml"/>
+					<file name="modules/org.pathvisio.pluginmanager/build.xml"/>
 					<file name="modules/org.pathvisio.launcher/build.xml"/>
 					<file name="modules/org.pathvisio.gex/build.xml"/>
 					<file name="modules/org.pathvisio.statistics/build.xml"/>
@@ -83,16 +83,16 @@
 		<subant target="jar" buildpath="modules/org.pathvisio.data/build.xml"/>
 	</target>
 
-	<target name="pluginmanager.jar" depends="prepare">
-		<subant target="jar" buildpath="modules/org.pathvisio.pluginmanager/build.xml"/>
-	</target>
-
 	<target name="gui.jar" depends="core.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.gui/build.xml"/>
 	</target>
 
-	<target name="desktop.jar" depends="gui.jar, data.jar, pluginmanager.jar">
+	<target name="desktop.jar" depends="gui.jar, data.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.desktop/build.xml"/>
+	</target>
+
+	<target name="pluginmanager.jar" depends="desktop.jar">
+		<subant target="jar" buildpath="modules/org.pathvisio.pluginmanager/build.xml"/>
 	</target>
 
 	<target name="launcher.jar" depends="core.jar">
@@ -123,7 +123,7 @@
 		</copy>
 	</target>
 
-	<target name="plugins.jar" depends="visualization.jar">
+	<target name="plugins.jar" depends="visualization.jar,pluginmanager.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.gex/build.xml"/>
 		<subant target="jar" buildpath="modules/org.pathvisio.statistics/build.xml"/>
 	</target>

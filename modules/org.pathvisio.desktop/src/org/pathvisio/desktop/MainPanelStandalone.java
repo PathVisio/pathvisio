@@ -91,7 +91,6 @@ public class MainPanelStandalone extends MainPanel
 		JMenu dataMenu = new JMenu("Data");
 		addToMenu (standaloneActions.selectGeneDbAction, dataMenu);
 		addToMenu (standaloneActions.selectMetaboliteDbAction, dataMenu);
-		addToMenu (standaloneActions.selectInteractionDbAction, dataMenu);
 
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");
@@ -99,7 +98,8 @@ public class MainPanelStandalone extends MainPanel
 		for(Action a : actions.zoomActions) addToMenu(a, zoomMenu);
 
 		JMenu pluginsMenu = new JMenu("Plugins");//new
-		pluginsMenu.add(standaloneActions.pluginManagerAction);
+//		pluginsMenu.add(standaloneActions.pluginManagerAction);
+		pluginsMenu.add(standaloneActions.newPluginManagerAction);
 		pluginsMenu.add(standaloneActions.loadLocalBundlesAction);
 		
 		JMenu helpMenu = new JMenu("Help");

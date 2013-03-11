@@ -35,13 +35,9 @@ import javax.swing.KeyStroke;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine.ApplicationEventListener;
 import org.pathvisio.core.Globals;
-import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.ViewActions;
-import org.pathvisio.desktop.dialog.PluginManagerDialog;
-import org.pathvisio.desktop.dialog.RunLocalPluginDialog;
-import org.pathvisio.desktop.plugin.PluginDialogSwitch;
 import org.pathvisio.gui.SwingEngine;
 
 import edu.stanford.ejalbert.BrowserLauncher;
@@ -61,10 +57,10 @@ public class StandaloneActions implements ApplicationEventListener
 	public final Action newAction;
 	public final Action selectGeneDbAction;
 	public final Action selectMetaboliteDbAction;
-	public final Action selectInteractionDbAction;
 	public final Action preferencesAction;
 	public final Action searchAction;
-	public final Action pluginManagerAction;
+	public final Action newPluginManagerAction;
+//	public final Action pluginManagerAction;
 	public final Action loadLocalBundlesAction;
 	public final Action printAction;
 
@@ -76,10 +72,10 @@ public class StandaloneActions implements ApplicationEventListener
 		newAction = new NewAction(swingEngine);
 		selectGeneDbAction = new SelectGeneDbAction(desktop, "Gene");
 		selectMetaboliteDbAction = new SelectGeneDbAction(desktop, "Metabolite");
-		selectInteractionDbAction = new SelectGeneDbAction(desktop, "Interaction");
 		preferencesAction = new PreferencesAction(desktop);
 		searchAction = new SearchAction(swingEngine);
-		pluginManagerAction = new PluginManagerAction(desktop);
+//		pluginManagerAction = new PluginManagerAction(desktop);
+		newPluginManagerAction = new NewPluginManagerAction(desktop);
 		loadLocalBundlesAction = new LoadLocalBundlesAction(desktop);
 		//registering this class to receive Application level events (used in PrintAction) 
 		swingEngine.getEngine().addApplicationEventListener(this);
@@ -125,37 +121,60 @@ public class StandaloneActions implements ApplicationEventListener
 			}
 		}
 	}
+	
+	/**
+		 * Help -> Plugin Manager
+		 * Show a list of active plugins and errors that
+		 * occurred while initializing the plugin manager.
+		 */
+		public static class NewPluginManagerAction extends AbstractAction
+		{
+			PvDesktop pvDesktop;
+	
+			public NewPluginManagerAction(PvDesktop desktop)
+			{
+				super();
+				this.pvDesktop = desktop;
+				putValue(NAME, "New Plugin manager");
+				putValue(SHORT_DESCRIPTION, "Information about active plugins");
+			}
+	
+			public void actionPerformed(ActionEvent e)
+			{
+				pvDesktop.getPluginManagerExternal().showGui(pvDesktop.getFrame());
+			}
+		}
 
 	/**
 	 * Help -> Plugin Manager
 	 * Show a list of active plugins and errors that
 	 * occurred while initializing the plugin manager.
 	 */
-	public static class PluginManagerAction extends AbstractAction
-	{
-		PvDesktop pvDesktop;
-
-		public PluginManagerAction(PvDesktop desktop)
-		{
-			super();
-			this.pvDesktop = desktop;
-			putValue(NAME, "Plugin manager");
-			putValue(SHORT_DESCRIPTION, "Information about active plugins");
-		}
-
-		public void actionPerformed(ActionEvent e)
-		{
-			if(PreferenceManager.getCurrent().getBoolean(PluginDialogSwitch.PLUGIN_DIALOG_SWITCH)) {
-				// show new plugin dialog
-				PluginManagerDialog dlg = new PluginManagerDialog(pvDesktop);
-				dlg.createAndShowGUI();
-			} else {
-				// show old plugin dialog (default)
-				PluginManagerDlg dlg = new PluginManagerDlg (pvDesktop);
-				dlg.createAndShowGUI();
-			}
-		}
-	}
+//	public static class PluginManagerAction extends AbstractAction
+//	{
+//		PvDesktop pvDesktop;
+//
+//		public PluginManagerAction(PvDesktop desktop)
+//		{
+//			super();
+//			this.pvDesktop = desktop;
+//			putValue(NAME, "Plugin manager");
+//			putValue(SHORT_DESCRIPTION, "Information about active plugins");
+//		}
+//
+//		public void actionPerformed(ActionEvent e)
+//		{
+//			if(PreferenceManager.getCurrent().getBoolean(PluginDialogSwitch.PLUGIN_DIALOG_SWITCH)) {
+//				// show new plugin dialog
+//				PluginManagerDialog dlg = new PluginManagerDialog(pvDesktop);
+//				dlg.createAndShowGUI();
+//			} else {
+//				// show old plugin dialog (default)
+//				PluginManagerDlg dlg = new PluginManagerDlg (pvDesktop);
+//				dlg.createAndShowGUI();
+//			}
+//		}
+//	}
 	
 	/**
 	 * Plugins -> Install local plugins
@@ -175,8 +194,8 @@ public class StandaloneActions implements ApplicationEventListener
 
 		public void actionPerformed(ActionEvent e)
 		{
-			RunLocalPluginDialog dlg = new RunLocalPluginDialog(pvDesktop);
-			dlg.createAndShowGUI();
+//			RunLocalPluginDialog dlg = new RunLocalPluginDialog(pvDesktop);
+//			dlg.createAndShowGUI();
 		}
 	}
 	
@@ -248,15 +267,14 @@ public class StandaloneActions implements ApplicationEventListener
 
 		String dbType;
 		/**
-		 * type should be "Gene" , "Metabolite" or "Interaction"
+		 * type should be "Gene" or "Metabolite"
 		 */
 		public SelectGeneDbAction(PvDesktop desktop, String type)
 		{
 			super();
 			this.desktop = desktop;
 			dbType = type;
-			assert (dbType.equals ("Gene") || dbType.equals ("Metabolite") || 
-					dbType.equals ("Interaction"));
+			assert (dbType.equals ("Gene") || dbType.equals ("Metabolite"));
 			putValue(NAME, "Select " + dbType + " Database");
 			putValue(SHORT_DESCRIPTION, "Select " + dbType + " Database");
 		}

@@ -18,6 +18,7 @@ package org.pathvisio.pluginmanager;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.pathvisio.desktop.plugin.IPluginManager;
 import org.pathvisio.pluginmanager.impl.PluginManager;
 
 /**

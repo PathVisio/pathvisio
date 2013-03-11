@@ -479,7 +479,7 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 			}
 
 			File localRepo = new File(GlobalPreference.getApplicationDir(), ".bundles");
-			pluginManager.init(localRepo, onlineRepos);
+			pluginManager.init(localRepo, onlineRepos, this);
 		}
 	}
 

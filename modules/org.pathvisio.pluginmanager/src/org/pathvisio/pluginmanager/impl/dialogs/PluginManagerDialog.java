@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -89,7 +90,50 @@ public class PluginManagerDialog extends JDialog {
 
 	private JPanel getErrorPanel() {
 		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
 		panel.setBackground(Color.WHITE);
+		CellConstraints cc = new CellConstraints();
+		List<BundleVersion> plugins = new ArrayList<BundleVersion>();
+		for(BundleVersion plugin : manager.getErrors()) {
+			if(!plugin.isInstalled()) {
+				plugins.add(plugin);
+			}
+		}
+		
+		if (plugins.isEmpty()) {
+			panel.add(new JLabel("No errors occured."), BorderLayout.NORTH);
+		} else {
+			String rowLayout = "4dlu,pref,";
+			for(int i = 0; i < plugins.size(); i++) {
+				rowLayout = rowLayout + "4dlu,pref,";
+			}
+			rowLayout = rowLayout + "15dlu";
+			FormLayout layout = new FormLayout("4dlu, pref, 4dlu, 150dlu, 4dlu", rowLayout);
+			PanelBuilder builder = new PanelBuilder(layout);
+			builder.setBackground(Color.white);
+			if(plugins.size() > 0) {
+				builder.addLabel("Problems occured:", cc.xy(2, 2));
+				builder.addSeparator("", cc.xyw(2, 3, 3));
+			}
+			int count = 4;
+			for(BundleVersion b : plugins) {
+				builder.add(new JLabel("    " + b), cc.xy(2, count));
+				JTextArea ta = new JTextArea(b.getBundle().getStatus().getMessage());
+				ta.setForeground(Color.red);
+				ta.setBackground(Color.white);
+				ta.setLineWrap(true);
+				ta.setEditable(false);
+				builder.add(ta, cc.xy(4, count));
+				builder.addSeparator("", cc.xyw(2, count+1, 3));
+				count = count + 2;
+			}
+			
+			JScrollPane pane = new JScrollPane(builder.getPanel());
+			pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			panel.add(pane, BorderLayout.CENTER);
+		}
+		
 		return panel;
 	}
 
@@ -107,7 +151,12 @@ public class PluginManagerDialog extends JDialog {
 			}
 		}
 		if (plugins.isEmpty()) {
-			panel.add(new JLabel("No plugins available."));
+			panel.setLayout(new BorderLayout());
+			if(manager.getOnlineRepos().size() == 0) {
+				panel.add(new JLabel("Could not connect to online repository."), BorderLayout.NORTH);
+			} else {
+				panel.add(new JLabel("No plugins available."), BorderLayout.NORTH);
+			}
 		} else {
 			available = new JTable(new PluginTableModel(plugins));
 			available.setBackground(Color.white);
@@ -122,13 +171,12 @@ public class PluginManagerDialog extends JDialog {
 				public void valueChanged(ListSelectionEvent e) {
 					int row = available.getSelectedRow();
 					int column = available.getSelectedColumn();
-					System.out.println(row + "\t" + column);
 					BundleVersion p = (BundleVersion) available.getValueAt(row, column);
 					updatePluginDetails(p, availInfo);
 				}
 			});
 			
-			panel.add(new JScrollPane(available), BorderLayout.WEST);
+			panel.add(new JScrollPane(available));
 			availInfo = new JPanel();
 			availInfo.setBackground(Color.white);
 			panel.add(availInfo);
@@ -211,7 +259,8 @@ public class PluginManagerDialog extends JDialog {
 		}
 		
 		if (plugins.isEmpty()) {
-			panel.add(new JLabel("No plugins installed."));
+			panel.setLayout(new BorderLayout());
+			panel.add(new JLabel("No plugins installed."), BorderLayout.NORTH);
 		} else {
 			installed = new JTable(new PluginTableModel(plugins));
 			installed.setBackground(Color.white);
@@ -231,7 +280,7 @@ public class PluginManagerDialog extends JDialog {
 				}
 			});
 			
-			panel.add(new JScrollPane(installed), BorderLayout.WEST);
+			panel.add(new JScrollPane(installed));
 			installedInfo = new JPanel();
 			installedInfo.setBackground(Color.white);
 			panel.add(installedInfo);

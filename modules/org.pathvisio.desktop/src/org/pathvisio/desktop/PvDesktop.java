@@ -50,7 +50,6 @@ import org.pathvisio.desktop.data.DBConnectorSwing;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.plugin.IPluginManager;
-import org.pathvisio.desktop.plugin.PluginDialogSwitch;
 import org.pathvisio.desktop.util.StandaloneCompat;
 import org.pathvisio.desktop.visualization.VisualizationEvent;
 import org.pathvisio.desktop.visualization.VisualizationManager;
@@ -179,11 +178,6 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		preferencesDlg.addPanel ("Database", preferencesDlg.builder()
 			.stringField (GlobalPreference.DB_ENGINE_GEX,
 				"Database connector class for expression dataset:")
-			.build());
-		
-		preferencesDlg.addPanel("Plugin Manager", 
-			preferencesDlg.builder().booleanField(PluginDialogSwitch.PLUGIN_DIALOG_SWITCH, 
-					"Select if you want to use the new plug-in manager (work in progress)")
 			.build());
 
 	}

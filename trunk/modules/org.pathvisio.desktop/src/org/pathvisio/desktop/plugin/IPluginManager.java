@@ -6,9 +6,11 @@ import java.util.Set;
 
 import javax.swing.JFrame;
 
+import org.pathvisio.desktop.PvDesktop;
+
 public interface IPluginManager {
 
 	public void installLocalPlugins(File bundleDir);
-	public void init(File localRepo, Set<URL> onlineRepo);
+	public void init(File localRepo, Set<URL> onlineRepo, PvDesktop desktop);
 	public void showGui(JFrame parent);
 }

@@ -135,7 +135,7 @@ public class StandaloneActions implements ApplicationEventListener
 			{
 				super();
 				this.pvDesktop = desktop;
-				putValue(NAME, "New Plugin manager");
+				putValue(NAME, "Plugin manager");
 				putValue(SHORT_DESCRIPTION, "Information about active plugins");
 			}
 	

@@ -12,7 +12,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
-import org.pathvisio.pluginmanager.impl.PluginManager;
 import org.pathvisio.pluginmanager.impl.Utils;
 import org.pathvisio.pluginmanager.impl.data.Affiliation;
 import org.pathvisio.pluginmanager.impl.data.BundleAuthor;
@@ -24,7 +23,6 @@ import org.pathvisio.pluginmanager.impl.data.PVRepository;
 import org.pathvisio.pluginmanager.impl.data.Profile;
 
 public class RepoXmlReader {
-
 	
 	private static String SYMBOLIC_NAME = "symbolic_name";
 	private static String TYPE = "type";

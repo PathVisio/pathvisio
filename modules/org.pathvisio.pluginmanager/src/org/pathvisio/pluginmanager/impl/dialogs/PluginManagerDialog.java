@@ -275,8 +275,14 @@ public class PluginManagerDialog extends JDialog {
 				public void valueChanged(ListSelectionEvent e) {
 					int row = installed.getSelectedRow();
 					int column = installed.getSelectedColumn();
-					BundleVersion p = (BundleVersion) installed.getValueAt(row, column);
-					updatePluginDetails(p, installedInfo);
+					if(row != -1 && column != -1) {
+						BundleVersion p = (BundleVersion) installed.getValueAt(row, column);
+						updatePluginDetails(p, installedInfo);
+					} else {
+						installedInfo.removeAll();
+						installedInfo.revalidate();
+						installedInfo.repaint();
+					}
 				}
 			});
 			

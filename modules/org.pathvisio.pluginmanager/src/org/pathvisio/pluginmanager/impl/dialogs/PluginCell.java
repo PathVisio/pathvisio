@@ -103,6 +103,7 @@ public class PluginCell extends AbstractCellEditor implements TableCellEditor, T
 			button.setText(" Uninstall ");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
+					manager.uninstallBundle(bundleVersion);
 //					LocalRepository repo = pvDesktop.getPluginManager().getRepositoryManager().getLocalRepository();
 //					repo.uninstallResource(resource);
 //					JOptionPane.showMessageDialog(null, "Remove:  " + resource.getSymbolicName());

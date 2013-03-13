@@ -234,8 +234,7 @@ public class CommonActions implements ApplicationEventListener {
 							new NewElementAction(e, new DefaultTemplates.InteractionTemplate()) },
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.ReactionTemplate()) },
-
-			};
+					};
 	
 		 // actions for "Data nodes" section
 		 newDatanodeActions = new Action[] {
@@ -260,6 +259,11 @@ public class CommonActions implements ApplicationEventListener {
 		
 		 // actions for "Basic shapes" section
 		 newShapeActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.LabelTemplate()),
+				 new NewElementAction(e, new DefaultTemplates.GraphicalLineTemplate(
+							"line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
+					),
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.RECTANGLE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.OVAL)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ROUNDED_RECTANGLE)),
@@ -267,10 +271,6 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.PENTAGON)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.HEXAGON)),
 //				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.EDGE)),
-				 new NewElementAction(e, new DefaultTemplates.GraphicalLineTemplate(
-							"line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
-					),
-			 	 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.ARC)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
 		 };

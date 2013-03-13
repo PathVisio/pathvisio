@@ -95,7 +95,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	private GraphicsChoiceButton itemsDropDown;
 	
 	private ObjectsPane objectsPane;
-
+	
 	private JTable propertyTable;
 	private JComboBox zoomCombo;
 	protected BackpagePane backpagePane;
@@ -195,14 +195,16 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		objectsPane = new ObjectsPane(swingEngine);
 		int numItemsPerRow = 10;
 		objectsPane.addButtons(actions.newDatanodeActions, "Data Nodes", numItemsPerRow);
-		objectsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
 		objectsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
 		//objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
 		objectsPane.addButtons(actions.newMIMInteractionActions, "MIM interactions", numItemsPerRow);
+		//objectsPane.addButtons(actions.newAnnotationActions, "Annotations", numItemsPerRow);
+		objectsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
+		
 		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular compartments", numItemsPerRow);
-		objectsPane.addButtons(actions.newAnnotationActions, "Annotations", numItemsPerRow);
+		
 		objectsPane.addButtons(actions.newTemplateActions, "Templates", numItemsPerRow);
-				
+		
 		propertyTable = new JTable(model) {
 
 			public TableCellRenderer getCellRenderer(int row, int column) {
@@ -339,7 +341,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		GraphicsChoiceButton datanodeButton = new GraphicsChoiceButton();
 		datanodeButton.setToolTipText("Select a data node to draw");
 		datanodeButton.addButtons("Data Nodes", actions.newDatanodeActions);		
-		datanodeButton.addButtons("Annotations", actions.newAnnotationActions);
+//		datanodeButton.addButtons("Annotations", actions.newAnnotationActions);
 		addToToolbar(datanodeButton, TB_GROUP_SHOW_IF_EDITMODE);
 		tb.addSeparator(new Dimension(2,0));
 		

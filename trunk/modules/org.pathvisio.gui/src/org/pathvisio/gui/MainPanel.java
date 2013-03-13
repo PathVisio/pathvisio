@@ -199,7 +199,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		//objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
 		objectsPane.addButtons(actions.newMIMInteractionActions, "MIM interactions", numItemsPerRow);
 		//objectsPane.addButtons(actions.newAnnotationActions, "Annotations", numItemsPerRow);
-		objectsPane.addButtons(actions.newShapeActions, "Basic Shapes", numItemsPerRow);
+		objectsPane.addButtons(actions.newShapeActions, "Graphical elements", numItemsPerRow);
 		
 		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular compartments", numItemsPerRow);
 		

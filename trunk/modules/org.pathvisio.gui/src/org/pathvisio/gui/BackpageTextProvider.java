@@ -19,8 +19,10 @@ package org.pathvisio.gui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -173,20 +175,22 @@ public class BackpageTextProvider
 				String db = "";
 				crt.append("<table border=0>");
 				for(Xref cr : sortedRefs) {
-					String dbNew = (cr.getDataSource().getFullName() != null ? cr.getDataSource().getFullName() : cr.getDataSource().getSystemCode());
-					if(!dbNew.equals(db)) {
-						db = dbNew;
-						crt.append("<TR></TR>");
-						crt.append("<TR><TH border=1 align=\"left\" bgcolor=\"#F0F0F0\"><font size=\"4\"><b>" + db + "</b></font></TH></TR>");
-					}
-					String idtxt = cr.getId();
-					String url = cr.getUrl();
-					if(url != null && !url.equals(idtxt)) {
-						url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
-						idtxt = "<a href=\"" + url + "\">" + idtxt + "</a>";
-					}
+					 if(!oldEnsembl(cr)) {
+						 String dbNew = (cr.getDataSource().getFullName() != null ? cr.getDataSource().getFullName() : cr.getDataSource().getSystemCode());
+						 if(!dbNew.equals(db)) {
+							 db = dbNew;
+							 crt.append("<TR></TR>");
+							 crt.append("<TR><TH border=1 align=\"left\" bgcolor=\"#F0F0F0\"><font size=\"4\"><b>" + db + "</b></font></TH></TR>");
+						 }
+						String idtxt = cr.getId();
+						String url = cr.getUrl();
+						if(url != null && !url.equals(idtxt)) {
+							url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
+							idtxt = "<a href=\"" + url + "\">" + idtxt + "</a>";
+						}
 
-					crt.append("<TR><TH align=\"left\" style=\"border-left : 1\">" + idtxt + "</TH></TR>");
+						crt.append("<TR><TH align=\"left\" style=\"border-left : 1\">" + idtxt + "</TH></TR>");
+					 }
 				}
 				crt.append("</table>");
 				return crt.toString();
@@ -197,7 +201,26 @@ public class BackpageTextProvider
 					+ ex.getMessage() + "\n";
 			}
 		}
+		private Set<String> oldEnsembl = new HashSet<String>(Arrays.asList(new String[] {
+				"EnBs", "EnCe", "EnGg", "EnPt", "EnBt", "EnCf", "EnEc", "EnDm", "EnQc", 
+				"EnHs", "EnMx", "EnAg", "EnMm","EnSs", "EP", "EnRn", "EnXt", 
+				"EnSc", "EnDr"}));
+				 
+		private boolean oldEnsembl(Xref xref) {
+			String sysCode = xref.getDataSource().getSystemCode();
+			String dsName = xref.getDataSource().getFullName();
+			if(oldEnsembl.contains(sysCode)) {
+				return true;
+			} else if(dsName.equals("Ensembl Bacteria") || dsName.equals("Ensembl Fruitfly") ||
+					dsName.equals("Ensembl Fungi") || dsName.equals("Ensembl Metazoa") ||
+					dsName.equals("Ensembl Protists ")) {
+				return true;
+					 }
+			return false;
+		}
 	}
+	
+	
 
 	/**
 	 * Register a BackpageHook with this text provider. Backpage fragments

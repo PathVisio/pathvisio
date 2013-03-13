@@ -75,7 +75,6 @@ public class PluginManager implements IPluginManager {
 	
 	public PluginManager (BundleContext context) {
 		logger = new Logger();
-		logger.setStream(System.out);
 		this.context = context;
 		onlineRepos = new ArrayList<PVRepository>();
 		runningPlugins = new ArrayList<Plugin>();

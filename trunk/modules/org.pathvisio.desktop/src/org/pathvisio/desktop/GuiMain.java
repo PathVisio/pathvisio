@@ -157,21 +157,21 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		}
 		return s;
 	}
-
-	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel, JLabel idbLabel) {
+//Commented out interaction database for milestone 33, to be included in milestone 34
+	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel) {
 		String gdb = "" + swingEngine.getGdbManager().getGeneDb();
 		String mdb = "" + swingEngine.getGdbManager().getMetaboliteDb();
-		String idb = "" + swingEngine.getGdbManager().getInteractionDb();
+//		String idb = "" + swingEngine.getGdbManager().getInteractionDb();
 		gdbLabel.setText(gdb != null ? (" | Gene database: " + shortenString(gdb)) : "");
 		mdbLabel.setText(mdb != null ? (" | Metabolite database: " + shortenString(mdb)) : "");
-		idbLabel.setText(idb != null ? (" | Interaction database: " + shortenString(idb)) : "");
+//		idbLabel.setText(idb != null ? (" | Interaction database: " + shortenString(idb)) : "");
 		gdbLabel.setToolTipText(gdb != null ? gdb : "");
 		mdbLabel.setToolTipText(mdb != null ? mdb : "");
-		idbLabel.setToolTipText(idb != null ? idb : "");
+//		idbLabel.setToolTipText(idb != null ? idb : "");
 	}
 
 	public void gdbEvent(GdbEvent e) {
-		setGdbStatus(gdbLabel, mdbLabel, idbLabel);
+		setGdbStatus(gdbLabel, mdbLabel);
 	}
 
 	public void gexManagerEvent(GexManagerEvent e)
@@ -192,7 +192,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 
 	private JLabel gdbLabel;
 	private JLabel mdbLabel;
-	private JLabel idbLabel;
+//	private JLabel idbLabel;
 	private JLabel gexLabel;
 
 	/**
@@ -217,14 +217,14 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 
 		gdbLabel = new JLabel();
 		mdbLabel = new JLabel();
-		idbLabel = new JLabel();
+//		idbLabel = new JLabel();
 		gexLabel = new JLabel();
 
 		statusBar.add(gdbLabel);
 		statusBar.add(mdbLabel);
-		statusBar.add(idbLabel);
+//		statusBar.add(idbLabel);
 		statusBar.add(gexLabel);
-		setGdbStatus(gdbLabel, mdbLabel, idbLabel);
+		setGdbStatus(gdbLabel, mdbLabel);
 
 		swingEngine.getGdbManager().addGdbEventListener(this);
 

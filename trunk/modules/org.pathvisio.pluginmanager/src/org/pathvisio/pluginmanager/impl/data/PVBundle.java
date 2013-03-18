@@ -1,3 +1,19 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2013 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 package org.pathvisio.pluginmanager.impl.data;
 
 import java.util.ArrayList;
@@ -21,11 +37,9 @@ public class PVBundle implements Comparable<PVBundle> {
 	private Boolean installed = false;
 	private StatusMessage status;
 	
-//	private List<BundleVersion> versions;
 	private List<Category> categories;
 	
 	public PVBundle() {
-//		versions = new ArrayList<BundleVersion>();
 		categories = new ArrayList<Category>();
 		status = new StatusMessage();
 	}
@@ -87,15 +101,6 @@ public class PVBundle implements Comparable<PVBundle> {
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
-
-//	@XmlTransient
-//	public List<BundleVersion> getVersions() {
-//		return versions;
-//	}
-//
-//	public void setVersions(List<BundleVersion> versions) {
-//		this.versions = versions;
-//	}
 	
 	public String getWebsite() {
 		return website;
@@ -129,52 +134,8 @@ public class PVBundle implements Comparable<PVBundle> {
 		this.source = source;
 	}
 
-//	public boolean hasVersion(String version) {
-//		for(BundleVersion ver : versions) {
-//			if(Utils.compare(ver.getVersion(), version) == 0) {
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-
 	@Override
 	public int compareTo(PVBundle plugin) {
 		return plugin.getName().compareTo(name);
 	}
-
-//	@Override
-//	public Version getStableVersion() {
-//		Version v = null;
-//		for(BundleVersion ver : versions) {
-//			if(v == null) {
-//				
-//				v = new Version(ver.getVersion());
-//			} else if (Utils.compare(ver.getVersion().toString(), v.toString()) > 0) {
-//				v = new Version(ver.getVersion());
-//			}
-//		}
-//		return v;
-//	}
-	
-//	public BundleVersion getBundleVersion(String version) {
-//		for(BundleVersion ver : versions) {
-//			if(ver.getVersion().equals(version)) {
-//				return ver;
-//			}
-//		}
-//		return null;
-//	}
-//	
-//	public BundleVersion getStablePluginVersion() {
-//		BundleVersion version = null;
-//		for(BundleVersion ver : versions) {
-//			if(version == null) {
-//				version = ver;
-//			} else if (Utils.compare(ver.getVersion().toString(), version.toString()) > 0) {
-//				version = ver;
-//			}
-//		}
-//		return version;
-//	}
 }

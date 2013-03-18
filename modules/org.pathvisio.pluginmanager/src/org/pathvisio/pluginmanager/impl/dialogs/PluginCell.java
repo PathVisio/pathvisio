@@ -1,6 +1,6 @@
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2011 BiGCaT Bioinformatics
+// Copyright 2006-2013 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ package org.pathvisio.pluginmanager.impl.dialogs;
  * Developed by Panagiotis Peikidis
  * http://pekalicious.com/blog/custom-jpanel-cell-with-jbuttons-in-jtable/
  */
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -39,9 +38,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.pathvisio.core.util.Resources;
 import org.pathvisio.pluginmanager.impl.PluginManager;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
-import org.pathvisio.pluginmanager.impl.util.Resources;
 
 public class PluginCell extends AbstractCellEditor implements TableCellEditor, TableCellRenderer {
 
@@ -94,8 +93,6 @@ public class PluginCell extends AbstractCellEditor implements TableCellEditor, T
 			button.setText("  Install ");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-//					JOptionPane.showMessageDialog(null, "Install:  " + bundleVersion.getBundle().getSymbolicName());
-//					System.out.println("ACTION");
 					manager.installPluginFromRepo(bundleVersion);
 				}
 			});
@@ -104,9 +101,6 @@ public class PluginCell extends AbstractCellEditor implements TableCellEditor, T
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					manager.uninstallBundle(bundleVersion);
-//					LocalRepository repo = pvDesktop.getPluginManager().getRepositoryManager().getLocalRepository();
-//					repo.uninstallResource(resource);
-//					JOptionPane.showMessageDialog(null, "Remove:  " + resource.getSymbolicName());
 				}
 			});
 		}

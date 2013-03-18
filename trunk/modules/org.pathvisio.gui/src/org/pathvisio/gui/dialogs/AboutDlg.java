@@ -19,6 +19,7 @@ package org.pathvisio.gui.dialogs;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -41,7 +42,7 @@ import org.pathvisio.gui.SwingEngine;
  */
 public class AboutDlg
 {
-	private static final URL IMG_ABOUT_LOGO = Resources.getResourceURL("logo.jpg");
+	private static final URL IMG_ABOUT_LOGO = Resources.getResourceURL("new-logo-small.png");
 
 	private SwingEngine swingEngine;
 
@@ -51,29 +52,32 @@ public class AboutDlg
 	public void createAndShowGUI()
 	{
 		final JFrame aboutDlg = new JFrame();
-
+		aboutDlg.setBackground(Color.white);
 		FormLayout layout = new FormLayout(
-				"4dlu, pref, 4dlu, fill:160dlu:grow, 4dlu",
-				"4dlu, 220dlu:grow, 4dlu, pref, 4dlu, pref, 4dlu");
+				" 4dlu, left:230dlu:grow, 4dlu",
+				"4dlu, pref, 4dlu, 240dlu:grow, 4dlu, pref, 4dlu");
 
-		JLabel versionLabel = new JLabel (swingEngine.getEngine().getApplicationName());
-		JLabel revisionLabel = new JLabel (Engine.getRevision());
 		JEditorPane label = new JEditorPane();
+		label.setBackground(Color.white);
 		label.setContentType("text/html");
 		label.setEditable(false);
 		label.setText(
-				"<html><h3>Core developers</h3>\n" +
-				"<p>Thomas Kelder, Martijn van Iersel\n" +
-				"Kristina Hanspers, Alex Pico, Tina Kutmon\n" +
-				"<h3>Contributors</h3>\n" +
-				"<p>R.M.H. Besseling, S.P.M.Crijns, I. Kaashoek\n" +
-				"M.M. Palm, E.D. Pelgrim, E. Neuteboom,\n" +
-				"E.J. Creusen, P. Moeskops, Adem Bilican,\n" +
-				"Margot Sunshine, Mark Woon, Bing Liu,\n" +
-				"Ferry Jagers, Justin Elser, Harm Nijveen, \n" +
-				"Sravanthi Sinha, Praveen Kumar, Anwesha Dutta\n" +
-				"<h3>Visit our website</h3>" +
-				"<p><a href=\"http://www.pathvisio.org\">http://www.pathvisio.org</a>" +
+				swingEngine.getEngine().getApplicationName() + "<br>Revision: " + Engine.getRevision() +
+				"<br><br><hr><br>" + 
+				"<html><b>Core developers</b><br>" +
+				"Martina Kutmon, Anwesha Dutta, Thomas Kelder, " +
+				"Martijn van Iersel, Kristina Hanspers, Alex Pico<br><br><hr><br>" +
+				"<b>Contributors</b><br>" +
+				"Adem Bilicna, Augustin Luna, Bing Lui, " + 
+				"Christ Leemans, Eric Creussen, Erik Pelgrin, " + 
+				"Esterh Neuteboom, Ferry Jagers, Hakim Achterberg, " + 
+				"Harm Nijveen, Irene Kaashoek, Justin Elser, " + 
+				"Kumar Chanden, Margot Sunshine, Mark Woon, " + 
+				"Margiet Palm, Pim Moeskops, Praveen Kumar, " +
+				"Rene Besseling, Rianne Fijten, Sjoerd Crijns, " + 
+				"Sravanthi Sinha, Stefan van Helden<br><br><hr><br>" +
+				"<b>Visit our website</b><br>" +
+				"<a href=\"http://www.pathvisio.org\">http://www.pathvisio.org</a>" + 
 				"</html>");
 		label.addHyperlinkListener(swingEngine);
 		JLabel iconLbl = new JLabel(new ImageIcon (IMG_ABOUT_LOGO));
@@ -81,9 +85,10 @@ public class AboutDlg
 		CellConstraints cc = new CellConstraints();
 
 		JPanel dialogBox = new JPanel();
+		dialogBox.setBackground(Color.white);
 		dialogBox.setLayout (layout);
 		dialogBox.add (iconLbl, cc.xy(2,2));
-		dialogBox.add (label, cc.xy(4,2));
+		dialogBox.add (label, cc.xy(2,4));
 
 		JButton btnOk = new JButton();
 		btnOk.setText("OK");
@@ -95,9 +100,7 @@ public class AboutDlg
 			}
 		});
 
-		dialogBox.add (versionLabel, cc.xy(2, 4));
-		dialogBox.add (revisionLabel, cc.xy(4, 4));
-		dialogBox.add (btnOk, cc.xyw (2, 6, 3, "center, top"));
+		dialogBox.add (btnOk, cc.xyw (2, 6, 1, "center, top"));
 
 		aboutDlg.setResizable(false);
 		aboutDlg.setTitle("About " + Globals.APPLICATION_NAME);

@@ -24,7 +24,6 @@ import org.pathvisio.core.model.DataNodeType;
 import org.pathvisio.core.model.IShape;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.LineType;
-import org.pathvisio.core.model.MLine;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;

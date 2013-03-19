@@ -23,9 +23,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.pathvisio.desktop.plugin.IPVBundle;
-import org.pathvisio.pluginmanager.impl.Utils;
 
-public class BundleVersion implements Comparable<BundleVersion>, IPVBundle {
+public class BundleVersion implements IPVBundle {
 
 	private String jarFile;
 	private String version;
@@ -119,17 +118,6 @@ public class BundleVersion implements Comparable<BundleVersion>, IPVBundle {
 		
 		v.setBundle(b);
 		return v;
-	}
-
-	/**
-	 * compares version numbers
-	 * returns 0 if versions are the same
-	 * returns < 0 if when the current version is smaller as the new
-	 * returns > 0 if the current version is bigger than the new
-	 */
-	@Override
-	public int compareTo(BundleVersion version) {
-		return Utils.compare(this.version.toString(), version.getVersion().toString());
 	}
 	
 	@Override

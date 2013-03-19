@@ -11,7 +11,6 @@
 		<include name="org.bridgedb.rdb.jar"/>
 		<include name="org.bridgedb.gui.jar"/>
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
-		<include name="org.pathvisio.browserlauncher.jar"/>
 		<include name="commons-math-2.0.jar"/>
 		<include name="org.eclipse.osgi.jar"/>
 	  </fileset>

@@ -17,6 +17,7 @@
 package org.pathvisio.desktop;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -62,8 +63,6 @@ import org.pathvisio.desktop.visualization.VisualizationManager;
 import org.pathvisio.gui.MainPanel;
 import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.SwingEngine.Browser;
-
-import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * Main class for the Swing GUI. This class creates and shows the GUI.
@@ -338,8 +337,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		swingEngine.setUrlBrowser(new Browser() {
 			public void openUrl(URL url) {
 				try {
-					BrowserLauncher b = new BrowserLauncher(null);
-					b.openURLinBrowser(url.toString());
+					Desktop.getDesktop().browse(url.toURI());
 				} catch (Exception ex) {
 					Logger.log.error ("Couldn't open url '" + url + "'", ex);
 				}

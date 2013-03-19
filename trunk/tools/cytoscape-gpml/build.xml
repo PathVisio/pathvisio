@@ -22,7 +22,6 @@
 		<pathelement location="${pathvisio.lib.dir}/com.springsource.org.jdom-1.1.0.jar" />
 		<pathelement location="${pathvisio.lib.dir}/org.bridgedb.jar" />
 		<pathelement location="${pathvisio.lib.dir}/org.bridgedb.bio.jar" />
-		<pathelement location="${pathvisio.lib.dir}/org.pathvisio.browserlauncher.jar" />
 		<pathelement location="${pathvisio.lib.dir}/org.pathvisio.jgoodies.forms.jar" />
 		<pathelement location="${pathvisio.dir}/modules/org.pathvisio.core.jar" />
 		<pathelement location="${pathvisio.dir}/modules/org.pathvisio.gui.jar" />
@@ -63,7 +62,6 @@
 			<!--<fileset dir="${pathvisio.lib.dir}" includes="com.springsource.org.apache.commons.logging-1.1.1.jar" />-->
 			<fileset dir="${pathvisio.lib.dir}" includes="org.bridgedb.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="org.bridgedb.bio.jar" />
-			<fileset dir="${pathvisio.lib.dir}" includes="org.pathvisio.browserlauncher.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="org.pathvisio.jgoodies.forms.jar" />
 			<!--<fileset dir="${pathvisio.lib.dir}" includes="org.apache.commons.discovery_0.2.0.v201004190315.jar" />
 			<fileset dir="${pathvisio.lib.dir}" includes="org.apache.axis_1.4.0.v201005080400.jar"/>

@@ -69,7 +69,7 @@ public class PluginManagerDialog extends JDialog {
 
 		dlg.add(getContentPanel(), BorderLayout.CENTER);
 
-		dlg.setAlwaysOnTop(true);
+		dlg.setModal(true);
 		dlg.pack();
 		dlg.setLocationRelativeTo(parent);
 		dlg.setVisible(true);

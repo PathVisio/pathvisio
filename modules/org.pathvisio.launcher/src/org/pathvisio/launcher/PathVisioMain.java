@@ -247,7 +247,7 @@ public class PathVisioMain {
 		}
 		catch (Exception ex)
 		{ 
-			System.out.println("Core Bundle " + b.getBundleId() + " failed to start.");
+			System.out.println("Core Bundle " + b.getBundleId() + " " + symbolicName + " failed to start.");
 			if (mustActivateLeft.contains (symbolicName))
 			{
 				reportException ("Fatal: could not start bundle " + symbolicName, ex);

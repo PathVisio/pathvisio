@@ -94,7 +94,6 @@ public class BundleVersion implements IPVBundle {
 	}
 	
 	public BundleVersion copyVersion() {
-		System.out.println("copy");
 		BundleVersion v = new BundleVersion();
 		v.setAuthors(authors);
 		v.setJarFile(jarFile);

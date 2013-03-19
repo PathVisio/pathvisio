@@ -254,7 +254,7 @@ public class PluginManagerDialog extends JDialog {
 		panel.setBackground(Color.white);
 		
 		List<BundleVersion> plugins = new ArrayList<BundleVersion>();
-		for(BundleVersion plugin : manager.getInstalledPlugins()) {
+		for(BundleVersion plugin : manager.getLocalHandler().getInstalledPlugins()) {
 			plugins.add(plugin);
 		}
 		

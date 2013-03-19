@@ -43,11 +43,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingWorker;
 import javax.swing.border.Border;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.data.XrefWithSymbol;
 import org.pathvisio.core.debug.Logger;

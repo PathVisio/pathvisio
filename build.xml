@@ -195,7 +195,6 @@
 			<include name="org.bridgedb.webservice.bridgerest.jar"/>
 			<include name="derbyclient.jar"/>
 			<include name="org.pathvisio.jgoodies.forms.jar"/>
-			<include name="org.pathvisio.swingworker.jar"/>
 			<include name="org.pathvisio.xmlrpc.client.jar"/>
 			<include name="org.pathvisio.xmlrpc.common.jar"/>
 			<include name="org.pathvisio.ws.commons.util.jar"/>
@@ -225,7 +224,6 @@
 			<include name="javax.xml*.jar"/>
 			<include name="derbyclient.jar"/>
 			<include name="org.pathvisio.jgoodies.forms.jar"/>
-			<include name="org.pathvisio.swingworker.jar"/>
 			<include name="org.pathvisio.ws.commons.util.jar"/>
 			<include name="org.pathvisio.xmlrpc.client.jar"/>
 			<include name="org.pathvisio.xmlrpc.common.jar"/>

@@ -26,11 +26,11 @@ import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 import javax.swing.ProgressMonitor;
+import javax.swing.SwingWorker;
 
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.jdesktop.swingworker.SwingWorker;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.data.XrefWithSymbol;
 import org.pathvisio.core.debug.Logger;

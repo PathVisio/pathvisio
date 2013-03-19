@@ -8,7 +8,6 @@
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.gui.jar"/>
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
-		<include name="org.pathvisio.swingworker.jar"/>
 		<include name="org.eclipse.osgi.jar"/>
 	  </fileset>
 	  <fileset dir="${bundle.dest}">

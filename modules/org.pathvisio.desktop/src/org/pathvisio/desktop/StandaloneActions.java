@@ -38,6 +38,7 @@ import org.pathvisio.core.Globals;
 import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.ViewActions;
+import org.pathvisio.desktop.dialog.RunLocalPluginDialog;
 import org.pathvisio.gui.SwingEngine;
 
 import edu.stanford.ejalbert.BrowserLauncher;
@@ -194,8 +195,8 @@ public class StandaloneActions implements ApplicationEventListener
 
 		public void actionPerformed(ActionEvent e)
 		{
-//			RunLocalPluginDialog dlg = new RunLocalPluginDialog(pvDesktop);
-//			dlg.createAndShowGUI();
+			RunLocalPluginDialog dlg = new RunLocalPluginDialog(pvDesktop);
+			dlg.createAndShowGUI();
 		}
 	}
 	

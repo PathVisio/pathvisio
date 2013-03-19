@@ -25,14 +25,23 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.util.regex.Pattern;
 
 import org.apache.felix.bundlerepository.Resource;
 import org.pathvisio.pluginmanager.impl.data.BundleAuthor;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
 
+/**
+ * Various utility functions
+ * @author martina
+ *
+ */
 public class Utils {
 	
+	/**
+	 * copies a file to another location
+	 * @param sourceFile = file to be copied
+	 * @param destFile = destination file
+	 */
 	public static void copyFile(File sourceFile, File destFile) throws IOException {
 	    if(!destFile.exists()) {
 	        destFile.createNewFile();
@@ -56,33 +65,31 @@ public class Utils {
 	    }
 	}
 	
-	public static File downloadFile(String uri, Resource resource, File bundleDir) {
+	/**
+	 * downloads a file and saves it in the bundle directory
+	 * @param uri = URI of the repository file
+	 * @param resource = bundle that should be downloaded
+	 * @param bundleDir = destination directory
+	 */
+	public static File downloadFile(String uri, Resource resource, File bundleDir) throws Exception {
 		File localFile = new File(bundleDir,resource.getSymbolicName()+"-"+resource.getVersion()+".jar");
-		System.out.println(localFile.getAbsolutePath());
 
 		FileOutputStream fos = null;
 		ReadableByteChannel rbc = null;
-		try {
-			URL website = new URL(uri);
-		    rbc = Channels.newChannel(website.openStream());
-		    fos = new FileOutputStream(localFile);
-		    fos.getChannel().transferFrom(rbc, 0, 1 << 24);
-		 
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				fos.close();
-				rbc.close();
-				return localFile;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return null;
+		URL website = new URL(uri);
+		rbc = Channels.newChannel(website.openStream());
+		fos = new FileOutputStream(localFile);
+		fos.getChannel().transferFrom(rbc, 0, 1 << 24);
+		fos.close();
+		rbc.close();
+		return localFile;
 	}
 	
+	/**
+	 * gets pathvisio.xml file from repository URL
+	 * this file contains the bundle information
+	 * @param url = repository URL (repository.pathvisio.org/repository.xml)
+	 */
 	public static URL getXMLURL(URL url) throws MalformedURLException {
         // represent the path portion of the URL as a file
         File file = new File( url.getPath( ) );
@@ -93,12 +100,9 @@ public class Utils {
         return parentUrl;
 	}
 	
-	public static int compare(String v1, String v2) {
-        String s1 = normalisedVersion(v1);
-        String s2 = normalisedVersion(v2);
-        return s1.compareTo(s2);
-    }
-	
+	/**
+	 * formats semantic version and removes additional unnecessary elements
+	 */
 	public static String formatVersion(String version) {
 		String [] buffer = version.split("\\.");
 		if(buffer.length > 3) {
@@ -106,41 +110,8 @@ public class Utils {
 		}
 		return version;
 	}
-
-    private static String normalisedVersion(String version) {
-        return normalisedVersion(version, ".", 4);
-    }
-    
-    private static String normalisedVersion(String version, String sep, int maxWidth) {
-        String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
-        StringBuilder sb = new StringBuilder();
-        for (String s : split) {
-            sb.append(String.format("%" + maxWidth + 's', s));
-        }
-        return sb.toString();
-    }
-    
+   
     public static String formatText(String text, int length) {
-//    	text = text.replace("\n", "");
-//		if(text.length() > length) {
-//			String result = "<html>";
-//			for(int i = 0; i < text.length(); i=i+length) {
-//				int end = i+length;
-//				if (text.length() < i+length) end = text.length();
-//				String s = text.substring(i, end);
-//				System.out.println(s);
-//				int index = s.lastIndexOf(" ");
-//				if(index == -1) {
-//					result = result + s + "<br>";
-//				} else {
-//					result = result + text.substring(i, i+index) + "<br>";
-//					i = i - (s.length()-index);
-//				}
-//			}
-//			result = result + "</html>";
-//			System.out.println(result);
-//			return result;
-//		} else return text;
     	if(text.length() > length) {
     		String str = "<html>";
     		
@@ -205,7 +176,6 @@ public class Utils {
 	    	}
 	    	
 	    	str = str + "</html>";
-	    	
 	    	return str;
     	}
     	return "";

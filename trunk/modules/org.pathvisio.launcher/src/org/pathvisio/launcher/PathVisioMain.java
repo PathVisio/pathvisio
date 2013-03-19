@@ -17,6 +17,7 @@
 package org.pathvisio.launcher;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -42,6 +43,7 @@ public class PathVisioMain {
 	/** The smoke-test option is for automated testing purposes.
 	 * When set, PathVisio just tries loading plugins, and quits with exit code 0 on success or non-zero on error. */
 	private static boolean isSmokeTest = false;
+	private static File loc = new File(System.getProperty("user.home"),".bundle-cache");
 	
 	/**
 	 * @param args
@@ -84,6 +86,8 @@ public class PathVisioMain {
         {"org.osgi.framework.system.packages.extra", "javax.xml.parsers,org.xml.sax,org.xml.sax.ext,org.xml.sax.helpers"},
         
         {"org.osgi.framework.storage.clean", "onFirstInit"},
+        
+        {"felix.cache.rootdir", loc.getAbsolutePath()},
 //        {"org.osgi.framework.storage.clean", "none"},
         
         /* following property is necessary for Felix: to prevent complaints 

@@ -134,7 +134,7 @@ public class ColorHandler extends AbstractCellEditor implements TableCellRendere
 				public void actionPerformed(ActionEvent e) {}
 			};
 			
-			JDialog dlg = JColorChooser.createDialog(null, "Choose a color", true, colorChooser, alOk, alCancel);
+			JDialog dlg = JColorChooser.createDialog(editButton, "Choose a color", true, colorChooser, alOk, alCancel);
 			colorChooser.setColor(currentColor);
 			dlg.pack();
 			dlg.setVisible(true);

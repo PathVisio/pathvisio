@@ -202,7 +202,6 @@ public class RunLocalPluginDialog extends JDialog
 		dlg.setBackground(Color.white);
 		dlg.setLayout(new BorderLayout());
 		dlg.setResizable(false);
-		dlg.setAlwaysOnTop(true);
 		dlg.setModal(true);
 		dlg.pack();
 		dlg.setLocationRelativeTo(desktop.getFrame());

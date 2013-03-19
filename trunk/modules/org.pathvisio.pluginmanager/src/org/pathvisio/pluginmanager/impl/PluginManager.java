@@ -33,12 +33,12 @@ import java.util.jar.Manifest;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
 import org.apache.felix.bundlerepository.Resolver;
 import org.apache.felix.bundlerepository.Resource;
-import org.jdesktop.swingworker.SwingWorker;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
@@ -264,8 +264,7 @@ public class PluginManager implements IPluginManager {
 	public void installPluginFromRepo(final BundleVersion version) {
 		
 		final ProgressKeeper pk = new ProgressKeeper();
-		
-		final ProgressDialog d = new ProgressDialog(desktop.getFrame(), "", pk, false, true);
+		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(dlg), "", pk, false, true);
 
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
 			@Override protected Boolean doInBackground() {
@@ -280,48 +279,46 @@ public class PluginManager implements IPluginManager {
 					problems.add(version);
 				} else {
 					List<Bundle> bundleList = new ArrayList<Bundle>();
-					
-					for(Resource res : resources) {
-						BundleVersion bundleVersion = getAvailableBundle(res.getSymbolicName(), Utils.formatVersion(res.getVersion().toString()));
-						if(bundleVersion != null && !bundleVersion.isInstalled()) {
-							File file;
-							try {
-								file = Utils.downloadFile(res.getURI(), res, localRepository.getRepoLocation());
+						for(Resource res : resources) {
+							BundleVersion bundleVersion = getAvailableBundle(res.getSymbolicName(), Utils.formatVersion(res.getVersion().toString()));
+							if(bundleVersion != null && !bundleVersion.isInstalled()) {
+								File file;
 								try {
-									Bundle b = context.installBundle(file.toURI().toString());
-									bundleList.add(b);
-									bundleVersion.getBundle().getStatus().setBundle(b);
-									bundleVersion.setJarFile(file.getAbsolutePath());
-									Logger.log.info("Bundle installed " + res.getURI());
-								} catch (BundleException e) {
+									file = Utils.downloadFile(res.getURI(), res, localRepository.getRepoLocation());
+									try {
+										Bundle b = context.installBundle(file.toURI().toString());
+										bundleList.add(b);
+										bundleVersion.getBundle().getStatus().setBundle(b);
+										bundleVersion.setJarFile(file.getAbsolutePath());
+										Logger.log.info("Bundle installed " + res.getURI());
+									} catch (BundleException e) {
+										bundleVersion.getBundle().getStatus().setSuccess(false);
+										bundleVersion.getBundle().getStatus().setMessage("Could not install plugin " + res.getURI());
+										file.delete();
+										problems.add(bundleVersion);
+										Logger.log.error("Could not install plugin " + res.getURI() + "\t" + e.getMessage());
+									}
+								} catch (Exception e1) {
 									bundleVersion.getBundle().getStatus().setSuccess(false);
-									bundleVersion.getBundle().getStatus().setMessage("Could not install plugin " + res.getURI());
-									file.delete();
+									bundleVersion.getBundle().getStatus().setMessage("Could not download file from " + res.getURI() + " (" + e1.getMessage() + ")");
 									problems.add(bundleVersion);
-									Logger.log.error("Could not install plugin " + res.getURI() + "\t" + e.getMessage());
 								}
-							} catch (Exception e1) {
-								bundleVersion.getBundle().getStatus().setSuccess(false);
-								bundleVersion.getBundle().getStatus().setMessage("Could not download file from " + res.getURI() + " (" + e1.getMessage() + ")");
-								problems.add(bundleVersion);
+							} else {
+								Logger.log.error("Resource not found in database or it is already installed.");
 							}
-						} else {
-							Logger.log.error("Resource not found in database or it is already installed.");
 						}
-					}
-				
-					for(Bundle b : bundleList) {
-						BundleVersion bundleVersion = getAvailableBundle(b.getSymbolicName(), Utils.formatVersion(b.getVersion().toString()));
-						if(bundleVersion != null) {
-							startBundle(b, bundleVersion);
-						} else {
-							Logger.log.error("BundleVersion not found.");
+					
+						for(Bundle b : bundleList) {
+							BundleVersion bundleVersion = getAvailableBundle(b.getSymbolicName(), Utils.formatVersion(b.getVersion().toString()));
+							if(bundleVersion != null) {
+								startBundle(b, bundleVersion);
+							} else {
+								Logger.log.error("BundleVersion not found.");
+							}
 						}
-					}
-					
-					updateLocalXml();
-					initPlugins();
-					
+						
+						updateLocalXml();
+						initPlugins();
 				}
 				pk.finished();
 				return true;
@@ -330,9 +327,9 @@ public class PluginManager implements IPluginManager {
 			@Override public void done()
 			{
 				if(version.getBundle().isInstalled()) {
-					JOptionPane.showMessageDialog(desktop.getFrame(), "The plugins was installed successfully.");
+					JOptionPane.showMessageDialog(desktop.getFrame(), "Plugin " + version.getSymbolicName() + "  was installed successfully.");
 				} else {
-					JOptionPane.showMessageDialog(desktop.getFrame(), "There was a problem installing the plugin. Please check the error tab.");
+					JOptionPane.showMessageDialog(desktop.getFrame(), "There was a problem installing plugin " + version.getSymbolicName() + ". Please check the error tab.");
 				}
 				localRepository.getBundleVersions().removeAll(problems);
 				// show status
@@ -346,24 +343,29 @@ public class PluginManager implements IPluginManager {
 	
 	public void uninstallBundle(BundleVersion bundleVersion) {
 		if(startedBundles.containsKey(bundleVersion.getSymbolicName())) {
-			Bundle b = startedBundles.get(bundleVersion.getSymbolicName());
-			try {
-				b.stop();
-				b.uninstall();
-				File file = new File(bundleVersion.getJarFile());
-				file.delete();
-				BundleVersion onlineBundle = getAvailableBundle(bundleVersion.getSymbolicName(), bundleVersion.getVersion());
-				if(onlineBundle != null) {
-					onlineBundle.getBundle().setInstalled(false);
+			int reply = JOptionPane.showConfirmDialog(dlg, "Do you really want to uninstall plugin " + bundleVersion.getName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
+	        if (reply == JOptionPane.YES_OPTION) {
+	        	Bundle b = startedBundles.get(bundleVersion.getSymbolicName());
+				try {
+					b.stop();
+					b.uninstall();
+					File file = new File(bundleVersion.getJarFile());
+					file.delete();
+					BundleVersion onlineBundle = getAvailableBundle(bundleVersion.getSymbolicName(), bundleVersion.getVersion());
+					if(onlineBundle != null) {
+						onlineBundle.getBundle().setInstalled(false);
+					}
+					localRepository.getBundleVersions().remove(bundleVersion);
+					startedBundles.remove(bundleVersion.getSymbolicName());
+					updateLocalXml();
+					dlg.updateData();
+					Logger.log.info("Bundle " + bundleVersion.getName() + " is uninstalled.");
+					JOptionPane.showMessageDialog(dlg, "Plugin " + bundleVersion.getSymbolicName() + " has been uninstalled.");
+				} catch (BundleException e) {
+					Logger.log.error("Could not stop plugin " + bundleVersion.getName());
+					JOptionPane.showMessageDialog(dlg, "Could not uninstall plugin " + bundleVersion.getSymbolicName() + ". Please check error tab.");
 				}
-				localRepository.getBundleVersions().remove(bundleVersion);
-				startedBundles.remove(bundleVersion.getSymbolicName());
-				updateLocalXml();
-				dlg.updateData();
-				Logger.log.info("Bundle " + bundleVersion.getName() + " is uninstalled.");
-			} catch (BundleException e) {
-				Logger.log.error("Could not stop plugin " + bundleVersion.getName());
-			}
+	        }
 		}
 	}
 	

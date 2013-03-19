@@ -16,6 +16,7 @@
 //
 package org.pathvisio.desktop;
 
+import java.awt.Desktop;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.net.URI;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
@@ -40,8 +42,6 @@ import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.ViewActions;
 import org.pathvisio.desktop.dialog.RunLocalPluginDialog;
 import org.pathvisio.gui.SwingEngine;
-
-import edu.stanford.ejalbert.BrowserLauncher;
 
 /**
  * collection of menu / toolbar Actions that are only needed
@@ -113,8 +113,7 @@ public class StandaloneActions implements ApplicationEventListener
 			String url = Globals.HELP_URL;
 			try
 			{
-				BrowserLauncher bl = new BrowserLauncher(null);
-				bl.openURLinBrowser(url);
+				Desktop.getDesktop().browse(new URI(url));
 			}
 			catch (Exception ex)
 			{

@@ -11,7 +11,6 @@
 		<include name="org.bridgedb.rdb.construct.jar"/>
 		<include name="org.bridgedb.gui.jar"/>
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
-		<include name="org.pathvisio.swingworker.jar"/>
 		<include name="org.eclipse.osgi.jar"/>
 		<include name="com.springsource.org.jdom-1.1.0.jar"/>
 	  </fileset>

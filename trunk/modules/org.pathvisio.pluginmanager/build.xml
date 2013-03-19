@@ -9,7 +9,6 @@
 			<include name="com.springsource.org.jdom-1.1.0.jar"/>
 			<include name="org.pathvisio.jgoodies.forms.jar"/>
 			<include name="org.apache.felix.bundlerepository-1.6.6.jar"/>
-			<include name="org.pathvisio.swingworker.jar"/>
 		</fileset>
   		<fileset dir="${bundle.dest}">
   			<include name="org.pathvisio.core.jar"/>

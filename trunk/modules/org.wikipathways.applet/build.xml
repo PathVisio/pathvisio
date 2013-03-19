@@ -8,7 +8,6 @@
 		<include name="com.springsource.org.jdom-1.1.0.jar"/>
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.bio.jar"/>
-		<include name="org.pathvisio.swingworker.jar"/>
 		<include name="org.bridgedb.webservice.bridgerest.jar"/>
 		<include name="org.pathvisio.xmlrpc.client.jar"/>
 		<include name="org.pathvisio.xmlrpc.common.jar"/>

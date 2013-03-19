@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
@@ -44,7 +45,7 @@ public class ColorHandler extends AbstractCellEditor implements TableCellRendere
 	private JLabel renderer;
 	private JButton editButton;
 	private Color currentColor;
-
+	private JColorChooser colorChooser;
 
 	public ColorHandler() {
 		renderer = new JLabel();
@@ -113,10 +114,31 @@ public class ColorHandler extends AbstractCellEditor implements TableCellRendere
 		if (EDIT_COMMAND.equals(e.getActionCommand())) {
 			editButton.setBackground(currentColor);
 
-			Color newColor = JColorChooser.showDialog(editButton, "Choose a color", currentColor);
-			if (newColor != null && !newColor.equals(currentColor)) {
-				currentColor = newColor;
+			if(colorChooser == null) {
+				colorChooser = new JColorChooser();
 			}
+			
+			// new color is selected when user clicks ok
+			ActionListener alOk = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Color newColor = colorChooser.getColor();
+					if (newColor != null && !newColor.equals(currentColor)) {
+						currentColor = newColor;
+					}
+				}
+			};
+			// nothing happens when the user clicks cancel
+			ActionListener alCancel = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {}
+			};
+			
+			JDialog dlg = JColorChooser.createDialog(null, "Choose a color", true, colorChooser, alOk, alCancel);
+			colorChooser.setColor(currentColor);
+			dlg.pack();
+			dlg.setVisible(true);
+
 			fireEditingStopped();  // make the renderer reappear
 		}
 	}

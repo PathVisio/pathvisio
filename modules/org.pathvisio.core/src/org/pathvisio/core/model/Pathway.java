@@ -186,17 +186,18 @@ public class Pathway
 	}
 
 	/**
-	   note: may return null.
+	   @returns the BioPAX element of this pathway, containing literature references and other optional biopax elements.
+	   Guaranteed to not return null. 
+	   If a BioPAX element does not yet exist, it is automatically created.
 	 */
 	public BiopaxElement getBiopax()
 	{
+		if (biopax == null)
+		{
+			PathwayElement tmp = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
+			this.add(tmp); // biopax will now be set.
+		}
 		return biopax;
-	}
-
-	public void createBiopax()
-	{
-		PathwayElement biopax = PathwayElement.createPathwayElement(ObjectType.BIOPAX);
-		this.add(biopax);
 	}
 
 	/** @deprecated use getBiopax() instead */

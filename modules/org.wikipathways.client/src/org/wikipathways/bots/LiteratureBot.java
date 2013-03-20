@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.pathvisio.core.biopax.BiopaxNode;
-import org.pathvisio.core.biopax.reflect.PublicationXref;
+import org.pathvisio.core.biopax.PublicationXref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;

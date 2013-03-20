@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.core.biopax.reflect;
+package org.pathvisio.core.biopax;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,9 +22,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.core.biopax.BiopaxElement;
-import org.pathvisio.core.biopax.BiopaxNode;
-import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;

@@ -14,12 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.core.biopax.reflect;
+package org.pathvisio.core.biopax;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pathvisio.core.biopax.BiopaxNode;
 
 /**
  * Object to store a publication Xref (citation), based on BioPAX

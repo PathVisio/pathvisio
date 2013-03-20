@@ -17,7 +17,11 @@
 package org.pathvisio.core.biopax.reflect;
 
 import org.jdom.Element;
+import org.pathvisio.core.debug.Logger;
 
+/**
+ * Represents a property of a BiopaxElement, such as "Title" for a PublicationXref
+ */
 public class BiopaxProperty extends Element {
 
 	public static final int UNBOUND = -1;
@@ -47,13 +51,19 @@ public class BiopaxProperty extends Element {
 	BiopaxProperty(Element e) {
 		this();
 		setName(e.getName());
-		PropertyType pt = PropertyType.valueOf(name);
+		PropertyType pt = PropertyType.byName(name);
 		if(pt == null) {
-			throw new IllegalArgumentException("Unknown property: " + name);
+			Logger.log.warn ("Unknown property: " + name);
+			maxCardinality = UNBOUND;
+			setDatatype("http://www.w3.org/2001/XMLSchema#string");
+		}
+		else
+		{
+			setDatatype(pt.datatype);
+			maxCardinality = pt.maxCardinality;
 		}
 		setText(e.getText());
-		setDatatype(pt.datatype);
-		maxCardinality = pt.maxCardinality;
+		
 	}
 
 	public void setDatatype(String datatype) {

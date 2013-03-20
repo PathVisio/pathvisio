@@ -16,6 +16,9 @@
 //
 package org.pathvisio.core.biopax.reflect;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Properties in BioPAX, only the properties
  * that are accessed by PathVisio need to be listed here.
@@ -32,6 +35,12 @@ public enum PropertyType {
 	String datatype;
 	int maxCardinality;
 
+	private static Map<String, PropertyType> lookupMap = new HashMap<String, PropertyType>();
+	static {
+		for (PropertyType pt : PropertyType.values())
+			lookupMap.put(pt.name(), pt);
+	}
+	
 	PropertyType(String datatype) {
 		this(datatype, BiopaxProperty.UNBOUND);
 	}
@@ -43,5 +52,10 @@ public enum PropertyType {
 
 	BiopaxProperty getProperty(String value) {
 		return new BiopaxProperty(name(), value, datatype, maxCardinality);
+	}
+	
+	public static PropertyType byName(String name)
+	{
+		return lookupMap.get(name);
 	}
 }

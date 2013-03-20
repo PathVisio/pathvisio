@@ -135,15 +135,7 @@ public class PathwayTransferable implements Transferable {
 				BiopaxReferenceManager bpr = e.getBiopaxReferenceManager();
 				BiopaxReferenceManager bprnew = enew.getBiopaxReferenceManager();
 				for(BiopaxElement bpe : bpr.getReferences()) {
-					try {
-						bprnew.addElementReference(BiopaxElement.fromXML((Element)bpe.clone()));
-					} catch (ClassNotFoundException e1) {
-						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
-					} catch (InstantiationException e1) {
-						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
-					} catch (IllegalAccessException e1) {
-						Logger.log.error("Unable to paste biopax refernce " + bpe, e1);
-					}
+					bprnew.addElementReference(BiopaxElement.fromXML((Element)bpe.clone()));
 				}
 			}
 		}

@@ -6,7 +6,6 @@ Bundle-Version: 3.0.0
 Bundle-Description: This module is the core module of the PathVisio application. It contains the data model and basic preferences of the application.
 Export-Package: org.pathvisio.core,
  org.pathvisio.core.biopax,
- org.pathvisio.core.biopax.reflect,
  org.pathvisio.core.data,
  org.pathvisio.core.debug,
  org.pathvisio.core.gpmldiff,

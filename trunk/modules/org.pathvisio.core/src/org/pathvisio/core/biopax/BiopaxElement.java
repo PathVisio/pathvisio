@@ -23,10 +23,6 @@ import java.util.Random;
 
 import org.jdom.Document;
 import org.jdom.Element;
-import org.pathvisio.core.biopax.reflect.BiopaxProperty;
-import org.pathvisio.core.biopax.reflect.Namespaces;
-import org.pathvisio.core.biopax.reflect.PropertyType;
-import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.GpmlFormat;
 import org.pathvisio.core.model.ObjectType;
@@ -53,8 +49,10 @@ public class BiopaxElement extends PathwayElement
 	
 	private Random random = new Random(); //Used to generate unique id's
 	private Map<String, BiopaxNode> biopax;
+	
 	/**
 	 * Keeps track of the order of the loaded biopax elements per subclass.
+	 * (The main use of this is to keep the citation numbers constant between sessions).
 	 */
 	private Map<Class<? extends BiopaxNode>, Map<String, Integer>> ordinal;
 
@@ -62,7 +60,7 @@ public class BiopaxElement extends PathwayElement
 	 * Check if the pathway element that contains the biopax document has changed
 	 * and update the biopax hashmap if needed.
 	 */
-	public void refresh() 
+	private void refresh() 
 	{
 		if(parent == null) return;
 		
@@ -142,7 +140,7 @@ public class BiopaxElement extends PathwayElement
 
 	/**
 	 * Add a biopax element to the biopax document, but ignore it
-	 * in the BiopaxElementManager. This method can be used for elemens that
+	 * in the BiopaxElement. This method can be used for elemens that
 	 * are not used by PathVisio but still have to be included in the GPML
 	 * file.
 	 * @param e
@@ -219,6 +217,7 @@ public class BiopaxElement extends PathwayElement
 	/**
 	 * Get the position of the biopax element in the document, relative
 	 * to other elements of the same class.
+	 * (The main use of this is to keep citation numbers constant)
 	 */
 	public int getOrdinal(BiopaxNode bpe) {
 		Map<String, Integer> classOrdinal = ordinal.get(bpe.getClass());

@@ -30,13 +30,16 @@ import org.pathvisio.core.model.GpmlFormat;
 /**
  * Represents a fragment of the embedded biopax of a pathway.
  */
-public class BiopaxElement extends Element 
+public class BiopaxElement
 {
+	private Element wrapped;
+	
 	private Set<PropertyType> validProperties;
 	private List<BiopaxProperty> properties;
 
 	public BiopaxElement() {
-		setNamespace(GpmlFormat.BIOPAX);
+		wrapped = new Element("unnamed");
+		wrapped.setNamespace(GpmlFormat.BIOPAX);
 		validProperties = new HashSet<PropertyType>();
 		properties = new ArrayList<BiopaxProperty>();
 	}
@@ -65,14 +68,14 @@ public class BiopaxElement extends Element
 		} else {
 			properties.add(p);
 		}
-		addContent(p);
+		wrapped.addContent(p);
 	}
 
 	public void removeProperty(BiopaxProperty p) {
 		BiopaxProperty existing = properties.get(properties.indexOf(p));
 		if(existing != null) {
 			properties.remove(p);
-			removeContent(p);
+			wrapped.removeContent(p);
 		}
 	}
 
@@ -115,11 +118,11 @@ public class BiopaxElement extends Element
 	}
 
 	public String getId() {
-		return getAttributeValue("id", Namespaces.RDF);
+		return wrapped.getAttributeValue("id", Namespaces.RDF);
 	}
 
 	public void setId(String id) {
-		setAttribute("id", id, Namespaces.RDF);
+		wrapped.setAttribute("id", id, Namespaces.RDF);
 	}
 
 	public static BiopaxElement fromXML(Element xml) 
@@ -142,8 +145,8 @@ public class BiopaxElement extends Element
 	}
 
 	void loadXML(Element xml) {
-		setName(xml.getName());
-		setNamespace(xml.getNamespace());
+		wrapped.setName(xml.getName());
+		wrapped.setNamespace(xml.getNamespace());
 		String id = xml.getAttributeValue("id", Namespaces.RDF);
 		if (id != null) setId(id);
 		for(Object child : xml.getChildren()) {
@@ -155,7 +158,7 @@ public class BiopaxElement extends Element
 
 	public void removeFromDocument(Document d) {
 		if(d == null) return;
-		d.getRootElement().removeContent(this);
+		d.getRootElement().removeContent(wrapped);
 	}
 
 	/**
@@ -202,5 +205,22 @@ public class BiopaxElement extends Element
 			}
 		}
 		return true;
+	}
+
+	/** @deprecated warning: internal, don't use. */
+	public Element getWrapped()
+	{
+		return wrapped;
+	}
+
+	protected void setName(String string)
+	{
+		wrapped.setName(string);
+	}
+
+
+	public String getName()
+	{
+		return wrapped.getName();
 	}
 }

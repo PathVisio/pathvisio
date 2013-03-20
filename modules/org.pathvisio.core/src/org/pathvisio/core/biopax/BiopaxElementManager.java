@@ -96,7 +96,7 @@ public class BiopaxElementManager extends PathwayElement
 			//Remove old instances of the elements, replace with
 			//BiopaxElement instances
 			for(BiopaxElement bpe : oldElements.keySet()) {
-				root.addContent(bpe);
+				root.addContent(bpe.getWrapped());
 				root.removeContent(oldElements.get(bpe));
 			}
 		}
@@ -109,7 +109,7 @@ public class BiopaxElementManager extends PathwayElement
 	 */
 	public void removeElement(BiopaxElement e) {
 		Document doc = getDocument();
-		System.err.println("removed: " + doc.getRootElement().removeContent(e));
+		System.err.println("removed: " + doc.getRootElement().removeContent(e.getWrapped()));
 //		doc.getRootElement().removeContent(e);
 		biopax.remove(e.getId());
 		rebuildOrdinal();
@@ -202,7 +202,7 @@ public class BiopaxElementManager extends PathwayElement
 			}
 
 		}
-		d.getRootElement().addContent(elm);
+		d.getRootElement().addContent(elm.getWrapped());
 		biopax.put(elm.getId(), elm);
 		addToOrdinal(elm);
 	}

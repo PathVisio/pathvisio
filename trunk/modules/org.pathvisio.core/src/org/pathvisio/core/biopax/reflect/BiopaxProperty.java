@@ -48,7 +48,7 @@ public class BiopaxProperty extends Element {
 		this(type.name(), value, type.datatype, type.maxCardinality);
 	}
 
-	BiopaxProperty(Element e) {
+	public BiopaxProperty(Element e) {
 		this();
 		setName(e.getName());
 		PropertyType pt = PropertyType.byName(name);

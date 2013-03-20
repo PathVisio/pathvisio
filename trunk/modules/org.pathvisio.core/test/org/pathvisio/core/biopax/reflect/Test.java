@@ -22,7 +22,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.pathvisio.core.biopax.BiopaxElementManager;
+import org.pathvisio.core.biopax.BiopaxElement;
+import org.pathvisio.core.biopax.BiopaxNode;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.model.ConverterException;
 import org.pathvisio.core.model.ObjectType;
@@ -33,7 +34,7 @@ import org.pathvisio.core.model.PathwayEvent;
 public class Test extends TestCase {
 	Pathway data;
 	List<PathwayEvent> received;
-	BiopaxElementManager elementManager;
+	BiopaxElement elementManager;
 	BiopaxReferenceManager pwRefManager;
 
 	public void setUp()
@@ -165,7 +166,7 @@ public class Test extends TestCase {
 		Pathway pwy = new Pathway();
 		pwy.readFromXml(f, true);
 		
-		BiopaxElement elt = pwy.getBiopaxElementManager().getElement("e4d");
+		BiopaxNode elt = pwy.getBiopaxElementManager().getElement("e4d");
 		assertNotNull (elt);
 		assertTrue (elt instanceof PublicationXref);
 	}

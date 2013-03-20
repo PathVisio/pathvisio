@@ -33,7 +33,7 @@ import java.util.TreeMap;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.jdom.Document;
-import org.pathvisio.core.biopax.BiopaxElementManager;
+import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.GraphLink.GraphRefContainer;
@@ -613,7 +613,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		PathwayElement e;
 		switch (ot) {
 		case BIOPAX:
-			e = new BiopaxElementManager();
+			e = new BiopaxElement();
 			break;
 		case GROUP:
 			e = new MGroup();

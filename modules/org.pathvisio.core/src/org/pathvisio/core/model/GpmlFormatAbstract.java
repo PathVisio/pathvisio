@@ -202,7 +202,8 @@ public abstract class GpmlFormatAbstract
 		// the constructor.
 		private final String[] elements = new String[] {
 				"Comment", "BiopaxRef", "Graphics", "DataNode", "State", "Interaction", 
-				"GraphicalLine", "Label", "Shape", "Group", "InfoBox", "Legend", "Biopax"
+				"Line", "GraphicalLine", "Label", "Shape", "Group", "InfoBox", "Legend", "Biopax"
+				
 			};
 
 		/*

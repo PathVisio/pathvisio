@@ -40,10 +40,19 @@ public class Test extends TestCase {
 		PathwayElement o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
 		data.add (o);
 
-		data.createBiopax();
 		elementManager = data.getBiopax();
 	}
 
+	public void testEmpty()
+	{
+		data = new Pathway();
+		PathwayElement o = PathwayElement.createPathwayElement(ObjectType.DATANODE);
+		data.add (o);
+		elementManager = data.getBiopax();
+
+		assertNotNull (elementManager);
+	}
+	
 	public void testProperties() {
 		PublicationXref xref = new PublicationXref();
 

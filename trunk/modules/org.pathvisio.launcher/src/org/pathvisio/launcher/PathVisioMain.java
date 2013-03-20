@@ -43,7 +43,6 @@ public class PathVisioMain {
 	/** The smoke-test option is for automated testing purposes.
 	 * When set, PathVisio just tries loading plugins, and quits with exit code 0 on success or non-zero on error. */
 	private static boolean isSmokeTest = false;
-	private static File loc = new File(System.getProperty("user.home"),".bundle-cache");
 	
 	/**
 	 * @param args
@@ -87,7 +86,6 @@ public class PathVisioMain {
         
         {"org.osgi.framework.storage.clean", "onFirstInit"},
         
-        {"felix.cache.rootdir", loc.getAbsolutePath()},
 //        {"org.osgi.framework.storage.clean", "none"},
         
         /* following property is necessary for Felix: to prevent complaints 
@@ -119,6 +117,8 @@ public class PathVisioMain {
 		for (int i = 0; i < frameworkProperties.length; i++) {
 			launchProperties.setProperty(frameworkProperties[i][0], frameworkProperties[i][1]);
 		}
+		// hides the felix cache in .PathVisio/bundle-cache
+		launchProperties.setProperty("felix.cache.rootdir", getBundleCacheFile().getAbsolutePath());
 		return launchProperties;
 	}
 	
@@ -331,6 +331,18 @@ public class PathVisioMain {
 			}
 		}
     }
+	
+	private static File getBundleCacheFile() {
+		File appDir;
+		String os = System.getProperty("os.name");
+		if(os.startsWith("Win")) {	
+			appDir = new File(System.getenv("APPDATA"), "PathVisio");
+		} else { //All other OS
+			appDir = new File(System.getProperty("user.home"), ".PathVisio");
+		}
+		if(!appDir.exists()) appDir.mkdirs();
+		return new File(appDir.getAbsolutePath(), "bundle-cache");
+	}
 		
 	private static boolean isArgument(String string) {
 		if(string.equals("-p") || string.equals("-v") || string.equals("-h") || string.equals("-d") || string.equals("--smoketest")) {

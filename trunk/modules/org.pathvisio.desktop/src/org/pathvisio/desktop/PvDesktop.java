@@ -408,18 +408,6 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		if (vPwy != null) vPwy.redraw();
 	}
 
-//	private PluginManager manager = null;
-
-//	public void initPlugins()
-//	{
-//		if (manager != null) throw new IllegalStateException ("Can't initialize plugin manager twice!");
-//		manager = new PluginManager(this);
-//	}
-
-//	public PluginManager getPluginManager() {
-//		return manager;
-//	}
-	
 	/**
 	 * Ask the user to select a gdb. Uses the appropriate swingDbConnector for the
 	 * current database type.
@@ -486,5 +474,5 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 
 	public IPluginManager getPluginManagerExternal() {
 		return pluginManager;
-	}
+	} 
 }

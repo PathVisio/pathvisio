@@ -33,6 +33,8 @@ my $hugo = "http://www.genenames.org/data/hgnc_data.php?hgnc_id=";
 my $ec = "http://www.brenda-enzymes.info/php/result_flat.php4?ecno=";
 my $wikipedia = "http://en.wikipedia.org/wiki/";
 my $wikipathways = "http://www.wikipathways.org/index.php/Pathway:";
+my $pubchemcomp = "http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid=";
+my $chemspider = "http://www.chemspider.com/Chemical-Structure.";
 #my $chembl = "https://www.ebi.ac.uk/chembldb/index.php/compound/inspect/"; ## CHEMBL identifiers are not properly exported by html exporter yet
 
 #### Find file			
@@ -60,7 +62,7 @@ unless ( open(HTML, $html) )
         exit;
        }
 
-$pathway =~ /.*_(WP\d*)$/;
+$pathway =~ /(WP\d*)/;
 my $WPID = $1;
 
 #variable for width of png image
@@ -118,7 +120,7 @@ while (my $line = <HTML>)
       			$id = $1;
          		$newlink = $genewiki.$id;
 				$newlink = FetchArticleURL($newlink);
-				if ($newlink =~ m/Special:Search/)
+				if ($newlink =~ m/biogps/)
 					{
 					$color = 'red';
 					$newlink =~ s/#Interactive_pathway_map go to/ search for/;
@@ -146,7 +148,7 @@ while (my $line = <HTML>)
       				$id = $entrez;
  	        		$newlink = $genewiki.$id;
 					$newlink = FetchArticleURL($newlink);
-					if ($newlink =~ m/Special:Search/)
+					if ($newlink =~ m/biogps/)
 						{
 						$color = 'red';
 						$newlink =~ s/#Interactive_pathway_map go to/ search for/;
@@ -175,7 +177,7 @@ while (my $line = <HTML>)
       				$id = $entrez;
  	        		$newlink = $genewiki.$id;
 					$newlink = FetchArticleURL($newlink);
-					if ($newlink =~ m/Special:Search/)
+					if ($newlink =~ m/biogps/)
 						{
 						$color = 'red';
 						$newlink =~ s/#Interactive_pathway_map go to/ search for/;
@@ -204,7 +206,7 @@ while (my $line = <HTML>)
       				$id = $entrez;
  	        		$newlink = $genewiki.$id;
 					$newlink = FetchArticleURL($newlink);
-					if ($newlink =~ m/Special:Search/){
+					if ($newlink =~ m/biogps/){
 						$color = 'red';
 						$newlink =~ s/#Interactive_pathway_map go to/ search for/;
 						} 
@@ -232,7 +234,7 @@ while (my $line = <HTML>)
       				$id = $entrez;
  	        		$newlink = $genewiki.$id;
 				$newlink = FetchArticleURL($newlink);
-				if ($newlink =~ m/Special:Search/){
+				if ($newlink =~ m/biogps/){
 					$color = 'red';
 					$newlink =~ s/#Interactive_pathway_map go to/ search for/;
 				} else {
@@ -282,6 +284,54 @@ while (my $line = <HTML>)
 				my $wp = BackpageLookup($xref, 'Wikipedia');
 				if ($wp eq "null"){
 					$newlink = $keggcomp.$id." Go to KEGG";
+					$color = 'green';
+					}
+				else {
+					$id = $wp;
+					$newlink = $wikipedia.$wp." Go to article";
+					$color = 'blue';
+					}
+   				}
+   				case "Ce"
+      			{
+      			#print "system is ChEBI\n";
+      			$xref =~ m/Ce_(.+)/;
+      			$id = $1;
+				my $wp = BackpageLookup($xref, 'Wikipedia');
+				if ($wp eq "null"){
+					$newlink = $chebi.$id." Go to ChEBI";
+					$color = 'green';
+					}
+				else {
+					$id = $wp;
+					$newlink = $wikipedia.$wp." Go to article";
+					$color = 'blue';
+					}
+   				}
+   				case "PubChem-Compound"
+      			{
+      			#print "system is PubChem Compound\n";
+      			$xref =~ m/PubChem-Compound_(.+)/;
+      			$id = $1;
+				my $wp = BackpageLookup($xref, 'Wikipedia');
+				if ($wp eq "null"){
+					$newlink = $pubchemcomp.$id." Go to PubChem Compound";
+					$color = 'green';
+					}
+				else {
+					$id = $wp;
+					$newlink = $wikipedia.$wp." Go to article";
+					$color = 'blue';
+					}
+   				}
+   				case "Cs"
+      			{
+      			#print "system is ChemSpider\n";
+      			$xref =~ m/Cs_(.+)/;
+      			$id = $1;
+				my $wp = BackpageLookup($xref, 'Wikipedia');
+				if ($wp eq "null"){
+					$newlink = $chemspider.$id." Go to ChemSpider";
 					$color = 'green';
 					}
 				else {
@@ -481,6 +531,6 @@ sub FetchArticleURL
 	my $newlink = shift;
 	my $ua = LWP::UserAgent->new;
 	my $response = $ua->get($newlink);
-	$newlink = $response->request->url."#Interactive_pathway_map go to article";
+	$newlink = $response->request->url."#Interactive_pathway_map Go to article";
 	return $newlink;
 }

@@ -39,7 +39,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.pathvisio.core.biopax.BiopaxElementManager;
+import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.biopax.reflect.PublicationXref;
 import org.pathvisio.core.debug.Logger;
@@ -56,7 +56,7 @@ public class LitReferencePanel extends PathwayElementPanel implements ActionList
 	private static final URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
 
 	BiopaxReferenceManager refMgr;
-	BiopaxElementManager elmMgr;
+	BiopaxElement elmMgr;
 
 	List<PublicationXref> xrefs;
 

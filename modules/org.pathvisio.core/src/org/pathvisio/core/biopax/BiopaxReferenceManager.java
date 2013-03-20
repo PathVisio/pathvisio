@@ -32,7 +32,7 @@ import org.pathvisio.core.model.PathwayElement;
  *
  */
 public class BiopaxReferenceManager {
-	private PathwayElement pwElement;
+	private final PathwayElement pwElement;
 
 	/**
 	 * Constructor for this class

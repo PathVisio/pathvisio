@@ -33,13 +33,13 @@ import java.util.TreeMap;
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
 import org.jdom.Document;
+import org.pathvisio.core.biopax.BiopaxElementManager;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.GraphLink.GraphRefContainer;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.Utils;
-import org.pathvisio.core.view.Line;
 import org.pathvisio.core.view.State;
 
 /**
@@ -612,6 +612,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	public static PathwayElement createPathwayElement(ObjectType ot) {
 		PathwayElement e;
 		switch (ot) {
+		case BIOPAX:
+			e = new BiopaxElementManager();
+			break;
 		case GROUP:
 			e = new MGroup();
 			break;
@@ -1351,9 +1354,6 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		groupStyle = src.groupStyle;
 		connectorType = src.connectorType;
 		biopaxRefs = (List<String>)((ArrayList<String>)src.biopaxRefs).clone();
-		if(src.biopax != null) {
-			biopax = (Document)src.biopax.clone();
-		}
 		fireObjectModifiedEvent(PathwayElementEvent.createAllPropertiesEvent(this));
 	}
 
@@ -2519,26 +2519,13 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		end.setGraphRef(ref);
 	}
 
-	protected Document biopax;
-
-	public Document getBiopax()
-	{
-		return biopax;
-	}
-
-	BiopaxReferenceManager bpRefMgr;
+	private BiopaxReferenceManager bpRefMgr;
 
 	public BiopaxReferenceManager getBiopaxReferenceManager() {
 		if(bpRefMgr == null) {
 			bpRefMgr = new BiopaxReferenceManager(this);
 		}
 		return bpRefMgr;
-	}
-
-	public void setBiopax(Document bp)
-	{
-		biopax = bp;
-		if(parent != null) parent.getBiopaxElementManager().refresh();
 	}
 
 	protected List<String> biopaxRefs = new ArrayList<String>();

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="wikipathways-client" default="jar" basedir=".">
+<project name="org.wikipathways.client" default="jar" basedir=".">
 
 	<import file="../../build-common.xml" />
 
@@ -22,7 +22,7 @@
 		</fileset>
 	</path>
 
-	<target name="compile" depends="wpclient-axis,prepare-common">
+	<target name="compile" depends="wpclient-axis,prepare-common,prepare-jar-name">
 		<javac srcdir="${axis.wpclient.dir}" debug="${debug.mode}" destdir="build">
 			<classpath refid="project.class.path" />
 		</javac>

@@ -39,12 +39,13 @@ import cytoscape.util.ModulePropertiesImpl;
 import cytoscape.view.CyNetworkView;
 import cytoscape.visual.VisualStyle;
 
-import edu.stanford.ejalbert.BrowserLauncher;
 import giny.view.EdgeView;
 import giny.view.NodeView;
 
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -192,8 +193,7 @@ public class CyWikiPathwaysClient extends WebServiceClientImplWithGUI<WikiPathwa
 				menuList.add(new JMenuItem(new AbstractAction("View pathway " + label + " on WikiPathways") {
 					public void actionPerformed(ActionEvent e) {
 						try {
-							BrowserLauncher b = new BrowserLauncher(null);
-							b.openURLinBrowser(url);
+							Desktop.getDesktop().browse(new URI(url));
 						} catch(Exception ex) {
 							JOptionPane.showMessageDialog(
 									null, "Unable to launch browser: " + ex.getMessage(),

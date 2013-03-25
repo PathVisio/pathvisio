@@ -13,7 +13,7 @@ pluginName=GPML-Plugin
 pluginDescription=The GPML plugin for Cytoscape is a converter between Cytoscape networks and the GPML (GenMAPP Pathway Markup Language) pathway format.<p>This plugin makes it possible open and save GPML pathways from Cytoscape. You can also copy/paste bits of pathways or networks between PathVisio, WikiPathways and Cytoscape. The plugin provides a webservice client to directly search and open pathways on WikiPathways<br>See http://www.pathvisio.org/Cytoscape_plugin for more information and http://www.wikipathways.org for a collection of GPML pathways.
 
 # Plugin version number, this must be two numbers separated by a decimlal.  Ex. 0.2, 14.03
-pluginVersion=1.3
+pluginVersion=1.4
 
 # Compatible Cytoscape version. If there are more than one version, seperate by ",".
 cytoscapeVersion=2.7,2.8
@@ -28,4 +28,4 @@ projectURL=http://www.pathvisio.org/Cytoscape_plugin
 
 # List of authors.  Note each author and institution pair are separated by a : (colon)
 # each additional author institution pair must be separated from other pairs bye a ; (semicolon)
-pluginAuthorsInstitutions=Thomas Kelder:Maastricht University
+pluginAuthorsInstitutions=Thomas Kelder:Maastricht University;Martina Kutmon:Maastricht University;Alexander Pico:Gladstone Institutes;Martijn van Iersel:EBI;Kristina Hanspers:Gladstone Institutes

@@ -24,9 +24,8 @@ import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.pathvisio.core.biopax.BiopaxElementManager;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
-import org.pathvisio.core.biopax.reflect.PublicationXref;
+import org.pathvisio.core.biopax.PublicationXref;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 
@@ -55,14 +54,11 @@ public class LiteratureIndexer extends IndexerBase {
 	 */
 	public static final String FIELD_AUTHOR = "literature.author";
 
-	BiopaxElementManager bpMgr;
-
 	public LiteratureIndexer(String source, Pathway pathway, IndexWriter writer) {
 		super(source, pathway, writer);
 	}
 
 	public void indexPathway() throws CorruptIndexException, IOException {
-		bpMgr = new BiopaxElementManager(pathway);
 		for(PathwayElement pe : pathway.getDataObjects()) {
 			indexLiterature(pe);
 		}

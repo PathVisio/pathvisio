@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<project name="Plugins-common-future" basedir=".">	
+<!--
+
+Plugin-common-future.xml should replace plugin-common.xml 
+after the 3.0 release.
+
+This is an improved build file that allows non-osgi libraries to 
+be embedded.
+
+To get a plugin working with this, it needs to define
+the embed.jars path (even if it's just empty)
+
+However, that would break existing plugins just before the release,
+so I'm using this temporary solution until after the release.
+
+-->
+	<property name="debug.mode" value="true"/>
+	
+	<!-- location where bundle and its dependencies will be installed -->
+	<property name="bundle.dest" value="dist"/>
+
+	<!-- the name of the executable wrapper jar uses the project name of the calling build file -->
+	<property name="exe.jar" value="pathvisio-with-${ant.project.name}.jar"/>
+
+	<!-- perpare-common should not be overriden -> override prepare instead -->
+	<target name="prepare-common">
+		<mkdir dir="build/classes"/>
+      <!-- copies plugin.props file so it is included in jar-->
+		<copy toDir="build/classes">
+			<fileset dir=".">
+				<include name="*.props"/>
+			</fileset>
+		</copy>
+		<mkdir dir="${bundle.dest}"/>
+		<mkdir dir="resources"/> <!-- defensive, to prevent file not found error later on -->
+		<fail message="Can't find ${pathvisio.dir}/modules/org.pathvisio.core.jar, please specify the path to pathvisio with -Dpathvisio.dir=....">
+			<condition>
+				<not><available file="${pathvisio.dir}/modules/org.pathvisio.core.jar"/></not>
+			</condition>
+		</fail>
+		<condition property="test.dir.exists"><available file="test"/></condition>
+	</target>
+
+	<target name="prepare-jar-name">
+		<!-- the name of the plug-in jar uses the project name of the calling build file -->
+		<property name="jar.name" value="${bundle.dest}/${ant.project.name}.jar"/>
+	</target>
+
+	<!-- designed to be overridden -->
+	<target name="prepare">
+	</target>
+	
+	<target name="clean">
+		<delete dir="build"/>
+		<delete file="${jar.name}"/>
+	</target>
+
+	<target name="compile" depends="prepare,prepare-common,prepare-jar-name">
+		<echo>Compiling: ${jar.name}</echo>
+		<javac srcdir="src"
+			   includes="**"
+			   destdir="build/classes"
+			   debug="${debug.mode}"
+			   source="1.5">
+			<classpath>
+				<path refid="project.class.path"/>
+				<path refid="embed.jars"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jar" depends="compile"> 
+		<echo>Creating JAR: ${jar.name}</echo>
+		<manifestclasspath property="manifest.cp" jarfile="${jar.name}">
+			<classpath>
+				<fileset dir="${bundle.dest}">
+					<include name="*.jar"/>
+					<exclude name="${ant.project.name}.jar"/>
+				</fileset>
+			</classpath>
+		</manifestclasspath>
+		<unjar dest="build/classes">
+			<path refid="embed.jars"/>
+		</unjar>
+		<jar jarfile="${jar.name}" manifest="META-INF/MANIFEST.MF">
+		    <fileset dir="build/classes">
+			    <include name="**/*"/>
+			</fileset>
+		    <fileset dir="resources">
+				<include name="**/*"/>
+			</fileset>
+            <manifest>
+				<attribute name="Class-Path" value="${manifest.cp}"/>
+			</manifest>
+        </jar>
+	</target>
+
+	<target name="install" depends="jar"> 
+		<copy toDir="${bundle.dest}" flatten="true">
+			<path refid="project.class.path"/>
+		</copy>
+	</target>
+	
+	  <target name="dist-clean" depends="clean">
+		<delete file="${jar.name}"/>
+		<delete file="${exe.jar}"/>
+		<delete dir="${bundle.dest}"/>
+	  </target>
+
+	<target name="test" if="test.dir.exists">
+		<javac srcdir="test" debug="${debug.mode}"
+					includes="**"
+					destdir="build"
+					source="1.5">
+			<classpath>
+				<path refid="test.class.path"/>
+				<path refid="project.class.path"/>
+				<path refid="embed.jars"/>
+			</classpath>
+		</javac>
+		<junit printsummary="on" haltonfailure="true" fork="true" dir=".">
+			<formatter type="brief" usefile="false"/>
+			<classpath>
+				<pathelement path="build"/>
+				<path refid="test.class.path"/>
+				<path refid="project.class.path"/>
+				<path refid="embed.jars"/>
+			</classpath>
+			<batchtest>
+				<fileset dir="test">
+					<include name="**/*Test*.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<!-- create an executable bundle that includes pathvisio bundles and launcher -->
+	<target name="exe" depends="jar">
+		<mkdir dir="build/exe"/>
+		<copy toDir="build/exe" flatten="true">
+			<path refid="exe.bundle"/>
+		</copy>
+      <!-- copies plugin jar to build/exe -->
+	   <copy file="${jar.name}" toDir="build/exe"/>
+		<unjar src="${pathvisio.dir}/modules/org.pathvisio.launcher.jar" dest="build/exe"/>
+		<unjar src="${pathvisio.dir}/lib/felix.jar" dest="build/exe"/>
+		<jar file="${exe.jar}" basedir="build/exe">
+			<manifest>
+				<attribute name="Main-Class" value="org.pathvisio.launcher.PathVisioMain"/>
+			</manifest>
+		</jar>
+	</target>
+
+  <target name="webstart" depends="exe">
+	<fail message="You must specify a keystore password for opening visioKeyStore: ant -Dkeystore.password=***** [ant target]">
+		<condition>
+			<not> <isset property="keystore.password"/> </not>
+		</condition>
+	</fail>
+  	<delete dir="build/webstart"/>
+	<mkdir dir="build/webstart"/>	
+  	<copy todir="build/webstart" file="pathvisio-with-${ant.project.name}.jar"/>
+  	<copy todir="build/webstart" file="${ant.project.name}.jnlp"/>
+	<replace file="build/webstart/${ant.project.name}.jnlp" token="#BASEURL#" value="${webstart.base.url}"/>
+    <signjar alias="PV" lazy = "true" 
+		storepass="${keystore.password}" keystore="${pathvisio.dir}/lib/visioKeyStore">
+		<fileset dir="build/webstart" includes="**/*.jar"/>
+	</signjar>
+  </target>
+
+</project>

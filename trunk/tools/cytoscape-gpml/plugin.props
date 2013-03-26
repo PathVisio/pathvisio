@@ -19,7 +19,7 @@ pluginVersion=1.4
 cytoscapeVersion=2.7,2.8
 
 # Category, use one of the categories listed on the http://cytoscape.org/plugins2.php site
-pluginCategory=Network and Attribute I/O
+pluginCategory=online data import
 
 # -- The following properties are OPTIONAL -- #
 

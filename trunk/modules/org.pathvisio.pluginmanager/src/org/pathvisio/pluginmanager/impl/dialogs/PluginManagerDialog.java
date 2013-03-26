@@ -26,6 +26,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JDialog;
@@ -158,6 +160,13 @@ public class PluginManagerDialog extends JDialog {
 				panel.add(new JLabel("No plugins available."), BorderLayout.NORTH);
 			}
 		} else {
+			Collections.sort(plugins, new Comparator<BundleVersion>() {
+
+				@Override
+				public int compare(BundleVersion o1, BundleVersion o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
 			available = new JTable(new PluginTableModel(plugins));
 			available.setBackground(Color.white);
 			available.setSelectionForeground(Color.white);
@@ -257,11 +266,21 @@ public class PluginManagerDialog extends JDialog {
 		for(BundleVersion plugin : manager.getLocalHandler().getInstalledPlugins()) {
 			plugins.add(plugin);
 		}
+		for(String str : manager.getTmpBundles().keySet()) {
+			plugins.add(manager.getTmpBundles().get(str));
+		}
 		
 		if (plugins.isEmpty()) {
 			panel.setLayout(new BorderLayout());
 			panel.add(new JLabel("No plugins installed."), BorderLayout.NORTH);
 		} else {
+			Collections.sort(plugins, new Comparator<BundleVersion>() {
+
+				@Override
+				public int compare(BundleVersion o1, BundleVersion o2) {
+					return o1.getName().compareTo(o2.getName());
+				}
+			});
 			installed = new JTable(new PluginTableModel(plugins));
 			installed.setBackground(Color.white);
 			installed.setSelectionForeground(Color.white);
@@ -308,5 +327,11 @@ public class PluginManagerDialog extends JDialog {
 		installedPanel.add(getInstalled());
 		installedPanel.revalidate();
 		installedPanel.repaint();
+		
+		errorPanel.removeAll();
+		errorPanel.setLayout(new GridLayout(1,1));
+		errorPanel.add(getErrorPanel());
+		errorPanel.revalidate();
+		errorPanel.repaint();
 	}
 }

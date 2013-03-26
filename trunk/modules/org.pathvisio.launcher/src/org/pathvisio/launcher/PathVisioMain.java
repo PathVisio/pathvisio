@@ -154,7 +154,6 @@ public class PathVisioMain {
 						frame.getTextLabel().setText("<html>Install " + text + ".</html>");
 						frame.repaint();
 						publish(100 * (++cnt) / total);
-						System.out.println(cnt + "\t" + total);
 						loader.installEmbeddedBundle(s);
 					}
 
@@ -163,7 +162,6 @@ public class PathVisioMain {
 			    	System.out.println("Installing bundles from directories specified on the command-line.");
 			    	for(String location : pluginLocations) {
 			    		publish(100 * (++cnt) / total);
-			    		System.out.println(cnt + "\t" + total);
 			    		loader.loadFromParameter(location);
 					}
 			    

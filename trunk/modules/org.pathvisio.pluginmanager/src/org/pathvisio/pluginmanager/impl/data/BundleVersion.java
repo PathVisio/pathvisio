@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.osgi.framework.Bundle;
 import org.pathvisio.desktop.plugin.IPVBundle;
 
 public class BundleVersion implements IPVBundle {
@@ -34,6 +35,8 @@ public class BundleVersion implements IPVBundle {
 	private String iconUrl;
 	private List<BundleAuthor> authors;
 	private PVBundle bundle;
+	private Boolean tmp = false;
+	private Bundle osgiBundle;
 
 	public BundleVersion() {
 		authors = new ArrayList<BundleAuthor>();
@@ -142,5 +145,23 @@ public class BundleVersion implements IPVBundle {
 	@Override@XmlTransient
 	public String getType() {
 		return getBundle().getType();
+	}
+
+	@XmlTransient
+	public Boolean getTmp() {
+		return tmp;
+	}
+
+	public void setTmp(Boolean tmp) {
+		this.tmp = tmp;
+	}
+
+	@XmlTransient
+	public Bundle getOsgiBundle() {
+		return osgiBundle;
+	}
+
+	public void setOsgiBundle(Bundle osgiBundle) {
+		this.osgiBundle = osgiBundle;
 	}
 }

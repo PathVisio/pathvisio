@@ -68,6 +68,7 @@ public class PluginManager implements IPluginManager {
 
 	private List<PVRepository> onlineRepos;
 	private List<BundleVersion> problems;
+	private Map<String, BundleVersion> tmpBundles;
 	
 	private BundleContext context;
 	private RepositoryAdmin repoAdmin;
@@ -85,6 +86,7 @@ public class PluginManager implements IPluginManager {
 		runningPlugins = new ArrayList<Plugin>();
 		problems = new ArrayList<BundleVersion>();
 		localHandler = new LocalRepositoryHandler(context, this);
+		tmpBundles = new HashMap<String, BundleVersion>();
 	}
 	
 	public void init(File localRepo, Set<URL> onlineRepo, PvDesktop desktop) {
@@ -129,6 +131,7 @@ public class PluginManager implements IPluginManager {
 						Logger.log.info("Initialize plugin " + refs[i].getBundle().getSymbolicName());
 						
 						ServiceReference ref = context.getServiceReference(PvDesktop.class.getName());
+						checkTmpBundles(refs[i]);
 						plugin.init((PvDesktop) context.getService(ref));
 						runningPlugins.add(plugin);
 					} else {
@@ -145,6 +148,27 @@ public class PluginManager implements IPluginManager {
 	}
 
 	
+	private void checkTmpBundles(ServiceReference serviceReference) {
+		String symName = serviceReference.getBundle().getSymbolicName();
+		if(getLocalHandler().containsBundle(symName) == null) {
+			if(!symName.equals("org.pathvisio.gex") && !symName.equals("org.pathvisio.statistics") &&
+					!symName.equals("org.pathvisio.visualization")) {
+				PVBundle b = new PVBundle();
+				b.setInstalled(true);
+				b.setSymbolicName(symName);
+				b.setName(symName);
+				b.setType("plugin");
+				b.setSource("temp");
+				BundleVersion v = new BundleVersion();
+				v.setOsgiBundle(serviceReference.getBundle());
+				v.setBundle(b);
+				v.setTmp(true);
+				v.setVersion(Utils.formatVersion(serviceReference.getBundle().getVersion().toString()));
+				tmpBundles.put(symName, v);
+			}
+		}
+	}
+
 	/**
 	 * initializes the online repository
 	 * information comes from the pathvisio.xml file
@@ -281,7 +305,7 @@ public class PluginManager implements IPluginManager {
 		if(localHandler.getStartedBundles().containsKey(bundleVersion.getSymbolicName())) {
 			int reply = JOptionPane.showConfirmDialog(dlg, "Do you really want to uninstall plugin " + bundleVersion.getName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
 	        if (reply == JOptionPane.YES_OPTION) {
-	        	Bundle b = localHandler.getStartedBundles().get(bundleVersion.getSymbolicName());
+		        Bundle b = localHandler.getStartedBundles().get(bundleVersion.getSymbolicName());
 				try {
 					b.stop();
 					b.uninstall();
@@ -292,7 +316,7 @@ public class PluginManager implements IPluginManager {
 						onlineBundle.getBundle().setInstalled(false);
 					}
 					localHandler.removeBundleVersion(bundleVersion);
-
+	
 					localHandler.updateLocalXml();
 					dlg.updateData();
 					Logger.log.info("Bundle " + bundleVersion.getName() + " is uninstalled.");
@@ -302,7 +326,24 @@ public class PluginManager implements IPluginManager {
 					JOptionPane.showMessageDialog(dlg, "Could not uninstall plugin " + bundleVersion.getSymbolicName() + ". Please check error tab.");
 				}
 	        }
-		}
+		} else {
+			if(bundleVersion.getTmp()) {
+				int reply = JOptionPane.showConfirmDialog(dlg, "Do you really want to uninstall plugin " + bundleVersion.getName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
+		        if (reply == JOptionPane.YES_OPTION) {
+		    		try {
+						bundleVersion.getOsgiBundle().stop();
+						bundleVersion.getOsgiBundle().uninstall();
+						tmpBundles.remove(bundleVersion.getSymbolicName());
+						dlg.updateData();
+						Logger.log.info("Bundle " + bundleVersion.getName() + " is uninstalled.");
+						JOptionPane.showMessageDialog(dlg, "Plugin " + bundleVersion.getSymbolicName() + " has been uninstalled.");
+					} catch (BundleException e) {
+						Logger.log.error("Could not stop plugin " + bundleVersion.getName());
+						JOptionPane.showMessageDialog(dlg, "Could not uninstall plugin " + bundleVersion.getSymbolicName() + ". Please check error tab.");
+					}
+	        	}
+	        }
+    	}
 	}
 	
 	/**
@@ -535,5 +576,9 @@ public class PluginManager implements IPluginManager {
 	
 	public List<PVRepository> getOnlineRepos() {
 		return onlineRepos;
+	}
+
+	public Map<String, BundleVersion> getTmpBundles() {
+		return tmpBundles;
 	}
 }

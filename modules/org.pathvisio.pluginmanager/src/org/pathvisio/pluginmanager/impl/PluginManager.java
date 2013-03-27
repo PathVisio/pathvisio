@@ -35,8 +35,10 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
+import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
+import org.apache.felix.bundlerepository.Requirement;
 import org.apache.felix.bundlerepository.Resolver;
 import org.apache.felix.bundlerepository.Resource;
 import org.osgi.framework.Bundle;
@@ -357,7 +359,7 @@ public class PluginManager implements IPluginManager {
 			Resource[] resources = repoAdmin.discoverResources("(symbolicname=" + bundleVersion.getSymbolicName() + ")");
 
 			if(resources != null && resources.length > 0) {
-				Logger.log.info("Installing bundle " + bundleVersion.getSymbolicName() + " requires " + resources.length + " resources.");
+				Logger.log.info("Installing bundle " + bundleVersion.getSymbolicName());
 				
 				resolver.add(resources[0]);
 				if(!resolver.resolve()) {
@@ -365,10 +367,25 @@ public class PluginManager implements IPluginManager {
 				}
 				
 				for(Resource res : resolver.getAddedResources()) {
-					list.add(res);
+					if(!list.contains(res)) list.add(res);
 				}
 				for(Resource res : resolver.getRequiredResources()) {
-					list.add(res);
+					if(!list.contains(res))list.add(res);
+				}
+				
+				for(Reason r : resolver.getUnsatisfiedRequirements()) {
+					Resource[] res = repoAdmin.discoverResources("(symbolicname=" + r.getResource().getSymbolicName() + ")");
+					if(res.length == 1) {
+						boolean installed = false;
+						for(Bundle b : context.getBundles()) {
+							if(b.getSymbolicName().equals(res[0].getSymbolicName())) {
+								installed = true;
+							}
+						}
+						if(!installed) {
+							if(!list.contains(res[0])) list.add(res[0]);
+						}
+					}
 				}
 			} else {
 				Logger.log.error("Could not resolve bundle " + bundleVersion.getSymbolicName());

@@ -68,7 +68,7 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 	 * @param o Filter for specified organism. If null, don't filter on organism.
 	 * @return filtered set.
 	 */
-	public static Set<DataSource> getFilteredSetAlt (Boolean primary, String[] type, Object o)
+	public static Set<DataSource> getFilteredSetAlt (Boolean primary, String[] type, Object o, Boolean interaction)
 	{
 		final Set<DataSource> result = new HashSet<DataSource>();
 		final Set<String> types = new HashSet<String>();
@@ -81,7 +81,18 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 					(o == null || ds.getOrganism() == null || o == ds.getOrganism())
 				)
 			{
-				result.add (ds);
+				if(interaction == true){
+					String[] interactiondbs = { "KEGG Reaction", "PharmGKB Pathways", "SPIKE Map", "BIND", "MACiE",
+							"NCI Pathway Interaction Database: Pathway","Reactome","Microbial Protein Interaction Database",
+							"STRING","Database of Interacting Proteins", "Rhea", "DrugBank","Small Molecule Pathway Database",
+							"UM-BBD Pathway","UM-BBD Reaction","IntAct","PhosphoSite Protein","PubMed","MINT"};
+					if(Arrays.asList(interactiondbs).contains(ds.getFullName())){
+						result.add (ds);
+					}
+				}
+				else{
+					result.add (ds);
+				}
 			}
 		}
 		return result;
@@ -128,7 +139,7 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		if (DSTYPE_BY_DNTYPE.containsKey(dnType)) dsType = DSTYPE_BY_DNTYPE.get(dnType);
 
 		dataSources.addAll(getFilteredSetAlt(true, dsType, 
-				Organism.fromLatinName(pathway.getMappInfo().getOrganism())));
+				Organism.fromLatinName(pathway.getMappInfo().getOrganism()),false));
 
 		if (isDifferent(dataSources)) {
 			renderer.removeAllItems();

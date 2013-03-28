@@ -74,6 +74,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	 * up accession numbers of reactions/interactions.
 	 */
 	private static final long serialVersionUID = 1L;
+	
 
 	protected LineDialog(final SwingEngine swingEngine, final PathwayElement e, final boolean readonly, final Frame frame, final Component locationComp) {
 		super(swingEngine, e, readonly, frame, "Interaction properties", locationComp);
@@ -93,6 +94,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		dsm.setSelectedItem(input.getDataSource());
 		String lType = getInput().getEndLineType().toString();
 		typeCombo.setSelectedItem(LineType.fromName(lType));
+		dsm.setInteractionFilter(true);
 		pack();
 	}
 
@@ -110,84 +112,84 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		dsm.setSelectedItem(ref.getDataSource());
 		}
 
-	/**
-	 * Search for symbols or ids in the synonym databases that match
-	 * the given text
-	 */
-	private void search(final String aText)
-	{
-		if(aText == null || "".equals(aText.trim())) {
-			JOptionPane.showMessageDialog(this, "No search term specified, " +
-			"please type something in the 'Search' field");
-			return;
-		}
-		final String text = aText.trim();
-
-		final ProgressKeeper progress = new ProgressKeeper();
-		ProgressDialog dialog = new ProgressDialog(null, "Searching", progress, true, true);
-		dialog.setLocationRelativeTo(this);
-
-		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
-			private static final int QUERY_LIMIT = 200;
-
-			protected List<XrefWithSymbol> doInBackground() throws IDMapperException
-			{
-				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
-
-			    //The result set
-				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
-
-		    	for (Map.Entry<Xref, String> i :
-		    		gdb.freeAttributeSearch( text, AttributeMapper.MATCH_ID, QUERY_LIMIT).entrySet())
-		    	{
-		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
-		    	}
-		    	for (Map.Entry<Xref, String> i :
-		    		gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT).entrySet())
-		    	{
-		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
-		    	}
-				return result;
-			}
-
-			@Override
-			public void done()
-			{
-				progress.finished();
-				if (!progress.isCancelled())
-				{
-					List<XrefWithSymbol> results = null;
-					try
-					{
-						results = get();
-						//Show results to user
-						if(results != null && results.size() > 0) {
-							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
-							resultDialog.setVisible(true);
-							XrefWithSymbol selected = resultDialog.getSelected();
-							if(selected != null) {
-								applyAutoFill(selected);
-							}
-						} else {
-							JOptionPane.showMessageDialog(LineDialog.this,
-									"No results for '" + text + "'");
-						}
-					} catch (InterruptedException e) {
-						//Ignore, thread interrupted. Same as cancel.
-					}
-					catch (ExecutionException e) {
-						JOptionPane.showMessageDialog(LineDialog.this,
-								"Exception occurred while searching,\n" +
-								"see error log for details.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-						Logger.log.error("Error while searching", e);
-					}
-				}
-			}
-		};
-		sw.execute();
-		dialog.setVisible(true);
-	}
+//	/**
+//	 * Search for symbols or ids in the synonym databases that match
+//	 * the given text
+//	 */
+//	private void search(final String aText)
+//	{
+//		if(aText == null || "".equals(aText.trim())) {
+//			JOptionPane.showMessageDialog(this, "No search term specified, " +
+//			"please type something in the 'Search' field");
+//			return;
+//		}
+//		final String text = aText.trim();
+//
+//		final ProgressKeeper progress = new ProgressKeeper();
+//		ProgressDialog dialog = new ProgressDialog(null, "Searching", progress, true, true);
+//		dialog.setLocationRelativeTo(this);
+//
+//		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
+//			private static final int QUERY_LIMIT = 200;
+//
+//			protected List<XrefWithSymbol> doInBackground() throws IDMapperException
+//			{
+//				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
+//
+//			    //The result set
+//				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
+//
+//		    	for (Map.Entry<Xref, String> i :
+//		    		gdb.freeAttributeSearch( text, AttributeMapper.MATCH_ID, QUERY_LIMIT).entrySet())
+//		    	{
+//		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
+//		    	}
+//		    	for (Map.Entry<Xref, String> i :
+//		    		gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT).entrySet())
+//		    	{
+//		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
+//		    	}
+//				return result;
+//			}
+//
+//			@Override
+//			public void done()
+//			{
+//				progress.finished();
+//				if (!progress.isCancelled())
+//				{
+//					List<XrefWithSymbol> results = null;
+//					try
+//					{
+//						results = get();
+//						//Show results to user
+//						if(results != null && results.size() > 0) {
+//							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
+//							resultDialog.setVisible(true);
+//							XrefWithSymbol selected = resultDialog.getSelected();
+//							if(selected != null) {
+//								applyAutoFill(selected);
+//							}
+//						} else {
+//							JOptionPane.showMessageDialog(LineDialog.this,
+//									"No results for '" + text + "'");
+//						}
+//					} catch (InterruptedException e) {
+//						//Ignore, thread interrupted. Same as cancel.
+//					}
+//					catch (ExecutionException e) {
+//						JOptionPane.showMessageDialog(LineDialog.this,
+//								"Exception occurred while searching,\n" +
+//								"see error log for details.", "Error",
+//								JOptionPane.ERROR_MESSAGE);
+//						Logger.log.error("Error while searching", e);
+//					}
+//				}
+//			}
+//		};
+//		sw.execute();
+//		dialog.setVisible(true);
+//	}
 
 	protected final void addCustomTabs(final JTabbedPane parent) {
 		JPanel panel = new JPanel();
@@ -195,7 +197,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 
 		JPanel searchPanel = new JPanel();
 		JPanel fieldPanel = new JPanel();
-		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
+//		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
 		fieldPanel.setBorder(BorderFactory.createTitledBorder("Manual entry"));
 		GridBagConstraints panelConstraints = new GridBagConstraints();
 		panelConstraints.fill = GridBagConstraints.BOTH;
@@ -210,35 +212,35 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 
 		//Search panel elements
 		searchPanel.setLayout(new GridBagLayout());
-
-		final JTextField searchText = new JTextField();
-		final JButton searchButton = new JButton("Search");
+//Commenting out search for now due to lack of interaction annotation database
+//		final JTextField searchText = new JTextField();
+//		final JButton searchButton = new JButton("Search");
 
 		//Key listener to search when user presses Enter
-		searchText.addKeyListener(new KeyAdapter() {
-			public void keyReleased(final KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					searchButton.requestFocus();
-					search(searchText.getText());
-				}
-			}
-		});
+//		searchText.addKeyListener(new KeyAdapter() {
+//			public void keyReleased(final KeyEvent e) {
+//				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+//					searchButton.requestFocus();
+//					search(searchText.getText());
+//				}
+//			}
+//		});
 
-		searchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(final ActionEvent e) {
-				search(searchText.getText());
-			}
-		});
-		searchButton.setToolTipText("Search the synonym database for references, based on the text label");
+//		searchButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(final ActionEvent e) {
+//				search(searchText.getText());
+//			}
+//		});
+//		searchButton.setToolTipText("Search the synonym database for references, based on the text label");
 
 		GridBagConstraints searchConstraints = new GridBagConstraints();
 		searchConstraints.gridx = GridBagConstraints.RELATIVE;
 		searchConstraints.fill = GridBagConstraints.HORIZONTAL;
 		searchConstraints.weightx = 1;
-		searchPanel.add(searchText, searchConstraints);
+//		searchPanel.add(searchText, searchConstraints);
 
 		searchConstraints.weightx = 0;
-		searchPanel.add(searchButton, searchConstraints);
+//		searchPanel.add(searchButton, searchConstraints);
 
 		//Manual entry panel elements
 		fieldPanel.setLayout(new GridBagLayout());

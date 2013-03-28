@@ -114,7 +114,8 @@ public class DataSourceModel implements ComboBoxModel
 	private void initItems()
 	{
 		items = new ArrayList<DataSource>();
-		items.addAll (DataSourceHandler.getFilteredSetAlt(primary, type, organism));
+		items.addAll (DataSourceHandler.getFilteredSetAlt(primary, type, organism, interaction));
+//		items.addAll (DataSourceHandler.getFilteredSetAlt(primary, type, organism));
 		Collections.sort (items, new Comparator<DataSource>()
 		{
 			public int compare(DataSource arg0, DataSource arg1)
@@ -141,6 +142,7 @@ public class DataSourceModel implements ComboBoxModel
 	private Organism organism = null;
 	private String[] type = null;
 	private Boolean primary = null;
+	private Boolean interaction = false;
 
 	public void setSpeciesFilter (Organism aOrganism)
 	{
@@ -157,6 +159,12 @@ public class DataSourceModel implements ComboBoxModel
 	public void setPrimaryFilter (Boolean aPrimary)
 	{
 		primary = aPrimary;
+		initItems();
+	}
+	
+	public void setInteractionFilter (Boolean aInteraction)
+	{
+		interaction = aInteraction;
 		initItems();
 	}
 

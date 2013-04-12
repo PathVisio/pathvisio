@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +92,7 @@ public class PluginManager implements IPluginManager {
 		tmpBundles = new HashMap<String, BundleVersion>();
 	}
 	
-	public void init(File localRepo, Set<URL> onlineRepo, PvDesktop desktop) {
+	public void init(File localRepo, final Set<URL> onlineRepo, PvDesktop desktop) {
 		this.desktop = desktop;
 	
 		// initialize local repository
@@ -104,18 +105,46 @@ public class PluginManager implements IPluginManager {
 		initPlugins();
 		
 		// initialize online repositories
-		ServiceReference ref = context.getServiceReference(RepositoryAdmin.class.getName());
-		if(ref != null) {
-			repoAdmin = (RepositoryAdmin) context.getService(ref);
-			for(URL url : onlineRepo) {
-				try {
-					Repository repo = repoAdmin.addRepository(url);
-					setUpOnlineRepo(repo, url);
-				} catch (Exception e) {
-					Logger.log.error("Could not initialize repository " + url + "\t" + e.getMessage());
-				} 
-			}
-		} else {
+		final ServiceReference ref = context.getServiceReference(RepositoryAdmin.class.getName());
+		repoAdmin = (RepositoryAdmin) context.getService(ref);
+
+		if(ref != null) 
+		{
+			SwingWorker<Void, Map.Entry<Repository, URL>> worker = new SwingWorker<Void, Map.Entry<Repository, URL>>()
+			{
+
+				@Override
+				protected Void doInBackground() throws Exception
+				{
+					for(URL url : onlineRepo) 
+					{
+						try 
+						{
+							Repository repo = repoAdmin.addRepository(url);
+							publish (new AbstractMap.SimpleEntry<Repository, URL>(repo, url));
+						}
+						catch (Exception e) 
+						{
+							Logger.log.error("Could not initialize repository " + url + "\t" + e.getMessage());
+						} 
+					}
+					return null;
+				}
+				
+				@Override
+				protected void process(List<Map.Entry<Repository, URL>> result) 
+				{
+					for (Map.Entry<Repository, URL> repo : result)
+					{
+						setUpOnlineRepo(repo.getKey(), repo.getValue());
+					}
+				}
+				
+			};
+			worker.execute();
+		} 
+		else 
+		{
 			Logger.log.error("Could not initialize online repositories.");
 		}
 	}

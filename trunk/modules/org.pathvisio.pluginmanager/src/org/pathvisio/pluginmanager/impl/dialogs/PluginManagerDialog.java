@@ -43,6 +43,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.pathvisio.pluginmanager.impl.PluginManager;
+import org.pathvisio.pluginmanager.impl.PluginManager.PluginManagerStatus;
 import org.pathvisio.pluginmanager.impl.Utils;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
 
@@ -152,13 +153,11 @@ public class PluginManagerDialog extends JDialog {
 				plugins.add(plugin);
 			}
 		}
-		if (plugins.isEmpty()) {
+		if (plugins.isEmpty()) 
+		{
 			panel.setLayout(new BorderLayout());
-			if(manager.getOnlineRepos().size() == 0) {
-				panel.add(new JLabel("Could not connect to online repository."), BorderLayout.NORTH);
-			} else {
-				panel.add(new JLabel("No plugins available."), BorderLayout.NORTH);
-			}
+			String msg = manager.getStatusMessage();
+			panel.add(new JLabel(msg), BorderLayout.NORTH);
 		} else {
 			Collections.sort(plugins, new Comparator<BundleVersion>() {
 
@@ -334,4 +333,5 @@ public class PluginManagerDialog extends JDialog {
 		errorPanel.revalidate();
 		errorPanel.repaint();
 	}
+
 }

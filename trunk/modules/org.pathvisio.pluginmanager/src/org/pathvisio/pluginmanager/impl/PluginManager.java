@@ -112,7 +112,9 @@ public class PluginManager implements IPluginManager {
 		{
 			SwingWorker<Void, Map.Entry<Repository, URL>> worker = new SwingWorker<Void, Map.Entry<Repository, URL>>()
 			{
-
+				boolean atLeastOneSuccess = false;
+				Throwable connectionException;
+				
 				@Override
 				protected Void doInBackground() throws Exception
 				{
@@ -122,10 +124,12 @@ public class PluginManager implements IPluginManager {
 						{
 							Repository repo = repoAdmin.addRepository(url);
 							publish (new AbstractMap.SimpleEntry<Repository, URL>(repo, url));
+							atLeastOneSuccess = true;
 						}
 						catch (Exception e) 
 						{
 							Logger.log.error("Could not initialize repository " + url + "\t" + e.getMessage());
+							connectionException = e;
 						} 
 					}
 					return null;
@@ -138,6 +142,19 @@ public class PluginManager implements IPluginManager {
 					{
 						setUpOnlineRepo(repo.getKey(), repo.getValue());
 					}
+				}
+				
+				@Override
+				protected void done()
+				{
+					if (atLeastOneSuccess)
+						status = PluginManagerStatus.CONNECTION_COMPLETED_SUCCESSFULLY;
+					else
+					{
+						status = PluginManagerStatus.CONNECTION_COMPLETED_FAILURE;
+						savedConnectionException = connectionException;
+					}
+					if (dlg != null) dlg.updateData();
 				}
 				
 			};
@@ -627,4 +644,54 @@ public class PluginManager implements IPluginManager {
 	public Map<String, BundleVersion> getTmpBundles() {
 		return tmpBundles;
 	}
+
+	public enum PluginManagerStatus
+	{
+		/** This status indicates that the PluginManager attempted to connect,
+		 * but failed due to a problem, most likely due to firewall or slow connection (timeout) */
+		CONNECTION_COMPLETED_FAILURE,
+		
+		/** This status indicates that the PluginManager is still attempting to connect to the online repository */
+		BUSY,
+		
+		/** 
+		 * This status indicates that AT LEAST ONE online repository was initialized correctly.
+		 * It is possible that others did fail.  
+		 * If the number of online repositories is still zero, it means there weren't any to begin with. */
+		CONNECTION_COMPLETED_SUCCESSFULLY
+	}
+	
+	private PluginManagerStatus status = PluginManagerStatus.BUSY;
+	private Throwable savedConnectionException = null;
+	
+	/**
+	 * Return the status of connecting to online repositories.
+	 * The resulting message may contain html formatting suitable for a JLabel.
+	 */
+	public String getStatusMessage()
+	{
+		String msg;
+		switch (status)
+		{
+		case BUSY:
+			msg = "Attempting to connect to online repository, please wait...";
+			break;
+		case CONNECTION_COMPLETED_FAILURE:
+			msg = "<html>Exception occurred while connecting to the online repository.";
+			if (savedConnectionException != null)
+			{
+				// create a user-friendly exception message
+				Throwable t = savedConnectionException;
+				if (t.getCause() != null) t = t.getCause();
+				msg += "<br>" + t.getClass().getSimpleName() + ": " + savedConnectionException.getCause().getMessage();
+			}
+			break;
+		default:
+		case CONNECTION_COMPLETED_SUCCESSFULLY:
+			// if connection has completed successfully, but repo is empty, then there simply are no plugins
+			msg = "Connected succesfully to " + onlineRepos.size() + " repositories";
+		}
+		return msg;
+	}
+
 }

@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
-<project name="Plugins-common" basedir=".">
+<project name="Plugins-common-future" basedir=".">	
+<!--
 
+Plugins that use this build file have to define
+the embed.jars path (even if it's just empty)
+The embed.jars will be unjarred and included in the plugin jar.
+
+-->
 	<property name="debug.mode" value="true"/>
 	
 	<!-- location where bundle and its dependencies will be installed -->
@@ -12,6 +18,12 @@
 	<!-- perpare-common should not be overriden -> override prepare instead -->
 	<target name="prepare-common">
 		<mkdir dir="build/classes"/>
+      <!-- copies plugin.props file so it is included in jar-->
+		<copy toDir="build/classes">
+			<fileset dir=".">
+				<include name="*.props"/>
+			</fileset>
+		</copy>
 		<mkdir dir="${bundle.dest}"/>
 		<mkdir dir="resources"/> <!-- defensive, to prevent file not found error later on -->
 		<fail message="Can't find ${pathvisio.dir}/modules/org.pathvisio.core.jar, please specify the path to pathvisio with -Dpathvisio.dir=....">
@@ -43,7 +55,10 @@
 			   destdir="build/classes"
 			   debug="${debug.mode}"
 			   source="1.5">
-		  <classpath refid="project.class.path"/>
+			<classpath>
+				<path refid="project.class.path"/>
+				<path refid="embed.jars"/>
+			</classpath>
 		</javac>
 	</target>
 
@@ -57,6 +72,9 @@
 				</fileset>
 			</classpath>
 		</manifestclasspath>
+		<unjar dest="build/classes">
+			<path refid="embed.jars"/>
+		</unjar>
 		<jar jarfile="${jar.name}" manifest="META-INF/MANIFEST.MF">
 		    <fileset dir="build/classes">
 			    <include name="**/*"/>
@@ -90,14 +108,16 @@
 			<classpath>
 				<path refid="test.class.path"/>
 				<path refid="project.class.path"/>
+				<path refid="embed.jars"/>
 			</classpath>
 		</javac>
 		<junit printsummary="on" haltonfailure="true" fork="true" dir=".">
 			<formatter type="brief" usefile="false"/>
 			<classpath>
 				<pathelement path="build"/>
-				<path refid="project.class.path"/>
 				<path refid="test.class.path"/>
+				<path refid="project.class.path"/>
+				<path refid="embed.jars"/>
 			</classpath>
 			<batchtest>
 				<fileset dir="test">
@@ -113,6 +133,8 @@
 		<copy toDir="build/exe" flatten="true">
 			<path refid="exe.bundle"/>
 		</copy>
+      <!-- copies plugin jar to build/exe -->
+	   <copy file="${jar.name}" toDir="build/exe"/>
 		<unjar src="${pathvisio.dir}/modules/org.pathvisio.launcher.jar" dest="build/exe"/>
 		<unjar src="${pathvisio.dir}/lib/felix.jar" dest="build/exe"/>
 		<jar file="${exe.jar}" basedir="build/exe">

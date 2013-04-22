@@ -14,7 +14,6 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${pathvisio.dir}">
-			<include name="lib/axis-1_4/lib/*.jar" />
 			<include name="modules/org.pathvisio.core.jar"/>
 			<include name="modules/org.wikipathways.client.jar"/>
 			<include name="modules/org.wikipathways.applet.jar"/>
@@ -25,6 +24,7 @@
 			<include name="lib/org.bridgedb.rdb.construct.jar"/>
 			<include name="lib/derby.jar"/>
 			<include name="lib/apache/*.jar"/>
+			<include name="lib/com.springsource.org.apache.commons.logging*.jar" />
 		</fileset>
 	</path>
 

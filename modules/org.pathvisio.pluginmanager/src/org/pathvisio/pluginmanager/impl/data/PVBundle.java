@@ -138,4 +138,13 @@ public class PVBundle implements Comparable<PVBundle> {
 	public int compareTo(PVBundle plugin) {
 		return plugin.getName().compareTo(name);
 	}
+
+	public boolean hasCatgeory(String tag) {
+		for(Category cat : categories) {
+			if(cat.getName().equals(tag)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

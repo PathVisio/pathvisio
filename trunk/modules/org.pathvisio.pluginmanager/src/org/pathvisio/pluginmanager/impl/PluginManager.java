@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +40,6 @@ import javax.swing.SwingWorker;
 import org.apache.felix.bundlerepository.Reason;
 import org.apache.felix.bundlerepository.Repository;
 import org.apache.felix.bundlerepository.RepositoryAdmin;
-import org.apache.felix.bundlerepository.Requirement;
 import org.apache.felix.bundlerepository.Resolver;
 import org.apache.felix.bundlerepository.Resource;
 import org.osgi.framework.Bundle;
@@ -54,6 +54,7 @@ import org.pathvisio.desktop.plugin.IPluginManager;
 import org.pathvisio.desktop.plugin.Plugin;
 import org.pathvisio.gui.ProgressDialog;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
+import org.pathvisio.pluginmanager.impl.data.Category;
 import org.pathvisio.pluginmanager.impl.data.PVBundle;
 import org.pathvisio.pluginmanager.impl.data.PVRepository;
 import org.pathvisio.pluginmanager.impl.dialogs.PluginManagerDialog;
@@ -486,6 +487,30 @@ public class PluginManager implements IPluginManager {
 			}
 		}
 		return null;
+	}
+	
+	public Set<BundleVersion> getBundlesPerTag(String tag) {
+		Set<BundleVersion> set = new HashSet<BundleVersion>();
+		for(PVRepository repo : onlineRepos) {
+			for(BundleVersion v : repo.getBundleVersions()) {
+				if(!v.isInstalled() && v.getBundle().hasCatgeory(tag)) {
+					set.add(v);
+				}
+			}
+		}
+		return set;
+	}
+	
+	public Set<Category> getAvailableTags() {
+		Set<Category> tags = new HashSet<Category>();
+		for(PVRepository repo : onlineRepos) {
+			for(BundleVersion version : repo.getBundleVersions()) {
+				if(version.getType() != null && version.getType().equals("plugin")) {
+					tags.addAll(version.getBundle().getCategories());
+				}
+			}
+		}
+		return tags;
 	}
 
 	/**

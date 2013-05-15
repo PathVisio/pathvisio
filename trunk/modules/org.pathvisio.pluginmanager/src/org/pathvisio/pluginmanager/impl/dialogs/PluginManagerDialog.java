@@ -22,6 +22,8 @@ import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
@@ -29,7 +31,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Vector;
 
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -43,9 +47,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.pathvisio.pluginmanager.impl.PluginManager;
-import org.pathvisio.pluginmanager.impl.PluginManager.PluginManagerStatus;
 import org.pathvisio.pluginmanager.impl.Utils;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
+import org.pathvisio.pluginmanager.impl.data.Category;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -58,6 +62,9 @@ public class PluginManagerDialog extends JDialog {
 	private JPanel availablePanel;
 	private JPanel installedPanel;
 	private JPanel errorPanel;
+	private String currTag = "all";
+	private Vector<String> tags;
+	private JComboBox box;
 	
 	public PluginManagerDialog(PluginManager manager) {
 		this.manager = manager;
@@ -70,12 +77,37 @@ public class PluginManagerDialog extends JDialog {
 		dlg.setLayout(new BorderLayout());
 		dlg.setResizable(false);
 
+		getData();
 		dlg.add(getContentPanel(), BorderLayout.CENTER);
 
 		dlg.setModal(true);
 		dlg.pack();
 		dlg.setLocationRelativeTo(parent);
 		dlg.setVisible(true);
+	}
+	
+	public void getData() {
+		tags = new Vector<String>();
+		tags.add("all");
+		System.out.println(manager.getAvailableTags());
+		for(Category cat : manager.getAvailableTags()) {
+			tags.add(cat.getName());
+		}
+		Collections.sort(tags);
+		
+		box = new JComboBox(tags);
+		box.setSelectedItem("all");
+		box.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				String item = (String) box.getSelectedItem();
+		        if (item != null) {
+		        	currTag = item;
+		        	updateData();
+		        }
+			}
+		});
 	}
 	
 	private Component getContentPanel() {
@@ -144,21 +176,39 @@ public class PluginManagerDialog extends JDialog {
 	private JPanel availInfo;
 	
 	private JPanel getAvail() {
+		JPanel around = new JPanel();
+		around.setLayout(new BorderLayout());
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(1, 2));
 		panel.setBackground(Color.white);
+		
 		List<BundleVersion> plugins = new ArrayList<BundleVersion>();
-		for(BundleVersion plugin : manager.getAvailablePlugins()) {
-			if(!plugin.isInstalled()) {
-				plugins.add(plugin);
+		if(currTag.equals("all")) {
+			for(BundleVersion plugin : manager.getAvailablePlugins()) {
+				if(!plugin.isInstalled()) {
+					plugins.add(plugin);
+				}
+			}
+		} else {
+			for(BundleVersion plugin : manager.getBundlesPerTag(currTag)) {
+				if(!plugin.isInstalled()) {
+					plugins.add(plugin);
+				}
 			}
 		}
-		if (plugins.isEmpty()) 
-		{
-			panel.setLayout(new BorderLayout());
-			String msg = manager.getStatusMessage();
-			panel.add(new JLabel(msg), BorderLayout.NORTH);
-		} else {
+//		if (plugins.isEmpty()) 
+//		{
+//			panel.setLayout(new BorderLayout());
+//			String msg = manager.getStatusMessage();
+//			panel.add(new JLabel(msg), BorderLayout.NORTH);
+//		} else {
+			
+			JPanel sorting = new JPanel();
+			sorting.add(new JLabel("Browse by tag"));
+			sorting.add(box);
+			
+			around.add(sorting, BorderLayout.NORTH);
+			
 			Collections.sort(plugins, new Comparator<BundleVersion>() {
 
 				@Override
@@ -169,7 +219,7 @@ public class PluginManagerDialog extends JDialog {
 			available = new JTable(new PluginTableModel(plugins));
 			available.setBackground(Color.white);
 			available.setSelectionForeground(Color.white);
-			available.setSelectionBackground(new Color(245, 255, 255));
+			available.setSelectionBackground(Color.white);
 			available.setDefaultRenderer(BundleVersion.class, new PluginCell(false, manager));
 			available.setDefaultEditor(BundleVersion.class, new PluginCell(false, manager));
 			available.setRowHeight(70);
@@ -188,8 +238,9 @@ public class PluginManagerDialog extends JDialog {
 			availInfo = new JPanel();
 			availInfo.setBackground(Color.white);
 			panel.add(availInfo);
-		}
-		return panel;
+//		}
+		around.add(panel, BorderLayout.CENTER);
+		return around;
 	}
 	
 	protected void updatePluginDetails(BundleVersion p, JPanel panel) {

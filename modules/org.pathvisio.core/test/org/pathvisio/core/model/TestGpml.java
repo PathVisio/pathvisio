@@ -51,6 +51,38 @@ public class TestGpml extends TestCase
 		pwy.readFromXml(in, true);
 	}
 	
+	/**
+	 * Test reading 2008a file, then writing it as 2013a
+	 */
+	public static void testConvert08a13a() throws ConverterException, IOException
+	{
+		File in = new File (PATHVISIO_BASEDIR, "testData/WP248_2008a.gpml");
+		assertTrue (in.exists());
+		
+		Pathway pwy = new Pathway();
+		pwy.readFromXml(in, true);
+		
+		File tmp = File.createTempFile("test", "gpml");
+		GpmlFormat2013a.GPML_2013A.writeToXml(pwy, tmp, true);		
+	}
+	
+	/**
+	 * Test reading 2008a & 2010a files, then writing them as 2013a
+	 */
+	public static void testConvert10a13a() throws ConverterException, IOException
+	{
+		File in = new File (PATHVISIO_BASEDIR, "testData/WP248_2010a.gpml");
+		assertTrue (in.exists());
+		
+		Pathway pwy = new Pathway();
+		pwy.readFromXml(in, true);
+		
+		File tmp = File.createTempFile("test", "gpml");
+		GpmlFormat2013a.GPML_2013A.writeToXml(pwy, tmp, true);		
+	}
+	
+	
+	
 	private static final File FILE1 = 
 		new File (PATHVISIO_BASEDIR, "testData/2008a-deprecation-test.gpml");
 	

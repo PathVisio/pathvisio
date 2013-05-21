@@ -327,4 +327,14 @@ public class BiopaxElement extends PathwayElement
 		}
 	}
 
+	@Override
+	public void copyValuesFrom(PathwayElement src) {
+		super.copyValuesFrom(src);
+		BiopaxElement srcElement = (BiopaxElement) src;
+		this.document = srcElement.getDocument();
+		this.biopax = srcElement.biopax;
+		this.ordinal = srcElement.ordinal;
+		this.random = srcElement.random;
+	}
+
 }

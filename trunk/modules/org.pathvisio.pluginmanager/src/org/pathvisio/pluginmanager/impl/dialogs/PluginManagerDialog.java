@@ -22,18 +22,14 @@ import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,10 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.pathvisio.pluginmanager.impl.PluginManager;
 import org.pathvisio.pluginmanager.impl.Utils;
@@ -59,13 +52,11 @@ public class PluginManagerDialog extends JDialog {
 
 	private JDialog dlg;
 	private PluginManager manager;
-	private JPanel availablePanel;
-	private JPanel installedPanel;
+	private AvailablePluginsPanel availablePanel;
+	private InstalledPluginsPanel installedPanel;
 	private JPanel errorPanel;
-	private String currTag = "all";
 	private Vector<String> tags;
-	private JComboBox box;
-	
+
 	public PluginManagerDialog(PluginManager manager) {
 		this.manager = manager;
 		dlg = this;
@@ -77,7 +68,7 @@ public class PluginManagerDialog extends JDialog {
 		dlg.setLayout(new BorderLayout());
 		dlg.setResizable(false);
 
-		getData();
+		getTags();
 		dlg.add(getContentPanel(), BorderLayout.CENTER);
 
 		dlg.setModal(true);
@@ -86,36 +77,22 @@ public class PluginManagerDialog extends JDialog {
 		dlg.setVisible(true);
 	}
 	
-	public void getData() {
+	public void getTags() {
 		tags = new Vector<String>();
 		tags.add("all");
-		System.out.println(manager.getAvailableTags());
 		for(Category cat : manager.getAvailableTags()) {
 			tags.add(cat.getName());
 		}
 		Collections.sort(tags);
-		
-		box = new JComboBox(tags);
-		box.setSelectedItem("all");
-		box.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				String item = (String) box.getSelectedItem();
-		        if (item != null) {
-		        	currTag = item;
-		        	updateData();
-		        }
-			}
-		});
 	}
 	
 	private Component getContentPanel() {
 		JTabbedPane pane = new JTabbedPane();
 		pane.setBackground(Color.WHITE);
-		availablePanel = getAvail();
+		
+		availablePanel = new AvailablePluginsPanel(manager);
 		pane.add("Available", availablePanel);
-		installedPanel = getInstalled();
+		installedPanel = new InstalledPluginsPanel(manager);
 		pane.add("Installed", installedPanel);
 		errorPanel = getErrorPanel();
 		pane.add("Errors", errorPanel);
@@ -170,77 +147,6 @@ public class PluginManagerDialog extends JDialog {
 		}
 		
 		return panel;
-	}
-
-	private JTable available;
-	private JPanel availInfo;
-	
-	private JPanel getAvail() {
-		JPanel around = new JPanel();
-		around.setLayout(new BorderLayout());
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 2));
-		panel.setBackground(Color.white);
-		
-		List<BundleVersion> plugins = new ArrayList<BundleVersion>();
-		if(currTag.equals("all")) {
-			for(BundleVersion plugin : manager.getAvailablePlugins()) {
-				if(!plugin.isInstalled()) {
-					plugins.add(plugin);
-				}
-			}
-		} else {
-			for(BundleVersion plugin : manager.getBundlesPerTag(currTag)) {
-				if(!plugin.isInstalled()) {
-					plugins.add(plugin);
-				}
-			}
-		}
-//		if (plugins.isEmpty()) 
-//		{
-//			panel.setLayout(new BorderLayout());
-//			String msg = manager.getStatusMessage();
-//			panel.add(new JLabel(msg), BorderLayout.NORTH);
-//		} else {
-			
-			JPanel sorting = new JPanel();
-			sorting.add(new JLabel("Browse by tag"));
-			sorting.add(box);
-			
-			around.add(sorting, BorderLayout.NORTH);
-			
-			Collections.sort(plugins, new Comparator<BundleVersion>() {
-
-				@Override
-				public int compare(BundleVersion o1, BundleVersion o2) {
-					return o1.getName().compareTo(o2.getName());
-				}
-			});
-			available = new JTable(new PluginTableModel(plugins));
-			available.setBackground(Color.white);
-			available.setSelectionForeground(Color.white);
-			available.setSelectionBackground(Color.white);
-			available.setDefaultRenderer(BundleVersion.class, new PluginCell(false, manager));
-			available.setDefaultEditor(BundleVersion.class, new PluginCell(false, manager));
-			available.setRowHeight(70);
-			available.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-				
-				@Override
-				public void valueChanged(ListSelectionEvent e) {
-					int row = available.getSelectedRow();
-					int column = available.getSelectedColumn();
-					BundleVersion p = (BundleVersion) available.getValueAt(row, column);
-					updatePluginDetails(p, availInfo);
-				}
-			});
-			
-			panel.add(new JScrollPane(available));
-			availInfo = new JPanel();
-			availInfo.setBackground(Color.white);
-			panel.add(availInfo);
-//		}
-		around.add(panel, BorderLayout.CENTER);
-		return around;
 	}
 	
 	protected void updatePluginDetails(BundleVersion p, JPanel panel) {
@@ -302,81 +208,10 @@ public class PluginManagerDialog extends JDialog {
 		return new JLabel();
 	}
 	
-	
-	
-	private JTable installed;
-	private JPanel installedInfo;
-
-	private JPanel getInstalled() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridLayout(1, 2));
-		panel.setBackground(Color.white);
-		
-		List<BundleVersion> plugins = new ArrayList<BundleVersion>();
-		for(BundleVersion plugin : manager.getLocalHandler().getInstalledPlugins()) {
-			plugins.add(plugin);
-		}
-		for(String str : manager.getTmpBundles().keySet()) {
-			plugins.add(manager.getTmpBundles().get(str));
-		}
-		
-		if (plugins.isEmpty()) {
-			panel.setLayout(new BorderLayout());
-			panel.add(new JLabel("No plugins installed."), BorderLayout.NORTH);
-		} else {
-			Collections.sort(plugins, new Comparator<BundleVersion>() {
-
-				@Override
-				public int compare(BundleVersion o1, BundleVersion o2) {
-					return o1.getName().compareTo(o2.getName());
-				}
-			});
-			installed = new JTable(new PluginTableModel(plugins));
-			installed.setBackground(Color.white);
-			installed.setSelectionForeground(Color.white);
-			installed.setSelectionBackground(new Color(245, 255, 255));
-			installed.setDefaultRenderer(BundleVersion.class, new PluginCell(true, manager));
-			installed.setDefaultEditor(BundleVersion.class, new PluginCell(true, manager));
-			installed.setRowHeight(70);
-			installed.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-				
-				@Override
-				public void valueChanged(ListSelectionEvent e) {
-					int row = installed.getSelectedRow();
-					int column = installed.getSelectedColumn();
-					if(row != -1 && column != -1) {
-						BundleVersion p = (BundleVersion) installed.getValueAt(row, column);
-						updatePluginDetails(p, installedInfo);
-					} else {
-						installedInfo.removeAll();
-						installedInfo.revalidate();
-						installedInfo.repaint();
-					}
-				}
-			});
-			
-			panel.add(new JScrollPane(installed));
-			installedInfo = new JPanel();
-			installedInfo.setBackground(Color.white);
-			panel.add(installedInfo);
-		}
-		
-		
-		return panel;
-	}
-	
 	public void updateData() {
-		availablePanel.removeAll();
-		availablePanel.setLayout(new GridLayout(1,1));
-		availablePanel.add(getAvail());
-		availablePanel.revalidate();
-		availablePanel.repaint();
+		availablePanel.updatePluginPanel();
 
-		installedPanel.removeAll();
-		installedPanel.setLayout(new GridLayout(1,1));
-		installedPanel.add(getInstalled());
-		installedPanel.revalidate();
-		installedPanel.repaint();
+		installedPanel.updatePluginPanel();
 		
 		errorPanel.removeAll();
 		errorPanel.setLayout(new GridLayout(1,1));
@@ -384,5 +219,4 @@ public class PluginManagerDialog extends JDialog {
 		errorPanel.revalidate();
 		errorPanel.repaint();
 	}
-
 }

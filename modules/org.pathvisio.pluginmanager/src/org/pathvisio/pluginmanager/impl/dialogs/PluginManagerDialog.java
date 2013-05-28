@@ -40,6 +40,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
 import org.pathvisio.pluginmanager.impl.PluginManager;
+import org.pathvisio.pluginmanager.impl.PluginManager.PluginManagerStatus;
 import org.pathvisio.pluginmanager.impl.Utils;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
 import org.pathvisio.pluginmanager.impl.data.Category;
@@ -54,6 +55,7 @@ public class PluginManagerDialog extends JDialog {
 	private PluginManager manager;
 	private AvailablePluginsPanel availablePanel;
 	private InstalledPluginsPanel installedPanel;
+	
 	private JPanel errorPanel;
 	private Vector<String> tags;
 
@@ -96,6 +98,12 @@ public class PluginManagerDialog extends JDialog {
 		pane.add("Installed", installedPanel);
 		errorPanel = getErrorPanel();
 		pane.add("Errors", errorPanel);
+		StatusPanel statusPanel = new StatusPanel(manager);
+		pane.add("Status", statusPanel);
+		if (manager.getStatus().equals(PluginManagerStatus.CONNECTION_COMPLETED_FAILURE) 
+				|| manager.getStatus().equals(PluginManagerStatus.BUSY)) {
+			pane.setSelectedComponent(statusPanel);
+		}
 		
 		return pane;
 	}

@@ -1,8 +1,25 @@
+// PathVisio,
+// a tool for data visualization and analysis using Biological Pathways
+// Copyright 2006-2013 BiGCaT Bioinformatics
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 package org.pathvisio.pluginmanager.impl.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +50,14 @@ import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+/**
+ * InstalledPluginsPanel.java
+ * creates JPanel object shown in the
+ * plugin manager dialog tab "Installed"
+ * 
+ * @author martina
+ *
+ */
 public class InstalledPluginsPanel extends JPanel  {
 
 	private String currentTag = "all";
@@ -41,6 +66,8 @@ public class InstalledPluginsPanel extends JPanel  {
 	private JPanel pluginInfo;
 	private JComboBox tagBox;
 	private JPanel pluginPanel;
+	private JLabel numPlugins;
+	private int countPlugins = 0;
 	
 	public InstalledPluginsPanel(PluginManager manager) {
 		super();
@@ -53,6 +80,7 @@ public class InstalledPluginsPanel extends JPanel  {
 		pluginPanel.setBackground(Color.white);
 		
 		List<BundleVersion> plugins = getInstalledBundles();
+		countPlugins = plugins.size();
 		
 		JPanel north = getNorthPanel();
 		this.add(north, BorderLayout.NORTH);
@@ -145,7 +173,7 @@ public class InstalledPluginsPanel extends JPanel  {
 	}
 	
 	private JPanel getNorthPanel() {
-		FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,15dlu,pref,5dlu,fill:max(75dlu;pref),fill:pref:grow","25dlu,pref,15dlu");
+		FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,fill:pref:grow","10dlu,pref,5dlu,pref,15dlu");
 		PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBackground(Color.white);
 		CellConstraints cc = new CellConstraints();
@@ -166,8 +194,13 @@ public class InstalledPluginsPanel extends JPanel  {
 		});
 		
 		builder.add(tagBox, cc.xy(4, 2));
+		numPlugins = new JLabel();
+		Font newLabelFont=new Font(numPlugins.getFont().getName(),Font.ITALIC,numPlugins.getFont().getSize());
+		numPlugins.setFont(newLabelFont);
+		numPlugins.setText(countPlugins + " plugins were found.");
+		builder.add(numPlugins, cc.xyw(4, 4, 2));
 		
-		builder.addSeparator("", cc.xyw(2, 3, 8));
+		builder.addSeparator("", cc.xyw(2, 5, 4));
 		
 		return builder.getPanel();
 	}
@@ -206,12 +239,17 @@ public class InstalledPluginsPanel extends JPanel  {
 	public void updatePluginPanel() {
 		pluginPanel.removeAll();
 		List<BundleVersion> plugins = getInstalledBundles();
+		countPlugins = plugins.size();
 		pluginPanel.add(new JScrollPane(getPluginsTable(plugins)));
 		pluginInfo = new JPanel();
 		pluginInfo.setBackground(Color.white);
 		pluginPanel.add(pluginInfo);
 		pluginPanel.revalidate();
 		pluginPanel.repaint();
+		numPlugins.removeAll();
+		numPlugins.setText(countPlugins + " plugins were found.");
+		numPlugins.revalidate();
+		numPlugins.repaint();
 	}
 	
 	public Vector<String> getTags() {

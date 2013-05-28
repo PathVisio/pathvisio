@@ -63,6 +63,7 @@ public class RepoXmlReader {
 		profileMap = new HashMap<String, Profile>();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<PVRepository> parseFile(URL url) {
 		
 		try {
@@ -183,6 +184,7 @@ public class RepoXmlReader {
 		profileMap.clear();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addRepoBundles(Element element) {
 		List<Element> fields = element.getChildren("field");
 		
@@ -204,6 +206,7 @@ public class RepoXmlReader {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addProfileCategories(Element element) {
 		List<Element> fields = element.getChildren("field");
 		
@@ -225,6 +228,7 @@ public class RepoXmlReader {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addPluginAuthors(Element element) {
 		List<Element> fields = element.getChildren("field");
 		
@@ -250,7 +254,6 @@ public class RepoXmlReader {
 			
 			BundleVersion version = bundleVersionMap.get(bundleVersionId);
 			BundleAuthor author = new BundleAuthor();
-//			author.setVersion(version);
 			author.setAffiliation(affiliationMap.get(affiliationId));
 			author.setDeveloper(developerMap.get(developerId));
 			
@@ -258,6 +261,7 @@ public class RepoXmlReader {
 		}	
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void addPluginCategories(Element element) {
 		List<Element> fields = element.getChildren("field");
 		
@@ -279,26 +283,27 @@ public class RepoXmlReader {
 		}
 	}
 	
-	private void readProfiles(Element element) {
-		List<Element> fields = element.getChildren("field");
-		String profileId = "";
-		Profile profile = new Profile();
-		
-		for(Element f : fields) {
-			String attribute = f.getAttributeValue("name");
-			
-			if(attribute.equals("profile_id")) {
-				profileId = f.getValue();
-			} else if(attribute.equals("name")) {
-				profile.setName(f.getValue());
-			}
-		}
-		
-		if(!profileId.equals("") && profile.getName() != null) {
-			profileMap.put(profileId, profile);
-		}
-	}
+//	private void readProfiles(Element element) {
+//		List<Element> fields = element.getChildren("field");
+//		String profileId = "";
+//		Profile profile = new Profile();
+//		
+//		for(Element f : fields) {
+//			String attribute = f.getAttributeValue("name");
+//			
+//			if(attribute.equals("profile_id")) {
+//				profileId = f.getValue();
+//			} else if(attribute.equals("name")) {
+//				profile.setName(f.getValue());
+//			}
+//		}
+//		
+//		if(!profileId.equals("") && profile.getName() != null) {
+//			profileMap.put(profileId, profile);
+//		}
+//	}
 	
+	@SuppressWarnings("unchecked")
 	private void readDevelopers(Element element) {
 		List<Element> fields = element.getChildren("field");
 		String developerId = "";
@@ -321,6 +326,7 @@ public class RepoXmlReader {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void readCategories(Element element) {
 		List<Element> fields = element.getChildren("field");
 		String categoryId = "";
@@ -340,6 +346,7 @@ public class RepoXmlReader {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void readRepository(Element element) {
 		List<Element> fields = element.getChildren("field");
 		String repoId = "";
@@ -362,6 +369,7 @@ public class RepoXmlReader {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void readAffiliation(Element element) {
 		List<Element> fields = element.getChildren("field");
 		
@@ -385,6 +393,7 @@ public class RepoXmlReader {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void readBundleVersionData(Element element) {
 		List<Element> fields = element.getChildren("field");
 		
@@ -421,6 +430,7 @@ public class RepoXmlReader {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void readBundleData(Element element) {
 		List<Element> fields = element.getChildren("field");
 		String symName = "";

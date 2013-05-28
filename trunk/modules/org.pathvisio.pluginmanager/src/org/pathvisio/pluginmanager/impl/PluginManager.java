@@ -116,6 +116,7 @@ public class PluginManager implements IPluginManager {
 				boolean atLeastOneSuccess = false;
 				Throwable connectionException;
 				
+				@SuppressWarnings("unchecked")
 				@Override
 				protected Void doInBackground() throws Exception
 				{
@@ -689,6 +690,10 @@ public class PluginManager implements IPluginManager {
 	private PluginManagerStatus status = PluginManagerStatus.BUSY;
 	private Throwable savedConnectionException = null;
 	
+	public PluginManagerStatus getStatus() {
+		return status;
+	}
+
 	/**
 	 * Return the status of connecting to online repositories.
 	 * The resulting message may contain html formatting suitable for a JLabel.
@@ -702,21 +707,31 @@ public class PluginManager implements IPluginManager {
 			msg = "Attempting to connect to online repository, please wait...";
 			break;
 		case CONNECTION_COMPLETED_FAILURE:
-			msg = "<html>Exception occurred while connecting to the online repository.";
+			msg = "PathVisio was not able to connect to the online plugin repository.";
 			if (savedConnectionException != null)
 			{
 				// create a user-friendly exception message
 				Throwable t = savedConnectionException;
 				if (t.getCause() != null) t = t.getCause();
-				msg += "<br>" + t.getClass().getSimpleName() + ": " + savedConnectionException.getCause().getMessage();
+				Logger.log.warn("<html>Exception occurred while connecting to the online repository." +
+						"<br>" + t.getClass().getSimpleName() + ": " + savedConnectionException.getCause().getMessage());
 			}
 			break;
 		default:
 		case CONNECTION_COMPLETED_SUCCESSFULLY:
 			// if connection has completed successfully, but repo is empty, then there simply are no plugins
-			msg = "Connected succesfully to " + onlineRepos.size() + " repositories";
+			msg = "Connected succesfully to " + onlineRepos.size();
+			if(onlineRepos.size() == 1) {
+				msg = msg + " repository.";
+			} else {
+				msg = msg + " repositories.";
+			}
 		}
 		return msg;
+	}
+
+	public PvDesktop getDesktop() {
+		return desktop;
 	}
 
 }

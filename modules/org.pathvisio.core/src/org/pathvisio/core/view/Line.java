@@ -635,6 +635,7 @@ public class Line extends Graphics implements Adjustable
 		if(gdata.getMAnchors().size() != anchors.size()) {
 			setAnchors();
 		}
+		checkCitation();
 		updateAnchorPositions();
 		updateCitationPosition();
 	}

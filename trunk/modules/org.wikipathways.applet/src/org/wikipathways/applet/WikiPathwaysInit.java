@@ -67,9 +67,10 @@ public class WikiPathwaysInit
 
 	public static void registerXmlRpcExporters(URL rpcUrl, Engine engine) {
 		engine.addPathwayExporter(new RasterImageExporter(ImageExporter.TYPE_PNG));
-		if(Utils.getOS() == Utils.OS_WINDOWS) {
-			engine.addPathwayExporter(new MappFormat());
-		}
+//		disabled mapp export see ticket 1555
+//		if(Utils.getOS() == Utils.OS_WINDOWS) {
+//			engine.addPathwayExporter(new MappFormat());
+//		}
 //		engine.addPathwayExporter(new WikiPathwaysExporter(rpcUrl, ImageExporter.TYPE_TIFF)); disabled, see bug #166
 	}
 }

@@ -5,7 +5,7 @@
 	<property name="ant.build.javac.target" value="1.6"/>
 	<property name="ant.build.javac.source" value="1.6"/>
 	
-	<property name="pathvisio.version" value="3.0.0"/>
+	<property name="pathvisio.version" value="3.1.0"/>
 	<property name="bundle.dest" value=".."/>
 
 	<target name="prepare-jar-name">

@@ -8,6 +8,7 @@
 	<property name="webstart.dir" value="webstart"/>
 	<property name="release.dir" value="release"/>
 
+
 	<property name="build.wpi.bin" value="build/wpi/bin"/>
 	<property name="build.wpi.applet" value="build/wpi/applet"/>
 	<property name="wikipathways.dest.bin" value="${wikipathways.dest}/wpi/bin"/> <!-- install dir for wikipathways utilities !-->
@@ -16,6 +17,10 @@
 	<property name="checkstyle.output.file" value="warnings.txt"/>
 
 	<property name="webstart.base.url" value="http://www.pathvisio.org/webstart"/>
+
+	<!-- needed to build zip files correctly -->
+	<property name="pathvisio.version" value="3.1.0"/>
+	<property name="lib.axis.dir" value="tools/cytoscape-gpml/lib"/>
 	
    <macrodef name="iterate">
 		<attribute name="target"/>
@@ -441,15 +446,15 @@
 
 		<zip destfile="${release.dir}/${binbase2}.zip">
 			<zipfileset dir="." prefix="wikipathways_client-${pathvisio.version}">
-				<include name="wikipathways-client.jar" />
-				<include name="lib/jdom.jar" />
+				<include name="modules/org.wikipathways.client.jar" />
+				<include name="lib/com.springsource.org.jdom-1.1.0.jar" />
 				<include name="lib/derby.jar" />
 				<include name="modules/org.pathvisio.core.jar" />
 				<include name="modules/org.wikipathways.applet.jar" />
 				<include name="${lib.axis.dir}/*.jar" />
 				<include name="lib/resources.jar"/>
-				<include name="resources/botresult.css" />
-				<include name="resources/sorttable.js" />
+				<include name="modules/org.pathvisio.core/resources/botresult.css" />
+				<include name="modules/org.pathvisio.core/resources/sorttable.js" />
 				<include name="lib/org.bridgedb.jar"/>
 				<include name="lib/org.bridgedb.bio.jar"/>
 				<include name="lib/org.bridgedb.webservice.bridgerest.jar"/>

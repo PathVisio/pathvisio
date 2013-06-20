@@ -132,8 +132,8 @@ public class MainPanelStandalone extends MainPanel
 		SearchPane searchPane = new SearchPane(swingEngine);
 		sidebarTabbedPane.addTab ("Search", searchPane);
 
-		// backpage hook for showing expression data.
-		bpt.addBackpageHook(new BackpageExpression(desktop.getGexManager()));
+		// data hook for showing expression data on the data panel
+		dpt.addDataHook(new BackpageExpression(desktop.getGexManager()));
 	}
 
 	@Override

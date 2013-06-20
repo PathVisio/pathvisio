@@ -66,6 +66,7 @@ import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.core.view.VPathwayEvent;
 import org.pathvisio.core.view.VPathwayListener;
 import org.pathvisio.gui.BackpageTextProvider.BackpageAttributes;
+import org.pathvisio.gui.DataPaneTextProvider.DataAttributes;
 import org.pathvisio.gui.BackpageTextProvider.BackpageXrefs;
 import org.pathvisio.gui.CommonActions.ZoomAction;
 import org.pathvisio.gui.dnd.PathwayImportHandler;
@@ -99,7 +100,9 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	private JTable propertyTable;
 	private JComboBox zoomCombo;
 	protected BackpagePane backpagePane;
+	protected DataPane dataPane;
 	protected BackpageTextProvider bpt;
+	protected DataPaneTextProvider dpt;
 
 	protected CommonActions actions;
 
@@ -227,14 +230,21 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		bpt = new BackpageTextProvider ();
 		bpt.addBackpageHook(new BackpageAttributes(swingEngine.getGdbManager().getCurrentGdb()));
 		bpt.addBackpageHook(new BackpageXrefs(swingEngine.getGdbManager().getCurrentGdb()));
-
+		
 		backpagePane = new BackpagePane(bpt, swingEngine.getEngine());
 		backpagePane.addHyperlinkListener(swingEngine);
-
+		
+		dpt = new DataPaneTextProvider ();
+		dpt.addDataHook(new BackpageAttributes(swingEngine.getGdbManager().getCurrentGdb()));
+//		dpt.addDataHook(new DataAttributes(swingEngine));
+		dataPane = new DataPane(dpt, swingEngine.getEngine());
+		dataPane.addHyperlinkListener(swingEngine);
+			
 		sidebarTabbedPane = new JTabbedPane();
 		sidebarTabbedPane.addTab("Objects", objectsPane);
 		sidebarTabbedPane.addTab( "Properties", propertiesScrollPane );
 		sidebarTabbedPane.addTab( "Backpage", new JScrollPane(backpagePane) );
+		sidebarTabbedPane.addTab( "Data", new JScrollPane(dataPane) );
 
 		splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				pathwayScrollPane, sidebarTabbedPane);
@@ -454,6 +464,10 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public BackpagePane getBackpagePane() {
 		return backpagePane;
 	}
+	
+	public DataPane getDataPane() {
+		return dataPane;
+	}
 
 	public void vPathwayEvent(VPathwayEvent e) {
 		VPathway vp = (VPathway)e.getSource();
@@ -533,6 +547,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	public void dispose()
 	{
 		backpagePane.dispose();
+		dataPane.dispose();
 	}
 
 	/**

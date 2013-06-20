@@ -100,9 +100,9 @@ public class BackpageExpression implements BackpageHook, DataHook {
 		return text;
 	}
 
-	@Override
-	public String getHtml(SwingEngine swe) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public String getHtml(SwingEngine swe) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }

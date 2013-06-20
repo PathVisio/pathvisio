@@ -25,81 +25,84 @@ import org.pathvisio.data.DataException;
 import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
+import org.pathvisio.gui.DataPaneTextProvider.DataHook;
+import org.pathvisio.gui.SwingEngine;
 
 /**
- * Backpage hook to show gene expression data in tabular format.
- * Only used in Standalone application.
+ * Shows data uploaded for each DataNode/Interaction present in the pathway
+ * in tabular format. Only used in Standalone application.
+ *
+ * modified by @author anwesha
  */
-public class BackpageExpression implements BackpageHook
-{
+public class BackpageExpression implements BackpageHook, DataHook {
 	private final GexManager gexManager;
 
-	public BackpageExpression (GexManager gexManager)
-	{
+	public BackpageExpression(GexManager gexManager) {
 		this.gexManager = gexManager;
 	}
 
 	/**
-	 * Gets all available expression data for the given gene id and returns a string
-	 * containing this data in a HTML table
-	 * @param idc	the {@link Xref} containing the id and code of the geneproduct to look for
-	 * @return		String containing the expression data in HTML format or a string displaying a
-	 * 'no expression data found' message in HTML format
+	 * Gets all available data for the given identifier and returns a
+	 * string containing this data in a HTML table
+	 * 
+	 * @param idc
+	 *            the {@link Xref} containing the id and code of the pathway element
+	 *            to look for
+	 * @return String containing the data in HTML format or a string
+	 *         displaying a 'no data found' message in HTML format
 	 */
-	private static String getDataString(Xref idc, CachedData gex) throws IDMapperException, DataException
-	{
-		String noDataFound = "<P><I>No expression data found";
-		String exprInfo = "<P><B>Gene id on mapp: " + idc.getId() + "</B><TABLE border='1'>";
+	private static String getDataString(Xref idc, CachedData gex)
+			throws IDMapperException, DataException {
+		String noDataFound = "<P><I>No data found";
 
-		String colNames = "<TR><TH>Sample name";
-		if(!gex.isConnected()) return noDataFound;
+		String colNames = "<TR><TH>Identifier";
+		if (!gex.isConnected())
+			return noDataFound;
 
 		List<? extends IRow> pwData = gex.syncGet(idc);
 
-		if(pwData == null) return noDataFound;
+		if (pwData == null)
+			return noDataFound;
 
-		for(IRow d : pwData){
+		for (IRow d : pwData) {
 			colNames += "<TH>" + d.getXref().getId();
 		}
 
 		String dataString = "";
-		for(ISample s : gex.getOrderedSamples())
-		{
+		for (ISample s : gex.getOrderedSamples()) {
 			dataString += "<TR><TH>" + s.getName();
-			for(IRow d : pwData)
-			{
+			for (IRow d : pwData) {
 				dataString += "<TH>" + d.getSampleData(s);
 			}
 		}
-
-		return exprInfo + colNames + dataString + "</TABLE>";
+		return "<TABLE border='1'>" + colNames + dataString + "</TABLE>";
 	}
 
-	public String getHtml(PathwayElement e)
-	{
+	public String getHtml(PathwayElement e) {
 		return getHtml(e, gexManager.getCachedData());
 	}
 
 	public static String getHtml(PathwayElement e, CachedData gex) {
 		String text = "";
-		try
-		{
-			//Get the expression data information if available
-			if(gex != null) {
-				text += "<H1>Expression data</H1>";
+		try {
+			// Get the data if available
+			if (gex != null) {
+				text += "<br/><br/><hr/><br/><H1><font color=\"006699\">Data uploaded</font></H1>";
 				text += getDataString(e.getXref(), gex);
 			}
-		}
-		catch (IDMapperException ex)
-		{
+		} catch (IDMapperException ex) {
 			text += "Exception occured while getting cross-references</br>"
-				+ ex.getMessage();
-		}
-		catch (DataException ex)
-		{
+					+ ex.getMessage();
+		} catch (DataException ex) {
 			text += "Exception occured while getting cross-references</br>"
-				+ ex.getMessage();
+					+ ex.getMessage();
 		}
 		return text;
+	}
+
+	@Override
+	public String getHtml(SwingEngine swe) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

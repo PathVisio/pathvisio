@@ -108,7 +108,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	}
 
 	protected void queryPressed() {
-		final PubMedQuery pmq = new PubMedQuery(pmId.getText());
+		final PubMedQuery pmq = new PubMedQuery(pmId.getText().trim());
 		final ProgressKeeper pk = new ProgressKeeper();
 		ProgressDialog d = new ProgressDialog(
 				JOptionPane.getFrameForComponent(this),
@@ -130,6 +130,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 
 		PubMedResult pmr = pmq.getResult();
 		if(pmr != null) {
+			pmId.setText(pmr.getId()); // write the trimmed pmid to the dialog
 			title.setText(pmr.getTitle());
 			year.setText(pmr.getYear());
 			source.setText(pmr.getSource());

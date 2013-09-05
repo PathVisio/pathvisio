@@ -253,6 +253,8 @@ public class VPathway implements PathwayListener
 		case LEGEND:
 			result = new Legend(this, o);
 			break;
+		default:
+			break;
 		}
 		return result;
 	}
@@ -1355,6 +1357,17 @@ public class VPathway implements PathwayListener
 		selection.stopSelecting();
 	}
 	
+	public void selectObjectsByObjectType(ObjectType ot) {
+		clearSelection();
+		selection.startSelecting();
+		for(PathwayElement pe : getPathwayModel().getDataObjects()) {
+			if(pe.getObjectType() == ot) {
+				selection.addToSelection(getPathwayElementView(pe));
+			}
+		}
+		selection.stopSelecting();
+	}
+	
 	/**
 	 * select all objects of the pathway.
 	 */
@@ -1830,6 +1843,8 @@ public class VPathway implements PathwayListener
 				case ALIGN_BOTTOM:
 					g.vMoveBy(0, vBoundsFirst.getMaxY() - vBounds.getMaxY());
 				break;
+			default:
+				break;
 			}
 		}
 	}
@@ -1937,6 +1952,8 @@ public class VPathway implements PathwayListener
 				eCurr.vMoveBy(
 						vBoundsPrev.getMaxX() - vBoundsCurr.getX(),
 						vBoundsPrev.getMaxY() - vBoundsCurr.getMaxY());
+				break;
+			default:
 				break;
 			}
 		}

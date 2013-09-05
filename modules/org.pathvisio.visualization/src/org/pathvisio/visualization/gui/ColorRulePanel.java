@@ -29,11 +29,15 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -45,6 +49,7 @@ import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.util.TextFieldUtils;
 import org.pathvisio.desktop.visualization.ColorRule;
 import org.pathvisio.desktop.visualization.Criterion;
+import org.pathvisio.gui.dialogs.OkCancelDialog;
 
 /**
  * A panel for editing a color rule
@@ -133,10 +138,12 @@ public class ColorRulePanel extends JPanel
 	}
 
 	private final GexManager gexManager;
-
-	ColorRulePanel (GexManager gexManager) throws DataException
+	private JPanel colorRulePanel;
+	
+	public ColorRulePanel (GexManager gexManager) throws DataException
 	{
 		this.gexManager = gexManager;
+		colorRulePanel = this;
 		FormLayout layout = new FormLayout("4dlu, pref, 4dlu, pref, 4dlu",
 		"4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu, pref, 4dlu");
 
@@ -215,10 +222,18 @@ public class ColorRulePanel extends JPanel
 			{
 				// sanity check, button should have been disabled when cr == null
 				if (cr == null) throw new NullPointerException();
-				Color newColor =
-					JColorChooser.showDialog(getTopLevelAncestor(), "Pick color", cr.getColor());
-				colorLabel.setBackground(newColor);
-				cr.setColor(newColor);
+				
+				// check if rule expression is valid
+				if(errorMsg.getText().equals("Rule logic OK")) {
+					Color newColor = JColorChooser.showDialog(getTopLevelAncestor(), "Pick color", cr.getColor());
+					colorLabel.setBackground(newColor);
+					cr.setColor(newColor);
+				} else {
+					JOptionPane.showMessageDialog((OkCancelDialog) SwingUtilities.getWindowAncestor(colorRulePanel),
+						    "<html>Invalid color rule.<br/>Please check your rule expression.</html>",
+						    "Color Rule Error",
+						    JOptionPane.ERROR_MESSAGE);
+				}
 			}});
 
 		add (btnColor, cc.xy (4, 8));

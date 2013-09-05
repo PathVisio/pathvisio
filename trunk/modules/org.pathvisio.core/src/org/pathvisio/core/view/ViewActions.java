@@ -265,6 +265,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		case MODEL_LOADED:
 		case ELEMENT_CLICKED_UP:
 			resetGroupStates(vp);
+		default:
+			break;
 		}
 	}
 
@@ -408,13 +410,10 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		public SelectObjectAction(String name, ObjectType objtype) {
 			super("Select all " + name);
 			this.objtype = objtype;
-			}
+		}
+		
 		public void actionPerformed(ActionEvent e) {
-			for(PathwayElement pe : vPathway.getPathwayModel().getDataObjects()) {
-				if(pe.getObjectType() == objtype) {
-					vPathway.getPathwayElementView(pe).select();
-					}
-			}
+			vPathway.selectObjectsByObjectType(objtype);
 		}
 	}
 		
@@ -757,6 +756,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 				break;
 			case VPATHWAY_DISPOSED:
 				((VPathway)e.getSource()).getUndoManager().removeListener(this);
+				break;
+			default:
 				break;
 			}
 		}

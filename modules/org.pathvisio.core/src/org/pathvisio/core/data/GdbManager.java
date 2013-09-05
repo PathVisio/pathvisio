@@ -27,7 +27,7 @@ import org.bridgedb.BridgeDb;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
-import org.bridgedb.bio.EnsemblCompatibilityMapper;
+//import org.bridgedb.bio.EnsemblCompatibilityMapper;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
@@ -61,8 +61,6 @@ public class GdbManager extends AbstractListModel
 			Logger.log.error("Could not initilize GDB Manager", ex);
 			//TODO: propagate exception???
 		}
-		// ensure compatibility with old style Ensembl identifiers.
-		currentGdb.addIDMapper(new EnsemblCompatibilityMapper());
 		currentGdb.setTransitive(true);
 	}
 

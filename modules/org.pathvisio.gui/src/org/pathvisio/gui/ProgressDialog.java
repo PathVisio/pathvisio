@@ -105,6 +105,61 @@ public class ProgressDialog extends JDialog implements ActionListener, ProgressL
 		pack();
 		setLocationRelativeTo(frame);
 	}
+	
+	public ProgressDialog(JDialog frame, String title, ProgressKeeper progressKeeper, boolean canCancel, boolean modal) {
+		super(frame, title, modal);
+
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setResizable(false);
+
+		task = new JLabel();
+		//task.setPreferredSize(new Dimension (350, 50));
+		report = new JLabel();
+		//report.setPreferredSize(new Dimension (350, 50));
+
+		keeper = progressKeeper;
+		keeper.addListener(this);
+
+		dialogPane = new JPanel();
+		dialogPane.setLayout(new FormLayout(
+				"3dlu, [200dlu,pref], 3dlu",
+				"3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu"));
+		CellConstraints cc = new CellConstraints();
+
+		dialogPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		task.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+		report.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+		dialogPane.add(task, cc.xy (2,2));
+		dialogPane.add(report, cc.xy (2,4));
+
+		int totalWork = progressKeeper.getTotalWork();
+		progressBar = new JProgressBar();
+		if(progressKeeper.isIndeterminate()) {
+			progressBar.setIndeterminate(true);
+		}
+		else
+		{
+			progressBar.setMaximum(totalWork < 1 ? 1 : totalWork);
+		}
+		dialogPane.add(progressBar, cc.xy (2,6));
+
+		Container contentPane = getContentPane();
+		contentPane.add(dialogPane, BorderLayout.CENTER);
+
+		if(canCancel) {
+			JButton cancelButton = new JButton(CANCEL);
+			cancelButton.addActionListener(this);
+			getRootPane().setDefaultButton(cancelButton);
+
+			JPanel buttonPane = new JPanel();
+			buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
+			buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+			buttonPane.add(cancelButton, cc.xy(2,8));
+			contentPane.add(buttonPane, BorderLayout.PAGE_END);
+		}
+		pack();
+		setLocationRelativeTo(frame);
+	}
 
 	protected void cancelPressed() {
 		keeper.cancel();

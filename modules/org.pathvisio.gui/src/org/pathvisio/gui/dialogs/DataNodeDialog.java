@@ -130,7 +130,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 		final String text = aText.trim();
 
 		final ProgressKeeper progress = new ProgressKeeper();
-		ProgressDialog dialog = new ProgressDialog(null, "Searching", progress, true, true);
+		ProgressDialog dialog = new ProgressDialog(this, "Searching", progress, true, true);
 		dialog.setLocationRelativeTo(this);
 
 		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {

@@ -93,14 +93,18 @@ public class PluginCell extends AbstractCellEditor implements TableCellEditor, T
 			button.setText("  Install ");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
+					button.setEnabled(false);
 					manager.installPluginFromRepo(bundleVersion);
+					button.setEnabled(true);
 				}
 			});
 		} else {
 			button.setText(" Uninstall ");
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
+					button.setEnabled(false);
 					manager.uninstallBundle(bundleVersion);
+					button.setEnabled(true);
 				}
 			});
 		}

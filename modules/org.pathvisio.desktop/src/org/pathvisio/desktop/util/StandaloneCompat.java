@@ -18,26 +18,21 @@ package org.pathvisio.desktop.util;
 
 import javax.swing.JOptionPane;
 
-import org.bridgedb.IDMapperException;
-import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.data.GdbEvent;
 import org.pathvisio.core.data.GdbManager.GdbEventListener;
-import org.pathvisio.data.DataException;
 import org.pathvisio.desktop.PvDesktop;
-import org.pathvisio.desktop.gex.GexManager.GexManagerEvent;
-import org.pathvisio.desktop.gex.GexManager.GexManagerListener;
 
 /**
  * Collection of compatibility "hacks" for the standalone PathVisio app.
  */
-public class StandaloneCompat implements GdbEventListener, GexManagerListener
+public class StandaloneCompat implements GdbEventListener//, GexManagerListener
 {
 	private final PvDesktop desktop;
 
 	public StandaloneCompat (PvDesktop desktop)
 	{
 		this.desktop = desktop;
-		desktop.getGexManager().addListener(this);
+//		desktop.getGexManager().addListener(this);
 		desktop.getSwingEngine().getGdbManager().addGdbEventListener(this);
 	}
 
@@ -50,35 +45,37 @@ public class StandaloneCompat implements GdbEventListener, GexManagerListener
 				String name = e.getName();
 
 				//Very primitive check for updates
-				if (name != null && name.indexOf("_Derby_2008") > 0)
+				if (name != null && (name.contains("Derby_2011") || name.contains("Derby_2010") || name.contains("Derby_2009") || name.contains("Derby_2008")))
 				{
 					JOptionPane.showMessageDialog(desktop.getFrame(),
-					"A newer gene database is available\n" +
-					"Please browse to http://www.pathvisio.org/Download to obtain the latest.");
+					"A newer identifier mapping database is available\n" +
+					"Please check http://www.pathvisio.org/downloads/download-bridgedbs/ for the latest database.");
 				}
 			}
+		default:
+			break;
 		}
 	}
 
-	public void gexManagerEvent(GexManagerEvent e)
-	{
-		if (e.getType() == GexManagerEvent.CONNECTION_OPENED)
-		{
-			try
-			{
-				if (desktop.getGexManager().getCurrentGex().getUsedDatasources().contains(BioDataSource.ENSEMBL))
-				{
-					JOptionPane.showMessageDialog(desktop.getFrame(),
-							"The selected data set contains old references to Ensembl\n" +
-							"It is recommended that you redo the dataset import process");
-				}
-			}
-			catch (DataException ex)
-			{
-				//ignore - no compatibility check today
-			}
-		}
-
-	}
+//	public void gexManagerEvent(GexManagerEvent e)
+//	{
+//		if (e.getType() == GexManagerEvent.CONNECTION_OPENED)
+//		{
+//			try
+//			{
+//				if (desktop.getGexManager().getCurrentGex().getUsedDatasources().contains(BioDataSource.ENSEMBL))
+//				{
+//					JOptionPane.showMessageDialog(desktop.getFrame(),
+//							"The selected data set contains old references to Ensembl\n" +
+//							"It is recommended that you redo the dataset import process");
+//				}
+//			}
+//			catch (DataException ex)
+//			{
+//				//ignore - no compatibility check today
+//			}
+//		}
+//
+//	}
 
 }

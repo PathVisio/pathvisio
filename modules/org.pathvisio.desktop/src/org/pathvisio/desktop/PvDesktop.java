@@ -394,7 +394,6 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		swingEngine.getEngine().removeApplicationEventListener(this);
 		visualizationManager.removeListener(this);
 		visualizationManager.dispose();
-		gexManager.removeListener(compat);
 		gexManager.close();
 		disposed = true;
 	}

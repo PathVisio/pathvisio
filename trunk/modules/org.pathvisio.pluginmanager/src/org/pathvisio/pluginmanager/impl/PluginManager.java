@@ -268,14 +268,14 @@ public class PluginManager implements IPluginManager {
 	 * installs plugin from online repository
 	 */
 	public void installPluginFromRepo(final BundleVersion version) {
-		
+				
 		final ProgressKeeper pk = new ProgressKeeper();
-		final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(dlg), "", pk, false, true);
-
+		final ProgressDialog d = new ProgressDialog(dlg, "", pk, false, true);
+		
 		SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() {
-			@Override protected Boolean doInBackground() {
+			@Override protected Boolean doInBackground() throws InterruptedException {
 				pk.setTaskName("Installing plugin");
-				pk.setProgress(10);
+				Thread.sleep(200);
 				List<Resource> resources = resolveDependencies(version);
 				if(resources.size() == 0) {
 					version.getBundle().getStatus().setSuccess(false);

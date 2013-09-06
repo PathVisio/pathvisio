@@ -333,9 +333,9 @@ public class PluginManager implements IPluginManager {
 			@Override public void done()
 			{
 				if(version.getBundle().isInstalled()) {
-					JOptionPane.showMessageDialog(desktop.getFrame(), "Plugin " + version.getSymbolicName() + "  was installed successfully.");
+					JOptionPane.showMessageDialog(dlg, "Plugin " + version.getSymbolicName() + "  was installed successfully.");
 				} else {
-					JOptionPane.showMessageDialog(desktop.getFrame(), "There was a problem installing plugin " + version.getSymbolicName() + ". Please check the error tab.");
+					JOptionPane.showMessageDialog(dlg, "There was a problem installing plugin " + version.getSymbolicName() + ". Please check the error tab.");
 				}
 				localHandler.clean(problems);
 				// show status

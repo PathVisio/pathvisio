@@ -60,7 +60,7 @@ import org.pathvisio.gui.util.FontChooser;
  */
 public class DataNodeLabel extends AbstractVisualizationMethod implements ActionListener {
 	static final String DISPLAY_ID = "Identifier";
-	static final String DISPLAY_LABEL = "Text label";
+	static final String DISPLAY_LABEL = "DataNode label";
 	static final String ACTION_APPEARANCE = "Appearance...";
 
 	static final Font DEFAULT_FONT = new Font("Arial narrow", Font.PLAIN, 10);
@@ -83,7 +83,7 @@ public class DataNodeLabel extends AbstractVisualizationMethod implements Action
 	}
 
 	public String getDescription() {
-		return "Draws a label";
+		return "Displays a label on the data nodes";
 	}
 
 	public String getName() {

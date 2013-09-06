@@ -29,7 +29,6 @@ import java.util.Map;
  */
 public class LineType
 {
-	private static Map<String, LineType> mappMappings = new HashMap<String, LineType>();
 	private static Map<String, LineType> nameMappings = new HashMap<String, LineType>();
 	private static List<LineType> values = new ArrayList<LineType>();
 	private static List<LineType> visible = new ArrayList<LineType>();
@@ -66,10 +65,6 @@ public class LineType
 		this.mappName = mappName;
 		this.name = name;
 
-		if (mappName != null)
-		{
-			mappMappings.put (mappName, this);
-		}
 		nameMappings.put (name, this);
 
 		values.add (this);		
@@ -98,18 +93,7 @@ public class LineType
 
 	public String getMappName() { return mappName; }
 
-	/** @deprecated, use getName instead. */
-	public String getGpmlName() { return getName(); }
-
 	public String getName() { return name; }
-
-	/**
-	   @deprecated
-	 */
-	static LineType fromGpmlName(String value)
-	{
-		return fromName (value);
-	}
 
 	public static LineType fromName(String value)
 	{
@@ -118,12 +102,7 @@ public class LineType
 
 	static public String[] getNames()
 	{
-		String[] result = new String [values.size()];
-		for (int i = 0; i < values.size(); ++i)
-		{
-			result[i] = values.get(i).getName();
-		}
-		return result;
+		return nameMappings.keySet().toArray(new String[nameMappings.size()]); 
 	}
 
 	static public String[] getVisibleNames()
@@ -138,7 +117,7 @@ public class LineType
 
 	static public LineType[] getValues()
 	{
-		return values.toArray (new LineType[0]);
+		return nameMappings.values().toArray (new LineType[nameMappings.size()]);
 	}
 
 	static public LineType[] getVisibleValues()

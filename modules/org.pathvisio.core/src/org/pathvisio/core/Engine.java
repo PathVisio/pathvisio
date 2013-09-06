@@ -315,6 +315,18 @@ public class Engine
 			Utils.multimapPut(exporters, ext.toLowerCase(), export);
 		}
 	}
+	
+	public void removePathwayExporter(PathwayExporter export) {
+		for(String ext : export.getExtensions()) {
+			if(exporters.containsKey(ext)) {
+				if(exporters.get(ext).size() == 1) {
+					exporters.remove(ext);
+				} else {
+					exporters.get(ext).remove(export);
+				}
+			}
+		}
+	}
 
 	/**
 	 * Add a {@link PathwayImporter} that handles imoprt of GPML to another file format
@@ -323,6 +335,18 @@ public class Engine
 	public void addPathwayImporter(PathwayImporter importer) {
 		for(String ext : importer.getExtensions()) {
 			Utils.multimapPut(importers, ext.toLowerCase(), importer);
+		}
+	}
+	
+	public void removePathwayImporter(PathwayImporter importer) {
+		for(String ext : importer.getExtensions()) {
+			if(importers.containsKey(ext)) {
+				if(importers.get(ext).size() == 1) {
+					importers.remove(ext);
+				} else {
+					importers.get(ext).remove(importer);
+				}
+			}
 		}
 	}
 

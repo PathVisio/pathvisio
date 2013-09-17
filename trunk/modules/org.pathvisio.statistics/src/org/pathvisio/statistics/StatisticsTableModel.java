@@ -44,12 +44,12 @@ class StatisticsTableModel extends ListWithPropertiesTableModel<Column, Statisti
 				StatisticsPreference.STATS_RESULT_INCLUDE_FILENAME)) {
 			saveColumns = new Column[] {
 					Column.PATHWAY_NAME, Column.FILE_NAME, Column.R,
-					Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE,
+					Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE, Column.PERMPVAL,
 			};
 		} else {
 			saveColumns = new Column[] {
 					Column.PATHWAY_NAME, Column.R, Column.N,
-					Column.TOTAL, Column.PCT, Column.ZSCORE,
+					Column.TOTAL, Column.PCT, Column.ZSCORE, Column.PERMPVAL,
 			};
 		}
 	}

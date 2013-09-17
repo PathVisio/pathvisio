@@ -452,7 +452,7 @@ public class StatisticsPlugin implements Plugin
 				this.pk = pk;
 				calculator = new ZScoreCalculator (crit, pwDir, cache, gdb, pk);
 				temp = new StatisticsTableModel();
-				temp.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
+				temp.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE, Column.PERMPVAL});
 				tblResult.setModel(temp);
 				useMappFinder = PreferenceManager.getCurrent().getBoolean(StatisticsPreference.MAPPFINDER_COMPATIBILITY);
 			}

@@ -29,7 +29,7 @@ public enum Column implements PropertyColumn
 	PATHWAY_NAME("Pathway"),
 	FILE_NAME("File"),
 	PCT("%"),
-	PERMPVAL("Permute p-value"),
+	PERMPVAL("p-value (permuted)"),
 	ADJPVAL("Adjusted p-value"),
 	ZSCORE ("Z Score");
 

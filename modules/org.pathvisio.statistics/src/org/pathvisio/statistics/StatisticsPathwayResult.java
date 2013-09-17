@@ -58,8 +58,8 @@ public class StatisticsPathwayResult implements RowWithProperties<Column>
 		case R: return "" + r;
 		case TOTAL: return "" + total;
 		case PATHWAY_NAME: return name;
-		case PERMPVAL: return String.format ("%3.2f", (float)permP);
-		case ADJPVAL: return String.format ("%3.2f", (float)adjP);
+		case PERMPVAL: return String.format ("%3.3f", (float)permP);
+		case ADJPVAL: return String.format ("%3.3f", (float)adjP);
 		case ZSCORE: return String.format ("%3.2f", (float)z);
 		case PCT: return String.format("%3.2f%%", (n == 0 ? Float.NaN : 100.0 * (float)r / (float)n));
 		case FILE_NAME: return f.getName();

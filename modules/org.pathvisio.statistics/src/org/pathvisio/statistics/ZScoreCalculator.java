@@ -62,7 +62,7 @@ public class ZScoreCalculator
 		result = new StatisticsResult();
 		result.crit = crit;
 		result.stm = new StatisticsTableModel();
-		result.stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE});
+		result.stm.setColumns(new Column[] {Column.PATHWAY_NAME, Column.R, Column.N, Column.TOTAL, Column.PCT, Column.ZSCORE, Column.PERMPVAL});
 		result.pwDir = pwDir;
 		result.gex = gex;
 		result.gdb = gdb;
@@ -361,7 +361,6 @@ public class ZScoreCalculator
 				double pval = (double)extremer.get(pi) / 1000.0;
 				StatisticsPathwayResult spr = statsMap.get(pi);
 				spr.permP = pval;
-				System.out.println (spr.getProperty(Column.PATHWAY_NAME) + "\t" + spr.getZScore() + "\t" + pval);
 			}
 		}
 

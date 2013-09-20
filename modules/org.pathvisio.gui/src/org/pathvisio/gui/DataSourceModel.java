@@ -114,8 +114,7 @@ public class DataSourceModel implements ComboBoxModel
 	private void initItems()
 	{
 		items = new ArrayList<DataSource>();
-		items.addAll (DataSourceHandler.getFilteredSetAlt(primary, type, organism, interaction));
-//		items.addAll (DataSourceHandler.getFilteredSetAlt(primary, type, organism));
+		items.addAll(DataSourceHandler.getFilteredSetAlt(primary, type, organism, interaction));
 		Collections.sort (items, new Comparator<DataSource>()
 		{
 			public int compare(DataSource arg0, DataSource arg1)

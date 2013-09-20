@@ -558,6 +558,8 @@ public class GexImportWizard extends Wizard
 			cbColSyscode = new JComboBox();
 
 			mDataSource = new DataSourceModel();
+			String[] types = {"metabolite","protein","gene","interaction"};
+			mDataSource.setTypeFilter(types);
 			cbDataSource = new PermissiveComboBox(mDataSource);
 
 			ctm = new ColumnTableModel(importInformation);

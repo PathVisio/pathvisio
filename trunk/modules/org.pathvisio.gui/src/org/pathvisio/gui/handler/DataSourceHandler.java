@@ -75,24 +75,10 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 		if (type != null) types.addAll(Arrays.asList(type));
 		for (DataSource ds : DataSource.getDataSources())
 		{
-			if (
-					(primary == null || primary == ds.isPrimary()) &&
-					(type == null || types.contains(ds.getType())) &&
-					(o == null || ds.getOrganism() == null || o == ds.getOrganism())
-				)
-			{
-				if(interaction == true){
-					String[] interactiondbs = { "KEGG Reaction", "PharmGKB Pathways", "SPIKE Map", "BIND", "MACiE",
-							"NCI Pathway Interaction Database: Pathway","Reactome","Microbial Protein Interaction Database",
-							"STRING","Database of Interacting Proteins", "Rhea", "DrugBank","Small Molecule Pathway Database",
-							"UM-BBD Pathway","UM-BBD Reaction","IntAct","PhosphoSite Protein","PubMed","MINT"};
-					if(Arrays.asList(interactiondbs).contains(ds.getFullName())){
-						result.add (ds);
-					}
-				}
-				else{
-					result.add (ds);
-				}
+			if ((primary == null || primary == ds.isPrimary()) &&
+				(type == null || types.contains(ds.getType())) &&
+				(o == null || ds.getOrganism() == null || o == ds.getOrganism())) {
+				result.add (ds);
 			}
 		}
 		return result;

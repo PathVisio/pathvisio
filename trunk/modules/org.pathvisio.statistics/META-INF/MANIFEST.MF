@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio statistics module
 Bundle-SymbolicName: org.pathvisio.statistics
-Bundle-Version: 3.0.0
+Bundle-Version: 3.1.1
 Bundle-Description: This module adds functionality to perform basic pathway statistics, ranking pathways based on their z-score.
 Bundle-Activator: org.pathvisio.statistics.Activator
 Export-Package: org.pathvisio.statistics

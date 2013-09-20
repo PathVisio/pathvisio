@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio visualization module
 Bundle-SymbolicName: org.pathvisio.visualization
-Bundle-Version: 3.0.0
+Bundle-Version: 3.1.1
 Bundle-Description: This module provides basic functionality to visualize biological data on pathway nodes.
 Bundle-Activator: org.pathvisio.visualization.Activator
 Export-Package: org.pathvisio.visualization,

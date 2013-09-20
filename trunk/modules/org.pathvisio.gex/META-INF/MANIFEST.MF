@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio gex module
 Bundle-SymbolicName: org.pathvisio.gex
-Bundle-Version: 3.0.0
+Bundle-Version: 3.1.1
 Bundle-Description: This module is the importer of biological data into PathVisio.
 Bundle-Activator: org.pathvisio.gexplugin.Activator
 Require-Bundle: org.pathvisio.core;bundle-version="3.0.0",

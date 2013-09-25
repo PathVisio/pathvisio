@@ -4,7 +4,7 @@
 	<property name="src.dir" value="modules"/>
 	<property name="debug.mode" value="true"/>
 
-    <property name="apidoc.dir" value="apidoc"/>
+    	<property name="apidoc.dir" value="apidoc"/>
 	<property name="webstart.dir" value="webstart"/>
 	<property name="release.dir" value="release"/>
 
@@ -19,7 +19,7 @@
 	<property name="webstart.base.url" value="http://www.pathvisio.org/webstart"/>
 
 	<!-- needed to build zip files correctly -->
-	<property name="pathvisio.version" value="3.1.0"/>
+	<property name="pathvisio.version" value="3.1.1"/>
 	<property name="lib.axis.dir" value="tools/cytoscape-gpml/lib"/>
 	
    <macrodef name="iterate">

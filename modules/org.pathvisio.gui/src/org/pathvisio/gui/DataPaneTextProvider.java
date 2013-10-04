@@ -19,25 +19,13 @@ package org.pathvisio.gui;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.bridgedb.AttributeMapper;
-import org.bridgedb.IDMapper;
-import org.bridgedb.IDMapperException;
-import org.bridgedb.Xref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.debug.WorkerThreadOnly;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.util.Resources;
-import org.pathvisio.core.util.Utils;
-import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
 
 /**
  * BackpageTextProvider knows how to generate a html "backpage" for a given
@@ -148,7 +136,7 @@ public class DataPaneTextProvider {
 		StringBuilder builder = new StringBuilder(backpagePanelHeader);
 		for (DataHook h : hooks) {
 			builder.append(h.getHtml(e));
-			}
+		}
 		builder.append("</body></html>");
 		return builder.toString();
 	}

@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-package org.pathvisio.gui;
+package org.pathvisio.desktop;
 
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -33,11 +33,11 @@ import org.pathvisio.core.model.PathwayElementEvent;
 import org.pathvisio.core.model.PathwayElementListener;
 import org.pathvisio.core.model.StaticProperty;
 import org.pathvisio.core.view.Graphics;
-import org.pathvisio.core.view.GraphicsShape;
 import org.pathvisio.core.view.SelectionBox.SelectionEvent;
 import org.pathvisio.core.view.SelectionBox.SelectionListener;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
+import org.pathvisio.gui.DataPaneTextProvider;
 
 /**
  * The backpage panel for the Swing version of PathVisio. This pane shows
@@ -180,7 +180,7 @@ public class DataPane extends JEditorPane implements ApplicationEventListener,
 		if (input != null
 				&& (e.affectsProperty(StaticProperty.GENEID) || e
 						.affectsProperty(StaticProperty.DATASOURCE))) {
-			Xref nref = new Xref(pe.getGeneID(), input.getDataSource());
+			Xref nref = new Xref(pe.getElementID(), input.getDataSource());
 			if (!nref.equals(currRef)) {
 				doQuery();
 			}

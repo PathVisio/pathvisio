@@ -28,6 +28,7 @@ import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
@@ -35,6 +36,8 @@ import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.desktop.gex.BackpageExpression;
+import org.pathvisio.gui.BackpageTextProvider.BackpageAttributes;
+import org.pathvisio.gui.DataPaneTextProvider;
 import org.pathvisio.gui.MainPanel;
 import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.WrapLayout;
@@ -48,6 +51,7 @@ public class MainPanelStandalone extends MainPanel
 
 	private StandaloneActions standaloneActions = null;
 	private List<File> recent;
+	
 	public static GlobalPreference[] mostRecentArray = new GlobalPreference[] {
     	GlobalPreference.MOST_RECENT_1, GlobalPreference.MOST_RECENT_2,
     	GlobalPreference.MOST_RECENT_3, GlobalPreference.MOST_RECENT_4,
@@ -129,11 +133,17 @@ public class MainPanelStandalone extends MainPanel
 	{
 		super.createAndShowGUI();
 
+		dpt = new DataPaneTextProvider();
+		
+		// data hook for showing basic annotation and expression data on the data panel
+		dpt.addDataHook(new BackpageAttributes(swingEngine.getGdbManager().getCurrentGdb()));
+		dpt.addDataHook(new BackpageExpression(desktop.getGexManager()));
+		DataPane dataPane = new DataPane(dpt, swingEngine.getEngine());
+		dataPane.addHyperlinkListener(swingEngine);
+		sidebarTabbedPane.addTab( "Data", new JScrollPane(dataPane) );
+		
 		SearchPane searchPane = new SearchPane(swingEngine);
 		sidebarTabbedPane.addTab ("Search", searchPane);
-
-		// data hook for showing expression data on the data panel
-		dpt.addDataHook(new BackpageExpression(desktop.getGexManager()));
 	}
 
 	@Override

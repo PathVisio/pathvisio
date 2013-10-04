@@ -26,7 +26,6 @@ import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
 import org.pathvisio.gui.BackpageTextProvider.BackpageHook;
 import org.pathvisio.gui.DataPaneTextProvider.DataHook;
-import org.pathvisio.gui.SwingEngine;
 
 /**
  * Shows data uploaded for each DataNode/Interaction present in the pathway
@@ -53,7 +52,7 @@ public class BackpageExpression implements BackpageHook, DataHook {
 	 */
 	private static String getDataString(Xref idc, CachedData gex)
 			throws IDMapperException, DataException {
-		String noDataFound = "<P><I>No data found";
+		String noDataFound = "<P><I>No data found.";
 
 		String colNames = "<TR><TH>Identifier";
 		if (!gex.isConnected())
@@ -61,13 +60,14 @@ public class BackpageExpression implements BackpageHook, DataHook {
 
 		List<? extends IRow> pwData = gex.syncGet(idc);
 
-		if (pwData == null)
+		if (pwData == null || pwData.size() == 0) {
 			return noDataFound;
+		}
 
 		for (IRow d : pwData) {
 			colNames += "<TH>" + d.getXref().getId();
 		}
-
+		
 		String dataString = "";
 		for (ISample s : gex.getOrderedSamples()) {
 			dataString += "<TR><TH>" + s.getName();
@@ -87,8 +87,11 @@ public class BackpageExpression implements BackpageHook, DataHook {
 		try {
 			// Get the data if available
 			if (gex != null) {
-				text += "<br/><br/><hr/><br/><H1><font color=\"006699\">Data uploaded</font></H1>";
+				text += "<br/><br/><hr/><br/><H1><font color=\"006699\">Expression data</font></H1>";
 				text += getDataString(e.getXref(), gex);
+			} else {
+				text += "<br/><br/><hr/><br/><H1><font color=\"006699\">Expression data</font></H1>";
+				text += "<br/>No data imported.</br/>";
 			}
 		} catch (IDMapperException ex) {
 			text += "Exception occured while getting cross-references</br>"

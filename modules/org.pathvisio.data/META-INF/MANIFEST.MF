@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio data module
 Bundle-SymbolicName: org.pathvisio.data
-Bundle-Version: 3.1.1
+Bundle-Version: 3.1.2
 Bundle-Description: This module is the data model of biological data in PathVisio.
 Export-Package: org.pathvisio.data
 Require-Bundle: org.bridgedb;bundle-version="1.1.0",

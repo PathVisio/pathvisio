@@ -386,4 +386,14 @@ public class WikiPathwaysClient {
 		if(r == null) r = new WSSearchResult[0];
 		return r;
 	}
+
+	/**
+	 * search by literature reference
+	 */
+	public WSSearchResult[] findPathwaysByLiterature(String query) throws RemoteException {
+		WSSearchResult[] r = port.findPathwaysByLiterature(query);
+		if(r == null) r = new WSSearchResult[0];
+		return r;        
+	}
+
 }

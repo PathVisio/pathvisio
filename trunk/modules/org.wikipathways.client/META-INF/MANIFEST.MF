@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.wikipathways.client
 Bundle-SymbolicName: org.wikipathways.client
-Bundle-Version: 3.0.0
+Bundle-Version: 3.1.2
 Export-Package: org.pathvisio.wikipathways.webservice,
  org.wikipathways.bots,
  org.wikipathways.client
-Require-Bundle: org.pathvisio.core;bundle-version="3.0.0",
- org.pathvisio.gui;bundle-version="3.0.0",
+Require-Bundle: org.pathvisio.core;bundle-version="3.1.2",
+ org.pathvisio.gui;bundle-version="3.1.2",
  org.bridgedb;bundle-version="1.1.0",
  org.bridgedb.bio;bundle-version="1.1.0",
  org.bridgedb.rdb;bundle-version="1.1.0",

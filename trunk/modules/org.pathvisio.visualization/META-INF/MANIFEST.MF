@@ -2,16 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio visualization module
 Bundle-SymbolicName: org.pathvisio.visualization
-Bundle-Version: 3.1.1
+Bundle-Version: 3.1.2
 Bundle-Description: This module provides basic functionality to visualize biological data on pathway nodes.
 Bundle-Activator: org.pathvisio.visualization.Activator
 Export-Package: org.pathvisio.visualization,
  org.pathvisio.visualization.gui,
  org.pathvisio.visualization.plugins
-Require-Bundle: org.pathvisio.core;bundle-version="3.0.0",
- org.pathvisio.gui;bundle-version="3.0.0",
- org.pathvisio.data;bundle-version="3.0.0",
- org.pathvisio.desktop;bundle-version="3.0.0",
+Require-Bundle: org.pathvisio.core;bundle-version="3.1.2",
+ org.pathvisio.gui;bundle-version="3.1.2",
+ org.pathvisio.data;bundle-version="3.1.2",
+ org.pathvisio.desktop;bundle-version="3.1.2",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
  com.springsource.org.jdom;bundle-version="1.1.0",
  org.bridgedb;bundle-version="1.2.0",

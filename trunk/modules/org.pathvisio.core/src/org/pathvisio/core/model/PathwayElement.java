@@ -2071,6 +2071,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		if (!Utils.stringEquals(href, input))
 		{
 			href = input;
+			if(PreferenceManager.getCurrent() == null) PreferenceManager.init();
 			setColor(PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_LINK)); 
 			fireObjectModifiedEvent(PathwayElementEvent.createSinglePropertyEvent(this, StaticProperty.HREF));
 		}

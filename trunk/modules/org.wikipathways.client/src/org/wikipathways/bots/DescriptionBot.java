@@ -25,7 +25,6 @@ import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement.Comment;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
-import org.wikipathways.applet.WikiPathways;
 
 /**
  * A bot to check for empty description fields and add a curation tag if the description
@@ -33,6 +32,7 @@ import org.wikipathways.applet.WikiPathways;
  */
 public class DescriptionBot extends Bot {
 	private static final String CURATIONTAG = "Curation:MissingDescription";
+	public static final String COMMENT_DESCRIPTION = "WikiPathways-description";
 
 	public DescriptionBot(Properties props) throws BotException {
 		super(props);
@@ -67,7 +67,7 @@ public class DescriptionBot extends Bot {
 
 			String comment = null;
 			for(Comment c : p.getMappInfo().getComments()) {
-				if(WikiPathways.COMMENT_DESCRIPTION.equals(c.getSource())) {
+				if(COMMENT_DESCRIPTION.equals(c.getSource())) {
 					comment = c.getComment();
 					break;
 				}

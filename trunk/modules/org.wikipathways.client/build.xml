@@ -18,7 +18,6 @@
 		</fileset>
 		<fileset dir="${bundle.dest}">
 			<include name="org.pathvisio.core.jar"/>
-			<include name="org.wikipathways.applet.jar"/>
 		</fileset>
 	</path>
 
@@ -48,7 +47,6 @@
 		<mkdir dir="build/bot"/>
 		<unjar src="../org.pathvisio.core.jar" dest="build/bot"/>
 		<unjar src="../org.wikipathways.client.jar" dest="build/bot"/>
-		<unjar src="../org.wikipathways.applet.jar" dest="build/bot"/>
 		
 		<unjar src="../../lib/com.springsource.org.jdom-1.1.0.jar" dest="build/bot"/>
 		<unjar src="../../lib/derby.jar" dest="build/bot"/>

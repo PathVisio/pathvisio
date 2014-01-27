@@ -87,7 +87,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 	public void refresh() {
 		super.refresh();
 		symText.setText(getInput().getTextLabel());
-		idText.setText(getInput().getGeneID());
+		idText.setText(getInput().getElementID());
 		dsm.setSelectedItem(input.getDataSource());
 		String dnType = getInput().getDataNodeType();
 		typeCombo.setSelectedItem(DataNodeType.byName(dnType));
@@ -261,8 +261,10 @@ public class DataNodeDialog extends PathwayElementDialog {
 				List<String> symbols = new ArrayList<String>();
 				try
 				{
-					symbols.addAll
-						(gdb.freeAttributeSearch(text, "Symbol", 10).values());
+					if(gdb.getMappers().size() > 0) {
+						symbols.addAll
+							(gdb.freeAttributeSearch(text, "Symbol", 10).values());
+					}
 				}
 				catch (IDMapperException ignore) {}
 				return symbols;
@@ -278,7 +280,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 				Set<Xref> refs = new HashSet<Xref>();
 				try
 				{
-					refs = gdb.freeSearch(text, 100);
+					if(gdb.getMappers().size() > 0) refs = gdb.freeSearch(text, 100);
 				}
 				catch (IDMapperException ignore) {}
 
@@ -329,7 +331,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 			public void insertUpdate(DocumentEvent e) {	setText(); }
 			public void removeUpdate(DocumentEvent e) { setText(); }
 			private void setText() {
-				getInput().setGeneID(idText.getText());
+				getInput().setElementID(idText.getText());
 			}
 		});
 

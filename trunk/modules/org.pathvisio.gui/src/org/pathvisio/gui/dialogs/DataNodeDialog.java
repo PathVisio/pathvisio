@@ -142,16 +142,28 @@ public class DataNodeDialog extends PathwayElementDialog {
 
 			    //The result set
 				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
-
-		    	for (Map.Entry<Xref, String> i :
+	    		
+	    		for (Map.Entry<Xref, String> i :
 		    		gdb.freeAttributeSearch( text, AttributeMapper.MATCH_ID, QUERY_LIMIT).entrySet())
 		    	{
-		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
+	    			// GO terms are annotated as symbols in BridgeDb databases
+		    		// those are filtered from the results
+		    		if(!i.getKey().getDataSource().getType().equals("ontology") ||
+		    				!i.getKey().getDataSource().getType().equals("probe")) {
+		    			result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
+		    		}
 		    	}
 		    	for (Map.Entry<Xref, String> i :
 		    		gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT).entrySet())
 		    	{
-		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
+		    		System.out.println(i.getKey().getDataSource().getType());
+		    		// GO terms are annotated as symbols in BridgeDb databases
+		    		// those are filtered from the results
+		    		if(!i.getKey().getDataSource().getType().equals("ontology") &&
+		    				!i.getKey().getDataSource().getType().equals("probe")) {
+		    			result.add (new XrefWithSymbol (i.getKey(), i.getValue()));	
+		    		}
+		    		
 		    	}
 				return result;
 			}
@@ -182,11 +194,17 @@ public class DataNodeDialog extends PathwayElementDialog {
 						//Ignore, thread interrupted. Same as cancel.
 					}
 					catch (ExecutionException e) {
-						JOptionPane.showMessageDialog(DataNodeDialog.this,
-								"Exception occurred while searching,\n" +
-								"see error log for details.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-						Logger.log.error("Error while searching", e);
+						if(swingEngine.getGdbManager().getCurrentGdb().getMappers().size() == 0) {
+							JOptionPane.showMessageDialog(DataNodeDialog.this,
+									"No identifier mapping database loaded.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+						} else {
+							JOptionPane.showMessageDialog(DataNodeDialog.this,
+									"Exception occurred while searching,\n" +
+									"see error log for details.", "Error",
+									JOptionPane.ERROR_MESSAGE);
+							Logger.log.error("Error while searching", e);
+						}
 					}
 				}
 			}

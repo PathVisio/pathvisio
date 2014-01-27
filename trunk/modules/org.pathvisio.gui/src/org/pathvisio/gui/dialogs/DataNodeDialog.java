@@ -156,7 +156,6 @@ public class DataNodeDialog extends PathwayElementDialog {
 		    	for (Map.Entry<Xref, String> i :
 		    		gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT).entrySet())
 		    	{
-		    		System.out.println(i.getKey().getDataSource().getType());
 		    		// GO terms are annotated as symbols in BridgeDb databases
 		    		// those are filtered from the results
 		    		if(!i.getKey().getDataSource().getType().equals("ontology") &&

@@ -16,7 +16,6 @@
 		<fileset dir="${pathvisio.dir}">
 			<include name="modules/org.pathvisio.core.jar"/>
 			<include name="modules/org.wikipathways.client.jar"/>
-			<include name="modules/org.wikipathways.applet.jar"/>
 			<include name="lib/*jdom*.jar"/>
 			<include name="lib/org.bridgedb.bio.jar"/>
 			<include name="lib/org.bridgedb.jar"/>

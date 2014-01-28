@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio gex module
 Bundle-SymbolicName: org.pathvisio.gex
-Bundle-Version: 3.1.2
+Bundle-Version: 3.1.3
 Bundle-Description: This module is the importer of biological data into PathVisio.
 Bundle-Activator: org.pathvisio.gexplugin.Activator
-Require-Bundle: org.pathvisio.core;bundle-version="3.1.2",
- org.pathvisio.gui;bundle-version="3.1.2",
- org.pathvisio.data;bundle-version="3.1.2",
- org.pathvisio.desktop;bundle-version="3.1.2",
- org.pathvisio.visualization;bundle-version="3.1.2",
+Require-Bundle: org.pathvisio.core;bundle-version="3.1.3",
+ org.pathvisio.gui;bundle-version="3.1.3",
+ org.pathvisio.data;bundle-version="3.1.3",
+ org.pathvisio.desktop;bundle-version="3.1.3",
+ org.pathvisio.visualization;bundle-version="3.1.3",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
  org.bridgedb;bundle-version="1.2.0",
  org.bridgedb.bio;bundle-version="1.2.0",

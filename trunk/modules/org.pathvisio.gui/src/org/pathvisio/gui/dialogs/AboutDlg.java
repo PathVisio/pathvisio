@@ -65,7 +65,7 @@ public class AboutDlg
 				swingEngine.getEngine().getApplicationName() + "<br>Revision: " + Engine.getRevision() +
 				"<br><br><hr><br>" + 
 				"<html><b>Core developers</b><br>" +
-				"Martina Kutmon, Anwesha Dutta, Thomas Kelder, " +
+				"Martina Kutmon, Anwesha Bohler, Thomas Kelder, " +
 				"Martijn van Iersel, Kristina Hanspers, Alex Pico<br><br><hr><br>" +
 				"<b>Contributors</b><br>" +
 				"Adem Bilicna, Augustin Luna, Bing Lui, " + 

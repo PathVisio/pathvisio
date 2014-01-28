@@ -26,7 +26,6 @@ import org.jdom.Element;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
-import org.wikipathways.applet.WikiPathways;
 
 /**
  * Class that indexes several metadata for a pathway.
@@ -74,7 +73,10 @@ public class PathwayIndexer extends IndexerBase {
 	 * identifiers)
 	 */
 	public static final String FIELD_SOURCEID = "sourceId";
-
+	
+	public static final String COMMENT_DESCRIPTION = "WikiPathways-description";
+	public static final String COMMENT_CATEGORY = "WikiPathways-category";
+	
 	/**
 	 * Create a PathwayIndexer
 	 * 
@@ -111,11 +113,11 @@ public class PathwayIndexer extends IndexerBase {
 
 		// Process comments
 		for (PathwayElement.Comment c : info.getComments()) {
-			if (WikiPathways.COMMENT_CATEGORY.equals(c)) {
+			if (COMMENT_CATEGORY.equals(c)) {
 				doc.add(new Field(FIELD_CATEGORY, c.getComment(),
 						Field.Store.YES, Field.Index.TOKENIZED));
 			}
-			if (WikiPathways.COMMENT_DESCRIPTION.equals(c)) {
+			if (COMMENT_DESCRIPTION.equals(c)) {
 				doc.add(new Field(FIELD_DESCRIPTION, c.getComment(),
 						Field.Store.YES, Field.Index.TOKENIZED));
 			}

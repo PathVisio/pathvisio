@@ -95,6 +95,10 @@ public abstract class Bot {
 		return reports;
 	}
 
+	public Boolean updateTags() {
+		return true;
+	}
+	
 	public void applyCurationTags(Collection<Result> results, BotReport report) throws BotException {
 		if(user == null || pass == null) {
 			Logger.log.trace("No user account");
@@ -242,8 +246,10 @@ public abstract class Bot {
 		Logger.log.trace("Generating report");
 		BotReport report = bot.createReport(results);
 
-		Logger.log.trace("Applying curation tags");
-		bot.applyCurationTags(results, report);
+		if(bot.updateTags()) {
+			Logger.log.trace("Applying curation tags");
+			bot.applyCurationTags(results, report);
+		}
 
 		Logger.log.trace("Writing text report");
 		report.writeTextReport(txtReport);

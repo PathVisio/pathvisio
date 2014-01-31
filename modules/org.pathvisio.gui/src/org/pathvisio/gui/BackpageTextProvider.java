@@ -189,7 +189,7 @@ public class BackpageTextProvider
 						crt.append("<TR><TH border=1 align=\"left\" bgcolor=\"#F0F0F0\"><font size=\"4\"><b>" + db + "</b></font></TH></TR>");
 					}
 					String idtxt = cr.getId();
-					String url = cr.getKnownUrl();
+					String url = cr.getUrl();
 					if(url != null && !url.equals(idtxt)) {
 						url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
 						idtxt = "<a href=\"" + url + "\">" + idtxt + "</a>";

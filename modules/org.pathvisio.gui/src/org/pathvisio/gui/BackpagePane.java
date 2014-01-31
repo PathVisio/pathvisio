@@ -33,7 +33,6 @@ import org.pathvisio.core.model.PathwayElementEvent;
 import org.pathvisio.core.model.PathwayElementListener;
 import org.pathvisio.core.model.StaticProperty;
 import org.pathvisio.core.view.Graphics;
-import org.pathvisio.core.view.GraphicsShape;
 import org.pathvisio.core.view.SelectionBox.SelectionEvent;
 import org.pathvisio.core.view.SelectionBox.SelectionListener;
 import org.pathvisio.core.view.VPathway;

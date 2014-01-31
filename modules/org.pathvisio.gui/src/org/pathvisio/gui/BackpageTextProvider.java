@@ -179,62 +179,26 @@ public class BackpageTextProvider
 				Collections.sort(sortedRefs);
 				StringBuilder crt = new StringBuilder("<br><br><hr><br><br><H1><font color=\"006699\">Cross references</font></H1><BR>");
 				
-				boolean ontologyannoations = false;
 				String db = "";
 				crt.append("<table border=0>");
 				for(Xref cr : sortedRefs) {
-					if(!cr.getDataSource().getType().equals("ontology")) {
-						String dbNew = (cr.getDataSource().getFullName() != null ? cr.getDataSource().getFullName() : cr.getDataSource().getSystemCode());
-						if(!dbNew.equals(db)) {
-							db = dbNew;
-							crt.append("<TR></TR>");
-							crt.append("<TR><TH border=1 align=\"left\" bgcolor=\"#F0F0F0\"><font size=\"4\"><b>" + db + "</b></font></TH></TR>");
-						}
-						String idtxt = cr.getId();
-						String url = cr.getUrl();
-						if(url != null && !url.equals(idtxt)) {
-							url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
-							idtxt = "<a href=\"" + url + "\">" + idtxt + "</a>";
-						}
-						crt.append("<TR><TH align=\"left\" style=\"border-left : 1\">" + idtxt + "</TH></TR>");
-					} else {
-						ontologyannoations = true;
+					String dbNew = (cr.getDataSource().getFullName() != null ? cr.getDataSource().getFullName() : cr.getDataSource().getSystemCode());
+					if(!dbNew.equals(db)) {
+						db = dbNew;
+						crt.append("<TR></TR>");
+						crt.append("<TR><TH border=1 align=\"left\" bgcolor=\"#F0F0F0\"><font size=\"4\"><b>" + db + "</b></font></TH></TR>");
 					}
+					String idtxt = cr.getId();
+					String url = cr.getKnownUrl();
+					if(url != null && !url.equals(idtxt)) {
+						url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
+						idtxt = "<a href=\"" + url + "\">" + idtxt + "</a>";
+					}
+					crt.append("<TR><TH align=\"left\" style=\"border-left : 1\">" + idtxt + "</TH></TR>");
 				}
+			
 				crt.append("</table>");
-				
-				// adds a section ontology annotations for GeneOntology terms and other ontology mappings
-				// replaces id with label if available
-				// TODO: test for performance - might be a problem - especially in applet
-				if(ontologyannoations) {
-					crt.append("<br><br><hr><br><br><H1><font color=\"006699\">Ontology annotations</font></H1><BR>");
-					db = "";
-					AttributeMapper mapper = (AttributeMapper)gdb;
-					crt.append("<table border=0>");
-					for(Xref cr : sortedRefs) {
-						if(cr.getDataSource().getType().equals("ontology")) {
-							String dbNew = (cr.getDataSource().getFullName() != null ? cr.getDataSource().getFullName() : cr.getDataSource().getSystemCode());
-							if(!dbNew.equals(db)) {
-								db = dbNew;
-								crt.append("<TR></TR>");
-								crt.append("<TR><TH border=1 align=\"left\" bgcolor=\"#F0F0F0\"><font size=\"4\"><b>" + db + "</b></font></TH></TR>");
-							}
-							String idtxt = cr.getId();
-							String url = cr.getUrl();
-							if(url != null && !url.equals(idtxt)) {
-								url = url.replace("&", "&amp;"); // primitive HTML entity encoding. TODO: do it properly 
-								Set<String> res = mapper.getAttributes(cr, "Symbol");
-								if(res.size() == 0) {
-									idtxt = "* <a href=\"" + url + "\">" + idtxt + "</a>";
-								} else {
-									idtxt = "* <a href=\"" + url + "\">" +idtxt + ": " + res.iterator().next() + "</a>";
-								}
-							}
-							crt.append("<TR><TH align=\"left\" style=\"border-left : 1\">" + idtxt + "</TH></TR>");
-						}
-					}
-					crt.append("</table>");
-				}
+			
 				return crt.toString();
 			}
 			catch (IDMapperException ex)

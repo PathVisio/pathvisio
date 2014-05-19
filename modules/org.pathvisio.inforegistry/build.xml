@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<project name="org.pathvisio.inforegistry" default="jar" basedir=".">
+
+	<import file="../../build-common.xml" />
+
+	<path id="project.class.path">
+		<fileset dir="../../lib">
+			<include name="org.eclipse.osgi.jar"/>
+	 	</fileset>
+	  	<fileset dir="${bundle.dest}">
+			<include name="org.pathvisio.core.jar"/>
+			<include name="org.pathvisio.gui.jar"/>
+			<include name="org.pathvisio.desktop.jar"/>
+	  	</fileset>
+	</path>
+	
+</project>

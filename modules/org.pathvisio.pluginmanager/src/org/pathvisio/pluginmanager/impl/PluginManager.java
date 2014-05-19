@@ -202,7 +202,7 @@ public class PluginManager implements IPluginManager {
 		String symName = serviceReference.getBundle().getSymbolicName();
 		if(getLocalHandler().containsBundle(symName) == null) {
 			if(!symName.equals("org.pathvisio.gex") && !symName.equals("org.pathvisio.statistics") &&
-					!symName.equals("org.pathvisio.visualization")) {
+					!symName.equals("org.pathvisio.visualization") && !symName.equals("org.pathvisio.inforegistry")) {
 				PVBundle b = new PVBundle();
 				b.setInstalled(true);
 				b.setSymbolicName(symName);

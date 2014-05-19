@@ -2,18 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio-PluginManager
 Bundle-SymbolicName: org.pathvisio.pluginmanager
-Bundle-Version: 3.1.3
+Bundle-Version: 3.2.0
 Bundle-Activator: org.pathvisio.pluginmanager.Activator
 Bundle-Vendor: PathVisio developers
 Export-Package: org.pathvisio.pluginmanager
 Require-Bundle: org.apache.felix.bundlerepository;bundle-version="1.6.6",
  com.springsource.org.jdom;bundle-version="1.1.0",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
- org.pathvisio.desktop;bundle-version="3.1.3",
- org.pathvisio.core;bundle-version="3.1.3",
- org.pathvisio.gui;bundle-version="3.1.3"
+ org.pathvisio.desktop;bundle-version="3.2.0",
+ org.pathvisio.core;bundle-version="3.2.0",
+ org.pathvisio.gui;bundle-version="3.2.0"
 Import-Package: org.osgi.framework;version="1.5.0"
-Bundle-Copyright: 2006-2013 BiGCaT Bioinformatics
+Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Description: This module is the independent plugin manager that manages the local and online plugin repositories and handles all plugin installation tasks.

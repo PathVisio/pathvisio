@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio gex module
 Bundle-SymbolicName: org.pathvisio.gex
-Bundle-Version: 3.1.3
+Bundle-Version: 3.2.0
 Bundle-Description: This module is the importer of biological data into PathVisio.
 Bundle-Activator: org.pathvisio.gexplugin.Activator
-Require-Bundle: org.pathvisio.core;bundle-version="3.1.3",
- org.pathvisio.gui;bundle-version="3.1.3",
- org.pathvisio.data;bundle-version="3.1.3",
- org.pathvisio.desktop;bundle-version="3.1.3",
- org.pathvisio.visualization;bundle-version="3.1.3",
+Require-Bundle: org.pathvisio.core;bundle-version="3.2.0",
+ org.pathvisio.gui;bundle-version="3.2.0",
+ org.pathvisio.data;bundle-version="3.2.0",
+ org.pathvisio.desktop;bundle-version="3.2.0",
+ org.pathvisio.visualization;bundle-version="3.2.0",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
  org.bridgedb;bundle-version="1.2.0",
  org.bridgedb.bio;bundle-version="1.2.0",
@@ -21,5 +21,5 @@ Import-Package: org.osgi.framework;version="1.3.0"
 Export-Package: org.pathvisio.gexplugin
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Vendor: PathVisio developers
-Bundle-Copyright: 2006-2013 BiGCaT Bioinformatics
+Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio core module
 Bundle-SymbolicName: org.pathvisio.core
-Bundle-Version: 3.1.3
+Bundle-Version: 3.2.0
 Bundle-Description: This module is the core module of the PathVisio application. It contains the data model and basic preferences of the application.
 Export-Package: org.pathvisio.core,
  org.pathvisio.core.biopax,
@@ -43,5 +43,5 @@ Require-Bundle: derby;bundle-version="10.4.2000000",
 Import-Package: org.osgi.framework;version="1.5.0"
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Vendor: PathVisio developers
-Bundle-Copyright: 2006-2013 BiGCaT Bioinformatics
+Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0

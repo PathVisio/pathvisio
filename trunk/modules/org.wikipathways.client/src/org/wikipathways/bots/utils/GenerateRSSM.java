@@ -13,7 +13,6 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -23,7 +22,6 @@ import javax.imageio.ImageIO;
 
 import org.apache.axis.encoding.Base64;
 import org.bridgedb.DataSource;
-import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
 import org.bridgedb.Xref;
@@ -79,7 +77,7 @@ public class GenerateRSSM {
 		Pattern p = Pattern.compile("<Id>([0-9]+)<\\/Id>");
 		String base = "http://www.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=taxonomy&term=";
 		for(String org : client.listOrganisms()) {
-			URL url = new URL(base + URLEncoder.encode(org));
+			URL url = new URL(base + URLEncoder.encode(org, "UTF-8"));
 			BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 			String tax = null;
 			String line;

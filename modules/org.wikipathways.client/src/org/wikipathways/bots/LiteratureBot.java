@@ -21,10 +21,9 @@ import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.Properties;
 
-import org.pathvisio.core.biopax.BiopaxNode;
-import org.pathvisio.core.biopax.PublicationXref;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.Pathway;
+import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 /**
@@ -51,8 +50,8 @@ public class LiteratureBot extends Bot {
 			p.readFromXml(pathwayFile, true);
 
 			boolean hasRef = false;
-			for(BiopaxNode bpe : p.getBiopaxElementManager().getElements()) {
-				if(bpe instanceof PublicationXref) {
+			for(PathwayElement e : p.getDataObjects()) {
+				if(e.getBiopaxReferenceManager().getPublicationXRefs().size() > 0) {
 					hasRef = true;
 					break;
 				}

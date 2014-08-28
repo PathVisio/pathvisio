@@ -133,9 +133,9 @@ public class ConnectorBot extends Bot {
 			return (double)(100 * getNrValid()) / getNrLines();
 		}
 
-		public double getPercentInvalid() {
-			return (double)(100 * getNrInvalid()) / getNrLines();
-		}
+//		public double getPercentInvalid() {
+//			return (double)(100 * getNrInvalid()) / getNrLines();
+//		}
 
 		public int getNrInvalid() {
 			return getNrLines() - getNrValid();

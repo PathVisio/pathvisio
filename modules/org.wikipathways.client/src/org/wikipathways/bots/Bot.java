@@ -82,7 +82,7 @@ public abstract class Bot {
 
 	public Collection<Result> scan() throws BotException {
 		try {
-			getCache().update();
+			getCache().update(null);
 		} catch(Exception e) {
 			throw new BotException(e);
 		}

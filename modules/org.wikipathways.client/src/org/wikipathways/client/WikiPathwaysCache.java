@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ import javax.xml.rpc.ServiceException;
 
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ConverterException;
-import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.wikipathways.webservice.WSPathway;
@@ -145,7 +145,6 @@ public class WikiPathwaysCache
 	private List<File> downloadNew(Collection<WSPathwayInfo> pathways, ProgressKeeper keeper) throws ConverterException, IOException {
 		Set<WSPathwayInfo> newPathways = new HashSet<WSPathwayInfo>();
 
-		int i = 0;
 		for(WSPathwayInfo p : pathways)
 		{
 			File f = pathwayToFile(p);
@@ -196,8 +195,19 @@ public class WikiPathwaysCache
 
 			File file = pathwayToFile(pwi);
 			WSPathway wsp = wpClient.getPathway(pwi.getId());
-			Pathway p = WikiPathwaysClient.toPathway(wsp);
-			p.writeToXml(file, true);
+			
+			// write out GPML without any tests 
+			// needed for new pathways with SBGN symbols which should 
+			// just be ignored for now
+			FileWriter writer = new FileWriter(file);
+			writer.write(wsp.getGpml());
+			writer.close();
+			
+			// old version to write out pathways which
+			// also checks validity of GPML file 
+//			Pathway p = WikiPathwaysClient.toPathway(wsp);
+//			p.writeToXml(file, true);
+			
 			// also write a file that stores some pathway info
 			writeInfoFile(pwi);
 			files.add(file);
@@ -234,7 +244,7 @@ public class WikiPathwaysCache
 		prop.setProperty("Url", pathway.getUrl());
 		prop.setProperty("Revision", pathway.getRevision());
 		prop.setProperty("Id", pathway.getId());
-		prop.save(new FileOutputStream(getInfoFile(pathwayToFile(pathway))), "");
+		prop.store(new FileOutputStream(getInfoFile(pathwayToFile(pathway))), "");
 	}
 
 	private File getInfoFile(File pathwayFile) {
@@ -242,14 +252,14 @@ public class WikiPathwaysCache
 	}
 
 	//Assume that files are in the form: http://host/index.php/Pathway:{Organism}:{PathwayName}
-	private String fileToPathwayName(File f) {
-		String filename = f.getName(); // gpml file
-		String pwyName = filename.substring(0, filename.length() - PW_EXT_DOT.length()); // remove the extension and the first 3 characters i.e. ACE-Inhibitor_pathway_PharmGKB
-		//Parse the pathway name
-		int slash = pwyName.lastIndexOf('/');
-		pwyName = pwyName.substring(slash);
-		return pwyName;
-	}
+//	private String fileToPathwayName(File f) {
+//		String filename = f.getName(); // gpml file
+//		String pwyName = filename.substring(0, filename.length() - PW_EXT_DOT.length()); // remove the extension and the first 3 characters i.e. ACE-Inhibitor_pathway_PharmGKB
+//		//Parse the pathway name
+//		int slash = pwyName.lastIndexOf('/');
+//		pwyName = pwyName.substring(slash);
+//		return pwyName;
+//	}
 
 	/**
 	 * Get the source url (that points to the pathway

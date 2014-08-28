@@ -164,6 +164,7 @@ public class WikiPathwaysClient {
 		byte[] data = getPathwayAs(fileType, id, revision);
 		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
 		out.write(data);
+		out.close();
 	}
 
 	/**

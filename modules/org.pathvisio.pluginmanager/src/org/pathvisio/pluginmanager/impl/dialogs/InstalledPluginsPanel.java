@@ -46,6 +46,8 @@ import org.pathvisio.pluginmanager.impl.Utils;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
 import org.pathvisio.pluginmanager.impl.data.Category;
 
+import sun.security.krb5.internal.crypto.Des;
+
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -160,7 +162,11 @@ public class InstalledPluginsPanel extends JPanel  {
 				@Override
 				public void mouseClicked(MouseEvent arg0) {
 					try {
-						Desktop.getDesktop().browse(new URI(p.getBundle().getWebsite()));
+						if(Desktop.isDesktopSupported()) {
+							Desktop.getDesktop().browse(new URI(p.getBundle().getWebsite()));
+						} else {
+							new JOptionPane("Could not open default browser.\nPlease go to\n" + p.getBundle().getWebsite() + "\nin your browser.", JOptionPane.WARNING_MESSAGE);
+						}
 					} catch (Exception e) {
 						new JOptionPane("Could not open website.", JOptionPane.ERROR_MESSAGE);
 					}

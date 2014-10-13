@@ -31,6 +31,7 @@ import java.net.URL;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 
@@ -107,16 +108,16 @@ public class StandaloneActions implements ApplicationEventListener
 			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 		}
 
-		public void actionPerformed(ActionEvent e)
-		{
+		public void actionPerformed(ActionEvent e) {
 			//TODO: wrap in thread, progress dialog
 			String url = Globals.HELP_URL;
-			try
-			{
-				Desktop.getDesktop().browse(new URI(url));
-			}
-			catch (Exception ex)
-			{
+			try {
+				if(Desktop.isDesktopSupported()) {
+					Desktop.getDesktop().browse(new URI(url));
+				} else {
+					new JOptionPane("Could not open default browser.\n Please go to\n" + url + "\nin your browser.", JOptionPane.WARNING_MESSAGE);
+				}
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		}

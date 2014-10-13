@@ -118,7 +118,7 @@ public class InstalledPluginsPanel extends JPanel  {
 	protected void updatePluginDetails(BundleVersion p) {
 		pluginInfo.removeAll();
 		pluginInfo.setLayout(new GridLayout(1,1));
-		pluginInfo.add(getPluginData(p).getPanel());
+		pluginInfo.add(new JScrollPane(getPluginData(p).getPanel()));
 		pluginInfo.revalidate();
 		pluginInfo.repaint();
 	}

@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,10 +47,13 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.preferences.GlobalPreference;
+import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.desktop.PvDesktop;
 import org.pathvisio.desktop.plugin.IPluginManager;
 import org.pathvisio.desktop.plugin.Plugin;
+import org.pathvisio.desktop.plugin.PluginRepoPreference;
 import org.pathvisio.gui.ProgressDialog;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
 import org.pathvisio.pluginmanager.impl.data.Category;
@@ -93,11 +95,11 @@ public class PluginManager implements IPluginManager {
 		tmpBundles = new HashMap<String, BundleVersion>();
 	}
 	
-	public void init(File localRepo, final Set<URL> onlineRepo, PvDesktop desktop) {
+	public void init(PvDesktop desktop) {
 		this.desktop = desktop;
 	
 		// initialize local repository
-		localHandler.init(localRepo);
+		localHandler.init(GlobalPreference.getBundleDir());
 		
 		// do not save bundles that could not get started
 		localHandler.clean(problems);
@@ -109,61 +111,55 @@ public class PluginManager implements IPluginManager {
 		final ServiceReference ref = context.getServiceReference(RepositoryAdmin.class.getName());
 		repoAdmin = (RepositoryAdmin) context.getService(ref);
 
-		if(ref != null) 
-		{
-			SwingWorker<Void, Map.Entry<Repository, URL>> worker = new SwingWorker<Void, Map.Entry<Repository, URL>>()
-			{
+		if(ref != null) {
+			SwingWorker<Void, Map<Repository, URL>> worker = new SwingWorker<Void, Map<Repository, URL>>() {
 				boolean atLeastOneSuccess = false;
 				Throwable connectionException;
 				
 				@SuppressWarnings("unchecked")
 				@Override
-				protected Void doInBackground() throws Exception
-				{
-					for(URL url : onlineRepo) 
-					{
-						try 
-						{
-							Repository repo = repoAdmin.addRepository(url);
-							publish (new AbstractMap.SimpleEntry<Repository, URL>(repo, url));
-							atLeastOneSuccess = true;
-						}
-						catch (Exception e) 
-						{
-							Logger.log.error("Could not initialize repository " + url + "\t" + e.getMessage());
-							connectionException = e;
-						} 
+				protected Void doInBackground() throws Exception {
+					
+					URL url = new URL(PreferenceManager.getCurrent().get(PluginRepoPreference.ONLINE_REPO_URL));
+					try {
+						Repository repo = repoAdmin.addRepository(url);
+						Map<Repository, URL> map = new HashMap<Repository, URL>();
+						map.put(repo, url);
+						publish(map);
+						atLeastOneSuccess = true;
+					} catch (Exception e) {
+						Logger.log.error("Could not initialize repository " + url + "\t" + e.getMessage());
+						connectionException = e;
 					}
+				
 					return null;
 				}
 				
 				@Override
-				protected void process(List<Map.Entry<Repository, URL>> result) 
-				{
-					for (Map.Entry<Repository, URL> repo : result)
-					{
-						setUpOnlineRepo(repo.getKey(), repo.getValue());
+				protected void process(List<Map<Repository, URL>> result) {
+					for(Map<Repository, URL> repo : result) {
+						for(Repository r : repo.keySet()) {
+							setUpOnlineRepo(r, repo.get(r));
+						}
 					}
 				}
 				
 				@Override
-				protected void done()
-				{
-					if (atLeastOneSuccess)
+				protected void done() {
+					if (atLeastOneSuccess) {
 						status = PluginManagerStatus.CONNECTION_COMPLETED_SUCCESSFULLY;
-					else
-					{
+					} else {
 						status = PluginManagerStatus.CONNECTION_COMPLETED_FAILURE;
 						savedConnectionException = connectionException;
 					}
-					if (dlg != null) dlg.updateData();
+					if (dlg != null) {
+						dlg.updateData();
+					}
 				}
 				
 			};
 			worker.execute();
-		} 
-		else 
-		{
+		} else {
 			Logger.log.error("Could not initialize online repositories.");
 		}
 	}
@@ -248,9 +244,7 @@ public class PluginManager implements IPluginManager {
 	}
 	
 	/**
-	 * currently the pathvisio.xml file is created through a 
-	 * mysql dump
-	 * TODO: replace with JAXB xml file
+	 * currently the pathvisio.xml file is created through a mysql dump
 	 */
 	private List<PVRepository> readPluginInfo(URL url) {
 		try {
@@ -518,18 +512,29 @@ public class PluginManager implements IPluginManager {
 	 * returns all available plugins that are not installed
 	 * does not return libraries
 	 */
-	public List<BundleVersion> getAvailablePlugins() {
-		List<BundleVersion> list = new ArrayList<BundleVersion>();
-	
+	public List<BundleVersion> getAvailablePlugins() {	
+		Map<String, BundleVersion> map = new HashMap<String, BundleVersion>();
 		for(PVRepository repo : onlineRepos) {
 			for(BundleVersion version : repo.getBundleVersions()) {
 				if(version.getType() != null && version.getType().equals("plugin")) {
-					if(!version.isInstalled() && !list.contains(version)) {
-						list.add(version);
+					if(!version.isInstalled()) {
+						// only show latest version of the plugin
+						if(map.containsKey(version.getSymbolicName())) {
+							String currentVer = map.get(version.getSymbolicName()).getVersion();
+							String newVer = version.getVersion();
+							int comp = Utils.compareVersions(currentVer, newVer);
+							if(comp < 0) {
+								map.put(version.getSymbolicName(), version);
+							}
+						} else {
+							map.put(version.getSymbolicName(), version);
+						}
 					}
 				}
 			}
 		}
+		List<BundleVersion> list = new ArrayList<BundleVersion>();
+		list.addAll(map.values());
 		return list;
 	}
 
@@ -635,6 +640,7 @@ public class PluginManager implements IPluginManager {
 		if(name.contains("%")) {
 			name = symName;
 		}
+		jarStream.close();
 		if(!localHandler.getLocalRepository().containsBundle(symName) || (localHandler.getLocalRepository().getBundle(symName, version) == null)) {
 			PVBundle bundle = new PVBundle();
 			bundle.setName(name);

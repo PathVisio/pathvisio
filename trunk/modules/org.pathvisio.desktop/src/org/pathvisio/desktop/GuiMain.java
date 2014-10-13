@@ -31,6 +31,7 @@ import java.util.Locale;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -339,7 +340,11 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		swingEngine.setUrlBrowser(new Browser() {
 			public void openUrl(URL url) {
 				try {
-					Desktop.getDesktop().browse(url.toURI());
+					if(Desktop.isDesktopSupported()) {
+						Desktop.getDesktop().browse(url.toURI());
+					} else {
+						new JOptionPane("Could not open default browser.\n Please go to\n" + url + "\nin your browser.", JOptionPane.WARNING_MESSAGE);
+					}
 				} catch (Exception ex) {
 					Logger.log.error ("Couldn't open url '" + url + "'", ex);
 				}

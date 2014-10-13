@@ -204,7 +204,11 @@ public class PluginManagerDialog extends JDialog {
 				@Override
 				public void mouseClicked(MouseEvent arg0) {
 					try {
-						Desktop.getDesktop().browse(new URI(p.getBundle().getWebsite()));
+						if(Desktop.isDesktopSupported()) {
+							Desktop.getDesktop().browse(new URI(p.getBundle().getWebsite()));
+						} else {
+							new JOptionPane("Could not open default browser.\nPlease go to\n" + p.getBundle().getWebsite() + "\nin your browser.", JOptionPane.WARNING_MESSAGE);
+						}
 					} catch (Exception e) {
 						new JOptionPane("Could not open website.", JOptionPane.ERROR_MESSAGE);
 					}

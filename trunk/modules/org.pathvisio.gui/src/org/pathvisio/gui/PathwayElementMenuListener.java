@@ -95,7 +95,11 @@ public class PathwayElementMenuListener implements VPathwayListener {
 	private JPopupMenu getMenuInstance(SwingEngine swingEngine, VPathwayElement e) {
 		if(e instanceof Citation) return null;
 
-		if(e instanceof Handle) e = ((Handle)e).getParent();
+		JMenu pathLitRef = null;
+		if(e instanceof Handle) {
+			e = ((Handle)e).getParent();
+			pathLitRef = new JMenu("Literature for pathway");
+		}
 
 		VPathway vp = e.getDrawing();
 		VPathwaySwing component = (VPathwaySwing)vp.getWrapper();
@@ -227,7 +231,12 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			menu.add(new PropertiesAction(swingEngine, component,e));
 		}
 		
-		
+		if(pathLitRef != null) {
+			menu.addSeparator();
+			pathLitRef.add(new AddLiteratureAction(swingEngine, component, swingEngine.getEngine().getActiveVPathway().getMappInfo()));
+			pathLitRef.add(new EditLiteratureAction(swingEngine, component, swingEngine.getEngine().getActiveVPathway().getMappInfo()));
+			menu.add(pathLitRef);
+		}
 
 		// give plug-ins a chance to add menu items.
 		for (PathwayElementMenuHook hook : hooks)

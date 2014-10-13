@@ -206,7 +206,7 @@ public class GexTxtImporter
 					if(!refExists)
 					{
 						errors = reportError(info, error, "Line " + n + ":\t" + ref +
-								"\tError: Could not look up this identifier in the synonym database", errors);
+								"\tError: Could not look up this identifier in the identifier mapping database", errors);
 					} else {
 						errors = reportError(info, error, "Line " + n + ":\t" + ref +
 								"\t", errors - 1); // decrement counter to count only the errors

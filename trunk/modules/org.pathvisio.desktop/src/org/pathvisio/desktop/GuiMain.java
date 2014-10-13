@@ -60,7 +60,6 @@ import org.pathvisio.desktop.gex.GexManager.GexManagerListener;
 import org.pathvisio.desktop.model.BatikImageWithDataExporter;
 import org.pathvisio.desktop.model.RasterImageWithDataExporter;
 import org.pathvisio.desktop.visualization.VisualizationManager;
-import org.pathvisio.gui.DataPaneTextProvider;
 import org.pathvisio.gui.MainPanel;
 import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.SwingEngine.Browser;
@@ -150,8 +149,8 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 	}
 
 	private String shortenString(String s, int maxLength) {
-		if(s.length() > maxLength) {
-			String prefix = "...";
+		String prefix = "...";
+		if(s.length() > maxLength + prefix.length()) {
 			s = s.substring(s.length() - maxLength - prefix.length());
 			s = prefix + s;
 		}

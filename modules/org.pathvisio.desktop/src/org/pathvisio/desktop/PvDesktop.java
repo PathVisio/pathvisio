@@ -17,13 +17,8 @@
 
 package org.pathvisio.desktop;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.swing.Action;
 import javax.swing.JFrame;
@@ -50,6 +45,7 @@ import org.pathvisio.desktop.data.DBConnectorSwing;
 import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.plugin.IPluginManager;
+import org.pathvisio.desktop.plugin.PluginRepoPreference;
 import org.pathvisio.desktop.util.StandaloneCompat;
 import org.pathvisio.desktop.visualization.VisualizationEvent;
 import org.pathvisio.desktop.visualization.VisualizationManager;
@@ -446,27 +442,24 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		}
 	}
 	
+	private void initPluginPreference() {
+		PreferencesDlg dlg = getPreferencesDlg();
+        dlg.addPanel("Plugin Repository", 
+                       dlg.builder().stringField(PluginRepoPreference.ONLINE_REPO_URL, "Online repository URL")
+                       .build());
+	}
+	
 	/**
 	 * plugin manager registers a service in the activator
 	 * this methods gets the plugin manager class from the OSGi registry
 	 * @return
 	 */
 	public void loadPluginManager() {
+		initPluginPreference();
 		ServiceReference ref = getContext().getServiceReference(IPluginManager.class.getName());
-		// TODO: warning if plugin manager service can not be resolved
 		if(ref != null) {
 			pluginManager = (IPluginManager) getContext().getService(ref);
-			Set<URL> onlineRepos = new HashSet<URL>();
-			try {
-				// TODO: this information should be stored in global settings
-				onlineRepos.add(new URL("http://repository.pathvisio.org/repository.xml"));
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			File localRepo = new File(GlobalPreference.getApplicationDir(), ".bundles");
-			pluginManager.init(localRepo, onlineRepos, this);
+			pluginManager.init(this);
 		}
 	}
 

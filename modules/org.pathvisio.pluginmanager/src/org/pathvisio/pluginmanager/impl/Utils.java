@@ -25,6 +25,7 @@ import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.util.regex.Pattern;
 
 import org.apache.felix.bundlerepository.Resource;
 import org.pathvisio.pluginmanager.impl.data.BundleAuthor;
@@ -169,9 +170,11 @@ public class Utils {
 	    	
 	    	int i = 1;
 	    	for(BundleAuthor author : version.getAuthors()) {
-	    		String text = Utils.formatText(author.getDeveloper().getFirstName() + " " + 
-	    				author.getDeveloper().getLastName() + ",  " + author.getAffiliation().getName(), 40);
-	    		str = str + "     " + i + ") " + text + "<br>";
+	    		String firstName = author.getDeveloper().getFirstName();
+	    		String lastName = author.getDeveloper().getLastName();
+	    		String aff = author.getAffiliation().getName();
+	    		
+	    		str = str + "   " + i + ") " + firstName + " " + lastName + "<br>" + aff + "<br>";
 	    		i++;
 	    	}
 	    	
@@ -179,5 +182,28 @@ public class Utils {
 	    	return str;
     	}
     	return "";
+    }
+    
+    public static int compareVersions(String v1, String v2) {
+        String s1 = normalisedVersion(v1);
+        String s2 = normalisedVersion(v2);
+        int cmp = s1.compareTo(s2);
+        // -1 v1 < v2
+        // 0 v1 = v2
+        // 1 v1 > v2
+        return cmp < 0 ? -1 : cmp > 0 ? 1 : 0;
+    }
+
+    private static String normalisedVersion(String version) {
+        return normalisedVersion(version, ".", 4);
+    }
+
+    private static String normalisedVersion(String version, String sep, int maxWidth) {
+        String[] split = Pattern.compile(sep, Pattern.LITERAL).split(version);
+        StringBuilder sb = new StringBuilder();
+        for (String s : split) {
+            sb.append(String.format("%" + maxWidth + 's', s));
+        }
+        return sb.toString();
     }
 }

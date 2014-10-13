@@ -118,7 +118,7 @@ public class AvailablePluginsPanel extends JPanel {
 	protected void updatePluginDetails(BundleVersion p) {
 		pluginInfo.removeAll();
 		pluginInfo.setLayout(new GridLayout(1,1));
-		pluginInfo.add(getPluginData(p).getPanel());
+		pluginInfo.add(new JScrollPane(getPluginData(p).getPanel()));
 		pluginInfo.revalidate();
 		pluginInfo.repaint();
 	}
@@ -137,6 +137,7 @@ public class AvailablePluginsPanel extends JPanel {
 	
 		builder.addLabel(Utils.printAuthors(p), cc.xy(2, 12));
 		builder.add(getWebsiteLabel(p), cc.xy(2, 14));
+		
 		return builder;
 	}
 	

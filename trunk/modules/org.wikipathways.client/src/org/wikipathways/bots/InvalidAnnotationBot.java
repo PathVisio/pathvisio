@@ -26,7 +26,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.bridgedb.IDMapperException;
+import org.bridgedb.IDMapperStack;
 import org.bridgedb.Xref;
+import org.bridgedb.bio.Organism;
+import org.bridgedb.rdb.GdbProvider;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
@@ -34,22 +38,30 @@ import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.wikipathways.webservice.WSPathwayInfo;
 
 /**
- * Only check if a datanode has an empty id or datasource attribute
- * and adds a curation tag for pathways that contain not annotated
- * dataNodes.
- * Replaces old Xref bot together with InvalidAnnotationBot
+ * Checks if a datanode is annotated with an Xref that is 
+ * not supported by the identifier mapping databases
+ * Replaces old Xref bot together with MissingAnnotationBot
  * @author mkutmon
  */
-public class MissingAnnotationBot extends Bot {
+public class InvalidAnnotationBot extends Bot {
 	private static final String CURATIONTAG = "Curation:MissingXRef";
 	private static final String PROP_THRESHOLD = "threshold";
+	private static final String PROP_GDBS = "gdb-config";
 
+	GdbProvider gdbs;
 	double threshold;
 
-	public MissingAnnotationBot(Properties props) throws BotException {
+	public InvalidAnnotationBot(Properties props) throws BotException {
 		super(props);
 		String thr = props.getProperty(PROP_THRESHOLD);
 		if(thr != null) threshold = Double.parseDouble(thr);
+
+		File gdbFile = new File(props.getProperty(PROP_GDBS));
+		try {
+			gdbs = GdbProvider.fromConfigFile(gdbFile);
+		} catch (Exception e) {
+			throw new BotException(e);
+		}
 	}
 
 	public String getTagName() {
@@ -59,22 +71,21 @@ public class MissingAnnotationBot extends Bot {
 	public BotReport createReport(Collection<Result> results) {
 		BotReport report = new BotReport(
 			new String[] {
-				"Nr Xrefs", "Nr valid", "% valid", "Invalid DataNodes"
+				"Nr Xrefs", "Nr invalid", "% invalid", "Invalid Annotations"
 			}
 		);
-		report.setTitle("XRefBot scan report");
-		report.setDescription("The XRefBot checks for valid DataNode annotations");
-
+		report.setTitle("InvalidAnnotationBot scan report");
+		report.setDescription("The InvalidAnnotationBot checks for invalid DataNode annotations");
 		for(Result r : results) {
 			XRefResult xr = (XRefResult)r;
 			report.setRow(
-				xr.getPathwayInfo(),
-				new String[] {
-					"" + xr.getNrXrefs(),
-					"" + xr.getNrValid(),
-					"" + (int)(xr.getPercentValid() * 100) / 100, 
-					"" + xr.getLabelsForInvalid()
-				}
+					r.getPathwayInfo(),
+					new String[] {
+						"" + xr.getNrXrefs(),
+						"" + xr.getNrInvalid(),
+						"" + (int)(xr.getPercentInvalid() * 100) / 100, //Round to two decimals
+						"" + xr.getLabelsForInvalid()
+					}
 			);
 		}
 		return report;
@@ -85,15 +96,26 @@ public class MissingAnnotationBot extends Bot {
 			XRefResult report = new XRefResult(getCache().getPathwayInfo(pathwayFile));
 			Pathway pathway = new Pathway();
 			pathway.readFromXml(pathwayFile, true);
-			
+
+			String orgName = pathway.getMappInfo().getOrganism();
+			Organism org = Organism.fromLatinName(orgName);
+			if(org == null) org = Organism.fromShortName(orgName);
+
 			for(PathwayElement pwe : pathway.getDataObjects()) {
 				if(pwe.getObjectType() == ObjectType.DATANODE) {
-					boolean annotated = false;
+					boolean valid = true;
 					Xref xref = pwe.getXref();
-					if(xref.getId() != null && !xref.getId().equals("") && xref.getDataSource() != null) {
-						annotated = true;
+					IDMapperStack gdb = gdbs.getStack(org);
+					try {
+						if(xref.getId() != null && xref.getDataSource() != null) {
+							if(!gdb.xrefExists(xref)) {
+								valid = false;
+							}
+						}
+					} catch (IDMapperException e) {
+						Logger.log.error("Error checking xref exists", e);
 					}
-					report.addXref(pwe, annotated);
+					report.addXref(pwe, valid);
 				}
 			}
 
@@ -130,6 +152,10 @@ public class MissingAnnotationBot extends Bot {
 			return (double)(100 * getNrValid()) / getNrXrefs();
 		}
 
+		public double getPercentInvalid() {
+			return (double)(100 * getNrInvalid()) / getNrXrefs();
+		}
+
 		public int getNrInvalid() {
 			return getNrXrefs() - getNrValid();
 		}
@@ -148,7 +174,7 @@ public class MissingAnnotationBot extends Bot {
 			List<String> labels = new ArrayList<String>();
 			for(PathwayElement pwe : xrefs.keySet()) {
 				if(!xrefs.get(pwe)) {
-					labels.add(pwe.getTextLabel());
+					labels.add(pwe.getTextLabel() + "[" + pwe.getXref() + "]");
 				}
 			}
 			return labels;
@@ -176,44 +202,38 @@ public class MissingAnnotationBot extends Bot {
 			return new String[] { labelString, labelStringTrun };
 		}
 
-		/**
-		 * adapted function because of webservice issues when
-		 * using tags longer than 300 letters
-		 */
 		public String getTagText() {
 			String[] labels = getLabelStrings();
-			
-			String labelTitle = labels[0];
-			labelTitle = labelTitle.replace("\n", " ");
-			labelTitle = labelTitle.replace("/", " ");
-			String labelText = labels[1];
-			labelText = labelText.replace("\n", " ");
-			labelText = labelText.replace("/", " ");
-			
-			String front = getNrInvalid() + " out of " + getNrXrefs() +
-					" DataNodes have a missing external reference: " +
-					"<span title=\"";
-			
-			String middle = "\">";
-			String end = "</span>";
-			
-			int max = 300 - (front.length() + middle.length() + end.length() + labelText.length());
-			if(labelTitle.length() > max) {
-				labelTitle = labelTitle.substring(0, max-4) + ",...";
+
+			//Limit length of label string
+			if(labels[0].length() > 300) {
+				labels[0] = labels[0].substring(0, 300) + "...";
 			}
-			
-			String txt = front + labelTitle + middle + labelText + end;
+			String txt = getNrInvalid() + " out of " + getNrXrefs() +
+				" DataNodes have an incorrect external reference: " +
+				"<span title=\"" + labels[0] + "\">" + labels[1] + "</span>";
 			return txt;
 		}
 	}
 
 	public static void main(String[] args) {
 		try {
-			Logger.log.trace("Starting MissingAnnotationBot");
+			Logger.log.trace("Starting InvalidAnnotationBot");
 			Properties props = new Properties();
 			props.load(new FileInputStream(new File(args[0])));
-			MissingAnnotationBot bot = new MissingAnnotationBot(props);
-			Bot.runAll(bot, new File(args[1] + ".html"), new File(args[1] + ".txt"));
+			InvalidAnnotationBot bot = new InvalidAnnotationBot(props);
+			
+			Logger.log.trace("Running bot " + bot);
+			Collection<Result> results = bot.scan();
+
+			Logger.log.trace("Generating report");
+			BotReport report = bot.createReport(results);
+
+			Logger.log.trace("Writing text report");
+			report.writeTextReport(new File(args[1] + ".txt"));
+
+			Logger.log.trace("Writing HTML report");
+			report.writeHtmlReport(new File(args[1] + ".html"));
 		} catch(Exception e) {
 			e.printStackTrace();
 			printUsage();
@@ -223,7 +243,7 @@ public class MissingAnnotationBot extends Bot {
 	static private void printUsage() {
 		System.out.println(
 			"Usage:\n" +
-			"java org.pathvisio.wikipathways.bots.MissingAnnotationBot propsfile reportfilename\n" +
+			"java org.pathvisio.wikipathways.bots.InvalidAnnotationBot propsfile reportfilename\n" +
 			"Where:\n" +
 			"-propsfile: a properties file containing the bot properties\n" +
 			"-reportfilename: the base name of the file that will be used to write reports to " +

@@ -419,16 +419,25 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 
 			if (result == null) return;
 			String dbName = "idmapper-pgdb:" + result;
-
-			if (dbType.equals("Gene"))
-			{
-				swingEngine.getGdbManager().setGeneDb(dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, dbName);
+			if(!isLoaded(dbName)) {
+				if (dbType.equals("Gene"))
+				{
+					swingEngine.getGdbManager().setGeneDb(dbName);
+					PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, dbName);
 			}
-			else
-			{
-				swingEngine.getGdbManager().setMetaboliteDb(dbName);
-				PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);
+				else
+				{
+					swingEngine.getGdbManager().setMetaboliteDb(dbName);
+					PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);
+				}
+			} else {
+				String msg = "This identifier mapping database is already loaded."; 
+				msg = msg + "\nCheck loaded gene and metabolite databases.";
+				msg = msg + "\n" + result;
+				JOptionPane.showMessageDialog(null,
+						msg,
+						"Warning",
+						JOptionPane.WARNING_MESSAGE);
 			}
 		}
 		catch(Exception ex)
@@ -442,6 +451,17 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 		}
 	}
 	
+	private boolean isLoaded(String connectionString) {
+		int size = swingEngine.getGdbManager().getCurrentGdb().getMappers().size();
+		for(int i = 0; i < size; i++) {
+			String conString = swingEngine.getGdbManager().getConnectionStringAt(i);
+			if(conString.equals(connectionString)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void initPluginPreference() {
 		PreferencesDlg dlg = getPreferencesDlg();
         dlg.addPanel("Plugin Repository", 

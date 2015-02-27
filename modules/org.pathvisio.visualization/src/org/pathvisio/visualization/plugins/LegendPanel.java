@@ -22,8 +22,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -54,6 +54,7 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 		this.visualizationManager = visualizationManager;
 		visualizationManager.addListener(this);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		setBackground(Color.white);
 		createContents();
 		rebuildContent();
 	}
@@ -88,7 +89,7 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 
 		boolean advanced = colorSetManager.getColorSets().size() > 1;
 
-		Set<ColorSet> usedColorSets = new HashSet<ColorSet>();
+		List<ColorSet> usedColorSets = new ArrayList<ColorSet>();
 
 		for (VisualizationMethod vm : v.getMethods()) {
 			if (vm instanceof ColorByExpression) {
@@ -100,11 +101,14 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 				}
 			}
 		}
+		
+		ypos = ypos + SEPARATOR;
 
 		for (ColorSet cs : usedColorSets) {
 			ypos = drawColorset(g, cs, xpos, ypos, advanced, zoomFactor);
+			ypos = ypos + INNER_MARGIN;
 		}
-		drawDefaults(g, xpos, ypos, zoomFactor);
+		drawDefaults(g, xpos, ypos+SEPARATOR, zoomFactor);
 	}
 
 	private static final double TOTAL_SAMPLES_WIDTH = 100;
@@ -115,30 +119,39 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 	private static final double MARGIN_LEFT = 5;
 	private static final double MARGIN_TOP = 5;
 	private static final double INNER_MARGIN = 5;
+	private static final double SEPARATOR = 15;
 
 	/**
 	 * Shows defaults colours, e.g : colour for data not found
 	 * 
 	 * @author anwesha
 	 */
-	private static void drawDefaults(Graphics2D g, double startx,
-			double starty, double zoomFactor) {
-		Graphics dg = g.create();
-		double lineHeight = dg.getFontMetrics().getHeight();
+	private static void drawDefaults(Graphics2D g, double startx, double starty, double zoomFactor) {
+		Graphics gCritNotMet = g.create();
+		Graphics gDataNotFound = g.create();
+
+		double lineHeight = g.getFontMetrics().getHeight();
 		double partWidth = COLOR_BOX_SIZE * zoomFactor;
 
-		dg.setColor(PreferenceManager.getCurrent().getColor(
-				GlobalPreference.COLOR_NO_DATA_FOUND));
-		dg.fillRect((int) startx, (int) starty, (int) partWidth,
-				(int) partWidth);
-		dg.setColor(Color.BLACK);
-		dg.drawRect((int) startx, (int) starty, (int) partWidth,
-				(int) partWidth);
+		// criteria (color rule) not met
+		gCritNotMet.setColor(PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_NO_CRIT_MET));
+		gCritNotMet.fillRect((int) startx, (int) (starty), (int) partWidth, (int) partWidth);
+		gCritNotMet.setColor(Color.BLACK);
+		gCritNotMet.drawRect((int) startx, (int) (starty), (int) partWidth, (int) partWidth);
+		double labelLeft2 = startx + (partWidth / 2) + partWidth;
+		double labelTop2 = starty + lineHeight;
+		String label2 = "Color rule not met";
+		gCritNotMet.drawString(label2, (int) labelLeft2, (int) (labelTop2));
+		
+		// no data found
+		gDataNotFound.setColor(PreferenceManager.getCurrent().getColor(GlobalPreference.COLOR_NO_DATA_FOUND));
+		gDataNotFound.fillRect((int) startx, (int) (starty+lineHeight+INNER_MARGIN), (int) partWidth, (int) partWidth);
+		gDataNotFound.setColor(Color.BLACK);
+		gDataNotFound.drawRect((int) startx, (int) (starty+lineHeight+INNER_MARGIN), (int) partWidth, (int) partWidth);
 		double labelLeft = startx + (partWidth / 2) + partWidth;
-		double labelTop = starty + lineHeight;
+		double labelTop = starty + lineHeight + lineHeight + INNER_MARGIN;
 		String label = "No data found";
-		dg.drawString(label, (int) labelLeft, (int) (labelTop));
-
+		gDataNotFound.drawString(label, (int) labelLeft, (int) (labelTop));
 	}
 
 	private static double drawSamples(Graphics2D g, ColorByExpression cbex,
@@ -174,18 +187,17 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 			double top, boolean advanced, double zoomFactor) {
 		double xco = left;
 		double yco = top;
-		int base = g.getFontMetrics().getHeight()
-				- g.getFontMetrics().getDescent();
+		int base = g.getFontMetrics().getHeight() - g.getFontMetrics().getDescent();
 		g.setColor(Color.BLACK);
 
 		if (advanced) {
 			g.drawString(cs.getName(), (int) left, (int) (top + base));
-			yco += g.getFontMetrics().getHeight();
+			yco += g.getFontMetrics().getHeight()+3;
 		}
 
 		ColorGradient gradient = cs.getGradient();
 		if (gradient != null)
-			yco = drawGradient(g, gradient, left, top + base, zoomFactor);
+			yco = drawGradient(g, gradient, xco, yco, zoomFactor);
 		for (ColorRule cr : cs.getColorRules()) {
 			yco = drawColorRule(g, cr, xco, yco, zoomFactor);
 		}
@@ -195,40 +207,20 @@ public class LegendPanel extends JPanel implements VisualizationListener {
 
 	private static double drawColorRule(Graphics2D g, ColorRule cr,
 			double left, double top, double zoomFactor) {
-		Graphics g1 = g.create();
-		Graphics g2 = g.create();
 		int height = g.getFontMetrics().getHeight();
 		int base = height - g.getFontMetrics().getDescent();
 		double xco = left + (zoomFactor * COLOR_GRADIENT_MARGIN);
 		double yco = top;
-		/**
-		 * Legend boxes showing colours used when rule is met/not met
-		 * 
-		 * @author anwesha
-		 */
-		g1.setColor(cr.getColor());
-		g1.fillRect((int) xco, (int) yco, (int) (zoomFactor * COLOR_BOX_SIZE),
-				(int) (zoomFactor * COLOR_BOX_SIZE));
-		g.drawString(cr.getExpression(),
-				(int) (xco + (zoomFactor * (COLOR_BOX_SIZE + INNER_MARGIN))),
-				(int) (yco + base));
-		g1.setColor(Color.BLACK);
-		g1.drawRect((int) xco, (int) yco, (int) (zoomFactor * COLOR_BOX_SIZE),
-				(int) (zoomFactor * COLOR_BOX_SIZE));
-
-		g2.setColor(PreferenceManager.getCurrent().getColor(
-				GlobalPreference.COLOR_NO_CRIT_MET));
-		g2.fillRect((int) xco, (int) (yco + zoomFactor * COLOR_BOX_SIZE),
-				(int) (zoomFactor * COLOR_BOX_SIZE),
-				(int) (zoomFactor * COLOR_BOX_SIZE));
-		g.drawString("Rule logic not met",
-				(int) (xco + (zoomFactor * (COLOR_BOX_SIZE + INNER_MARGIN))),
-				(int) (yco + zoomFactor * COLOR_BOX_SIZE + base));
-		g2.setColor(Color.BLACK);
-		g2.drawRect((int) xco, (int) (yco + zoomFactor * COLOR_BOX_SIZE),
-				(int) (zoomFactor * COLOR_BOX_SIZE),
-				(int) (zoomFactor * COLOR_BOX_SIZE));
-		return yco + zoomFactor * COLOR_BOX_SIZE + height + INNER_MARGIN;
+		Rectangle2D bounds2 = new Rectangle2D.Double (xco, yco, zoomFactor * COLOR_BOX_SIZE, zoomFactor * COLOR_BOX_SIZE);
+		Rectangle2D bounds = new Rectangle2D.Double (xco + 1, yco + 1, COLOR_BOX_SIZE-2, COLOR_BOX_SIZE-2);
+		g.drawString (cr.getExpression(), (int)(xco + (zoomFactor * (COLOR_BOX_SIZE + INNER_MARGIN))), (int)(yco + base));
+		g.setColor(cr.getColor());
+		g.fill(bounds);
+		g.setColor (Color.WHITE);
+		g.draw (bounds);
+		g.setColor (Color.BLACK);
+		g.draw (bounds2);
+		return top + height + INNER_MARGIN;
 	}
 
 	private static double drawGradient(Graphics2D g, ColorGradient cg,

@@ -20,6 +20,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.net.URL;
 import java.util.ArrayList;
@@ -343,8 +344,8 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 			String descr = "Paste pathway objects from clipboard";
 			putValue(Action.SHORT_DESCRIPTION, descr);
 			putValue(Action.LONG_DESCRIPTION, descr);
-			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V,
-					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+//			putValue(Action.ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V,
+//					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		}
 
 		public void actionPerformed(ActionEvent e) {

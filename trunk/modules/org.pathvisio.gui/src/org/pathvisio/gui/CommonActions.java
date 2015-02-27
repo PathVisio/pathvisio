@@ -565,8 +565,6 @@ public class CommonActions implements ApplicationEventListener {
 			putValue(SMALL_ICON, new ImageIcon(IMG_EXPORT));
 			putValue(SHORT_DESCRIPTION, "Export pathway to a file on your computer");
 			putValue(LONG_DESCRIPTION, "Export the pathway to various file formats on your computer");
-			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_E,
-					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			setEnabled(false);
 		}
 

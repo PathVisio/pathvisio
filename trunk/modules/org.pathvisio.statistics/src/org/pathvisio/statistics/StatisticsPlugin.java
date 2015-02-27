@@ -401,7 +401,8 @@ public class StatisticsPlugin implements Plugin
 						JOptionPane.showMessageDialog(dlg,
 						"Please enter an expression to calculate");
 						return;
-					} else if(critPanel.lblError.getText().equals(CriterionPanel.CRIT_VALID)) {
+					} 
+					if(!critPanel.lblError.getText().equals(CriterionPanel.CRIT_VALID)) {
 						JOptionPane.showMessageDialog(dlg,
 								"Your criterion is invalid! Please correct your criterion", "Error", JOptionPane.ERROR_MESSAGE);
 								return;

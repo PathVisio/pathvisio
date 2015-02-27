@@ -166,6 +166,7 @@ public class StatisticsPlugin implements Plugin
 		{
 			private JTextField txtExpr;
 			private JLabel lblError;
+			private static String CRIT_VALID = "OK";
 			private Criterion myCriterion = new Criterion();
 			private final List<String> sampleNames;
 
@@ -184,7 +185,7 @@ public class StatisticsPlugin implements Plugin
 				}
 				else
 				{
-					lblError.setText ("OK");
+					lblError.setText (CRIT_VALID);
 				}
 			}
 
@@ -265,7 +266,7 @@ public class StatisticsPlugin implements Plugin
 				} );
 
 				add (new JScrollPane (lstSamples), cc.xy (4,6));
-				lblError = new JLabel("OK");
+				lblError = new JLabel(CRIT_VALID);
 				add (lblError, cc.xyw (2,8,3));
 
 				txtExpr.requestFocus();
@@ -397,9 +398,13 @@ public class StatisticsPlugin implements Plugin
 				public void actionPerformed(ActionEvent ae)
 				{	
 					if(critPanel.getCriterion().getExpression().trim().equals("")){
-						JOptionPane.showMessageDialog(null,
+						JOptionPane.showMessageDialog(dlg,
 						"Please enter an expression to calculate");
 						return;
+					} else if(critPanel.lblError.getText().equals(CriterionPanel.CRIT_VALID)) {
+						JOptionPane.showMessageDialog(dlg,
+								"Your criterion is invalid! Please correct your criterion", "Error", JOptionPane.ERROR_MESSAGE);
+								return;
 					}
 					File pwDir = new File (txtDir.getText());
 					btnCalc.setEnabled(false);

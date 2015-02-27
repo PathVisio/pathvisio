@@ -42,6 +42,12 @@
 		<echo>Creating JAR: ${jar.name}</echo>
 		<mkdir dir="resources"/> <!-- workaround in case resources dir doesn't exist -->
 		<jar jarfile="${jar.name}" manifest="META-INF/MANIFEST.MF">
+			<manifest>
+				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Codebase" value="*"/>
+				<attribute name="Application-Name" value="PathVisio"/>
+			</manifest>
+
 			<fileset dir="resources">
 				<include name="**/*"/>
 			</fileset>

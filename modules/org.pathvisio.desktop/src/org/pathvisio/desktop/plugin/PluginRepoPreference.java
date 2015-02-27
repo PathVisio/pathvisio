@@ -6,7 +6,7 @@ import org.pathvisio.core.preferences.Preference;
 
 public enum PluginRepoPreference implements Preference {
 
-	ONLINE_REPO_URL(new String("http://devrepository.pathvisio.org/repository.xml"));
+	ONLINE_REPO_URL(new String("http://repository.pathvisio.org/repository.xml"));
 
 	
 	PluginRepoPreference(String defaultValue) {

@@ -253,6 +253,8 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		};
 		InputMap im = getInputMap();
 		ActionMap am = getActionMap();
+		
+		// define shortcuts
 		for(Action a : keyStrokeActions) {
 			im.put((KeyStroke)a.getValue(Action.ACCELERATOR_KEY), a.getValue(Action.NAME));
 			am.put(a.getValue(Action.NAME), a);

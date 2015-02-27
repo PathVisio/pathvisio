@@ -165,6 +165,9 @@
 		<jar file="pathvisio.jar" basedir="build/exe">
 			<manifest>
 				<attribute name="Main-Class" value="org.pathvisio.launcher.PathVisioMain"/>
+				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Codebase" value="www.pathvisio.org"/>
+				<attribute name="Application-Name" value="PathVisio"/>
 			</manifest>
 		</jar>
 	</target>
@@ -181,8 +184,9 @@
 		<!-- Update latest version file -->
 		<echo file="${webstart.dir}/www/latestversion">${subversion_revision}</echo>
 		<!-- Copy files needed for webstart !-->
+		<!--tsaurl="http://timestamp.comodoca.com/authenticode"-->
 		<signjar jar="pathvisio.jar"
-			alias="PV" storepass="${keystore.password}" keystore="lib/visioKeyStore"/>
+			alias="secure.ksoftware.net" storetype="pkcs12"  storepass="${keystore.password}" keystore="../lib/visioKeyStore.p12"/>
 
 		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
@@ -301,8 +305,8 @@
 			</condition>
 		</fail>
 		<!-- Sign all jar files -->
-		<signjar alias="PV"
-			storepass="${keystore.password}" keystore="lib/visioKeyStore">
+		<signjar alias="secure.ksoftware.net"
+			storetype="pkcs12" storepass="${keystore.password}" keystore="../lib/visioKeyStore.p12">
 			<fileset dir="${build.wpi.applet}" includes="**/*.jar"/>
 			<fileset dir="${build.wpi.bin}" includes="**/*.jar"/>
 		</signjar>

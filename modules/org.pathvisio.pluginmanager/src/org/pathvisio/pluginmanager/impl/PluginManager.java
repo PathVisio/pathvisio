@@ -116,7 +116,6 @@ public class PluginManager implements IPluginManager {
 				boolean atLeastOneSuccess = false;
 				Throwable connectionException;
 				
-				@SuppressWarnings("unchecked")
 				@Override
 				protected Void doInBackground() throws Exception {
 					
@@ -270,6 +269,7 @@ public class PluginManager implements IPluginManager {
 			@Override protected Boolean doInBackground() throws InterruptedException {
 				pk.setTaskName("Installing plugin");
 				Thread.sleep(200);
+
 				List<Resource> resources = resolveDependencies(version);
 				if(resources.size() == 0) {
 					version.getBundle().getStatus().setSuccess(false);
@@ -281,6 +281,7 @@ public class PluginManager implements IPluginManager {
 					List<Bundle> bundleList = new ArrayList<Bundle>();
 						for(Resource res : resources) {
 							BundleVersion bundleVersion = getAvailableBundle(res.getSymbolicName(), Utils.formatVersion(res.getVersion().toString()));
+
 							if(bundleVersion != null && !bundleVersion.isInstalled()) {
 								File file;
 								try {
@@ -398,8 +399,9 @@ public class PluginManager implements IPluginManager {
 		List<Resource> list = new ArrayList<Resource>();
 		try {
 			Resolver resolver = repoAdmin.resolver();
-			Resource[] resources = repoAdmin.discoverResources("(symbolicname=" + bundleVersion.getSymbolicName() + ")");
-
+			
+			String filter = "(&(symbolicname=" + bundleVersion.getSymbolicName() + ")(version>="+ bundleVersion.getVersion()+ "))";
+			Resource[] resources = repoAdmin.discoverResources(filter);
 			if(resources != null && resources.length > 0) {
 				Logger.log.info("Installing bundle " + bundleVersion.getSymbolicName());
 				
@@ -416,7 +418,8 @@ public class PluginManager implements IPluginManager {
 				}
 				
 				for(Reason r : resolver.getUnsatisfiedRequirements()) {
-					Resource[] res = repoAdmin.discoverResources("(symbolicname=" + r.getResource().getSymbolicName() + ")");
+					String filterR = "(&(symbolicname=" + r.getResource().getSymbolicName() + ")(version>="+ r.getResource().getVersion()+ "))";
+					Resource[] res = repoAdmin.discoverResources(filterR);
 					if(res.length == 1) {
 						boolean installed = false;
 						for(Bundle b : context.getBundles()) {
@@ -524,6 +527,7 @@ public class PluginManager implements IPluginManager {
 							String newVer = version.getVersion();
 							int comp = Utils.compareVersions(currentVer, newVer);
 							if(comp < 0) {
+								map.remove(version.getSymbolicName());
 								map.put(version.getSymbolicName(), version);
 							}
 						} else {

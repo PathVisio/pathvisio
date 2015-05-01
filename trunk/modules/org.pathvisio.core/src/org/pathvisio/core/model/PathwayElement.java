@@ -997,7 +997,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			break;
 
 		case GENEID:
-			setGeneID((String) value);
+			setElementID((String) value);
 			break;
 		case DATASOURCE:
 			if (value instanceof DataSource)
@@ -1177,7 +1177,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			break;
 
 		case GENEID:
-			result = getGeneID();
+			result = getElementID();
 			break;
 		case DATASOURCE:
 			result = getDataSource();
@@ -1706,6 +1706,7 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	{
 		if (v == null)
 			throw new IllegalArgumentException();
+		v = v.trim();
 		if (!Utils.stringEquals(setGeneID, v))
 		{
 			setGeneID = v;

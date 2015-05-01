@@ -256,7 +256,7 @@ public class ColorByExpression extends AbstractVisualizationMethod {
 					(int)(xf + wf), area.height);
 			xf += wf;
 			ConfiguredSample s = useSamples.get(i);
-			Xref idc = new Xref(gp.getPathwayElement().getGeneID(), gp.getPathwayElement().getDataSource());
+			Xref idc = new Xref(gp.getPathwayElement().getElementID(), gp.getPathwayElement().getDataSource());
 			CachedData cache = gexManager.getCachedData();
 			if(cache == null) continue;
 

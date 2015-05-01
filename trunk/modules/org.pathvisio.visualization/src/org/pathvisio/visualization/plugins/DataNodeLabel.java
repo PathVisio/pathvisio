@@ -297,7 +297,7 @@ public class DataNodeLabel extends AbstractVisualizationMethod implements Action
 			if(DISPLAY_LABEL.equals(display)) {
 				text = g.getPathwayElement().getTextLabel();
 			} else if(DISPLAY_ID.equals(display)){
-				text = g.getPathwayElement().getGeneID();
+				text = g.getPathwayElement().getElementID();
 			}
 		}
 		return text;

@@ -104,7 +104,7 @@ public class TextByExpression extends AbstractVisualizationMethod
 			CachedData  cache = gexManager.getCachedData();
 			if (cache == null) return;
 
-			String id = gp.getPathwayElement().getGeneID();
+			String id = gp.getPathwayElement().getElementID();
 			DataSource ds = gp.getPathwayElement().getDataSource();
 			Xref idc = new Xref(id, ds);
 
@@ -139,7 +139,7 @@ public class TextByExpression extends AbstractVisualizationMethod
 			CachedData  cache = gexManager.getCachedData();
 
 			Xref idc = new Xref(
-					gp.getPathwayElement().getGeneID(),
+					gp.getPathwayElement().getElementID(),
 					gp.getPathwayElement().getDataSource());
 
 			if(!cache.hasData(idc)|| useSamples.size() == 0) {

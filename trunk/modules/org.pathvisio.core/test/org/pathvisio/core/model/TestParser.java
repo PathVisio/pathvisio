@@ -86,7 +86,7 @@ public class TestParser extends TestCase
 		assertEquals (5010.0, elt.getMCenterY(), 0.1);
 		assertEquals (900.0, elt.getMWidth(), 0.1);
 		assertEquals (300.0, elt.getMHeight(), 0.1);
-		assertEquals ("8739", elt.getGeneID());
+		assertEquals ("8739", elt.getElementID());
 		assertEquals (BioDataSource.ENTREZ_GENE, elt.getDataSource());
 		
 		//TODO: Line doesn't have fixed graphId, can't test
@@ -296,7 +296,7 @@ public class TestParser extends TestCase
 		assertFalse (elt.isItalic());
 		assertFalse (elt.isStrikethru());
 		assertFalse (elt.isUnderline());
-		assertEquals ("", elt.getGeneID());
+		assertEquals ("", elt.getElementID());
 		assertEquals (LineStyle.SOLID, elt.getLineStyle());
 		assertEquals (DataSource.getByFullName("EC Number"), elt.getDataSource());
 		
@@ -306,7 +306,7 @@ public class TestParser extends TestCase
 		assertEquals ("", elt.getTextLabel());
 		assertEquals (ValignType.MIDDLE, elt.getValign());
 		assertEquals (AlignType.LEFT, elt.getAlign());
-		assertEquals ("", elt.getGeneID());
+		assertEquals ("", elt.getElementID());
 		assertNull (elt.getDataSource());
 
 		elt = data.getElementById("f7f5c");
@@ -323,7 +323,7 @@ public class TestParser extends TestCase
 		assertFalse (elt.isItalic());
 		assertFalse (elt.isStrikethru());
 		assertFalse (elt.isUnderline());
-		assertEquals ("id", elt.getGeneID());
+		assertEquals ("id", elt.getElementID());
 		assertNull (elt.getDataSource());
 
 		elt = data.getElementById("fbbac");
@@ -332,7 +332,7 @@ public class TestParser extends TestCase
 		assertEquals (ShapeType.ROUNDED_RECTANGLE, elt.getShapeType());
 		assertEquals (LineStyle.DASHED, elt.getLineStyle());
 		assertEquals (DataSource.getByFullName("Entrez Gene"), elt.getDataSource());
-		assertEquals ("3643", elt.getGeneID());
+		assertEquals ("3643", elt.getElementID());
 		
 		elt = data.getElementById("be269");
 		assertEquals (ObjectType.STATE, elt.getObjectType());
@@ -342,7 +342,7 @@ public class TestParser extends TestCase
 		assertEquals (-1.0, elt.getRelX(), 0.01);
 		assertEquals (1.0, elt.getRelY(), 0.01);
 		assertEquals (ShapeType.OVAL, elt.getShapeType());
-		assertEquals ("1234", elt.getGeneID());
+		assertEquals ("1234", elt.getElementID());
 		assertEquals (DataSource.getByFullName("Entrez Gene"), elt.getDataSource());
 		
 		elt = data.getElementById("ca5fa");

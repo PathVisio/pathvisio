@@ -742,7 +742,7 @@ public class MappFormat extends AbstractPathwayFormat
     	mappObject[COL_TYPE] = "Gene";
     	mappObject[COL_SYSTEMCODE] = o.getDataSource() != null ? o.getDataSource().getSystemCode() : "";
 		mappObject[COL_HEAD] = getSafeDynamicProperty (o, "org.pathvisio.model.BackpageHead");
-		mappObject[COL_ID] = o.getGeneID();
+		mappObject[COL_ID] = o.getElementID();
 		mappObject[COL_LABEL] = o.getTextLabel();
 		mappObject[COL_LINKS] = getSafeDynamicProperty (o, "org.pathvisio.model.GenMAPP-Xref");
 		unmapShape(o, mappObject);
@@ -761,11 +761,11 @@ public class MappFormat extends AbstractPathwayFormat
         o.setDynamicProperty ("org.pathvisio.model.BackpageHead", mappObject[COL_HEAD]);
         if (mappObject[COL_ID] == null)
         {
-        	o.setGeneID("");
+        	o.setElementID("");
         }
         else
         {
-        	o.setGeneID(mappObject[COL_ID]);
+        	o.setElementID(mappObject[COL_ID]);
         }
         o.setTextLabel(mappObject[COL_LABEL]);
 

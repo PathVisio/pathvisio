@@ -48,7 +48,7 @@ public class Test extends TestCase {
     	eltDn = PathwayElement.createPathwayElement(ObjectType.DATANODE);
     	eltDn.setMCenterX(3000);
     	eltDn.setMCenterY(3000);
-    	eltDn.setGeneID("1234");
+    	eltDn.setElementID("1234");
     	eltDn.setTextLabel("Gene");
     	eltDn.setMWidth(1000);
     	eltDn.setMHeight(1000);
@@ -110,7 +110,7 @@ public class Test extends TestCase {
 
 		PathwayElement pasted = null;
 		for(PathwayElement e : pTarget.getDataObjects()) {
-			if("1234".equals(e.getGeneID())) {
+			if("1234".equals(e.getElementID())) {
 				pasted = e;
 			}
 		}

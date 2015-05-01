@@ -381,7 +381,7 @@ class GpmlFormat200X extends GpmlFormatAbstract implements GpmlFormatReader
 		mapDeprecatedAttribute(o, e, "org.pathvisio.model.BackpageHead", "DataNode", "BackpageHead");
 		o.setDataNodeType (getAttribute("DataNode", "Type", e));
 		Element xref = e.getChild ("Xref", e.getNamespace());
-		o.setGeneID (getAttribute("DataNode.Xref", "ID", xref));
+		o.setElementID (getAttribute("DataNode.Xref", "ID", xref));
 		o.setDataSource (DataSource.getByFullName (getAttribute("DataNode.Xref", "Database", xref)));
 	}
 

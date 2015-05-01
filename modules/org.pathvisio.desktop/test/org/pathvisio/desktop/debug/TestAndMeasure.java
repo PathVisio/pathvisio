@@ -173,7 +173,7 @@ public class TestAndMeasure extends TestCase
 				elt.setMWidth(8);
 				elt.setMHeight(10);
 				elt.setDataSource(BioDataSource.ENTREZ_GENE);
-				elt.setGeneID("3463");
+				elt.setElementID("3463");
 				elt.setTextLabel("INSR");
 				pwy1.add (elt);
 				return elt;
@@ -216,7 +216,7 @@ public class TestAndMeasure extends TestCase
 				elt.setMWidth(8);
 				elt.setMHeight(10);
 				elt.setDataSource(BioDataSource.ENTREZ_GENE);
-				elt.setGeneID("3463");
+				elt.setElementID("3463");
 				elt.setTextLabel("INSR");
 				pwy3.add (elt);
 				VPathwayElement velt = new GeneProduct(vpwy3, elt);

@@ -46,8 +46,6 @@ import org.pathvisio.pluginmanager.impl.Utils;
 import org.pathvisio.pluginmanager.impl.data.BundleVersion;
 import org.pathvisio.pluginmanager.impl.data.Category;
 
-import sun.security.krb5.internal.crypto.Des;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;

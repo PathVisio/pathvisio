@@ -5,5 +5,6 @@ Bundle-SymbolicName: org.pathvisio.launcher
 Bundle-Version: 3.2.0
 Export-Package: org.pathvisio.launcher
 Import-Package: org.osgi.framework;version="1.5.0",
- org.osgi.framework.launch
+ org.osgi.framework.launch,
+ javax.swing
 Main-Class: org.pathvisio.launcher.PathVisioMain

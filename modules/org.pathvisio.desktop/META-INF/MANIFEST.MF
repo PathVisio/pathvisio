@@ -46,7 +46,8 @@ Require-Bundle: org.pathvisio.core;bundle-version="3.2.0",
  org.w3c.dom.svg;bundle-version="1.1.0",
  org.apache.felix.bundlerepository;bundle-version="1.6.6",
  org.junit;bundle-version="4.10.0";resolution:=optional
-Import-Package: org.osgi.framework;version="1.5.0"
+Import-Package: org.osgi.framework;version="1.5.0",
+ javax.swing
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Vendor: PathVisio developers
 Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics

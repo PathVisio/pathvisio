@@ -162,9 +162,8 @@ public class GexImportWizard extends Wizard
 
 		    // add .pgex.
 			String outFile = FileUtils.removeExtension(fileName) + ".pgex";
-
 		    txtOutput.setText(outFile);
-
+		    	
 		    if (txtFileComplete)
 			{
 				setErrorMessage(null);
@@ -255,9 +254,30 @@ public class GexImportWizard extends Wizard
 		public void aboutToHidePanel()
 		{
 			importInformation.guessSettings();
-			importInformation.setGexName (txtOutput.getText());
+			File f = new File(txtOutput.getText());
+			// if the pgex file already exists the file import often
+			// goes wrong (probably because writing in an existing
+			// database - therefore the file name will be changed if the file already exists
+			if(f.exists()) {
+				String filePath = FileUtils.removeExtension(txtOutput.getText());
+				importInformation.setGexName(getFinalPgexFileLocation(filePath));
+			} else {
+				importInformation.setGexName (txtOutput.getText());
+			}
 	    }
 
+		private String getFinalPgexFileLocation(String filepath) {
+			int count = 1;
+			while(true) {
+				String buffer = filepath + "-" + count + ".pgex";
+				File n = new File(buffer);
+				if(!n.exists()) {
+					return buffer;
+				}
+				count++;
+			}
+		}
+		
 		public void actionPerformed(ActionEvent e) {
 			String action = e.getActionCommand();
 

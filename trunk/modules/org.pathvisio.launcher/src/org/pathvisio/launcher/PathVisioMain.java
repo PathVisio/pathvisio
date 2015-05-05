@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -112,14 +113,14 @@ public class PathVisioMain {
 	
 	private BundleContext context;
 		
-	private Properties getLaunchProperties()
+	private Map<String, String> getLaunchProperties()
 	{	
-		Properties launchProperties = new Properties();
+		Map<String, String> launchProperties = new HashMap<String, String>();
 		for (int i = 0; i < frameworkProperties.length; i++) {
-			launchProperties.setProperty(frameworkProperties[i][0], frameworkProperties[i][1]);
+			launchProperties.put(frameworkProperties[i][0], frameworkProperties[i][1]);
 		}
 		// hides the felix cache in .PathVisio/bundle-cache
-		launchProperties.setProperty("felix.cache.rootdir", getBundleCacheFile().getAbsolutePath());
+		launchProperties.put("felix.cache.rootdir", getBundleCacheFile().getAbsolutePath());
 		return launchProperties;
 	}
 	

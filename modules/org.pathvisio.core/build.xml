@@ -33,7 +33,7 @@ class Revision
 	</path>
 
 	<path id="test.class.path">
-	  <pathelement path="../../lib/org.junit_4.10.0.jar"/>
+		<pathelement path="../../lib-build/junit-4.12.jar"/>
 	</path>
 
 </project>

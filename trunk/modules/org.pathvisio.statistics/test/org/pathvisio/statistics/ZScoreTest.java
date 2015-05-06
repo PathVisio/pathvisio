@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.bridgedb.BridgeDb;
 import org.bridgedb.IDMapper;
-import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.DataSourceTxt;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.visualization.Criterion;
@@ -43,7 +43,7 @@ public class ZScoreTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		PreferenceManager.init();
-		BioDataSource.init();
+		DataSourceTxt.init();
 
 		//Load the expression data
 		gexMgr = new GexManager();

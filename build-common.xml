@@ -33,6 +33,7 @@
 		<javac srcdir="src"
 			   includes="**"
 			   destdir="build"
+			   includeantruntime="false"
 			   debug="${debug.mode}">
 		  <classpath refid="project.class.path"/>
 		</javac>
@@ -61,7 +62,7 @@
 		<javac srcdir="test" debug="${debug.mode}"
 					includes="**"
 					destdir="build"
-					source="1.6">
+					includeantruntime="false">
 			<classpath>
 				<path refid="test.class.path"/>
 				<path refid="project.class.path"/>

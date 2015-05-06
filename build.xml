@@ -383,7 +383,7 @@
 		</tar>
 	</target>
 	
-	<target name="zip.bin" depends="plugins.jar" description="create binary tarball and zip">
+	<target name="zip.bin" depends="exe" description="create binary tarball and zip">
 		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
 		<zip destfile="${release.dir}/${binbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">

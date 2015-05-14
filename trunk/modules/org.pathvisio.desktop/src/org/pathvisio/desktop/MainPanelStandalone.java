@@ -21,6 +21,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,6 +36,7 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.core.ApplicationEvent;
+import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.preferences.GlobalPreference;
 import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.desktop.gex.BackpageExpression;
@@ -144,6 +148,11 @@ public class MainPanelStandalone extends MainPanel
 		
 		SearchPane searchPane = new SearchPane(swingEngine);
 		sidebarTabbedPane.addTab ("Search", searchPane);
+
+		String osName = System.getProperty("os.name").toLowerCase();
+		if (osName.startsWith("mac os x")) {
+			initMacListeners();
+		}
 	}
 
 	@Override
@@ -189,7 +198,7 @@ public class MainPanelStandalone extends MainPanel
 				added++;
 			}
 		}
-		recentPathwaysMenu.setEnabled (added != 0);
+		recentPathwaysMenu.setEnabled(added != 0);
 	}
 
 	@Override
@@ -209,7 +218,7 @@ public class MainPanelStandalone extends MainPanel
 	{
 		PreferenceManager prefs = PreferenceManager.getCurrent();
         recent.remove(pwf);
-		recent.add(0,pwf);
+		recent.add(0, pwf);
 		if(recent.size() > 10) recent.remove(recent.size()-1);
 
 	    for (int i = 0; i < recent.size(); ++i)
@@ -232,5 +241,101 @@ public class MainPanelStandalone extends MainPanel
 		}
 		refreshRecentPathwaysMenu();
 	}
-}
 
+
+	/**
+	 * Initializes Mac event listeners via reflection so there is no compile-time dependencies on Apple classes.
+	 * Effectively performs the folowing:
+	 * <pre>
+	 *   com.apple.eawt.Application app = Application.getApplication();
+	 *   app.addApplicationListener(new ApplicationAdapter() {
+	 *     public void handleAbout(ApplicationEvent e) {
+	 *       e.setHandled(true);
+	 *       new HelpAboutAction().actionPerformed(null);
+	 *     }
+	 *     public void handleQuit(ApplicationEvent e) {
+	 *       e.setHandled(false);
+	 *       new ExitGateAction().actionPerformed(null);
+	 *     }
+	 *     public void handlePreferences(ApplicationEvent e) {
+	 *       e.setHandled(true);
+	 *       optionsDialog.showDialog();
+	 *       optionsDialog.dispose();
+	 *     }
+	 *   });
+	 *
+	 *   app.setEnabledPreferencesMenu(true);
+	 * </pre>
+	 */
+	protected void initMacListeners() {
+		try {
+			// load the Apple classes
+			final Class<?> eawtApplicationClass =
+					getClass().getClassLoader().loadClass("com.apple.eawt.Application");
+			final Class<?> eawtApplicationListenerInterface =
+					getClass().getClassLoader().loadClass("com.apple.eawt.ApplicationListener");
+			final Class<?> eawtApplicationEventClass =
+					getClass().getClassLoader().loadClass("com.apple.eawt.ApplicationEvent");
+
+			// method used in the InvocationHandler
+			final Method appEventSetHandledMethod = eawtApplicationEventClass.getMethod("setHandled", boolean.class);
+
+			// Invocation handler used to process Apple application events
+			InvocationHandler handler = new InvocationHandler() {
+
+				@Override
+				public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+					Object appEvent = args[0];
+					if ("handleAbout".equals(method.getName())) {
+						appEventSetHandledMethod.invoke(appEvent, Boolean.TRUE);
+						swingEngine.getActions().aboutAction.actionPerformed(null);
+					} else if ("handleQuit".equals(method.getName())) {
+						appEventSetHandledMethod.invoke(appEvent, Boolean.FALSE);
+						swingEngine.getActions().exitAction.actionPerformed(null);
+					} else if ("handlePreferences".equals(method.getName())) {
+						appEventSetHandledMethod.invoke(appEvent, Boolean.TRUE);
+						standaloneActions.preferencesAction.actionPerformed(null);
+					} else if ("handleOpenFile".equals(method.getName())) {
+						String filename = null;
+						try {
+							Method getFilenameMethod = appEvent.getClass().getDeclaredMethod("getFilename", (Class<?>[]) null);
+							filename = (String) getFilenameMethod.invoke(appEvent, (Object[]) null);
+							Logger.log.info("Opening filename: " + filename);
+							if (swingEngine.canDiscardPathway()) {
+								swingEngine.openPathway(new File(filename));
+							}
+						} catch (Exception ex) {
+							Logger.log.error("Error opening " + filename, ex);
+						}
+
+					} else {
+						System.out.println(method.getName());
+					}
+					return null;
+				}
+			};
+
+			// Create an ApplicationListener proxy instance
+			Object applicationListenerObject = Proxy.newProxyInstance(getClass().getClassLoader(),
+					new Class<?>[]{ eawtApplicationListenerInterface }, handler);
+
+			// get hold of the Application object
+			Method getApplicationMethod = eawtApplicationClass.getMethod("getApplication");
+			Object applicationObject = getApplicationMethod.invoke(null);
+
+			// enable the preferences menu item
+			Method setEnabledPreferencesMenuMethod = eawtApplicationClass.getMethod("setEnabledPreferencesMenu",
+					boolean.class);
+			setEnabledPreferencesMenuMethod.invoke(applicationObject, Boolean.TRUE);
+
+			// Register our proxy instance as an ApplicationListener
+			Method addApplicationListenerMethod = eawtApplicationClass.getMethod("addApplicationListener",
+					eawtApplicationListenerInterface);
+			addApplicationListenerMethod.invoke(applicationObject, applicationListenerObject);
+
+		} catch (Throwable error) {
+			// oh well, we tried
+			Logger.log.error("Problem setting up Mac bindings", error);
+		}
+	}
+}

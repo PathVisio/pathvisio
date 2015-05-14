@@ -124,59 +124,29 @@ public class StandaloneActions implements ApplicationEventListener
 	}
 	
 	/**
-		 * Help -> Plugin Manager
-		 * Show a list of active plugins and errors that
-		 * occurred while initializing the plugin manager.
-		 */
-		public static class NewPluginManagerAction extends AbstractAction
-		{
-			PvDesktop pvDesktop;
-	
-			public NewPluginManagerAction(PvDesktop desktop)
-			{
-				super();
-				this.pvDesktop = desktop;
-				putValue(NAME, "Plugin manager");
-				putValue(SHORT_DESCRIPTION, "Information about active plugins");
-			}
-	
-			public void actionPerformed(ActionEvent e)
-			{
-				pvDesktop.getPluginManagerExternal().showGui(pvDesktop.getFrame());
-			}
-		}
-
-	/**
 	 * Help -> Plugin Manager
 	 * Show a list of active plugins and errors that
 	 * occurred while initializing the plugin manager.
 	 */
-//	public static class PluginManagerAction extends AbstractAction
-//	{
-//		PvDesktop pvDesktop;
-//
-//		public PluginManagerAction(PvDesktop desktop)
-//		{
-//			super();
-//			this.pvDesktop = desktop;
-//			putValue(NAME, "Plugin manager");
-//			putValue(SHORT_DESCRIPTION, "Information about active plugins");
-//		}
-//
-//		public void actionPerformed(ActionEvent e)
-//		{
-//			if(PreferenceManager.getCurrent().getBoolean(PluginDialogSwitch.PLUGIN_DIALOG_SWITCH)) {
-//				// show new plugin dialog
-//				PluginManagerDialog dlg = new PluginManagerDialog(pvDesktop);
-//				dlg.createAndShowGUI();
-//			} else {
-//				// show old plugin dialog (default)
-//				PluginManagerDlg dlg = new PluginManagerDlg (pvDesktop);
-//				dlg.createAndShowGUI();
-//			}
-//		}
-//	}
+	public static class NewPluginManagerAction extends AbstractAction
+	{
+		PvDesktop pvDesktop;
 	
+		public NewPluginManagerAction(PvDesktop desktop)
+		{
+			super();
+			this.pvDesktop = desktop;
+			putValue(NAME, "Plugin manager");
+			putValue(SHORT_DESCRIPTION, "Information about active plugins");
+		}
+	
+		public void actionPerformed(ActionEvent e)
+		{
+			pvDesktop.getPluginManagerExternal().showGui(pvDesktop.getFrame());
+		}
+	}
+
+
 	/**
 	 * Plugins -> Install local plugins
 	 * allows users to start all bundles in a directory
@@ -286,11 +256,6 @@ public class StandaloneActions implements ApplicationEventListener
 		}
 
 	}
-
-	/**
-	 * Open the about dialog,
-	 * showing a list of authors and the current program version
-	 */
 
 	/**
 	 * Show preferences dialog.

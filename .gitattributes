@@ -78,6 +78,7 @@ JavaApplicationStub   text eol=lf
 *.gif     binary
 *.gz      binary
 *.ico     binary
+*.icns    binary
 *.jar     binary
 *.jnilib  binary
 *.jpeg    binary

@@ -3,6 +3,8 @@ src/core/org/pathvisio/Revision.java
 *.rej
 bin/
 build/
+modules/*.jar
+release/
 lib/resources.jar
 pathvisio.jar
 pathvisio_core.jar

@@ -420,29 +420,36 @@
 		</checkstyle>
 	</target>
 
-	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="lib-build/jarbundler-2.1.0.jar" />
+	<target name="appbundler" depends="exe" description="Generate OS X Bundle">
+		<property name="app.name" value="PathVisio" />
+		<property name="app.icon" value="bigcateye.icns"/>
+		<property name="app.dir" value="${release.dir}/${app.name}.app" />
+		<property name="app.executableName" value="JavaApplicationStub" />
+		<tstamp>
+			<format property="year" pattern="yyyy"/>
+		</tstamp>
 
-	<target name="jarbundler" depends="plugins.jar" description="Generate OS X Bundle">
-		<!-- On operating systems other than Mac OS you have to set the stubfile property with -Dstubfile=/path/to/JavaApplicationStub.
-		You can find JavaApplicationStub on any Mac OS X installation and copy it from there. !-->
-		<jarbundler dir="${release.dir}" name="PathVisio" mainclass="org.pathvisio.desktop.GuiMain"
-				stubfile="${stubfile}"
-				icon="lib-build/bigcateye.icns">
-		  <documenttype name="PathVisio Pathway"
-						extensions="gpml"
-						role="Editor"/>
-			<jarfileset dir=".">
-				<include name="lib/*.jar" />
-				<include name="lib/**/*.jar" />
-				<include name="pathvisio.jar" />
-			</jarfileset>
-		</jarbundler>
-		<zip destfile="${release.dir}/PathVisio.App.zip">
-			<zipfileset dir="${release.dir}">
-				<include name="PathVisio.app/**" />
-			</zipfileset>
+		<mkdir dir="${app.dir}/Contents/Java"/>
+		<mkdir dir="${app.dir}/Contents/MacOS"/>
+		<mkdir dir="${app.dir}/Contents/Resources/en.lproj"/>
+		<copy todir="${app.dir}/Contents/Java" file="pathvisio.jar" />
+		<copy todir="${app.dir}/Contents/MacOS" file="${app.executableName}" />
+		<copy todir="${app.dir}/Contents/Resources" file="lib-build/${app.icon}" />
+		<echo message="AAPL????" file="${app.dir}/Contents/PkgInfo" />
+		<copy todir="${app.dir}/Contents/" file="Info.plist" overwrite="true">
+			<filterset>
+				<filter token="PV_APP_NAME" value="${app.name}" />
+				<filter token="PV_APP_VERSION" value="${pathvisio.version}" />
+				<filter token="PV_APP_SHORT_VERSION" value="${pathvisio.version}" />
+				<filter token="PV_APP_ICON" value="${app.icon}" />
+				<filter token="PV_APP_COPYRIGHT" value="2006-${year} BiGCaT Bioinformatics" />
+			</filterset>
+		</copy>
+		<zip destfile="${release.dir}/${app.name}.app.zip">
+			<zipfileset prefix="${app.name}.app" dir="${app.dir}" excludes="${app.dir}/Contents/MacOS/${app.executableName}" />
+			<zipfileset prefix="${app.name}.app/Contents/MacOS" file="${app.dir}/Contents/MacOS/${app.executableName}" filemode="755" />
 		</zip>
-		<delete dir="${release.dir}/PathVisio.app"/>
+		<delete dir="${app.dir}" />
 	</target>
 
 	<target name="wp-bots" depends="wpclient.jar" description="">

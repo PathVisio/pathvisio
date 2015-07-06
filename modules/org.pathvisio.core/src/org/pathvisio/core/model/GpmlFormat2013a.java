@@ -1,6 +1,6 @@
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2011 BiGCaT Bioinformatics
+// Copyright 2006-2015 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -439,7 +439,7 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 				mapGroup (o, e);
 				break;
 			case BIOPAX:
-				mapBiopax(o, e);
+				mapBiopax(o, e, p);
 				break;
 			default:
 				throw new ConverterException("Invalid ObjectType'" + tag + "'");
@@ -898,7 +898,7 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		}
 	}
 
-	protected void mapBiopax(PathwayElement o, Element e) throws ConverterException
+	protected void mapBiopax(PathwayElement o, Element e, Pathway p) throws ConverterException
 	{
 		//this method clones all content,
 		//getContent will leave them attached to the parent, which we don't want
@@ -920,6 +920,13 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		Document bp = new Document(root);
 
 		((BiopaxElement)o).setBiopax(bp);
+		
+		for (Object f : e.getChildren("openControlledVocabulary", GpmlFormat.BIOPAX)){
+			p.addOntologyTag(((Element) f).getChild("ID", GpmlFormat.BIOPAX).getText(),
+					((Element) f).getChild("TERM", GpmlFormat.BIOPAX).getText(),
+					((Element) f).getChild("Ontology", GpmlFormat.BIOPAX).getText()
+					);
+		}
 	}
 
 }

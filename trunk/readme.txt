@@ -46,7 +46,7 @@ where <target> is one of:
 
 compile:   just compile all classes
 docs:      generate all apidocs
-jar:       generate executable jar file
+exe:       generate executable jar file
 clean:     remove all generated files
 dist:      generate zip package and windows installer. 
            The zip package only includes files needed to *run* not compile.

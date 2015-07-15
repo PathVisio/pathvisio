@@ -8,6 +8,8 @@
 	<property name="pathvisio.version" value="3.2.0"/>
 	<property name="bundle.dest" value=".."/>
 
+	<property name="haltonfailure" value="true"/>
+
 	<target name="prepare-jar-name">
 		<!-- the name of the plug-in jar uses the project name of the calling build file -->
 		<property name="jar.name" value="${bundle.dest}/${ant.project.name}.jar"/>
@@ -68,8 +70,9 @@
 				<path refid="project.class.path"/>
 			</classpath>
 		</javac>
-		<junit printsummary="on" haltonfailure="true" fork="true" dir=".">
+		<junit printsummary="on" haltonfailure="${haltonfailure=}" fork="true" dir=".">
 			<formatter type="brief" usefile="false"/>
+			<formatter type="xml" usefile="yes"/>
 			<classpath>
 				<pathelement path="build"/>
 				<pathelement path="resources"/>

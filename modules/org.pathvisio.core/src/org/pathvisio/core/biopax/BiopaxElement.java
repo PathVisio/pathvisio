@@ -180,7 +180,9 @@ public class BiopaxElement extends PathwayElement
 					//by pubmed id
 					BiopaxProperty bp1 = e.getProperty(PropertyType.ID.name());
 					BiopaxProperty bp2 = elm.getProperty(PropertyType.ID.name());
-					if(!bp1.getValue().equals("") && !bp2.getValue().equals("") && bp1.getValue().equals(bp2.getValue())) {
+					if(bp1 != null && !"".equals(bp1.getValue()) &&
+					   bp2 != null && !"".equals(bp2.getValue()) &&
+					    bp1.getValue().equals(bp2.getValue())) {
 						Logger.log.trace("Equal pubmed id!");
 						elm.setId(e.getId());
 						return;

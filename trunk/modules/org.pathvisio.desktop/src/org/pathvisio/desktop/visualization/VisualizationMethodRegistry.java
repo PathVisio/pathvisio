@@ -23,11 +23,14 @@ import java.util.Set;
 /**
  * Creates a VisualizationMethod instance by name.
  * @author thomas
+ * @author anwesha
  */
 public class VisualizationMethodRegistry {
 	private Map<String, VisualizationMethodProvider> methodProviders =
 		new HashMap<String, VisualizationMethodProvider>();
 	private Map<String, VisualizationMethodProvider> edgemethodProviders =
+			new HashMap<String, VisualizationMethodProvider>();
+	private Map<String, VisualizationMethodProvider> complexmethodProviders =
 			new HashMap<String, VisualizationMethodProvider>();
 
 	/**
@@ -82,6 +85,35 @@ public class VisualizationMethodRegistry {
 	 */
 	public VisualizationMethod createEdgeVisualizationMethod(String name) {
 		VisualizationMethodProvider p = edgemethodProviders.get(name);
+		if(p != null) {
+			return p.create();
+		}
+		return null;
+	}
+	
+	/**
+	 * Register a visualization method for Complexes with the given name.
+	 * The VisualizationMethodProvider will be used to create instances
+	 * of VisualizationMethod.
+	 */
+	public void registerComplexMethod(String name, VisualizationMethodProvider p) {
+		complexmethodProviders.put(name, p);
+	}
+
+	public void unregisterComplexMethod(String name) {
+		complexmethodProviders.remove(name);
+	}
+
+	public Set<String> getRegisteredComplexMethods() {
+		return complexmethodProviders.keySet();
+	}
+	/**
+	 * Creates an instance of a VisualizationMethod subclass that is registered
+	 * by the given name. Returns null if there is no subclass registered for the
+	 * name.
+	 */
+	public VisualizationMethod createComplexVisualizationMethod(String name) {
+		VisualizationMethodProvider p = complexmethodProviders.get(name);
 		if(p != null) {
 			return p.create();
 		}

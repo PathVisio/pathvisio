@@ -1,16 +1,2 @@
-Changes since PV 1.0 Release candidate 3:
-
-A few bugs were found in the release candidate, and the most annoying ones have been fixed, such as
-- An issue where the keyboard focus is lost and PathVisio doesn't respond to keyboard commands any more is now fixed.
-- The multi-select key changed from ctrl to shift to accommodate mac users who use ctrl to simulate a right-click
-- Undo-ing delete operations was not possible before, this is now fixed.
-
-Changes since PV 1.0 Release candidate 2:
-
-* "Undo" feature added to undo any changes made
-* "Group" feature to group related pathway elements
-* Copy / Paste now uses the global clipboard
-* Alignment & Stacking Toolbar
-* Support for new arrow types and shapes
-* Swing-based drawing canvas
-* fixes for many bugs 
+Check all release notes here:
+http://developers.pathvisio.org/wiki/ReleaseNotes

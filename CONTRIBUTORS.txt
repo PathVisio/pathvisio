@@ -1,21 +1,34 @@
-R.M.H. Besseling
-S.P.M. Crijns
-I. Kaashoek
-Margriet M. Palm
-E.D Pelgrim
+# DEVELOPERS TEAM
+Martina Kutmon
+Jonathan Melius
+Anwesha Bohler
+Nuno Nunes
 Thomas Kelder
 Martijn van Iersel
-Alex Pico
 Kristina Hanspers
-E.J. Creusen
-P. Moeskops
-Adem Bilican
+Alexander Pico
+
+# CONTRIBUTORS
+Adem Bilicna
+Augustin Luna
+Bing Lui 
+Christ Leemans
+Eric Creussen
+Erik Pelgrin
+Esterh Neuteboom
+Ferry Jagers
+Hakim Achterberg
+Harm Nijveen
+Irene Kaashoek
+Justin Elser
+Kumar Chanden
 Margot Sunshine
 Mark Woon
-Bing Liu
-Ferry Jagers
-Justin Elser
-Martina Kutmon
-Harm Nijveen
-Sravanthi Sinha
+Margiet Palm
+Pim Moeskops
 Praveen Kumar
+Rene Besseling
+Rianne Fijten
+Sjoerd Crijns
+Sravanthi Sinha
+Stefan van Helden

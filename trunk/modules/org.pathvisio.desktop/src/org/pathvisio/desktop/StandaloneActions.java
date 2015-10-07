@@ -62,7 +62,6 @@ public class StandaloneActions implements ApplicationEventListener
 	public final Action preferencesAction;
 	public final Action searchAction;
 	public final Action newPluginManagerAction;
-//	public final Action pluginManagerAction;
 	public final Action loadLocalBundlesAction;
 	public final Action printAction;
 
@@ -76,7 +75,6 @@ public class StandaloneActions implements ApplicationEventListener
 		selectMetaboliteDbAction = new SelectGeneDbAction(desktop, "Metabolite");
 		preferencesAction = new PreferencesAction(desktop);
 		searchAction = new SearchAction(swingEngine);
-//		pluginManagerAction = new PluginManagerAction(desktop);
 		newPluginManagerAction = new NewPluginManagerAction(desktop);
 		loadLocalBundlesAction = new LoadLocalBundlesAction(desktop);
 		//registering this class to receive Application level events (used in PrintAction) 

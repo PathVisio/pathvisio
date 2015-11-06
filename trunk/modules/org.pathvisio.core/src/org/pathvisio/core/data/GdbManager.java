@@ -133,6 +133,8 @@ public class GdbManager extends AbstractListModel
 	 * depends on the value of the DB_ENGINE_GDB value
 	 *
 	 * use null to disconnect the current db
+	 * 
+	 * @author anwesha
 	 */
 	public void setInteractionDb(String connectString) throws IDMapperException
 	{
@@ -143,7 +145,7 @@ public class GdbManager extends AbstractListModel
 			interactions = BridgeDb.connect(connectString);
 			if (interactions != null)
 			{
-				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_METADB, (connectString));
+				PreferenceManager.getCurrent().set(GlobalPreference.DB_CONNECTSTRING_IDB, (connectString));
 				addMapper(interactions, connectString);
 			}
 		}
@@ -246,7 +248,10 @@ public class GdbManager extends AbstractListModel
 				Logger.log.error("Setting previous Metabolite db failed.", e);
 			}
 		}
-		// then do the Interaction database
+		/**
+		 *  then do the Interaction database
+		 * @author anwesha 
+		 */
 		gdbName = prefs.get(GlobalPreference.DB_CONNECTSTRING_IDB);
 		if(!gdbName.equals("") && !prefs.isDefault (GlobalPreference.DB_CONNECTSTRING_IDB))
 		{

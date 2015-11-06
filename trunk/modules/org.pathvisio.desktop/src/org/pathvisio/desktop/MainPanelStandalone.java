@@ -99,6 +99,10 @@ public class MainPanelStandalone extends MainPanel
 		JMenu dataMenu = new JMenu("Data");
 		addToMenu (standaloneActions.selectGeneDbAction, dataMenu);
 		addToMenu (standaloneActions.selectMetaboliteDbAction, dataMenu);
+		/**
+		 * @author anwesha
+		 */
+		addToMenu (standaloneActions.selectInteractionDbAction, dataMenu);
 
 		JMenu viewMenu = new JMenu("View");
 		JMenu zoomMenu = new JMenu("Zoom");

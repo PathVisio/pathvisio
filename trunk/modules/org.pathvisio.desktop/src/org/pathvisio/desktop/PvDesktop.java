@@ -425,10 +425,18 @@ public class PvDesktop implements ApplicationEventListener, GdbEventListener, Vi
 					swingEngine.getGdbManager().setGeneDb(dbName);
 					PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_GDB, dbName);
 			}
-				else
+				else if (dbType.equals("Metabolite"))
 				{
 					swingEngine.getGdbManager().setMetaboliteDb(dbName);
 					PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_METADB, dbName);
+				}
+				/**
+				 * @author anwesha
+				 */
+				else if (dbType.equals("Interaction"))
+				{
+					swingEngine.getGdbManager().setInteractionDb(dbName);
+					PreferenceManager.getCurrent().set (GlobalPreference.DB_CONNECTSTRING_IDB, dbName);
 				}
 			} else {
 				String msg = "This identifier mapping database is already loaded."; 

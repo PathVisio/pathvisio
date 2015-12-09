@@ -27,6 +27,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -48,6 +53,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.bridgedb.AttributeMapper;
 import org.bridgedb.DataSource;
@@ -56,7 +69,10 @@ import org.bridgedb.IDMapperStack;
 import org.bridgedb.Xref;
 import org.pathvisio.core.data.XrefWithSymbol;
 import org.pathvisio.core.debug.Logger;
+import org.pathvisio.core.model.DataNodeType;
 import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.model.ObjectType;
+import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.DataSourceModel;
@@ -65,31 +81,42 @@ import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.completer.CompleterQueryTextField;
 import org.pathvisio.gui.completer.OptionProvider;
 import org.pathvisio.gui.util.PermissiveComboBox;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class LineDialog extends PathwayElementDialog implements ItemListener {
 
 	/**
-	 * Dialog for editing Reactions/ Interactions. In addition to the 
-	 * standard comments and literature tabs, this has a tab for looking 
-	 * up accession numbers of reactions/interactions.
+	 * Dialog for editing Reactions/ Interactions. In addition to the standard
+	 * comments and literature tabs, this has a tab for looking up accession
+	 * numbers of reactions/interactions.
 	 */
 	private static final long serialVersionUID = 1L;
-	
-
-	protected LineDialog(final SwingEngine swingEngine, final PathwayElement e, final boolean readonly, final Frame frame, final Component locationComp) {
-		super(swingEngine, e, readonly, frame, "Interaction properties", locationComp);
-		getRootPane().setDefaultButton(null);
-		setButton.requestFocus();
-	}
-	CompleterQueryTextField idText;
+	private CompleterQueryTextField idText;
+	private String startNodeRef;
+	private String endNodeRef;
 	private PermissiveComboBox dbCombo;
 	private PermissiveComboBox typeCombo;
 	private DataSourceModel dsm;
-	XrefWithSymbol ref;
-	String id;
+//	private XrefWithSymbol ref;
+	private String rheaWS = "http://www.rhea-db.org/rest/1.0/ws/reaction/cmlreact?q=";
+	private Pathway pathway;
+	
+	protected LineDialog(final SwingEngine swingEngine, final PathwayElement e,
+			final boolean readonly, final Frame frame,
+			final Component locationComp) {
+		super(swingEngine, e, readonly, frame, "Interaction properties",
+				locationComp);
+		getRootPane().setDefaultButton(null);
+		setButton.requestFocus();
+		
+	}
 
 	public final void refresh() {
 		super.refresh();
+		pathway = getInput().getPathway();
+		startNodeRef = getInput().getStartGraphRef();
+		endNodeRef = getInput().getEndGraphRef();
 		idText.setText(getInput().getElementID());
 		dsm.setSelectedItem(input.getDataSource());
 		String lType = getInput().getEndLineType().toString();
@@ -98,106 +125,156 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		pack();
 	}
 
-	private void applyAutoFill(final XrefWithSymbol ref)
-	{
-		String sym = ref.getSymbol();
-		if (sym == null || sym.equals ("")) {
-			sym = ref.getId();
-		}
-		idText.setText(ref.getId());
-		String type = ref.getDataSource().getType();
-		if (!type.equals(null)) {
-			typeCombo.setSelectedItem(LineType.LINE);
-		}
-		dsm.setSelectedItem(ref.getDataSource());
-		}
+	/**
+	 * Search for identifiers for the selected interaction in Rhea
+	 * (http://www.rhea-db.org/home) based on identifiers of the nodes that are
+	 * connected by the interaction
+	 * @param pathway2 
+	 */
+	private void search(Pathway pwy, final String startNode, final String endNode ) {
 
-//	/**
-//	 * Search for symbols or ids in the synonym databases that match
-//	 * the given text
-//	 */
-//	private void search(final String aText)
-//	{
-//		if(aText == null || "".equals(aText.trim())) {
-//			JOptionPane.showMessageDialog(this, "No search term specified, " +
-//			"please type something in the 'Search' field");
-//			return;
-//		}
-//		final String text = aText.trim();
-//
-//		final ProgressKeeper progress = new ProgressKeeper();
-//		ProgressDialog dialog = new ProgressDialog(null, "Searching", progress, true, true);
-//		dialog.setLocationRelativeTo(this);
-//
-//		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
-//			private static final int QUERY_LIMIT = 200;
-//
-//			protected List<XrefWithSymbol> doInBackground() throws IDMapperException
-//			{
-//				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
-//
-//			    //The result set
-//				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
-//
-//		    	for (Map.Entry<Xref, String> i :
-//		    		gdb.freeAttributeSearch( text, AttributeMapper.MATCH_ID, QUERY_LIMIT).entrySet())
-//		    	{
-//		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
-//		    	}
-//		    	for (Map.Entry<Xref, String> i :
-//		    		gdb.freeAttributeSearch( text, "Symbol", QUERY_LIMIT).entrySet())
-//		    	{
-//		    		result.add (new XrefWithSymbol (i.getKey(), i.getValue()));
-//		    	}
-//				return result;
-//			}
-//
-//			@Override
-//			public void done()
-//			{
-//				progress.finished();
-//				if (!progress.isCancelled())
-//				{
-//					List<XrefWithSymbol> results = null;
-//					try
-//					{
-//						results = get();
-//						//Show results to user
-//						if(results != null && results.size() > 0) {
-//							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
-//							resultDialog.setVisible(true);
-//							XrefWithSymbol selected = resultDialog.getSelected();
-//							if(selected != null) {
-//								applyAutoFill(selected);
-//							}
-//						} else {
-//							JOptionPane.showMessageDialog(LineDialog.this,
-//									"No results for '" + text + "'");
-//						}
-//					} catch (InterruptedException e) {
-//						//Ignore, thread interrupted. Same as cancel.
-//					}
-//					catch (ExecutionException e) {
-//						JOptionPane.showMessageDialog(LineDialog.this,
-//								"Exception occurred while searching,\n" +
-//								"see error log for details.", "Error",
-//								JOptionPane.ERROR_MESSAGE);
-//						Logger.log.error("Error while searching", e);
-//					}
-//				}
-//			}
-//		};
-//		sw.execute();
-//		dialog.setVisible(true);
-//	}
+	 String startNodeId = getElementId(startNode, pwy);
+	 String endNodeId = getElementId(endNode,pwy );
+		
+		if ((startNodeId == null || "".equals(startNodeId.trim())) &&(
+				endNodeId == null || "".equals(endNodeId.trim()))) {
+			JOptionPane
+					.showMessageDialog(
+							this,
+							"Interactors not annotated, "
+									+ "please annotate the interacting datanodes by double-clicking on them");
+			return;
+		}
+		String query = "";
+		// Eg. query:
+		// http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632+CHEBI:16301
+		
+		if(startNodeId == null || "".equals(startNodeId.trim())){
+					query = rheaWS + endNodeId.trim();	
+				}else if(endNodeId == null || "".equals(endNodeId.trim())){
+					query = rheaWS + startNodeId.trim();	
+				}else {
+					query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
+					}
+		
+//		String query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
+		final String text = query.trim();
+		System.out.println("query:" + text);
+
+		final ProgressKeeper progress = new ProgressKeeper();
+		ProgressDialog dialog = new ProgressDialog(this, "Searching", progress,
+				true, true);
+		dialog.setLocationRelativeTo(this);
+
+		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
+			private static final int QUERY_LIMIT = 200;
+
+			protected List<XrefWithSymbol> doInBackground()
+					throws IDMapperException {
+
+				// querying Rhea using webservice
+
+				// The result set
+				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
+				try {
+					DocumentBuilderFactory dbf = DocumentBuilderFactory
+							.newInstance();
+					DocumentBuilder db = dbf.newDocumentBuilder();
+					
+					URL queryText = new URL(text);
+					org.w3c.dom.Document doc = db.parse(queryText.openStream());
+			
+					 String text2parse = doc.getDocumentElement().getTextContent();
+					 text2parse= text2parse.replaceAll("^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
+				     .replace("\t"," ");
+					 String[] parsedText = text2parse.split("\n");
+					 
+					 for(int i =0;i<  parsedText.length;i=i+8){
+						 /*
+						  * Get id
+						  */
+//						System.out.println("id" + parsedText[i]);
+						Xref intxref = new Xref(parsedText[i],
+								DataSource.getExistingBySystemCode("Rh"));
+
+						/*
+						 * Get uri
+						 */
+						String interactionUri = parsedText[i+2];
+//						System.out.println("uri" + interactionUri);
+						//
+						result.add(new XrefWithSymbol(intxref, "reaction")); 
+					 }
+					//
+				} catch (ParserConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SAXException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
+
+				return result;
+			}
+
+			private void applyAutoFill(XrefWithSymbol ref)
+			{
+				input.setElementID(ref.getId());
+				input.setDataSource(ref.getDataSource());
+				idText.setText(ref.getId());
+				dsm.setSelectedItem(ref.getDataSource());
+			}		
+			@Override
+			public void done() {
+				progress.finished();
+				if (!progress.isCancelled()) {
+					List<XrefWithSymbol> results = null;
+					try {
+						results = get();
+						// Show results to user
+						if (results != null && results.size() > 0) {
+							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog(
+									"Results", results);
+							resultDialog.setVisible(true);
+							XrefWithSymbol selected = resultDialog
+									.getSelected();
+							if (selected != null) {
+								applyAutoFill(selected);
+							}
+						} else {
+							JOptionPane.showMessageDialog(LineDialog.this,
+									"No results for '" + text + "'");
+						}
+					} catch (InterruptedException e) {
+						// Ignore, thread interrupted. Same as cancel.
+					} catch (ExecutionException e) {
+						JOptionPane.showMessageDialog(LineDialog.this,
+								"Exception occurred while searching,\n"
+										+ "see error log for details.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+						Logger.log.error("Error while searching", e);
+					}
+				}
+			}
+		};
+		sw.execute();
+		dialog.setVisible(true);
+	}
 
 	protected final void addCustomTabs(final JTabbedPane parent) {
+		
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 
 		JPanel searchPanel = new JPanel();
 		JPanel fieldPanel = new JPanel();
-//		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
+		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
 		fieldPanel.setBorder(BorderFactory.createTitledBorder("Manual entry"));
 		GridBagConstraints panelConstraints = new GridBagConstraints();
 		panelConstraints.fill = GridBagConstraints.BOTH;
@@ -210,66 +287,59 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		panel.add(searchPanel, panelConstraints);
 		panel.add(fieldPanel, panelConstraints);
 
-		//Search panel elements
+		// Search panel elements
 		searchPanel.setLayout(new GridBagLayout());
-//Commenting out search for now due to lack of interaction annotation database
-//		final JTextField searchText = new JTextField();
-//		final JButton searchButton = new JButton("Search");
-
-		//Key listener to search when user presses Enter
-//		searchText.addKeyListener(new KeyAdapter() {
-//			public void keyReleased(final KeyEvent e) {
-//				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//					searchButton.requestFocus();
-//					search(searchText.getText());
-//				}
-//			}
-//		});
-
-//		searchButton.addActionListener(new ActionListener() {
-//			public void actionPerformed(final ActionEvent e) {
-//				search(searchText.getText());
-//			}
-//		});
-//		searchButton.setToolTipText("Search the synonym database for references, based on the text label");
+		
+		final JLabel searchText = new JLabel("Search in Rhea");
+		final JButton searchButton = new JButton("Search");
+//		 final String startNodeId = getElementId(startNodeRef);
+//		 final String endNodeId = getElementId(endNodeRef);
+		searchButton.addActionListener(new ActionListener() {
+			public void actionPerformed(final ActionEvent e) {
+				search(getInput().getPathway(), getInput().getStartGraphRef(), getInput().getEndGraphRef());
+			}
+		});
+		searchButton
+				.setToolTipText("Search the online Rhea database for references, based on the identifiers of the interactors");
 
 		GridBagConstraints searchConstraints = new GridBagConstraints();
 		searchConstraints.gridx = GridBagConstraints.RELATIVE;
 		searchConstraints.fill = GridBagConstraints.HORIZONTAL;
+
 		searchConstraints.weightx = 1;
-//		searchPanel.add(searchText, searchConstraints);
+		searchPanel.add(searchText, searchConstraints);
 
 		searchConstraints.weightx = 0;
-//		searchPanel.add(searchButton, searchConstraints);
+		searchPanel.add(searchButton, searchConstraints);
 
-		//Manual entry panel elements
+		// Manual entry panel elements
 		fieldPanel.setLayout(new GridBagLayout());
-		
+
 		JLabel typeLabel = new JLabel("Biological Type");
 		JLabel idLabel = new JLabel("Identifier");
 		JLabel dbLabel = new JLabel("Database");
-		
+
 		idText = new CompleterQueryTextField(new OptionProvider() {
 			public List<String> provideOptions(final String text) {
-				if(text == null) {
+				if (text == null) {
 					return Collections.emptyList();
 				}
 
 				IDMapperStack gdb = swingEngine.getGdbManager().getCurrentGdb();
 				Set<Xref> refs = new HashSet<Xref>();
-				try
-				{
+				try {
 					refs = gdb.freeSearch(text, 100);
+				} catch (IDMapperException ignore) {
 				}
-				catch (IDMapperException ignore) {}
 
-				//Only take identifiers
+				// Only take identifiers
 				List<String> ids = new ArrayList<String>();
-				for (Xref ref : refs) ids.add(ref.getId());
+				for (Xref ref : refs)
+					ids.add(ref.getId());
 				return ids;
 			}
 		}, true);
-		
+
 		idText.setCorrectCase(false);
 
 		dsm = new DataSourceModel();
@@ -277,7 +347,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		dsm.setSpeciesFilter(swingEngine.getCurrentOrganism());
 		dbCombo = new PermissiveComboBox(dsm);
 		typeCombo = new PermissiveComboBox(LineType.getValues());
-		
+
 		GridBagConstraints c = new GridBagConstraints();
 		c.ipadx = c.ipady = 5;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
@@ -290,37 +360,46 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		c.gridx = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
-		
+
 		fieldPanel.add(typeCombo, c);
 		fieldPanel.add(idText, c);
 		fieldPanel.add(dbCombo, c);
 
 		idText.getDocument().addDocumentListener(new DocumentListener() {
-			public void changedUpdate(final DocumentEvent e) { setText();	}
-			public void insertUpdate(final DocumentEvent e) {	setText(); }
-			public void removeUpdate(final DocumentEvent e) { setText(); }
+			public void changedUpdate(final DocumentEvent e) {
+				setText();
+			}
+
+			public void insertUpdate(final DocumentEvent e) {
+				setText();
+			}
+
+			public void removeUpdate(final DocumentEvent e) {
+				setText();
+			}
+
 			private void setText() {
 				getInput().setElementID(idText.getText());
 			}
 		});
 
-		dsm.addListDataListener(new ListDataListener()
-		{
+		dsm.addListDataListener(new ListDataListener() {
 
-			public void contentsChanged(final ListDataEvent arg0)
-			{
-				getInput().setDataSource((DataSource)dsm.getSelectedItem());
+			public void contentsChanged(final ListDataEvent arg0) {
+				getInput().setDataSource((DataSource) dsm.getSelectedItem());
 
 			}
 
-			public void intervalAdded(final ListDataEvent arg0) {	}
+			public void intervalAdded(final ListDataEvent arg0) {
+			}
 
-			public void intervalRemoved(final ListDataEvent arg0) { }
+			public void intervalRemoved(final ListDataEvent arg0) {
+			}
 		});
 
 		typeCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
-				LineType item = (LineType)typeCombo.getSelectedItem();
+				LineType item = (LineType) typeCombo.getSelectedItem();
 				getInput().setEndLineType(item);
 				refresh();
 			}
@@ -334,8 +413,35 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		parent.setSelectedComponent(panel);
 	}
 
+	private String getElementId(String nodeRef, Pathway pwy) {
+		System.out.println("ref "+nodeRef);
+		String id = "";
+		// System.out.println(pathway.getMappInfo().getMapInfoName());
+		for (PathwayElement pe : pwy.getDataObjects()) {
+			if(!(pe.getGraphId()==null)){
+				if (pe.getGraphId().equalsIgnoreCase(nodeRef)) {
+					id = pe.getElementID();
+					System.out.println("id "+ id);
+					if(pe.getDataSource() != DataSource.getExistingBySystemCode("Ce")){
+						id = pe.getTextLabel();
+					}
+				}else{
+					//TODO
+					/*
+					 * handle anchors
+					 */
+					if(pe.getObjectType() == ObjectType.LINE){
+//						System.out.println(pe.getMPoints());
+					}
+				}
+//				System.out.println("node graph id "+pe.getGraphId());	
+			}
+		}
+		return id;
+	}
+
 	@Override
 	public void itemStateChanged(final ItemEvent arg0) {
 		// TODO Auto-generated method stub
-		}
+	}
 }

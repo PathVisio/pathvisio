@@ -25,18 +25,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
@@ -45,9 +40,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -56,20 +49,13 @@ import javax.swing.event.ListDataListener;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
-import org.bridgedb.AttributeMapper;
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
 import org.bridgedb.Xref;
 import org.pathvisio.core.data.XrefWithSymbol;
 import org.pathvisio.core.debug.Logger;
-import org.pathvisio.core.model.DataNodeType;
 import org.pathvisio.core.model.LineType;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
@@ -81,7 +67,6 @@ import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.completer.CompleterQueryTextField;
 import org.pathvisio.gui.completer.OptionProvider;
 import org.pathvisio.gui.util.PermissiveComboBox;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class LineDialog extends PathwayElementDialog implements ItemListener {
@@ -98,10 +83,10 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	private PermissiveComboBox dbCombo;
 	private PermissiveComboBox typeCombo;
 	private DataSourceModel dsm;
-//	private XrefWithSymbol ref;
+	// private XrefWithSymbol ref;
 	private String rheaWS = "http://www.rhea-db.org/rest/1.0/ws/reaction/cmlreact?q=";
 	private Pathway pathway;
-	
+
 	protected LineDialog(final SwingEngine swingEngine, final PathwayElement e,
 			final boolean readonly, final Frame frame,
 			final Component locationComp) {
@@ -109,7 +94,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 				locationComp);
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
-		
+
 	}
 
 	public final void refresh() {
@@ -129,15 +114,17 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	 * Search for identifiers for the selected interaction in Rhea
 	 * (http://www.rhea-db.org/home) based on identifiers of the nodes that are
 	 * connected by the interaction
-	 * @param pathway2 
+	 * 
+	 * @param pathway2
 	 */
-	private void search(Pathway pwy, final String startNode, final String endNode ) {
+	private void search(Pathway pwy, final String startNode,
+			final String endNode) {
 
-	 String startNodeId = getElementId(startNode, pwy);
-	 String endNodeId = getElementId(endNode,pwy );
-		
-		if ((startNodeId == null || "".equals(startNodeId.trim())) &&(
-				endNodeId == null || "".equals(endNodeId.trim()))) {
+		String startNodeId = getElementId(startNode, pwy);
+		String endNodeId = getElementId(endNode, pwy);
+
+		if ((startNodeId == null || "".equals(startNodeId.trim()))
+				&& (endNodeId == null || "".equals(endNodeId.trim()))) {
 			JOptionPane
 					.showMessageDialog(
 							this,
@@ -148,16 +135,16 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		String query = "";
 		// Eg. query:
 		// http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632+CHEBI:16301
-		
-		if(startNodeId == null || "".equals(startNodeId.trim())){
-					query = rheaWS + endNodeId.trim();	
-				}else if(endNodeId == null || "".equals(endNodeId.trim())){
-					query = rheaWS + startNodeId.trim();	
-				}else {
-					query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
-					}
-		
-//		String query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
+
+		if (startNodeId == null || "".equals(startNodeId.trim())) {
+			query = rheaWS + endNodeId.trim();
+		} else if (endNodeId == null || "".equals(endNodeId.trim())) {
+			query = rheaWS + startNodeId.trim();
+		} else {
+			query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
+		}
+
+		// String query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
 		final String text = query.trim();
 		System.out.println("query:" + text);
 
@@ -180,31 +167,33 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 					DocumentBuilderFactory dbf = DocumentBuilderFactory
 							.newInstance();
 					DocumentBuilder db = dbf.newDocumentBuilder();
-					
+
 					URL queryText = new URL(text);
 					org.w3c.dom.Document doc = db.parse(queryText.openStream());
-			
-					 String text2parse = doc.getDocumentElement().getTextContent();
-					 text2parse= text2parse.replaceAll("^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
-				     .replace("\t"," ");
-					 String[] parsedText = text2parse.split("\n");
-					 
-					 for(int i =0;i<  parsedText.length;i=i+8){
-						 /*
-						  * Get id
-						  */
-//						System.out.println("id" + parsedText[i]);
+
+					String text2parse = doc.getDocumentElement()
+							.getTextContent();
+					text2parse = text2parse.replaceAll(
+							"^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
+							.replace("\t", " ");
+					String[] parsedText = text2parse.split("\n");
+
+					for (int i = 0; i < parsedText.length; i = i + 8) {
+						/*
+						 * Get id
+						 */
+						// System.out.println("id" + parsedText[i]);
 						Xref intxref = new Xref(parsedText[i],
 								DataSource.getExistingBySystemCode("Rh"));
 
 						/*
 						 * Get uri
 						 */
-						String interactionUri = parsedText[i+2];
-//						System.out.println("uri" + interactionUri);
+						String interactionUri = parsedText[i + 2];
+						// System.out.println("uri" + interactionUri);
 						//
-						result.add(new XrefWithSymbol(intxref, "reaction")); 
-					 }
+						result.add(new XrefWithSymbol(intxref, "reaction"));
+					}
 					//
 				} catch (ParserConfigurationException e) {
 					// TODO Auto-generated catch block
@@ -218,18 +207,18 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} 
+				}
 
 				return result;
 			}
 
-			private void applyAutoFill(XrefWithSymbol ref)
-			{
+			private void applyAutoFill(XrefWithSymbol ref) {
 				input.setElementID(ref.getId());
 				input.setDataSource(ref.getDataSource());
 				idText.setText(ref.getId());
 				dsm.setSelectedItem(ref.getDataSource());
-			}		
+			}
+
 			@Override
 			public void done() {
 				progress.finished();
@@ -268,7 +257,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	}
 
 	protected final void addCustomTabs(final JTabbedPane parent) {
-		
+
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 
@@ -289,14 +278,15 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 
 		// Search panel elements
 		searchPanel.setLayout(new GridBagLayout());
-		
+
 		final JLabel searchText = new JLabel("Search in Rhea");
 		final JButton searchButton = new JButton("Search");
-//		 final String startNodeId = getElementId(startNodeRef);
-//		 final String endNodeId = getElementId(endNodeRef);
+		// final String startNodeId = getElementId(startNodeRef);
+		// final String endNodeId = getElementId(endNodeRef);
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
-				search(getInput().getPathway(), getInput().getStartGraphRef(), getInput().getEndGraphRef());
+				search(getInput().getPathway(), getInput().getStartGraphRef(),
+						getInput().getEndGraphRef());
 			}
 		});
 		searchButton
@@ -414,27 +404,28 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	}
 
 	private String getElementId(String nodeRef, Pathway pwy) {
-		System.out.println("ref "+nodeRef);
+		System.out.println("ref " + nodeRef);
 		String id = "";
 		// System.out.println(pathway.getMappInfo().getMapInfoName());
 		for (PathwayElement pe : pwy.getDataObjects()) {
-			if(!(pe.getGraphId()==null)){
+			if (!(pe.getGraphId() == null)) {
 				if (pe.getGraphId().equalsIgnoreCase(nodeRef)) {
 					id = pe.getElementID();
-					System.out.println("id "+ id);
-					if(pe.getDataSource() != DataSource.getExistingBySystemCode("Ce")){
+					System.out.println("id " + id);
+					if (pe.getDataSource() != DataSource
+							.getExistingBySystemCode("Ce")) {
 						id = pe.getTextLabel();
 					}
-				}else{
-					//TODO
+				} else {
+					// TODO
 					/*
 					 * handle anchors
 					 */
-					if(pe.getObjectType() == ObjectType.LINE){
-//						System.out.println(pe.getMPoints());
+					if (pe.getObjectType() == ObjectType.LINE) {
+						// System.out.println(pe.getMPoints());
 					}
 				}
-//				System.out.println("node graph id "+pe.getGraphId());	
+				// System.out.println("node graph id "+pe.getGraphId());
 			}
 		}
 		return id;

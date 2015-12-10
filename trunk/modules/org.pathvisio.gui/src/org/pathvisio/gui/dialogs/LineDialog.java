@@ -83,9 +83,9 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	private PermissiveComboBox dbCombo;
 	private PermissiveComboBox typeCombo;
 	private DataSourceModel dsm;
-	// private XrefWithSymbol ref;
 	private String rheaWS = "http://www.rhea-db.org/rest/1.0/ws/reaction/cmlreact?q=";
 	private Pathway pathway;
+	private IDMapperStack mapper;
 
 	protected LineDialog(final SwingEngine swingEngine, final PathwayElement e,
 			final boolean readonly, final Frame frame,
@@ -94,6 +94,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 				locationComp);
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
+		mapper = swingEngine.getGdbManager().getCurrentGdb();
 
 	}
 
@@ -115,26 +116,30 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	 * (http://www.rhea-db.org/home) based on identifiers of the nodes that are
 	 * connected by the interaction
 	 * 
-	 * @param pathway2
+	 * @param pwy
 	 */
 	private void search(Pathway pwy, final String startNode,
 			final String endNode) {
-
 		String startNodeId = getElementId(startNode, pwy);
 		String endNodeId = getElementId(endNode, pwy);
 
-		if ((startNodeId == null || "".equals(startNodeId.trim()))
-				&& (endNodeId == null || "".equals(endNodeId.trim()))) {
-			JOptionPane
-					.showMessageDialog(
-							this,
-							"Interactors not annotated, "
-									+ "please annotate the interacting datanodes by double-clicking on them");
-			return;
-		}
+//		if ((startNodeId == null || "".equals(startNodeId.trim()))
+//				&& (endNodeId == null || "".equals(endNodeId.trim()))) {
+//			JOptionPane
+//					.showMessageDialog(
+//							this,
+//							"Interactors not annotated, "
+//									+ "please annotate the interacting datanodes by double-clicking on them. "
+//									+ "This function works best for metabolites identifier with ChEBI identifiers.");
+//			return;
+//		}
 		String query = "";
-		// Eg. query:
-		// http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632+CHEBI:16301
+
+		/*
+		 * Eg. query: http://www.rhea-db.org/rest/1.0/ws/reaction?q=glucose *
+		 * http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632
+		 * http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632+CHEBI:16301
+		 */
 
 		if (startNodeId == null || "".equals(startNodeId.trim())) {
 			query = rheaWS + endNodeId.trim();
@@ -149,12 +154,13 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		System.out.println("query:" + text);
 
 		final ProgressKeeper progress = new ProgressKeeper();
-		ProgressDialog dialog = new ProgressDialog(this, "Searching", progress,
+		ProgressDialog dialog = new ProgressDialog(this,
+				"Searching Rhea for interactions. Query =" + query, progress,
 				true, true);
 		dialog.setLocationRelativeTo(this);
 
 		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
-			private static final int QUERY_LIMIT = 200;
+//			private static final int QUERY_LIMIT = 200;
 
 			protected List<XrefWithSymbol> doInBackground()
 					throws IDMapperException {
@@ -176,25 +182,31 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 					text2parse = text2parse.replaceAll(
 							"^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
 							.replace("\t", " ");
-					String[] parsedText = text2parse.split("\n");
+					System.out.println(text2parse);
 
-					for (int i = 0; i < parsedText.length; i = i + 8) {
-						/*
-						 * Get id
-						 */
-						// System.out.println("id" + parsedText[i]);
-						Xref intxref = new Xref(parsedText[i],
-								DataSource.getExistingBySystemCode("Rh"));
+					if (text2parse.contains("rhea")) {
+						String[] parsedText = text2parse.split("\n");
 
-						/*
-						 * Get uri
-						 */
-						String interactionUri = parsedText[i + 2];
-						// System.out.println("uri" + interactionUri);
-						//
-						result.add(new XrefWithSymbol(intxref, "reaction"));
+						for (int i = 0; i < parsedText.length; i = i + 8) {
+							/*
+							 * Get id
+							 */
+							// System.out.println("id" + parsedText[i]);
+							Xref intxref = new Xref(parsedText[i],
+									DataSource.getExistingBySystemCode("Rh"));
+
+							/*
+							 * Get uri
+							 */
+							String interactionUri = parsedText[i + 2];
+							// System.out.println("uri" + interactionUri);
+							//
+							result.add(new XrefWithSymbol(intxref, "reaction"));
+						}
+					} else {
+System.out.println("No reactions");
 					}
-					//
+
 				} catch (ParserConfigurationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -281,8 +293,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 
 		final JLabel searchText = new JLabel("Search in Rhea");
 		final JButton searchButton = new JButton("Search");
-		// final String startNodeId = getElementId(startNodeRef);
-		// final String endNodeId = getElementId(endNodeRef);
+		
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
 				search(getInput().getPathway(), getInput().getStartGraphRef(),
@@ -290,7 +301,8 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 			}
 		});
 		searchButton
-				.setToolTipText("Search the online Rhea database for references, based on the identifiers of the interactors");
+				.setToolTipText("Search the online Rhea database for references," +
+						" based on the identifiers of the interactors");
 
 		GridBagConstraints searchConstraints = new GridBagConstraints();
 		searchConstraints.gridx = GridBagConstraints.RELATIVE;
@@ -403,18 +415,35 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		parent.setSelectedComponent(panel);
 	}
 
+	/*
+	 * Select query id (identifier or label)
+	 */
+
 	private String getElementId(String nodeRef, Pathway pwy) {
-		System.out.println("ref " + nodeRef);
+		System.out.println("Ref " + nodeRef);
 		String id = "";
-		// System.out.println(pathway.getMappInfo().getMapInfoName());
+
 		for (PathwayElement pe : pwy.getDataObjects()) {
 			if (!(pe.getGraphId() == null)) {
 				if (pe.getGraphId().equalsIgnoreCase(nodeRef)) {
-					id = pe.getElementID();
-					System.out.println("id " + id);
-					if (pe.getDataSource() != DataSource
+					if (pe.getDataSource() == DataSource
 							.getExistingBySystemCode("Ce")) {
-						id = pe.getTextLabel();
+						id = pe.getElementID();
+					} else {
+						Set<Xref> chEBI;
+						try {
+							chEBI = mapper.mapID(pe.getXref(),
+									DataSource.getExistingBySystemCode("Ce"));
+							if (chEBI.isEmpty()) {
+								id = pe.getTextLabel();
+							}else{
+								id = chEBI.iterator().next().getId();
+							}
+						} catch (IDMapperException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
 					}
 				} else {
 					// TODO
@@ -425,7 +454,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 						// System.out.println(pe.getMPoints());
 					}
 				}
-				// System.out.println("node graph id "+pe.getGraphId());
 			}
 		}
 		return id;

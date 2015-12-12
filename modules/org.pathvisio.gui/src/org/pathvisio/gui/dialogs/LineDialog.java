@@ -60,6 +60,7 @@ import org.pathvisio.core.model.LineType;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
+import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.DataSourceModel;
 import org.pathvisio.gui.ProgressDialog;
@@ -86,6 +87,9 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	private String rheaWS = "http://www.rhea-db.org/rest/1.0/ws/reaction/cmlreact?q=";
 	private Pathway pathway;
 	private IDMapperStack mapper;
+	private PathwayElement queryElement = null;
+	private int tries;
+	private String id = null;
 
 	protected LineDialog(final SwingEngine swingEngine, final PathwayElement e,
 			final boolean readonly, final Frame frame,
@@ -95,7 +99,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
 		mapper = swingEngine.getGdbManager().getCurrentGdb();
-
+		tries = 0;
 	}
 
 	public final void refresh() {
@@ -122,17 +126,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 			final String endNode) {
 		String startNodeId = getElementId(startNode, pwy);
 		String endNodeId = getElementId(endNode, pwy);
-
-//		if ((startNodeId == null || "".equals(startNodeId.trim()))
-//				&& (endNodeId == null || "".equals(endNodeId.trim()))) {
-//			JOptionPane
-//					.showMessageDialog(
-//							this,
-//							"Interactors not annotated, "
-//									+ "please annotate the interacting datanodes by double-clicking on them. "
-//									+ "This function works best for metabolites identifier with ChEBI identifiers.");
-//			return;
-//		}
 		String query = "";
 
 		/*
@@ -140,15 +133,22 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		 * http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632
 		 * http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632+CHEBI:16301
 		 */
-
-		if (startNodeId == null || "".equals(startNodeId.trim())) {
-			query = rheaWS + endNodeId.trim();
-		} else if (endNodeId == null || "".equals(endNodeId.trim())) {
+		if (!(startNodeId == null || "".equals(startNodeId.trim())
+				|| endNodeId == null || "".equals(endNodeId.trim()))) {
+			if (tries == 0) {
+				query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
+			} else if (tries == 1) {
+				query = rheaWS + startNodeId.trim();
+			} else if (tries == 2) {
+				query = rheaWS + endNodeId.trim();
+			}
+		} else if (!(startNodeId == null || "".equals(startNodeId.trim()))) {
 			query = rheaWS + startNodeId.trim();
-		} else {
-			query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
+		} else if (!(endNodeId == null || "".equals(endNodeId.trim()))) {
+			query = rheaWS + endNodeId.trim();
 		}
 
+		tries++;
 		// String query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
 		final String text = query.trim();
 		System.out.println("query:" + text);
@@ -160,7 +160,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		dialog.setLocationRelativeTo(this);
 
 		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
-//			private static final int QUERY_LIMIT = 200;
+			// private static final int QUERY_LIMIT = 200;
 
 			protected List<XrefWithSymbol> doInBackground()
 					throws IDMapperException {
@@ -187,7 +187,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 					if (text2parse.contains("rhea")) {
 						String[] parsedText = text2parse.split("\n");
 
-						for (int i = 0; i < parsedText.length; i = i + 8) {
+						for (int i = 0; i < parsedText.length; i = i + 4) {
 							/*
 							 * Get id
 							 */
@@ -202,9 +202,17 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 							// System.out.println("uri" + interactionUri);
 							//
 							result.add(new XrefWithSymbol(intxref, "reaction"));
+
 						}
 					} else {
-System.out.println("No reactions");
+						if (tries < 2) {
+							search(getInput().getPathway(), getInput()
+									.getStartGraphRef(), getInput()
+									.getEndGraphRef());
+						} else {
+							System.out.println("No reactions");
+						}
+
 					}
 
 				} catch (ParserConfigurationException e) {
@@ -240,17 +248,27 @@ System.out.println("No reactions");
 						results = get();
 						// Show results to user
 						if (results != null && results.size() > 0) {
+							String pretext = "Reactions shown for ";
 							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog(
-									"Results", results);
+									pretext + text.replace(rheaWS, ""), results);
 							resultDialog.setVisible(true);
 							XrefWithSymbol selected = resultDialog
 									.getSelected();
 							if (selected != null) {
 								applyAutoFill(selected);
 							}
+							
 						} else {
+							String posttext = "";
+							String pretext = "No reactions found for ";
+							if(!(text.contains("CHEBI"))){
+								posttext = ".\nAnnotating the datanodes will improve the results.";	
+							}							 
+							if(text.isEmpty()){
+								pretext = "Search function for this pathway element has not been implemented yet";
+							}
 							JOptionPane.showMessageDialog(LineDialog.this,
-									"No results for '" + text + "'");
+									pretext + text.replace(rheaWS, "")+posttext);
 						}
 					} catch (InterruptedException e) {
 						// Ignore, thread interrupted. Same as cancel.
@@ -293,7 +311,7 @@ System.out.println("No reactions");
 
 		final JLabel searchText = new JLabel("Search in Rhea");
 		final JButton searchButton = new JButton("Search");
-		
+
 		searchButton.addActionListener(new ActionListener() {
 			public void actionPerformed(final ActionEvent e) {
 				search(getInput().getPathway(), getInput().getStartGraphRef(),
@@ -301,8 +319,8 @@ System.out.println("No reactions");
 			}
 		});
 		searchButton
-				.setToolTipText("Search the online Rhea database for references," +
-						" based on the identifiers of the interactors");
+				.setToolTipText("Search the online Rhea database for references,"
+						+ " based on the identifiers of the interactors");
 
 		GridBagConstraints searchConstraints = new GridBagConstraints();
 		searchConstraints.gridx = GridBagConstraints.RELATIVE;
@@ -418,45 +436,87 @@ System.out.println("No reactions");
 	/*
 	 * Select query id (identifier or label)
 	 */
-
 	private String getElementId(String nodeRef, Pathway pwy) {
+		boolean matchFound = false;
 		System.out.println("Ref " + nodeRef);
-		String id = "";
-
-		for (PathwayElement pe : pwy.getDataObjects()) {
-			if (!(pe.getGraphId() == null)) {
-				if (pe.getGraphId().equalsIgnoreCase(nodeRef)) {
-					if (pe.getDataSource() == DataSource
-							.getExistingBySystemCode("Ce")) {
-						id = pe.getElementID();
-					} else {
-						Set<Xref> chEBI;
-						try {
-							chEBI = mapper.mapID(pe.getXref(),
-									DataSource.getExistingBySystemCode("Ce"));
-							if (chEBI.isEmpty()) {
-								id = pe.getTextLabel();
-							}else{
-								id = chEBI.iterator().next().getId();
-							}
-						} catch (IDMapperException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+		if (nodeRef != null) {
+			for (PathwayElement pe : pwy.getDataObjects()) {
+				if (!(pe.getGraphId() == null)) {
+					if (pe.getObjectType() == ObjectType.DATANODE) {
+						if (pe.getGraphId().equalsIgnoreCase(nodeRef)) {
+							queryElement = pe;
+							matchFound = true;
 						}
-
-					}
-				} else {
-					// TODO
-					/*
-					 * handle anchors
-					 */
-					if (pe.getObjectType() == ObjectType.LINE) {
-						// System.out.println(pe.getMPoints());
 					}
 				}
 			}
+			if (!matchFound) {
+				for (PathwayElement pe : pwy.getDataObjects()) {
+					if (!(pe.getGraphId() == null)) {
+						if (pe.getObjectType() == ObjectType.LINE) {
+							for (MAnchor anchor : pe.getMAnchors()) {
+								if (anchor.getGraphId().equalsIgnoreCase(
+										nodeRef)) {
+									queryElement = findConnectedNode(anchor,
+											pwy);
+									matchFound = true;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (matchFound && queryElement != null) {
+				if (queryElement.getDataSource() == DataSource
+						.getExistingBySystemCode("Ce")) {
+					id = queryElement.getElementID();
+				} else {
+					Set<Xref> chEBI;
+					try {
+						chEBI = mapper.mapID(queryElement.getXref(),
+								DataSource.getExistingBySystemCode("Ce"));
+						if (chEBI.isEmpty()) {
+							id = queryElement.getTextLabel();
+							id = id.replaceAll(" ", "+");
+						} else {
+							id = chEBI.iterator().next().getId();
+						}
+					} catch (IDMapperException e) {
+						e.printStackTrace();
+					}
+				}
+				if (id.matches("\\d+")) {
+					if (!(id.contains("CHEBI:"))) {
+						id = "CHEBI:" + id;
+					}
+				}
+
+			}
 		}
 		return id;
+	}
+
+	private PathwayElement findConnectedNode(MAnchor anchor, Pathway pwy) {
+		PathwayElement targetNode = null;
+		String targetNodeRef = "";
+		for (PathwayElement pwe : pwy.getDataObjects()) {
+			if (pwe.getObjectType() == ObjectType.LINE) {
+				if (anchor.getGraphId().equalsIgnoreCase(pwe.getEndGraphRef())) {
+					targetNodeRef = pwe.getStartGraphRef();
+				} else if (anchor.getGraphId().equalsIgnoreCase(
+						pwe.getStartGraphRef())) {
+					targetNodeRef = pwe.getEndGraphRef();
+				}
+			}
+		}
+		for (PathwayElement pwe1 : pwy.getDataObjects()) {
+			if (pwe1.getObjectType() == ObjectType.DATANODE) {
+				if (pwe1.getGraphId().equalsIgnoreCase(targetNodeRef)) {
+					targetNode = pwe1;
+				}
+			}
+		}
+		return targetNode;
 	}
 
 	@Override

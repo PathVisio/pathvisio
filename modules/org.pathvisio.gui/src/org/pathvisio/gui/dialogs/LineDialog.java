@@ -151,7 +151,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		tries++;
 		// String query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
 		final String text = query.trim();
-		System.out.println("query:" + text);
+//		System.out.println("query:" + text);
 
 		final ProgressKeeper progress = new ProgressKeeper();
 		ProgressDialog dialog = new ProgressDialog(this,
@@ -182,7 +182,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 					text2parse = text2parse.replaceAll(
 							"^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
 							.replace("\t", " ");
-					System.out.println(text2parse);
+//					System.out.println(text2parse);
 
 					if (text2parse.contains("rhea")) {
 						String[] parsedText = text2parse.split("\n");
@@ -210,7 +210,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 									.getStartGraphRef(), getInput()
 									.getEndGraphRef());
 						} else {
-							System.out.println("No reactions");
+//							System.out.println("No reactions");
 						}
 
 					}
@@ -249,6 +249,8 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 						// Show results to user
 						if (results != null && results.size() > 0) {
 							String pretext = "Reactions shown for ";
+//							JOptionPane.showMessageDialog(LineDialog.this,
+//									pretext + text.replace(rheaWS, ""));
 							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog(
 									pretext + text.replace(rheaWS, ""), results);
 							resultDialog.setVisible(true);
@@ -257,18 +259,18 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 							if (selected != null) {
 								applyAutoFill(selected);
 							}
-							
 						} else {
 							String posttext = "";
 							String pretext = "No reactions found for ";
-							if(!(text.contains("CHEBI"))){
-								posttext = ".\nAnnotating the datanodes will improve the results.";	
-							}							 
-							if(text.isEmpty()){
+							if (!((text.contains("CHEBI")|| (text.contains("\\d+"))))) {
+								posttext = ".\nAnnotating the datanodes will improve the results.";
+							}
+							if (text.isEmpty()) {
 								pretext = "Search function for this pathway element has not been implemented yet";
 							}
 							JOptionPane.showMessageDialog(LineDialog.this,
-									pretext + text.replace(rheaWS, "")+posttext);
+									pretext + text.replace(rheaWS, "")
+											+ posttext);
 						}
 					} catch (InterruptedException e) {
 						// Ignore, thread interrupted. Same as cancel.
@@ -438,7 +440,7 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	 */
 	private String getElementId(String nodeRef, Pathway pwy) {
 		boolean matchFound = false;
-		System.out.println("Ref " + nodeRef);
+//		System.out.println("Ref " + nodeRef);
 		if (nodeRef != null) {
 			for (PathwayElement pe : pwy.getDataObjects()) {
 				if (!(pe.getGraphId() == null)) {
@@ -466,26 +468,36 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 					}
 				}
 			}
+			Set<Xref> ids;
 			if (matchFound && queryElement != null) {
-				if (queryElement.getDataSource() == DataSource
-						.getExistingBySystemCode("Ce")) {
-					id = queryElement.getElementID();
-				} else {
-					Set<Xref> chEBI;
-					try {
-						chEBI = mapper.mapID(queryElement.getXref(),
-								DataSource.getExistingBySystemCode("Ce"));
-						if (chEBI.isEmpty()) {
-							id = queryElement.getTextLabel();
-							id = id.replaceAll(" ", "+");
-						} else {
-							id = chEBI.iterator().next().getId();
-						}
-					} catch (IDMapperException e) {
-						e.printStackTrace();
+				try {
+					ids = mapper.mapID(queryElement.getXref(), DataSource.getExistingBySystemCode("Ce"));
+					if(ids.isEmpty()){
+						ids = mapper.mapID(queryElement.getXref(), DataSource.getExistingBySystemCode("S"));
 					}
+					if(ids.isEmpty()){
+						id = queryElement.getTextLabel();
+						id = id.replaceAll(" ", "+");
+					}else{
+						String tmpid = ids.iterator().next().getId();
+						if(ids.iterator().next().getDataSource() == DataSource.getExistingBySystemCode("S")){
+								/*
+								 * Choose ids starting with P/Q if found
+								 */
+								for(Xref ref:ids){
+									if(ref.getId().startsWith("P")||ref.getId().startsWith("Q")){
+										tmpid = ref.getId();
+									}
+								}
+							}
+						id = tmpid;
+					}
+					
+				} catch (IDMapperException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-				if (id.matches("\\d+")) {
+							if (id.matches("\\d+")) {
 					if (!(id.contains("CHEBI:"))) {
 						id = "CHEBI:" + id;
 					}

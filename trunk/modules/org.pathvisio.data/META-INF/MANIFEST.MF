@@ -3,11 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio data module
 Bundle-SymbolicName: org.pathvisio.data
 Bundle-Version: 3.2.0
-Bundle-Description: This module is the data model of biological data in PathVisio.
+Bundle-Vendor: PathVisio developers
 Export-Package: org.pathvisio.data
 Require-Bundle: org.bridgedb;bundle-version="2.0.0",
  org.apache.commons.math;bundle-version="2.0.0"
-Bundle-DocURL: http://www.pathvisio.org
-Bundle-Vendor: PathVisio developers
-Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
+Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
+Bundle-DocURL: http://www.pathvisio.org
+Bundle-Description: This module is the data model of biological data in PathVisio.

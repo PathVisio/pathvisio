@@ -79,13 +79,13 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	private CompleterQueryTextField idText;
-	private String startNodeRef;
-	private String endNodeRef;
+//	private String startNodeRef;
+//	private String endNodeRef;
 	private PermissiveComboBox dbCombo;
 	private PermissiveComboBox typeCombo;
 	private DataSourceModel dsm;
-	private String rheaWS = "http://www.rhea-db.org/rest/1.0/ws/reaction/cmlreact?q=";
-	private Pathway pathway;
+//	private String rheaWS = "http://www.rhea-db.org/rest/1.0/ws/reaction/cmlreact?q=";
+//	private Pathway pathway;
 	private IDMapperStack mapper;
 	private PathwayElement queryElement = null;
 	private int tries;
@@ -104,9 +104,9 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 
 	public final void refresh() {
 		super.refresh();
-		pathway = getInput().getPathway();
-		startNodeRef = getInput().getStartGraphRef();
-		endNodeRef = getInput().getEndGraphRef();
+//		pathway = getInput().getPathway();
+//		startNodeRef = getInput().getStartGraphRef();
+//		endNodeRef = getInput().getEndGraphRef();
 		idText.setText(getInput().getElementID());
 		dsm.setSelectedItem(input.getDataSource());
 		String lType = getInput().getEndLineType().toString();
@@ -115,187 +115,187 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		pack();
 	}
 
-	/**
-	 * Search for identifiers for the selected interaction in Rhea
-	 * (http://www.rhea-db.org/home) based on identifiers of the nodes that are
-	 * connected by the interaction
-	 * 
-	 * @param pwy
-	 */
-	private void search(Pathway pwy, final String startNode,
-			final String endNode) {
-		String startNodeId = getElementId(startNode, pwy);
-		String endNodeId = getElementId(endNode, pwy);
-		String query = "";
-
-		/*
-		 * Eg. query: http://www.rhea-db.org/rest/1.0/ws/reaction?q=glucose *
-		 * http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632
-		 * http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632+CHEBI:16301
-		 */
-		if (!(startNodeId == null || "".equals(startNodeId.trim())
-				|| endNodeId == null || "".equals(endNodeId.trim()))) {
-			if (tries == 0) {
-				query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
-			} else if (tries == 1) {
-				query = rheaWS + startNodeId.trim();
-			} else if (tries == 2) {
-				query = rheaWS + endNodeId.trim();
-			}
-		} else if (!(startNodeId == null || "".equals(startNodeId.trim()))) {
-			query = rheaWS + startNodeId.trim();
-		} else if (!(endNodeId == null || "".equals(endNodeId.trim()))) {
-			query = rheaWS + endNodeId.trim();
-		}
-
-		tries++;
-		// String query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
-		final String text = query.trim();
-//		System.out.println("query:" + text);
-
-		final ProgressKeeper progress = new ProgressKeeper();
-		ProgressDialog dialog = new ProgressDialog(this,
-				"Searching Rhea for interactions. Query =" + query, progress,
-				true, true);
-		dialog.setLocationRelativeTo(this);
-
-		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
-			// private static final int QUERY_LIMIT = 200;
-
-			protected List<XrefWithSymbol> doInBackground()
-					throws IDMapperException {
-
-				// querying Rhea using webservice
-
-				// The result set
-				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
-				try {
-					DocumentBuilderFactory dbf = DocumentBuilderFactory
-							.newInstance();
-					DocumentBuilder db = dbf.newDocumentBuilder();
-
-					URL queryText = new URL(text);
-					org.w3c.dom.Document doc = db.parse(queryText.openStream());
-
-					String text2parse = doc.getDocumentElement()
-							.getTextContent();
-					text2parse = text2parse.replaceAll(
-							"^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
-							.replace("\t", " ");
-//					System.out.println(text2parse);
-
-					if (text2parse.contains("rhea")) {
-						String[] parsedText = text2parse.split("\n");
-
-						for (int i = 0; i < parsedText.length; i = i + 4) {
-							/*
-							 * Get id
-							 */
-							// System.out.println("id" + parsedText[i]);
-							Xref intxref = new Xref(parsedText[i],
-									DataSource.getExistingBySystemCode("Rh"));
-
-							/*
-							 * Get uri
-							 */
-							String interactionUri = parsedText[i + 2];
-							// System.out.println("uri" + interactionUri);
-							//
-							result.add(new XrefWithSymbol(intxref, "reaction"));
-
-						}
-					} else {
-						if (tries < 2) {
-							search(getInput().getPathway(), getInput()
-									.getStartGraphRef(), getInput()
-									.getEndGraphRef());
-						} else {
-//							System.out.println("No reactions");
-						}
-
-					}
-
-				} catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SAXException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				return result;
-			}
-
-			private void applyAutoFill(XrefWithSymbol ref) {
-				input.setElementID(ref.getId());
-				input.setDataSource(ref.getDataSource());
-				idText.setText(ref.getId());
-				dsm.setSelectedItem(ref.getDataSource());
-			}
-
-			@Override
-			public void done() {
-				progress.finished();
-				if (!progress.isCancelled()) {
-					List<XrefWithSymbol> results = null;
-					try {
-						results = get();
-						// Show results to user
-						if (results != null && results.size() > 0) {
-							String pretext = "Reactions shown for ";
+//	/**
+//	 * Search for identifiers for the selected interaction in Rhea
+//	 * (http://www.rhea-db.org/home) based on identifiers of the nodes that are
+//	 * connected by the interaction
+//	 * 
+//	 * @param pwy
+//	 */
+//	private void search(Pathway pwy, final String startNode,
+//			final String endNode) {
+//		String startNodeId = getElementId(startNode, pwy);
+//		String endNodeId = getElementId(endNode, pwy);
+//		String query = "";
+//
+//		/*
+//		 * Eg. query: http://www.rhea-db.org/rest/1.0/ws/reaction?q=glucose *
+//		 * http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632
+//		 * http://www.rhea-db.org/rest/1.0/ws/reaction?q=CHEBI:17632+CHEBI:16301
+//		 */
+//		if (!(startNodeId == null || "".equals(startNodeId.trim())
+//				|| endNodeId == null || "".equals(endNodeId.trim()))) {
+//			if (tries == 0) {
+//				query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
+//			} else if (tries == 1) {
+//				query = rheaWS + startNodeId.trim();
+//			} else if (tries == 2) {
+//				query = rheaWS + endNodeId.trim();
+//			}
+//		} else if (!(startNodeId == null || "".equals(startNodeId.trim()))) {
+//			query = rheaWS + startNodeId.trim();
+//		} else if (!(endNodeId == null || "".equals(endNodeId.trim()))) {
+//			query = rheaWS + endNodeId.trim();
+//		}
+//
+//		tries++;
+//		// String query = rheaWS + startNodeId.trim() + "+" + endNodeId.trim();
+//		final String text = query.trim();
+////		System.out.println("query:" + text);
+//
+//		final ProgressKeeper progress = new ProgressKeeper();
+//		ProgressDialog dialog = new ProgressDialog(this,
+//				"Searching Rhea for interactions. Query =" + query, progress,
+//				true, true);
+//		dialog.setLocationRelativeTo(this);
+//
+//		SwingWorker<List<XrefWithSymbol>, Void> sw = new SwingWorker<List<XrefWithSymbol>, Void>() {
+//			// private static final int QUERY_LIMIT = 200;
+//
+//			protected List<XrefWithSymbol> doInBackground()
+//					throws IDMapperException {
+//
+//				// querying Rhea using webservice
+//
+//				// The result set
+//				List<XrefWithSymbol> result = new ArrayList<XrefWithSymbol>();
+//				try {
+//					DocumentBuilderFactory dbf = DocumentBuilderFactory
+//							.newInstance();
+//					DocumentBuilder db = dbf.newDocumentBuilder();
+//
+//					URL queryText = new URL(text);
+//					org.w3c.dom.Document doc = db.parse(queryText.openStream());
+//
+//					String text2parse = doc.getDocumentElement()
+//							.getTextContent();
+//					text2parse = text2parse.replaceAll(
+//							"^\\s+|\\s+$|\\s*(\n)\\s*|(\\s)\\s*", "$1$2")
+//							.replace("\t", " ");
+////					System.out.println(text2parse);
+//
+//					if (text2parse.contains("rhea")) {
+//						String[] parsedText = text2parse.split("\n");
+//
+//						for (int i = 0; i < parsedText.length; i = i + 4) {
+//							/*
+//							 * Get id
+//							 */
+//							// System.out.println("id" + parsedText[i]);
+//							Xref intxref = new Xref(parsedText[i],
+//									DataSource.getExistingBySystemCode("Rh"));
+//
+//							/*
+//							 * Get uri
+//							 */
+//							String interactionUri = parsedText[i + 2];
+//							// System.out.println("uri" + interactionUri);
+//							//
+//							result.add(new XrefWithSymbol(intxref, "reaction"));
+//
+//						}
+//					} else {
+//						if (tries < 2) {
+//							search(getInput().getPathway(), getInput()
+//									.getStartGraphRef(), getInput()
+//									.getEndGraphRef());
+//						} else {
+////							System.out.println("No reactions");
+//						}
+//
+//					}
+//
+//				} catch (ParserConfigurationException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (MalformedURLException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (SAXException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//
+//				return result;
+//			}
+//
+//			private void applyAutoFill(XrefWithSymbol ref) {
+//				input.setElementID(ref.getId());
+//				input.setDataSource(ref.getDataSource());
+//				idText.setText(ref.getId());
+//				dsm.setSelectedItem(ref.getDataSource());
+//			}
+//
+//			@Override
+//			public void done() {
+//				progress.finished();
+//				if (!progress.isCancelled()) {
+//					List<XrefWithSymbol> results = null;
+//					try {
+//						results = get();
+//						// Show results to user
+//						if (results != null && results.size() > 0) {
+//							String pretext = "Reactions shown for ";
+////							JOptionPane.showMessageDialog(LineDialog.this,
+////									pretext + text.replace(rheaWS, ""));
+//							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog(
+//									pretext + text.replace(rheaWS, ""), results);
+//							resultDialog.setVisible(true);
+//							XrefWithSymbol selected = resultDialog
+//									.getSelected();
+//							if (selected != null) {
+//								applyAutoFill(selected);
+//							}
+//						} else {
+//							String posttext = "";
+//							String pretext = "No reactions found for ";
+//							if (!((text.contains("CHEBI")|| (text.contains("\\d+"))))) {
+//								posttext = ".\nAnnotating the datanodes will improve the results.";
+//							}
+//							if (text.isEmpty()) {
+//								pretext = "Search function for this pathway element has not been implemented yet";
+//							}
 //							JOptionPane.showMessageDialog(LineDialog.this,
-//									pretext + text.replace(rheaWS, ""));
-							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog(
-									pretext + text.replace(rheaWS, ""), results);
-							resultDialog.setVisible(true);
-							XrefWithSymbol selected = resultDialog
-									.getSelected();
-							if (selected != null) {
-								applyAutoFill(selected);
-							}
-						} else {
-							String posttext = "";
-							String pretext = "No reactions found for ";
-							if (!((text.contains("CHEBI")|| (text.contains("\\d+"))))) {
-								posttext = ".\nAnnotating the datanodes will improve the results.";
-							}
-							if (text.isEmpty()) {
-								pretext = "Search function for this pathway element has not been implemented yet";
-							}
-							JOptionPane.showMessageDialog(LineDialog.this,
-									pretext + text.replace(rheaWS, "")
-											+ posttext);
-						}
-					} catch (InterruptedException e) {
-						// Ignore, thread interrupted. Same as cancel.
-					} catch (ExecutionException e) {
-						JOptionPane.showMessageDialog(LineDialog.this,
-								"Exception occurred while searching,\n"
-										+ "see error log for details.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-						Logger.log.error("Error while searching", e);
-					}
-				}
-			}
-		};
-		sw.execute();
-		dialog.setVisible(true);
-	}
+//									pretext + text.replace(rheaWS, "")
+//											+ posttext);
+//						}
+//					} catch (InterruptedException e) {
+//						// Ignore, thread interrupted. Same as cancel.
+//					} catch (ExecutionException e) {
+//						JOptionPane.showMessageDialog(LineDialog.this,
+//								"Exception occurred while searching,\n"
+//										+ "see error log for details.",
+//								"Error", JOptionPane.ERROR_MESSAGE);
+//						Logger.log.error("Error while searching", e);
+//					}
+//				}
+//			}
+//		};
+//		sw.execute();
+//		dialog.setVisible(true);
+//	}
 
 	protected final void addCustomTabs(final JTabbedPane parent) {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 
-		JPanel searchPanel = new JPanel();
+//		JPanel searchPanel = new JPanel();
 		JPanel fieldPanel = new JPanel();
-		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
+//		searchPanel.setBorder(BorderFactory.createTitledBorder("Search"));
 		fieldPanel.setBorder(BorderFactory.createTitledBorder("Manual entry"));
 		GridBagConstraints panelConstraints = new GridBagConstraints();
 		panelConstraints.fill = GridBagConstraints.BOTH;
@@ -305,34 +305,34 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		panelConstraints.insets = new Insets(2, 2, 2, 2);
 		panelConstraints.gridy = GridBagConstraints.RELATIVE;
 
-		panel.add(searchPanel, panelConstraints);
+//		panel.add(searchPanel, panelConstraints);
 		panel.add(fieldPanel, panelConstraints);
 
 		// Search panel elements
-		searchPanel.setLayout(new GridBagLayout());
+//		searchPanel.setLayout(new GridBagLayout());
 
-		final JLabel searchText = new JLabel("Search in Rhea");
-		final JButton searchButton = new JButton("Search");
-
-		searchButton.addActionListener(new ActionListener() {
-			public void actionPerformed(final ActionEvent e) {
-				search(getInput().getPathway(), getInput().getStartGraphRef(),
-						getInput().getEndGraphRef());
-			}
-		});
-		searchButton
-				.setToolTipText("Search the online Rhea database for references,"
-						+ " based on the identifiers of the interactors");
+//		final JLabel searchText = new JLabel("Search in Rhea");
+//		final JButton searchButton = new JButton("Search");
+//
+//		searchButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(final ActionEvent e) {
+//				search(getInput().getPathway(), getInput().getStartGraphRef(),
+//						getInput().getEndGraphRef());
+//			}
+//		});
+//		searchButton
+//				.setToolTipText("Search the online Rhea database for references,"
+//						+ " based on the identifiers of the interactors");
 
 		GridBagConstraints searchConstraints = new GridBagConstraints();
 		searchConstraints.gridx = GridBagConstraints.RELATIVE;
 		searchConstraints.fill = GridBagConstraints.HORIZONTAL;
 
-		searchConstraints.weightx = 1;
-		searchPanel.add(searchText, searchConstraints);
-
-		searchConstraints.weightx = 0;
-		searchPanel.add(searchButton, searchConstraints);
+//		searchConstraints.weightx = 1;
+//		searchPanel.add(searchText, searchConstraints);
+//
+//		searchConstraints.weightx = 0;
+//		searchPanel.add(searchButton, searchConstraints);
 
 		// Manual entry panel elements
 		fieldPanel.setLayout(new GridBagLayout());
@@ -435,101 +435,101 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 		parent.setSelectedComponent(panel);
 	}
 
-	/*
-	 * Select query id (identifier or label)
-	 */
-	private String getElementId(String nodeRef, Pathway pwy) {
-		boolean matchFound = false;
-//		System.out.println("Ref " + nodeRef);
-		if (nodeRef != null) {
-			for (PathwayElement pe : pwy.getDataObjects()) {
-				if (!(pe.getGraphId() == null)) {
-					if (pe.getObjectType() == ObjectType.DATANODE) {
-						if (pe.getGraphId().equalsIgnoreCase(nodeRef)) {
-							queryElement = pe;
-							matchFound = true;
-						}
-					}
-				}
-			}
-			if (!matchFound) {
-				for (PathwayElement pe : pwy.getDataObjects()) {
-					if (!(pe.getGraphId() == null)) {
-						if (pe.getObjectType() == ObjectType.LINE) {
-							for (MAnchor anchor : pe.getMAnchors()) {
-								if (anchor.getGraphId().equalsIgnoreCase(
-										nodeRef)) {
-									queryElement = findConnectedNode(anchor,
-											pwy);
-									matchFound = true;
-								}
-							}
-						}
-					}
-				}
-			}
-			Set<Xref> ids;
-			if (matchFound && queryElement != null) {
-				try {
-					ids = mapper.mapID(queryElement.getXref(), DataSource.getExistingBySystemCode("Ce"));
-					if(ids.isEmpty()){
-						ids = mapper.mapID(queryElement.getXref(), DataSource.getExistingBySystemCode("S"));
-					}
-					if(ids.isEmpty()){
-						id = queryElement.getTextLabel();
-						id = id.replaceAll(" ", "+");
-					}else{
-						String tmpid = ids.iterator().next().getId();
-						if(ids.iterator().next().getDataSource() == DataSource.getExistingBySystemCode("S")){
-								/*
-								 * Choose ids starting with P/Q if found
-								 */
-								for(Xref ref:ids){
-									if(ref.getId().startsWith("P")||ref.getId().startsWith("Q")){
-										tmpid = ref.getId();
-									}
-								}
-							}
-						id = tmpid;
-					}
-					
-				} catch (IDMapperException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-							if (id.matches("\\d+")) {
-					if (!(id.contains("CHEBI:"))) {
-						id = "CHEBI:" + id;
-					}
-				}
+//	/*
+//	 * Select query id (identifier or label)
+//	 */
+//	private String getElementId(String nodeRef, Pathway pwy) {
+//		boolean matchFound = false;
+////		System.out.println("Ref " + nodeRef);
+//		if (nodeRef != null) {
+//			for (PathwayElement pe : pwy.getDataObjects()) {
+//				if (!(pe.getGraphId() == null)) {
+//					if (pe.getObjectType() == ObjectType.DATANODE) {
+//						if (pe.getGraphId().equalsIgnoreCase(nodeRef)) {
+//							queryElement = pe;
+//							matchFound = true;
+//						}
+//					}
+//				}
+//			}
+//			if (!matchFound) {
+//				for (PathwayElement pe : pwy.getDataObjects()) {
+//					if (!(pe.getGraphId() == null)) {
+//						if (pe.getObjectType() == ObjectType.LINE) {
+//							for (MAnchor anchor : pe.getMAnchors()) {
+//								if (anchor.getGraphId().equalsIgnoreCase(
+//										nodeRef)) {
+//									queryElement = findConnectedNode(anchor,
+//											pwy);
+//									matchFound = true;
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//			Set<Xref> ids;
+//			if (matchFound && queryElement != null) {
+//				try {
+//					ids = mapper.mapID(queryElement.getXref(), DataSource.getExistingBySystemCode("Ce"));
+//					if(ids.isEmpty()){
+//						ids = mapper.mapID(queryElement.getXref(), DataSource.getExistingBySystemCode("S"));
+//					}
+//					if(ids.isEmpty()){
+//						id = queryElement.getTextLabel();
+//						id = id.replaceAll(" ", "+");
+//					}else{
+//						String tmpid = ids.iterator().next().getId();
+//						if(ids.iterator().next().getDataSource() == DataSource.getExistingBySystemCode("S")){
+//								/*
+//								 * Choose ids starting with P/Q if found
+//								 */
+//								for(Xref ref:ids){
+//									if(ref.getId().startsWith("P")||ref.getId().startsWith("Q")){
+//										tmpid = ref.getId();
+//									}
+//								}
+//							}
+//						id = tmpid;
+//					}
+//					
+//				} catch (IDMapperException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//							if (id.matches("\\d+")) {
+//					if (!(id.contains("CHEBI:"))) {
+//						id = "CHEBI:" + id;
+//					}
+//				}
+//
+//			}
+//		}
+//		return id;
+//	}
 
-			}
-		}
-		return id;
-	}
-
-	private PathwayElement findConnectedNode(MAnchor anchor, Pathway pwy) {
-		PathwayElement targetNode = null;
-		String targetNodeRef = "";
-		for (PathwayElement pwe : pwy.getDataObjects()) {
-			if (pwe.getObjectType() == ObjectType.LINE) {
-				if (anchor.getGraphId().equalsIgnoreCase(pwe.getEndGraphRef())) {
-					targetNodeRef = pwe.getStartGraphRef();
-				} else if (anchor.getGraphId().equalsIgnoreCase(
-						pwe.getStartGraphRef())) {
-					targetNodeRef = pwe.getEndGraphRef();
-				}
-			}
-		}
-		for (PathwayElement pwe1 : pwy.getDataObjects()) {
-			if (pwe1.getObjectType() == ObjectType.DATANODE) {
-				if (pwe1.getGraphId().equalsIgnoreCase(targetNodeRef)) {
-					targetNode = pwe1;
-				}
-			}
-		}
-		return targetNode;
-	}
+//	private PathwayElement findConnectedNode(MAnchor anchor, Pathway pwy) {
+//		PathwayElement targetNode = null;
+//		String targetNodeRef = "";
+//		for (PathwayElement pwe : pwy.getDataObjects()) {
+//			if (pwe.getObjectType() == ObjectType.LINE) {
+//				if (anchor.getGraphId().equalsIgnoreCase(pwe.getEndGraphRef())) {
+//					targetNodeRef = pwe.getStartGraphRef();
+//				} else if (anchor.getGraphId().equalsIgnoreCase(
+//						pwe.getStartGraphRef())) {
+//					targetNodeRef = pwe.getEndGraphRef();
+//				}
+//			}
+//		}
+//		for (PathwayElement pwe1 : pwy.getDataObjects()) {
+//			if (pwe1.getObjectType() == ObjectType.DATANODE) {
+//				if (pwe1.getGraphId().equalsIgnoreCase(targetNodeRef)) {
+//					targetNode = pwe1;
+//				}
+//			}
+//		}
+//		return targetNode;
+//	}
 
 	@Override
 	public void itemStateChanged(final ItemEvent arg0) {

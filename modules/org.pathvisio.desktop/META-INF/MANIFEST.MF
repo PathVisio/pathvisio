@@ -3,11 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio desktop module
 Bundle-SymbolicName: org.pathvisio.desktop
 Bundle-Version: 3.2.0
-Bundle-Description: This module is the desktop application of PathVisio.
 Bundle-Activator: org.pathvisio.desktop.Activator
-Export-Package: com.nexes.wizard,
+Bundle-Vendor: PathVisio developers
+Export-Package: com.nexes.test,
+ com.nexes.wizard,
  org.pathvisio.desktop,
  org.pathvisio.desktop.data,
+ org.pathvisio.desktop.debug,
+ org.pathvisio.desktop.dialog,
  org.pathvisio.desktop.gex,
  org.pathvisio.desktop.model,
  org.pathvisio.desktop.parameter,
@@ -45,9 +48,9 @@ Require-Bundle: org.pathvisio.core;bundle-version="3.2.0",
  org.w3c.dom.smil;bundle-version="1.0.1",
  org.w3c.dom.svg;bundle-version="1.1.0",
  org.apache.felix.bundlerepository;bundle-version="1.6.6"
-Import-Package: org.osgi.framework;version="1.5.0",
- javax.swing
-Bundle-DocURL: http://www.pathvisio.org
-Bundle-Vendor: PathVisio developers
+Import-Package: javax.swing,
+ org.osgi.framework;version="1.5.0"
 Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
+Bundle-DocURL: http://www.pathvisio.org
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
+Bundle-Description: This module is the desktop application of PathVisio.

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio gui module
 Bundle-SymbolicName: org.pathvisio.gui
 Bundle-Version: 3.2.0
-Bundle-Description: This module is the user interface for the applet and stand alone version of PathVisio.
+Bundle-Vendor: PathVisio developers
 Export-Package: com.jroller.completer,
  com.mammothsoftware.frwk.ddb,
  org.pathvisio.gui,
@@ -21,11 +21,11 @@ Require-Bundle: org.pathvisio.core;bundle-version="3.2.0",
  org.bridgedb.bio;bundle-version="2.0.0",
  org.bridgedb.gui;bundle-version="2.0.0",
  org.bridgedb.rdb;bundle-version="2.0.0"
-Import-Package: org.osgi.framework;version="1.5.0",
- javax.swing,
+Import-Package: javax.swing,
  javax.swing.table,
- javax.swing.text
-Bundle-DocURL: http://www.pathvisio.org
-Bundle-Vendor: PathVisio developers
-Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
+ javax.swing.text,
+ org.osgi.framework;version="1.5.0"
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
+Bundle-DocURL: http://www.pathvisio.org
+Bundle-Description: This module is the user interface for the applet and stand alone version of PathVisio.
+Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics

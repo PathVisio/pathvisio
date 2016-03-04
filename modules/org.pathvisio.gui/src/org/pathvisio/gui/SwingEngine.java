@@ -273,7 +273,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 			if(!f.toString().toUpperCase().endsWith("." + ff.getDefaultExtension().toUpperCase())) {
 				f = new File(f.toString() + "." + ff.getDefaultExtension());
 			}
-			return exportPathway(f);
+//			return exportPathway(f);
+			return exportPathway(f,ff.name);
 
 		}
 		return false;
@@ -345,7 +346,54 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 		}
 	}
 	
+	public boolean exportPathway(final File f, final String exporterName) {
+		if(mayOverwrite(f)) {
+			final ProgressKeeper pk = new ProgressKeeper();
+			final ProgressDialog d = new ProgressDialog(JOptionPane.getFrameForComponent(getApplicationPanel()),
+					"", pk, false, true);
 
+			// create a clone so we can safely act on it in a worker thread.
+			final Pathway clone = engine.getActivePathway().clone();
+
+			SwingWorker<Boolean, Boolean> sw = new SwingWorker<Boolean, Boolean>() 
+			{
+				private List<String> warnings;
+				
+				@Override
+				protected Boolean doInBackground() {
+					try {
+						pk.setTaskName("Exporting pathway");
+						warnings = engine.exportPathway(f, clone,exporterName);
+						return true;
+					} catch(Exception e) {
+						handleConverterException(e.getMessage(), frame, e);
+						return false;
+					} finally {
+						pk.finished();
+					}
+				}
+				
+				@Override
+				public void done()
+				{
+					if (warnings != null && warnings.size() > 0)
+					{
+						OkCancelDialog dlg = new OkCancelDialog(frame, "Conversion warnings", getFrame(), true);
+						JTextArea area = new JTextArea(60, 30);
+						for (String w : warnings)
+							area.append(w + "\n");
+						dlg.setDialogComponent(area);
+						dlg.pack();
+						dlg.setVisible(true);
+					}
+				}
+			};
+
+			return processTask(pk, d, sw);
+		}
+		return false;
+	}
+	
 	public boolean exportPathway(final File f) {
 		if(mayOverwrite(f)) {
 			final ProgressKeeper pk = new ProgressKeeper();

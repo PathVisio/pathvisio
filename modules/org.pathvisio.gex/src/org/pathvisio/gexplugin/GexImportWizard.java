@@ -104,7 +104,8 @@ public class GexImportWizard extends Wizard
 		this.standaloneEngine = standaloneEngine;
 
 		getDialog().setTitle ("Expression data import wizard");
-
+		Wizard wiz = new Wizard();
+		wiz.getDialog();
         registerWizardPanel(fpd);
         registerWizardPanel(hpd);
         registerWizardPanel(cpd);
@@ -992,7 +993,7 @@ public class GexImportWizard extends Wizard
 				@Override public void done()
 				{
 					getWizard().setNextFinishButtonEnabled(true);
-					getWizard().setBackButtonEnabled(true);
+					getWizard().setBackButtonEnabled(false);
 				}
 			};
 			sw.execute();

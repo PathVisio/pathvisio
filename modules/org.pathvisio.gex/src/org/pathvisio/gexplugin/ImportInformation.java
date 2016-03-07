@@ -606,8 +606,12 @@ public class ImportInformation {
 
 		// if more than 90% of number-like patterns use a dot, then the digit symbol is a dot.
 		guessDigitIsDot = ((dotTotal / (commaTotal + dotTotal)) > GOOD_GUESS_FRACTION);
+		
+		//Update digitIsDot in case of csv file and dot digit.
+		digitIsDot = guessDigitIsDot;
+		
 		Logger.log.info ("readsample - I read " + dotTotal + " dots and " + commaTotal + " comma's. I'm guessing " + (guessDigitIsDot ? "dot" : "comma"));
-
+		
 		//Look for maximum.
 		double max = 0;
 		double second = 0;

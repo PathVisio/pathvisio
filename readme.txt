@@ -1,3 +1,6 @@
+IMPORTING SVN REPO TO GITHUB - WORK IN PROGRESS!! 
+
+
 *********************
 * PROJECT STRUCTURE *
 *********************
@@ -58,22 +61,3 @@ all:       clean, then compile, jar, dist and docs.
 
 If you have managed to build the classes with ant or with eclipse, you 
 can use pathvisio.bat to start java from the command line.
-
-**********************************
-* HOW TO BUILD WINDOWS INSTALLER *
-**********************************
-
-With the ant target "dist", you generate a 
-zip file and an automatic installer. These files are
-put in the dist directory and include the revision nr. 
-in the filename.
-
-You need the following external tools: 
-
-Inno-Setup
-http://www.jrsoftware.org/isinfo.php
-make sure "iscc.exe" is in your path.
-
-svnversion.exe
-This .exe comes with the windows version of svn (not TortoiseSvn)
-http://subversion.tigris.org/

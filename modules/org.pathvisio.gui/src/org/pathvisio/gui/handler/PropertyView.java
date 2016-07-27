@@ -160,8 +160,8 @@ public class PropertyView implements Comparable<PropertyView> {
 				vPathway.getUndoManager().newAction (
 					"Change " + type + " property");
 			}
-			for(PathwayElement e : elements) {
-				e.setPropertyEx(type, value);
+			for (PathwayElement pe : elements.toArray(new PathwayElement[0])) {
+				pe.setPropertyEx(type, value);
 			}
 		}
 	}

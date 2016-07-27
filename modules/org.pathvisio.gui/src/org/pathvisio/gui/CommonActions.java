@@ -253,7 +253,8 @@ public class CommonActions implements ApplicationEventListener {
 		
 		 // actions for "Template" section
 		 newTemplateActions = new Action[] {
-				 new NewElementAction(e, new  DefaultTemplates.InteractionTemplate()),
+				 new NewElementAction(e, new  DefaultTemplates.InhibitionInteractionTemplate()),
+				 new NewElementAction(e, new  DefaultTemplates.StimulationInteractionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.ReactionTemplate()),
 		 };
 		

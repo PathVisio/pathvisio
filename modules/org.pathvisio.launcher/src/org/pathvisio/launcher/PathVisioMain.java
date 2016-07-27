@@ -266,9 +266,13 @@ public class PathVisioMain {
 	
 	public static final String ARG_PROPERTY_PGEX = "pathvisio.pgex";
 	public static final String ARG_PROPERTY_PATHWAYFILE = "pathvisio.pathwayfile";
+	
+	// if WP plugin is loaded this pathway will be loaded when PV starts
+	public static final String ARG_PROPERTY_OPEN_WPID = "open.wpid";
 	public static List<String> pluginLocations;
 	public static String pgexFile;
 	public static String pathwayFile;
+	public static String wpId;
 	
 	// this is only a workaround to hand over the pathway and pgex file
 	// from the command line when using the launcher
@@ -279,6 +283,9 @@ public class PathVisioMain {
 		}
 		if(pathwayFile != null) {
 			System.setProperty(ARG_PROPERTY_PATHWAYFILE, pathwayFile);
+		}
+		if(wpId != null) {
+			System.setProperty(ARG_PROPERTY_OPEN_WPID, wpId);
 		}
 	}
 
@@ -325,6 +332,14 @@ public class PathVisioMain {
 			} else if ("--smoketest".equals(args[i]))
 			{
 				isSmokeTest = true;
+			} else if("-wp".equals(args[i])) {
+				if(i+1 < args.length && !isArgument(args[i+1])) {
+					wpId = args[i+1];
+				} else {
+					System.out.println ("Missing WP pathway identifier after -wp option");
+					printHelp();
+					System.exit(-1);
+				}
 			}
 			else {
 				pathwayFile = args[i];
@@ -358,7 +373,8 @@ public class PathVisioMain {
 				"-p: A plugin file/directory to load\n" +
 				"-d: A pgex data file to load\n" +
 				"-v: displays PathVisio version\n" +
-				"-h: displays this help message"
+				"-h: displays this help message\n" +
+				"-wp: opens pathway from WikiPathways through plugin"
 				
 				/* NOTE: the --smoketest option is not documented on purpose
 				 * It's not for use by end-users. */

@@ -42,7 +42,7 @@
 	<target name="clean" description="Remove all intermediate files.">
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
-		<delete dir="build/exe"/>
+		<delete dir="build"/>
 		<iterate target="clean"/>
 	</target>
 

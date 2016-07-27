@@ -3,10 +3,9 @@
 
 	<import file="../../build-common.xml" />
 	
-	<target name="prepare" depends="svnversion">
+	<target name="prepare">
 		<mkdir dir="resources"/>
 		<echo file="resources/version.props">
-pathvisio.revision = ${subversion_revision}
 pathvisio.version = ${pathvisio.version}
 		</echo>
 	</target>

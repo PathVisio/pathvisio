@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="lib-build">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib-build/checkstyle-all-5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib-build/measure.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib-build/junit-4.12.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib-build/biz.aQute.bnd.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

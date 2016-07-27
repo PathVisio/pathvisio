@@ -43,15 +43,17 @@ public class PathwayFileFilter extends FileFilter {
 		if(f.isDirectory()) return true;
 
 		String fn = f.toString();
-		int i = fn.lastIndexOf('.');
-		if(i > 0) {
-			String ext = fn.substring(i + 1);
-			for(String impExt : exts) {
-				if(impExt.equalsIgnoreCase(ext)) {
-					return true;
-				}
-			}
-		}
+		if (fn != null) {
+            int i = fn.lastIndexOf('.');
+            if (i > 0) {
+                String ext = fn.substring(i + 1);
+                for (String impExt : exts) {
+                    if (impExt.equalsIgnoreCase(ext)) {
+                        return true;
+                    }
+                }
+            }
+        }
 		return false;
 	}
 

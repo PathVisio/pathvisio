@@ -545,9 +545,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	/* Some default values */
-	private static final int M_INITIAL_FONTSIZE = 10;
-	private static final int M_INITIAL_LABEL_WIDTH = 80;
-	private static final int M_INITIAL_LABEL_HEIGHT = 20;
+	private static final int M_INITIAL_FONTSIZE = 12;
+	private static final int M_INITIAL_LABEL_WIDTH = 90;
+	private static final int M_INITIAL_LABEL_HEIGHT = 25;
 	private static final int M_INITIAL_LINE_LENGTH = 30; 
 	private static final int M_INITIAL_STATE_SIZE = 15;
 	private static final int M_INITIAL_SHAPE_SIZE = 30;
@@ -555,8 +555,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	private static final int M_INITIAL_CELLCOMP_WIDTH = 200;
 	private static final int M_INITIAL_BRACE_HEIGHT = 15;
 	private static final int M_INITIAL_BRACE_WIDTH = 60;
-	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 80;
-	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20;
+	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 90;
+	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 25;
 
 	// groups should be behind other graphics
 	// to allow background colors

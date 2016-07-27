@@ -1,3 +1,0 @@
-Reduce the amount of public methods and classes.
-Define a process for doing this.
-Does OSGI help in really protecting the non-interface classes from being used?

@@ -385,6 +385,36 @@ public abstract class DefaultTemplates {
 		public void postInsert(PathwayElement[] newElements) {
 		}
 	}
+	/**
+	 * Template for an inhibition interaction, two datanodes with a MIM_INHIBITION line.
+	 */
+	public static class InhibitionInteractionTemplate extends InteractionTemplate {
+		@Override
+		public PathwayElement[] addElements(Pathway p, double mx, double my) {
+			super.addElements(p, mx, my);
+			lastLine.setEndLineType(MIMShapes.MIM_INHIBITION);
+			return new PathwayElement[] { lastLine, lastStartNode, lastEndNode };
+		}
+		@Override
+		public String getName() {
+			return "inhibition interaction";
+		}
+	}
+	/**
+	 * Template for a stimulation interaction, two datanodes with a MIM_STIMULATION line.
+	 */
+	public static class StimulationInteractionTemplate extends InteractionTemplate {
+		@Override
+		public PathwayElement[] addElements(Pathway p, double mx, double my) {
+			super.addElements(p, mx, my);
+			lastLine.setEndLineType(MIMShapes.MIM_STIMULATION);
+			return new PathwayElement[] { lastLine, lastStartNode, lastEndNode };
+		}
+		@Override
+		public String getName() {
+			return "stimulation interaction";
+		}
+	}
 
 	/**
 	 * Template for a reaction, two Metabolites with a connecting arrow, and a GeneProduct (enzyme)
@@ -408,8 +438,7 @@ public abstract class DefaultTemplates {
 			lastEndNode.setColor(COLOR_METABOLITE);
 			lastStartNode.setTextLabel("Substrate");
 			lastEndNode.setTextLabel("Product");
-
-			lastLine.setEndLineType(LineType.ARROW);
+			lastLine.setEndLineType(MIMShapes.MIM_CONVERSION);
 			MAnchor anchor = lastLine.addMAnchor(0.5);
 
 			Template lnt = new LineTemplate("line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT);

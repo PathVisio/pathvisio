@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.SwingUtilities;
@@ -502,9 +501,10 @@ public class Engine
 	}
 
 	/** return the subversion revision at the time of building */
+	@Deprecated
 	public static String getRevision()
 	{
-		return Revision.REVISION;
+		return "";
 	}
 
 	/** The current PathVisio version */

@@ -12,9 +12,11 @@ src-axis-wpclient/
 tools/cytoscape-gpml/build/
 tools/cytoscape-gpml/class
 tools/cytoscape-gpml/gpml.jar
-.classpath
-.project
 ant.properties
 *~
 felix-cache/
 .settings/
+.recommenders/
+warnings.txt
+.metadata/
+derby.log

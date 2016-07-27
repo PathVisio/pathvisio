@@ -62,7 +62,7 @@ public class AboutDlg
 		label.setContentType("text/html");
 		label.setEditable(false);
 		label.setText(
-				swingEngine.getEngine().getApplicationName() + "<br>Revision: " + Engine.getRevision() +
+				swingEngine.getEngine().getApplicationName() +
 				"<br><br><hr><br>" + 
 				"<html><b>Core developers</b><br>" +
 				"Martina Kutmon, Anwesha Bohler, Jonathan Melius, Nuno Nunes, Thomas Kelder, " +

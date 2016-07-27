@@ -91,8 +91,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		String logDest = PreferenceManager.getCurrent().get(GlobalPreference.FILE_LOG);
 		Logger.log.setDest (logDest);
 		Logger.log.setLogLevel(true, true, true, true, true, true);//Modify this to adjust log level
-		Logger.log.info("Application name: " + engine.getApplicationName() +
-				" revision: " + Engine.getRevision());
+		Logger.log.info("Application name: " + engine.getApplicationName());
 		Logger.log.info("os.name: " + System.getProperty("os.name") +
 					" os.version: " + System.getProperty("os.version") +
 					" java.version: " + System.getProperty ("java.version"));

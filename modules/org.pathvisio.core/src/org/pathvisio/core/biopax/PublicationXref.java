@@ -16,6 +16,8 @@
 //
 package org.pathvisio.core.biopax;
 
+import org.pathvisio.core.util.Utils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,37 +154,48 @@ public class PublicationXref extends BiopaxNode {
 	}
 
 	public String toString() {
+		StringBuilder builder = new StringBuilder();
 		String title = getTitle();
-		String pmid = getPubmedId();
+		if(!Utils.isEmpty(title)) {
+			builder.append(title);
+			if (!title.endsWith(".") && title.endsWith("!") && title.endsWith("?")) {
+				builder.append(".");
+			}
+			builder.append(" ");
+		}
 		String authors = getAuthorString();
+		if(!Utils.isEmpty(authors)) {
+			builder.append("<B>")
+					.append(authors)
+					.append("</B>. ");
+		}
 		String source = getSource();
-		String year = getYear();
-		if(title != null && title.length() > 0) {
-			title += "; ";
-		} else {
-			title = "";
-		}
-		if(authors != null && authors.length() > 0) {
-			authors = "<B>" + authors + "</B>; ";
-		} else {
-			authors = "";
-		}
-		if(source != null && source.length() > 0) {
+		if(!Utils.isEmpty(source)) {
 			if(source.startsWith("http://")) {
-				source = "<A href='" + source + "'>" + source + "</A>; ";
+				builder.append("<A href='")
+						.append(source)
+						.append("'>")
+						.append(source)
+						.append("</A>. ");
 			} else {
-				source = "<I>" + source + "</I>; ";
+				builder.append("<I>")
+						.append(source)
+						.append("</I>. ");
 			}
 		}
-		if(year != null && year.length() > 0) {
-			year += "; ";
+		String year = getYear();
+		if(!Utils.isEmpty(year)) {
+			builder.append(year)
+					.append(". ");
 		}
-		if(pmid != null && pmid.length() > 0) {
-			pmid = "<A href='" + PUBMED_URL + pmid + "'>" +
-				"PubMed" + "</A>";
-		} else {
-			pmid = "";
+		String pmid = getPubmedId();
+		if(!Utils.isEmpty(pmid)) {
+			builder.append("<A href='" + PUBMED_URL)
+					.append(pmid)
+					.append("'>PubMed ")
+					.append(pmid)
+					.append("</A>.");
 		}
-		return 	title + authors + source + year + pmid;
+		return 	builder.toString();
 	}
 }

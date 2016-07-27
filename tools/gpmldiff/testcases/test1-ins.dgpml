@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<Delta>
-  <Insert>
-    <Shape xmlns="http://genmapp.org/GPML/2007" Type="Brace" GraphId="cd6">
-      <Graphics FillColor="Transparent" Color="000000" CenterX="1582.5" CenterY="2640.0" Width="1231.0" Height="823.9999999999999" Rotation="1.5707963267948966" />
-    </Shape>
-  </Insert>
-</Delta>
-

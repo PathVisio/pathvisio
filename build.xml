@@ -1,28 +1,21 @@
 <?xml version="1.0"?>
 <project name="PathVisio" default="all" basedir=".">
-
 	<property name="src.dir" value="modules"/>
 	<property name="debug.mode" value="true"/>
 
-    <property name="apidoc.dir" value="apidoc"/>
+    	<property name="apidoc.dir" value="apidoc"/>
 	<property name="webstart.dir" value="webstart"/>
 	<property name="release.dir" value="release"/>
 
-
-	<property name="build.wpi.bin" value="build/wpi/bin"/>
-	<property name="build.wpi.applet" value="build/wpi/applet"/>
-	<property name="wikipathways.dest.bin" value="${wikipathways.dest}/wpi/bin"/> <!-- install dir for wikipathways utilities !-->
-	<property name="wikipathways.dest.applet" value="${wikipathways.dest}/wpi/applet"/> <!-- install dir for wikipathways applets !-->
 	<property name="svn.exec.svnversion" value="svnversion"/>
 	<property name="checkstyle.output.file" value="warnings.txt"/>
 
 	<property name="webstart.base.url" value="http://www.pathvisio.org/webstart"/>
 
 	<!-- needed to build zip files correctly -->
-	<property name="pathvisio.version" value="3.2.1"/>
-	<property name="lib.axis.dir" value="tools/cytoscape-gpml/lib"/>
+	<property name="pathvisio.version" value="3.2.2"/>
 	
-   <macrodef name="iterate">
+  	<macrodef name="iterate">
 		<attribute name="target"/>
 		<sequential>
 			<subant target="@{target}">
@@ -36,47 +29,27 @@
 					<file name="modules/org.pathvisio.gex/build.xml"/>
 					<file name="modules/org.pathvisio.statistics/build.xml"/>
 					<file name="modules/org.pathvisio.visualization/build.xml"/>
-					<file name="modules/org.wikipathways.applet/build.xml"/>
-					<file name="modules/org.wikipathways.client/build.xml"/>
 				</filelist>
 			</subant>
 		</sequential>
 	</macrodef>
 
-	<target name="svnversion">
-		<exec executable="${svn.exec.svnversion}" outputproperty="subversion_revision" failifexecutionfails="false">
-			<arg line="-n ."/>
-		</exec>
-	</target>
-
-	<target name="prepare" depends="svnversion">
+	<target name="prepare">
 		<mkdir dir="${apidoc.dir}"/>
-		<mkdir dir="${build.wpi.bin}"/>
 		<mkdir dir="${release.dir}" />
 	</target>
 
 	<target name="clean" description="Remove all intermediate files.">
-		<delete dir="${build.test.dir}"/>
 		<delete dir="${apidoc.dir}"/>
 		<delete dir="${webstart.dir}/www"/>
-		<delete dir="${build.wpi.bin}"/>
-		<delete dir="${build.wpi.applet}"/>
 		<delete dir="build/exe"/>
 		<iterate target="clean"/>
 	</target>
 
 	<target name="dist-clean" depends="clean" description="Cleaner than clean: remove all generated files">
-		<delete file="lib/resources.jar"/>
 		<delete file="${src.dir}/org.pathvisio.core/src/org/pathvisio/core/Revision.java"/>
-		<delete file="visplugins.jar"/>
-		<delete file="diffview.jar"/>
-		<delete file="pathvisio_core.jar"/>
 		<delete file="pathvisio.jar"/>
-		<delete file="preloader.jar"/>
-		<delete file="wikipathways.jar"/>
-		<delete file="wikipathways-client.jar"/>
 		<delete dir="${release.dir}" />
-		<delete dir="${axis.wpclient.dir}" />
 		<iterate target="dist-clean"/>
 	</target>
 
@@ -102,14 +75,6 @@
 
 	<target name="launcher.jar" depends="core.jar">
 		<subant target="jar" buildpath="modules/org.pathvisio.launcher/build.xml"/>
-	</target>
-
-	<target name="applet.jar" depends="gui.jar">
-		<subant target="jar" buildpath="modules/org.wikipathways.applet/build.xml"/>
-	</target>
-
-	<target name="wpclient.jar" depends="applet.jar">
-		<subant target="jar" buildpath="modules/org.wikipathways.client/build.xml"/>
 	</target>
 
 	<target name="visualization.jar" depends="desktop.jar">
@@ -149,7 +114,6 @@
 			<fileset dir="lib">
 				<include name="org.apache*.jar"/>
 				<include name="org.w3c*.jar"/>
-				<!-- <include name="org.eclipse.osgi.jar"/> -->
 				<include name="derby.jar"/>
 				<include name="org.bridgedb*.jar"/>
 				<include name="org.pathvisio.*.jar"/>
@@ -160,7 +124,6 @@
 			</fileset>
 		</copy>
 		<unjar src="modules/org.pathvisio.launcher.jar" dest="build/exe"/>
-		<!-- <unjar src="lib/org.eclipse.osgi.jar" dest="build/exe"/> -->
 		<unjar src="lib/felix.jar" dest="build/exe"/>
 		<jar file="pathvisio.jar" basedir="build/exe">
 			<manifest>
@@ -182,7 +145,7 @@
 		</fail>
 		<mkdir dir="${webstart.dir}/www"/>
 		<!-- Update latest version file -->
-		<echo file="${webstart.dir}/www/latestversion">${subversion_revision}</echo>
+		<echo file="${webstart.dir}/www/latestversion">PV${pathvisio.version}</echo>
 		<!-- Copy files needed for webstart !-->
 		<!--tsaurl="http://timestamp.comodoca.com/authenticode"-->
 		<signjar jar="pathvisio.jar"
@@ -195,136 +158,11 @@
 		<replace file="webstart/www/pathvisio.jnlp" token="#BASEURL#" value="${webstart.base.url}"/>
 	</target>
 
-	<path id="applet.libs">
-		<fileset dir="lib">
-			<include name="org.bridgedb.jar"/>
-			<include name="org.bridgedb.bio.jar"/>
-			<include name="org.bridgedb.rdb.jar"/>
-			<include name="org.bridgedb.webservice.bridgerest.jar"/>
-			<include name="derbyclient.jar"/>
-			<include name="org.pathvisio.jgoodies.forms.jar"/>
-			<include name="org.pathvisio.xmlrpc.client.jar"/>
-			<include name="org.pathvisio.xmlrpc.common.jar"/>
-			<include name="org.pathvisio.ws.commons.util.jar"/>
-			<include name="com.springsource.org.jdom-1.1.0.jar"/>
-		</fileset>
-		<fileset dir="lib/apache">
-			<include name="*.jar"/>
-		</fileset>
-		<fileset dir="modules">
-			<include name="org.pathvisio.core.jar"/>
-			<include name="org.pathvisio.gui.jar"/>
-			<include name="org.wikipathways.applet.jar"/>
-		</fileset>
-	</path>
-
-	<path id="utility.libs">
-		<fileset dir="lib">
-			<include name="org.bridgedb.jar"/>
-			<include name="org.bridgedb.bio.jar"/>
-			<include name="org.bridgedb.rdb.jar"/>
-			<include name="org.apache.batik.*.jar"/>
-			<include name="org.pathvisio.pdftranscoder.jar"/>
-			<include name="org.apache.xalan*.jar"/>
-			<include name="org.apache.xerces*.jar"/>
-			<include name="org.apache.xml*.jar"/>
-			<include name="org.w3c*.jar"/>
-			<include name="javax.xml*.jar"/>
-			<include name="derbyclient.jar"/>
-			<include name="org.pathvisio.jgoodies.forms.jar"/>
-			<include name="org.pathvisio.ws.commons.util.jar"/>
-			<include name="org.pathvisio.xmlrpc.client.jar"/>
-			<include name="org.pathvisio.xmlrpc.common.jar"/>
-			<include name="com.springsource.org.jdom-1.1.0.jar"/>
-		</fileset>
-	</path>
-
-	<target name="prepare-wpi" depends="applet.jar" description="Prepare all applets and utilities needed by WikiPathways">
-		
-		<!-- Copy converter jar with modified main class -->
-		<copy tofile="${build.wpi.bin}/pathvisio_color_exporter.jar"
-			file="modules/org.pathvisio.core.jar"/>
-		
-		<copy toDir="${build.wpi.bin}/lib"><path refid="utility.libs"/></copy>		
-		<manifestclasspath property="jar.class.path" jarfile="${build.wpi.bin}/pathvisio_color_exporter.jar">
-			<classpath>
-				<fileset dir="${build.wpi.bin}/lib"><include name="*.jar"/></fileset>
-				<!-- add reference to optional BioPAX converter to classpath -->
-				<pathelement location="${build.wpi.bin}/Biopax3GPML.jar"/>
-			</classpath>
-		</manifestclasspath>
-		
-		<jar file="${build.wpi.bin}/pathvisio_color_exporter.jar" update="true">
-			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.core.util.ColorExporter"/>
-				<attribute name="Class-Path" value="${jar.class.path}"/>
-			</manifest>
-		</jar>
-
-		<copy tofile="${build.wpi.bin}/pathvisio_core.jar"
-			file="modules/org.pathvisio.core.jar"/>
-		<jar file="${build.wpi.bin}/pathvisio_core.jar" update="true">
-			<manifest>
-				<attribute name="Main-Class" value="org.pathvisio.core.util.Converter"/>
-				<attribute name="Class-Path" value="${jar.class.path}"/>
-			</manifest>
-		</jar>
-
-		<!-- Copy necessary libraries -->
-		<copy toDir="${build.wpi.applet}">
-			<fileset dir=".">
-				<include name="preloader.jar"/>
-			</fileset>
-		</copy>
-		<copy toDir="${build.wpi.applet}">
-			<path refid="applet.libs"/>
-		</copy>
-
-		<!-- Copy preloader class -->
-		<copy toDir="${build.wpi.applet}/org/wikipathways/applet"
-			file="modules/org.wikipathways.applet/build/org/wikipathways/applet/Preloader.class"/>
-
-		<!-- generate cache_archive, which will be used to determine which jars are needed for the applet -->
-		<pathconvert property="wikipathways.class.path"
-					 pathsep=" ">
-		  <path refid="applet.libs"/>
-		  <flattenmapper/>
-		</pathconvert>
-		<echo file="${build.wpi.applet}/cache_archive" message="org.wikipathways.applet.jar ${wikipathways.class.path}" />
-	</target>
-
-	<target name="install-wpi" depends="prepare-wpi" description="Install applets and utilities in the WikiPathways www directory">
-		<fail message="You must specify a destination path for WikiPathways to run this task:    ant -Dwikipathways.dest=/path/to/wikipathways [ant target]">
-			<condition>
-				<not> <isset property="wikipathways.dest"/> </not>
-			</condition>
-		</fail>
-		<fail message="You must specify a keystore password for opening visioKeyStore: ant -Dkeystore.password=***** [ant target]">
-			<condition>
-				<not> <isset property="keystore.password"/> </not>
-			</condition>
-		</fail>
-		<!-- Sign all jar files -->
-		<signjar alias="secure.ksoftware.net"
-			storetype="pkcs12" storepass="${keystore.password}" keystore="../lib/visioKeyStore.p12">
-			<fileset dir="${build.wpi.applet}" includes="**/*.jar"/>
-			<fileset dir="${build.wpi.bin}" includes="**/*.jar"/>
-		</signjar>
-
-		<!-- copy to /var/www/wikipathways -->
-		<copy toDir="${wikipathways.dest.applet}">
-			<fileset dir="${build.wpi.applet}" includes="**/*" />
-		</copy>
-		<copy toDir="${wikipathways.dest.bin}">
-			<fileset dir="${build.wpi.bin}" includes="**/*" />
-		</copy>
-	</target>
-
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<tstamp /> <!-- set ${TODAY} -->
 		<javadoc destdir="${apidoc.dir}"
 			doctitle="PathVisio"
-			header="Revision ${subversion_revision}"
+			header="Version ${pathvisio.version}"
 			footer="Generated ${TODAY}">
 			<classpath>
 				<fileset dir="lib">
@@ -340,8 +178,6 @@
 			<packageset dir="${src.dir}/org.pathvisio.gex/src"/>
 			<packageset dir="${src.dir}/org.pathvisio.visualization/src"/>
 			<packageset dir="${src.dir}/org.pathvisio.statistics/src"/>
-			<packageset dir="${src.dir}/org.wikipathways.client/src"/>
-			<packageset dir="${src.dir}/org.wikipathways.client/gen-src"/>
 			<sourcepath>
 				<pathelement location="${src.dir}/org.pathvisio.core/src"/>
 				<pathelement location="${src.dir}/org.pathvisio.data/src"/>
@@ -351,14 +187,12 @@
 				<pathelement location="${src.dir}/org.pathvisio.statistics/src"/>
 				<pathelement location="${src.dir}/org.pathvisio.gui/src"/>
 				<pathelement location="${src.dir}/org.pathvisio.desktop/src"/>
-				<pathelement location="${src.dir}/org.wikipathways.applet/src"/>
-				<pathelement location="${src.dir}/org.wikipathways.client/src"/>
 			</sourcepath>
 		</javadoc>
 	</target>
 
-	<target name="zip.src" depends="svnversion" description="create source tarball and zip">
-		<property name="srcbase" value="pathvisio_src-${pathvisio.version}-r${subversion_revision}"/>
+	<target name="zip.src" description="create source tarball and zip">
+		<property name="srcbase" value="pathvisio_src-${pathvisio.version}"/>
 		<zip destfile="${release.dir}/${srcbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
 				<include name="modules/**/*"/>
@@ -384,7 +218,7 @@
 	</target>
 	
 	<target name="zip.bin" depends="exe" description="create binary tarball and zip">
-		<property name="binbase" value="pathvisio_bin-${pathvisio.version}-r${subversion_revision}"/>
+		<property name="binbase" value="pathvisio_bin-${pathvisio.version}"/>
 		<zip destfile="${release.dir}/${binbase}.zip">
 			<zipfileset dir="." prefix="pathvisio-${pathvisio.version}">
 				<include name="pathvisio.jar"/>
@@ -411,10 +245,9 @@
 			 classpath="lib-build/checkstyle-all-5.0.jar"/>
 
 	<target name="checkstyle">
-		<checkstyle config="tools/dailybuild/pv_checks.xml">
+		<checkstyle config="pv_checks.xml">
 			<fileset dir="modules">
 				<include name="**/*.java"/>
-				<exclude name="org.wikipathways.client/gen-src/**/*.java"/>
 			</fileset>
 			<formatter toFile="${checkstyle.output.file}"/>
 		</checkstyle>
@@ -451,36 +284,4 @@
 		</zip>
 		<delete dir="${app.dir}" />
 	</target>
-
-	<target name="wp-bots" depends="wpclient.jar" description="">
-		<subant target="wp-bots" buildpath="modules/org.wikipathways.client/build.xml"/>
-	</target>
-
-	<target name="tarbin-wpclient" depends="wpclient.jar" description="Create a binary tarball for the WikiPathways client">
-		<property name="binbase2" value="wikipathways_client_bin-${pathvisio.version}-r${subversion_revision}" />
-
-		<zip destfile="${release.dir}/${binbase2}.zip">
-			<zipfileset dir="." prefix="wikipathways_client-${pathvisio.version}">
-				<include name="modules/org.wikipathways.client.jar" />
-				<include name="lib/com.springsource.org.jdom-1.1.0.jar" />
-				<include name="lib/derby.jar" />
-				<include name="modules/org.pathvisio.core.jar" />
-				<include name="modules/org.wikipathways.applet.jar" />
-				<include name="${lib.axis.dir}/*.jar" />
-				<include name="lib/resources.jar"/>
-				<include name="modules/org.pathvisio.core/resources/botresult.css" />
-				<include name="modules/org.pathvisio.core/resources/sorttable.js" />
-				<include name="lib/org.bridgedb.jar"/>
-				<include name="lib/org.bridgedb.bio.jar"/>
-				<include name="lib/org.bridgedb.webservice.bridgerest.jar"/>
-				<include name="lib/org.bridgedb.rdb.jar"/>
-			</zipfileset>
-		</zip>
-		<tar destfile="${release.dir}/${binbase2}.tar.gz" compression="gzip">
-		  <zipfileset src="${release.dir}/${binbase2}.zip"/>
-		</tar>
-	</target>
-
-	<target name="dist" depends="tarbin-wpclient,zip"/>
-
 </project>

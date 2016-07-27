@@ -4,4 +4,4 @@
 cd $(dirname $0)
 
 # Run PathVisio
-java -jar pathvisio.jar "$@"
+java -jar -Dfile.encoding=UTF-8 pathvisio.jar "$@"

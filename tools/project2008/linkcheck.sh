@@ -1,6 +1,0 @@
-#!/bin/bash
-
-PATHVISIO_CP=../../lib/apache/commons-codec-1.3.jar:../../lib/apache/commons-httpclient-3.0.1.jar:../../lib/apache/commons-logging-1.1.jar:../../lib/apache/ws-commons-util-1.0.1.jar:../../lib/apache/xmlrpc-client-3.0.jar:../../lib/apache/xmlrpc-common-3.0.jar:../../lib/batik/batik-anim.jar:../../lib/batik/batik-awt-util.jar:../../lib/batik/batik-bridge.jar:../../lib/batik/batik-css.jar:../../lib/batik/batik-dom.jar:../../lib/batik/batik-ext.jar:../../lib/batik/batik-extension.jar:../../lib/batik/batik-gvt.jar:../../lib/batik/batik-parser.jar:../../lib/batik/batik-script.jar:../../lib/batik/batik-svg-dom.jar:../../lib/batik/batik-svggen.jar:../../lib/batik/batik-transcoder.jar:../../lib/batik/batik-util.jar:../../lib/batik/batik-xml.jar:../../lib/batik/pdf-transcoder.jar:../../lib/batik/xml-apis-ext.jar:../../lib/batik/xml-apis.jar:../../lib/derby.jar:../../lib/derbyclient.jar:../../lib/h2.jar:../../lib/hsqldb.jar:../../lib/jdom.jar:../../lib/resources.jar:../../lib/swing-worker-1.1.jar
-MYCLASSPATH=$PATHVISIO_CP:build
-java -classpath $MYCLASSPATH org.pathvisio.plugins.project2008.LinkChecker online "${HOME}/PathVisio-Data/gene databases" ${HOME}/wikipathways result.html
-

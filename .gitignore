@@ -1,3 +1,13 @@
+# IntelliJ files
+/.idea/libraries/Gradle__*.xml
+/.idea/dataSources.xml
+/.idea/dataSources.ids
+/.idea/dictionaries/
+/.idea/scssLintPlugin.xml
+/.idea/shelf/
+/.idea/workspace.xml
+/.idea/watcherTasks.xml
+
 src/core/org/pathvisio/Revision.java
 *.orig
 *.rej

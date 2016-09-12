@@ -406,6 +406,12 @@ public class Pathway
 		{
 			removeGroupRef(groupRef, o);			
 		}
+		// Remove literature reference
+		if (o.getBiopaxRefs() != null){
+			for (String ref : o.getBiopaxRefs()){
+				getBiopax().removeElement(getBiopax().getElement(ref));
+			}
+		}
 		for (MAnchor a : o.getMAnchors()) {
 			if (a.getGraphId() != null)
 			{

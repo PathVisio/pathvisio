@@ -32,7 +32,6 @@ import java.util.TreeMap;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.jdom.Document;
 import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.model.GraphLink.GraphIdContainer;
@@ -2677,7 +2676,22 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	public int compareTo(PathwayElement o) {
-		return getZOrder() - o.getZOrder();
+		int rez = getZOrder() - o.getZOrder();
+		if (rez != 0) {
+			return rez;
+		}
+		String a = getGraphId();
+		String b = o.getGraphId();
+		if (a == null) {
+			if (b == null) {
+				return 0;
+			}
+			return -1;
+		}
+		if (b == null) {
+			return 1;
+		}
+		return a.compareTo(b);
 	}
 
 	public Point2D toAbsoluteCoordinate(Point2D p) {

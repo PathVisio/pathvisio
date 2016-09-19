@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.bridgedb.Xref;
 import org.pathvisio.core.biopax.BiopaxElement;
+import org.pathvisio.core.biopax.BiopaxNode;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.GraphLink.GraphIdContainer;
 import org.pathvisio.core.model.GraphLink.GraphRefContainer;
@@ -406,14 +407,14 @@ public class Pathway
 		{
 			removeGroupRef(groupRef, o);			
 		}
-		// Remove literature reference
+		// Add one or multiples literature(s) reference(s) to the list to deletion
 		if (o.getBiopaxRefs() != null){
 			for (String ref : o.getBiopaxRefs()){
 				BiopaxNode node = getBiopax().getElement(ref);
 				//if no an another pathway element use this literature reference
-				//delete the literature reference
+				//add to the list to deletion
 				if(!getBiopax().hasReferences(node))
-					getBiopax().removeElement(node);
+					biopaxReferenceToDelete.add(ref);
 			}
 		}
 		for (MAnchor a : o.getMAnchors()) {
@@ -903,6 +904,9 @@ public class Pathway
 		{
 			Logger.log.warn("Pathway.fixReferences fixed " + result + " reference(s)");
 		}
+		for (String ref : biopaxReferenceToDelete ){
+			getBiopax().removeElement(getBiopax().getElement(ref));
+		}
 		return result;
 	}
 
@@ -938,4 +942,9 @@ public class Pathway
 	public List<OntologyTag> getOntologyTags(){
 		return ontologyTags;
 	}
+	/**
+	 * List of Biopax references to be deleted.
+	 * The deletion is done before to save the pathway.
+	 */
+	private List<String> biopaxReferenceToDelete = new ArrayList<String>();
 }

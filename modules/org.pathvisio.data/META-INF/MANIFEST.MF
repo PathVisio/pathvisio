@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio data module
 Bundle-SymbolicName: org.pathvisio.data
-Bundle-Version: 3.2.0
+Bundle-Version: 3.2.3
 Bundle-Vendor: PathVisio developers
 Export-Package: org.pathvisio.data
-Require-Bundle: org.bridgedb;bundle-version="2.0.0",
+Require-Bundle: org.bridgedb;bundle-version="2.2.0",
  org.apache.commons.math;bundle-version="2.0.0"
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics

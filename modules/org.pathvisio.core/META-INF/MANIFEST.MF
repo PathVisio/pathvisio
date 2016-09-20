@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio core module
 Bundle-SymbolicName: org.pathvisio.core
-Bundle-Version: 3.2.0
+Bundle-Version: 3.2.3
 Bundle-Vendor: PathVisio developers
 Export-Package: org.pathvisio.core,
  org.pathvisio.core.biopax,
@@ -17,9 +17,9 @@ Export-Package: org.pathvisio.core,
 Require-Bundle: derby;bundle-version="10.4.2000000",
  com.springsource.org.jdom;bundle-version="1.1.0",
  org.pathvisio.pdftranscoder;bundle-version="1.7.0",
- org.bridgedb;bundle-version="2.0.0",
- org.bridgedb.bio;bundle-version="2.0.0",
- org.bridgedb.rdb;bundle-version="2.0.0",
+ org.bridgedb;bundle-version="2.2.0",
+ org.bridgedb.bio;bundle-version="2.2.0",
+ org.bridgedb.rdb;bundle-version="2.2.0",
  org.apache.batik.bridge;bundle-version="1.7.0",
  org.apache.batik.css;bundle-version="1.7.0",
  org.apache.batik.dom;bundle-version="1.7.0",

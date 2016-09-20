@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio gui module
 Bundle-SymbolicName: org.pathvisio.gui
-Bundle-Version: 3.2.0
+Bundle-Version: 3.2.3
 Bundle-Vendor: PathVisio developers
 Export-Package: com.jroller.completer,
  com.mammothsoftware.frwk.ddb,
@@ -17,10 +17,10 @@ Export-Package: com.jroller.completer,
 Require-Bundle: org.pathvisio.core;bundle-version="3.2.0",
  com.springsource.org.jdom;bundle-version="1.1.0",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
- org.bridgedb;bundle-version="2.0.0",
- org.bridgedb.bio;bundle-version="2.0.0",
- org.bridgedb.gui;bundle-version="2.0.0",
- org.bridgedb.rdb;bundle-version="2.0.0"
+ org.bridgedb;bundle-version="2.2.0",
+ org.bridgedb.bio;bundle-version="2.2.0",
+ org.bridgedb.gui;bundle-version="2.2.0",
+ org.bridgedb.rdb;bundle-version="2.2.0"
 Import-Package: javax.swing,
  javax.swing.table,
  javax.swing.text,

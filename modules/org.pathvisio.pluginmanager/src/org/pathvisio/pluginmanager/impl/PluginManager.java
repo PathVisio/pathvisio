@@ -79,17 +79,19 @@ public class PluginManager implements IPluginManager {
 	private BundleContext context;
 	private RepositoryAdmin repoAdmin;
 
-	private List<Plugin> runningPlugins;
+	private Map<String, Plugin> runningPlugins;
 	
 	private PvDesktop desktop;
 	
 	private LocalRepositoryHandler localHandler;
 	private PluginManagerDialog dlg;
 	
+	public static final String ARG_PROPERTY_WPID = "wp.id";
+	
 	public PluginManager (BundleContext context) {
 		this.context = context;
 		onlineRepos = new ArrayList<PVRepository>();
-		runningPlugins = new ArrayList<Plugin>();
+		runningPlugins = new HashMap<String, Plugin>();
 		problems = new ArrayList<BundleVersion>();
 		localHandler = new LocalRepositoryHandler(context, this);
 		tmpBundles = new HashMap<String, BundleVersion>();
@@ -97,28 +99,28 @@ public class PluginManager implements IPluginManager {
 	
 	public void init(PvDesktop desktop) {
 		this.desktop = desktop;
-	
+
 		// initialize local repository
 		localHandler.init(GlobalPreference.getBundleDir());
-		
+
 		// do not save bundles that could not get started
 		localHandler.clean(problems);
-		
+
 		// initializes running plugins
 		initPlugins();
-		
+
 		// initialize online repositories
 		final ServiceReference ref = context.getServiceReference(RepositoryAdmin.class.getName());
 		repoAdmin = (RepositoryAdmin) context.getService(ref);
 
-		if(ref != null) {
+		if (ref != null) {
 			SwingWorker<Void, Map<Repository, URL>> worker = new SwingWorker<Void, Map<Repository, URL>>() {
 				boolean atLeastOneSuccess = false;
 				Throwable connectionException;
-				
+
 				@Override
 				protected Void doInBackground() throws Exception {
-					
+
 					URL url = new URL(PreferenceManager.getCurrent().get(PluginRepoPreference.ONLINE_REPO_URL));
 					try {
 						Repository repo = repoAdmin.addRepository(url);
@@ -130,32 +132,42 @@ public class PluginManager implements IPluginManager {
 						Logger.log.error("Could not initialize repository " + url + "\t" + e.getMessage());
 						connectionException = e;
 					}
-				
 					return null;
 				}
-				
+
 				@Override
 				protected void process(List<Map<Repository, URL>> result) {
-					for(Map<Repository, URL> repo : result) {
-						for(Repository r : repo.keySet()) {
+					for (Map<Repository, URL> repo : result) {
+						for (Repository r : repo.keySet()) {
 							setUpOnlineRepo(r, repo.get(r));
 						}
 					}
 				}
-				
+
 				@Override
 				protected void done() {
 					if (atLeastOneSuccess) {
 						status = PluginManagerStatus.CONNECTION_COMPLETED_SUCCESSFULLY;
+						
+						// check if WP plugin needs to be installed
+						String str = System.getProperty(ARG_PROPERTY_WPID);
+						if (str != null && !runningPlugins.containsKey("org.pathvisio.wpclient")) {
+							for (BundleVersion plugin : getAvailablePlugins()) {
+								if (plugin.getSymbolicName().equals("org.pathvisio.wpclient")) {
+									installPluginFromRepo(plugin);
+								}
+							}
+						}
 					} else {
 						status = PluginManagerStatus.CONNECTION_COMPLETED_FAILURE;
 						savedConnectionException = connectionException;
 					}
+
 					if (dlg != null) {
 						dlg.updateData();
 					}
 				}
-				
+
 			};
 			worker.execute();
 		} else {
@@ -172,13 +184,13 @@ public class PluginManager implements IPluginManager {
 			if(refs != null) {
 				for(int i = 0; i < refs.length; i++) {
 					Plugin plugin = (Plugin) context.getService(refs[i]);
-					if(!runningPlugins.contains(plugin)) {
+					if(!runningPlugins.containsKey(refs[i].getBundle().getSymbolicName())) {
 						Logger.log.info("Initialize plugin " + refs[i].getBundle().getSymbolicName());
 						
 						ServiceReference ref = context.getServiceReference(PvDesktop.class.getName());
 						checkTmpBundles(refs[i]);
 						plugin.init((PvDesktop) context.getService(ref));
-						runningPlugins.add(plugin);
+						runningPlugins.put(refs[i].getBundle().getSymbolicName(), plugin);
 					} else {
 						Logger.log.info("Plugin " + refs[i].getBundle().getSymbolicName() + " is running.");
 					}
@@ -334,7 +346,7 @@ public class PluginManager implements IPluginManager {
 				}
 				localHandler.clean(problems);
 				// show status
-				dlg.updateData();
+				if(dlg != null) dlg.updateData();
 			}
 		};
 

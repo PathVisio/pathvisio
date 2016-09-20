@@ -268,7 +268,8 @@ public class PathVisioMain {
 	public static final String ARG_PROPERTY_PATHWAYFILE = "pathvisio.pathwayfile";
 	
 	// if WP plugin is loaded this pathway will be loaded when PV starts
-	public static final String ARG_PROPERTY_OPEN_WPID = "open.wpid";
+	public static final String ARG_PROPERTY_WPID = "wp.id";
+	
 	public static List<String> pluginLocations;
 	public static String pgexFile;
 	public static String pathwayFile;
@@ -285,12 +286,11 @@ public class PathVisioMain {
 			System.setProperty(ARG_PROPERTY_PATHWAYFILE, pathwayFile);
 		}
 		if(wpId != null) {
-			System.setProperty(ARG_PROPERTY_OPEN_WPID, wpId);
-		}
+			System.setProperty(ARG_PROPERTY_WPID, wpId);
+		}		
 	}
 
-	public static void parseArguments(String [] args) 
-	{
+	public static void parseArguments(String [] args) {
 		pluginLocations = new ArrayList<String>();
 		for(int i = 0; i < args.length; i++) {
 			if ("-v".equals(args[i])) 
@@ -332,16 +332,15 @@ public class PathVisioMain {
 			} else if ("--smoketest".equals(args[i]))
 			{
 				isSmokeTest = true;
-			} else if("-wp".equals(args[i])) {
+			} else if("-wpid".equals(args[i])) {
 				if(i+1 < args.length && !isArgument(args[i+1])) {
 					wpId = args[i+1];
 				} else {
-					System.out.println ("Missing WP pathway identifier after -wp option");
+					System.out.println ("Missing WP pathway identifier after -wpid option");
 					printHelp();
 					System.exit(-1);
 				}
-			}
-			else {
+			} else {
 				pathwayFile = args[i];
 			}
 		}
@@ -374,8 +373,7 @@ public class PathVisioMain {
 				"-d: A pgex data file to load\n" +
 				"-v: displays PathVisio version\n" +
 				"-h: displays this help message\n" +
-				"-wp: opens pathway from WikiPathways through plugin"
-				
+				"-wpid: opens pathway from WikiPathways through plugin"				
 				/* NOTE: the --smoketest option is not documented on purpose
 				 * It's not for use by end-users. */
 		);

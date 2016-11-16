@@ -103,7 +103,7 @@ public enum GlobalPreference implements Preference
 
 	WIN_X ("50"),
 	WIN_Y ("50"),
-	WIN_W ("800"),
+	WIN_W ("1000"),
 	WIN_H ("600"),
 
 	// don't use system look and feel by default on linux.

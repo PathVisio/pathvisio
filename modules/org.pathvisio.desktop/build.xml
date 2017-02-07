@@ -37,4 +37,12 @@
 		<pathelement path="../../lib-build/measure.jar"/>
 	</path>
 
+	<target name="dist-clean" depends="clean">
+		<delete>
+			<fileset dir=".">
+				<include name="TEST-*.xml" />
+			</fileset>
+		</delete>
+	</target>
+
 </project>

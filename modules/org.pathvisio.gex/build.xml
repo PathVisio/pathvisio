@@ -5,6 +5,18 @@
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
+
+		  <include name="poi-ooxml-3.15.jar"/>
+		  <include name="poi-3.15.jar"/>
+		  <include name="poi-ooxml-schemas-3.15.jar"/>
+		  <include name="curvesapi-1.04.jar"/>
+		  <include name="xmlbeans-2.6.0.jar"/>
+		  <include name="commons-codec-1.10.jar"/>
+		  <include name="commons-collections4-4.1.jar"/>
+		  <include name="poi-scratchpad-3.15.jar"/>
+		  <include name="poi-excelant-3.15.jar"/>
+
+
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.bio.jar"/>
 		<include name="org.bridgedb.rdb.jar"/>

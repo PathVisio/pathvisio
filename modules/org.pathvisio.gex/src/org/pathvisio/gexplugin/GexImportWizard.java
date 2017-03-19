@@ -137,7 +137,10 @@ public class GexImportWizard extends Wizard
 		private void updateTxtFile()
 		{
 			String fileName = txtInput.getText();
-			File file = new File (fileName);
+			try{
+
+			File file=new FileConverter().convertExcelToText(fileName);
+			//File file = new File (fileName);
 			txtFileComplete = true;
 			if (!file.exists())
 			{
@@ -149,9 +152,10 @@ public class GexImportWizard extends Wizard
 				setErrorMessage("Can't access specified file containing expression data");
 				txtFileComplete = false;
 			}
-			else try
+			else
 			{
 				importInformation.setTxtFile(file);
+			}
 			}
 			catch (IOException e)
 			{

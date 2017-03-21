@@ -56,6 +56,8 @@
       <root url="jar://$PROJECT_DIR$/lib/org.hamcrest.core_1.1.0.v20090501071000.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/javax.wsdl_1.5.1.v201012040544.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.bridgedb.rdb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.springsource.org.apache.commons.codec-1.6.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/com.springsource.org.apache.poi-3.9.0.FINAL.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

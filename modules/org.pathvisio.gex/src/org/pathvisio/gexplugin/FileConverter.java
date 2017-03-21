@@ -14,8 +14,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.pathvisio.core.util.FileUtils;
 
 public class FileConverter {
@@ -25,22 +23,19 @@ public class FileConverter {
     public File convertExcelToText(String filename) throws IOException {
         try {
             cellGrid = new ArrayList<List<HSSFCell>>();
-            // FileInputStream myInput = new FileInputStream(filename);
-            FileInputStream myInput = new FileInputStream(new File(filename));
-            XSSFWorkbook workbook = new XSSFWorkbook(myInput);
-            XSSFSheet sheet = workbook.getSheetAt(0);
-            //POIFSFileSystem myFileSystem = new POIFSFileSystem(myInput);
-            //HSSFWorkbook myWorkBook = new HSSFWorkbook(myFileSystem);
-            // HSSFSheet mySheet = myWorkBook.getSheetAt(0);
-            Iterator<?> rowIter = sheet.rowIterator();
+             FileInputStream input = new FileInputStream(filename);
+            POIFSFileSystem fileSystem = new POIFSFileSystem(input);
+            HSSFWorkbook workBook = new HSSFWorkbook(fileSystem);
+             HSSFSheet mySheet = workBook.getSheetAt(0);
+            Iterator<?> rowIter = mySheet.rowIterator();
 
             while (rowIter.hasNext()) {
-                HSSFRow myRow = (HSSFRow) rowIter.next();
-                Iterator<?> cellIter = myRow.cellIterator();
+                HSSFRow row = (HSSFRow) rowIter.next();
+                Iterator<?> cellIter = row.cellIterator();
                 List<HSSFCell> cellRowList = new ArrayList<HSSFCell>();
                 while (cellIter.hasNext()) {
-                    HSSFCell myCell = (HSSFCell) cellIter.next();
-                    cellRowList.add(myCell);
+                    HSSFCell cell = (HSSFCell) cellIter.next();
+                    cellRowList.add(cell);
                 }
                 cellGrid.add(cellRowList);
             }

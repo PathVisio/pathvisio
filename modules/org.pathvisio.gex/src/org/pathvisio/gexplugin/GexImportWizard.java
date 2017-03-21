@@ -295,14 +295,21 @@ public class GexImportWizard extends Wizard
 
 				File defaultdir = PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT);
 				JFileChooser jfc = new JFileChooser();
+				jfc.setMultiSelectionEnabled(true);//for multiple files select
 				jfc.setCurrentDirectory(defaultdir);
 				jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv|*.tab", true));
 				int result = jfc.showDialog(null, "Select data file");
 				if (result == JFileChooser.APPROVE_OPTION)
 				{
+					//File f[] = jfc.getSelectedFiles();
 					File f = jfc.getSelectedFile();
 					defaultdir = jfc.getCurrentDirectory();
 					PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT, defaultdir);
+					//String temp_file="";
+				/*	for(File i: f ){
+						System.out.println(i.toString());
+						temp_file+=i.toString()+";";
+					}*/
 					txtInput.setText("" + f);
 					updateTxtFile ();
 				}

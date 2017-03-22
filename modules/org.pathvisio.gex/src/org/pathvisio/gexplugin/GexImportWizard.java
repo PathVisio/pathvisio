@@ -31,6 +31,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -129,6 +130,8 @@ public class GexImportWizard extends Wizard
 	    private JButton btnOutput;
 	    private boolean txtFileComplete = false;
 
+
+
 		/**
 		 * Stores the given {@link File} pointing to the file containing the expresssion
 		 * data in text form to the {@link ImportInformation} object
@@ -137,10 +140,11 @@ public class GexImportWizard extends Wizard
 		private void updateTxtFile()
 		{
 			String fileName = txtInput.getText();
+			File file=null;
 			try{
 
-			File file=new FileConverter().convertExcelToText(fileName);
-			//File file = new File (fileName);
+				file=new FileConverter().convertFile(fileName);
+
 			txtFileComplete = true;
 			if (!file.exists())
 			{

@@ -32,7 +32,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -56,6 +55,7 @@ import org.pathvisio.core.preferences.PreferenceManager;
 import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.VPathwayWrapper;
+import org.pathvisio.gui.dialogs.NewPathwayDialog;
 import org.pathvisio.gui.dialogs.OkCancelDialog;
 import org.pathvisio.gui.dialogs.PopupDialogHandler;
 import org.pathvisio.gui.view.VPathwaySwing;
@@ -258,6 +258,8 @@ public class SwingEngine implements ApplicationEventListener, Pathway.StatusFlag
 	public void newPathway() {
 		engine.setWrapper (createWrapper());
 		engine.newPathway();
+		NewPathwayDialog dlg = new NewPathwayDialog(this, "Pathway attributes");
+		dlg.setVisible(true);
 	}
 
 	public boolean exportPathway() 

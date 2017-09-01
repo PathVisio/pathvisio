@@ -74,6 +74,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 
 	protected DataNodeDialog(SwingEngine swingEngine, PathwayElement e, boolean readonly, Frame frame, Component locationComp) {
 		super(swingEngine, e, readonly, frame, "DataNode properties", locationComp);
+		curDlg = this;
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
 	}
@@ -83,6 +84,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 	private PermissiveComboBox dbCombo;
 	private PermissiveComboBox typeCombo;
 	private DataSourceModel dsm;
+	private DataNodeDialog curDlg;
 
 	public void refresh() {
 		super.refresh();
@@ -179,7 +181,7 @@ public class DataNodeDialog extends PathwayElementDialog {
 						results = get();
 						//Show results to user
 						if(results != null && results.size() > 0) {
-							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results);
+							DatabaseSearchDialog resultDialog = new DatabaseSearchDialog("Results", results, curDlg);
 							resultDialog.setVisible(true);
 							XrefWithSymbol selected = resultDialog.getSelected();
 							if(selected != null) {

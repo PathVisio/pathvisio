@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -41,15 +42,18 @@ import org.pathvisio.core.data.XrefWithSymbol;
 public class DatabaseSearchDialog extends OkCancelDialog {
 	List<XrefWithSymbol> xrefs = new ArrayList<XrefWithSymbol>();
 
-	public DatabaseSearchDialog(String title, List<XrefWithSymbol> xrefs) {
+	public DatabaseSearchDialog(String title, List<XrefWithSymbol> xrefs, JDialog parent) {
 		super(null, title, null, true);
+		
 		this.xrefs = xrefs;
 		Collections.sort(xrefs);
 
 		setDialogComponent(createDialogPane());
 
 		((XRefTableModel)table.getModel()).refresh();
+		
 		pack();
+		setLocationRelativeTo(parent);
 		validate();
 	}
 

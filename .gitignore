@@ -30,3 +30,4 @@ felix-cache/
 warnings.txt
 .metadata/
 derby.log
+plugin-dev/

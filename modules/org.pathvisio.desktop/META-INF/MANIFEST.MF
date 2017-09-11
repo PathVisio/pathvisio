@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio desktop module
 Bundle-SymbolicName: org.pathvisio.desktop
-Bundle-Version: 3.2.3
+Bundle-Version: 3.3.0
 Bundle-Activator: org.pathvisio.desktop.Activator
 Bundle-Vendor: PathVisio developers
 Export-Package: com.nexes.test,
@@ -17,9 +17,9 @@ Export-Package: com.nexes.test,
  org.pathvisio.desktop.plugin,
  org.pathvisio.desktop.util,
  org.pathvisio.desktop.visualization
-Require-Bundle: org.pathvisio.core;bundle-version="3.2.0",
- org.pathvisio.gui;bundle-version="3.2.0",
- org.pathvisio.data;bundle-version="3.2.0",
+Require-Bundle: org.pathvisio.core;bundle-version="3.3.0",
+ org.pathvisio.gui;bundle-version="3.3.0",
+ org.pathvisio.data;bundle-version="3.3.0",
  derby;bundle-version="10.4.2000000",
  org.apache.commons.math;bundle-version="2.0.0",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",

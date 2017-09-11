@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio-PluginManager
 Bundle-SymbolicName: org.pathvisio.pluginmanager
-Bundle-Version: 3.2.3
+Bundle-Version: 3.3.0
 Bundle-Activator: org.pathvisio.pluginmanager.Activator
 Bundle-Vendor: PathVisio developers
 Export-Package: org.pathvisio.pluginmanager,
@@ -13,9 +13,9 @@ Export-Package: org.pathvisio.pluginmanager,
 Require-Bundle: org.apache.felix.bundlerepository;bundle-version="1.6.6",
  com.springsource.org.jdom;bundle-version="1.1.0",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
- org.pathvisio.desktop;bundle-version="3.2.0",
- org.pathvisio.core;bundle-version="3.2.0",
- org.pathvisio.gui;bundle-version="3.2.0"
+ org.pathvisio.desktop;bundle-version="3.3.0",
+ org.pathvisio.core;bundle-version="3.3.0",
+ org.pathvisio.gui;bundle-version="3.3.0"
 Import-Package: org.osgi.framework;version="1.5.0"
 Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
 Bundle-DocURL: http://www.pathvisio.org

@@ -148,8 +148,8 @@
 		<echo file="${webstart.dir}/www/latestversion">PV${pathvisio.version}</echo>
 		<!-- Copy files needed for webstart !-->
 		<!--tsaurl="http://timestamp.comodoca.com/authenticode"-->
-		<signjar jar="pathvisio.jar"
-			alias="secure.ksoftware.net" storetype="pkcs12"  storepass="${keystore.password}" keystore="../lib/visioKeyStore.p12"/>
+		<signjar jar="pathvisio.jar" alias="b9490170-b550-11e5-ad7d-000c29471649"
+			storetype="pkcs12" storepass="${keystore.password}" keystore="../Signing_Key.pfx" tsaurl="http://timestamp.comodoca.com"/>
 
 		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
 		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>

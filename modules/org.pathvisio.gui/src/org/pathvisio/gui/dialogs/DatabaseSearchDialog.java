@@ -70,6 +70,7 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 
 		JLabel label = new JLabel("Please select one of the references and press Ok");
 		table = new JTable(new XRefTableModel());
+		table.setAutoCreateRowSorter(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll = new JScrollPane(table);
 

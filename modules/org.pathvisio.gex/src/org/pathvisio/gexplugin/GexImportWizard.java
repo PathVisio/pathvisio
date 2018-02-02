@@ -31,6 +31,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -129,6 +130,8 @@ public class GexImportWizard extends Wizard
 	    private JButton btnOutput;
 	    private boolean txtFileComplete = false;
 
+
+
 		/**
 		 * Stores the given {@link File} pointing to the file containing the expresssion
 		 * data in text form to the {@link ImportInformation} object
@@ -137,7 +140,11 @@ public class GexImportWizard extends Wizard
 		private void updateTxtFile()
 		{
 			String fileName = txtInput.getText();
-			File file = new File (fileName);
+			File file=null;
+			try{
+
+				file=new FileConverter().convertFile(fileName);
+
 			txtFileComplete = true;
 			if (!file.exists())
 			{
@@ -149,9 +156,10 @@ public class GexImportWizard extends Wizard
 				setErrorMessage("Can't access specified file containing expression data");
 				txtFileComplete = false;
 			}
-			else try
+			else
 			{
 				importInformation.setTxtFile(file);
+			}
 			}
 			catch (IOException e)
 			{
@@ -291,14 +299,21 @@ public class GexImportWizard extends Wizard
 
 				File defaultdir = PreferenceManager.getCurrent().getFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT);
 				JFileChooser jfc = new JFileChooser();
+				jfc.setMultiSelectionEnabled(true);//for multiple files select
 				jfc.setCurrentDirectory(defaultdir);
 				jfc.addChoosableFileFilter(new SimpleFileFilter("Data files", "*.txt|*.csv|*.tab", true));
 				int result = jfc.showDialog(null, "Select data file");
 				if (result == JFileChooser.APPROVE_OPTION)
 				{
+					//File f[] = jfc.getSelectedFiles();
 					File f = jfc.getSelectedFile();
 					defaultdir = jfc.getCurrentDirectory();
 					PreferenceManager.getCurrent().setFile(GlobalPreference.DIR_LAST_USED_EXPRESSION_IMPORT, defaultdir);
+					//String temp_file="";
+				/*	for(File i: f ){
+						System.out.println(i.toString());
+						temp_file+=i.toString()+";";
+					}*/
 					txtInput.setText("" + f);
 					updateTxtFile ();
 				}

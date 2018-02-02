@@ -5,6 +5,11 @@
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
+
+		  <include name="com.springsource.org.apache.commons.codec-1.6.0.jar"/>
+		  <include name="com.springsource.org.apache.commons.logging-1.1.1.jar"/>
+		  <include name="com.springsource.org.apache.poi-3.9.0.FINAL.jar"/>
+
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.bio.jar"/>
 		<include name="org.bridgedb.rdb.jar"/>

@@ -33,6 +33,7 @@ import org.bridgedb.rdb.construct.DBConnector;
 import org.bridgedb.rdb.construct.DataDerby;
 import org.bridgedb.rdb.construct.DataDerbyDirectory;
 import org.pathvisio.core.preferences.PreferenceManager;
+import org.pathvisio.core.util.FileUtils;
 import org.pathvisio.data.DataException;
 import org.pathvisio.data.DataInterface;
 import org.pathvisio.data.IRow;
@@ -60,6 +61,9 @@ public class Test extends TestCase
 		Class.forName ("org.bridgedb.rdb.IDMapperRdb");
 	}
 
+	public void test(){
+
+	}
 	public void testImportInformation()
 	{
 		final int base1 = 26;
@@ -172,14 +176,14 @@ public class Test extends TestCase
 	{
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_long_headers.txt");
-		assertTrue (f.exists());
+		assertTrue(f.exists());
 		info.setTxtFile(f);
 		info.guessSettings();
 
-		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
-		assertTrue (info.isSyscodeFixed());
-		assertTrue (info.digitIsDot());
-		assertEquals (0, info.getIdColumn());
+		assertEquals(info.getDataSource(), BioDataSource.ENTREZ_GENE);
+		assertTrue(info.isSyscodeFixed());
+		assertTrue(info.digitIsDot());
+		assertEquals(0, info.getIdColumn());
 
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex3";
 		info.setGexName(dbFileName);
@@ -200,10 +204,10 @@ public class Test extends TestCase
 		info.setFirstDataRow(0);
 		info.guessSettings();
 
-		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
-		assertFalse (info.isSyscodeFixed());
-		assertTrue (info.digitIsDot());
-		assertEquals (0, info.getIdColumn());
+		assertEquals(info.getDataSource(), BioDataSource.ENTREZ_GENE);
+		assertFalse(info.isSyscodeFixed());
+		assertTrue(info.digitIsDot());
+		assertEquals(0, info.getIdColumn());
 		assertTrue (info.getNoHeader());
 		assertEquals ("Column A", info.getColNames()[0]);
 
@@ -225,12 +229,12 @@ public class Test extends TestCase
 	{
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_with_text.txt");
-		assertTrue (f.exists());
+		assertTrue(f.exists());
 		info.setTxtFile(f);
 		info.guessSettings();
 
-		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
-		assertFalse (info.isSyscodeFixed());
+		assertEquals(info.getDataSource(), BioDataSource.ENTREZ_GENE);
+		assertFalse(info.isSyscodeFixed());
 		assertEquals (info.getSyscodeColumn(), 1);
 		assertTrue (info.digitIsDot());
 		assertEquals (info.getIdColumn(), 0);
@@ -254,7 +258,7 @@ public class Test extends TestCase
 
 		sgex.prepare();
 		sgex.addSample(55, "mysample", 99);
-		sgex.addExpr(new Xref ("abc_at", BioDataSource.AFFY), "55", "3.141", 77);
+		sgex.addExpr(new Xref("abc_at", BioDataSource.AFFY), "55", "3.141", 77);
 
 		// TODO: this is messy. call finalize on writeable db, not close...
 		sgex.finalize();
@@ -264,12 +268,12 @@ public class Test extends TestCase
 
 		ISample s = sgex.getSample(55);
 		assertEquals (s.getName(), "mysample");
-		assertEquals (s.getDataType(), 99);
+		assertEquals(s.getDataType(), 99);
 
 		//TODO: test data value as well.
 
 		sgex.close();
-		assertTrue (new File(dbFileName + ".pgex").exists());
+		assertTrue(new File(dbFileName + ".pgex").exists());
 
 	}
 
@@ -281,6 +285,17 @@ public class Test extends TestCase
 	//TODO: re-enable
 	public void disabled_testGexDirectory() throws IDMapperException, SQLException, DataException
 	{
-		gexHelper (new DataDerbyDirectory(), "tempgex1b");
+		gexHelper(new DataDerbyDirectory(), "tempgex1b");
+	}
+
+
+	public void testProcessFile() throws IOException, IDMapperException {
+		FileConverter fileConverter=new FileConverter();
+		System.out.println("In test Processfile");
+		String fileName="example-data/csv_data.csv";
+		File real=fileConverter.processFile(fileName);
+		String expectFileName= FileUtils.removeExtension(fileName)+"_excel.txt";
+		File expect=new File(expectFileName);
+		assertEquals("Mismatching", real, expect);
 	}
 }

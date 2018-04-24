@@ -5,11 +5,11 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.pathvisio</groupId>
-  <artifactId>org.pathvisio.core</artifactId>
+  <artifactId>org.pathvisio.desktop</artifactId>
   <packaging>bundle</packaging>
 
   <version>3.4.0-SNAPSHOT</version>
-  <name>PathVisio Core</name>
+  <name>PathVisio Desktop</name>
 
   <repositories>
     <repository>
@@ -26,24 +26,24 @@
       <version>1.4.0</version>
     </dependency>
     <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>com.springsource.org.jdom</artifactId>
-      <version>1.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-svggen</artifactId>
-      <version>1.7</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xmlgraphics</groupId>
-      <artifactId>batik-transcoder</artifactId>
-      <version>1.7</version>
+      <groupId>org.bridgedb</groupId>
+      <artifactId>org.bridgedb.rdb.construct</artifactId>
+      <version>2.3.0</version>
     </dependency>
     <dependency>
       <groupId>org.bridgedb</groupId>
-      <artifactId>org.bridgedb.bio</artifactId>
+      <artifactId>org.bridgedb.gui</artifactId>
       <version>2.3.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.pathvisio</groupId>
+      <artifactId>org.pathvisio.gui</artifactId>
+      <version>3.4.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.pathvisio</groupId>
+      <artifactId>org.pathvisio.data</artifactId>
+      <version>3.4.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

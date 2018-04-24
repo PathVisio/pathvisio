@@ -14,6 +14,9 @@
   <modules>
     <module>org.pathvisio.core</module>
     <module>org.pathvisio.gui</module>
+    <module>org.pathvisio.data</module>
+    <module>org.pathvisio.desktop</module>
+    <module>org.pathvisio.pluginmanager</module>
   </modules>
 
 </project>

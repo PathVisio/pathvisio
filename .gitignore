@@ -13,6 +13,7 @@ src/core/org/pathvisio/Revision.java
 *.rej
 bin/
 build/
+target/
 modules/*.jar
 release/
 lib/resources.jar

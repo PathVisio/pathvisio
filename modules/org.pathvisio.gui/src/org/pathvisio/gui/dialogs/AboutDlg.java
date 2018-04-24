@@ -69,7 +69,7 @@ public class AboutDlg
 				"Martijn van Iersel, Kristina Hanspers, Alex Pico<br><br><hr><br>" +
 				"<b>Contributors</b><br>" +
 				"Adem Bilicna, Augustin Luna, Bing Lui, " + 
-				"Christ Leemans, Eric Creussen, Erik Pelgrin, " + 
+				"Christ Leemans, Denise Slenter, Eric Creussen, Erik Pelgrin, " + 
 				"Esterh Neuteboom, Ferry Jagers, Hakim Achterberg, " + 
 				"Harm Nijveen, Irene Kaashoek, Justin Elser, " + 
 				"Kumar Chanden, Margot Sunshine, Mark Woon, " + 

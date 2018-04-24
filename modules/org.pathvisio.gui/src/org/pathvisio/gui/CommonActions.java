@@ -346,7 +346,7 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Conversion", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_CONVERSION, ConnectorType.STRAIGHT)
 				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+				  new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Stimulation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_STIMULATION, ConnectorType.STRAIGHT)
 				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
@@ -361,20 +361,23 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Cleavage", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_CLEAVAGE, ConnectorType.STRAIGHT)
 				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Covalent bond", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_COVALENT_BOND, ConnectorType.STRAIGHT)
-				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Branching left", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_LEFT, ConnectorType.STRAIGHT)
-				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Branching right", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_RIGHT, ConnectorType.STRAIGHT)
-				 ),
+//				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+//						 "Covalent bond", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_COVALENT_BOND, ConnectorType.STRAIGHT)
+//				 ),
+//				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+//						 "Branching left", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_LEFT, ConnectorType.STRAIGHT)
+//				 ),
+//				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+//						 "Branching right", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_RIGHT, ConnectorType.STRAIGHT)
+//				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Transcription-translation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_TRANSLATION, ConnectorType.STRAIGHT)
 				 ),
+//				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+//						 "Gap", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_GAP, ConnectorType.STRAIGHT)
+//				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Gap", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_GAP, ConnectorType.STRAIGHT)
+						 "Translocation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_TRANSLOCATION, ConnectorType.STRAIGHT)
 				 ),
 		 };
 		

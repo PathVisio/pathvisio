@@ -34,6 +34,7 @@ public class MIMShapes
 	public static final LineType MIM_NECESSARY_STIMULATION = LineType.create ("mim-necessary-stimulation", "Arrow");
     public static final LineType MIM_BINDING = LineType.create ("mim-binding", "Arrow");
     public static final LineType MIM_CONVERSION = LineType.create ("mim-conversion", "Arrow");
+    public static final LineType MIM_TRANSLOCATION = LineType.create ("mim-translocation", "Arrow");
     public static final LineType MIM_STIMULATION = LineType.create ("mim-stimulation", "Arrow");
     public static final LineType MIM_MODIFICATION = LineType.create ("mim-modification", "Arrow");
     public static final LineType MIM_CATALYSIS =LineType.create ("mim-catalysis", "Arrow");
@@ -60,6 +61,7 @@ public class MIMShapes
 		ShapeRegistry.registerArrow (MIM_NECESSARY_STIMULATION.getName(), getMIMNecessary(), ArrowShape.FillType.OPEN, ARROWWIDTH);
 		ShapeRegistry.registerArrow (MIM_BINDING.getName(), getMIMBinding(), ArrowShape.FillType.CLOSED);
 		ShapeRegistry.registerArrow (MIM_CONVERSION.getName(), getMIMConversion(), ArrowShape.FillType.CLOSED, ARROWWIDTH);
+		ShapeRegistry.registerArrow (MIM_TRANSLOCATION.getName(), getMIMTranslocation(), ArrowShape.FillType.CLOSED, ARROWWIDTH);
 		ShapeRegistry.registerArrow (MIM_STIMULATION.getName(), getMIMStimulation(), ArrowShape.FillType.OPEN, ARROWWIDTH);
         ShapeRegistry.registerArrow (MIM_MODIFICATION.getName(), getMIMBinding(), ArrowShape.FillType.CLOSED);
 		ShapeRegistry.registerArrow (MIM_CATALYSIS.getName(), getMIMCatalysis(), ArrowShape.FillType.OPEN, CATALYSIS_DIAM + CATALYSIS_GAP);
@@ -174,6 +176,10 @@ public class MIMShapes
 	}
 
 	static private java.awt.Shape getMIMConversion () {
+		return getArrowShapedPath();
+	}
+	
+	static private java.awt.Shape getMIMTranslocation () {
 		return getArrowShapedPath();
 	}
 

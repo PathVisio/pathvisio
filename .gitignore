@@ -11,6 +11,8 @@
 src/core/org/pathvisio/Revision.java
 *.orig
 *.rej
+.project
+.classpath
 bin/
 build/
 target/

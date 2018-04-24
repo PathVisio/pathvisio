@@ -4,11 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.pathvisio</groupId>
-  <artifactId>org.pathvisio.statistics</artifactId>
+  <parent>
+     <groupId>org.pathvisio</groupId>
+     <artifactId>pathvisio</artifactId>
+     <version>3.4.0-SNAPSHOT</version>
+  </parent>
   <packaging>bundle</packaging>
 
-  <version>3.4.0-SNAPSHOT</version>
+  <artifactId>org.pathvisio.statistics</artifactId>
   <name>PathVisio Statistics</name>
 
   <dependencies>
@@ -25,6 +28,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
         <extensions>true</extensions>
         <configuration>
           <instructions>

@@ -11,6 +11,10 @@
   <version>3.4.0-SNAPSHOT</version>
   <name>PathVisio Project</name>
 
+  <properties>
+    <maven-bundle-plugin-version>3.5.0</maven-bundle-plugin-version>
+  </properties>
+
   <modules>
     <module>modules</module>
   </modules>

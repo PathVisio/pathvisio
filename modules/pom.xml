@@ -13,6 +13,7 @@
 
   <modules>
     <module>org.pathvisio.core</module>
+    <module>org.pathvisio.gui</module>
   </modules>
 
 </project>

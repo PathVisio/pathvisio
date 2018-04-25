@@ -11,11 +11,8 @@
 src/core/org/pathvisio/Revision.java
 *.orig
 *.rej
-.project
-.classpath
 bin/
 build/
-target/
 modules/*.jar
 release/
 lib/resources.jar

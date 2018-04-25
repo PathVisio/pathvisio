@@ -221,4 +221,11 @@ public class GpmlFormat extends AbstractPathwayFormat
 		}
 	}
 
+	@Override
+	public void doExport(File file, Pathway pathway, int zoom)
+			throws ConverterException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

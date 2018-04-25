@@ -16,6 +16,7 @@
 //
 package org.pathvisio.core.model;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,5 +67,16 @@ public abstract class ImageExporter implements PathwayExporter {
 	public List<String> getWarnings()
 	{
 		return Collections.emptyList();
-	}	
+	}
+
+//	public void doExport(File file, Pathway pathway, int width, int height) throws ConverterException{
+//		
+//	}
+
+	public void doExport(File file, Pathway pathway, int zoom)
+			throws ConverterException {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

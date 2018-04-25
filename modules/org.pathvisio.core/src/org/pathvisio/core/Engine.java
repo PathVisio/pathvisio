@@ -539,7 +539,7 @@ public class Engine
 	/** return the subversion revision at the time of building */
 	public static String getRevision()
 	{
-		return Revision.REVISION;
+		return "";
 	}
 
 	/** The current PathVisio version */

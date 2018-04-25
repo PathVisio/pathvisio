@@ -32,7 +32,6 @@ import java.util.TreeMap;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.jdom.Document;
 import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.biopax.BiopaxReferenceManager;
 import org.pathvisio.core.model.GraphLink.GraphIdContainer;
@@ -545,9 +544,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	/* Some default values */
-	private static final int M_INITIAL_FONTSIZE = 10;
-	private static final int M_INITIAL_LABEL_WIDTH = 80;
-	private static final int M_INITIAL_LABEL_HEIGHT = 20;
+	private static final int M_INITIAL_FONTSIZE = 12;
+	private static final int M_INITIAL_LABEL_WIDTH = 90;
+	private static final int M_INITIAL_LABEL_HEIGHT = 25;
 	private static final int M_INITIAL_LINE_LENGTH = 30; 
 	private static final int M_INITIAL_STATE_SIZE = 15;
 	private static final int M_INITIAL_SHAPE_SIZE = 30;
@@ -555,8 +554,8 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	private static final int M_INITIAL_CELLCOMP_WIDTH = 200;
 	private static final int M_INITIAL_BRACE_HEIGHT = 15;
 	private static final int M_INITIAL_BRACE_WIDTH = 60;
-	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 80;
-	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 20;
+	private static final int M_INITIAL_GENEPRODUCT_WIDTH = 90;
+	private static final int M_INITIAL_GENEPRODUCT_HEIGHT = 25;
 
 	// groups should be behind other graphics
 	// to allow background colors
@@ -2677,7 +2676,22 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 	}
 
 	public int compareTo(PathwayElement o) {
-		return getZOrder() - o.getZOrder();
+		int rez = getZOrder() - o.getZOrder();
+		if (rez != 0) {
+			return rez;
+		}
+		String a = getGraphId();
+		String b = o.getGraphId();
+		if (a == null) {
+			if (b == null) {
+				return 0;
+			}
+			return -1;
+		}
+		if (b == null) {
+			return 1;
+		}
+		return a.compareTo(b);
 	}
 
 	public Point2D toAbsoluteCoordinate(Point2D p) {
@@ -2730,3 +2744,4 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 		}
 	}
 }
+

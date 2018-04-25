@@ -1,18 +1,21 @@
 # DEVELOPERS TEAM
 Martina Kutmon
 Jonathan Melius
-Anwesha Bohler
 Nuno Nunes
-Thomas Kelder
-Martijn van Iersel
 Kristina Hanspers
 Alexander Pico
+
+# FORMER DEVELOPERS
+Anwesha Bohler
+Thomas Kelder
+Martijn van Iersel
 
 # CONTRIBUTORS
 Adem Bilicna
 Augustin Luna
 Bing Lui 
 Christ Leemans
+Denise Slenter
 Eric Creussen
 Erik Pelgrin
 Esterh Neuteboom

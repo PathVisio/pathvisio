@@ -20,11 +20,13 @@ import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import org.pathvisio.core.ApplicationEvent;
@@ -47,6 +49,7 @@ import org.pathvisio.core.util.Resources;
 import org.pathvisio.core.view.DefaultTemplates;
 import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.Handle;
+import org.pathvisio.core.view.Label;
 import org.pathvisio.core.view.LayoutType;
 import org.pathvisio.core.view.MIMShapes;
 import org.pathvisio.core.view.SelectionBox;
@@ -346,7 +349,7 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Conversion", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_CONVERSION, ConnectorType.STRAIGHT)
 				 ),
-				  new NewElementAction(e, new DefaultTemplates.LineTemplate(
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Stimulation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_STIMULATION, ConnectorType.STRAIGHT)
 				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
@@ -361,23 +364,20 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Cleavage", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_CLEAVAGE, ConnectorType.STRAIGHT)
 				 ),
-//				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-//						 "Covalent bond", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_COVALENT_BOND, ConnectorType.STRAIGHT)
-//				 ),
-//				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-//						 "Branching left", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_LEFT, ConnectorType.STRAIGHT)
-//				 ),
-//				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-//						 "Branching right", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_RIGHT, ConnectorType.STRAIGHT)
-//				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Covalent bond", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_COVALENT_BOND, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Branching left", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_LEFT, ConnectorType.STRAIGHT)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Branching right", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_RIGHT, ConnectorType.STRAIGHT)
+				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Transcription-translation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_TRANSLATION, ConnectorType.STRAIGHT)
 				 ),
-//				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-//						 "Gap", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_GAP, ConnectorType.STRAIGHT)
-//				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Translocation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_TRANSLOCATION, ConnectorType.STRAIGHT)
+						 "Gap", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_GAP, ConnectorType.STRAIGHT)
 				 ),
 		 };
 		
@@ -728,6 +728,35 @@ public class CommonActions implements ApplicationEventListener {
 		}
 	}
 
+	public static class AddHrefAction extends AbstractAction {
+		
+		SwingEngine se;
+		VPathwayElement vpe;
+		
+		public AddHrefAction(VPathwayElement selected, SwingEngine engine) {
+			super("Hyperlink");
+			se = engine;
+			vpe = selected;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			if(vpe instanceof Label) {
+				PathwayElement pe = ((Label) vpe).getPathwayElement();
+				String currentHref = pe.getHref();
+				String userInput = JOptionPane.showInputDialog(se.getFrame(), "Label hyperlink", currentHref);
+				if(userInput != null) {
+					try {
+						new URL(userInput);
+						pe.setHref(userInput);
+					} catch (MalformedURLException e) {
+						se.handleMalformedURLException("The specified link address is not valid", se.getFrame(), e);
+					}	
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Pops up the pathway element dialog directly on the literature tab.
 	 */

@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
@@ -39,6 +40,7 @@ import org.pathvisio.core.view.Graphics;
 import org.pathvisio.core.view.Group;
 import org.pathvisio.core.view.Handle;
 import org.pathvisio.core.view.InfoBox;
+import org.pathvisio.core.view.Label;
 import org.pathvisio.core.view.Line;
 import org.pathvisio.core.view.MouseEvent;
 import org.pathvisio.core.view.State;
@@ -237,6 +239,13 @@ public class PathwayElementMenuListener implements VPathwayListener {
 			pathLitRef.add(new EditLiteratureAction(swingEngine, component, swingEngine.getEngine().getActiveVPathway().getMappInfo()));
 			menu.add(pathLitRef);
 		}
+		
+		if(e instanceof Label) {
+			menu.addSeparator();
+			menu.add(new CommonActions.AddHrefAction(e, swingEngine));
+		}
+		
+		menu.addSeparator();
 
 		// give plug-ins a chance to add menu items.
 		for (PathwayElementMenuHook hook : hooks)

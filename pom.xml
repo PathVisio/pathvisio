@@ -13,6 +13,8 @@
 
   <properties>
     <maven-bundle-plugin-version>3.5.0</maven-bundle-plugin-version>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
   </properties>
 
   <modules>

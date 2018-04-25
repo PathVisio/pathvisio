@@ -1104,4 +1104,11 @@ public class MappFormat extends AbstractPathwayFormat
 	{
 		return true;
 	}
+
+	@Override
+	public void doExport(File file, Pathway pathway, int zoom)
+			throws ConverterException {
+		// TODO Auto-generated method stub
+		
+	}
 }

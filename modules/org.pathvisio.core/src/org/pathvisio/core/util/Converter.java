@@ -50,12 +50,12 @@ public class Converter {
 	{
 		System.out.println ("GPML Converter\n" +
 				"Usage:\n" +
-				"\tjava Converter <input filename> [<output filename>]\n" +
+				"\tjava Converter <input filename> [<output filename>] [<zoom>] \n" +
 				"\n" +
 				"Converts between GPML format and several other formats:\n" +
 				"\t- GPML (.gpml/.xml) <-> GenMAPP (.mapp)\n" +
 				"\t- GPML (.gpml/.xml) -> SVG (.svg)\n" +
-				"\t- GPML (.gpml/.xml) -> PNG (.png)\n" +
+				"\t- GPML (.gpml/.xml) -> PNG (.png); Zoom value at 100 by default, can be changed for PNG\n" +
 				"\t- GPML (.gpml/.xml) -> TIFF (.tiff)\n" +
 				"\t- GPML (.gpml/.xml) -> PDF (.pdf)\n" +
 				"The conversion direction is determined from the extension of the input file.\n" +
@@ -118,6 +118,8 @@ public class Converter {
 
         File inputFile = null;
         File outputFile = null;
+        
+        int zoom = 100;
 
 		boolean error = false;
 		if (args.length == 0)
@@ -125,7 +127,7 @@ public class Converter {
 			Logger.log.error ("Need at least one command line argument");
 			error = true;
 		}
-		else if (args.length > 2)
+		else if (args.length > 3)
 		{
 			Logger.log.error ("Too many arguments");
 			error = true;
@@ -134,6 +136,7 @@ public class Converter {
 		{
 			inputFile = new File(args[0]);
 			outputFile = new File(args[1]);
+			
 			if(inputFile == null || !inputFile.canRead()) {
 				Logger.log.error("Unable to read inputfile: " + inputFile);
 				error = true;
@@ -145,7 +148,12 @@ public class Converter {
 			try {
 				engine.importPathway(inputFile);
 				Pathway pathway = engine.getActivePathway();
-				engine.exportPathway(outputFile, pathway);
+				if (args.length == 2)				
+					engine.exportPathway(outputFile, pathway);
+				if (args.length == 3){			
+					zoom = Integer.parseInt(args[2]);
+					engine.exportPathway(outputFile, pathway, zoom);	
+				}
 			} catch(ConverterException e) {
 				e.printStackTrace();
 				System.exit(-2);

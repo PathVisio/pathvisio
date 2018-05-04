@@ -153,7 +153,7 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 		//Store selected value
 		int row = table.getSelectedRow();
 		if(row > -1) {
-			selected = xrefs.get(row);
+			selected = xrefs.get(table.convertRowIndexToModel(row));
 		} else {
 			selected = null;
 		}

@@ -139,22 +139,19 @@ public class GexImportWizard extends Wizard
 			String fileName = txtInput.getText();
 			File file = new File (fileName);
 			txtFileComplete = true;
-			if (!file.exists())
-			{
+			
+			if (fileName.contains(" ") || fileName.contains("(") || fileName.contains("[")) {
+				setErrorMessage("Remove special characters from file name, e.g. \"(\", \" \".");
+				txtFileComplete = false;
+			} else if (!file.exists()) {
 				setErrorMessage("Specified file to import does not exist");
 				txtFileComplete = false;
-			}
-			else if (!file.canRead())
-			{
+			} else if (!file.canRead()) {
 				setErrorMessage("Can't access specified file containing expression data");
 				txtFileComplete = false;
-			}
-			else try
-			{
+			} else try {
 				importInformation.setTxtFile(file);
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				setErrorMessage("Exception while reading file: " + e.getMessage());
 				txtFileComplete = false;
 			}

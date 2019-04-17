@@ -364,7 +364,7 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Cleavage", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_CLEAVAGE, ConnectorType.STRAIGHT)
 				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+/*				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Covalent bond", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_COVALENT_BOND, ConnectorType.STRAIGHT)
 				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
@@ -373,11 +373,14 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Branching right", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_BRANCHING_RIGHT, ConnectorType.STRAIGHT)
 				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+*/				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Transcription-translation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_TRANSLATION, ConnectorType.STRAIGHT)
 				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+/*				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Gap", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_GAP, ConnectorType.STRAIGHT)
+				 ),
+*/				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Translocation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_TRANSLOCATION, ConnectorType.STRAIGHT)
 				 ),
 		 };
 		

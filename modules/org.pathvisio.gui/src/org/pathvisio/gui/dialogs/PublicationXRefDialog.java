@@ -99,7 +99,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	}
 
 	protected void okPressed() {
-		input.setPubmedId(pmId.getText());
+		input.setPubmedId(pmId.getText().trim());
 		input.setTitle(title.getText());
 		input.setSource(source.getText());
 		input.setYear(year.getText());

@@ -25,6 +25,7 @@ import com.nexes.wizard.WizardPanelDescriptor;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -440,59 +441,6 @@ public class GexImportWizard extends Wizard
 
 			});
 
-			/*
-			btnAdvanced.addActionListener(new ActionListener()
-			{
-				public void createAndShowDlg()
-				{
-					final JDialog dlg = new JDialog (getWizard().getDialog(), "More options", true);
-					dlg.setLayout(new FlowLayout());
-
-					final JRadioButton rbDecimalDot;
-					final JRadioButton rbDecimalComma;
-
-					ButtonGroup bgDecimal = new ButtonGroup();
-					rbDecimalDot = new JRadioButton ("Use dot as decimal separator");
-					rbDecimalComma = new JRadioButton ("Use comma as decimal separator");
-
-					bgDecimal.add(rbDecimalComma);
-					bgDecimal.add(rbDecimalDot);
-
-					dlg.add(rbDecimalComma);
-					dlg.add(rbDecimalDot);
-
-					rbDecimalDot.setSelected(importInformation.digitIsDot());
-					rbDecimalComma.setSelected(!importInformation.digitIsDot());
-
-					JButton btnOk = new JButton ("OK");
-
-					dlg.add (btnOk);
-					btnOk.addActionListener(new ActionListener()
-					{
-
-						public void actionPerformed(ActionEvent ae)
-						{
-							importInformation.setDigitIsDot (rbDecimalDot.isSelected());
-							dlg.dispose();
-						}
-					});
-					dlg.setLocationRelativeTo(getWizard().getDialog());
-					dlg.pack();
-					dlg.setVisible(true);
-				}
-
-				public void actionPerformed(ActionEvent e)
-				{
-					javax.swing.SwingUtilities.invokeLater(new Runnable()
-					{
-
-						public void run() {
-							createAndShowDlg();
-						}
-					});
-				}
-			});
-			*/
 			return builder.getPanel();
 		}
 
@@ -533,10 +481,11 @@ public class GexImportWizard extends Wizard
 		private JTable tblColumn;
 
 	    private JComboBox cbColId;
+	    private JComboBox cbDataSource;
 	    private JComboBox cbColSyscode;
 	    private JRadioButton rbFixedNo;
 	    private JRadioButton rbFixedYes;
-	    private JComboBox cbDataSource;
+	    
 	    private DataSourceModel mDataSource;
 
 	    public ColumnPage()
@@ -559,15 +508,15 @@ public class GexImportWizard extends Wizard
 		{
 		    FormLayout layout = new FormLayout (
 		    		"pref, 7dlu, pref:grow",
-		    		"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, fill:[100dlu,min]:grow");
+		    		"5dlu, pref, 20dlu, pref, 3dlu, pref, 3dlu, pref, 20dlu, fill:[100dlu,min]:grow");
 
 		    PanelBuilder builder = new PanelBuilder(layout);
 		    builder.setDefaultDialogBorder();
 
 		    CellConstraints cc = new CellConstraints();
 
-			rbFixedNo = new JRadioButton("Select a column to specify system code");
-			rbFixedYes = new JRadioButton("Use the same system code for all rows");
+		    rbFixedYes = new JRadioButton("Same for all rows:");
+		    rbFixedNo = new JRadioButton("(Advanced) System code column:");
 			ButtonGroup bgSyscodeCol = new ButtonGroup ();
 			bgSyscodeCol.add (rbFixedNo);
 			bgSyscodeCol.add (rbFixedYes);
@@ -578,8 +527,8 @@ public class GexImportWizard extends Wizard
 			mDataSource = new DataSourceModel();
 			String[] types = {"metabolite","protein","gene","interaction","probe"};
 			mDataSource.setTypeFilter(types);
-			cbDataSource = new PermissiveComboBox(mDataSource);
-
+			cbDataSource = new JComboBox(mDataSource);
+			
 			ctm = new ColumnTableModel(importInformation);
 			tblColumn = new JTable(ctm);
 			tblColumn.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -595,18 +544,19 @@ public class GexImportWizard extends Wizard
 		    jv.setView(rowHeader);
 		    jv.setPreferredSize(rowHeader.getPreferredSize());
 		    scrTable.setRowHeader(jv);
-//		    scrTable.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, rowHeader
-//		            .getTableHeader());
 
-			builder.addLabel ("Select primary identifier column:", cc.xy(1,1));
-			builder.add (cbColId, cc.xy(3,1));
+			builder.addLabel ("1. Identifier column:", cc.xy(1,2));
+			builder.add (cbColId, cc.xy(3,2));
+			
+			builder.addSeparator("", cc.xyw(1, 3, 3));
 
-			builder.add (rbFixedNo, cc.xyw(1,3,3));
-			builder.add (cbColSyscode, cc.xy(3,5));
-			builder.add (rbFixedYes, cc.xyw (1,7,3));
-			builder.add (cbDataSource, cc.xy (3,9));
+			builder.addLabel("2. Database selection:", cc.xy(1,4));
+			builder.add (rbFixedYes, cc.xy(1,6));
+			builder.add (cbDataSource, cc.xy(3,6));
+			builder.add (rbFixedNo, cc.xy(1,8));
+			builder.add (cbColSyscode, cc.xy (3,8));
 
-			builder.add (scrTable, cc.xyw(1,11,3));
+			builder.add (scrTable, cc.xyw(1,10,3));
 
 			ActionListener rbAction = new ActionListener() {
 				public void actionPerformed (ActionEvent ae)

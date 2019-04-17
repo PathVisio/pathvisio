@@ -335,22 +335,29 @@ public abstract class DefaultTemplates {
 		final static int OFFSET_LINE = 5;
 		PathwayElement lastStartNode;
 		PathwayElement lastEndNode;
-//		PathwayElement lastStartProteinNode;
-//		PathwayElement lastEndProteinNode;
+		PathwayElement lastStartProteinNode;
+		PathwayElement lastEndProteinNode;
 		PathwayElement lastLine;
+		PathwayElement lastProteinLine;
 
 		LineType endType;
 		LineType startType;
+		LineType endProteinType;
+		LineType startProteinType;
 		int lineStyle;
+		int lineProteinStyle;
 
 		public InteractionTemplate() {
 			endType = LineType.LINE;
 			startType = LineType.LINE;
+			endProteinType = LineType.LINE;
+			startProteinType = LineType.LINE;
 			lineStyle = LineStyle.SOLID;
+			lineProteinStyle = LineStyle.SOLID;
 		}
 
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
-			//Add two datanodes, connected by a line
+			//Add two GeneProduct DataNodes, connected by a line
 			Template dnt = new DataNodeTemplate(DataNodeType.GENEPRODUCT);
 			lastStartNode = dnt.addElements(p, mx, my)[0];
 			lastStartNode.setInitialSize();
@@ -364,6 +371,23 @@ public abstract class DefaultTemplates {
 
 			return new PathwayElement[] { lastLine, lastStartNode, lastEndNode };
 		}
+		
+		public PathwayElement[] addElementsProtein(Pathway p, double mx, double my) {
+			//Add two Protein DataNodes, connected by a line
+			Template pdnt = new DataNodeTemplate(DataNodeType.PROTEIN);
+			lastStartProteinNode = pdnt.addElements(p, mx, my)[0];
+			lastStartProteinNode.setInitialSize();
+			lastEndProteinNode = pdnt.addElements(p, mx + 2 * lastStartProteinNode.getMWidth(), my)[0];
+			lastEndProteinNode.setInitialSize();
+			
+			Template lnt = new LineTemplate("defaultline", lineStyle, startProteinType, endProteinType, ConnectorType.STRAIGHT);
+			lastProteinLine = lnt.addElements(p, mx, my)[0];
+			lastProteinLine.getMStart().linkTo(lastStartProteinNode, 1, 0);
+			lastProteinLine.getMEnd().linkTo(lastEndProteinNode, -1, 0);
+
+			return new PathwayElement[] { lastProteinLine, lastStartProteinNode, lastEndProteinNode };
+		}
+		
 
 		public VPathwayElement getDragElement(VPathway vp) {
 			return null;
@@ -420,9 +444,8 @@ public abstract class DefaultTemplates {
 	 */
 	public static class PhosporylationTemplate extends InteractionTemplate {
 		@Override
-		public PathwayElement[] addElements(Pathway p, double mx, double my) {
-			
-			Template pdnt = new DataNodeTemplate(DataNodeType.PROTEIN);
+		public PathwayElement[] addElementsProtein(Pathway p, double mx, double my) {			
+/*			Template pdnt = new DataNodeTemplate(DataNodeType.PROTEIN);
 			PathwayElement lastStartProteinNode = pdnt.addElements(p, mx, my)[0];
 			lastStartProteinNode.setInitialSize();
 			PathwayElement lastEndProteinNode = pdnt.addElements(p, mx + 2 * lastStartProteinNode.getMWidth(), my)[0];
@@ -432,9 +455,8 @@ public abstract class DefaultTemplates {
 			PathwayElement lastProteinLine = lnt.addElements(p, mx, my)[0];
 			lastProteinLine.getMStart().linkTo(lastStartProteinNode, 1, 0);
 			lastProteinLine.getMEnd().linkTo(lastEndProteinNode, -1, 0);
-//			super.addElements(p, mx, my);
-			
-			lastLine.setEndLineType(MIMShapes.MIM_MODIFICATION);
+*/			super.addElementsProtein(p, mx, my);			
+			lastProteinLine.setEndLineType(MIMShapes.MIM_MODIFICATION);
 			return new PathwayElement[] { lastProteinLine, lastStartProteinNode, lastEndProteinNode };
 		}
 		@Override

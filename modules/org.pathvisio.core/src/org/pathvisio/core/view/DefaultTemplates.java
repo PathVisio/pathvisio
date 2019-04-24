@@ -24,6 +24,7 @@ import org.pathvisio.core.model.DataNodeType;
 import org.pathvisio.core.model.IShape;
 import org.pathvisio.core.model.LineStyle;
 import org.pathvisio.core.model.LineType;
+import org.pathvisio.core.model.MState;
 import org.pathvisio.core.model.ObjectType;
 import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
@@ -335,25 +336,17 @@ public abstract class DefaultTemplates {
 		final static int OFFSET_LINE = 5;
 		PathwayElement lastStartNode;
 		PathwayElement lastEndNode;
-		PathwayElement lastStartProteinNode;
-		PathwayElement lastEndProteinNode;
 		PathwayElement lastLine;
-		PathwayElement lastProteinLine;
 
 		LineType endType;
 		LineType startType;
-		LineType endProteinType;
-		LineType startProteinType;
+
 		int lineStyle;
-		int lineProteinStyle;
 
 		public InteractionTemplate() {
 			endType = LineType.LINE;
 			startType = LineType.LINE;
-			endProteinType = LineType.LINE;
-			startProteinType = LineType.LINE;
 			lineStyle = LineStyle.SOLID;
-			lineProteinStyle = LineStyle.SOLID;
 		}
 
 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
@@ -372,22 +365,7 @@ public abstract class DefaultTemplates {
 			return new PathwayElement[] { lastLine, lastStartNode, lastEndNode };
 		}
 		
-		public PathwayElement[] addElementsProtein(Pathway p, double mx, double my) {
-			//Add two Protein DataNodes, connected by a line
-			Template pdnt = new DataNodeTemplate(DataNodeType.PROTEIN);
-			lastStartProteinNode = pdnt.addElements(p, mx, my)[0];
-			lastStartProteinNode.setInitialSize();
-			lastEndProteinNode = pdnt.addElements(p, mx + 2 * lastStartProteinNode.getMWidth(), my)[0];
-			lastEndProteinNode.setInitialSize();
-			
-			Template lnt = new LineTemplate("defaultline", lineStyle, startProteinType, endProteinType, ConnectorType.STRAIGHT);
-			lastProteinLine = lnt.addElements(p, mx, my)[0];
-			lastProteinLine.getMStart().linkTo(lastStartProteinNode, 1, 0);
-			lastProteinLine.getMEnd().linkTo(lastEndProteinNode, -1, 0);
-
-			return new PathwayElement[] { lastProteinLine, lastStartProteinNode, lastEndProteinNode };
-		}
-		
+	
 
 		public VPathwayElement getDragElement(VPathway vp) {
 			return null;
@@ -442,26 +420,37 @@ public abstract class DefaultTemplates {
 	/**
 	 * Template for a phosphorylation interaction, two Protein Datanodes with a MIM_MODIFICATION line.
 	 */
-	public static class PhosporylationTemplate extends InteractionTemplate {
-		@Override
-		public PathwayElement[] addElementsProtein(Pathway p, double mx, double my) {			
-/*			Template pdnt = new DataNodeTemplate(DataNodeType.PROTEIN);
-			PathwayElement lastStartProteinNode = pdnt.addElements(p, mx, my)[0];
-			lastStartProteinNode.setInitialSize();
-			PathwayElement lastEndProteinNode = pdnt.addElements(p, mx + 2 * lastStartProteinNode.getMWidth(), my)[0];
-			lastEndProteinNode.setInitialSize();
+	///**
+	// * Template for a reaction, two Metabolites with a connecting arrow, and a GeneProduct (enzyme)
+//	 * pointing to an anchor on that arrow.
+//	 */
+	public static class PhosphorylationTemplate extends InteractionTemplate {
+		//static final double OFFSET_CATALYST = 50;
+		PathwayElement lastPhosphorylation;
+		//PathwayElement lastPhosLine;
+
+		public PathwayElement[] addElements(Pathway p, double mx, double my) {
+			super.addElements(p, mx, my);
+			lastStartNode.setDataNodeType(DataNodeType.PROTEIN);
+			lastEndNode.setDataNodeType(DataNodeType.PROTEIN);
+			lastStartNode.setTextLabel("Protein");
+			lastEndNode.setTextLabel("P-Protein");
+			lastLine.setEndLineType(MIMShapes.MIM_MODIFICATION);
 			
-			Template lnt = new LineTemplate("defaultline", lineStyle, startType, endType, ConnectorType.STRAIGHT);
-			PathwayElement lastProteinLine = lnt.addElements(p, mx, my)[0];
-			lastProteinLine.getMStart().linkTo(lastStartProteinNode, 1, 0);
-			lastProteinLine.getMEnd().linkTo(lastEndProteinNode, -1, 0);
-*/			super.addElementsProtein(p, mx, my);			
-			lastProteinLine.setEndLineType(MIMShapes.MIM_MODIFICATION);
-			return new PathwayElement[] { lastProteinLine, lastStartProteinNode, lastEndProteinNode };
+			
+			PathwayElement elt = PathwayElement.createPathwayElement(ObjectType.STATE);                        
+			elt.setInitialSize();
+			elt.setTextLabel("P");
+			((MState)elt).linkTo (lastEndNode, 1.0, 1.0);
+			elt.setShapeType(ShapeType.OVAL);
+			p.add(elt);
+			elt.setGeneratedGraphId();			
+			
+			return new PathwayElement[] { lastStartNode, lastEndNode, lastLine };
 		}
-		@Override
+
 		public String getName() {
-			return "phosphorylation interaction";
+			return "Phosphorylation";
 		}
 	}
 	

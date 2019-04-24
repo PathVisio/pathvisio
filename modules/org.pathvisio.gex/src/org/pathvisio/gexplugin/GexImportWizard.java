@@ -16,16 +16,8 @@
 //
 package org.pathvisio.gexplugin;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.nexes.wizard.Wizard;
-import com.nexes.wizard.WizardPanelDescriptor;
-
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -35,6 +27,7 @@ import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -59,6 +52,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.gui.SimpleFileFilter;
 import org.bridgedb.rdb.construct.DBConnector;
@@ -81,9 +75,15 @@ import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.Visualization;
 import org.pathvisio.desktop.visualization.VisualizationManager;
 import org.pathvisio.gui.DataSourceModel;
-import org.pathvisio.gui.util.PermissiveComboBox;
 import org.pathvisio.visualization.plugins.ColorByExpression;
 import org.pathvisio.visualization.plugins.DataNodeLabel;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.nexes.wizard.Wizard;
+import com.nexes.wizard.WizardPanelDescriptor;
 
 /**
  * Wizard to guide the user through importing a large dataset from a tab delimited text file
@@ -522,12 +522,15 @@ public class GexImportWizard extends Wizard
 			bgSyscodeCol.add (rbFixedYes);
 
 			cbColId = new JComboBox();
+			cbColId.setBackground(new Color(192, 255, 192));
 			cbColSyscode = new JComboBox();
 
 			mDataSource = new DataSourceModel();
 			String[] types = {"metabolite","protein","gene","interaction","probe"};
 			mDataSource.setTypeFilter(types);
 			cbDataSource = new JComboBox(mDataSource);
+			((JLabel)cbDataSource.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
+			cbDataSource.setBackground(new Color(255, 192, 192));
 			
 			ctm = new ColumnTableModel(importInformation);
 			tblColumn = new JTable(ctm);
@@ -553,6 +556,7 @@ public class GexImportWizard extends Wizard
 			builder.addLabel("2. Database selection:", cc.xy(1,4));
 			builder.add (rbFixedYes, cc.xy(1,6));
 			builder.add (cbDataSource, cc.xy(3,6));
+			
 			builder.add (rbFixedNo, cc.xy(1,8));
 			builder.add (cbColSyscode, cc.xy (3,8));
 
@@ -563,6 +567,7 @@ public class GexImportWizard extends Wizard
 				{
 					boolean result = (ae.getSource() == rbFixedYes);
 					importInformation.setSyscodeFixed(result);
+					cbDataSource.setSelectedItem(selectDatasource(importInformation.getSampleData(1, importInformation.getIdColumn())));
 			    	columnPageRefresh();
 				}
 			};
@@ -592,6 +597,10 @@ public class GexImportWizard extends Wizard
 				public void actionPerformed(ActionEvent ae)
 				{
 					importInformation.setIdColumn(cbColId.getSelectedIndex());
+					if(importInformation.isSyscodeFixed()) {
+						cbDataSource.setSelectedItem(selectDatasource(importInformation.getSampleData(1, importInformation.getIdColumn())));
+					}
+					
 			    	columnPageRefresh();
 				}
 			});
@@ -1006,5 +1015,20 @@ public class GexImportWizard extends Wizard
 		
 		visMgr.addVisualization(v);
 		visMgr.setActiveVisualization(v);
+	}
+	
+	private DataSource selectDatasource(String id) {
+		if(id.startsWith("ENS")) {
+			return DataSource.getExistingBySystemCode("En");
+		} else if (id.matches("[0-9]+")) {
+			return DataSource.getExistingBySystemCode("L");
+		} else if (id.startsWith("HMDB")) {
+			return DataSource.getExistingBySystemCode("Ch");
+		} else if (id.startsWith("CHEBI")) {
+			return DataSource.getExistingBySystemCode("Ce");
+		} else if (id.startsWith("LM")) {
+			return DataSource.getExistingBySystemCode("Lm");
+		}
+		return DataSource.getExistingByFullName("Affy");
 	}
 }

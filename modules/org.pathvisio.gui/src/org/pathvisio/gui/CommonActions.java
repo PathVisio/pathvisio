@@ -238,7 +238,7 @@ public class CommonActions implements ApplicationEventListener {
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.ReactionTemplate()) },
 					new Action[] {
-							new NewElementAction(e, new DefaultTemplates.PhosporylationTemplate()) },
+							new NewElementAction(e, new DefaultTemplates.PhosphorylationTemplate()) },
 					};
 	
 		 // actions for "Data nodes" section
@@ -261,7 +261,7 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new  DefaultTemplates.InhibitionInteractionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.StimulationInteractionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.ReactionTemplate()),
-				 new NewElementAction(e, new  DefaultTemplates.PhosporylationTemplate()),
+				 new NewElementAction(e, new  DefaultTemplates.PhosphorylationTemplate()),
 		 };
 		
 		 // actions for "Basic shapes" section

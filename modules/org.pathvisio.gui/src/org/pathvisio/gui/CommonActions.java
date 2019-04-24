@@ -167,6 +167,7 @@ public class CommonActions implements ApplicationEventListener {
 //					new LayoutAction(e, LayoutType.STACK_TOP),
 //					new LayoutAction(e, LayoutType.STACK_BOTTOM)
 			};
+		 // Created actions to perform:
 		 newElementActions = new Action[][] {
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.GENEPRODUCT))
@@ -239,6 +240,9 @@ public class CommonActions implements ApplicationEventListener {
 							new NewElementAction(e, new DefaultTemplates.ReactionTemplate()) },
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.PhosphorylationTemplate()) },
+					new Action[] {
+							new NewElementAction(e, new DefaultTemplates.ReversibleReactionTemplate()) },
+					
 					};
 	
 		 // actions for "Data nodes" section
@@ -256,13 +260,14 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LabelTemplate()),
 		 };
 		
-		 // actions for "Template" section
+		 // actions for "Template" section: Adds button to GUI
 		 newTemplateActions = new Action[] {
 				 new NewElementAction(e, new  DefaultTemplates.InhibitionInteractionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.StimulationInteractionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.ReactionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.PhosphorylationTemplate()),
-		 };
+				 new NewElementAction(e, new  DefaultTemplates.ReversibleReactionTemplate()),
+				 };
 		
 		 // actions for "Basic shapes" section
 		 newShapeActions = new Action[] {

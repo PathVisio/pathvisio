@@ -16,13 +16,6 @@
 //
 package org.pathvisio.gexplugin;
 
-import com.jgoodies.forms.builder.DefaultFormBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.nexes.wizard.Wizard;
-import com.nexes.wizard.WizardPanelDescriptor;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -34,6 +27,7 @@ import java.io.IOException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -58,6 +52,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.gui.SimpleFileFilter;
 import org.bridgedb.rdb.construct.DBConnector;
@@ -80,9 +75,15 @@ import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.Visualization;
 import org.pathvisio.desktop.visualization.VisualizationManager;
 import org.pathvisio.gui.DataSourceModel;
-import org.pathvisio.gui.util.PermissiveComboBox;
 import org.pathvisio.visualization.plugins.ColorByExpression;
 import org.pathvisio.visualization.plugins.DataNodeLabel;
+
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.nexes.wizard.Wizard;
+import com.nexes.wizard.WizardPanelDescriptor;
 
 /**
  * Wizard to guide the user through importing a large dataset from a tab delimited text file
@@ -139,22 +140,19 @@ public class GexImportWizard extends Wizard
 			String fileName = txtInput.getText();
 			File file = new File (fileName);
 			txtFileComplete = true;
-			if (!file.exists())
-			{
+			
+			if (fileName.contains(" ") || fileName.contains("(") || fileName.contains("[")) {
+				setErrorMessage("Remove special characters from file name, e.g. \"(\", \" \".");
+				txtFileComplete = false;
+			} else if (!file.exists()) {
 				setErrorMessage("Specified file to import does not exist");
 				txtFileComplete = false;
-			}
-			else if (!file.canRead())
-			{
+			} else if (!file.canRead()) {
 				setErrorMessage("Can't access specified file containing expression data");
 				txtFileComplete = false;
-			}
-			else try
-			{
+			} else try {
 				importInformation.setTxtFile(file);
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				setErrorMessage("Exception while reading file: " + e.getMessage());
 				txtFileComplete = false;
 			}
@@ -443,59 +441,6 @@ public class GexImportWizard extends Wizard
 
 			});
 
-			/*
-			btnAdvanced.addActionListener(new ActionListener()
-			{
-				public void createAndShowDlg()
-				{
-					final JDialog dlg = new JDialog (getWizard().getDialog(), "More options", true);
-					dlg.setLayout(new FlowLayout());
-
-					final JRadioButton rbDecimalDot;
-					final JRadioButton rbDecimalComma;
-
-					ButtonGroup bgDecimal = new ButtonGroup();
-					rbDecimalDot = new JRadioButton ("Use dot as decimal separator");
-					rbDecimalComma = new JRadioButton ("Use comma as decimal separator");
-
-					bgDecimal.add(rbDecimalComma);
-					bgDecimal.add(rbDecimalDot);
-
-					dlg.add(rbDecimalComma);
-					dlg.add(rbDecimalDot);
-
-					rbDecimalDot.setSelected(importInformation.digitIsDot());
-					rbDecimalComma.setSelected(!importInformation.digitIsDot());
-
-					JButton btnOk = new JButton ("OK");
-
-					dlg.add (btnOk);
-					btnOk.addActionListener(new ActionListener()
-					{
-
-						public void actionPerformed(ActionEvent ae)
-						{
-							importInformation.setDigitIsDot (rbDecimalDot.isSelected());
-							dlg.dispose();
-						}
-					});
-					dlg.setLocationRelativeTo(getWizard().getDialog());
-					dlg.pack();
-					dlg.setVisible(true);
-				}
-
-				public void actionPerformed(ActionEvent e)
-				{
-					javax.swing.SwingUtilities.invokeLater(new Runnable()
-					{
-
-						public void run() {
-							createAndShowDlg();
-						}
-					});
-				}
-			});
-			*/
 			return builder.getPanel();
 		}
 
@@ -536,10 +481,11 @@ public class GexImportWizard extends Wizard
 		private JTable tblColumn;
 
 	    private JComboBox cbColId;
+	    private JComboBox cbDataSource;
 	    private JComboBox cbColSyscode;
 	    private JRadioButton rbFixedNo;
 	    private JRadioButton rbFixedYes;
-	    private JComboBox cbDataSource;
+	    
 	    private DataSourceModel mDataSource;
 
 	    public ColumnPage()
@@ -562,27 +508,30 @@ public class GexImportWizard extends Wizard
 		{
 		    FormLayout layout = new FormLayout (
 		    		"pref, 7dlu, pref:grow",
-		    		"p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, p, 3dlu, fill:[100dlu,min]:grow");
+		    		"5dlu, pref, 20dlu, pref, 3dlu, pref, 3dlu, pref, 20dlu, fill:[100dlu,min]:grow");
 
 		    PanelBuilder builder = new PanelBuilder(layout);
 		    builder.setDefaultDialogBorder();
 
 		    CellConstraints cc = new CellConstraints();
 
-			rbFixedNo = new JRadioButton("Select a column to specify system code");
-			rbFixedYes = new JRadioButton("Use the same system code for all rows");
+		    rbFixedYes = new JRadioButton("Same for all rows:");
+		    rbFixedNo = new JRadioButton("(Advanced) System code column:");
 			ButtonGroup bgSyscodeCol = new ButtonGroup ();
 			bgSyscodeCol.add (rbFixedNo);
 			bgSyscodeCol.add (rbFixedYes);
 
 			cbColId = new JComboBox();
+			cbColId.setBackground(new Color(192, 255, 192));
 			cbColSyscode = new JComboBox();
 
 			mDataSource = new DataSourceModel();
 			String[] types = {"metabolite","protein","gene","interaction","probe"};
 			mDataSource.setTypeFilter(types);
-			cbDataSource = new PermissiveComboBox(mDataSource);
-
+			cbDataSource = new JComboBox(mDataSource);
+			((JLabel)cbDataSource.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
+			cbDataSource.setBackground(new Color(255, 192, 192));
+			
 			ctm = new ColumnTableModel(importInformation);
 			tblColumn = new JTable(ctm);
 			tblColumn.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -598,24 +547,27 @@ public class GexImportWizard extends Wizard
 		    jv.setView(rowHeader);
 		    jv.setPreferredSize(rowHeader.getPreferredSize());
 		    scrTable.setRowHeader(jv);
-//		    scrTable.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, rowHeader
-//		            .getTableHeader());
 
-			builder.addLabel ("Select primary identifier column:", cc.xy(1,1));
-			builder.add (cbColId, cc.xy(3,1));
+			builder.addLabel ("1. Identifier column:", cc.xy(1,2));
+			builder.add (cbColId, cc.xy(3,2));
+			
+			builder.addSeparator("", cc.xyw(1, 3, 3));
 
-			builder.add (rbFixedNo, cc.xyw(1,3,3));
-			builder.add (cbColSyscode, cc.xy(3,5));
-			builder.add (rbFixedYes, cc.xyw (1,7,3));
-			builder.add (cbDataSource, cc.xy (3,9));
+			builder.addLabel("2. Database selection:", cc.xy(1,4));
+			builder.add (rbFixedYes, cc.xy(1,6));
+			builder.add (cbDataSource, cc.xy(3,6));
+			
+			builder.add (rbFixedNo, cc.xy(1,8));
+			builder.add (cbColSyscode, cc.xy (3,8));
 
-			builder.add (scrTable, cc.xyw(1,11,3));
+			builder.add (scrTable, cc.xyw(1,10,3));
 
 			ActionListener rbAction = new ActionListener() {
 				public void actionPerformed (ActionEvent ae)
 				{
 					boolean result = (ae.getSource() == rbFixedYes);
 					importInformation.setSyscodeFixed(result);
+					cbDataSource.setSelectedItem(selectDatasource(importInformation.getSampleData(1, importInformation.getIdColumn())));
 			    	columnPageRefresh();
 				}
 			};
@@ -645,6 +597,10 @@ public class GexImportWizard extends Wizard
 				public void actionPerformed(ActionEvent ae)
 				{
 					importInformation.setIdColumn(cbColId.getSelectedIndex());
+					if(importInformation.isSyscodeFixed()) {
+						cbDataSource.setSelectedItem(selectDatasource(importInformation.getSampleData(1, importInformation.getIdColumn())));
+					}
+					
 			    	columnPageRefresh();
 				}
 			});
@@ -1059,5 +1015,20 @@ public class GexImportWizard extends Wizard
 		
 		visMgr.addVisualization(v);
 		visMgr.setActiveVisualization(v);
+	}
+	
+	private DataSource selectDatasource(String id) {
+		if(id.startsWith("ENS")) {
+			return DataSource.getExistingBySystemCode("En");
+		} else if (id.matches("[0-9]+")) {
+			return DataSource.getExistingBySystemCode("L");
+		} else if (id.startsWith("HMDB")) {
+			return DataSource.getExistingBySystemCode("Ch");
+		} else if (id.startsWith("CHEBI")) {
+			return DataSource.getExistingBySystemCode("Ce");
+		} else if (id.startsWith("LM")) {
+			return DataSource.getExistingBySystemCode("Lm");
+		}
+		return DataSource.getExistingByFullName("Affy");
 	}
 }

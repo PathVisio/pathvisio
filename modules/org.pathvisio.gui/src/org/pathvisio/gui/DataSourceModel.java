@@ -29,6 +29,8 @@ import org.bridgedb.DataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.gui.handler.DataSourceHandler;
 
+import javafx.scene.chart.PieChart.Data;
+
 /**
  * Stick this into a ComboBox to let the user
  * select a {@link DataSource}.
@@ -115,6 +117,26 @@ public class DataSourceModel implements ComboBoxModel
 	{
 		items = new ArrayList<DataSource>();
 		items.addAll(DataSourceHandler.getFilteredSetAlt(primary, type, organism, interaction));
+		items.remove(DataSource.getExistingBySystemCode("EnBs"));
+		items.remove(DataSource.getExistingBySystemCode("EnCe"));
+		items.remove(DataSource.getExistingBySystemCode("EnGg"));
+		items.remove(DataSource.getExistingBySystemCode("EnPt"));
+		items.remove(DataSource.getExistingBySystemCode("EnBt"));
+		items.remove(DataSource.getExistingBySystemCode("EnCf"));
+		items.remove(DataSource.getExistingBySystemCode("EnEc"));
+		items.remove(DataSource.getExistingBySystemCode("EnDm"));
+		items.remove(DataSource.getExistingBySystemCode("EnQc"));
+		items.remove(DataSource.getExistingBySystemCode("EnHs"));
+		items.remove(DataSource.getExistingBySystemCode("EnMx"));
+		items.remove(DataSource.getExistingBySystemCode("EnAg"));
+		items.remove(DataSource.getExistingBySystemCode("EnMm"));
+		items.remove(DataSource.getExistingBySystemCode("EnSs"));
+		items.remove(DataSource.getExistingBySystemCode("EP"));
+		items.remove(DataSource.getExistingBySystemCode("EnRn"));
+		items.remove(DataSource.getExistingBySystemCode("EnXt"));
+		items.remove(DataSource.getExistingBySystemCode("EnSc"));
+		items.remove(DataSource.getExistingBySystemCode("EnDr"));
+		
 		Collections.sort (items, new Comparator<DataSource>()
 		{
 			public int compare(DataSource arg0, DataSource arg1)

@@ -47,7 +47,7 @@ import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.WrapLayout;
 
 /**
- * the mainPanel for the standalone (non-applet) version of PathVisio.
+ * the mainPanel for the stand alone (non-applet) version of PathVisio.
  */
 public class MainPanelStandalone extends MainPanel
 {
@@ -148,10 +148,10 @@ public class MainPanelStandalone extends MainPanel
 		dpt.addDataHook(new BackpageExpression(desktop.getGexManager()));
 		DataPane dataPane = new DataPane(dpt, swingEngine.getEngine());
 		dataPane.addHyperlinkListener(swingEngine);
-		sidebarTabbedPane.addTab( "Data", new JScrollPane(dataPane) );
+		sidebarTabbedPane.addTab("Data", new JScrollPane(dataPane) );
 		
 		SearchPane searchPane = new SearchPane(swingEngine);
-		sidebarTabbedPane.addTab ("Search", searchPane);
+		sidebarTabbedPane.addTab("Search", searchPane);
 
 		String osName = System.getProperty("os.name").toLowerCase();
 		if (osName.startsWith("mac os x")) {
@@ -214,7 +214,7 @@ public class MainPanelStandalone extends MainPanel
 		addToToolbar(standaloneActions.openAction);
 		addToToolbar(actions.standaloneSaveAction);
 
-		// do the common part that is shared between applet and standalone version.
+		// do the common part that is shared between applet and stand alone version.
 		addCommonToolbarActions(swingEngine, tb);
 	}
 

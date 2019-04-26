@@ -58,7 +58,6 @@ import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.core.view.ViewActions;
 import org.pathvisio.core.view.WPShapes;
-import org.pathvisio.core.view.WPShapes;
 import org.pathvisio.gui.dialogs.AboutDlg;
 import org.pathvisio.gui.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.dialogs.PublicationXRefDialog;
@@ -310,7 +309,7 @@ public class CommonActions implements ApplicationEventListener {
 						 "Post Translational Modification", LineStyle.SOLID, LineType.LINE, WPShapes.WP_MODIFICATION, ConnectorType.STRAIGHT) //PMT Relationship
 				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Basic Directed", LineStyle.DASHED, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT) // Basic Directed Relationship (reusing Basic interaction panel)
+						 "Basic Directed", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT) // Basic Directed Relationship (reusing Basic interaction panel)
 				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Stimulation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_STIMULATION, ConnectorType.STRAIGHT) // Stimulation Relationship

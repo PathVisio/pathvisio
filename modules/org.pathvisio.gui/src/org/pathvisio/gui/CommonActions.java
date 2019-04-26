@@ -57,6 +57,10 @@ import org.pathvisio.core.view.Template;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.core.view.ViewActions;
+<<<<<<< HEAD
+=======
+import org.pathvisio.core.view.WPShapes;
+>>>>>>> 94c63501... Changed default shape of Metabolites to Rounded Rectangle
 import org.pathvisio.gui.dialogs.AboutDlg;
 import org.pathvisio.gui.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.dialogs.PublicationXRefDialog;
@@ -279,7 +283,46 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.HEXAGON)),
 //				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.EDGE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)),
+<<<<<<< HEAD
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
+=======
+				 //new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)), //This item should not be part of the Basic shapes, since it's a MIM shape. 
+		 };
+		 
+		 
+	// actions for "WPs Relationships (aka interactions)" section
+		 newWPInteractionActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Conversion", LineStyle.SOLID, LineType.LINE, WPShapes.WP_CONVERSION, ConnectorType.STRAIGHT) //Metabolic Reaction Relationship
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Catalysis", LineStyle.SOLID, LineType.LINE, WPShapes.WP_CATALYSIS, ConnectorType.STRAIGHT) //Catalysis Relationship
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Inhibition", LineStyle.SOLID, LineType.LINE, WPShapes.WP_INHIBITION, ConnectorType.STRAIGHT) //Inhibiting Relationship
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Post Translational Modification", LineStyle.SOLID, LineType.LINE, WPShapes.WP_MODIFICATION, ConnectorType.STRAIGHT) //PMT Relationship
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Directed", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT) // Basic Directed Relationship (reusing Basic interaction panel)
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Stimulation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_STIMULATION, ConnectorType.STRAIGHT) // Stimulation Relationship
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Binding", LineStyle.SOLID, LineType.LINE, WPShapes.WP_BINDING, ConnectorType.STRAIGHT // Binding Relationship
+				 )),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Transcription-Translation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_TRANSLATION, ConnectorType.STRAIGHT // Transcription/Translation Relationship
+				 )),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Translocation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_TRANSLOCATION, ConnectorType.STRAIGHT // Translocation (cellular movement) Relationship
+				 )),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Undirected", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT // Basic UNDirected Relationship (reusing Basic interaction panel)
+				 )),
+>>>>>>> 94c63501... Changed default shape of Metabolites to Rounded Rectangle
 		 };
 		
 		// actions for "Basic interactions" section

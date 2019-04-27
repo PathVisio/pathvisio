@@ -57,6 +57,7 @@ import org.pathvisio.core.view.Template;
 import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.core.view.ViewActions;
+import org.pathvisio.core.view.WPShapes;
 import org.pathvisio.gui.dialogs.AboutDlg;
 import org.pathvisio.gui.dialogs.PathwayElementDialog;
 import org.pathvisio.gui.dialogs.PublicationXRefDialog;
@@ -65,7 +66,10 @@ import org.pathvisio.gui.dialogs.PublicationXRefDialog;
  * A collection of {@link Action}s that may be used throughout the program (e.g. in
  * toolbars, menubars and right-click menu). These actions are registered to the proper
  * group in {@ViewActions} when a new {@link VPathway} is created.
+ * The actions in this class are visualisations in the GUI of PathVisio.
  * @author thomas
+ * @author MKutmon
+ * @author DeniseSl22
  * @see {@link ViewActions}
  */
 public class CommonActions implements ApplicationEventListener {
@@ -127,6 +131,9 @@ public class CommonActions implements ApplicationEventListener {
 	
 	public final Action[] newInteractionActions;
 	
+	public final Action[] newWPInteractionActions; //Adds semantic relationships
+	public final Action[] newWPOtherInteractionActions; //Adds non semantic relationships.
+	
 	public final Action[] newRLInteractionActions;
 	
 	public final Action[] newMIMInteractionActions;
@@ -167,6 +174,7 @@ public class CommonActions implements ApplicationEventListener {
 //					new LayoutAction(e, LayoutType.STACK_TOP),
 //					new LayoutAction(e, LayoutType.STACK_BOTTOM)
 			};
+		 // Created actions to perform:
 		 newElementActions = new Action[][] {
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.DataNodeTemplate(DataNodeType.GENEPRODUCT))
@@ -239,6 +247,9 @@ public class CommonActions implements ApplicationEventListener {
 							new NewElementAction(e, new DefaultTemplates.ReactionTemplate()) },
 					new Action[] {
 							new NewElementAction(e, new DefaultTemplates.PhosphorylationTemplate()) },
+					new Action[] {
+							new NewElementAction(e, new DefaultTemplates.ReversibleReactionTemplate()) },
+					
 					};
 	
 		 // actions for "Data nodes" section
@@ -256,13 +267,14 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LabelTemplate()),
 		 };
 		
-		 // actions for "Template" section
+		 // actions for "Template" section: Adds button to GUI
 		 newTemplateActions = new Action[] {
 				 new NewElementAction(e, new  DefaultTemplates.InhibitionInteractionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.StimulationInteractionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.ReactionTemplate()),
 				 new NewElementAction(e, new  DefaultTemplates.PhosphorylationTemplate()),
-		 };
+				 new NewElementAction(e, new  DefaultTemplates.ReversibleReactionTemplate()),
+				 };
 		
 		 // actions for "Basic shapes" section
 		 newShapeActions = new Action[] {
@@ -280,9 +292,54 @@ public class CommonActions implements ApplicationEventListener {
 //				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.EDGE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
+ 			 //new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)), //This item should not be part of the Basic shapes, since it's a MIM shape. 
 		 };
+		 
+	// actions for "Semantic Relationships (aka interactions)" section
+		 newWPInteractionActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Conversion-Modification", LineStyle.SOLID, LineType.LINE, WPShapes.WP_CONVERSION, ConnectorType.STRAIGHT) //Metabolic Reaction Relationship
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Catalysis", LineStyle.SOLID, LineType.LINE, WPShapes.WP_CATALYSIS, ConnectorType.STRAIGHT) //Catalysis Relationship
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Inhibition", LineStyle.SOLID, LineType.LINE, WPShapes.WP_INHIBITION, ConnectorType.STRAIGHT) //Inhibiting Relationship
+				 ),
+				/* new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Modification", LineStyle.SOLID, LineType.LINE, WPShapes.WP_MODIFICATION, ConnectorType.STRAIGHT) //PMT Relationship
+				 ),*/ //// Merged with conversion
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Stimulation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_STIMULATION, ConnectorType.STRAIGHT) // Stimulation Relationship
+				 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Binding", LineStyle.SOLID, LineType.LINE, WPShapes.WP_BINDING, ConnectorType.STRAIGHT // Binding Relationship
+				 )),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Transcription-Translation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_TRANSLATION, ConnectorType.STRAIGHT // Transcription/Translation Relationship
+				 )),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Translocation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_TRANSLOCATION, ConnectorType.STRAIGHT // Translocation (cellular movement) Relationship
+				 )),
+				 /*new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Undirected", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT // Basic UNDirected Relationship (reusing Basic interaction panel)
+				 )),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Directed", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT) // Basic Directed Relationship (reusing Basic interaction panel)
+				 ),*/
+		 };
+		 
+		// actions for "NON Semantic (or other) Relationships (aka interactions)" section
+		 newWPOtherInteractionActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Directed", LineStyle.DASHED, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT) // Basic Directed Relationship (reusing Basic interaction panel)
+						 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Undirected", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT) // Basic UNDirected Relationship (reusing Basic interaction panel)
+				         ),
+				 };
 		
-		// actions for "Basic interactions" section
+		// actions for "Basic interactions" section (Deprecated, but still available in Properties)
 		 newInteractionActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT)
@@ -341,7 +398,7 @@ public class CommonActions implements ApplicationEventListener {
 				// new NewElementAction(e, new DefaultTemplates.CellularComponentTemplate(ShapeType.ROUNDED_RECTANGLE, CellularComponentType.MEMBRANE))
 		 };
 		 
-		 // actions for "Molecular Interaction Map Interactions" section
+		 // actions for "Molecular Interaction Map Interactions" section (Deprecated from main menu, but still available in properties; could be a plugin later on TODO)
 		 newMIMInteractionActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Necessary stimulation", LineStyle.SOLID, LineType.LINE, MIMShapes.MIM_NECESSARY_STIMULATION, ConnectorType.STRAIGHT)

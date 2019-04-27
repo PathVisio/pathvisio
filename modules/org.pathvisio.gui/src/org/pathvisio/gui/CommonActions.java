@@ -291,9 +291,9 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.HEXAGON)),
 //				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.EDGE)),
 				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(ShapeType.BRACE)),
-				 //new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)), //This item should not be part of the Basic shapes, since it's a MIM shape. 
+				 new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)),
+ 			 //new NewElementAction(e, new DefaultTemplates.ShapeTemplate(MIMShapes.MIM_DEGRADATION_SHAPE)), //This item should not be part of the Basic shapes, since it's a MIM shape. 
 		 };
-		 
 		 
 	// actions for "Semantic Relationships (aka interactions)" section
 		 newWPInteractionActions = new Action[] {

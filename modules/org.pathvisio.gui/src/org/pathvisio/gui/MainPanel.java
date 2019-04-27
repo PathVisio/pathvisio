@@ -76,7 +76,7 @@ import com.mammothsoftware.frwk.ddb.DropDownButton;
  * this is the contents of the main window in the WikiPathways applet,
  * and contains the editor window, side panels, toolbar and menu.
  *
- * For the standalone application, the derived class MainPanelStandalone is used.
+ * For the stand alone application, the derived class MainPanelStandalone is used.
  */
 public class MainPanel extends JPanel implements VPathwayListener, ApplicationEventListener {
 
@@ -124,6 +124,9 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 	private boolean mayAddAction(Action a) {
 		return hideActions == null || !hideActions.contains(a);
 	}
+	
+	public static final Color BEIGE = new Color(238, 245, 219); //adding new background colour
+	public static final Color Columbia_Blue = new Color(184, 216, 216); //adding new menu colour
 
 	protected void addMenuActions(JMenuBar mb) {
 		JMenu fileMenu = new JMenu("File");
@@ -190,22 +193,25 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		// menuBar will be added by container (JFrame or JApplet)
 
 		pathwayScrollPane = new JScrollPane();
-		// set background color when no VPathway is loaded, override l&f because it is usually white.
-		pathwayScrollPane.getViewport().setBackground(Color.LIGHT_GRAY);
+		
+		// set background color when no VPathway is loaded, override l&f because it is usually white.		
+		//pathwayScrollPane.getViewport().setBackground(Color.LIGHT_GRAY); // old background colour
+		pathwayScrollPane.getViewport().setBackground(BEIGE);
 		
 		objectsPane = new ObjectsPane(swingEngine);
+		//objectsPane.setForeground(Columbia_Blue); // Not working, check with Tina how to change colours :)
 		int numItemsPerRow = 10;
 		objectsPane.addButtons(actions.newDatanodeActions, "Data Nodes", numItemsPerRow);
-		objectsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
+		objectsPane.addButtons(actions.newWPInteractionActions, "Semantic Relationships", numItemsPerRow);
+		objectsPane.addButtons(actions.newTemplateActions, "Templates", numItemsPerRow);
+		objectsPane.addButtons(actions.newWPOtherInteractionActions, "Additional Relationships", numItemsPerRow);
+		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular compartments", numItemsPerRow);
+		//objectsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
 		//objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);
-		objectsPane.addButtons(actions.newMIMInteractionActions, "MIM interactions", numItemsPerRow);
+		//objectsPane.addButtons(actions.newMIMInteractionActions, "MIM interactions", numItemsPerRow);
 		//objectsPane.addButtons(actions.newAnnotationActions, "Annotations", numItemsPerRow);
 		objectsPane.addButtons(actions.newShapeActions, "Graphical elements", numItemsPerRow);
-		
-		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular compartments", numItemsPerRow);
-		
-		objectsPane.addButtons(actions.newTemplateActions, "Templates", numItemsPerRow);
-		
+				
 		propertyTable = new JTable(model) {
 
 			public TableCellRenderer getCellRenderer(int row, int column) {
@@ -361,6 +367,7 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		// define the drop-down menu for interactions
 		GraphicsChoiceButton lineButton = new GraphicsChoiceButton();
 		lineButton.setToolTipText("Select an interaction to draw");
+		lineButton.addButtons("WP relationships (aka interactions)", actions.newWPInteractionActions);
 		lineButton.addButtons("Basic interactions", actions.newInteractionActions);
 		lineButton.addButtons("MIM interactions", actions.newMIMInteractionActions);
 		addToToolbar(lineButton, TB_GROUP_SHOW_IF_EDITMODE);

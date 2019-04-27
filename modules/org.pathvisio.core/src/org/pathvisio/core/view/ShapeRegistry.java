@@ -28,7 +28,7 @@ import org.pathvisio.core.model.IShape;
    The Shape registry stores all arrow heads and shapes
 
    at this moment the shape registry initializes itself,
-   by calling  registerShape() on BasicShapes, GenMAPPShapes and MIMShapes.
+   by calling  registerShape() on BasicShapes, GenMAPPShapes, MIMShapes and WPShapes.
  */
 
 public class ShapeRegistry
@@ -41,7 +41,7 @@ public class ShapeRegistry
 	private static Map <String, IShape> shapeMap = new HashMap <String, IShape>();
 	private static Map <String, ArrowShape> arrowMap = new HashMap <String, ArrowShape>();
 	private static Map <String, AnchorShape> anchorMap = new HashMap <String, AnchorShape>();
-	private static Map<String, IShape> mappMappings = new HashMap<String, IShape>();
+	private static Map <String, IShape> mappMappings = new HashMap<String, IShape>();
 
 	static
 	{
@@ -72,6 +72,7 @@ public class ShapeRegistry
 
 		BasicShapes.registerShapes();
 		GenMAPPShapes.registerShapes();
+		WPShapes.registerShapes();
 	}
 
 	/**
@@ -104,10 +105,10 @@ public class ShapeRegistry
 
 	/**
 	 * Register an arrow shape
-	 * @param key The key used to identify the arrow shape
-	 * @param sh The shape used to draw the stroke
-	 * @param fillType The fill type, see {@link ArrowShape}
-	 * @param lineEndingLength The line ending width
+	 * @param key : The key used to identify the arrow shape
+	 * @param sh : The shape used to draw the stroke
+	 * @param fillType : The fill type, see {@link ArrowShape}
+	 * @param lineEndingLength : The line ending width
 	 */
 	static public void registerArrow (String key, Shape sh, ArrowShape.FillType fillType, int lineEndingLength) {
 		//pass in zero as the gap between line line ending and anchor

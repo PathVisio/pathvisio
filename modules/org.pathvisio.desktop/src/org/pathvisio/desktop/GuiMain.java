@@ -163,7 +163,7 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		String gdb = "" + swingEngine.getGdbManager().getGeneDb();
 		String mdb = "" + swingEngine.getGdbManager().getMetaboliteDb();
 		String idb = "" + swingEngine.getGdbManager().getInteractionDb();
-		gdbLabel.setText(gdb != null ? (" | Gene database: " + shortenString(gdb)) : "");
+		gdbLabel.setText(gdb != null ? (" | Gene and Protein database: " + shortenString(gdb)) : "");
 		mdbLabel.setText(mdb != null ? (" | Metabolite database: " + shortenString(mdb)) : "");
 		idbLabel.setText(idb != null ? (" | Interaction database: " + shortenString(idb)) : "");
 		gdbLabel.setToolTipText(gdb != null ? gdb : "");

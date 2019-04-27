@@ -131,7 +131,8 @@ public class CommonActions implements ApplicationEventListener {
 	
 	public final Action[] newInteractionActions;
 	
-	public final Action[] newWPInteractionActions;
+	public final Action[] newWPInteractionActions; //Adds semantic relationships
+	public final Action[] newWPOtherInteractionActions; //Adds non semantic relationships.
 	
 	public final Action[] newRLInteractionActions;
 	
@@ -294,10 +295,10 @@ public class CommonActions implements ApplicationEventListener {
 		 };
 		 
 		 
-	// actions for "WPs Relationships (aka interactions)" section
+	// actions for "Semantic Relationships (aka interactions)" section
 		 newWPInteractionActions = new Action[] {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Conversion", LineStyle.SOLID, LineType.LINE, WPShapes.WP_CONVERSION, ConnectorType.STRAIGHT) //Metabolic Reaction Relationship
+						 "Conversion-Modification", LineStyle.SOLID, LineType.LINE, WPShapes.WP_CONVERSION, ConnectorType.STRAIGHT) //Metabolic Reaction Relationship
 				 ),
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Catalysis", LineStyle.SOLID, LineType.LINE, WPShapes.WP_CATALYSIS, ConnectorType.STRAIGHT) //Catalysis Relationship
@@ -305,12 +306,9 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Inhibition", LineStyle.SOLID, LineType.LINE, WPShapes.WP_INHIBITION, ConnectorType.STRAIGHT) //Inhibiting Relationship
 				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Post Translational Modification", LineStyle.SOLID, LineType.LINE, WPShapes.WP_MODIFICATION, ConnectorType.STRAIGHT) //PMT Relationship
-				 ),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
-						 "Basic Directed", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT) // Basic Directed Relationship (reusing Basic interaction panel)
-				 ),
+				/* new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Modification", LineStyle.SOLID, LineType.LINE, WPShapes.WP_MODIFICATION, ConnectorType.STRAIGHT) //PMT Relationship
+				 ),*/ //// Merged with conversion
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Stimulation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_STIMULATION, ConnectorType.STRAIGHT) // Stimulation Relationship
 				 ),
@@ -323,10 +321,23 @@ public class CommonActions implements ApplicationEventListener {
 				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Translocation", LineStyle.SOLID, LineType.LINE, WPShapes.WP_TRANSLOCATION, ConnectorType.STRAIGHT // Translocation (cellular movement) Relationship
 				 )),
-				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+				 /*new NewElementAction(e, new DefaultTemplates.LineTemplate(
 						 "Basic Undirected", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT // Basic UNDirected Relationship (reusing Basic interaction panel)
 				 )),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Directed", LineStyle.SOLID, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT) // Basic Directed Relationship (reusing Basic interaction panel)
+				 ),*/
 		 };
+		 
+		// actions for "NON Semantic (or other) Relationships (aka interactions)" section
+		 newWPOtherInteractionActions = new Action[] {
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Directed", LineStyle.DASHED, LineType.LINE, LineType.ARROW, ConnectorType.STRAIGHT) // Basic Directed Relationship (reusing Basic interaction panel)
+						 ),
+				 new NewElementAction(e, new DefaultTemplates.LineTemplate(
+						 "Basic Undirected", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT) // Basic UNDirected Relationship (reusing Basic interaction panel)
+				         ),
+				 };
 		
 		// actions for "Basic interactions" section (Deprecated, but still available in Properties)
 		 newInteractionActions = new Action[] {

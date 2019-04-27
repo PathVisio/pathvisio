@@ -22,6 +22,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 
 import org.pathvisio.core.model.AbstractShape;
+import org.pathvisio.core.model.AnchorType;
 import org.pathvisio.core.model.IShape;
 import org.pathvisio.core.model.LineType;
 
@@ -32,15 +33,15 @@ import org.pathvisio.core.model.LineType;
  */
 public class WPShapes
 {
-	public static final LineType WP_CONVERSION = LineType.create ("mim-conversion", "Arrow");
-	public static final LineType WP_CATALYSIS = LineType.create ("mim-catalysis", "Arrow");
-	public static final LineType WP_INHIBITION = LineType.create ("mim-inhibition", "Arrow");
-	public static final LineType WP_MODIFICATION = LineType.create ("mim-modification", "Arrow"); 
+	public static final LineType WP_CONVERSION = LineType.create("Conversion-Modification", "Arrow"); 
+	public static final LineType WP_CATALYSIS = LineType.create ("Catalysis", "Arrow");
+	public static final LineType WP_INHIBITION = LineType.create ("Inhibition", "Arrow");
+	//public static final LineType WP_MODIFICATION = LineType.create ("Modification", "Arrow"); //Merged with Conversion!
 	//Basic Directed relationship can be reused from Basic interaction panel
-	public static final LineType WP_STIMULATION = LineType.create ("mim-stimulation", "Arrow");
-	public static final LineType WP_BINDING = LineType.create ("mim-binding", "Arrow");
-	public static final LineType WP_TRANSLATION = LineType.create ("mim-transcription-translation", "Arrow");
-	public static final LineType WP_TRANSLOCATION = LineType.create ("mim-translocation", "Arrow");
+	public static final LineType WP_STIMULATION = LineType.create ("Stimulation", "Arrow");
+	public static final LineType WP_BINDING = LineType.create ("Binding", "Arrow");
+	public static final LineType WP_TRANSLATION = LineType.create ("Transcription-Translation", "Arrow");
+	public static final LineType WP_TRANSLOCATION = LineType.create ("Translocation", "Arrow");
 	//Basic UNDirected relationship can be reused from Basic interaction panel
 	
  
@@ -49,7 +50,7 @@ public class WPShapes
     	ShapeRegistry.registerArrow (WP_CONVERSION.getName(), getWPConversion(), ArrowShape.FillType.CLOSED, ARROWWIDTH);
     	ShapeRegistry.registerArrow (WP_CATALYSIS.getName(), getWPCatalysis(), ArrowShape.FillType.OPEN, CATALYSIS_DIAM + CATALYSIS_GAP);
     	ShapeRegistry.registerArrow (WP_INHIBITION.getName(), getWPInhibition(),  ArrowShape.FillType.OPEN,TBARWIDTH + TBAR_GAP);
-    	ShapeRegistry.registerArrow (WP_MODIFICATION.getName(), getWPBinding(), ArrowShape.FillType.CLOSED);
+    	//ShapeRegistry.registerArrow (WP_MODIFICATION.getName(), getWPBinding(), ArrowShape.FillType.CLOSED);
     	
     	//Basic Directed relationship can be reused from Basic interaction panel
     	
@@ -61,8 +62,7 @@ public class WPShapes
 		//Basic UNDirected relationship can be reused from Basic interaction panel
 
 	}
-
-
+    
 	//Cleavage line ending constants
 	static final int CLEAVAGE_FIRST = 10;
 	static final int CLEAVAGE_SECOND = 20;

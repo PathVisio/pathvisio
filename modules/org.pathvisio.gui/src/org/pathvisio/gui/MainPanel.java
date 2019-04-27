@@ -202,8 +202,9 @@ public class MainPanel extends JPanel implements VPathwayListener, ApplicationEv
 		//objectsPane.setForeground(Columbia_Blue); // Not working, check with Tina how to change colours :)
 		int numItemsPerRow = 10;
 		objectsPane.addButtons(actions.newDatanodeActions, "Data Nodes", numItemsPerRow);
-		objectsPane.addButtons(actions.newWPInteractionActions, "Relationships", numItemsPerRow);
+		objectsPane.addButtons(actions.newWPInteractionActions, "Semantic Relationships", numItemsPerRow);
 		objectsPane.addButtons(actions.newTemplateActions, "Templates", numItemsPerRow);
+		objectsPane.addButtons(actions.newWPOtherInteractionActions, "Additional Relationships", numItemsPerRow);
 		objectsPane.addButtons(actions.newCellularComponentActions, "Cellular compartments", numItemsPerRow);
 		//objectsPane.addButtons(actions.newInteractionActions, "Basic interactions", numItemsPerRow);
 		//objectsPane.addButtons(actions.newRLInteractionActions, "Receptor/ligand", numItemsPerRow);

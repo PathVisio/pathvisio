@@ -33,7 +33,7 @@ import org.pathvisio.core.model.LineType;
 public class WPShapes
 {
 	public static final LineType WP_CONVERSION = LineType.create ("mim-conversion", "Arrow");
-	public static final LineType WP_CATALYSIS =LineType.create ("mim-catalysis", "Arrow");
+	public static final LineType WP_CATALYSIS = LineType.create ("mim-catalysis", "Arrow");
 	public static final LineType WP_INHIBITION = LineType.create ("mim-inhibition", "Arrow");
 	public static final LineType WP_MODIFICATION = LineType.create ("mim-modification", "Arrow"); 
 	//Basic Directed relationship can be reused from Basic interaction panel

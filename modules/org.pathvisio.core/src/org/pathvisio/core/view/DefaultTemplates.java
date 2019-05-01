@@ -178,6 +178,7 @@ public abstract class DefaultTemplates {
 			//Default colors for different types
 			if (type.equals(DataNodeType.METABOLITE)) {
 				e.setColor(COLOR_METABOLITE);
+				e.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			} else if (type.equals(DataNodeType.PATHWAY)) {
 				e.setColor(COLOR_PATHWAY);
 				e.setMFontSize(12);

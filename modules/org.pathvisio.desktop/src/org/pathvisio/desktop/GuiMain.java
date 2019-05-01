@@ -358,7 +358,6 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		JFrame frame = createAndShowGUI(mainPanel, swingEngine);
 		initImporters(engine);
 		initExporters(engine, swingEngine.getGdbManager());
-		MIMShapes.registerShapes();
 		swingEngine.setFrame(frame);
 		swingEngine.setApplicationPanel(mainPanel);
 		

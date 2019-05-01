@@ -35,4 +35,12 @@ class Revision
 		<pathelement path="../../lib-build/junit-4.12.jar"/>
 	</path>
 
+	<target name="dist-clean" depends="clean">
+		<delete>
+			<fileset dir=".">
+				<include name="TEST-*.xml" />
+			</fileset>
+		</delete>
+	</target>
+
 </project>

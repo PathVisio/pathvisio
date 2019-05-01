@@ -2,14 +2,9 @@
   <library name="lib">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/org.w3c.dom.events_3.0.0.draft20060413_v201105210656.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/org.pathvisio.xmlrpc.client.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/org.apache.commons.discovery_0.2.0.v201004190315.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.bridge_1.7.0.v201011041433.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.xml.serializer_2.7.1.v201005080400.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.ext.awt_1.7.0.v201011041433.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.5.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/hsqldb.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/javax.servlet_3.0.0.v201103241727.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.xerces_2.9.0.v201101211617.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/felix.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.util.gui_1.7.0.v200903091627.jar!/" />
@@ -18,19 +13,13 @@
       <root url="jar://$PROJECT_DIR$/lib/org.pathvisio.pdftranscoder.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/jnlp.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.w3c.dom.smil_1.0.1.v200903091627.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/org.apache.axis_1.4.0.v201005080400.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.bridgedb.gui.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.util_1.7.0.v201011041433.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.felix.bundlerepository-1.6.6.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.xml.resolver_1.2.0.v201005080400.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/h2.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.extension_1.7.0.v201011041433.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.bridgedb.bio.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.bridgedb.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/org.pathvisio.xmlrpc.common.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/com.springsource.org.apache.commons.logging-1.1.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/javax.activation_1.1.0.v201105071233.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/org.pathvisio.ws.commons.util.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/javax.xml_1.3.4.v201005080400.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/com.springsource.org.jdom-1.1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.bridgedb.rdb.construct.jar!/" />
@@ -39,22 +28,15 @@
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.transcoder_1.7.0.v201011041433.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.bridgedb.webservice.bridgerest.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.parser_1.7.0.v201011041433.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/javax.xml.soap_1.3.0.v201105210645.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/derby.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/javax.xml.rpc_1.1.0.v201005080400.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.dom.svg_1.7.0.v201011041433.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/bindex.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.w3c.dom.svg_1.1.0.v201011041433.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.w3c.css.sac_1.3.1.v200903091627.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/derbyclient.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/junit.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.xalan_2.7.1.v201005080400.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/commons-math-2.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.apache.batik.xml_1.7.0.v201011041433.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.eclipse.osgi.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.pathvisio.xerces.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/org.hamcrest.core_1.1.0.v20090501071000.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/javax.wsdl_1.5.1.v201012040544.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/org.bridgedb.rdb.jar!/" />
     </CLASSES>
     <JAVADOC />

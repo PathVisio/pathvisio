@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio visualization module
 Bundle-SymbolicName: org.pathvisio.visualization
-Bundle-Version: 3.3.0
+Bundle-Version: 3.4.0
 Bundle-Activator: org.pathvisio.visualization.Activator
 Bundle-Vendor: PathVisio developers
 Export-Package: org.pathvisio.visualization,

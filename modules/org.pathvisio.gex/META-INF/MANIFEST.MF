@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio gex module
 Bundle-SymbolicName: org.pathvisio.gex
-Bundle-Version: 3.3.0
+Bundle-Version: 3.4.0
 Bundle-Activator: org.pathvisio.gexplugin.Activator
 Bundle-Vendor: PathVisio developers
 Export-Package: org.pathvisio.gexplugin

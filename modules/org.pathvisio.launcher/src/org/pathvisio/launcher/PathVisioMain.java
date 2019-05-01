@@ -306,7 +306,7 @@ public class PathVisioMain {
 				{
 					e.printStackTrace();
 				}
-				System.out.println("PathVisio v" + props.getProperty("pathvisio.version") + ", build " + props.getProperty("pathvisio.revision"));
+				System.out.println("PathVisio v" + props.getProperty("pathvisio.version"));
 				System.exit(0);
 			} else if ("-h".equals(args[i])) {
 				printHelp();

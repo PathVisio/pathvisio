@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio desktop module
 Bundle-SymbolicName: org.pathvisio.desktop
-Bundle-Version: 3.3.0
+Bundle-Version: 3.4.0
 Bundle-Activator: org.pathvisio.desktop.Activator
 Bundle-Vendor: PathVisio developers
 Export-Package: com.nexes.test,

@@ -13,7 +13,7 @@
 	<property name="webstart.base.url" value="http://www.pathvisio.org/webstart"/>
 
 	<!-- needed to build zip files correctly -->
-	<property name="pathvisio.version" value="3.3.0"/>
+	<property name="pathvisio.version" value="3.4.0"/>
 	
   	<macrodef name="iterate">
 		<attribute name="target"/>

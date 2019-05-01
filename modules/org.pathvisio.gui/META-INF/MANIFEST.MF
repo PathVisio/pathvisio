@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: PathVisio gui module
 Bundle-SymbolicName: org.pathvisio.gui
-Bundle-Version: 3.3.0
+Bundle-Version: 3.4.0
 Bundle-Vendor: PathVisio developers
 Export-Package: com.jroller.completer,
  com.mammothsoftware.frwk.ddb,

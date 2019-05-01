@@ -72,6 +72,7 @@ public class ShapeRegistry
 
 		BasicShapes.registerShapes();
 		GenMAPPShapes.registerShapes();
+		MIMShapes.registerShapes();
 	}
 
 	/**

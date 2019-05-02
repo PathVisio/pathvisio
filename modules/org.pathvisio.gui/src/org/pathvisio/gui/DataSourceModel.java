@@ -29,8 +29,6 @@ import org.bridgedb.DataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.gui.handler.DataSourceHandler;
 
-import javafx.scene.chart.PieChart.Data;
-
 /**
  * Stick this into a ComboBox to let the user
  * select a {@link DataSource}.

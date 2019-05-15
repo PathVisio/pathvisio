@@ -1,6 +1,6 @@
 /*******************************************************************************
  * PathVisio, a tool for data visualization and analysis using biological pathways
- * Copyright 2019 BiGCaT Bioinformatics
+ * Copyright 2006-2019 BiGCaT Bioinformatics
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
@@ -351,28 +351,7 @@ public class SimpleGex implements DataInterface
 			}
 			getSamples(); // init samples cache
 		}
-//		try
-//		{
-//			con.setReadOnly( !create );
-//		}
-//		catch (SQLException e)
-//		{
-//			throw new IDMapperException (e);
-//		}
 	}
-
-	/**
-	 * Connects to the Expression database
-	 */
-//	public static void connect() throws Exception
-//	{
-//		connect(null, false, true);
-//	}
-//
-//	public static void connect(String dbName) throws Exception
-//	{
-//		connect(dbName, false, true);
-//	}
 
 	/**
 	 * Close the connection to the Expression database, with option to execute the 'SHUTDOWN COMPACT'

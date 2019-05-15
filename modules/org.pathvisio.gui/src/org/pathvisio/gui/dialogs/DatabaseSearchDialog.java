@@ -68,7 +68,7 @@ public class DatabaseSearchDialog extends OkCancelDialog {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 
-		JLabel label = new JLabel("Please select one of the references and press Ok");
+		JLabel label = new JLabel("Select your preffered references below and click 'Ok' to add it as an identifier. Click on the column headers to sort.");
 		table = new JTable(new XRefTableModel());
 		table.setAutoCreateRowSorter(true);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

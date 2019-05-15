@@ -24,6 +24,7 @@ import org.pathvisio.gui.util.PermissiveComboBox;
 public class NewPathwayDialog extends OkCancelDialog {
 
 	private PermissiveComboBox organismComboBox;
+	private JTextField actionField; 
 	private JTextField titleField; 
 	private SwingEngine swingEngine;
 	
@@ -50,9 +51,12 @@ public class NewPathwayDialog extends OkCancelDialog {
 	
 		fieldPanel.setLayout(new GridBagLayout());
 	
+		JLabel actionFieldLabel = new JLabel("");
 		JLabel titleFieldLabel = new JLabel("Title");
 		JLabel orgComboLabel = new JLabel ("Organism ");
 		
+		//actionField = new JTextField();
+		JLabel actionField = new JLabel("Please add a descriptive Title below:");
 		titleField = new JTextField();
 		organismComboBox = new PermissiveComboBox(Organism.latinNamesArray());
 		organismComboBox.setSelectedItem("Homo sapiens");
@@ -62,11 +66,14 @@ public class NewPathwayDialog extends OkCancelDialog {
 		c.weightx = 0;
 		c.gridx = 0;
 		c.gridy = GridBagConstraints.RELATIVE;
+		fieldPanel.add(actionFieldLabel, c);
 		fieldPanel.add(titleFieldLabel, c);
 		fieldPanel.add(orgComboLabel, c);
+		
 		c.gridx = 1;
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
+		fieldPanel.add(actionField, c);
 		fieldPanel.add(titleField, c);
 		fieldPanel.add(organismComboBox, c);
 	}
@@ -74,7 +81,7 @@ public class NewPathwayDialog extends OkCancelDialog {
 	protected void okPressed() {
 		if(titleField.getText().equals("")) {
 			// pathway title is required
-			JOptionPane.showMessageDialog(this, "Please fill in a pathway title", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "The Title is a mandatory field.", "Error", JOptionPane.ERROR_MESSAGE);
 		} else {
 			super.okPressed();
 			swingEngine.getEngine().getActivePathway().getMappInfo().setMapInfoName(titleField.getText());

@@ -1,21 +1,23 @@
 # DEVELOPERS TEAM
 Martina Kutmon
-Jonathan Melius
 Nuno Nunes
-Kristina Hanspers
 Alexander Pico
+Egon Willighagen
+Denise Slenter
+Kristina Hanspers
 
 # FORMER DEVELOPERS
+Andra Waagmeester
 Anwesha Bohler
-Thomas Kelder
+Jonathan Melius
 Martijn van Iersel
+Thomas Kelder
 
 # CONTRIBUTORS
 Adem Bilicna
 Augustin Luna
 Bing Lui 
 Christ Leemans
-Denise Slenter
 Eric Creussen
 Erik Pelgrin
 Esterh Neuteboom
@@ -25,6 +27,7 @@ Harm Nijveen
 Irene Kaashoek
 Justin Elser
 Kumar Chanden
+Lars Willighagen
 Margot Sunshine
 Mark Woon
 Margiet Palm

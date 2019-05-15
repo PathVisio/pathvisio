@@ -473,10 +473,14 @@ public abstract class DefaultTemplates {
 
 			lastStartNode.setDataNodeType(DataNodeType.METABOLITE);
 			lastStartNode.setColor(COLOR_METABOLITE);
+			lastStartNode.setShapeType(ShapeType.ROUNDED_RECTANGLE);
+			lastStartNode.setTextLabel("Substrate");
+
 			lastEndNode.setDataNodeType(DataNodeType.METABOLITE);
 			lastEndNode.setColor(COLOR_METABOLITE);
-			lastStartNode.setTextLabel("Substrate");
+			lastEndNode.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			lastEndNode.setTextLabel("Product");
+			
 			lastLine.setEndLineType(MIMShapes.MIM_CONVERSION);
 			MAnchor anchor = lastLine.addMAnchor(0.5);
 
@@ -520,9 +524,12 @@ public abstract class DefaultTemplates {
 
  			lastStartNode.setDataNodeType(DataNodeType.METABOLITE);
 			lastStartNode.setColor(COLOR_METABOLITE);
+			lastStartNode.setShapeType(ShapeType.ROUNDED_RECTANGLE);
+			lastStartNode.setTextLabel("Metabolite 1");
+
 			lastEndNode.setDataNodeType(DataNodeType.METABOLITE);
 			lastEndNode.setColor(COLOR_METABOLITE);
-			lastStartNode.setTextLabel("Metabolite 1");
+			lastEndNode.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			lastEndNode.setTextLabel("Metabolite 2");
 			lastLine.setEndLineType(MIMShapes.MIM_CONVERSION);
 
@@ -540,7 +547,6 @@ public abstract class DefaultTemplates {
 
  			lastReverseLine.getMStart().linkTo(lastEndNode, -1, 0.5);
 			lastReverseLine.getMEnd().linkTo(lastStartNode, 1, 0.5);
-			//lastReverseLine.getMEnd().linkTo(anchor, 0, 0);
 			lastReverseLine.setEndLineType(MIMShapes.MIM_CONVERSION);
 
  			MAnchor anchor2 = lastReverseLine.addMAnchor(0.5);

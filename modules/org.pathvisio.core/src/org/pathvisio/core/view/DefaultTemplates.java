@@ -41,6 +41,7 @@ import org.pathvisio.core.util.Resources;
 public abstract class DefaultTemplates {
 	public final static Color COLOR_METABOLITE = Color.BLUE;
 	public final static Color COLOR_PATHWAY = new Color(20,150,30);
+	public final static Color COLOR_LABEL = Color.DARK_GRAY;
 
 	/**
 	 * Abstract base for templates that only add a single PathwayElement
@@ -137,6 +138,7 @@ public abstract class DefaultTemplates {
 			e.setInitialSize();
 			e.setGraphId(p.getUniqueGraphId());
 			e.setTextLabel("Label");
+			e.setColor(COLOR_LABEL);
 			addElement(e, p);
 
 			return new PathwayElement[] { e };
@@ -176,6 +178,7 @@ public abstract class DefaultTemplates {
 			//Default colors for different types
 			if (type.equals(DataNodeType.METABOLITE)) {
 				e.setColor(COLOR_METABOLITE);
+				e.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			} else if (type.equals(DataNodeType.PATHWAY)) {
 				e.setColor(COLOR_PATHWAY);
 				e.setMFontSize(12);
@@ -420,10 +423,7 @@ public abstract class DefaultTemplates {
 	/**
 	 * Template for a phosphorylation interaction, two Protein Datanodes with a MIM_MODIFICATION line.
 	 */
-	///**
-	// * Template for a reaction, two Metabolites with a connecting arrow, and a GeneProduct (enzyme)
-//	 * pointing to an anchor on that arrow.
-//	 */
+
 	public static class PhosphorylationTemplate extends InteractionTemplate {
 		//static final double OFFSET_CATALYST = 50;
 		PathwayElement lastPhosphorylation;
@@ -494,4 +494,70 @@ public abstract class DefaultTemplates {
 			return "reaction";
 		}
 	}
+	
+	/**
+	 * Template for a reaction, two Metabolites with a connecting arrow, and a GeneProduct (enzyme)
+	 * pointing to an anchor on that arrow.
+	 */
+	public static class ReversibleReactionTemplate extends InteractionTemplate {
+		static final double OFFSET_CATALYST = 50;
+		PathwayElement lastCatalyst;
+		PathwayElement lastCatalyst2;
+		PathwayElement lastCatLine;
+		PathwayElement lastCatLine2;
+		PathwayElement lastReverseLine;
+
+ 		public PathwayElement[] addElements(Pathway p, double mx, double my) {
+			super.addElements(p, mx, my);
+			Template dnt = new DataNodeTemplate(DataNodeType.PROTEIN);
+			lastCatalyst = dnt.addElements(p, mx + lastStartNode.getMWidth(), my - OFFSET_CATALYST)[0];
+			lastCatalyst.setInitialSize();
+			lastCatalyst.setTextLabel("Catalyst 1");
+
+ 			lastCatalyst2 = dnt.addElements(p, mx + lastStartNode.getMWidth(), my + OFFSET_CATALYST)[0];
+			lastCatalyst2.setInitialSize();
+			lastCatalyst2.setTextLabel("Catalyst 2");
+
+ 			lastStartNode.setDataNodeType(DataNodeType.METABOLITE);
+			lastStartNode.setColor(COLOR_METABOLITE);
+			lastEndNode.setDataNodeType(DataNodeType.METABOLITE);
+			lastEndNode.setColor(COLOR_METABOLITE);
+			lastStartNode.setTextLabel("Metabolite 1");
+			lastEndNode.setTextLabel("Metabolite 2");
+			lastLine.setEndLineType(MIMShapes.MIM_CONVERSION);
+
+ 			MAnchor anchor = lastLine.addMAnchor(0.5);
+
+ 			Template lnt = new LineTemplate("line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT);
+			lastCatLine = lnt.addElements(p, mx, my)[0];
+
+ 			lastCatLine.getMStart().linkTo(lastCatalyst, 0, 1);
+			lastCatLine.getMEnd().linkTo(anchor, 0, 0);
+			lastCatLine.setEndLineType(MIMShapes.MIM_CATALYSIS);
+
+ 			Template rev = new LineTemplate("line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT);
+			lastReverseLine = rev.addElements(p, mx, my)[0];
+
+ 			lastReverseLine.getMStart().linkTo(lastEndNode, -1, 0.5);
+			lastReverseLine.getMEnd().linkTo(lastStartNode, 1, 0.5);
+			//lastReverseLine.getMEnd().linkTo(anchor, 0, 0);
+			lastReverseLine.setEndLineType(MIMShapes.MIM_CONVERSION);
+
+ 			MAnchor anchor2 = lastReverseLine.addMAnchor(0.5);
+
+ 			Template lnt2 = new LineTemplate("line", LineStyle.SOLID, LineType.LINE, LineType.LINE, ConnectorType.STRAIGHT);
+			lastCatLine2 = lnt2.addElements(p, mx, my)[0];
+
+ 			lastCatLine2.getMStart().linkTo(lastCatalyst2, 0, -1);
+			lastCatLine2.getMEnd().linkTo(anchor2, 0, 0);
+			lastCatLine2.setEndLineType(MIMShapes.MIM_CATALYSIS);
+
+ 			return new PathwayElement[] { lastStartNode, lastEndNode, lastLine, lastCatalyst, lastCatalyst2 }; //These elements are selected in PV, so users can move them around.
+		}
+
+ 		public String getName() {
+			return "ReversibleReaction";
+		}
+	}
+	
 }

@@ -158,21 +158,48 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		}
 		return s;
 	}
+	
+	/** The statements below check for local identifier mapping databases,
+	*	and change the output line in the bottom of PV to the correct name(s).
+	*   In the future, this could be extended with different mapping database.
+	*   Please check which combination can occur for correct output (when adding more mapping databases).
+	*/	
 
-	private void setGdbStatus(JLabel gdbLabel, JLabel mdbLabel, JLabel idbLabel) {
+	private void setGdbStatus(JLabel allLabel) {
 		String gdb = "" + swingEngine.getGdbManager().getGeneDb();
 		String mdb = "" + swingEngine.getGdbManager().getMetaboliteDb();
 		String idb = "" + swingEngine.getGdbManager().getInteractionDb();
-		gdbLabel.setText(gdb != null ? (" | Gene database: " + shortenString(gdb)) : "");
-		mdbLabel.setText(mdb != null ? (" | Metabolite database: " + shortenString(mdb)) : "");
-		idbLabel.setText(idb != null ? (" | Interaction database: " + shortenString(idb)) : "");
-		gdbLabel.setToolTipText(gdb != null ? gdb : "");
-		mdbLabel.setToolTipText(mdb != null ? mdb : "");
-		idbLabel.setToolTipText(idb != null ? idb : "");
-	}
-
+		
+		if (swingEngine.getGdbManager().getGeneDb() == null && swingEngine.getGdbManager().getMetaboliteDb() == null && swingEngine.getGdbManager().getInteractionDb() == null) {
+			allLabel.setText(" | Local mapping databases loaded: " + "None.");
+		}
+		else if (swingEngine.getGdbManager().getGeneDb() != null && swingEngine.getGdbManager().getMetaboliteDb() == null && swingEngine.getGdbManager().getInteractionDb() == null) {
+			allLabel.setText(" | Local mapping databases loaded: " + "GeneProtein: " + shortenString(gdb));
+		}
+		else if (swingEngine.getGdbManager().getGeneDb() == null && swingEngine.getGdbManager().getMetaboliteDb() != null && swingEngine.getGdbManager().getInteractionDb() == null) {
+			allLabel.setText(" | Local mapping databases loaded: " + "Metabolite: " + shortenString(mdb));
+		}
+		else if (swingEngine.getGdbManager().getGeneDb() == null && swingEngine.getGdbManager().getMetaboliteDb() == null && swingEngine.getGdbManager().getInteractionDb() != null) {
+			allLabel.setText(" | Local mapping databases loaded: " + "Interactions: " + shortenString(idb));
+		}
+		else if (swingEngine.getGdbManager().getGeneDb() != null && swingEngine.getGdbManager().getMetaboliteDb() != null && swingEngine.getGdbManager().getInteractionDb() == null) {
+			allLabel.setText(" | Local mapping databases loaded: " + "GeneProtein: " + shortenString(gdb) + " | " + "Metabolite: " + shortenString(mdb));
+		}
+		else if (swingEngine.getGdbManager().getGeneDb() == null && swingEngine.getGdbManager().getMetaboliteDb() != null && swingEngine.getGdbManager().getInteractionDb() != null) {
+			allLabel.setText(" | Local mapping databases loaded: " + "Metabolite: " + shortenString(mdb) + " | " + "Interactions: " + shortenString(idb));
+		}
+		else if (swingEngine.getGdbManager().getGeneDb() != null && swingEngine.getGdbManager().getMetaboliteDb() == null && swingEngine.getGdbManager().getInteractionDb() != null) {
+			allLabel.setText(" | Local mapping databases loaded: " + "GeneProtein: " + shortenString(gdb) + " | " + "Interactions: " + shortenString(idb));
+		}
+		else {
+		     allLabel.setText(" | Local mapping databases loaded: " + "GeneProtein: " + shortenString(gdb) + " | " + "Metabolite: " + shortenString(mdb) + " | " + "Interactions: " + shortenString(idb));
+		}
+		
+		allLabel.setToolTipText("Local BridgeDb mapping databases to support identifier mapping");
+	}		
+		
 	public void gdbEvent(GdbEvent e) {
-		setGdbStatus(gdbLabel, mdbLabel, idbLabel);
+		setGdbStatus(allLabel);
 	}
 
 	public void gexManagerEvent(GexManagerEvent e)
@@ -191,9 +218,10 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		}
 	}
 
-	private JLabel gdbLabel;
+	private JLabel allLabel;
+/*	private JLabel gdbLabel;
 	private JLabel mdbLabel;
-	private JLabel idbLabel;
+	private JLabel idbLabel;*/
 	private JLabel gexLabel;
 
 	/**
@@ -216,16 +244,19 @@ public class GuiMain implements GdbEventListener, GexManagerListener
 		statusBar.setLayout(new BoxLayout(statusBar, BoxLayout.X_AXIS));
 		frame.add(statusBar, BorderLayout.SOUTH);
 
-		gdbLabel = new JLabel();
+		allLabel = new JLabel();
+/*		gdbLabel = new JLabel();
 		mdbLabel = new JLabel();
-		idbLabel = new JLabel();
+		idbLabel = new JLabel();*/
 		gexLabel = new JLabel();
 
-		statusBar.add(gdbLabel);
+		statusBar.add(allLabel);
+/*		statusBar.add(gdbLabel);
 		statusBar.add(mdbLabel);
-		statusBar.add(idbLabel);
+		statusBar.add(idbLabel);*/
 		statusBar.add(gexLabel);
-		setGdbStatus(gdbLabel, mdbLabel, idbLabel);
+		//setGdbStatus(gdbLabel, mdbLabel, idbLabel);
+		setGdbStatus(allLabel);
 
 		swingEngine.getGdbManager().addGdbEventListener(this);
 

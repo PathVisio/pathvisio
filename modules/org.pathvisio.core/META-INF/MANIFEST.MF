@@ -14,12 +14,11 @@ Export-Package: org.pathvisio.core,
  org.pathvisio.core.preferences,
  org.pathvisio.core.util,
  org.pathvisio.core.view
-Require-Bundle: derby;bundle-version="10.4.2000000",
- com.springsource.org.jdom;bundle-version="1.1.0",
+Require-Bundle: com.springsource.org.jdom;bundle-version="1.1.0",
  org.pathvisio.pdftranscoder;bundle-version="1.7.0",
- org.bridgedb;bundle-version="2.2.0",
- org.bridgedb.bio;bundle-version="2.2.0",
- org.bridgedb.rdb;bundle-version="2.2.0",
+ org.bridgedb;bundle-version="2.3.0",
+ org.bridgedb.bio;bundle-version="2.3.0",
+ org.bridgedb.rdb;bundle-version="2.3.0",
  org.apache.batik.bridge;bundle-version="1.7.0",
  org.apache.batik.css;bundle-version="1.7.0",
  org.apache.batik.dom;bundle-version="1.7.0",
@@ -38,10 +37,11 @@ Require-Bundle: derby;bundle-version="10.4.2000000",
  org.w3c.css.sac;bundle-version="1.3.1",
  org.w3c.dom.events;bundle-version="3.0.0",
  org.w3c.dom.smil;bundle-version="1.0.1",
- org.w3c.dom.svg;bundle-version="1.1.0"
+ org.w3c.dom.svg;bundle-version="1.1.0",
+ derby;bundle-version="10.14.2000000"
 Import-Package: javax.swing,
  org.osgi.framework;version="1.5.0"
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Description: This module is the core module of the PathVisio application. It contains the data model and basic preferences of the application.
-Bundle-Copyright: 2006-2014 BiGCaT Bioinformatics
+Bundle-Copyright: 2006-2019 BiGCaT Bioinformatics

@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import org.bridgedb.bio.Organism;
 import org.pathvisio.gui.SwingEngine;
@@ -29,6 +30,7 @@ public class NewPathwayDialog extends OkCancelDialog {
 	public NewPathwayDialog(SwingEngine swingEngine, String title) {
 		super(swingEngine.getFrame(), title, swingEngine.getFrame(), true, false);
 		this.swingEngine = swingEngine;
+		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridLayout(0, 1));
 		addContent(panel);
@@ -53,6 +55,7 @@ public class NewPathwayDialog extends OkCancelDialog {
 		
 		titleField = new JTextField();
 		organismComboBox = new PermissiveComboBox(Organism.latinNamesArray());
+		organismComboBox.setSelectedItem("Homo sapiens");
 	
 		GridBagConstraints c = new GridBagConstraints();
 		c.anchor = GridBagConstraints.FIRST_LINE_START;

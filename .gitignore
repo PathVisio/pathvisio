@@ -31,3 +31,4 @@ warnings.txt
 .metadata/
 derby.log
 plugin-dev/
+webstart/www

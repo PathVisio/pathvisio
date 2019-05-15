@@ -1,6 +1,6 @@
 // PathVisio,
 // a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2011 BiGCaT Bioinformatics
+// Copyright 2006-2019 BiGCaT Bioinformatics
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,13 +22,12 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.bridgedb.BridgeDb;
+import org.bridgedb.DataSource;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.DataSourceTxt;
 import org.bridgedb.rdb.construct.DBConnector;
 import org.bridgedb.rdb.construct.DataDerby;
 import org.bridgedb.rdb.construct.DataDerbyDirectory;
@@ -41,6 +40,8 @@ import org.pathvisio.desktop.gex.CachedData;
 import org.pathvisio.desktop.gex.GexManager;
 import org.pathvisio.desktop.gex.ReporterData;
 import org.pathvisio.desktop.gex.SimpleGex;
+
+import junit.framework.TestCase;
 
 public class Test extends TestCase
 {
@@ -81,6 +82,7 @@ public class Test extends TestCase
 	public void testImportSimple() throws IOException, IDMapperException, DataException
 	{
 		PreferenceManager.init();
+		DataSourceTxt.init();
 		ImportInformation info = new ImportInformation();
 		File f = new File ("example-data/sample_data_1.txt");
 		assertTrue (f.exists());
@@ -95,8 +97,8 @@ public class Test extends TestCase
 
 		// Now test caching data
 		DataInterface gex = gexManager.getCurrentGex();
-		Xref ref1 = new Xref("7124", BioDataSource.ENTREZ_GENE);
-		Xref ref2 = new Xref("1909_at", BioDataSource.AFFY);
+		Xref ref1 = new Xref("7124", DataSource.getExistingBySystemCode("L"));
+		Xref ref2 = new Xref("1909_at", DataSource.getExistingBySystemCode("X"));
 		List<Xref> refs = Arrays.asList(new Xref[] { ref1, ref2 });
 		CachedData cache = new CachedData(gex);
 		cache.setMapper(gdb);
@@ -148,7 +150,7 @@ public class Test extends TestCase
 		info.setTxtFile(f);
 		info.guessSettings();
 
-		assertEquals (info.getDataSource(), BioDataSource.AFFY);
+		assertEquals (info.getDataSource(), DataSource.getExistingBySystemCode("X"));
 		assertTrue (info.isSyscodeFixed());
 		assertTrue (info.digitIsDot());
 		assertEquals (info.getIdColumn(), 0);
@@ -156,7 +158,7 @@ public class Test extends TestCase
 		String dbFileName = System.getProperty("java.io.tmpdir") + File.separator + "tempgex2";
 		info.setGexName(dbFileName);
 		info.setSyscodeFixed(true);
-		info.setDataSource(BioDataSource.AFFY);
+		info.setDataSource(DataSource.getExistingBySystemCode("X"));
 		IDMapper gdb = BridgeDb.connect("idmapper-pgdb:" + GDB_RAT);
 		GexTxtImporter.importFromTxt(info, null, gdb, gexManager);
 
@@ -176,7 +178,7 @@ public class Test extends TestCase
 		info.setTxtFile(f);
 		info.guessSettings();
 
-		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
+		assertEquals (info.getDataSource(), DataSource.getExistingBySystemCode("L"));
 		assertTrue (info.isSyscodeFixed());
 		assertTrue (info.digitIsDot());
 		assertEquals (0, info.getIdColumn());
@@ -200,7 +202,7 @@ public class Test extends TestCase
 		info.setFirstDataRow(0);
 		info.guessSettings();
 
-		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
+		assertEquals (info.getDataSource(), DataSource.getExistingBySystemCode("L"));
 		assertFalse (info.isSyscodeFixed());
 		assertTrue (info.digitIsDot());
 		assertEquals (0, info.getIdColumn());
@@ -229,7 +231,7 @@ public class Test extends TestCase
 		info.setTxtFile(f);
 		info.guessSettings();
 
-		assertEquals (info.getDataSource(), BioDataSource.ENTREZ_GENE);
+		assertEquals (info.getDataSource(), DataSource.getExistingBySystemCode("L"));
 		assertFalse (info.isSyscodeFixed());
 		assertEquals (info.getSyscodeColumn(), 1);
 		assertTrue (info.digitIsDot());
@@ -254,7 +256,7 @@ public class Test extends TestCase
 
 		sgex.prepare();
 		sgex.addSample(55, "mysample", 99);
-		sgex.addExpr(new Xref ("abc_at", BioDataSource.AFFY), "55", "3.141", 77);
+		sgex.addExpr(new Xref ("abc_at", DataSource.getExistingBySystemCode("X")), "55", "3.141", 77);
 
 		// TODO: this is messy. call finalize on writeable db, not close...
 		sgex.finalize();

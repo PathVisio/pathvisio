@@ -65,14 +65,15 @@ public class AboutDlg
 				swingEngine.getEngine().getApplicationName() +
 				"<br><br><hr><br>" + 
 				"<html><b>Core developers</b><br>" +
-				"Martina Kutmon, Anwesha Bohler, Jonathan Melius, Nuno Nunes, Thomas Kelder, " +
-				"Martijn van Iersel, Kristina Hanspers, Alex Pico<br><br><hr><br>" +
+				"Martina Kutmon, Nuno Nunes, Alexander Pico, Egon Willighagen, Denise Slenter, Kristina Hanspers<br><br><hr><br>" +
+				"<b>Former developers</b><br>" +
+				"Andra Waagmeester, Anwesha Bohler, Jonathan Melius, Martijn van Iersel, Thomas Kelder" + 
 				"<b>Contributors</b><br>" +
 				"Adem Bilicna, Augustin Luna, Bing Lui, " + 
-				"Christ Leemans, Denise Slenter, Eric Creussen, Erik Pelgrin, " + 
+				"Christ Leemans, Eric Creussen, Erik Pelgrin, " + 
 				"Esterh Neuteboom, Ferry Jagers, Hakim Achterberg, " + 
 				"Harm Nijveen, Irene Kaashoek, Justin Elser, " + 
-				"Kumar Chanden, Margot Sunshine, Mark Woon, " + 
+				"Kumar Chanden, Lars Willighagen, Margot Sunshine, Mark Woon, " + 
 				"Margiet Palm, Pim Moeskops, Praveen Kumar, " +
 				"Rene Besseling, Rianne Fijten, Sjoerd Crijns, " + 
 				"Sravanthi Sinha, Stefan van Helden<br><br><hr><br>" +

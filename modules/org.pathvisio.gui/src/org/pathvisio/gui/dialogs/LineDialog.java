@@ -1,19 +1,19 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2011 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
+/*******************************************************************************
+ * PathVisio, a tool for data visualization and analysis using biological pathways
+ * Copyright 2019 BiGCaT Bioinformatics
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
 package org.pathvisio.gui.dialogs;
 
 import java.awt.Component;
@@ -25,50 +25,32 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingWorker;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.IDMapperStack;
 import org.bridgedb.Xref;
-import org.pathvisio.core.data.XrefWithSymbol;
-import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.LineType;
-import org.pathvisio.core.model.ObjectType;
-import org.pathvisio.core.model.Pathway;
 import org.pathvisio.core.model.PathwayElement;
-import org.pathvisio.core.model.PathwayElement.MAnchor;
-import org.pathvisio.core.util.ProgressKeeper;
 import org.pathvisio.gui.DataSourceModel;
-import org.pathvisio.gui.ProgressDialog;
 import org.pathvisio.gui.SwingEngine;
 import org.pathvisio.gui.completer.CompleterQueryTextField;
 import org.pathvisio.gui.completer.OptionProvider;
 import org.pathvisio.gui.util.PermissiveComboBox;
-import org.xml.sax.SAXException;
 
 public class LineDialog extends PathwayElementDialog implements ItemListener {
 
@@ -84,11 +66,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 	private PermissiveComboBox typeCombo;
 	private DataSourceModel dsm;
 
-	private IDMapperStack mapper;
-	private PathwayElement queryElement = null;
-	private int tries;
-	private String id = null;
-
 	protected LineDialog(final SwingEngine swingEngine, final PathwayElement e,
 			final boolean readonly, final Frame frame,
 			final Component locationComp) {
@@ -96,8 +73,6 @@ public class LineDialog extends PathwayElementDialog implements ItemListener {
 				locationComp);
 		getRootPane().setDefaultButton(null);
 		setButton.requestFocus();
-		mapper = swingEngine.getGdbManager().getCurrentGdb();
-		tries = 0;
 	}
 
 	public final void refresh() {

@@ -1,19 +1,19 @@
-// PathVisio,
-// a tool for data visualization and analysis using Biological Pathways
-// Copyright 2006-2011 BiGCaT Bioinformatics
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
+/*******************************************************************************
+ * PathVisio, a tool for data visualization and analysis using biological pathways
+ * Copyright 2019 BiGCaT Bioinformatics
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
 package org.pathvisio.gui;
 
 import java.awt.BorderLayout;
@@ -30,22 +30,15 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-import org.pathvisio.core.Engine;
-
 /**
  * A side panel which displays all objects.
  */
 public class ObjectsPane extends JPanel
 {
-	private Engine engine;
-	private SwingEngine swingEngine;
 	private JPanel currentPane;
 
 	public ObjectsPane(SwingEngine swingEngine)
 	{
-		this.engine = swingEngine.getEngine();
-		this.swingEngine = swingEngine;
-		//setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));		
 		currentPane=this;
 	}
 

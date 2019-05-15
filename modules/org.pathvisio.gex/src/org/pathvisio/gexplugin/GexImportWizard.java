@@ -530,7 +530,6 @@ public class GexImportWizard extends Wizard
 			mDataSource.setTypeFilter(types);
 			cbDataSource = new JComboBox(mDataSource);
 			((JLabel)cbDataSource.getRenderer()).setHorizontalAlignment(JLabel.CENTER);
-			cbDataSource.setBackground(new Color(255, 192, 192));
 			
 			ctm = new ColumnTableModel(importInformation);
 			tblColumn = new JTable(ctm);

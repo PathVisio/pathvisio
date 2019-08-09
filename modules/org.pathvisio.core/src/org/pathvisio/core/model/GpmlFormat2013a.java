@@ -28,12 +28,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.bridgedb.DataSource;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
@@ -825,7 +825,7 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 
     	// now sort the generated elements in the order defined by the xsd
 		Collections.sort(elementList, new ByElementName());
-		for (Element e : elementList)
+		for (Element e : elementList) 
 		{
 			root.addContent(e);
 		}
@@ -849,7 +849,7 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		XMLOutputter xmlcode = new XMLOutputter(Format.getPrettyFormat());
 		Format f = xmlcode.getFormat();
 		f.setEncoding("UTF-8");
-		f.setTextMode(Format.TextMode.PRESERVE);
+		f.setTextMode(Format.TextMode.NORMALIZE);
 		xmlcode.setFormat(f);
 
 		try

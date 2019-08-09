@@ -16,7 +16,7 @@
  ******************************************************************************/
 package org.pathvisio.core.biopax;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.pathvisio.core.debug.Logger;
 
 /**

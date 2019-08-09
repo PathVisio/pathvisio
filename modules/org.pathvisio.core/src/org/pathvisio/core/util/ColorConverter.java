@@ -18,7 +18,7 @@ package org.pathvisio.core.util;
 
 import java.awt.Color;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * Methods for writing and parsing colors in different ways.

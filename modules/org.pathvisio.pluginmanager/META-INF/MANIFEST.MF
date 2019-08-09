@@ -11,7 +11,7 @@ Export-Package: org.pathvisio.pluginmanager,
  org.pathvisio.pluginmanager.impl.dialogs,
  org.pathvisio.pluginmanager.impl.io
 Require-Bundle: org.apache.felix.bundlerepository;bundle-version="1.6.6",
- com.springsource.org.jdom;bundle-version="1.1.0",
+ com.springsource.org.jdom;bundle-version="2.0.1",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
  org.pathvisio.desktop;bundle-version="3.4.0",
  org.pathvisio.core;bundle-version="3.4.0",

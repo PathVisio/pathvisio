@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.data.IRow;

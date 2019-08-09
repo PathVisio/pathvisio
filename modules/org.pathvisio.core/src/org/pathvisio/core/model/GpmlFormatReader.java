@@ -16,7 +16,7 @@
  ******************************************************************************/
 package org.pathvisio.core.model;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 public interface GpmlFormatReader extends GpmlFormatVersion 
 {

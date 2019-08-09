@@ -16,8 +16,8 @@
  ******************************************************************************/
 package org.pathvisio.core.model;
 
-import org.jdom.Document;
-import org.jdom.Namespace;
+import org.jdom2.Document;
+import org.jdom2.Namespace;
 
 public interface GpmlFormatVersion 
 {

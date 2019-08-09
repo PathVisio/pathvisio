@@ -19,8 +19,8 @@ package org.pathvisio.core.model;
 import java.io.File;
 import java.io.OutputStream;
 
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 public interface GpmlFormatWriter extends GpmlFormatVersion 
 {

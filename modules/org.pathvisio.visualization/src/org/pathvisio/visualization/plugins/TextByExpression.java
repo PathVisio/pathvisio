@@ -47,7 +47,7 @@ import javax.swing.event.ListDataListener;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.Utils;
 import org.pathvisio.core.view.GeneProduct;

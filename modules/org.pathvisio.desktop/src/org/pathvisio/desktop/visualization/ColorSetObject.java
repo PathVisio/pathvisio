@@ -18,8 +18,9 @@ package org.pathvisio.desktop.visualization;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.HashMap;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.pathvisio.data.IRow;
 import org.pathvisio.data.ISample;
 import org.pathvisio.desktop.visualization.Criterion.CriterionException;

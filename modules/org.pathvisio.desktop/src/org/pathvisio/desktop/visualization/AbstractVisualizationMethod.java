@@ -18,7 +18,7 @@ package org.pathvisio.desktop.visualization;
 
 import javax.swing.JPanel;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * The VisualizationMethod class can be extended to create a visualization method for

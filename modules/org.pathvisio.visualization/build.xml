@@ -5,7 +5,7 @@
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-		<include name="com.springsource.org.jdom-1.1.0.jar"/>
+		<include name="com.springsource.org.jdom-*.jar"/>
 		<include name="org.bridgedb.jar"/>
 		<include name="org.bridgedb.bio.jar"/>
 		<include name="org.bridgedb.rdb.jar"/>

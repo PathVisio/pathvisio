@@ -38,7 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ColorConverter;
 import org.pathvisio.core.util.Utils;

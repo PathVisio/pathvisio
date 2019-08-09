@@ -16,7 +16,7 @@
  ******************************************************************************/
 package org.pathvisio.core.biopax;
 
-import org.jdom.Namespace;
+import org.jdom2.Namespace;
 import org.pathvisio.core.model.GpmlFormat;
 
 /**

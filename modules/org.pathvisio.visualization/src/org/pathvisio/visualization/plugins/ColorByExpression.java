@@ -19,7 +19,6 @@ package org.pathvisio.visualization.plugins;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Paint;
@@ -27,7 +26,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.Toolkit;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageProducer;
@@ -43,9 +41,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.util.ColorConverter;
@@ -63,7 +60,6 @@ import org.pathvisio.desktop.visualization.AbstractVisualizationMethod;
 import org.pathvisio.desktop.visualization.ColorSet;
 import org.pathvisio.desktop.visualization.ColorSetManager;
 import org.pathvisio.desktop.visualization.VisualizationManager.VisualizationException;
-import org.pathvisio.desktop.visualization.VisualizationMethod;
 
 /**
  * Visualization method for coloring by expression: can color a datanode by one or more

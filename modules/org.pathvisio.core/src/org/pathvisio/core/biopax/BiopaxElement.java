@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.jdom.Document;
-import org.jdom.Element;
+import org.jdom2.Document;
+import org.jdom2.Element;
 import org.pathvisio.core.debug.Logger;
 import org.pathvisio.core.model.GpmlFormat;
 import org.pathvisio.core.model.ObjectType;

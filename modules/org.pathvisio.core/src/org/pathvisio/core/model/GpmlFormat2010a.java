@@ -28,16 +28,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.bridgedb.DataSource;
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.model.PathwayElement.MAnchor;
 import org.pathvisio.core.model.PathwayElement.MPoint;
-import org.pathvisio.core.view.Line;
 import org.pathvisio.core.view.ShapeRegistry;
 import org.pathvisio.core.view.State;
 

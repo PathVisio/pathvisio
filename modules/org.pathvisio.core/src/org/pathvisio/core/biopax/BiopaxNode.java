@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 import org.pathvisio.core.model.GpmlFormat;
 
 /**

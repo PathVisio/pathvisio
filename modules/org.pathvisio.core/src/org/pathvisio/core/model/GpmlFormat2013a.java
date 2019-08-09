@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -825,12 +826,32 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 
     	// now sort the generated elements in the order defined by the xsd
 		Collections.sort(elementList, new ByElementName());
-		for (Element e : elementList) 
-		{
+		for (Element e : elementList) {
+			// make sure biopax references are sorted alphabetically by rdf-id 
+			if(e.getName().equals("Biopax")) {
+				for(Element e3 : e.getChildren()) {
+					e3.removeChildren("AUTHORS", GpmlFormat.BIOPAX);
+				}
+				e.sortChildren(new BiopaxAttributeComparator());
+			}
 			root.addContent(e);
 		}
 
 		return doc;
+	}
+	
+	public class BiopaxAttributeComparator implements Comparator<Element> {
+	    public int compare(Element e1, Element e2) {
+	    	String id1 = "";
+	    	if(e1.getAttributes().size() > 0) {
+	    		 id1 = e1.getAttributes().get(0).getValue();
+	    	}
+	    	String id2 = "";
+	    	if(e2.getAttributes().size() > 0) {
+	    		 id2 = e2.getAttributes().get(0).getValue();
+	    	}
+	        return id1.compareTo(id2);
+	    }
 	}
 
 	/**

@@ -1,0 +1,12 @@
+language: java
+
+script: ant build -DskipTests=true
+
+jdk:
+  - openjdk8
+
+##services:
+##  - mysql
+##
+##before_install:
+## - mysql < mysqlConfig.sql 

@@ -1,6 +1,6 @@
 language: java
 
-script: ant exe
+script: ant compile
 
 jdk:
   - openjdk8

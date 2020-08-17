@@ -6,8 +6,9 @@ Bundle-Version: 3.4.0
 Bundle-Vendor: PathVisio developers
 Export-Package: org.pathvisio.data
 Require-Bundle: org.bridgedb;bundle-version="2.3.0",
- org.apache.commons.math;bundle-version="2.0.0"
+ org.apache.commons.math3;bundle-version="3.6.1"
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-Copyright: 2006-2019 BiGCaT Bioinformatics
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Description: This module is the data model of biological data in PathVisio.
+Import-Package: org.osgi.framework;version="1.7.0"

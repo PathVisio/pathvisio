@@ -18,10 +18,9 @@ package org.pathvisio.desktop.visualization;
 
 import java.util.List;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.stat.StatUtils;
-import org.apache.commons.math.stat.inference.TTest;
-import org.apache.commons.math.stat.inference.TTestImpl;
+import org.apache.commons.math3.exception.MathParseException;
+import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.inference.TTest;
 import org.pathvisio.desktop.visualization.Criterion.Operation;
 
 /**
@@ -81,7 +80,7 @@ enum Functions implements Operation
 			double[] doubles2 = toDoublesArray((List<?>)params.get(1));
 			boolean twoTailed = ((Double)params.get(2) == 2);
 			double type = (Double)params.get(3);
-			TTest ttest = new TTestImpl();
+			TTest ttest = new TTest();
 			double result = 0;
 			try
 			{
@@ -98,7 +97,7 @@ enum Functions implements Operation
 					break;
 				}
 			}
-			catch (MathException ex)
+			catch (MathParseException ex)
 			{  // make this a runtime error
 				throw new IllegalArgumentException (ex);
 			}

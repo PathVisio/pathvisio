@@ -42,6 +42,7 @@ import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.biopax.BiopaxElement;
 import org.pathvisio.core.debug.Logger;

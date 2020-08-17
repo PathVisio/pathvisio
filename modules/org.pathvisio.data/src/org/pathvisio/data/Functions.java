@@ -18,10 +18,8 @@ package org.pathvisio.data;
 
 import java.util.List;
 
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.stat.StatUtils;
-import org.apache.commons.math.stat.inference.TTest;
-import org.apache.commons.math.stat.inference.TTestImpl;
+import org.apache.commons.math3.stat.StatUtils;
+import org.apache.commons.math3.stat.inference.TTest;
 import org.pathvisio.data.Criterion.Operation;
 
 /**
@@ -82,27 +80,21 @@ enum Functions implements Operation
 			double[] doubles2 = toDoublesArray((List<?>)params.get(1));
 			boolean twoTailed = ((Double)params.get(2) == 2);
 			double type = (Double)params.get(3);
-			TTest ttest = new TTestImpl();
+			TTest ttest = new TTest();
 			double result = 0;
-			try
-			{
-				switch ((int)type)
-				{
-				case 1: // paired
-					result = ttest.pairedTTest(doubles1, doubles2);
-					break;
-				case 2: // homoscedastic
-					result = ttest.homoscedasticTTest(doubles1, doubles2);
-					break;
-				case 3: // unequal population variance
-					result = ttest.tTest(doubles1, doubles2);
-					break;
-				}
+		
+			switch ((int)type) {
+			case 1: // paired
+				result = ttest.pairedTTest(doubles1, doubles2);
+				break;
+			case 2: // homoscedastic
+				result = ttest.homoscedasticTTest(doubles1, doubles2);
+				break;
+			case 3: // unequal population variance
+				result = ttest.tTest(doubles1, doubles2);
+				break;
 			}
-			catch (MathException ex)
-			{  // make this a runtime error
-				throw new IllegalArgumentException (ex);
-			}
+			
 			if (!twoTailed) result /= 2;
 			return result;
 		}

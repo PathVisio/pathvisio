@@ -32,3 +32,4 @@ warnings.txt
 derby.log
 plugin-dev/
 webstart/www
+target/

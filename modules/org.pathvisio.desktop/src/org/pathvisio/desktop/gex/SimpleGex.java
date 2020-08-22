@@ -266,7 +266,7 @@ public class SimpleGex implements DataInterface
 			ResultSet r = pst.executeQuery();
 			while (r.next())
 			{
-				destFilter.add(DataSource.getBySystemCode(r.getString(1)));
+				destFilter.add(DataSource.getExistingBySystemCode(r.getString(1)));
 			}
 			return destFilter;
 		}
@@ -558,7 +558,7 @@ public class SimpleGex implements DataInterface
 				if (ref == null)
 				{
 					//TODO: this redundancy in ref is not normalized
-					ref = new Xref (rs.getString(1), DataSource.getBySystemCode(rs.getString(2)));
+					ref = new Xref (rs.getString(1), DataSource.getExistingBySystemCode(rs.getString(2)));
 					result.setXref(ref);
 				}
 
@@ -641,7 +641,7 @@ public class SimpleGex implements DataInterface
 				int currentGroup = rs.getInt(5);
 				result = new ReporterData (null, rs.getInt(5));
 				
-				Xref ref = new Xref (rs.getString(1), DataSource.getBySystemCode(rs.getString(2)));
+				Xref ref = new Xref (rs.getString(1), DataSource.getExistingBySystemCode(rs.getString(2)));
 				result.setXref(ref);
 				
 				do

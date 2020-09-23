@@ -47,13 +47,15 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 	protected static final String ADD = "Add comment";
 	protected static final String REMOVE = "Remove comment";
 	private static final URL IMG_REMOVE = Resources.getResourceURL("cancel.gif");
+	
+	protected static final String ECO = "Add ECO term";
 
 	JPanel buttonPanel;
 	JScrollPane cmtPanel;
 
 	public CommentPanel() {
 		setLayout(new BorderLayout(5, 5));
-
+        //"Add comment" button:
 		buttonPanel = new JPanel();
 		JButton add = new JButton(ADD);
 		add.setActionCommand(ADD);
@@ -64,8 +66,20 @@ public class CommentPanel extends PathwayElementPanel implements ActionListener 
 		buttonPanel.add(add);
 
 		add(buttonPanel, BorderLayout.PAGE_END);
-	}
+		
+		//"Add ECO" button:
+		buttonPanel = new JPanel();
+		JButton eco = new JButton(ECO);
+		eco.setActionCommand(ECO);
+		eco.addActionListener(this);
 
+		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
+		buttonPanel.add(Box.createHorizontalGlue());
+		buttonPanel.add(eco);
+
+		add(buttonPanel, BorderLayout.PAGE_START);
+	}
+	
 	public void setReadOnly(boolean readonly) {
 		super.setReadOnly(readonly);
 		setChildrenEnabled(buttonPanel, !readonly);

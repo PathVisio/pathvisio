@@ -1588,6 +1588,8 @@ public class VPathway implements PathwayListener
 			registerKeyboardAction(viewActions.orderUp);
 			registerKeyboardAction(viewActions.orderDown);
 			registerKeyboardAction(viewActions.showUnlinked);
+			registerKeyboardAction(viewActions.showInteractingLabels);
+			registerKeyboardAction(viewActions.showUnsourcedInteracting);
 			parent.registerKeyboardAction(KEY_MOVERIGHT, new KeyMoveAction(
 					engine,
 					KEY_MOVERIGHT));

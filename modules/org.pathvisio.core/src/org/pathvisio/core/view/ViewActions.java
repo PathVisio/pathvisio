@@ -118,6 +118,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final OrderDownAction orderDown;
 	public final ShowUnlinkedConnectors showUnlinked;
 	public final ShowInteractionsWithLabels showInteractingLabels;
+	public final ShowInteractionsWithoutReference showUnsourcedInteracting;
 	public final AddState addState;
 	public final RemoveState removeState;
 	public final TextFormattingAction formatText;
@@ -155,6 +156,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		orderDown = new OrderDownAction(engine);
 		showUnlinked = new ShowUnlinkedConnectors();
 		showInteractingLabels = new ShowInteractionsWithLabels();
+		showUnsourcedInteracting = new ShowInteractionsWithoutReference();
 		addState = new AddState();
 		removeState = new RemoveState();
 		formatText = new TextFormattingAction(engine, null);
@@ -178,6 +180,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(removeWaypoint, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(showUnlinked, GROUP_ENABLE_VPATHWAY_LOADED);
 		registerToGroup(showInteractingLabels, GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(showUnsourcedInteracting, GROUP_ENABLE_VPATHWAY_LOADED);
 
 		resetGroupStates();
 	}
@@ -925,6 +928,41 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 						if(gre != null || "".equals(gre)) {
 							PathwayElement end = vPathway.getPathwayModel().getElementById(gre);
 							if (end != null && end.getObjectType() == ObjectType.LABEL) vl.getEnd().highlight();
+						}
+					}
+				}
+		}
+	}
+
+
+	/**
+	 * Action that toggles highlight of points that connect an Interaction to a Label.
+	 */
+	public class ShowInteractionsWithoutReference extends AbstractAction {
+		public ShowInteractionsWithoutReference() {
+			putValue(NAME, "Highlight interactions without literature references");
+			putValue(SHORT_DESCRIPTION, "Highlight all interactions that do not have a literature reference");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Y,
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			vPathway.resetHighlight();
+				for(PathwayElement pe : vPathway.getPathwayModel().getDataObjects()) {
+					if(pe.getObjectType() == ObjectType.LINE) {
+						Line vl = (Line)vPathway.getPathwayElementView(pe);
+						List<String> bioPaxRefs = vl.getPathwayElement().getBiopaxRefs();
+						if (bioPaxRefs != null && bioPaxRefs.isEmpty()) {
+							String grs = pe.getStartGraphRef();
+							String gre = pe.getEndGraphRef();
+							if(grs != null || "".equals(grs)) {
+								PathwayElement start = vPathway.getPathwayModel().getElementById(grs);
+								if (start != null) vl.getStart().highlight();
+							}
+							if(gre != null || "".equals(gre)) {
+								PathwayElement end = vPathway.getPathwayModel().getElementById(gre);
+								if (end != null) vl.getEnd().highlight();
+							}
 						}
 					}
 				}

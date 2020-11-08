@@ -117,6 +117,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	public final OrderUpAction orderUp;
 	public final OrderDownAction orderDown;
 	public final ShowUnlinkedConnectors showUnlinked;
+	public final ShowInteractionsWithLabels showInteractingLabels;
 	public final AddState addState;
 	public final RemoveState removeState;
 	public final TextFormattingAction formatText;
@@ -153,6 +154,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		orderUp = new OrderUpAction(engine);
 		orderDown = new OrderDownAction(engine);
 		showUnlinked = new ShowUnlinkedConnectors();
+		showInteractingLabels = new ShowInteractionsWithLabels();
 		addState = new AddState();
 		removeState = new RemoveState();
 		formatText = new TextFormattingAction(engine, null);
@@ -175,6 +177,7 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 		registerToGroup(addWaypoint, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(removeWaypoint, GROUP_ENABLE_WHEN_SELECTION);
 		registerToGroup(showUnlinked, GROUP_ENABLE_VPATHWAY_LOADED);
+		registerToGroup(showInteractingLabels, GROUP_ENABLE_VPATHWAY_LOADED);
 
 		resetGroupStates();
 	}
@@ -897,6 +900,38 @@ public class ViewActions implements VPathwayListener, SelectionListener {
 	}
 	
 	
+	/**
+	 * Action that toggles highlight of points that connect an Interaction to a Label.
+	 */
+	public class ShowInteractionsWithLabels extends AbstractAction {
+		public ShowInteractionsWithLabels() {
+			putValue(NAME, "Highlight interactions to Labels");
+			putValue(SHORT_DESCRIPTION, "Highlight all interactions that link to a Label instead of a DataNode");
+			putValue(ACCELERATOR_KEY, KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U,
+					Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			vPathway.resetHighlight();
+				for(PathwayElement pe : vPathway.getPathwayModel().getDataObjects()) {
+					if(pe.getObjectType() == ObjectType.LINE) {
+						Line vl = (Line)vPathway.getPathwayElementView(pe);
+						String grs = pe.getStartGraphRef();
+						String gre = pe.getEndGraphRef();
+						if(grs == null || "".equals(grs)) {
+							PathwayElement start = vPathway.getPathwayModel().getElementById(grs);
+							if (start != null && start.getObjectType() == ObjectType.LABEL) vl.getStart().highlight();
+						}
+						if(gre != null || "".equals(gre)) {
+							PathwayElement end = vPathway.getPathwayModel().getElementById(gre);
+							if (end != null && end.getObjectType() == ObjectType.LABEL) vl.getEnd().highlight();
+						}
+					}
+				}
+		}
+	}
+
+
 	/**
 	 * Action for toggling bold or italic flags on selected elements.
 	 */

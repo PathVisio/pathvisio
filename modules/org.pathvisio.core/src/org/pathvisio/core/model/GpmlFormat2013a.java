@@ -606,7 +606,9 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		o.setDataNodeType (getAttribute("DataNode", "Type", e));
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setElementID (getAttribute("DataNode.Xref", "ID", xref));
-		o.setDataSource (DataSource.getExistingByFullName (getAttribute("DataNode.Xref", "Database", xref)));
+		String xrefSource = getAttribute("DataNode.Xref", "Database", xref);
+		if (DataSource.fullNameExists(xrefSource))
+			o.setDataSource(DataSource.getExistingByFullName(xrefSource));
 	}
 
 	protected void updateDataNode(PathwayElement o, Element e) throws ConverterException
@@ -622,7 +624,9 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 	{
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setElementID (getAttribute("Interaction.Xref", "ID", xref));
-		o.setDataSource (DataSource.getExistingByFullName (getAttribute("Interaction.Xref", "Database", xref)));
+		String xrefSource = getAttribute("Interaction.Xref", "Database", xref);
+		if (DataSource.fullNameExists(xrefSource))
+			o.setDataSource(DataSource.getExistingByFullName(xrefSource));
 	}
 
 	
@@ -652,7 +656,9 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		o.setGraphRef(getAttribute("State", "GraphRef", e));
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setElementID (getAttribute("State.Xref", "ID", xref));
-		o.setDataSource (DataSource.getExistingByFullName (getAttribute("State.Xref", "Database", xref)));
+		String xrefSource = getAttribute("State.Xref", "Database", xref);
+		if (DataSource.fullNameExists(xrefSource))
+			o.setDataSource(DataSource.getExistingByFullName(xrefSource));
 	}
 
 	protected void updateStateData(PathwayElement o, Element e) throws ConverterException

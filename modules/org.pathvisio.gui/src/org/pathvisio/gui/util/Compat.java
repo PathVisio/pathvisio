@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.swing.JOptionPane;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.bio.BioDataSource;
 import org.bridgedb.bio.Organism;
 import org.pathvisio.core.ApplicationEvent;
 import org.pathvisio.core.Engine;
@@ -45,13 +44,13 @@ public class Compat implements Engine.ApplicationEventListener
 	{
 		this.swingEngine = swingEngine;
 
-		ensSpecies.put (Organism.HomoSapiens, BioDataSource.ENSEMBL_HUMAN);
-		ensSpecies.put (Organism.CaenorhabditisElegans, BioDataSource.ENSEMBL_CELEGANS);
-		ensSpecies.put (Organism.DanioRerio, BioDataSource.ENSEMBL_ZEBRAFISH);
-		ensSpecies.put (Organism.DrosophilaMelanogaster, BioDataSource.ENSEMBL_ZEBRAFISH);
-		ensSpecies.put (Organism.MusMusculus, BioDataSource.ENSEMBL_MOUSE);
-		ensSpecies.put (Organism.RattusNorvegicus, BioDataSource.ENSEMBL_RAT);
-		ensSpecies.put (Organism.SaccharomycesCerevisiae, BioDataSource.ENSEMBL_SCEREVISIAE);
+		ensSpecies.put (Organism.HomoSapiens, DataSource.register ("EnHs", "Ensembl Human").asDataSource());
+		ensSpecies.put (Organism.CaenorhabditisElegans, DataSource.register ("EnCe", "Ensembl C. elegans").asDataSource());
+		ensSpecies.put (Organism.DanioRerio, DataSource.register ("EnDr", "Ensembl Zebrafish").asDataSource());
+		ensSpecies.put (Organism.DrosophilaMelanogaster, DataSource.register ("EnDm", "Ensembl Fruitfly").asDataSource());
+		ensSpecies.put (Organism.MusMusculus, DataSource.register ("EnMm", "Ensembl Mouse").asDataSource());
+		ensSpecies.put (Organism.RattusNorvegicus, DataSource.register ("EnRn", "Ensembl Rat").asDataSource());
+		ensSpecies.put (Organism.SaccharomycesCerevisiae, DataSource.register ("EnSc", "Ensembl Yeast").asDataSource());
 	}
 
 	private boolean usesOldEnsembl(Pathway pwy)
@@ -63,7 +62,7 @@ public class Compat implements Engine.ApplicationEventListener
 		for (PathwayElement elt : pwy.getDataObjects())
 		{
 			if (elt.getObjectType() == ObjectType.DATANODE &&
-					elt.getDataSource() == BioDataSource.ENSEMBL)
+					elt.getDataSource() == DataSource.register ("En", "Ensembl").asDataSource())
 			{
 				return true;
 			}
@@ -86,7 +85,7 @@ public class Compat implements Engine.ApplicationEventListener
 		for (PathwayElement elt : pwy.getDataObjects())
 		{
 			if (elt.getObjectType() == ObjectType.DATANODE &&
-					elt.getDataSource() == BioDataSource.ENSEMBL)
+					elt.getDataSource() == DataSource.register ("En", "Ensembl").asDataSource())
 			{
 				elt.setDataSource (ensSpecies.get (org));
 			}

@@ -300,7 +300,7 @@ public class TestParser extends TestCase
 		assertFalse (elt.isUnderline());
 		assertEquals ("", elt.getElementID());
 		assertEquals (LineStyle.SOLID, elt.getLineStyle());
-		assertEquals (DataSource.getByFullName("EC Number"), elt.getDataSource());
+		assertEquals (DataSource.getExistingByFullName("EC Number"), elt.getDataSource());
 		
 		elt = data.getElementById("ec886");
 		assertEquals (32767, elt.getZOrder());
@@ -333,7 +333,7 @@ public class TestParser extends TestCase
 		assertEquals (Color.BLUE, elt.getFillColor());
 		assertEquals (ShapeType.ROUNDED_RECTANGLE, elt.getShapeType());
 		assertEquals (LineStyle.DASHED, elt.getLineStyle());
-		assertEquals (DataSource.getByFullName("Entrez Gene"), elt.getDataSource());
+		assertEquals (DataSource.getExistingByFullName("Entrez Gene"), elt.getDataSource());
 		assertEquals ("3643", elt.getElementID());
 		
 		elt = data.getElementById("be269");
@@ -345,7 +345,7 @@ public class TestParser extends TestCase
 		assertEquals (1.0, elt.getRelY(), 0.01);
 		assertEquals (ShapeType.OVAL, elt.getShapeType());
 		assertEquals ("1234", elt.getElementID());
-		assertEquals (DataSource.getByFullName("Entrez Gene"), elt.getDataSource());
+		assertEquals (DataSource.getExistingByFullName("Entrez Gene"), elt.getDataSource());
 		
 		elt = data.getElementById("ca5fa");
 		assertEquals (ShapeType.RECTANGLE, elt.getShapeType());

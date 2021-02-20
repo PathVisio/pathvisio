@@ -104,7 +104,7 @@ public class PathwayParser extends DefaultHandler
 		{
 			String sysName = attributes.getValue("Database");
 			assert (sysName != null);
-			currentDs = DataSource.getByFullName (sysName);
+			currentDs = DataSource.getExistingByFullName (sysName);
 			currentId = attributes.getValue("ID");
 			assert (currentId != null);
 

@@ -14,7 +14,7 @@ Export-Package: org.pathvisio.core,
  org.pathvisio.core.preferences,
  org.pathvisio.core.util,
  org.pathvisio.core.view
-Require-Bundle: com.springsource.org.jdom;bundle-version="2.0.1",
+Require-Bundle: org.apache.servicemix.bundles.jdom;bundle-version="2.0.6",
  org.pathvisio.pdftranscoder;bundle-version="1.7.0",
  org.bridgedb;bundle-version="3.0.13",
  org.bridgedb.bio;bundle-version="3.0.13",

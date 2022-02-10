@@ -15,7 +15,7 @@ Export-Package: com.jroller.completer,
  org.pathvisio.gui.util,
  org.pathvisio.gui.view
 Require-Bundle: org.pathvisio.core;bundle-version="3.4.0",
- com.springsource.org.jdom;bundle-version="1.1.0",
+ org.apache.servicemix.bundles.jdom;bundle-version="2.0.6",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
  org.bridgedb;bundle-version="3.0.13",
  org.bridgedb.bio;bundle-version="3.0.13",

@@ -121,7 +121,6 @@
 				<include name="commons-math*.jar"/>
 				<include name="com.springsource*.jar"/>
 				<include name="org.apache.felix.bundlerepository-1.6.6.jar"/>
-				<include name="org.apache.servicemix.bundles.batik*.jar" />
 			</fileset>
 		</copy>
 		<unjar src="modules/org.pathvisio.launcher.jar" dest="build/exe"/>

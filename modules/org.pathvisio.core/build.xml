@@ -17,7 +17,7 @@ class Revision
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-		<include name="org.apache.batik.*.jar"/>
+		<include name="org.apache.servicemix.bundles.batik*.jar" />
 		<include name="org.apache.xml*.jar"/>
 		<include name="org.apache.xalan*.jar"/>
 		<include name="org.apache.xerces*.jar"/>

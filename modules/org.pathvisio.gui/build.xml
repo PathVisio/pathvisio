@@ -6,9 +6,9 @@
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
 		<include name="com.springsource.org.jdom-1.1.0.jar"/>
-		<include name="org.bridgedb.jar"/>
-		<include name="org.bridgedb.bio.jar"/>
-		<include name="org.bridgedb.rdb.jar"/>
+		<include name="org.bridgedb*.jar"/>
+		<include name="org.bridgedb.bio*.jar"/>
+		<include name="org.bridgedb.rdb*.jar"/>
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
 	  </fileset>
 	  <fileset dir="${bundle.dest}">

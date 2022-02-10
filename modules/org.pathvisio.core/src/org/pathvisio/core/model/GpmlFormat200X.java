@@ -382,7 +382,7 @@ class GpmlFormat200X extends GpmlFormatAbstract implements GpmlFormatReader
 		o.setDataNodeType (getAttribute("DataNode", "Type", e));
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setElementID (getAttribute("DataNode.Xref", "ID", xref));
-		o.setDataSource (DataSource.getByFullName (getAttribute("DataNode.Xref", "Database", xref)));
+		o.setDataSource (DataSource.getExistingByFullName (getAttribute("DataNode.Xref", "Database", xref)));
 	}
 
 	protected void mapStateData(PathwayElement o, Element e) throws ConverterException

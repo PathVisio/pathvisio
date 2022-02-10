@@ -6,10 +6,10 @@
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
 		<include name="com.springsource.org.jdom-*.jar"/>
-		<include name="org.bridgedb.jar"/>
-		<include name="org.bridgedb.bio.jar"/>
-		<include name="org.bridgedb.rdb.jar"/>
-		<include name="org.bridgedb.gui.jar"/>
+		<include name="org.bridgedb*.jar"/>
+		<include name="org.bridgedb.bio*.jar"/>
+		<include name="org.bridgedb.rdb*.jar"/>
+		<include name="org.bridgedb.gui*.jar"/>
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
 		<include name="commons-math-2.0.jar"/>
 		<include name="org.eclipse.osgi.jar"/>

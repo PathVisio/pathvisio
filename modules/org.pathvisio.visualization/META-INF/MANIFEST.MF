@@ -14,10 +14,10 @@ Require-Bundle: org.pathvisio.core;bundle-version="3.4.0",
  org.pathvisio.desktop;bundle-version="3.4.0",
  org.pathvisio.jgoodies.forms;bundle-version="1.2.0",
  com.springsource.org.jdom;bundle-version="2.0.1",
- org.bridgedb;bundle-version="2.3.0",
- org.bridgedb.bio;bundle-version="2.3.0",
- org.bridgedb.gui;bundle-version="2.3.0",
- org.bridgedb.rdb;bundle-version="2.3.0"
+ org.bridgedb;bundle-version="3.0.13",
+ org.bridgedb.bio;bundle-version="3.0.13",
+ org.bridgedb.gui;bundle-version="3.0.13",
+ org.bridgedb.rdb;bundle-version="3.0.13"
 Import-Package: org.osgi.framework;version="1.3.0"
 Bundle-Copyright: 2006-2019 BiGCaT Bioinformatics
 Bundle-DocURL: http://www.pathvisio.org

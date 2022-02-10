@@ -27,20 +27,17 @@ import java.util.Map;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.debug.Logger;
 
 /**
- * Exports to pathway format understood by the EuGene
- * pathway statistics program.
- * This format is basically a list of genes in a flat text file
+ * Exports to pathway format understood by the EuGene pathway statistics
+ * program. This format is basically a list of genes in a flat text file
  * preceded by 3 header lines.
  *
- * EuGene supports several id systems but has its own naming
- * for them, this exporter also handles the translation.
+ * EuGene supports several id systems but has its own naming for them, this
+ * exporter also handles the translation.
  */
-public class EUGeneExporter implements PathwayExporter
-{
+public class EUGeneExporter implements PathwayExporter {
 	public String[] getExtensions() {
 		return new String[] { "pwf" };
 	}
@@ -53,7 +50,7 @@ public class EUGeneExporter implements PathwayExporter
 		EUGenePathway eugPathway = new EUGenePathway(pathway);
 		try {
 			eugPathway.writeToEUGene(file);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new ConverterException(e);
 		}
 	}
@@ -62,11 +59,11 @@ public class EUGeneExporter implements PathwayExporter
 		Logger log = Logger.log;
 		Pathway pathway;
 
-		DataSource system; //The annotation system
+		DataSource system; // The annotation system
 
 		List<Xref> refs;
 
-		public EUGenePathway(Pathway p)  {
+		public EUGenePathway(Pathway p) {
 			pathway = p;
 			read();
 		}
@@ -77,30 +74,27 @@ public class EUGeneExporter implements PathwayExporter
 			StringBuilder missedGenes = new StringBuilder();
 			euGeneSystem = getEUGeneSystem();
 
-			for(Xref ref : refs)
-			{
+			for (Xref ref : refs) {
 				DataSource ds = ref.getDataSource();
 				String id = ref.getId();
-				if(ds == system)
-				{ //Check if gene is of most occuring system
+				if (ds == system) { // Check if gene is of most occuring system
 					geneString.append(id + "\n");
-				}
-				else
-				{
+				} else {
 					missedGenes.append(id + "|" + ds.getSystemCode() + "; ");
 					log.error("id '" + id + "' differs from pathway annotation system");
 				}
 			}
 
-			//Write the file
+			// Write the file
 			PrintStream out = null;
 			out = new PrintStream(file);
 
-			//Print the data
+			// Print the data
 			out.println("//PATHWAY_NAME = " + pathway.getMappInfo().getMapInfoName());
 			out.println("//PATHWAY_SOURCE = GenMAPP");
 			out.println("//PATHWAY_MARKER = " + euGeneSystem);
-			if(missedGenes.length() > 0) out.println("//LOST_DURING_CONVERSION: " + missedGenes );
+			if (missedGenes.length() > 0)
+				out.println("//LOST_DURING_CONVERSION: " + missedGenes);
 			out.print(geneString);
 
 			out.close();
@@ -110,105 +104,79 @@ public class EUGeneExporter implements PathwayExporter
 			refs = new ArrayList<Xref>();
 			Map<DataSource, Integer> codeCount = new HashMap<DataSource, Integer>();
 
-			for(PathwayElement elm : pathway.getDataObjects()) {
-				if(elm.getObjectType() != ObjectType.DATANODE) {
-					continue; //Skip non-datanodes
+			for (PathwayElement elm : pathway.getDataObjects()) {
+				if (elm.getObjectType() != ObjectType.DATANODE) {
+					continue; // Skip non-datanodes
 				}
 				Xref ref = elm.getXref();
 				DataSource ds = ref.getDataSource();
-				if(ref == null || ref.getId().equals("") || ref.getDataSource() == null)
-				{
-					continue; //Skip datanodes with incomplete annotation
+				if (ref == null || ref.getId().equals("") || ref.getDataSource() == null) {
+					continue; // Skip datanodes with incomplete annotation
 				}
-				refs.add (ref);
+				refs.add(ref);
 
-				//Increase code count for this code
-				if(codeCount.containsKey(ref.getDataSource()))
+				// Increase code count for this code
+				if (codeCount.containsKey(ref.getDataSource()))
 					codeCount.put(ds, codeCount.get(ds) + 1);
-				else codeCount.put(ds, 1);
+				else
+					codeCount.put(ds, 1);
 			}
 
-			//Get most occuring systemcode
+			// Get most occuring systemcode
 			DataSource maxCode = null;
-			for(DataSource ds : codeCount.keySet())
-			{
-				if(maxCode == null || codeCount.get(ds) > codeCount.get(maxCode))
-				{
+			for (DataSource ds : codeCount.keySet()) {
+				if (maxCode == null || codeCount.get(ds) > codeCount.get(maxCode)) {
 					maxCode = ds;
 				}
 			}
 			system = maxCode;
 
-			if(system == null) { //May occur when no identifiers available
-				system = BioDataSource.ENSEMBL;
+			if (system == null) { // May occur when no identifiers available
+				system = DataSource.getByCompactIdentifierPrefix("ensembl");
 			}
 
-			if(codeCount.keySet().size() > 1) {
-				log.warn("\tThis pathway contains genes with different SystemCodes; '" +
-						maxCode + "' has the highest occurence and is therefore chosen as PATHWAY_MARKER" +
-						" for the EUGene file\n\t Other SystemCodes found and their occurences: "
-						+ codeCount);
+			if (codeCount.keySet().size() > 1) {
+				log.warn("\tThis pathway contains genes with different SystemCodes; '" + maxCode
+						+ "' has the highest occurence and is therefore chosen as PATHWAY_MARKER"
+						+ " for the EUGene file\n\t Other SystemCodes found and their occurences: " + codeCount);
 			}
 
 		}
 
 		String getEUGeneSystem() {
-			if(systemMappings.containsKey(system))
-			{
+			if (systemMappings.containsKey(system)) {
 				return systemMappings.get(system);
-			}
-			else
-			{
+			} else {
 				return system.getFullName();
 			}
 		}
 	}
 
 	private static Map<DataSource, String> systemMappings;
-	private static final String[] EU_GENE_SYSTEMS = new String[]
-	                                           {
-		"ENSEMBL_GENE_ID",
-		"UNIPROT",
-		"ENTREZ",
-		"UNIGENE",
-		"AFFYMETRIX",
-		"AGILENT",
-		"HGNC",
-		"PDB_ID",
-		"SGD_ID"
-	                                           };
-	private static final DataSource[] GENMAPP_SYSTEMS = new DataSource[]
-	                                            {
-		BioDataSource.ENSEMBL,
-		BioDataSource.UNIPROT,
-		BioDataSource.ENTREZ_GENE,
-		BioDataSource.UNIGENE,
-		BioDataSource.AFFY,
-		BioDataSource.AGILENT,
-		BioDataSource.HUGO,
-		BioDataSource.PDB,
-		BioDataSource.SGD
-	                                            };
+	private static final String[] EU_GENE_SYSTEMS = new String[] { "ENSEMBL_GENE_ID", "UNIPROT", "ENTREZ", "UNIGENE",
+			"AFFYMETRIX", "AGILENT", "HGNC", "PDB_ID", "SGD_ID" };
+	private static final DataSource[] GENMAPP_SYSTEMS = new DataSource[] {
+			DataSource.getByCompactIdentifierPrefix("ensembl"), DataSource.getByCompactIdentifierPrefix("uniprot"),
+			DataSource.getByCompactIdentifierPrefix("ncbigene"), DataSource.getByCompactIdentifierPrefix("unigene"),
+			DataSource.getByCompactIdentifierPrefix("affy.probeset"), DataSource.getExistingByFullName("Agilent"), // TODO
+			DataSource.getExistingByFullName("HGNC"), // TODO
+			DataSource.getByCompactIdentifierPrefix("pdb"), DataSource.getByCompactIdentifierPrefix("sgd") };
 
-	static
-	{
+	static {
 		systemMappings = new HashMap<DataSource, String>();
-		for(int i = 0; i < EU_GENE_SYSTEMS.length; i++)
-		{
+		for (int i = 0; i < EU_GENE_SYSTEMS.length; i++) {
 			systemMappings.put(GENMAPP_SYSTEMS[i], EU_GENE_SYSTEMS[i]);
 		}
 	}
 
 	@Override
-	public List<String> getWarnings()
-	{
+	public List<String> getWarnings() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public void doExport(File file, Pathway pathway, int zoom)
-			throws ConverterException {
+	public void doExport(File file, Pathway pathway, int zoom) throws ConverterException {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

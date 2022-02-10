@@ -76,7 +76,7 @@ class Patch
 					result.setStaticProperty(pt, ShapeRegistry.fromName(ch.newValue));
 					break;
 				case DATASOURCE:
-					result.setStaticProperty(pt, DataSource.getByFullName(ch.newValue));
+					result.setStaticProperty(pt, DataSource.getExistingByFullName(ch.newValue));
 					break;
 				case DB_ID:
 					result.setStaticProperty(pt, ch.newValue);

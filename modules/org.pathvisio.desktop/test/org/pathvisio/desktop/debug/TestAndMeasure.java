@@ -24,8 +24,8 @@ import java.io.File;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.debug.StopWatch;
 import org.pathvisio.core.model.ConverterException;
@@ -153,7 +153,7 @@ public class TestAndMeasure extends TestCase
 		{
 			public Object create() 
 			{
-				return new Xref("ENS0000001", BioDataSource.ENTREZ_GENE);
+				return new Xref("ENS0000001", DataSource.getByCompactIdentifierPrefix("ncbigene"));
 			}
 
 			public String getName() 
@@ -171,7 +171,7 @@ public class TestAndMeasure extends TestCase
 				elt.setMCenterY(10);
 				elt.setMWidth(8);
 				elt.setMHeight(10);
-				elt.setDataSource(BioDataSource.ENTREZ_GENE);
+				elt.setDataSource(DataSource.getByCompactIdentifierPrefix("ncbigene"));
 				elt.setElementID("3463");
 				elt.setTextLabel("INSR");
 				pwy1.add (elt);
@@ -214,7 +214,7 @@ public class TestAndMeasure extends TestCase
 				elt.setMCenterY(10);
 				elt.setMWidth(8);
 				elt.setMHeight(10);
-				elt.setDataSource(BioDataSource.ENTREZ_GENE);
+				elt.setDataSource(DataSource.getByCompactIdentifierPrefix("ncbigene"));
 				elt.setElementID("3463");
 				elt.setTextLabel("INSR");
 				pwy3.add (elt);

@@ -17,17 +17,17 @@ class Revision
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-		<include name="org.apache.batik.*.jar"/>
+		<include name="org.apache.servicemix.bundles.batik*.jar" />
 		<include name="org.apache.xml*.jar"/>
 		<include name="org.apache.xalan*.jar"/>
 		<include name="org.apache.xerces*.jar"/>
 		<include name="org.w3c.*.jar"/>
 		<include name="javax.xml*.jar"/>
 		<include name="org.pathvisio.pdftranscoder.jar"/>
-		<include name="com.springsource.org.jdom*.jar"/>
-		<include name="org.bridgedb.jar"/>
-		<include name="org.bridgedb.bio.jar"/>
-		<include name="org.bridgedb.rdb.jar"/>
+		<include name="org.apache.servicemix.bundles.jdom*.jar" />
+		<include name="org.bridgedb*.jar"/>
+		<include name="org.bridgedb.bio*.jar"/>
+		<include name="org.bridgedb.rdb*.jar"/>
 	  </fileset>
 	</path>
 

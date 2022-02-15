@@ -142,9 +142,9 @@ public class DataSourceHandler extends DefaultCellEditor implements ContextSensi
 	private DataSource label2value(String label)
 	{
 		if (DataSource.getFullNames().contains(label))
-			return DataSource.getByFullName(label);
+			return DataSource.getExistingByFullName(label);
 		else
-			return DataSource.getBySystemCode(label);
+			return DataSource.getExistingBySystemCode(label);
 	}
 
 	private String value2label(DataSource value)

@@ -5,8 +5,8 @@
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-		<include name="org.bridgedb.jar"/>
-		<include name="org.bridgedb.gui.jar"/>
+		<include name="org.bridgedb*.jar"/>
+		<include name="org.bridgedb.gui*.jar"/>
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
 		<include name="org.eclipse.osgi.jar"/>
 	  </fileset>

@@ -5,7 +5,7 @@
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-	  	<include name="org.apache.batik.*.jar"/>
+	  	<include name="org.apache.servicemix.bundles.batik*.jar" />
 		<include name="org.apache.xml*.jar"/>
 		<include name="org.apache.xalan*.jar"/>
 		<include name="org.apache.xerces*.jar"/>
@@ -13,12 +13,12 @@
 		<include name="org.w3c.dom.smil*.jar"/>
 		<include name="org.w3c.dom.svg*.jar"/>
 		<include name="org.pathvisio.pdftranscoder.jar"/>
-		<include name="com.springsource.org.jdom-*.jar"/>
-		<include name="org.bridgedb.jar"/>
-		<include name="org.bridgedb.bio.jar"/>
-		<include name="org.bridgedb.rdb.jar"/>
-		<include name="org.bridgedb.rdb.construct.jar"/>
-		<include name="org.bridgedb.gui.jar"/>
+	  	<include name="org.apache.servicemix.bundles.jdom*.jar" />
+		<include name="org.bridgedb*.jar"/>
+		<include name="org.bridgedb.bio*.jar"/>
+		<include name="org.bridgedb.rdb*.jar"/>
+		<include name="org.bridgedb.rdb.construct*.jar"/>
+		<include name="org.bridgedb.gui*.jar"/>
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
 		<include name="commons-math-2.0.jar"/>
 		<include name="org.eclipse.osgi.jar"/>

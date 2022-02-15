@@ -756,7 +756,7 @@ public class MappFormat extends AbstractPathwayFormat
     	if (syscode == null) syscode = "";
     	syscode = syscode.trim();
 
-        o.setDataSource(DataSource.getBySystemCode(syscode));
+        o.setDataSource(DataSource.getExistingBySystemCode(syscode));
 
         o.setDynamicProperty ("org.pathvisio.model.BackpageHead", mappObject[COL_HEAD]);
         if (mappObject[COL_ID] == null)

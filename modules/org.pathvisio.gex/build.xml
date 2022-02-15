@@ -5,11 +5,11 @@
 
 	<path id="project.class.path">
 	  <fileset dir="../../lib">
-		<include name="org.bridgedb.jar"/>
-		<include name="org.bridgedb.bio.jar"/>
-		<include name="org.bridgedb.rdb.jar"/>
-		<include name="org.bridgedb.rdb.construct.jar"/>
-		<include name="org.bridgedb.gui.jar"/>
+		<include name="org.bridgedb*.jar"/>
+		<include name="org.bridgedb.bio*.jar"/>
+		<include name="org.bridgedb.rdb*.jar"/>
+		<include name="org.bridgedb.rdb.construct*.jar"/>
+		<include name="org.bridgedb.gui*.jar"/>
 		<include name="org.pathvisio.jgoodies.forms.jar"/>
 		<include name="org.eclipse.osgi.jar"/>
 		<include name="com.springsource.org.jdom-1.1.0.jar"/>

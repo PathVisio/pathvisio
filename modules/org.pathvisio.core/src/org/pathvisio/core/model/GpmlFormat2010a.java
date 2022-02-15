@@ -563,7 +563,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		o.setDataNodeType (getAttribute("DataNode", "Type", e));
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setElementID (getAttribute("DataNode.Xref", "ID", xref));
-		o.setDataSource (DataSource.getByFullName (getAttribute("DataNode.Xref", "Database", xref)));
+		o.setDataSource (DataSource.getExistingByFullName (getAttribute("DataNode.Xref", "Database", xref)));
 	}
 
 	protected void updateDataNode(PathwayElement o, Element e) throws ConverterException
@@ -604,7 +604,7 @@ class GpmlFormat2010a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		o.setGraphRef(getAttribute("State", "GraphRef", e));
 		Element xref = e.getChild ("Xref", e.getNamespace());
 		o.setElementID (getAttribute("State.Xref", "ID", xref));
-		o.setDataSource (DataSource.getByFullName (getAttribute("State.Xref", "Database", xref)));
+		o.setDataSource (DataSource.getExistingByFullName (getAttribute("State.Xref", "Database", xref)));
 	}
 
 	protected void updateStateData(PathwayElement o, Element e) throws ConverterException

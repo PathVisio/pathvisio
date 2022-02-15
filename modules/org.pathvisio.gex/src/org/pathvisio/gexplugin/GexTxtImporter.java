@@ -197,7 +197,7 @@ public class GexTxtImporter
 					}
 					else
 					{
-						ds = DataSource.getBySystemCode(data[info.getSyscodeColumn()].trim());
+						ds = DataSource.getExistingBySystemCode(data[info.getSyscodeColumn()].trim());
 					}
 					Xref ref = new Xref (id, ds);
 					

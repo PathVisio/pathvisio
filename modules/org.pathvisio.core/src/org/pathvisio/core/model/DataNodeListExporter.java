@@ -42,8 +42,9 @@ public class DataNodeListExporter implements PathwayExporter {
 	 * to indicate that the exporter has to keep the original database
 	 * code as used in the pathway
 	 */
-	public static final String DB_ORIGINAL = "original"; //Use the id/code as in database
-	private DataSource resultDs = DataSource.getBySystemCode(DB_ORIGINAL);
+	public static final String DB_ORIGINAL = "original"; // Use the id/code as in database
+	private DataSource resultDs = DataSource.register(DB_ORIGINAL, DB_ORIGINAL).asDataSource(); // workaround by EgonW
+//	private DataSource resultDs = DataSource.getExistingBySystemCode(DB_ORIGINAL);
 	private String multiRefSep = ", ";
 
 	/**
@@ -74,7 +75,7 @@ public class DataNodeListExporter implements PathwayExporter {
 	 */
 	public void setResultCode(String code)
 	{
-		resultDs = DataSource.getBySystemCode (code);
+		resultDs = DataSource.getExistingBySystemCode (code);
 	}
 
 	public void setResultDataSource (DataSource value)

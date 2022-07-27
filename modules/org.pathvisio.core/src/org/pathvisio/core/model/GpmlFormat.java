@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.bio.DataSourceTxt;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -52,7 +53,7 @@ public class GpmlFormat extends AbstractPathwayFormat
 	public static final Namespace OWL = Namespace.getNamespace("owl", "http://www.w3.org/2002/07/owl#");
 
 	static {
-		DataSourceTxt.init();
+		if (!DataSource.fullNameExists("Ensembl")) DataSourceTxt.init();
 	}
 
 	public Pathway doImport(File file) throws ConverterException

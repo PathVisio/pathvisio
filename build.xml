@@ -114,7 +114,7 @@
 			<fileset dir="lib">
 				<include name="org.apache*.jar"/>
 				<include name="org.w3c*.jar"/>
-				<include name="derby.jar"/>
+				<include name="derby*.jar"/>
 				<include name="org.bridgedb*.jar"/>
 				<include name="org.pathvisio.*.jar"/>
 				<include name="javax.*.jar"/>

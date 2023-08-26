@@ -108,9 +108,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	}
 
 	protected void okPressed() {
-		if (db.getSelectedIndex() > -1) {
-			input.setDb(DB_OPTIONS[db.getSelectedIndex()]);
-		}
+		input.setDb((String) db.getSelectedItem());
 		input.setPubmedId(pmId.getText().trim());
 		input.setTitle(title.getText());
 		input.setSource(source.getText());

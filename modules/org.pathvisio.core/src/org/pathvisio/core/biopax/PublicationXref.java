@@ -85,7 +85,7 @@ public class PublicationXref extends BiopaxNode {
 	}
 
 	public void setDb(String db) {
-		setPropertyValue(PropertyType.DB, db);
+		setPropertyValue(PropertyType.DB, db.equals("") ? "NA" : db);
 	}
 
 	public String getPubmedId() {
@@ -93,7 +93,7 @@ public class PublicationXref extends BiopaxNode {
 	}
 
 	public void setPubmedId(String id) {
-		setPropertyValue(PropertyType.ID, id);
+		setPropertyValue(PropertyType.ID, id.equals("") ? "NA" : id);
 	}
 
 	public List<String> getAuthors() {

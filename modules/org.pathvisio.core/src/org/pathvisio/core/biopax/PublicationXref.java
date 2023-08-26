@@ -80,13 +80,20 @@ public class PublicationXref extends BiopaxNode {
 		setPropertyValue(PropertyType.YEAR, year);
 	}
 
+	public String getDb() {
+		return getPropertyValue(PropertyType.DB);
+	}
+
+	public void setDb(String db) {
+		setPropertyValue(PropertyType.DB, db);
+	}
+
 	public String getPubmedId() {
 		return getPropertyValue(PropertyType.ID);
 	}
 
 	public void setPubmedId(String id) {
 		setPropertyValue(PropertyType.ID, id);
-		setPropertyValue(PropertyType.DB, "PubMed");
 	}
 
 	public List<String> getAuthors() {

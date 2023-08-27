@@ -30,6 +30,7 @@ import java.util.List;
 public class PublicationXref extends BiopaxNode {
 	static final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
 	static final String DOI_URL = "http://doi.org/";
+	static final String EMPTY_VALUE_STRING = "NA";
 
 	public PublicationXref() {
 		super();
@@ -82,19 +83,21 @@ public class PublicationXref extends BiopaxNode {
 	}
 
 	public String getDb() {
-		return getPropertyValue(PropertyType.DB);
+		String db = getPropertyValue(PropertyType.DB);
+		return db.equals(EMPTY_VALUE_STRING) ? "" : db;
 	}
 
 	public void setDb(String db) {
-		setPropertyValue(PropertyType.DB, db.equals("") ? "NA" : db);
+		setPropertyValue(PropertyType.DB, Utils.isEmpty(db) ? EMPTY_VALUE_STRING : db);
 	}
 
 	public String getPubmedId() {
-		return getPropertyValue(PropertyType.ID);
+		String id = getPropertyValue(PropertyType.ID);
+		return id.equals(EMPTY_VALUE_STRING) ? "" : id;
 	}
 
 	public void setPubmedId(String id) {
-		setPropertyValue(PropertyType.ID, id.equals("") ? "NA" : id);
+		setPropertyValue(PropertyType.ID, Utils.isEmpty(id) ? EMPTY_VALUE_STRING : id);
 	}
 
 	public List<String> getAuthors() {

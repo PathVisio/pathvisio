@@ -95,10 +95,14 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	}
 
 	protected void refresh() {
-		if (input.getDb() != null) {
-			db.setSelectedIndex(java.util.Arrays.asList(DB_OPTIONS).indexOf(input.getDb()));
-		} else {	
+		String selectedDb = input.getDb();
+		int selectedDbIndex = java.util.Arrays.asList(DB_OPTIONS).indexOf(selectedDb);
+		if (selectedDb == null) {
 			db.setSelectedIndex(0);
+		} else if (selectedDbIndex > -1) {
+			db.setSelectedIndex(selectedDbIndex);
+		} else {
+			db.setSelectedItem(selectedDb);
 		}
 		setText(input.getPubmedId(), pmId);
 		setText(input.getTitle(), title);

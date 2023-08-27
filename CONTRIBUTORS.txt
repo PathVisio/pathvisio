@@ -1,6 +1,5 @@
 # DEVELOPERS TEAM
 Martina Kutmon
-Nuno Nunes
 Alexander Pico
 Egon Willighagen
 Denise Slenter
@@ -9,9 +8,10 @@ Kristina Hanspers
 # FORMER DEVELOPERS
 Andra Waagmeester
 Anwesha Bohler
-Jonathan Melius
+Jonathan Mélius
 Martijn van Iersel
 Thomas Kelder
+Nuno Nunes
 
 # CONTRIBUTORS
 Adem Bilicna

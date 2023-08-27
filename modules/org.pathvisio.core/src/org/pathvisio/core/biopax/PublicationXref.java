@@ -29,6 +29,7 @@ import java.util.List;
  */
 public class PublicationXref extends BiopaxNode {
 	static final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
+	static final String DOI_URL = "http://doi.org/";
 
 	public PublicationXref() {
 		super();
@@ -195,13 +196,26 @@ public class PublicationXref extends BiopaxNode {
 			builder.append(year)
 					.append(". ");
 		}
+		String db = getDb();
 		String pmid = getPubmedId();
 		if(!Utils.isEmpty(pmid)) {
-			builder.append("<A href='" + PUBMED_URL)
-					.append(pmid)
-					.append("'>PubMed ")
-					.append(pmid)
-					.append("</A>.");
+			if (db.equals("PubMed")) {
+				builder.append("<A href='" + PUBMED_URL)
+						.append(pmid)
+						.append("'>PubMed ")
+						.append(pmid)
+						.append("</A>.");
+			} else if (db.equals("DOI")) {
+				builder.append("<A href='" + DOI_URL)
+						.append(pmid)
+						.append("'>doi:")
+						.append(pmid)
+						.append("</A>.");
+			} else {
+				builder.append(db)
+						.append(" ")
+						.append(pmid);
+			}
 		}
 		return 	builder.toString();
 	}

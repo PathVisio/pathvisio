@@ -1,6 +1,4 @@
 
-[![Build Status](https://travis-ci.org/PathVisio/pathvisio.svg?branch=master)](https://travis-ci.org/PathVisio/pathvisio) 
-
 *********************
  PROJECT STRUCTURE 
 *********************

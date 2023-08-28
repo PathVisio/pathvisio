@@ -1,5 +1,4 @@
-
-[![Build Status](https://travis-ci.org/PathVisio/pathvisio.svg?branch=master)](https://travis-ci.org/PathVisio/pathvisio) 
+[![Build Status](https://github.com/PathVisio/pathvisio/actions/workflows/ant.yml/badge.svg)](https://github.com/PathVisio/pathvisio/actions/workflows/ant.yml)
 
 *********************
  PROJECT STRUCTURE 

@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+title: PathVisio
+message: 'If you use this software, please cite it as below.'
+type: software
+identifiers:
+  - type: url
+    value: 'https://github.com/pathvisio/pathvisio'
+    description: Source code repository for PathVisio
+repository-code: 'https://github.com/pathvisio/pathvisio'
+url: 'https://pathvisio.org/'
+license: Apache-2
+preferred-citation:
+  type: article
+  authors:
+  - family-names: Summer-Kutmon
+    given-names: Martina
+  - family-names: Iersel
+    given-names: Martijn P
+    name-particle: van
+  - family-names: Bohler
+    given-names: Anwesha
+  - family-names: Kelder
+    given-names: Thomas
+  - family-names: Nunes
+    given-names: Nuno
+  - family-names: Pico
+    given-names: Alexander R.
+  - family-names: Evelo
+    given-names: Chris T.
+  doi: 10.1371/JOURNAL.PCBI.1004085
+  journal: 'PLoS Comput Biol'
+  title: 'PathVisio 3: an extendable pathway analysis toolbox'
+  issue: 2
+  volume: 11
+  year: 2015

@@ -1,3 +1,4 @@
+[![Build Status](https://github.com/PathVisio/pathvisio/actions/workflows/ant.yml/badge.svg)](https://github.com/PathVisio/pathvisio/actions/workflows/ant.yml)
 
 *********************
  PROJECT STRUCTURE 

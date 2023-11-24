@@ -844,9 +844,6 @@ class GpmlFormat2013a extends GpmlFormatAbstract implements GpmlFormatReader, Gp
 		for (Element e : elementList) {
 			// make sure biopax references are sorted alphabetically by rdf-id 
 			if(e.getName().equals("Biopax")) {
-				for(Element e3 : e.getChildren()) {
-					e3.removeChildren("AUTHORS", GpmlFormat.BIOPAX);
-				}
 				e.sortChildren(new BiopaxAttributeComparator());
 			}
 			root.addContent(e);

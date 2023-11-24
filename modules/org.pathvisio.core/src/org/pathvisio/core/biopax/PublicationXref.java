@@ -29,6 +29,8 @@ import java.util.List;
  */
 public class PublicationXref extends BiopaxNode {
 	static final String PUBMED_URL = "http://www.ncbi.nlm.nih.gov/pubmed/";
+	static final String DOI_URL = "http://doi.org/";
+	static final String EMPTY_VALUE_STRING = "NA";
 
 	public PublicationXref() {
 		super();
@@ -80,13 +82,22 @@ public class PublicationXref extends BiopaxNode {
 		setPropertyValue(PropertyType.YEAR, year);
 	}
 
+	public String getDb() {
+		String db = getPropertyValue(PropertyType.DB);
+		return db.equals(EMPTY_VALUE_STRING) ? "" : db;
+	}
+
+	public void setDb(String db) {
+		setPropertyValue(PropertyType.DB, Utils.isEmpty(db) ? EMPTY_VALUE_STRING : db);
+	}
+
 	public String getPubmedId() {
-		return getPropertyValue(PropertyType.ID);
+		String id = getPropertyValue(PropertyType.ID);
+		return id.equals(EMPTY_VALUE_STRING) ? "" : id;
 	}
 
 	public void setPubmedId(String id) {
-		setPropertyValue(PropertyType.ID, id);
-		setPropertyValue(PropertyType.DB, "PubMed");
+		setPropertyValue(PropertyType.ID, Utils.isEmpty(id) ? EMPTY_VALUE_STRING : id);
 	}
 
 	public List<String> getAuthors() {
@@ -188,13 +199,26 @@ public class PublicationXref extends BiopaxNode {
 			builder.append(year)
 					.append(". ");
 		}
+		String db = getDb();
 		String pmid = getPubmedId();
 		if(!Utils.isEmpty(pmid)) {
-			builder.append("<A href='" + PUBMED_URL)
-					.append(pmid)
-					.append("'>PubMed ")
-					.append(pmid)
-					.append("</A>.");
+			if (db.equals("PubMed")) {
+				builder.append("<A href='" + PUBMED_URL)
+						.append(pmid)
+						.append("'>PubMed ")
+						.append(pmid)
+						.append("</A>.");
+			} else if (db.equals("DOI")) {
+				builder.append("<A href='" + DOI_URL)
+						.append(pmid)
+						.append("'>doi:")
+						.append(pmid)
+						.append("</A>.");
+			} else {
+				builder.append(db)
+						.append(" ")
+						.append(pmid);
+			}
 		}
 		return 	builder.toString();
 	}

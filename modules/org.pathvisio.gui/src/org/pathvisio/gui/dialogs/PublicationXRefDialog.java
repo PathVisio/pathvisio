@@ -27,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -58,14 +59,17 @@ public class PublicationXRefDialog extends OkCancelDialog {
 
 	final static String ADD = "Add";
 	final static String REMOVE = "Remove";
-	final static String PMID = "Pubmed ID";
+	final static String DB = "Database";
+	final static String PMID = "ID";
 	final static String TITLE = "Title";
 	final static String SOURCE = "Source";
 	final static String YEAR = "Year";
 	final static String AUTHORS = "Authors (separate with " + PublicationXref.AUTHOR_SEP + ")";
 	final static String QUERY = "Query PubMed";
+	final static String[] DB_OPTIONS = {"PubMed", "DOI", "ISBN"};
 
 	PublicationXref input;
+	JComboBox<Object> db;
 	JTextField pmId;
 	JTextField title;
 	JTextField source;
@@ -91,6 +95,15 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	}
 
 	protected void refresh() {
+		String selectedDb = input.getDb();
+		int selectedDbIndex = java.util.Arrays.asList(DB_OPTIONS).indexOf(selectedDb);
+		if (selectedDb == null) {
+			db.setSelectedIndex(0);
+		} else if (selectedDbIndex > -1) {
+			db.setSelectedIndex(selectedDbIndex);
+		} else {
+			db.setSelectedItem(selectedDb);
+		}
 		setText(input.getPubmedId(), pmId);
 		setText(input.getTitle(), title);
 		setText(input.getSource(), source);
@@ -99,6 +112,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 	}
 
 	protected void okPressed() {
+		input.setDb((String) db.getSelectedItem());
 		input.setPubmedId(pmId.getText().trim());
 		input.setTitle(title.getText());
 		input.setSource(source.getText());
@@ -130,6 +144,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 
 		PubMedResult pmr = pmq.getResult();
 		if(pmr != null) {
+			db.setSelectedItem(DB_OPTIONS[0]); // set pubmed
 			pmId.setText(pmr.getId()); // write the trimmed pmid to the dialog
 			title.setText(pmr.getTitle());
 			year.setText(pmr.getYear());
@@ -149,12 +164,15 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		JPanel contents = new JPanel();
 		contents.setLayout(new GridBagLayout());
 
+		JLabel lblDb = new JLabel(DB);
 		JLabel lblPmId = new JLabel(PMID);
 		JLabel lblTitle = new JLabel(TITLE);
 		JLabel lblSource = new JLabel(SOURCE);
 		JLabel lblYear = new JLabel(YEAR);
 		JLabel lblAuthors = new JLabel(AUTHORS);
 
+		db = new JComboBox<Object>(DB_OPTIONS);
+		db.setEditable(true);
 		pmId = new JTextField();
 		title = new JTextField();
 		source = new JTextField();
@@ -203,6 +221,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		c.gridy = GridBagConstraints.RELATIVE;
 		c.weightx = 0;
 		contents.add(lblPmId, c);
+		contents.add(lblDb, c);
 		contents.add(lblTitle, c);
 		contents.add(lblYear, c);
 		contents.add(lblSource, c);
@@ -212,6 +231,7 @@ public class PublicationXRefDialog extends OkCancelDialog {
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 1;
 		contents.add(pmId, c);
+		contents.add(db, c);
 		contents.add(title, c);
 		contents.add(year, c);
 		contents.add(source, c);

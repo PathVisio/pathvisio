@@ -60,9 +60,11 @@ public class BiopaxNode
 		List<BiopaxProperty> existingProps = getProperties(p.getName());
 		if(p.getMaxCardinality() != BiopaxProperty.UNBOUND &&
 				existingProps.size() >= p.getMaxCardinality()) {
-			//Replace the first occuring property
+			//Replace other properties with the same name
 			int first = getFirstPropertyIndex(p.getName());
-			properties.remove(first);
+			for(BiopaxProperty existingProp : existingProps) {
+				removeProperty(existingProp);
+			}
 			properties.add(first, p);
 		} else {
 			properties.add(p);

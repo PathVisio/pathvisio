@@ -167,9 +167,8 @@ public class EUGeneExporter implements PathwayExporter
 	private static final String[] EU_GENE_SYSTEMS = new String[]
 	                                           {
 		"ENSEMBL_GENE_ID",
-		"UNIPROT",
+		"UNIPROTKB",
 		"ENTREZ",
-		"UNIGENE",
 		"AFFYMETRIX",
 		"AGILENT",
 		"HGNC",
@@ -179,9 +178,8 @@ public class EUGeneExporter implements PathwayExporter
 	private static final DataSource[] GENMAPP_SYSTEMS = new DataSource[]
 	                                            {
 	    DataSource.register ("En", "Ensembl").asDataSource(),
-	    DataSource.register ("S", "Uniprot-TrEMBL").asDataSource(),
+	    DataSource.register ("S", "UniProtKB").asDataSource(),
 	    DataSource.register ("L", "Entrez Gene").asDataSource(),
-	    DataSource.register ("U", "UniGene").asDataSource(),
 	    DataSource.register ("X", "Affy").asDataSource(),
 	    DataSource.register ("Ag", "Agilent").asDataSource(),
 	    DataSource.register ("H", "HGNC").asDataSource(),

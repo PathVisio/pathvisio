@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="PathVisio" default="all" basedir=".">
+<project name="PathVisio" default="exe" basedir=".">
 	<property name="src.dir" value="modules"/>
 	<property name="debug.mode" value="true"/>
 
@@ -13,7 +13,7 @@
 	<property name="webstart.base.url" value="http://www.pathvisio.org/webstart"/>
 
 	<!-- needed to build zip files correctly -->
-	<property name="pathvisio.version" value="3.4.0-bridgedb-3.0.1-1"/>
+	<property name="pathvisio.version" value="3.4.0"/>
 	
   	<macrodef name="iterate">
 		<attribute name="target"/>
@@ -137,26 +137,6 @@
 	
 	<target name="all" depends="exe" description="Compile all versions of this project" />
 
-	<target name="prepare-webstart" depends="exe" description="prepares webstart">
-		<fail message="You must specify a keystore password for opening visioKeyStore: ant -Dkeystore.password=***** [ant target]">
-			<condition>
-				<not> <isset property="keystore.password"/> </not>
-			</condition>
-		</fail>
-		<mkdir dir="${webstart.dir}/www"/>
-		<!-- Update latest version file -->
-		<echo file="${webstart.dir}/www/latestversion">PV${pathvisio.version}</echo>
-		<!-- Copy files needed for webstart !-->
-		<!--tsaurl="http://timestamp.comodoca.com/authenticode"-->
-		<signjar jar="pathvisio.jar" alias="b9490170-b550-11e5-ad7d-000c29471649"
-			storetype="pkcs12" storepass="${keystore.password}" keystore="../Signing_Key.pfx" tsaurl="http://timestamp.comodoca.com"/>
-
-		<copy file="pathvisio.jar" toDir="${webstart.dir}/www"/>
-		<copy file="${webstart.dir}/pathvisio.jnlp" toDir="${webstart.dir}/www"/>
-		
-		<!-- modify the base url in the jnlp-->
-		<replace file="webstart/www/pathvisio.jnlp" token="#BASEURL#" value="${webstart.base.url}"/>
-	</target>
 
 	<target name="docs" depends="prepare" description="generate api-docs">
 		<tstamp /> <!-- set ${TODAY} -->

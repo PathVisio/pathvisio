@@ -16,7 +16,9 @@ Require-Bundle: org.pathvisio.core;bundle-version="3.4.0",
  org.bridgedb.bio,
  org.bridgedb.rdb,
  org.bridgedb.rdb.construct,
- org.bridgedb.gui
+ org.bridgedb.gui,
+ derby;bundle-version="10.14.2000000",
+ derbyclient;bundle-version="10.14.2000000"
 Import-Package: org.osgi.framework;version="1.3.0"
 Bundle-Copyright: 2006-2019 BiGCaT Bioinformatics
 Bundle-DocURL: http://www.pathvisio.org

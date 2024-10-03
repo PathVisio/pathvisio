@@ -115,7 +115,7 @@ public class DataSourceModel implements ComboBoxModel
 	{
 		items = new ArrayList<DataSource>();
 		items.addAll(DataSourceHandler.getFilteredSetAlt(primary, type, organism, interaction));
-		items.remove(DataSource.getExistingBySystemCode("En"));
+//		items.remove(DataSource.getExistingBySystemCode("En"));
 		
 		Collections.sort (items, new Comparator<DataSource>()
 		{

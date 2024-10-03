@@ -179,7 +179,6 @@ public abstract class DefaultTemplates {
 			//Default colors for different types
 			if (type.equals(DataNodeType.METABOLITE)) {
 				e.setColor(COLOR_METABOLITE);
-				e.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			} else if (type.equals(DataNodeType.PATHWAY)) {
 				e.setColor(COLOR_PATHWAY);
 				e.setMFontSize(12);
@@ -474,12 +473,10 @@ public abstract class DefaultTemplates {
 
 			lastStartNode.setDataNodeType(DataNodeType.METABOLITE);
 			lastStartNode.setColor(COLOR_METABOLITE);
-			lastStartNode.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			lastStartNode.setTextLabel("Substrate");
 
 			lastEndNode.setDataNodeType(DataNodeType.METABOLITE);
 			lastEndNode.setColor(COLOR_METABOLITE);
-			lastEndNode.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			lastEndNode.setTextLabel("Product");
 			
 			lastLine.setEndLineType(MIMShapes.MIM_CONVERSION);
@@ -525,12 +522,10 @@ public abstract class DefaultTemplates {
 
  			lastStartNode.setDataNodeType(DataNodeType.METABOLITE);
 			lastStartNode.setColor(COLOR_METABOLITE);
-			lastStartNode.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			lastStartNode.setTextLabel("Metabolite 1");
 
 			lastEndNode.setDataNodeType(DataNodeType.METABOLITE);
 			lastEndNode.setColor(COLOR_METABOLITE);
-			lastEndNode.setShapeType(ShapeType.ROUNDED_RECTANGLE);
 			lastEndNode.setTextLabel("Metabolite 2");
 			lastLine.setEndLineType(MIMShapes.MIM_CONVERSION);
 

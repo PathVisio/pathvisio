@@ -82,11 +82,11 @@ public class Converter {
     	Engine engine = new Engine();
     	engine.addPathwayImporter(new GpmlFormat());
     	engine.addPathwayImporter(new MappFormat());
-		engine.addPathwayExporter(new MappFormat());
+//		engine.addPathwayExporter(new MappFormat());
     	engine.addPathwayExporter(new GpmlFormat());
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_SVG));
 		engine.addPathwayExporter(new RasterImageExporter(ImageExporter.TYPE_PNG));
-		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
+//		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_TIFF));
 		engine.addPathwayExporter(new BatikImageExporter(ImageExporter.TYPE_PDF));
 		engine.addPathwayExporter(new EUGeneExporter());
 		engine.addPathwayExporter(new DataNodeListExporter());

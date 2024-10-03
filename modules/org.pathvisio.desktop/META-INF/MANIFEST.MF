@@ -50,7 +50,7 @@ Require-Bundle: org.pathvisio.core;bundle-version="3.4.0",
  derby;bundle-version="10.14.2000000"
 Import-Package: javax.swing,
  org.osgi.framework;version="1.5.0"
-Bundle-Copyright: 2006-2019 BiGCaT Bioinformatics
+Bundle-Copyright: 2006-2024 PathVisio
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-Description: This module is the desktop application of PathVisio.

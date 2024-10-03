@@ -28,4 +28,4 @@ Import-Package: javax.swing,
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Description: This module is the user interface for the applet and stand alone version of PathVisio.
-Bundle-Copyright: 2006-2019 BiGCaT Bioinformatics
+Bundle-Copyright: 2006-2024 PathVisio

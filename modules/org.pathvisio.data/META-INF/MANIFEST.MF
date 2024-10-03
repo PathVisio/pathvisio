@@ -8,6 +8,6 @@ Export-Package: org.pathvisio.data
 Require-Bundle: org.bridgedb,
  org.apache.commons.math;bundle-version="2.0.0"
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
-Bundle-Copyright: 2006-2019 BiGCaT Bioinformatics
+Bundle-Copyright: 2006-2024 PathVisio
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Description: This module is the data model of biological data in PathVisio.

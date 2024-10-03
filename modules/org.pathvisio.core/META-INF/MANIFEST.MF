@@ -44,4 +44,4 @@ Import-Package: javax.swing,
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-DocURL: http://www.pathvisio.org
 Bundle-Description: This module is the core module of the PathVisio application. It contains the data model and basic preferences of the application.
-Bundle-Copyright: 2006-2019 BiGCaT Bioinformatics
+Bundle-Copyright: 2006-2024 PathVisio

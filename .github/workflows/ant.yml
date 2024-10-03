@@ -21,4 +21,4 @@ jobs:
         java-version: ${{ matrix.openjdk }}
         distribution: 'temurin'
     - name: Build with Ant
-      run: ant exe
+      run: ant 

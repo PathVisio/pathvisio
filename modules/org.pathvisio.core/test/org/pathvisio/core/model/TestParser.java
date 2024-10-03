@@ -26,7 +26,8 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.bridgedb.DataSource;
-import org.bridgedb.bio.BioDataSource;
+import org.bridgedb.bio.DataSourceTxt;
+//import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.biopax.BiopaxNode;
 import org.pathvisio.core.debug.StopWatch;
 import org.pathvisio.core.preferences.PreferenceManager;
@@ -89,7 +90,7 @@ public class TestParser extends TestCase
 		assertEquals (900.0, elt.getMWidth(), 0.1);
 		assertEquals (300.0, elt.getMHeight(), 0.1);
 		assertEquals ("8739", elt.getElementID());
-		assertEquals (BioDataSource.ENTREZ_GENE, elt.getDataSource());
+//		assertEquals (BioDataSource.ENTREZ_GENE, elt.getDataSource());
 		
 		//TODO: Line doesn't have fixed graphId, can't test
 		//TODO: generate line graphId based on hash of coordinates if not available

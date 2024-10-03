@@ -24,8 +24,8 @@ import java.io.File;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 
+import org.bridgedb.DataSource;
 import org.bridgedb.Xref;
-import org.bridgedb.bio.BioDataSource;
 import org.pathvisio.core.Engine;
 import org.pathvisio.core.debug.StopWatch;
 import org.pathvisio.core.model.ConverterException;
@@ -39,7 +39,7 @@ import org.pathvisio.core.view.VPathway;
 import org.pathvisio.core.view.VPathwayElement;
 import org.pathvisio.gui.view.VPathwaySwing;
 
-import buildsystem.Measure;
+//import buildsystem.Measure;
 import junit.framework.TestCase;
 
 /**
@@ -51,11 +51,11 @@ public class TestAndMeasure extends TestCase
 	private static final File PATHVISIO_BASEDIR = new File ("../..");
 	private static final File TEST_PATHWAY = new File (PATHVISIO_BASEDIR, "testData/WP248_2008a.gpml");
 
-	private Measure measure;
+//	private Measure measure;
 	
 	@Override public void setUp()
 	{
-		measure = new Measure("pv_mut.log");
+//		measure = new Measure("pv_mut.log");
 	}
 	
 	private interface ObjectTester
@@ -130,8 +130,10 @@ public class TestAndMeasure extends TestCase
 			try { Thread.sleep(100); } catch (InterruptedException ex) {}
 		}
 		long memEnd = (runtime.totalMemory() - runtime.freeMemory());
-		measure.add("Memory::" + tester.getName() + " " + N + "x", "" + (memEnd - memStart) / N, "bytes");
-		measure.add("Speed::" + tester.getName() + " " + N + "x", "" + (float)(msec) / (float)(N), "msec");
+		System.out.println("Memory::" + tester.getName() + " " + N + "x" + "\t" + (memEnd - memStart) / N + "\n");
+		System.out.println("Speed::" + tester.getName() + " " + N + "x" + "\t" + (float)(msec) / (float)(N) + "\n");
+//		measure.add("Memory::" + tester.getName() + " " + N + "x", "" + (memEnd - memStart) / N, "bytes");
+//		measure.add("Speed::" + tester.getName() + " " + N + "x", "" + (float)(msec) / (float)(N), "msec");
 	}
 
 	public void testFile()
@@ -153,7 +155,7 @@ public class TestAndMeasure extends TestCase
 		{
 			public Object create() 
 			{
-				return new Xref("ENS0000001", BioDataSource.ENTREZ_GENE);
+				return new Xref("ENS0000001", DataSource.getExistingBySystemCode("L"));
 			}
 
 			public String getName() 
@@ -171,7 +173,7 @@ public class TestAndMeasure extends TestCase
 				elt.setMCenterY(10);
 				elt.setMWidth(8);
 				elt.setMHeight(10);
-				elt.setDataSource(BioDataSource.ENTREZ_GENE);
+				elt.setDataSource(DataSource.getExistingBySystemCode("L"));
 				elt.setElementID("3463");
 				elt.setTextLabel("INSR");
 				pwy1.add (elt);
@@ -214,7 +216,7 @@ public class TestAndMeasure extends TestCase
 				elt.setMCenterY(10);
 				elt.setMWidth(8);
 				elt.setMHeight(10);
-				elt.setDataSource(BioDataSource.ENTREZ_GENE);
+				elt.setDataSource(DataSource.getExistingBySystemCode("L"));
 				elt.setElementID("3463");
 				elt.setTextLabel("INSR");
 				pwy3.add (elt);
@@ -261,8 +263,8 @@ public class TestAndMeasure extends TestCase
 		mw.start(); sw.start(); 
 		Pathway pwy = new Pathway();
 		pwy.readFromXml(TEST_PATHWAY, true);
-		measure.add ("Speed::Hs_Apoptosis readFromXml (+validate)", "" + sw.stop(), "msec");
-		measure.add ("Memory::Hs_Apoptosis readFromXml (+validate)", "" + mw.stop() / 1024, "kb");
+//		measure.add ("Speed::Hs_Apoptosis readFromXml (+validate)", "" + sw.stop(), "msec");
+//		measure.add ("Memory::Hs_Apoptosis readFromXml (+validate)", "" + mw.stop() / 1024, "kb");
 
 		mw.start(); sw.start(); 
 		JScrollPane sp = new JScrollPane();
@@ -273,8 +275,8 @@ public class TestAndMeasure extends TestCase
 		vpwy.activateUndoManager(engine);
 		vpwy.fromModel(pwy);
 		
-		measure.add ("Speed::Hs_Apoptosis create VPathway", "" + sw.stop(), "msec");
-		measure.add ("Memory::Hs_Apoptosis create VPathway", "" + mw.stop() / 1024, "kb");
+//		measure.add ("Speed::Hs_Apoptosis create VPathway", "" + sw.stop(), "msec");
+//		measure.add ("Memory::Hs_Apoptosis create VPathway", "" + mw.stop() / 1024, "kb");
 
 		mw.start(); sw.start(); 
 		wrapper.setSize(vpwy.getVWidth(), vpwy.getVHeight());
@@ -282,8 +284,8 @@ public class TestAndMeasure extends TestCase
 				BufferedImage.TYPE_INT_RGB);		
 		Graphics2D g2 = image.createGraphics();
 		wrapper.paint(g2);
-		measure.add ("Speed::Hs_Apoptosis paint", "" + sw.stop(), "msec");
-		measure.add ("Memory::Hs_Apoptosis paint", "" + mw.stop() / 1024, "kb");
+//		measure.add ("Speed::Hs_Apoptosis paint", "" + sw.stop(), "msec");
+//		measure.add ("Memory::Hs_Apoptosis paint", "" + mw.stop() / 1024, "kb");
 		g2.dispose();
 		
 		mw.start(); sw.start(); 
@@ -291,8 +293,8 @@ public class TestAndMeasure extends TestCase
 		{
 			elt.select();
 		}
-		measure.add ("Speed::Hs_Apoptosis select all", "" + sw.stop(), "msec");
-		measure.add ("Memory::Hs_Apoptosis select all", "" + mw.stop() / 1024, "kb");
+//		measure.add ("Speed::Hs_Apoptosis select all", "" + sw.stop(), "msec");
+//		measure.add ("Memory::Hs_Apoptosis select all", "" + mw.stop() / 1024, "kb");
 				
 		image = new BufferedImage(vpwy.getVWidth(), vpwy.getVHeight(), 
 				BufferedImage.TYPE_INT_RGB);
@@ -304,8 +306,8 @@ public class TestAndMeasure extends TestCase
 		mw.start(); sw.start(); 
 		// move all selected items, triggers undo action
 		for (int i = 0; i < 10; ++i) vpwy.moveByKey(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), 10);
-		measure.add ("Speed::Hs_Apoptosis move up 10x" , "" + sw.stop(), "msec");
-		measure.add ("Memory::Hs_Apoptosis move up 10x", "" + mw.stop() / 1024, "kb");		
+//		measure.add ("Speed::Hs_Apoptosis move up 10x" , "" + sw.stop(), "msec");
+//		measure.add ("Memory::Hs_Apoptosis move up 10x", "" + mw.stop() / 1024, "kb");		
 	}
 
 }

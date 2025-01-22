@@ -1005,7 +1005,9 @@ public class PathwayElement implements GraphIdContainer, Comparable<PathwayEleme
 			}
 			else
 			{
-				setDataSource(DataSource.getExistingByFullName((String)value));
+				if (DataSource.fullNameExists((String)value)) {
+					setDataSource(DataSource.getExistingByFullName((String)value));
+				}
 			}
 			break;
 		case TYPE:
